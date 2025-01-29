@@ -23,7 +23,7 @@
                                     ]
                                 ) : $this->escapeHtmlAttr($model['url']);
                         ?>
-                        <a download href="<?=$url?>" rel="nofollow">
+                        <a class="dropdown-item" download href="<?=$url?>" rel="nofollow">
                             <?=$this->transEscWithPrefix('model_type_', $model['type'])?>
                             <span><?=$this->transEscWithPrefix('model_format_', $model['format'])?></span>
                         </a>

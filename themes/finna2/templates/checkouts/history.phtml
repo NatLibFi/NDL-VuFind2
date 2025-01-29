@@ -81,8 +81,8 @@
                             <ul class="dropdown-menu useraccount-confirm" role="presentation">
                               <li><span class="dropdown-header"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
                               <li>
-                                <a href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
-                                <a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                                <a class="dropdown-item" href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
+                                <a class="dropdown-item" href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a>
                               </li>
                             </ul>
                           <?php endif; ?>
@@ -95,11 +95,11 @@
                               </button>
                               <ul class="dropdown-menu dropdown-menu-<?php if ($purgeSelectedAllowed): ?>right<?php else: ?>left<?php endif;?> download">
                                 <li>
-                                  <a data-lightbox href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
+                                  <a class="dropdown-item" data-lightbox href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
                                 </li>
                                 <?php foreach (['csv', 'ods', 'xlsx'] as $format): ?>
                                   <li>
-                                    <a href="<?=$this->url('myresearch-downloadloanhistory', [], ['query' => ['format' => $format]])?>"><?=$this->transEsc('loan_history_download_' . $format)?></a>
+                                    <a class="dropdown-item" href="<?=$this->url('myresearch-downloadloanhistory', [], ['query' => ['format' => $format]])?>"><?=$this->transEsc('loan_history_download_' . $format)?></a>
                                   </li>
                                 <?php endforeach; ?>
                               </ul>

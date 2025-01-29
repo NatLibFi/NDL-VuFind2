@@ -41,7 +41,7 @@
               }
             ?>
             <li>
-              <a href="<?=$viewUrl?>" role="menuitem" <?php if ($viewData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>>
+              <a class="dropdown-item" href="<?=$viewUrl?>" role="menuitem" <?php if ($viewData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>>
                 <?=$this->icon('view-' . $viewType, 'icon-' . $viewType) ?> <?=$this->transEsc('Show As ' . $viewData['desc'])?>
               </a>
             </li>

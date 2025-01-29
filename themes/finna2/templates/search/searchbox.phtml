@@ -188,7 +188,7 @@
           <?php foreach ($handlers as $handler): ?>
             <li>
               <input type="hidden" value="<?=$this->escapeHtmlAttr($handler['value'])?>">
-              <a role="menuitem" class="select-type" href="#"><?=$this->transEsc($handler['label'])?></a>
+              <a role="menuitem" class="dropdown-item select-type" href="#"><?=$this->transEsc($handler['label'])?></a>
             </li>
           <?php endforeach; ?>
         </ul>
@@ -214,11 +214,11 @@
             </button>
             <ul class="dropdown-menu" aria-labelledby="keyboard-selection-button">
               <li>
-                <a class="keyboard-selection-item" href="#" data-value="none"><?= $this->transEsc('None') ?></a>
+                <a class="dropdown-item keyboard-selection-item" href="#" data-value="none"><?= $this->transEsc('None') ?></a>
               </li>
               <?php foreach ($keyboardLayouts as $keyboardLayout): ?>
                 <li>
-                  <a class="keyboard-selection-item" href="#" data-value="<?= $this->escapeHtmlAttr($keyboardLayout) ?>"><?= $this->transEsc("KeyboardLayout::$keyboardLayout") ?></a>
+                  <a class="dropdown-item keyboard-selection-item" href="#" data-value="<?= $this->escapeHtmlAttr($keyboardLayout) ?>"><?= $this->transEsc("KeyboardLayout::$keyboardLayout") ?></a>
                 </li>
               <?php endforeach; ?>
             </ul>

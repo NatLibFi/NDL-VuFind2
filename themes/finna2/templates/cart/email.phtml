@@ -20,7 +20,7 @@
         <button type="button" class="btn show-records hidden" data-bs-toggle="collapse" data-bs-target="#itemhide">
           <?=count($this->records) . ' ' . $this->transEsc('items') ?> <?=$this->icon('show-more') ?>
         </button>
-        <div id="itemhide" class="collapse in">
+        <div id="itemhide" class="collapse show">
           <ul>
             <?php foreach ($this->records as $current): ?>
               <li><?=$this->escapeHtml($current->getBreadcrumb())?></li>
