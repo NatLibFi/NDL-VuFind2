@@ -44,13 +44,13 @@
     <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->getId())?>">
     <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->getTitle())?>">
   <?php endif; ?>
-  <div class="clearfix mylist-header hidden-print">
+  <div id="useraccount-content-header" class="clearfix mylist-header hidden-print" tabindex="0">
     <div>
       <?=$this->flashmessages()?>
     </div>
     <div>
       <?php if ($list): ?>
-        <div id="useraccount-content-header" class="useraccount-header" tabindex="0">
+        <div class="useraccount-header">
           <h2><?=$this->transEsc('saved_items')?></h2>
         </div>
         <div class="useraccount-header">
