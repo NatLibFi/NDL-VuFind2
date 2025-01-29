@@ -31,6 +31,10 @@
         box-shadow: none;
         margin-top: 0;
 
+        > li {
+          border: 0;
+        }
+
         .dropdown-item {
           border: 0;
           padding-left: 16px;
