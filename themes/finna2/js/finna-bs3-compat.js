@@ -1,15 +1,6 @@
 /*global VuFind*/
 VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3CompatibilityLayer() {
   /**
-   * Initialize navbar support
-   */
-  function initNavbar() {
-    document.querySelectorAll('.navbar').forEach((el) => {
-      el.classList.add('navbar-expand-md');
-    });
-  }
-
-  /**
    * Initialize nav support
    */
   function initNav() {
@@ -118,7 +109,6 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
    * Initialize all back-compatibility support functions
    */
   function init() {
-    initNavbar();
     initNav();
     initFormElements();
     initBreadcrumbs();
