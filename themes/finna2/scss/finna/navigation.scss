@@ -347,16 +347,6 @@
   z-index: 1; /* this is necessary for overcome the pseudo element */
 }
 
-/*@media(min-width: $grid-float-breakpoint) {
-  .finna-navbar {
-    display: flex;
-    .navbar-collapse {
-      flex: 1 1 100%;
-      display: flex !important; // Needed to override bootstrap defaults
-    }
-  }
-}*/
-
 header {
   box-shadow : 0 1px 0 1px rgba(0,0,0,0.1);
   z-index: $zindex-header;
