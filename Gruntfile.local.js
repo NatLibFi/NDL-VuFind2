@@ -7,7 +7,13 @@ module.exports = function(grunt) {
   grunt.registerTask("finna:scss", function finnaScssFunc() {
     const config = getFinnaSassConfig({
       outputStyle: style,
-      quietDeps: true
+      quietDeps: true,
+      silenceDeprecations: [
+        'import',
+        'color-functions',
+        'global-builtin',
+        'legacy-js-api'
+      ]
     }, false);
     grunt.config.set('dart-sass', config);
     grunt.task.run('dart-sass');
@@ -84,7 +90,6 @@ module.exports = function(grunt) {
         config.options.includePaths.push('vendor/');
         config.options.includePaths.push(path.resolve('themes/bootstrap5/scss/vendor'));
         config.options.includePaths.push(path.resolve('themes/bootstrap5/node_modules'));
-        console.log(config.options.includePaths);
 
         sassConfig[themeList[i]] = config;
       }
