@@ -74,7 +74,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'url' => 'https://glbmalli.glb',
                                 'format' => 'glb',
                                 'type' => 'preview',
-                                'data' => [],
                             ],
                         ],
                         'rights' => [
@@ -209,7 +208,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'type' => 'audio',
                         'embed' => 'audio',
                         'resourceName' => 'AudioTesti.mp3',
-                        'data' => [],
                     ],
                     [
                         'desc' => 'VideoTesti.mp4',

@@ -847,21 +847,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $type,
-        \SimpleXmlElement $measurements = null,
+        ?\SimpleXmlElement $measurements
     ): array {
         $type = $this->modelTypes[$type];
         $format = strtolower($format);
         if ('preview' !== $type || !in_array($format, $this->displayableModelFormats)) {
             return [];
         }
-        return [
+        $model = [
             'url' => $url,
             'format' => $format,
             'type' => $type,
-            'data' => $this->formatResourceMeasurements(
-                $measurements
-            ),
         ];
+        if ($measurements) {
+            $model['data'] = $this->formatResourceMeasurements($measurements);
+        }
+        return $model;
     }
 
     /**
@@ -942,19 +943,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $description,
-        \SimpleXmlElement $measurements = null
+        ?\SimpleXmlElement $measurements
     ): array {
         if ($codec = $this->supportedAudioFormats[$format] ?? false) {
-            return [
+            $audio = [
                 'desc' => $description ?: false,
                 'url' => $url,
                 'codec' => $format,
                 'type' => 'audio',
                 'embed' => 'audio',
-                'data' => $this->formatResourceMeasurements(
-                    $measurements
-                ),
             ];
+            if ($measurements) {
+                $audio['data'] = $this->formatResourceMeasurements($measurements);
+            }
+            return $audio;
         }
         return [];
     }
@@ -979,18 +981,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $description,
-        \SimpleXmlElement $measurements = null
+        ?\SimpleXmlElement $measurements
     ): array {
         $mediaType = $this->supportedVideoFormats[$format] ?? false;
-        return match ($mediaType) {
+        $video = match ($mediaType) {
             'text/html' => [
                 'desc' => $description ?: false,
                 'url' => $url,
                 'embed' => 'iframe',
                 'format' => $format,
-                'data' => $this->formatResourceMeasurements(
-                    $measurements
-                ),
             ],
             false => [],
             default => [
@@ -1002,11 +1001,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     'src' => $url,
                     'type' => $mediaType,
                 ],
-                'data' => $this->formatResourceMeasurements(
-                    $measurements
-                ),
             ],
         };
+        if ($video && $measurements) {
+            $video['data'] = $this->formatResourceMeasurements($measurements);
+        }
+        return $video;
     }
 
     /**
