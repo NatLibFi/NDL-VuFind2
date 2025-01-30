@@ -121,12 +121,12 @@
   .nav-item > .nav-link {
     display: flex;
     gap: 0.25rem;
-    --bs-nav-link-color: #{$header-text-color};
-    --bs-nav-link-hover-color: #{$header-text-hover-color};
-    --bs-navbar-active-color: #{$header-text-active-color};
+    --#{$prefix}nav-link-color: #{$header-text-color};
+    --#{$prefix}nav-link-hover-color: #{$header-text-hover-color};
+    --#{$prefix}navbar-active-color: #{$header-text-active-color};
   }
   .dropdown-menu > li > .dropdown-item.active:not(:hover) {
-    --bs-dropdown-link-active-color: #{$header-text-color};
+    --#{$prefix}dropdown-link-active-color: #{$header-text-color};
     background-color: transparent;
   }
 }

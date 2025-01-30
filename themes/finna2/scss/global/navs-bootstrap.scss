@@ -12,8 +12,8 @@
 .nav-tabs {
   .nav-link {
     border-top: 4px solid transparent;
-    --bs-nav-tabs-border-radius: 0;
-    --bs-nav-link-hover-color: #{$nav-tabs-text-color};
+    --#{$prefix}nav-tabs-border-radius: 0;
+    --#{$prefix}nav-link-hover-color: #{$nav-tabs-text-color};
   }
   // style 5 tabs to make sure they stay as tabs
   > li {

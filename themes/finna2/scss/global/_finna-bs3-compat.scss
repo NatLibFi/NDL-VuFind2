@@ -88,7 +88,7 @@ $pager-disabled-color:                 $pagination-disabled-color !default;
 
 $cursor-disabled:                not-allowed !default;
 
-$table-bg-accent: var(--bs-table-accent-bg) !default;
+$table-bg-accent: var(--#{$prefix}table-accent-bg) !default;
 
 $line-height-computed: $line-height-base * $font-size-base;
 
