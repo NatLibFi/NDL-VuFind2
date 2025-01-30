@@ -573,15 +573,3 @@ h6, .h6 {
     }
   }
 }
-
-// focus rings
-.form-select:-moz-focusring {
-  color: revert;
-}
-
-a, button, a.btn, button.btn, ul.finna-multiselect {
-  &:focus-visible {
-    outline: 0;
-    box-shadow: $nav-link-focus-box-shadow;
-  }
-}
