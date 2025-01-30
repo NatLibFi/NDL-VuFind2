@@ -212,9 +212,6 @@ a.authority {
     font-size: 1em;
     font-weight: 600;
     text-transform: uppercase;
-    .file-size {
-      color: $gray-mid-light;
-    }
   }
 }
 
@@ -518,6 +515,9 @@ a.authority {
   .image-dimensions {
     color: $gray-mid-light;
     font-size: .8em;
+  }
+  .file-size {
+    color: $gray-mid-light;
   }
 }
 
