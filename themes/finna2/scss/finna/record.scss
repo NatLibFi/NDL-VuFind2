@@ -585,14 +585,14 @@ a.authority {
 .nav-pills {
   padding: 0px;
   margin: 0px;
-  & a:hover {
+  a:hover {
     text-decoration: none;
   }
-  & > li:not(.share-buttons):not(.whatsapp) {
+  > li:not(.share-buttons):not(.whatsapp) {
     margin: 10px;
     float: left;
     // Links rendered as pills
-    & > a {
+    > a, > .btn-bookbag-toggle > a {
       border-radius: $nav-pills-border-radius;
       padding: 0px;
     }
