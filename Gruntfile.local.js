@@ -82,7 +82,9 @@ module.exports = function(grunt) {
         }
         config.options.includePaths = getLoadPaths('themes/' + themeList[i] + '/scss/finna.scss');
         config.options.includePaths.push('vendor/');
-        config.options.includePaths.push(path.resolve('themes/bootstrap3/scss/vendor'));
+        config.options.includePaths.push(path.resolve('themes/bootstrap5/scss/vendor'));
+        config.options.includePaths.push(path.resolve('themes/bootstrap5/node_modules'));
+        console.log(config.options.includePaths);
 
         sassConfig[themeList[i]] = config;
       }
