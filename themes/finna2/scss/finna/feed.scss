@@ -260,33 +260,33 @@
     .feed-nav-pills {
         width: 100%;
         margin-bottom: 6px;
-            > li {
-              float: left;
-              margin-right: 6px;
-              // Links rendered as pills
-              > a {
+        > .nav-item {
+            float: left;
+            margin-right: 6px;
+            // Links rendered as pills
+            > .nav-link {
                 border-radius: $feed-nav-pills-border-radius;
                 background-color: $feed-nav-pills-bg;
                 color: $feed-nav-pills-color;
                 border: $feed-nav-pills-border;
                 padding: $feed-nav-pills-padding;
-              }
-              + li {
+            }
+            + .nav-item {
                 margin-bottom: 6px;
-              }
-              // Active state
-              &.active > a {
+            }
+            // Active state
+            > .nav-link.active {
                 color: $feed-nav-pills-active-color;
                 background-color: $feed-nav-pills-active-bg;
-                border-color: $feed-nav-pills-active-border;
+                border: $feed-nav-pills-active-border;
                 &:hover,
                 &:focus {
-                  color: $feed-nav-pills-active-hover-color;
-                  background-color: $feed-nav-pills-active-hover-bg;
-                  border: $feed-nav-pills-active-hover-border;
+                    color: $feed-nav-pills-active-hover-color;
+                    background-color: $feed-nav-pills-active-hover-bg;
+                    border: $feed-nav-pills-active-hover-border;
                 }
-              }
             }
+        }
     }
 }
 

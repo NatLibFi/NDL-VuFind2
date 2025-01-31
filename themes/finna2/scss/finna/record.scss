@@ -582,42 +582,45 @@ a.authority {
   white-space: pre-wrap;
 }
 
-.nav-pills {
-  padding: 0px;
-  margin: 0px;
-  a:hover {
-    text-decoration: none;
-  }
-  > li:not(.share-buttons):not(.whatsapp) {
-    margin: 10px;
-    float: left;
-    // Links rendered as pills
-    > a, > .btn-bookbag-toggle > a {
-      border-radius: $nav-pills-border-radius;
-      padding: 0px;
+.record-toolbar,
+.mobile-toolbar {
+  .nav-pills {
+    padding: 0px;
+    margin: 0px;
+    a:hover {
+      text-decoration: none;
+    }
+    > li:not(.share-buttons):not(.whatsapp) {
+      margin: 10px;
+      float: left;
+      // Links rendered as pills
+      > a, > .btn-bookbag-toggle > a {
+        border-radius: $nav-pills-border-radius;
+        padding: 0px;
+      }
     }
   }
-}
 
-// QRCode in record view
-.nav-pills {
-  img.qrcode {
-    border-radius: 8px;
-    min-width: 150px;
+  // QRCode in record view
+  .nav-pills {
+    img.qrcode {
+      border-radius: 8px;
+      min-width: 150px;
+    }
   }
-}
 
-// Share buttons
-.nav-pills > li.share-buttons {
-  display: flex;
-  flex-grow: 1;
-  justify-content: end;
-  padding-top: 5px;
-  .share-buttons-toolbox {
-      a {
-          padding-left: 5px;
-          display: inline-block;
-      }
+  // Share buttons
+  .nav-pills > li.share-buttons {
+    display: flex;
+    flex-grow: 1;
+    justify-content: end;
+    padding-top: 5px;
+    .share-buttons-toolbox {
+        a {
+            padding-left: 5px;
+            display: inline-block;
+        }
+    }
   }
 }
 
