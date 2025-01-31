@@ -13,7 +13,7 @@
           $tabId = $this->id . '-' . $i++;
           $isActive = $this->active === $tab['title'];
         ?>
-        <li class="nav-item event-tab feed-tab" role="presentation" aria-label="<?= $this->escapeHtmlAttr($tab['title']); ?>">
+        <li class="nav-item event-tab feed-tab" role="presentation">
           <button
             type="button"
             id="<?=$this->escapeHtmlAttr($tabId)?>"
