@@ -322,7 +322,7 @@ class Quria extends AxiellWebServices
                 $holdings,
                 $id,
                 null,
-                $response->$functionResult->catalogueRecordDetail->reservable ?? ''
+                (string)($response->$functionResult->catalogueRecordDetail->reservable ?? '')
             );
         }
 
@@ -338,15 +338,19 @@ class Quria extends AxiellWebServices
     /**
      * This is responsible for iterating the organisation holdings
      *
-     * @param array  $organisationHoldings Organisation holdings
-     * @param string $id                   The record id to retrieve the holdings
-     * @param array  $journalInfo          Jornal information
-     * @param string $reservable           Is the record reservable
+     * @param array   $organisationHoldings Organisation holdings
+     * @param string  $id                   The record id to retrieve the holdings
+     * @param ?array  $journalInfo          Jornal information
+     * @param ?string $reservable           Is the record reservable
      *
      * @return array
      */
-    protected function parseHoldings($organisationHoldings, $id, $journalInfo = null, $reservable = null)
-    {
+    protected function parseHoldings(
+        array $organisationHoldings,
+        string $id,
+        ?array $journalInfo = null,
+        ?string $reservable = null
+    ) {
         $result = [];
         foreach ($organisationHoldings as $organisation) {
             $holdingsBranch = $journalInfo === null
