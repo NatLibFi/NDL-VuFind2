@@ -25,10 +25,10 @@
         <?php endif; ?>
         <ul class="dropdown-menu" role="menu" aria-labelledby="sort-label">
           <?php foreach ($list as $sortType => $sortData): ?>
-          <li>
-            <a class="dropdown-item" href="<?=$this->escapeHtmlAttr($context) ?><?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>" role="menuitem" <?php if ($sortData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>><?=$this->transEsc($sortData['desc'])?></a>
+            <li>
+              <a class="dropdown-item" href="<?=$this->escapeHtmlAttr($context) ?><?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>" role="menuitem" <?php if ($sortData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>><?=$this->transEsc($sortData['desc'])?></a>
+            </li>
           <?php endforeach; ?>
-          </li>
         </ul>
         <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEscAttr('Set')?>"></noscript>
       </div>
