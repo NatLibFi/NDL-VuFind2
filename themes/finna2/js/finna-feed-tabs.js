@@ -100,11 +100,10 @@ finna.feedTabs = (function finnaFeedTab() {
       if (!element.classList.contains('feed-tab-anchor')) {
         return;
       }
-      var parent = element.parentNode;
       if ((!hash && !_.isLoading && element.classList.contains('active')) ||
         hash === element.dataset.tab
       ) {
-        parent.click();
+        element.click();
       }
     });
     if (_.anchors[0] && !_.isLoading) {
