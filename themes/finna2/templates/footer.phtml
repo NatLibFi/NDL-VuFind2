@@ -42,7 +42,14 @@
 <div class="footer-container">
   <div class="footer-column">
     <a href="<?=$this->url('content-page', ['page' => 'about_finna'])?>" title="<?=$this->transEscAttr('About Finna')?>">
-      <img src="<?=$this->imageLink('powered-by-finna_' . $this->layout()->userLang . '-black.png')?>" alt="">
+      <?php
+        if (!($finnaImage = $this->imageLink('powered-by-finna_' . $this->layout()->userLang . '-black.png'))) {
+          $finnaImage = $this->imageLink('powered-by-finna_en-gb-black.png');
+        }
+        if ($finnaImage):
+      ?>
+        <img src="<?=$finnaImage?>" alt="">
+      <?php endif; ?>
       <span class="sr-only"><?=$this->transEsc('About Finna')?></span>
     </a>
     <br><br>
