@@ -588,6 +588,11 @@ finna-feed {
         flex-direction: row;
         align-items: center;
         position: relative;
+        @media (max-width: $screen-sm-max) {
+            // Leave room for scroll buttons
+            margin-left: 1rem;
+            margin-right: 1rem;
+        }
     }
     .carousel-hover-title {
         font-size: 14px;
