@@ -749,7 +749,7 @@ finna-feed.carousel.splide--ltr {
                     z-index: 1;
                 }
             }
-            .carousel-slide-header span:not(.title-bottom) {
+            .carousel-slide-header > span:not(.title-bottom) {
                 opacity: 0;
             }
             .carousel-text.scrollable {
@@ -771,7 +771,7 @@ finna-feed.carousel.splide--ltr {
                 z-index: 1;
                 opacity: 1;
             }
-            .carousel-slide-header span:not(.title-bottom) {
+            .carousel-slide-header > span:not(.title-bottom) {
                 opacity: 0;
             }
             .carousel-text.scrollable {
