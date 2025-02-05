@@ -1,13 +1,15 @@
 // Override the grid with everything one notch larger (required e.g. for vufind-offcanvas)
 $grid-breakpoints: (
-  xxs: 0,
-  xs: 1px,
+  xxxs: 0,
+  xxs: 1px,
+  xs: 480px,
   sm: 768px,
   md: 992px,
   lg: 1200px,
   xl: 1400px,
 );
 $container-max-widths: (
+  xs: 460px,
   sm: 720px,
   md: 960px,
   lg: 1140px,
