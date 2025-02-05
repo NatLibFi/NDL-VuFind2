@@ -981,9 +981,20 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         $catUsername = $card->getCatUsername();
         $users = $userCardService->getUsersForLibraryCard($catUsername);
+        $userInfo = [];
+        foreach ($users as $user) {
+            [$userInstitution, ] = str_contains($user->username, ':')
+                ? explode(':', $user->username, 2)
+                : ['', ''];
+            $userInfo[] = [
+                'institution' => $userInstitution,
+                'authMethod' => $user->auth_method,
+                'cardCreated' => $user->user_card_created,
+            ];
+        }
         $view = $this->createViewModel();
         $view->setTemplate('librarycards/users-connected-to-card');
-        $view->users = $users;
+        $view->users = $userInfo;
         return $view;
     }
 

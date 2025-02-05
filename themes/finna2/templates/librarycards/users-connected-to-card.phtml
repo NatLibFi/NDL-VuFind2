@@ -6,21 +6,14 @@
     <th><?=$this->transEsc('account_login_method')?></th>
   </tr>
   <?php foreach ($this->users as $user): ?>
-    <?php
-      $parts = explode(':', $user->username, 2);
-      $org = $parts[0];
-      if (!empty($parts[1])) {
-        $site = $org === 'national'
-        ? 'https://finna.fi'
-        : 'https://' . $org . '.finna.fi';
-      } else {
-        $site = $org = '';
-      }
-    ?>
     <tr>
-      <td><?= $this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user->user_card_created))?></td>
-      <td><a href="<?=$site?>"><?=$this->transEsc('institution::' . $org)?></a></td>
-      <td><?= $this->transEsc('login_method_' . $user->auth_method) ?></td>
+      <td><?= $this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user['cardCreated']))?></td>
+      <td>
+        <?php if ($user['institution']): ?>
+          <a href="https://<?=$user['institution']?>.finna.fi"><?=$this->transEsc('institution::' . $user['institution'])?></a>
+        <?php endif; ?>
+      </td>
+      <td><?= $this->transEsc('login_method_' . $user['authMethod']) ?></td>
     </tr>
   <?php endforeach; ?>
 </table>
