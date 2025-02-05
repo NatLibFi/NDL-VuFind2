@@ -9,7 +9,13 @@
     }
   }
 
-  .finna-toggletip__bubble--inner {
-    display: block;
+  .finna-toggletip__bubble {
+    &:not(.show) {
+      display: none;
+    }
+
+    .finna-toggletip__bubble--inner {
+      display: block;
+    }
   }
 }
