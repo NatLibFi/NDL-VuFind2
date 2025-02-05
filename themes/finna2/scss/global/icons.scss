@@ -63,13 +63,11 @@ table .iconlabel {
 }
 .iconlabel[class*="format-1othermicrofilm"]:before,
 .iconlabel[class*="format-feed-othermicrofilm"]:before {
-    font-family: FontAwesome;
-    content: $fa-var-film;
+    @extend .fa, .fa-film;
 }
 .iconlabel[class*="format-1otherinterview"]:before,
 .iconlabel[class*="format-feed-otherinterview"]:before {
-    font-family: FontAwesome;
-    content: $fa-var-microphone;
+    @extend .fa, .fa-microphone;
 }
 .iconlabel.format-book:before,
 .iconlabel[class*="format-1book"]:before,
@@ -220,8 +218,7 @@ table .iconlabel {
 .iconlabel[class*="format-1gamevideogame"]:before,
 .iconlabel[class*="format-2gamevideogame"]:before,
 .iconlabel[class*="format-feed-gamevideogame"]:before {
-	font-family: FontAwesome;
-	content: $fa-var-gamepad;
+	@extend .fa, .fa-gamepad;
 }
 .iconlabel.full-text-available:before {
     content: "\e96e";

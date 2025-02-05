@@ -8,7 +8,7 @@
 .browsebar .nav>li .iconlabel:before,
 .browsebar .nav-dropdown-label.iconlabel:before,
 .browsebar .dropdown-menu a.iconlabel:before{
-  vertical-align: bottom;
+  vertical-align: center;
   font-size: 1.3em;
   margin-right: 0.5em;
 }
@@ -45,7 +45,8 @@
       i.fa {
         margin-right: 0.5em;
       }
-      display: inline-block;
+      display: inline-flex;
+      align-items: baseline;
     }
   }
 }
@@ -79,10 +80,13 @@
 .browsebar {
   .priority-nav__dropdown {
     left: 0;
-    top: 30px;
+    top: 45px;
     li > a.iconlabel {
       margin: 0px;
     }
+  }
+  .dropdown-menu-wrapper {
+    display: inline-flex;
   }
   .nav-dropdown-toggle {
     height: 60px;
@@ -99,7 +103,6 @@
       font-size: 1.3em;
       margin-right: 0.5em;
       padding-right: 3px;
-      vertical-align: bottom;
     }
     &:after {
       font-family: finnaicons;
