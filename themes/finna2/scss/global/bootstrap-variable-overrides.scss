@@ -21,21 +21,14 @@ $gray-lighter:          #d1d1d1 !default;
 $gray-ultralight:       #f7f7f7 !default;
 
 // Brand Colors
-$brand-primary:         #007c90 !default;
-$brand-secondary:       #007c90 !default;
-$brand-third:           #007c90 !default;
-$brand-fourth:          #007c90 !default;
-$brand-success:         #33843B !default;
-$brand-warning:         #9E943D !default;
-$brand-danger:          #a94442 !default;
-$brand-info:            #007c90 !default;
-
-$primary:               $brand-primary !default;
-$secondary:             $brand-secondary !default;
-$success:               $brand-success !default;
-$warning:               $brand-warning !default;
-$danger:                $brand-danger !default;
-$info:                  $brand-info !default;
+$primary:               #007c90 !default;
+$secondary:             #007c90 !default;
+$third:                 #007c90 !default;
+$fourth:                #007c90 !default;
+$success:               #33843B !default;
+$warning:               #9E943D !default;
+$danger:                #a94442 !default;
+$info:                  #007c90 !default;
 $info-bg-subtle:        #d9edf7 !default;
 
 
@@ -104,7 +97,7 @@ $padding-small-vertical: 5px !default;
 $padding-small-horizontal: 10px !default;
 $line-height-large: 1.33 !default;
 $line-height-small: 1.5 !default;
-$component-active-bg: $brand-primary !default;
+$component-active-bg: $primary !default;
 
 
 //== Navbar
@@ -120,10 +113,10 @@ $navbar-padding-y:                 $navbar-padding-vertical !default;
 $navbar-collapse-max-height:       auto !default;
 $navbar-default-bg:                #fff !default;
 $navbar-toggler-focus-width:       0;
-//$navbar-light-color:               $brand-primary !default;
-//$navbar-light-active-color:        $brand-primary !default;
-//$navbar-light-brand-color:         $brand-primary !default;
-//$navbar-light-brand-hover-color:   $brand-primary !default;
+//$navbar-light-color:               $primary !default;
+//$navbar-light-active-color:        $primary !default;
+//$navbar-light-brand-color:         $primary !default;
+//$navbar-light-brand-hover-color:   $primary !default;
 
 // Navbar links
 $navbar-default-link-color:        $text-color !default;  // Color of link texts in navbar
@@ -209,19 +202,19 @@ $btn-default-color: $text-color !default;
 $btn-default-bg: #fff !default;
 $btn-default-border: #ccc !default;
 $btn-primary-color: #fff !default;
-$btn-primary-bg: $brand-primary !default;
+$btn-primary-bg: $primary !default;
 $btn-primary-border: color.adjust($btn-primary-bg, $lightness: -0% /*, $space: hsl*/) !default;
 $btn-success-color: #fff !default;
-$btn-success-bg: $brand-success !default;
+$btn-success-bg: $success !default;
 $btn-success-border: color.adjust($btn-success-bg, $lightness: -5% /*, $space: hsl*/) !default;
 $btn-warning-color: $gray-light !default;
-$btn-warning-bg: $brand-warning !default;
+$btn-warning-bg: $warning !default;
 $btn-warning-border: color.adjust($btn-warning-bg, $lightness: -5% /*, $space: hsl*/) !default;
 $btn-danger-color: #fff !default;
-$btn-danger-bg: $brand-danger !default;
+$btn-danger-bg: $danger !default;
 $btn-danger-border: color.adjust($btn-danger-bg, $lightness: -5% /*, $space: hsl*/) !default;
 $btn-info-color: #fff !default;
-$btn-info-bg: $brand-info !default;
+$btn-info-bg: $info !default;
 $btn-info-border: color.adjust($btn-info-bg, $lightness: -5% /*, $space: hsl*/) !default;
 $btn-link-disabled-color: $gray-light !default;
 
@@ -264,12 +257,12 @@ $pagination-color:                     $link-color !default;
 $pagination-bg:                        $body-bg !default;
 $pagination-border-color:              transparent !default;
 
-$pagination-hover-color:               $brand-primary !default;
+$pagination-hover-color:               $primary !default;
 $pagination-hover-bg:                  #f5f5f5 !default;
 $pagination-hover-border:              transparent !default;
 
 $pagination-active-color:              #fff !default;
-$pagination-active-bg:                 $brand-primary !default;
+$pagination-active-bg:                 $primary !default;
 $pagination-active-border:             transparent !default;
 
 $pagination-font-size:                 1.1em;
@@ -278,8 +271,8 @@ $pagination-font-size:                 1.1em;
 //
 //##
 
-$pager-bg:                             $brand-primary !default;
-$pager-hover-bg:                       color.adjust($brand-primary, $lightness: -0.5% /*, $space: hsl*/) !default;
+$pager-bg:                             $primary !default;
+$pager-hover-bg:                       color.adjust($primary, $lightness: -0.5% /*, $space: hsl*/) !default;
 $pager-disabled-color:                 $gray-mid-light !default;
 
 
@@ -305,7 +298,7 @@ $tooltip-opacity:             1 !default;
 //** Tooltip arrow width
 //$tooltip-arrow-width:         6px !default;
 //** Tooltip arrow color
-$tooltip-arrow-color:         $brand-primary !default;
+$tooltip-arrow-color:         $primary !default;
 $tooltip-header-color:        color.mix($tooltip-arrow-color, contrast($tooltip-arrow-color), 5%) !default;
 
 

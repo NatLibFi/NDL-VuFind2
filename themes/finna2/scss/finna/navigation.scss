@@ -194,7 +194,7 @@
         padding-right: 15px;
         width: 10px;
         align-self: center;
-        color: $brand-primary;
+        color: $primary;
       }
       > a, .barcode-container {
         border-bottom: 1px solid $gray-lighter;
@@ -233,7 +233,7 @@
       padding-left: 2rem;
     }
     .icon {
-      color: $brand-primary;
+      color: $primary;
     }
   }
   > li {
@@ -322,7 +322,7 @@
   }
   &.controls {
     border-radius: $finna-button-radius;
-    background-color: $brand-primary;
+    background-color: $primary;
     padding-top: 0px;
     transition: background-color .1s linear;
     option:checked {

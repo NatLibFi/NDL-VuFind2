@@ -498,7 +498,7 @@
 }
 
 .cc-rights a {
-    color: $brand-primary;
+    color: $primary;
 }
 
 .copyright-meaning {
@@ -736,7 +736,7 @@
                             font-style: initial;
                         }
                         &.current {
-                            border: 0.2em solid $brand-primary;
+                            border: 0.2em solid $primary;
                         }
                         &.truncate-change {
                             opacity: 0;

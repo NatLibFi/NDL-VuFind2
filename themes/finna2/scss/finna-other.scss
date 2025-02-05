@@ -237,7 +237,7 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
     }
   }
   .slider-handle {
-    background: $brand-primary;
+    background: $primary;
     background-image:none;
     border:1px solid $gray-light;
     box-shadow:none;
@@ -492,7 +492,7 @@ label.list-group-item {border-radius:0;font-weight:normal;margin-top:0;padding-l
         }
         button {
             font-size: 1.3rem;
-            color: $brand-primary;
+            color: $primary;
             &:hover {
                 background-color: $gray-lighter;
                 border-radius: 4px;

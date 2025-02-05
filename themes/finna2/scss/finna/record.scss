@@ -626,7 +626,7 @@ a.authority {
 
 // Request forms
 .ill-request-terms {
-  background-color: $state-info-bg;
+  background-color: $info-bg-subtle;
   padding: 2em;
   padding-left: 2.5em;
   margin-bottom: 1em;
@@ -653,7 +653,7 @@ a.authority {
     .comment-info-icon {
       font-size: 1.5em;
       float: left;
-      color: $brand-primary;
+      color: $primary;
     }
     .comment-description {
       margin-top: 1em;
@@ -729,7 +729,7 @@ a.authority {
   }
 }
 .rights-text {
-  color: $brand-primary;
+  color: $primary;
 }
 
 // Material provided by
@@ -806,7 +806,7 @@ finna-model-viewer {
     flex: 1 1 100%;
     background-color: #efefefcc;
     &.filedrop {
-      box-shadow: 0px 0px 2px 2px $brand-primary;
+      box-shadow: 0px 0px 2px 2px $primary;
     }
   }
   .options {
@@ -856,7 +856,7 @@ finna-model-viewer {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: $brand-primary;
+    background-color: $primary;
     padding: 10px 12px;
     font-weight: 500;
     line-height: 1.5;
@@ -1055,7 +1055,7 @@ finna-model-viewer .object-editor {
 
   /* Set default star color */
   .rating__icon--star {
-    color: $brand-warning;
+    color: $warning;
   }
 
   /* If any input is checked, make its following siblings grey */
@@ -1068,7 +1068,7 @@ finna-model-viewer .object-editor {
   {
     &:hover .rating__label .rating__icon--star,
     &:hover .rating__label--half .rating__icon--star {
-      color: $brand-warning;
+      color: $warning;
     }
     /* Make hovered input's following siblings grey on hover */
     .rating__input:hover ~ .rating__label .rating__icon--star,

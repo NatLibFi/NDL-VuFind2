@@ -3,6 +3,15 @@
 @use 'sass:math';
 
 // *** Variables ***
+
+// Legacy brand colors forced from current colors:
+$brand-primary:               $primary;
+$brand-secondary:             $secondary;
+$brand-success:               $success;
+$brand-warning:               $warning;
+$brand-danger:                $danger;
+$brand-info:                  $info;
+
 $border-radius-base:   $border-radius !default;
 $border-radius-large:  $border-radius-lg !default;
 
@@ -66,7 +75,7 @@ $grid-float-breakpoint-max: ($grid-float-breakpoint - 1) !default;
 $state-danger-text:           var(--#{$prefix}danger) !default;
 $state-danger-bg:             var(--#{$prefix}danger-bg-subtle) !default;
 $state-info-text:             var(--#{$prefix}info) !default;
-$state-info-bg:               var(--#{$prefix}body-bg) !default;
+$state-info-bg:               var(--#{$prefix}info-bg-subtle) !default;
 $state-success-text:          var(--#{$prefix}success) !default;
 $state-success-bg:            var(--#{$prefix}success-bg-subtle) !default;
 $state-warning-text:          var(--#{$prefix}warning) !default;

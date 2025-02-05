@@ -410,7 +410,7 @@
   }
 
   .library-card-terms {
-    background-color: $state-info-bg;
+    background-color: $info-bg-subtle;
     padding: 2em;
     padding-left: 2.5em;
     margin-bottom: 1em;
@@ -772,7 +772,7 @@ form#renewals, form#update_holds, form#purge_history {
       border-top: none;
     }
     &.menu-header {
-      background-color: $brand-third;
+      background-color: $third;
       > h1 {
         text-transform: none;
         color: $myresearch-menu-header-font-color;
@@ -857,7 +857,7 @@ form#renewals, form#update_holds, form#purge_history {
       margin-left: 0.5rem;
     }
     &.active {
-      background-color: $brand-primary;
+      background-color: $primary;
       color: #fff;
     }
   }

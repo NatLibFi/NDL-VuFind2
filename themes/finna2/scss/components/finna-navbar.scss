@@ -67,8 +67,8 @@
 
 // Content navbar variation with own variables for customization.
 
-$finna-navbar-content-color:             mix($brand-primary, contrast($brand-primary), 5%) !default;
-$finna-navbar-content-bg:                $brand-primary !default;
+$finna-navbar-content-color:             mix($primary, contrast($primary), 5%) !default;
+$finna-navbar-content-bg:                $primary !default;
 $finna-navbar-content-border:            $finna-navbar-content-bg !default;
 
 // Navbar links

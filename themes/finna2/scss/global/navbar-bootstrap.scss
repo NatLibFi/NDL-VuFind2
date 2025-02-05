@@ -40,7 +40,7 @@
 }
 
 .navbar-collapse {
-  border-top: 3px solid $brand-primary;
+  border-top: 3px solid $primary;
   @media (min-width: $grid-float-breakpoint) {
     border-top: 0;
     box-shadow: none;
@@ -79,11 +79,11 @@
   width: $navbar-height;
   margin:0;
   color: $btn-primary-color;
-  background-color: $brand-primary;
+  background-color: $primary;
   padding: 0;
   border-radius: 0;
   &:focus {
-    background: darken($brand-primary, 10%);
+    background: darken($primary, 10%);
   }
   .mobilemenu-bars, .mobilemenu-close {
     font-size: 24px;
@@ -100,7 +100,7 @@
   }
   @keyframes bg-blinker {
     50%  {
-      background-color: screen($brand-primary, rgba(255, 255, 255, 0.4));
+      background-color: screen($primary, rgba(255, 255, 255, 0.4));
     }
   }
 }

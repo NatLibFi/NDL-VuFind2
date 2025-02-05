@@ -172,13 +172,13 @@ ul.nav-tabs.help-tabs {
         display: inline-block;
         padding-bottom: 0.5em;
         > a {
-            color: $brand-primary;
-            border: 1px solid $brand-primary;
+            color: $primary;
+            border: 1px solid $primary;
             padding: 0.5em;
             &:hover,
             &:focus {
                 color: #fff;
-                background: $brand-primary;
+                background: $primary;
             }
         }
     }

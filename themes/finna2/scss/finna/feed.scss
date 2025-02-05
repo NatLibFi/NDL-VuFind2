@@ -493,7 +493,7 @@
     .event-geolocation {
         text-transform: uppercase;
         font-size: 0.84em;
-        color: $brand-primary;
+        color: $primary;
         font-weight: bold;
         margin-left: 10px;
         &:hover {
@@ -712,7 +712,7 @@ finna-feed {
                     outline: none;
                     border-radius: 50%;
                     &.is-active {
-                        background-color: $brand-primary;
+                        background-color: $primary;
                     }
                     &:focus {
                         outline: 2px solid $action-link-color;
