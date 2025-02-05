@@ -5,10 +5,10 @@
 .page-content {
   width: 100%;
   @media (min-width: $screen-lg) {
-    width: calc(0.75 * $screen-lg);
+    max-width: calc(0.75 * $screen-lg);
   }
   @media (min-width: $screen-xl) {
-    width: calc(0.75 * $screen-xl);
+    max-width: calc(0.75 * $screen-xl);
   }
 }
 
