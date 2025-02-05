@@ -1,0 +1,28 @@
+<h2 class="lightbox-header"><?=$this->transEsc('library_card_connected_users'); ?></h2>
+<table class="table table-striped">
+  <tr>
+    <th><?=$this->transEsc('library_card_date_of_connection')?></th>
+    <th><?=$this->transEsc('Institution')?></th>
+    <th><?=$this->transEsc('account_login_method')?></th>
+  </tr>
+  <?php foreach ($this->users as $user): ?>
+    <?php
+      $parts = explode(':', $user->username, 2);
+      $org = $parts[0];
+      if (!empty($parts[1])) {
+        $site = $org === 'national'
+        ? 'https://finna.fi'
+        : 'https://' . $org . '.finna.fi';
+      } else {
+        $site = $org = '';
+      }
+    ?>
+    <tr>
+      <td><?= $this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user->user_card_created))?></td>
+      <td><a href="<?=$site?>"><?=$this->transEsc('institution::' . $org)?></a></td>
+      <td><?= $this->transEsc('login_method_' . $user->auth_method) ?></td>
+    </tr>
+  <?php endforeach; ?>
+</table>
+<div class="infobox"><?=$this->transEsc('library_card_connected_users_info')?></div>
+<button class="btn btn-primary" data-dismiss="modal"><?=ucfirst($this->transEsc('close')) ?></button>

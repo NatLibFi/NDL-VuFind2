@@ -91,4 +91,27 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
         }
         return $cards;
     }
+
+    /**
+     * Get all users associated with a library card
+     *
+     * @param string $catUsername Catalog username
+     *
+     * @return array
+     */
+    public function getUsersForLibraryCard(string $catUsername): array
+    {
+        $userCards = $this->getDbTable('UserCard');
+        $callback = function ($select) use ($catUsername) {
+            $select
+                ->columns(['id', 'user_id', 'user_card_created' => 'created'])
+                ->where->equalTo('user_card.cat_username', $catUsername);
+            $select->join(
+                ['u' => 'user'],
+                'u.id = user_card.user_id',
+                ['username', 'auth_method']
+            );
+        };
+        return iterator_to_array($userCards->select($callback));
+    }
 }
