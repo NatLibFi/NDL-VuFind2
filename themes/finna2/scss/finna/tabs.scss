@@ -20,12 +20,14 @@
       flex: 1;
       padding: 10px 5px;
       font-size: 1em;
-      font-weight: 600;
 
       // Disable isolation that would cover the tooltip button:
       &:hover {
         isolation: auto;
       }
+    }
+    &:not(.help-tab) > a {
+      font-weight: 600;
     }
     &.active {
      .tooltip-tabs_local, .tooltip-tabs_pci {

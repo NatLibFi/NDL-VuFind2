@@ -958,19 +958,33 @@ finna.layout = (function finnaLayout() {
    */
   function initHelpTabs() {
     if ($('.help-tabs')[0]) {
+      $('.help-tabs').removeAttr('role');
       $('.help-tab').each(function initHelpTab() {
-        if ($(this).hasClass('active')) {
-          $(this).trigger("focus");
+        const $li = $(this);
+        if ($li.hasClass('nav-item')) {
+          // Already converted
+          return;
         }
-        var url = $(this).data('url');
-        $(this).on("keydown", function onTabEnter(event) {
-          if (event.which === 13) {
-            window.location.href = url;
-          }
-        });
-        $(this).on("click", function onTabClick() {
-          window.location.href = url;
-        });
+
+        const tabContent = $li.text();
+        $li.html('')
+          .addClass('nav-item')
+          .attr('tabindex', '-1')
+          .removeAttr('aria-selected')
+          .removeAttr('role');
+
+        const url = $li.data('url');
+        const $a = $('<a>')
+          .attr('href', url)
+          .attr('class', 'nav-link')
+          .text(tabContent)
+          .appendTo($li);
+
+        if ($li.hasClass('active')) {
+          $a.addClass('active')
+            .attr('aria-current', 'page')
+            .trigger('focus');
+        }
       });
     }
   }
