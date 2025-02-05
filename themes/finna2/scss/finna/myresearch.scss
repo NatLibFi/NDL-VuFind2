@@ -3,7 +3,9 @@
   margin: 0;
   word-wrap: break-word;
   @media(max-width: $screen-xs-max) {
-    @include make-row();
+    margin-right: calc(-0.5 * var(--bs-gutter-x));
+    margin-left: calc(-0.5 * var(--bs-gutter-x));
+    @include clearfix;
   }
   &:nth-child(odd) {
     background: $table-bg-accent;
@@ -545,7 +547,9 @@
   margin: 0;
   @media (max-width: $screen-md) {
     padding: 0px 15px;
-    @include make-row();
+    margin-right: calc(-0.5 * var(--bs-gutter-x));
+    margin-left: calc(-0.5 * var(--bs-gutter-x));
+    @include clearfix;
   }
   .toolbar-sticky {
     position: sticky;

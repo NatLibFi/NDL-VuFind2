@@ -151,7 +151,9 @@
   margin: 0;
   border-bottom: 1px solid $gray-lighter;
   @media (max-width: $screen-xs-max) {
-    @include make-row();
+    margin-right: calc(-0.5 * var(--bs-gutter-x));
+    margin-left: calc(-0.5 * var(--bs-gutter-x));
+    @include clearfix;
   }
 }
 
