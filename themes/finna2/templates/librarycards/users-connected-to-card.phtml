@@ -10,7 +10,7 @@
       <td><?= $this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user['cardCreated']))?></td>
       <td>
         <?php if ($user['institution']): ?>
-          <a href="https://<?=$user['institution']?>.finna.fi"><?=$this->transEsc('institution::' . $user['institution'])?></a>
+          <a href="https://<?=$this->escapeHtmlAttr($user['institution'])?>.finna.fi"><?=$this->transEsc('institution::' . $user['institution'])?></a>
         <?php endif; ?>
       </td>
       <td><?= $this->transEsc('login_method_' . $user['authMethod']) ?></td>
