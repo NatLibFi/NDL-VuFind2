@@ -362,8 +362,8 @@ $breadcrumb-bg                : #fff !default;
 $breadcrumb-color             : $gray-light !default;
 //** Text color of current page in the breadcrumb
 $breadcrumb-active-color      : $gray-dark !default;
-$breadcrumb-padding-vertical:   10px !default;
-$breadcrumb-padding-horizontal: 10px !default;
+$breadcrumb-padding-y         : 0.5rem !default;
+$breadcrumb-padding-x         : 0 !default;
 
 
 //== Wells
