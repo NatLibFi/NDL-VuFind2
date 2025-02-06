@@ -53,7 +53,8 @@
 @media (max-width:$screen-xs-max) {
   .nav-tabs {
     text-align: center;
-    //border-bottom: 5px solid $gray-lighter;
+    flex-wrap: nowrap;
+
     #details {
       display: none;
     }
