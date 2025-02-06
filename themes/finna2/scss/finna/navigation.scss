@@ -126,8 +126,9 @@
     --#{$prefix}navbar-active-color: #{$header-text-active-color};
   }
   .dropdown-menu > li > .dropdown-item.active:not(:hover) {
-    --#{$prefix}dropdown-link-active-color: #{$header-text-color};
-    background-color: transparent;
+    font-weight: bold;
+    --#{$prefix}dropdown-link-active-color: --#{$prefix}dropdown-link-color;
+    --#{$prefix}dropdown-link-active-bg: --#{$prefix}dropdown-link-bg;
   }
 }
 
