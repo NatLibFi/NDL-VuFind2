@@ -475,11 +475,6 @@
     }
     .holdings-container.root > .header {
         margin-bottom: 3px;
-        .info {
-            @media (max-width: $screen-xs-max) {
-                float: none;
-            }
-        }
     }
     .holdings-container.collapsible > .holdings:not(.root) {
         padding-left: 10px;
@@ -578,6 +573,7 @@
             }
             .title-hold {
                 float: left;
+                margin-left: 0;
                 a.btn {
                     white-space: pre-wrap;
                 }
