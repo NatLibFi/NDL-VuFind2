@@ -5,6 +5,9 @@ VuFind.register('finnaBootstrap3CompatibilityLayer', function finnaBootstrap3Com
    */
   function initNav() {
     document.querySelectorAll('.nav').forEach((navEl) => {
+      if (navEl.closest('.mobile-toolbar')) {
+        return;
+      }
       if (navEl.classList.contains('nav-tabs')) {
         // Apply active class to tab li for back-compatibility:
         const observer = new MutationObserver((mutations) => {
