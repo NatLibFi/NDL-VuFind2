@@ -155,7 +155,7 @@ view=full
 0 = "datasource_str_mv:(\"\")"
 ;0 = "datasource_str_mv:(\"aoe\")"
 ;0 = "educational_material_type_str_mv:(\"1/AIPA/Education/\")"
-;0 = "datasource_str_mv:(\"aoe\" OR educational_material_type_str_mv:(\"1/AIPA/Education/\"))"
+;0 = "datasource_str_mv:(\"aoe\") OR educational_material_type_str_mv:(\"1/AIPA/Education/\")"
 
 [ConditionalHiddenFilters]
 ;0 = "-conditionalFilter.MyUniversity|format:Book"
