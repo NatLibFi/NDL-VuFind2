@@ -8,7 +8,7 @@
 
   // Set up breadcrumbs:
   $currPage = $list ? 'List' : 'saved_items';
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
+  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc($currPage) . '</li>';
 
   // Load Javascript dependencies into header:
   $this->headScript()->appendFile('check_item_statuses.js');
@@ -133,7 +133,13 @@
             <form class="form<?= $multiPageSelection ?>" id="form-favorites<?= ($list && null !== $list->getId()) ? '-' . $list->getId() : ''?>" method="post" name="bulkActionForm" action="<?=$this->url('cart-myresearchbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
               <input class="hidden all-ids-global" type="text" name="all_ids_global" value="<?= $this->escapeHtmlAttr(json_encode($this->results->getAllIds())) ?>">
               <div class="toolbar-sticky">
-                <?=$this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', ['idPrefix' => '', 'list' => $list ?? null, 'account' => $this->account, 'lists' => $lists])?>
+                <?=$this->context($this)->renderInContext('myresearch/bulk-action-buttons.phtml', [
+                  'idPrefix' => '',
+                  'list' => $list ?? null,
+                  'account' => $this->account,
+                  'lists' => $lists,
+                  'canDelete' => (null !== $this->list && $this->list->editAllowed($user)) || (null === $this->list && $user),
+                ])?>
               </div>
               <?php foreach ($this->results->getResults() as $i => $current): ?>
                 <?=$this->record($current)->getListEntry($list, $user)?>
@@ -161,8 +167,8 @@
       <ul class="dropdown-menu useraccount-confirm">
         <li class="disabled"><?=$this->transEsc('confirm_delete_list_text')?></li>
         <li>
-          <a class="confirm" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-          <a class="cancel" href="#"><?=$this->transEsc('confirm_dialog_no')?></a>
+          <a class="dropdown-item confirm" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+          <a class="dropdown-item cancel" href="#"><?=$this->transEsc('confirm_dialog_no')?></a>
         </li>
       </ul>
     </form>

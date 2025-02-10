@@ -9,7 +9,7 @@
   $this->layout()->finnaMainHeader = '<div><h3 class="finna-main-header">' . $this->transEsc('Sort manually') . '</h3></div>';
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Sort manually') . '</li>';
+  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Sort manually') . '</li>';
 ?>
 
 <h2><?=$this->transEsc('Sort manually') ?></h2>
@@ -23,7 +23,7 @@
   <div>
     <div class="own-favorite-list-button-area">
       <input id="save_order_btn" name="saveOrdering" type="submit" value="<?=$this->transEscAttr('Save Order') ?>" class="btn btn-primary">
-      <input id="cancel_order_btn" name="cancelOrdering" type="submit" data-dismiss="modal" value="<?=$this->transEscAttr('Reset') ?>" class="btn btn-primary">
+      <input id="cancel_order_btn" name="cancelOrdering" type="submit" data-bs-dismiss="modal" value="<?=$this->transEscAttr('Reset') ?>" class="btn btn-primary">
     </div>
     <div class="clearfix"></div>
   </div>
