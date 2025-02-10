@@ -5,7 +5,7 @@
   $this->headTitle($title);
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-displaylists') . '">' . $title . '</a></li> <li class="active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
+  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('reservationlist-displaylists') . '">' . $title . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('ReservationList::Reservation List') . '</li>';
 ?>
 
 <!-- Leftside navigationbar -->

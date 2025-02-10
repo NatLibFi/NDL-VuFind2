@@ -334,7 +334,7 @@ class ReservationListController extends AbstractBase
         $form->setData($orderSpecificValues);
         $formId = ConnectionAbstractBase::FORM_ID;
         $view = $this->createViewModel(compact('form', 'formId', 'user'));
-        $view->setTemplate('reservationlist/form');
+        $view->setTemplate('feedback/form');
         $view->useCaptcha = false;
 
         if (!$this->formWasSubmitted(useCaptcha: false)) {

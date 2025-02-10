@@ -61,11 +61,12 @@ Institutions:
           Sender:
             name: Service sender
             email: test@noreply.fi
-          subject: Reservation List
+          Subject: Reservation List
 Forms:
   PlaceOrder:
     default:
       allowLocalOverride: false
+      formActionRoute: reservationlist-placeorder
       title: ReservationList::form_title
       enabled: true
       onlyForLoggedUsers: true
