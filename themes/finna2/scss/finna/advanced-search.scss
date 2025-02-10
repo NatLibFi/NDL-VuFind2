@@ -26,7 +26,7 @@
       bottom: -15px;
       left: 15px;
       width: 60px;
-      background: $brand-primary;
+      background: $primary;
       color: white;
       line-height: 64px;
       text-align: center;
@@ -164,7 +164,7 @@
   }
   #groupJoin {
     padding: 0px 0px 20px;
-    border: 2px solid $brand-primary;
+    border: 2px solid $primary;
     border-top: none;
     margin-top: -10px;
     margin-bottom: 30px;
@@ -325,7 +325,7 @@
     &::before {
       padding-left: 5px;
       font-size: 1.5em;
-      color: $brand-primary;
+      color: $primary;
       display: block;
       font-family: finnaicons;
       content: "\e00f";
@@ -461,16 +461,16 @@
         -moz-user-select: none;
         -ms-user-select: none;
         -webkit-user-select: none;
+        > span {
+          pointer-events: none;
+        }
         &.option-parent {
           background-color: white;
           z-index: 1;
         }
         .value:before {
-            content: '\f096';
-            font-family: 'FontAwesome';
+          @extend .fa, .fa-square-o;
             margin: 0px 4px;
-            font-weight: initial;
-            display: inline-block;
             width: 12px;
             font-size: 16px;
         }

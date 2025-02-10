@@ -3,7 +3,7 @@
 /**
  * Reservation list controller factory.
  *
- * PHP version 8.1
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *

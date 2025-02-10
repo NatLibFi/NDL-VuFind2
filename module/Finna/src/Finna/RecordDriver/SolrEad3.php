@@ -183,6 +183,22 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
+     * Get archive type
+     *
+     * @return string
+     */
+    public function getArchiveType(): string
+    {
+        $xml = $this->getXmlRecord();
+        if ($type = $xml->{'add-data'}->archive->attributes()->type ?? '') {
+            if (trim((string)$type) === 'collection') {
+                return 'collection';
+            }
+        }
+        return 'archive';
+    }
+
+    /**
      * Get the institutions holding the record.
      *
      * @return array

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2013-2023.
+ * Copyright (C) The National Library of Finland 2013-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -33,7 +33,6 @@ use Laminas\EventManager\EventInterface;
 use Laminas\EventManager\SharedEventManagerInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFindSearch\Query\Query;
-use VuFindSearch\Query\QueryGroup;
 
 use function count;
 use function in_array;
@@ -154,7 +153,7 @@ class SolrExtensionsListener
             $this->addDataSourceFilter($event);
             $context = $command->getContext();
             if (in_array($context, ['search', 'getids', 'workExpressions'])) {
-                $this->addHiddenComponentPartFilter($event);
+                $this->handleHiddenComponentPartFilter($event);
                 $this->handleAvailabilityFilters($event);
             }
             if ('search' === $context) {
@@ -346,35 +345,63 @@ class SolrExtensionsListener
     }
 
     /**
-     * Add hidden component part filter per search config.
+     * Handle hidden component part filter (finna.include_hidden_parts) per search config.
      *
      * @param EventInterface $event Event
      *
      * @return void
      */
-    protected function addHiddenComponentPartFilter(EventInterface $event)
+    protected function handleHiddenComponentPartFilter(EventInterface $event)
     {
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
-        $searchConfig = $config->get($this->searchConfig);
-        if (
-            isset($searchConfig->General->hide_component_parts)
-            && $searchConfig->General->hide_component_parts
-        ) {
-            $command = $event->getParam('command');
-            $params = $command->getSearchParameters();
-            if ($params) {
-                // Check that search is not for a known record id
-                $query = method_exists($command, 'getQuery')
-                    ? $command->getQuery()
-                    : null;
-                if (
-                    !$query
-                    || $query instanceof QueryGroup
-                    || ($query instanceof Query && $query->getHandler() !== 'id')
-                ) {
-                    $params->add('fq', '-hidden_component_boolean:true');
+        $hideHiddenComponentsPart = null;
+        $command = $event->getParam('command');
+        $params = $command->getSearchParameters();
+        if (!$params) {
+            return;
+        }
+
+        // Remove finna.include_hidden_parts from any facet fields:
+        if ($facetFields = $params->get('facet.field')) {
+            $newFields = [];
+            foreach ($facetFields as $field) {
+                if (strstr($field, 'finna.include_hidden_parts') === false) {
+                    $newFields[] = $field;
                 }
             }
+            $params->set('facet.field', $newFields);
+        }
+
+        // Check that search is not for a known record id
+        $query = method_exists($command, 'getQuery') ? $command->getQuery() : null;
+        if ($query instanceof Query && $query->getHandler() === 'id') {
+            return;
+        }
+
+        if ($fq = $params->get('fq')) {
+            // Check for a filter parameter:
+            $optionMappings = [
+                'finna.include_hidden_parts:"1"' => false,
+                'finna.include_hidden_parts:"0"' => true,
+            ];
+            foreach ($optionMappings as $filter => $value) {
+                if (false !== ($key = array_search($filter, $fq))) {
+                    $hideHiddenComponentsPart = $value;
+                    unset($fq[$key]);
+                    $params->set('fq', $fq);
+                }
+            }
+        }
+
+        if (null === $hideHiddenComponentsPart) {
+            // Check for config:
+            $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
+            $searchConfig = $config->get($this->searchConfig);
+            $hideHiddenComponentsPart = $searchConfig->General->hide_component_parts ?? false;
+        }
+
+        // Add the parameter if needed:
+        if ($hideHiddenComponentsPart) {
+            $params->add('fq', '-hidden_component_boolean:true');
         }
     }
 

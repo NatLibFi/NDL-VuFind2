@@ -8,19 +8,19 @@
     }
 }
 .status-available-icon {
-    color: $brand-success;
+    color: $success;
 }
 .status-unavailable-icon {
-    color: $brand-danger;
+    color: $danger;
 }
-.status-available .icon {
-    color: $brand-success;
+.status-available .status-icon {
+    color: $success;
 }
-.status-unavailable .icon {
-    color: $brand-danger;
+.status-unavailable .status-icon {
+    color: $danger;
 }
-.status-uncertain .icon, .status-unknown .icon {
-    color: $brand-warning;
+.status-uncertain .status-icon, .status-unknown .status-icon {
+    color: $warning;
 }
 .dedup-select {
     max-width: 100%;
@@ -112,9 +112,6 @@
             }
         }
     }
-    .available-total {
-        margin-top: 0.5em;
-    }
     .form-control {
         width: 100%;
     }
@@ -192,14 +189,14 @@
         .status-available {
             color: $state-success-text;
             .icon {
-                color: $brand-success;
+                color: $success;
             }
         }
         .status-unavailable {
-            color: $brand-danger;
+            color: $danger;
         }
         .status-uncertain, .status-unknown {
-            color: $brand-warning;
+            color: $warning;
         }
     }
     .holdings-group:not(.headers+.holdings-group) {
@@ -230,6 +227,10 @@
         }
         &:hover {
             cursor: pointer;
+        }
+        &:focus-visible {
+            outline: 0;
+            box-shadow: $focus-ring-box-shadow;
         }
         .location {
             flex: 1 0 40%;
@@ -355,6 +356,7 @@
     }
     .copy-details {
         padding: 8px 15px 8px 31px;
+        margin-top: 4px;
         @include clearfix();
 
         &:nth-child(odd):not(.group-heading) {
@@ -473,11 +475,6 @@
     }
     .holdings-container.root > .header {
         margin-bottom: 3px;
-        .info {
-            @media (max-width: $screen-xs-max) {
-                float: none;
-            }
-        }
     }
     .holdings-container.collapsible > .holdings:not(.root) {
         padding-left: 10px;
@@ -502,7 +499,6 @@
             float: right;
             max-width: 60%;
             display: flex;
-            margin-top: .5em;
             margin-left: 2rem;
             gap: 0 2rem;
             justify-content: right;
@@ -577,6 +573,7 @@
             }
             .title-hold {
                 float: left;
+                margin-left: 0;
                 a.btn {
                     white-space: pre-wrap;
                 }

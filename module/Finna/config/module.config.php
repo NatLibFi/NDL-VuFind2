@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2014-2024.
+ * Copyright (C) The National Library of Finland 2014-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -255,7 +255,7 @@ $config = [
             'Finna\Controller\FeedbackController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\FeedContentController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\HoldsController' => 'VuFind\Controller\HoldsControllerFactory',
-            'Finna\Controller\LibraryCardsController' => 'VuFind\Controller\AbstractBaseFactory',
+            'Finna\Controller\LibraryCardsController' => 'Finna\Controller\LibraryCardsControllerFactory',
             'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\L1recordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
@@ -380,7 +380,9 @@ $config = [
             'Finna\Service\UserPreferenceService' => 'Finna\Service\UserPreferenceServiceFactory',
             'Finna\Statistics\Driver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Statistics\EventHandler' => 'Finna\Statistics\EventHandlerFactory',
+            \Finna\ReservationList\Form\Form::class => \Finna\Form\FormFactory::class,
             \Finna\ReservationList\ReservationListService::class => \Finna\ReservationList\ReservationListServiceFactory::class,
+            \Finna\ReservationList\Handler\PluginManager::class => \VuFind\ServiceManager\AbstractPluginManagerFactory::class,
             'Finna\Favorites\FavoritesService' => 'Finna\Favorites\FavoritesServiceFactory',
             'Finna\View\CustomElement\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
@@ -390,6 +392,8 @@ $config = [
 
             // Factory overrides for non-Finna classes:
             'VuFind\Config\PathResolver' => 'Finna\Config\PathResolverFactory',
+
+            \Laminas\Session\SessionManager::class => \Finna\Session\ManagerFactory::class,
 
             'League\CommonMark\ConverterInterface' => 'Finna\Service\MarkdownFactory',
         ],
@@ -491,6 +495,8 @@ $config = [
                         'Finna\AjaxHandler\GetUserListFactory',
                     'Finna\AjaxHandler\GetUserLists' =>
                         'Finna\AjaxHandler\GetUserListsFactory',
+                    'Finna\AjaxHandler\ReservationList' =>
+                        'Finna\AjaxHandler\ReservationListFactory',
                     'Finna\AjaxHandler\ImportFavorites' =>
                         'Finna\AjaxHandler\ImportFavoritesFactory',
                     'Finna\AjaxHandler\OnlinePaymentNotify' =>
@@ -531,6 +537,7 @@ $config = [
                     'getSearchTabsRecommendations' => 'Finna\AjaxHandler\GetSearchTabsRecommendations',
                     'getSimilarRecords' => 'Finna\AjaxHandler\GetSimilarRecords',
                     'getUserList' => 'Finna\AjaxHandler\GetUserList',
+                    'reservationList' => 'Finna\AjaxHandler\ReservationList',
                     'importFavorites' => 'Finna\AjaxHandler\ImportFavorites',
                     'onlinePaymentNotify' => 'Finna\AjaxHandler\OnlinePaymentNotify',
                     'registerOnlinePayment' => 'Finna\AjaxHandler\RegisterOnlinePayment',
@@ -763,6 +770,7 @@ $config = [
             ],
             'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
             'video_handler' => [ /* see Finna\Video\Handler\PluginManager for defaults */ ],
+            'reservationlist_handler' => [ /* see Finna\ReservationList\Handler\PluginManager for defaults */ ],
             'recommend' => [
                 'factories' => [
                     'VuFind\Recommend\CollectionSideFacets' => 'Finna\Recommend\Factory::getCollectionSideFacets',
@@ -995,6 +1003,7 @@ $config = [
                     'Finna\RecordTab\AuthorityRecordsAuthor' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\AuthorityRecordsTopic' => 'Finna\RecordTab\AuthorityRecordsFactory',
                     'Finna\RecordTab\CollectionHierarchyTree' => 'VuFind\RecordTab\CollectionHierarchyTreeFactory',
+                    'Finna\RecordTab\CollectionList' => 'VuFind\RecordTab\CollectionListFactory',
                     'Finna\RecordTab\HoldingsArchive' => 'Finna\RecordTab\Factory::getHoldingsArchive',
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
@@ -1011,6 +1020,7 @@ $config = [
 
                     // Overrides:
                     'VuFind\RecordTab\CollectionHierarchyTree' => 'Finna\RecordTab\CollectionHierarchyTree',
+                    'VuFind\RecordTab\CollectionList' => 'Finna\RecordTab\CollectionList',
                     'VuFind\RecordTab\HierarchyTree' => 'Finna\RecordTab\HierarchyTree',
                     'VuFind\RecordTab\Map' => 'Finna\RecordTab\Map',
                     'VuFind\RecordTab\UserComments' => 'Finna\RecordTab\UserComments',
@@ -1078,7 +1088,10 @@ $nonTabRecordActions = [
 // Define dynamic routes -- controller => [route name => action]
 $dynamicRoutes = [
     'Comments' => ['inappropriate' => 'inappropriate/[:id]'],
-    'LibraryCards' => ['newLibraryCardPassword' => 'newPassword/[:id]'],
+    'LibraryCards' => [
+        'newLibraryCardPassword' => 'newPassword/[:id]',
+        'librarycards-displaybarcode' => 'displayBarcode/[:id]',
+    ],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
         'reservationlist-displaylists' => 'DisplayLists',

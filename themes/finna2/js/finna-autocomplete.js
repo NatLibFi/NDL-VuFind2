@@ -22,7 +22,7 @@ finna.autocomplete = (function finnaAutocomplete() {
     $('.autocomplete-finna').each(function initAutocompleteFields(i, op) {
       var searcher = extractClassParams(op);
       $(op).autocompleteFinna({
-        loadingString: VuFind.translate('loading_ellipsis'),
+        loadingString: VuFind.loading(),
         suggestions: searcher.suggestions !== '0',
         handler: function handleAutocomplete(query, cb) {
           if (searcher.suggestions === '0') {

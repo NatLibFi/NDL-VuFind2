@@ -47,7 +47,7 @@ class HierarchyTree extends \VuFind\RecordTab\HierarchyTree
      */
     public function getDescription()
     {
-        return $this->getRecordDriver() instanceof \Finna\RecordDriver\SolrEad
-            ? 'hierarchy_tree_archive' : 'hierarchy_tree_collection';
+        return $this->driver->tryMethod('getArchiveType') === 'collection'
+            ? 'hierarchy_tree_collection' : 'hierarchy_tree_archive';
     }
 }

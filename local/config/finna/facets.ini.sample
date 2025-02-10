@@ -116,6 +116,12 @@ online_boolean:1 = online_material_facet_html
 ;free_online_boolean:1 = free_online_material_facet_html
 source_available_str_mv:* = available_locally_facet_html
 ;hires_image_boolean:1 = high_resolution_image_available_html
+; Either of the following mappings can be used together with the
+; hide_component_parts setting in searches.ini to give the user the option to
+; reverse the default behavior. Note that the descriptions here are provided
+; as an example only, and there are no existing translations for them.
+;finna.include_hidden_parts:1 = "Include contained records"
+;finna.include_hidden_parts:0 = "Exclude contained records"
 
 ; These settings affect the way the [Results] facets are displayed
 ; If using facets at the top of search results you have more room for text.
