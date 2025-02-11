@@ -11,7 +11,7 @@
 
   .finna-toggletip__bubble {
     &:not(.show) {
-      display: none;
+      @extend .visually-hidden;
     }
 
     .finna-toggletip__bubble--inner {

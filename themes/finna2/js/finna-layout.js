@@ -334,6 +334,7 @@ finna.layout = (function finnaLayout() {
       if (!tipInnerEl) {
         return;
       }
+      tipInnerEl.innerHTML = message;
 
       const placement = toggletip.dataset.toggletipPlacement || 'bottom';
       const popperInst = Popper.createPopper(
@@ -358,10 +359,8 @@ finna.layout = (function finnaLayout() {
       toggletip.addEventListener('click', () => {
         if (tipEl.classList.contains('show')) {
           tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
         } else {
           window.setTimeout(() => {
-            tipInnerEl.innerHTML = message;
             tipEl.classList.add('show');
             popperInst.update();
           }, 100);
@@ -372,7 +371,6 @@ finna.layout = (function finnaLayout() {
       document.addEventListener('click', (e) => {
         if (toggletip !== e.target) {
           tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
         }
       });
 
@@ -380,14 +378,12 @@ finna.layout = (function finnaLayout() {
       toggletip.addEventListener('keydown', (e) => {
         if ((e.keyCode || e.which) === 27) {
           tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
         }
       });
 
       // Remove on blur
       toggletip.addEventListener('blur', () => {
         tipEl.classList.remove('show');
-        tipInnerEl.innerHTML = '';
       });
     });
   }
