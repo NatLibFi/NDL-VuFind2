@@ -99,7 +99,7 @@
                                 </li>
                                 <?php foreach (['csv', 'ods', 'xlsx'] as $formatEsc): ?>
                                   <li>
-                                    <button class="btn btn-link dropdown-item js-history-file-format" type="button" data-format="<?=$formatEsc?>"><?=$this->transEsc('loan_history_download_' . $formatEsc)?></button>
+                                    <a href="<?=$this->url('myresearch-downloadcheckouthistory', [], ['query' => ['format' => $formatEsc]]);?>" class="btn btn-link dropdown-item" data-lightbox="" aria-haspopup="true"><?=$this->transEsc('loan_history_download_' . $formatEsc)?></a>
                                   </li>
                                 <?php endforeach; ?>
                               </ul>
@@ -212,14 +212,3 @@
       <?php endif; ?>
   </div>
 </div>
-<?php
-// Initialize checkout history download element
-$js = <<<JS
-      document.addEventListener('DOMContentLoaded', () => {
-        finna.checkoutHistory.init(document.querySelector('div.js-download-loan-history'));
-      });
-    JS;
-
-echo $this->inlineScript()->appendScript($js);
-?>
-<!-- END of: finna - myresearch/historicloans.phtml -->

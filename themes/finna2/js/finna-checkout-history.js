@@ -1,55 +1,60 @@
 /*global finna, VuFind */
 finna.checkoutHistory = (function checkoutHistory() {
-
-  const toggleButtonSelector = 'button.js-history-toggle';
-
-  const fileFormatButtonSelector = 'button.js-history-file-format';
+  /**
+   * Selector used to obtain download button
+   * @member {string} downloadButtonSelector
+   */
+  const downloadButtonSelector = 'button.js-download-checkout-history';
 
   /**
-   * Calculates the current page for the button limited by the last possible page to be downloaded.
-   * @param {HTMLButtonElement} element Element containing toggleButton
+   * Holder for download button element.
+   * @member {HTMLButtonElement} downloadButton
+   */
+  let downloadButton;
+
+  /**
+   * Current part to be downloaded
+   * @member {number} currentPart
+   */
+  let currentPart = 0;
+
+  /**
+   * Last part to be downloaded
+   * @member {number} lastPart
+   */
+  let lastPart = -1;
+
+  /**
+   * Set the download button text to match next loadable part
    * @returns {void}
    */
-  function setNextPage(element) {
-    let currentPart = +element.dataset.currentPart;
-    let lastPart = +element.dataset.lastPart;
-    element.dataset.currentPart = Math.min(++currentPart, lastPart);
-  }
-  
-  /**
-   * Sets the buttons text content to match for the next page to be downloaded if clicked.
-   * @param {HTMLButtonElement} element Element containing toggleButton
-   * @returns {void}
-   */
-  function syncButtonText(element) {
-    const toggleButton = element.querySelector(toggleButtonSelector);
-    const textContent = VuFind.translate('loan_history_download_part');
-    toggleButton.textContent = `${textContent.replace('%%part%%', element.dataset.currentPart).replace('%%lastPart%%', element.dataset.lastPart)} `;
-    toggleButton.append(VuFind.icon('show-more', {}, true));
+  function syncButtonText() {
+    const textTemplate = VuFind.translate('loan_history_download_part');
+    downloadButton.textContent = `${textTemplate.replace('%%part%%', currentPart).replace('%%lastPart%%', lastPart)}`;
   }
 
   /**
-   * Display a spinner inside toggle button
-   * @param {HTMLElement} element Element containing toggleButton
+   * Display a spinner inside the download button
    */
-  function displaySpinner(element)
+  function displaySpinner()
   {
-    const toggleButton = element.querySelector(toggleButtonSelector);
     const spinnerElement = VuFind.icon('spinner', {}, true);
-    toggleButton.replaceChildren(spinnerElement, ` ${VuFind.translate('loading_ellipsis')}`);
+    downloadButton.replaceChildren(spinnerElement, ` ${VuFind.translate('loading_ellipsis')}`);
   }
 
   /**
    * Request part of a checkout history to download
-   * @param {HTMLElement} element Parent element for checkout history downloading
-   * @param {string} formatButton Clicked button containing format specific data
    */
-  function getCheckoutHistoryPart(element, formatButton)
+  function getCheckoutHistoryPart()
   {
-    displaySpinner(element);
-    const part = element.dataset.currentPart;
-    const format = formatButton.dataset.format;
-    const searchParams = new URLSearchParams({method: "getCheckoutHistoryFile", part, format});
+    displaySpinner();
+    const searchParams = new URLSearchParams(
+      {
+        method: "getCheckoutHistoryFile",
+        part: currentPart,
+        format: downloadButton.dataset.format
+      }
+    );
     let filename;
     fetch (`${VuFind.path}/AJAX/FILE?${searchParams}`)
       .then(response => {
@@ -68,47 +73,60 @@ finna.checkoutHistory = (function checkoutHistory() {
         document.body.appendChild(a); // we need to append the element to the dom -> otherwise it will not work in firefox
         a.click();
         a.remove();
-        setNextPage(element);
-        syncButtonText(element);
+        if (currentPart < lastPart) {
+          currentPart++;
+        }
+        syncButtonText();
       }).catch((reason) => {
         console.warn(reason);
-        syncButtonText(element);
+        syncButtonText();
       });
   }
 
   /**
-   * Initializes an element containing format buttons to allow for loading checkout history in batches.
-   * @param {HTMLButtonElement} element Element to be initialized
+   * Initializes download checkout history
    * @returns {void}
    */
-  function init(element) {
-    fetch (`${VuFind.path}/AJAX/JSON?method=getCheckoutHistory`)
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('');
-        }
-        return response.json();
-      }).then(result => {
-        if (!result.data) {
-          element.style.display = 'none';
-          return;
-        }
-        element.dataset.currentPart = 1;
-        if (result.data && result.data.parts) {
-          element.dataset.lastPart = result.data.parts;
-          syncButtonText(element);
-          const formatButtons = element.querySelectorAll(fileFormatButtonSelector);
-          formatButtons.forEach(formatButton => {
-            formatButton.addEventListener('click', (e) => {
-              e.preventDefault();
-              getCheckoutHistoryPart(element, formatButton);
-            });
-          });
-        }
-      }).catch(error => {
-        console.warn(error);
-        element.style.display = 'none';
+  function init() {
+    downloadButton = document.querySelector(downloadButtonSelector);
+    if (!downloadButton) {
+      return;
+    }
+
+    // Check if there is cached results
+    if (lastPart > -1) {
+      currentPart = 1;
+      syncButtonText();
+      downloadButton.addEventListener('click', (e) => {
+        e.preventDefault();
+        getCheckoutHistoryPart();
       });
+    } else {
+      displaySpinner();
+      fetch (`${VuFind.path}/AJAX/JSON?method=getCheckoutHistory`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Error occurred.');
+          }
+          return response.json();
+        }).then(result => {
+          if (!result.data) {
+            return;
+          }
+          currentPart = 1;
+          if (result.data && result.data.parts) {
+            lastPart = result.data.parts;
+            syncButtonText();
+            downloadButton.addEventListener('click', (e) => {
+              e.preventDefault();
+              getCheckoutHistoryPart();
+            });
+          }
+        }).catch(error => {
+          downloadButton.style.display = 'none';
+          console.warn(error);
+        });
+    }
   }
 
   return {

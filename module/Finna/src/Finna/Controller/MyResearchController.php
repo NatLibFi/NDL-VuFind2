@@ -1320,6 +1320,26 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * Returns template for downloading checkouts history
+     *
+     * @return mixed
+     */
+    public function downloadCheckoutHistoryAction()
+    {
+        // Retrieve user object and force login if necessary:
+        if (!$this->getUser()) {
+            return $this->forceLogin();
+        }
+        $view = $this->createViewModel(
+            [
+                'format' => $this->params()->fromQuery('format', 'csv'),
+            ]
+        );
+        $view->setTemplate('checkouts/download-checkout-history');
+        return $view;
+    }
+
+    /**
      * Add account blocks to the flash messenger as errors.
      *
      * @param \VuFind\ILS\Connection $catalog Catalog connection
