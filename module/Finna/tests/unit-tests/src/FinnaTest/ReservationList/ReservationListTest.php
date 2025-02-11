@@ -423,7 +423,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $this->container->set(\Finna\Config\YamlReader::class, $mockYamlReader);
 
         $factory = new ReservationListServiceFactory();
-        return  $factory($this->container, ReservationListService::class);
+        return $factory($this->container, ReservationListService::class);
     }
 
     /**
@@ -801,9 +801,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'message' => 'Test message',
             ],
             [
-              Form::SINGLE_LIST_ID_KEY => -1,
-              Form::INSTITUTION_KEY => 'Example Institution',
-              Form::LIST_IDENTIFIER_KEY => 'list_with_email',
+              'listId' => -1,
+              'rl_institution' => 'Example Institution',
+              'rl_config_identifier' => 'list_with_email',
               'firstName' => 'Testaaja',
               'lastName' => 'von Testaaja',
               'email' => 'testaaja@testeri.fi',
@@ -823,9 +823,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'message' => 'Test message',
             ],
             [
-              Form::SINGLE_LIST_ID_KEY => -1,
-              Form::INSTITUTION_KEY => 'Example Institution',
-              Form::LIST_IDENTIFIER_KEY => 'list_with_email',
+              'listId' => -1,
+              'rl_institution' => 'Example Institution',
+              'rl_config_identifier' => 'list_with_email',
               'firstName' => 'Pouta',
               'lastName' => 'Pakkanen',
               'email' => 'testaaja@testeri.fi',
@@ -845,9 +845,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'message' => 'Test message',
             ],
             [
-              Form::SINGLE_LIST_ID_KEY => -1,
-              Form::INSTITUTION_KEY => 'Example Institution',
-              Form::LIST_IDENTIFIER_KEY => 'list_with_disec',
+              'listId' => -1,
+              'rl_institution' => 'Example Institution',
+              'rl_config_identifier' => 'list_with_disec',
               'firstName' => 'Pouta',
               'lastName' => 'Pakkanen',
               'email' => 'testaaja@testeri.fi',
@@ -967,23 +967,23 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $handler = $this->getDisecHandler();
         $testValues = [
-        Form::SINGLE_LIST_ID_KEY => -1,
-        Form::INSTITUTION_KEY => 'Example Institution',
-        Form::LIST_IDENTIFIER_KEY => 'list_with_email',
-        'firstName' => 'Pouta',
-        'lastName' => 'Pakkanen',
-        'email' => 'testaaja@testeri.fi',
-        'record_ids_text' => '',
-        'record_source_and_ids' => [],
-        'pickup_date' => '2025-01-01',
-        'message' => 'Test message',
+          'listId' => -1,
+          'rl_institution' => 'Example Institution',
+          'rl_config_identifier' => 'list_with_email',
+          'firstName' => 'Pouta',
+          'lastName' => 'Pakkanen',
+          'email' => 'testaaja@testeri.fi',
+          'record_ids_text' => '',
+          'record_source_and_ids' => [],
+          'pickup_date' => '2025-01-01',
+          'message' => 'Test message',
         ];
         $result = $handler->placeOrder($testValues, $user);
         $this->assertEquals([
-        'external_id' => '123123',
-        'connection' => 'disec',
-        'pickup_date' => '2025-01-01',
-        'success' => true,
+          'external_id' => '123123',
+          'connection' => 'disec',
+          'pickup_date' => '2025-01-01',
+          'success' => true,
         ], $result);
     }
 
@@ -1001,16 +1001,16 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $handler = $this->getEmailHandler();
         $testValues = [
-        Form::SINGLE_LIST_ID_KEY => -1,
-        Form::INSTITUTION_KEY => 'Example Institution',
-        Form::LIST_IDENTIFIER_KEY => 'list_with_email',
-        'firstName' => 'Pouta',
-        'lastName' => 'Pakkanen',
-        'email' => 'testaaja@testeri.fi',
-        'record_ids_text' => '',
-        'record_source_and_ids' => [],
-        'pickup_date' => '2025-01-01',
-        'message' => 'Test message',
+          'listId' => -1,
+          'rl_institution' => 'Example Institution',
+          'rl_config_identifier' => 'list_with_email',
+          'firstName' => 'Pouta',
+          'lastName' => 'Pakkanen',
+          'email' => 'testaaja@testeri.fi',
+          'record_ids_text' => '',
+          'record_source_and_ids' => [],
+          'pickup_date' => '2025-01-01',
+          'message' => 'Test message',
         ];
         $handler->init([
         'Recipient' => [
@@ -1029,10 +1029,10 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         ]);
         $result = $handler->placeOrder($testValues, $user);
         $this->assertEquals([
-        'external_id' => null,
-        'connection' => 'email',
-        'pickup_date' => '2025-01-01',
-        'success' => true,
+          'external_id' => null,
+          'connection' => 'email',
+          'pickup_date' => '2025-01-01',
+          'success' => true,
         ], $result);
     }
 }

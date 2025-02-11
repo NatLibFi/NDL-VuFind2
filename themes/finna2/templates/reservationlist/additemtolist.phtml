@@ -25,7 +25,7 @@
 <?php if (!empty($this->listsContaining)): ?>
   <p><?=$this->transEsc('This item is already part of the following list/lists') ?>:
   <?php foreach ($this->listsContaining as $i => $list): ?>
-    <a href="<?=$this->url('reservationlist-displaylist', [\Finna\ReservationList\Form\Form::SINGLE_LIST_ID_KEY => $list->getId()]) ?>" data-lightbox-ignore><?=$this->escapeHtml($list->getTitle())?></a><?php if ($i < count($this->listsContaining) - 1): ?>, <?php endif; ?>
+    <a href="<?=$this->url('reservationlist-displaylist', ['listId' => $list->getId()]) ?>" data-lightbox-ignore><?=$this->escapeHtml($list->getTitle())?></a><?php if ($i < count($this->listsContaining) - 1): ?>, <?php endif; ?>
   <?php endforeach; ?>
   </p><hr>
 <?php endif; ?>
@@ -35,10 +35,10 @@
     <form method="post" name="AddItemToReservationList" data-lightbox-onclose="VuFind.refreshPage" action="<?=$this->url('reservationlist-additemtolist'); ?>">
       <?= $this->component('finna-hidden-form-fields.phtml', [
         'fields' => [
-          \Finna\ReservationList\Form\Form::LIST_RECORD_KEY => $this->recordId,
-          \Finna\ReservationList\Form\Form::SOURCE_KEY => $this->source,
-          \Finna\ReservationList\Form\Form::LIST_IDENTIFIER_KEY => $this->listIdentifier,
-          \Finna\ReservationList\Form\Form::INSTITUTION_KEY => $this->institution,
+          'rl_record_id' => $this->recordId,
+          'source' => $this->source,
+          'rl_config_identifier' => $this->listIdentifier,
+          'rl_institution' => $this->institution,
           'csrf' => $this->auth()->getManager()->getCsrfHash(),
         ],
       ]); ?>
@@ -59,5 +59,5 @@
       </div>
     </form>
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => [\Finna\ReservationList\Form\Form::INSTITUTION_KEY => $this->institution, \Finna\ReservationList\Form\Form::LIST_IDENTIFIER_KEY => $this->listIdentifier, 'newList' => '1', \Finna\ReservationList\Form\Form::LIST_RECORD_KEY => urlencode($this->recordId), \Finna\ReservationList\Form\Form::SOURCE_KEY => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
 </div>

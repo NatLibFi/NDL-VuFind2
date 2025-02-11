@@ -134,10 +134,10 @@ class ReservationListController extends AbstractBase
         }
         $view = $this->createViewModel(
             [
-                'institution' => $this->getParam(Form::INSTITUTION_KEY),
-                'listIdentifier' => $this->getParam(Form::LIST_IDENTIFIER_KEY),
-                'recordId' => $this->getParam(Form::LIST_RECORD_KEY),
-                'source' => $this->getParam(Form::SOURCE_KEY),
+                'institution' => $this->getParam('rl_institution'),
+                'listIdentifier' => $this->getParam('rl_config_identifier'),
+                'recordId' => $this->getParam('rl_record_id'),
+                'source' => $this->getParam('source'),
             ]
         );
         $driver = $this->getRecordLoader()->load(
@@ -206,10 +206,10 @@ class ReservationListController extends AbstractBase
 
         $view = $this->createViewModel(
             [
-                'source' => $this->getParam(Form::SOURCE_KEY),
-                'recordId' => $this->getParam(Form::LIST_RECORD_KEY),
-                'institution' => $this->getParam(Form::INSTITUTION_KEY),
-                'listIdentifier' => $this->getParam(Form::LIST_IDENTIFIER_KEY),
+                'source' => $this->getParam('source'),
+                'recordId' => $this->getParam('rl_record_id'),
+                'institution' => $this->getParam('rl_institution'),
+                'listIdentifier' => $this->getParam('rl_config_identifier'),
             ]
         );
         $listProperties = $this->reservationListService->getListProperties(
@@ -232,8 +232,8 @@ class ReservationListController extends AbstractBase
             $newListValues = [
                 'title' => $title,
                 'desc' => $this->getParam('desc'),
-                'institution' => $this->getParam(Form::INSTITUTION_KEY),
-                'listIdentifier' => $this->getParam(Form::LIST_IDENTIFIER_KEY),
+                'institution' => $this->getParam('rl_institution'),
+                'listIdentifier' => $this->getParam('rl_config_identifier'),
                 'connection' => ReservationListService::DEFAULT_CONNECTION_HANDLER,
             ];
             $this->reservationListService->updateListFromRequest(
@@ -262,7 +262,7 @@ class ReservationListController extends AbstractBase
         }
         try {
             $list = $this->reservationListService->getListById(
-                $this->getParam(Form::SINGLE_LIST_ID_KEY),
+                $this->getParam('listId'),
                 $user
             );
         } catch (RecordMissingException $e) {
@@ -292,8 +292,13 @@ class ReservationListController extends AbstractBase
      */
     public function placeOrderOptionsAction()
     {
-        $routeParams = $this->params()->fromQuery();
-        return $this->createViewModel(compact('routeParams'));
+        $viewParams = [
+            'rl_institution' => $this->params()->fromQuery('rl_institution'),
+            'rl_config_identifier' => $this->params()->fromQuery('rl_config_identifier'),
+            'source' => $this->params()->fromQuery('source'),
+            'rl_record_id' => $this->params()->fromQuery('rl_record_id'),
+        ];
+        return $this->createViewModel(['params' => $viewParams]);
     }
 
     /**
@@ -310,12 +315,13 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $request = $this->getRequest();
-        $listId = $this->getParam(Form::SINGLE_LIST_ID_KEY);
+
+        $listId = $this->getParam('listId');
         $list = $this->reservationListService->getListById($listId, $user);
         if ($list->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List already ordered');
         }
+
         $listProperties = $this->reservationListService->getListProperties(
             $list->getInstitution(),
             $list->getListConfigIdentifier()
@@ -323,6 +329,7 @@ class ReservationListController extends AbstractBase
         if (!($listProperties['Enabled'] ?? true)) {
             throw new \VuFind\Exception\Forbidden('ReservationList: No list properties found.');
         }
+
         $request = $this->getRequest();
         $handler = $this->reservationListPluginManager->getWithConfig($listProperties);
         $orderSpecificValues = $handler->getValuesForPlaceOrderForm(
@@ -330,13 +337,13 @@ class ReservationListController extends AbstractBase
             $user,
             $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()
         );
+
         $form = $handler->getPlaceOrderForm($orderSpecificValues);
         $form->setData($orderSpecificValues);
         $formId = ConnectionAbstractBase::FORM_ID;
         $view = $this->createViewModel(compact('form', 'formId', 'user'));
         $view->setTemplate('feedback/form');
         $view->useCaptcha = false;
-
         if (!$this->formWasSubmitted(useCaptcha: false)) {
             return $view;
         }
@@ -368,8 +375,8 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $institution = $this->getParam(Form::INSTITUTION_KEY);
-        $listIdentifier = $this->getParam(Form::LIST_IDENTIFIER_KEY);
+        $institution = $this->getParam('rl_institution');
+        $listIdentifier = $this->getParam('rl_config_identifier');
         $listProperties = $this->reservationListService->getListProperties(
             $institution,
             $listIdentifier
@@ -389,7 +396,7 @@ class ReservationListController extends AbstractBase
         $list = $this->reservationListService->createListForUser($user, $singularListValues);
         $handler = $this->reservationListPluginManager->getWithConfig($listProperties);
         $formId = ConnectionAbstractBase::FORM_ID;
-        $queryValues = $handler->getValuesForPlaceSingleOrderForm(
+        $queryValues = $handler->getValuesForSingleOrder(
             $list,
             $user,
             $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()
@@ -429,7 +436,7 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $listID = $this->getParam(Form::SINGLE_LIST_ID_KEY);
+        $listID = $this->getParam('listId');
         if ($this->getParam('confirm')) {
             try {
                 $list = $this->reservationListService->getListById((int)$listID, $user);
@@ -450,7 +457,7 @@ class ReservationListController extends AbstractBase
             $this->url()->fromRoute('reservationlist-deletelist'),
             $this->url()->fromRoute('reservationlist-displaylists'),
             'confirm_delete_list_text',
-            [Form::SINGLE_LIST_ID_KEY => $listID]
+            ['listId' => $listID]
         );
     }
 
@@ -494,7 +501,7 @@ class ReservationListController extends AbstractBase
             // Redirect to MyResearch home
             return $this->inLightbox()  // different behavior for lightbox context
                 ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-displaylist', [Form::SINGLE_LIST_ID_KEY => $listID]);
+                : $this->redirect()->toRoute('reservationlist-displaylist', ['listId' => $listID]);
         }
 
         return $this->createViewModel($viewParams);
@@ -531,8 +538,8 @@ class ReservationListController extends AbstractBase
         $request = $this->getRequest()->getQuery()->toArray()
           + $this->getRequest()->getPost()->toArray();
 
-        if (null !== $this->params()->fromRoute(Form::SINGLE_LIST_ID_KEY)) {
-            $request += ['id' => $this->params()->fromRoute(Form::SINGLE_LIST_ID_KEY)];
+        if (null !== $this->params()->fromRoute('listId')) {
+            $request += ['id' => $this->params()->fromRoute('listId')];
         }
         return $request;
     }

@@ -92,7 +92,7 @@ interface HandlerInterface
      *
      * @return array
      */
-    public function getValuesForPlaceSingleOrderForm(
+    public function getValuesForSingleOrder(
         FinnaResourceListEntityInterface $list,
         UserEntityInterface $user,
         array $requestValues

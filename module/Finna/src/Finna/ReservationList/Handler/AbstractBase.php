@@ -65,20 +65,6 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public const FORM_ID = 'ReservationListRequest';
 
     /**
-     * Keys to look for in an array to be returned when searching for requested params.
-     *
-     * @var array
-     */
-    public const PLACE_ORDER_REQUEST_KEYS = [
-        'firstName' => '',
-        'lastName' => '',
-        'phone' => '',
-        'email' => '',
-        'pickup_date' => '',
-        'message' => '',
-    ];
-
-    /**
      * Order form configuration defined.
      *
      * @var array
@@ -109,14 +95,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         UserEntityInterface $user,
         array $requestValues
     ): array {
-        $result = $this->getDefaultParamsForOrderForm($list, $user);
+        $result = $this->getValuesForSingleOrder($list, $user, $requestValues);
         $reservationListService = $this->getService(\Finna\ReservationList\ReservationListService::class);
+        $result['record_ids_text'] = '';
+        $result['record_source_and_ids'] = [];
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
             $result['record_ids_text'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
             $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
-        }
-        foreach (array_intersect_key($requestValues, self::PLACE_ORDER_REQUEST_KEYS) as $foundKey => $value) {
-            $result[$foundKey] = $requestValues[$foundKey];
         }
         return $result;
     }
@@ -130,25 +115,35 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      *
      * @return array
      */
-    public function getValuesForPlaceSingleOrderForm(
+    public function getValuesForSingleOrder(
         FinnaResourceListEntityInterface $list,
         UserEntityInterface $user,
         array $requestValues
     ): array {
-        $result = $this->getDefaultParamsForOrderForm($list, $user);
-        $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        $recordID = $requestValues[Form::LIST_RECORD_KEY];
-        $source = $requestValues[Form::SOURCE_KEY] ?? DEFAULT_SEARCH_BACKEND;
-        $record = $recordLoader->load($recordID, $source);
-        $result = array_merge($result, [
-            'rl_record_id' => $record->getUniqueID(),
-            'record_ids_text' => $record->getUniqueID() . '||' . $record->getTitle() . PHP_EOL,
-            'record_source_and_ids' => [$record->getSourceIdentifier() . '|' . $record->getUniqueID()],
-            'source' => $record->getSourceIdentifier(),
-        ]);
-        foreach (array_intersect_key($requestValues, self::PLACE_ORDER_REQUEST_KEYS) as $foundKey => $value) {
-            $result[$foundKey] = $requestValues[$foundKey];
+        $result = [
+            'listId' => $list->getId(),
+            'rl_institution' => $list->getInstitution(),
+            'rl_config_identifier' => $list->getListConfigIdentifier(),
+            'firstName' => $requestValues['firstName'] ?? $user->getFirstname(),
+            'lastName' => $requestValues['lastName'] ?? $user->getLastname(),
+            'email' => $requestValues['email'] ?? $user->getEmail(),
+            'phone' => $requestValues['phone'] ?? null,
+            'pickup_date' => $requestValues['pickup_date'] ?? null,
+            'message' => $requestValues['message'] ?? null,
+        ];
+
+        if (!isset($requestValues['rl_record_id'])) {
+            return $result;
         }
+
+        $recordLoader = $this->getService(\VuFind\Record\Loader::class);
+        $recordID = $requestValues['rl_record_id'];
+        $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
+        $record = $recordLoader->load($recordID, $source);
+        $defaultValues['rl_record_id'] = $record->getUniqueID();
+        $defaultValues['source'] = $record->getSourceIdentifier();
+        $defaultValues['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
+        $defaultValues['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
         return $result;
     }
 
@@ -165,9 +160,9 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         UserEntityInterface $user
     ): array {
         return [
-            Form::SINGLE_LIST_ID_KEY => $list->getId(),
-            Form::INSTITUTION_KEY => $list->getInstitution(),
-            Form::LIST_IDENTIFIER_KEY => $list->getListConfigIdentifier(),
+            'listId' => $list->getId(),
+            'rl_institution' => $list->getInstitution(),
+            'rl_config_identifier' => $list->getListConfigIdentifier(),
             'firstName' => $user->getFirstname(),
             'lastName' => $user->getLastname(),
             'email' => $user->getEmail(),

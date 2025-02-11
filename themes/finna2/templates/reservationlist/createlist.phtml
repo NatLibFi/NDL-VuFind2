@@ -15,10 +15,10 @@
 <form class="form-edit-list" method="post" name="CreateReservationList" action="<?=$this->url('reservationlist-createlist'); ?>">
   <?= $this->component('finna-hidden-form-fields.phtml', [
       'fields' => [
-        \Finna\ReservationList\Form\Form::LIST_RECORD_KEY => $this->recordId,
-        \Finna\ReservationList\Form\Form::SOURCE_KEY => $this->source,
-        \Finna\ReservationList\Form\Form::LIST_IDENTIFIER_KEY => $this->listIdentifier,
-        \Finna\ReservationList\Form\Form::INSTITUTION_KEY => $this->institution,
+        'rl_record_id' => $this->recordId,
+        'source' => $this->source,
+        'rl_config_identifier' => $this->listIdentifier,
+        'rl_institution' => $this->institution,
         'csrf' => $this->auth()->getManager()->getCsrfHash(),
       ],
     ]); ?>
