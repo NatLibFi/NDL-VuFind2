@@ -401,10 +401,9 @@ class ReservationListController extends AbstractBase
             $user,
             $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()
         );
-        $form = $handler->getPlaceOrderForm($queryValues);
+        $form = $handler->getSingleOrderForm($queryValues);
         $view = $this->createViewModel(compact('formId', 'user', 'form'));
-        $view->formActionRoute = 'reservationlist-placesingleorder';
-        $view->setTemplate('reservationlist/form');
+        $view->setTemplate('feedback/form');
         $view->useCaptcha = false;
         if (!$this->formWasSubmitted(useCaptcha: false)) {
             $form->setData($queryValues);

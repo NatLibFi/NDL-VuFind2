@@ -99,19 +99,6 @@ interface HandlerInterface
     ): array;
 
     /**
-     * Get default values commonly used in forms.
-     *
-     * @param FinnaResourceListEntityInterface $list List being ordered
-     * @param UserEntityInterface              $user User who owns the list
-     *
-     * @return array
-     */
-    public function getDefaultParamsForOrderForm(
-        FinnaResourceListEntityInterface $list,
-        UserEntityInterface $user
-    ): array;
-
-    /**
      * Get form used for placing orders.
      *
      * @param array $prefill Prefill form with these values.
@@ -119,6 +106,15 @@ interface HandlerInterface
      * @return Form
      */
     public function getPlaceOrderForm(array $prefill = []): Form;
+
+    /**
+     * Get form used for placing singular orders.
+     *
+     * @param array $prefill Prefill form with these values.
+     *
+     * @return Form
+     */
+    public function getSingleOrderForm(array $prefill = []): Form;
 
     /**
      * Initialize connection handler

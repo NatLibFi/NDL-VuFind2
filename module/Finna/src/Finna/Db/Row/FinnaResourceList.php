@@ -80,14 +80,11 @@ class FinnaResourceList extends RowGateway implements
     /**
      * Get the ID of the list.
      *
-     * @return int
+     * @return ?int
      */
-    public function getId(): int
+    public function getId(): ?int
     {
-        if (!isset($this->id)) {
-            return -1;
-        }
-        return $this->id;
+        return $this->id ?? null;
     }
 
     /**

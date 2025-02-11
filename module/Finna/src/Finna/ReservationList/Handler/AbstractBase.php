@@ -51,13 +51,6 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     use GetServiceTrait;
 
     /**
-     * Place order action form key
-     *
-     * @var string
-     */
-    public const PLACE_ORDER_FORM = 'PlaceOrder';
-
-    /**
      * Unique identifier to identify forms used for reservation lists.
      *
      * @var string
@@ -70,6 +63,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      * @var array
      */
     protected array $orderFormConfig = [];
+
+    /**
+     * Singular item order form configuration
+     *
+     * @var array
+     */
+    protected array $singleOrderFormConfig = [];
 
     /**
      * Constructor
@@ -140,35 +140,11 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $recordID = $requestValues['rl_record_id'];
         $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
         $record = $recordLoader->load($recordID, $source);
-        $defaultValues['rl_record_id'] = $record->getUniqueID();
-        $defaultValues['source'] = $record->getSourceIdentifier();
-        $defaultValues['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
-        $defaultValues['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
+        $result['rl_record_id'] = $record->getUniqueID();
+        $result['source'] = $record->getSourceIdentifier();
+        $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
+        $result['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
         return $result;
-    }
-
-    /**
-     * Get default values commonly used in forms
-     *
-     * @param FinnaResourceListEntityInterface $list List being ordered
-     * @param UserEntityInterface              $user User who owns the list
-     *
-     * @return array
-     */
-    public function getDefaultParamsForOrderForm(
-        FinnaResourceListEntityInterface $list,
-        UserEntityInterface $user
-    ): array {
-        return [
-            'listId' => $list->getId(),
-            'rl_institution' => $list->getInstitution(),
-            'rl_config_identifier' => $list->getListConfigIdentifier(),
-            'firstName' => $user->getFirstname(),
-            'lastName' => $user->getLastname(),
-            'email' => $user->getEmail(),
-            'record_ids_text' => '',
-            'record_source_and_ids' => [],
-        ];
     }
 
     /**
@@ -182,6 +158,22 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     {
         $form = $this->getService(\Finna\ReservationList\Form\Form::class);
         $form->buildFromConfig($this->orderFormConfig, self::FORM_ID, $prefill);
+        $form->setData($prefill);
+        $form->setName(self::FORM_ID);
+        return $form;
+    }
+
+    /**
+     * Build form with configuration obtained from ReservationList.yaml <Action>Forms section.
+     *
+     * @param array $prefill Prefill form with these values.
+     *
+     * @return Form
+     */
+    public function getSingleOrderForm(array $prefill = []): Form
+    {
+        $form = $this->getService(\Finna\ReservationList\Form\Form::class);
+        $form->buildFromConfig($this->singleOrderFormConfig, self::FORM_ID, $prefill);
         $form->setData($prefill);
         $form->setName(self::FORM_ID);
         return $form;
@@ -226,7 +218,8 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         if (!$definedForms) {
             throw new Exception('ReservationList: No forms defined.');
         }
-        $this->orderFormConfig = $definedForms[self::PLACE_ORDER_FORM][$orderFormKey];
+        $this->orderFormConfig = $definedForms['PlaceOrder'][$orderFormKey];
+        $this->singleOrderFormConfig = $definedForms['PlaceSingleOrder'][$orderFormKey];
         return $this;
     }
 }

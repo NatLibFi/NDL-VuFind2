@@ -13,15 +13,11 @@
 <h2><?=$this->transEsc($pageTitle); ?></h2>
 
 <form class="form-edit-list" method="post" name="CreateReservationList" action="<?=$this->url('reservationlist-createlist'); ?>">
-  <?= $this->component('finna-hidden-form-fields.phtml', [
-      'fields' => [
-        'rl_record_id' => $this->recordId,
-        'source' => $this->source,
-        'rl_config_identifier' => $this->listIdentifier,
-        'rl_institution' => $this->institution,
-        'csrf' => $this->auth()->getManager()->getCsrfHash(),
-      ],
-    ]); ?>
+  <input type="hidden" name="rl_record_id" value="<?=$this->escapeHtmlAttr($this->recordId)?>">
+  <input type="hidden" name="source" value="<?=$this->escapeHtmlAttr($this->source)?>">
+  <input type="hidden" name="rl_config_identifier" value="<?=$this->escapeHtmlAttr($this->listIdentifier)?>">
+  <input type="hidden" name="rl_institution" value="<?=$this->escapeHtmlAttr($this->institution)?>">
+  <input type="hidden" name="csrf" value="<?=$this->auth()->getManager()->getCsrfHash()?>">
   <div class="form-group">
     <label class="control-label" for="list_title"><?=$this->transEsc('ReservationList::Reservation List Name'); ?>*:</label>
     <input id="list_title" class="form-control" type="text" name="title" value="" required>

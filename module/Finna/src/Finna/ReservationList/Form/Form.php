@@ -50,41 +50,6 @@ class Form extends \Finna\Form\Form
     public const RESERVATION_LIST_REQUEST = 'ReservationListRequest';
 
     /**
-     * Reservation list institution key in requests
-     *
-     * @var string
-     */
-    public const INSTITUTION_KEY = 'rl_institution';
-
-    /**
-     * Reservation list configuration identifier key in requests
-     *
-     * @var string
-     */
-    public const LIST_IDENTIFIER_KEY = 'rl_list_identifier';
-
-    /**
-     * Reservation list id key identifying the list itself
-     *
-     * @var string
-     */
-    public const SINGLE_LIST_ID_KEY = 'rl_list_id';
-
-    /**
-     * Reservation list record id key containing data for the record(s) to be ordered.
-     *
-     * @var string
-     */
-    public const LIST_RECORD_KEY = 'rl_record_id';
-
-    /**
-     * Source for the record.
-     *
-     * @var string
-     */
-    public const SOURCE_KEY = 'source';
-
-    /**
      * Recipients for reservation lists
      *
      * @var array
@@ -126,11 +91,11 @@ class Form extends \Finna\Form\Form
     {
         $elements = parent::getFormElements($config);
         // Add hidden fields for reservation list order form
-        $elements[self::INSTITUTION_KEY] = ['type' => 'hidden', 'name' => self::INSTITUTION_KEY, 'value' => null];
-        $elements[self::LIST_IDENTIFIER_KEY]
-            = ['type' => 'hidden', 'name' => self::LIST_IDENTIFIER_KEY, 'value' => null];
-        $elements[self::SINGLE_LIST_ID_KEY] = ['type' => 'hidden', 'name' => self::SINGLE_LIST_ID_KEY, 'value' => null];
-        $elements[self::LIST_RECORD_KEY] = ['type' => 'hidden', 'name' => self::LIST_RECORD_KEY, 'value' => null];
+        $elements['rl_institution'] = ['type' => 'hidden', 'name' => 'rl_institution', 'value' => null];
+        $elements['rl_config_identifier']
+            = ['type' => 'hidden', 'name' => 'rl_config_identifier', 'value' => null];
+        $elements['listId'] = ['type' => 'hidden', 'name' => 'listId', 'value' => null];
+        $elements['rl_record_id'] = ['type' => 'hidden', 'name' => 'rl_record_id', 'value' => null];
         return $elements;
     }
 
