@@ -86,4 +86,22 @@ class CommentsController extends \VuFind\Controller\AbstractBase
         assert($service instanceof FinnaCommentsServiceInterface);
         $service->markCommentInappropriate($user, (int)$id, $reason, $message, $sessionId);
     }
+
+    /**
+     * Get all comments for the logged in user
+     *
+     */
+    public function myCommentsAction()
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirect()->toRoute(
+                'default',
+                ['controller' => 'MyResearch', 'action' => 'Login']
+            );
+        }
+        $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
+        $comments = $service->getCommentsByUser($user->id);
+        return $this->createViewModel(['comments' => $comments]);
+    }
 }

@@ -113,4 +113,26 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Finn
     {
         $this->getDbTable('CommentsRecord')->addLinks($commentId, $recordIds);
     }
+
+    /**
+     * Get all comments by a given user
+     *
+     * @return ?CommentsEntityInterface
+     */
+    public function getCommentsByUser(int $userId)
+    {
+        $callback = function ($select) use ($userId) {
+            $select->where->equalTo('comments.user_id', $userId);
+            $select->join(
+                ['r' => 'ratings'],
+                'comments.user_id = r.user_id and comments.resource_id = r.resource_id',
+                ['rating']
+            )->join(
+                ['re' => 'resource'],
+                'comments.resource_id = re.id',
+                ['record_id']
+            );
+        };
+        return $this->getDbTable('comments')->select($callback);
+    }
 }

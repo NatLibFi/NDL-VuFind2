@@ -1,0 +1,39 @@
+<?php $this->headTitle($this->translate('MY Comments'));?>
+<?=$this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'mycomments']); ?>
+<div class="<?=$this->layoutClass('mainbody-myresearch')?>">
+  <div class="my-research-content myresearch-grid-list">
+    <div class="useraccount-header">
+      <h2><?=$this->transEsc('My Comments')?></h2>
+    </div>
+    <table class="table finna-table-striped useraccount-table">
+        <?php foreach ($this->comments as $comment):?>
+        <tr>
+            <td class="checkbox-col">
+              <div class="checkbox-container">
+                <div class="checkbox">
+                  <label>
+                    <span class="sr-only"><?=$this->transEsc('Select');?></span>
+                    <input class="checkbox-select-item" type="checkbox" name="deleteSelectedComments[]" value="<?=$this->escapeHtmlAttr($comment->id)?>" id="checkbox_comment<?=$comment->id?>">
+                  </label>
+                </div>
+              </div>
+            </td>
+            <td>
+              <?php if ($comment->finna_visible): ?>
+                <?php $tooltipBtn = [
+                    'label' => 'Piilotettu (ylläpito)',
+                    'aria-label' => 'Piilotettu (ylläpito)',
+                    'content' => '<h4>Piilotettu kommentti</h4>Aineistosta vastaava taho on piilottanut kommentin. <a href="https://finna.fi">Lue lisää</a>'
+                ];?>
+                <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
+              <?php endif; ?>
+            </td>
+            <td><?=$comment->created ?? ''?></td>
+            <td><?=$comment->record_id ?? ''?><?=$this->url('record', ['id' => $comment->record_id])?></td>
+            <td><?=$this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => ['rating' => $comment->rating, 'count' => 1]])?></td>
+            <td><?=$comment->comment ?? ''?></td>
+        </tr>
+      <?php endforeach; ?>
+    </table>
+  </div>
+</div>
