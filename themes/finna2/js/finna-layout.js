@@ -325,7 +325,6 @@ finna.layout = (function finnaLayout() {
       }
       toggletip.dataset.initialized = true;
       // Get the message from the data-content element
-      const message = toggletip.dataset.toggletipContent || '';
       const tipEl = toggletip.parentNode.querySelector('.js-status');
       if (!tipEl) {
         return;
@@ -334,7 +333,6 @@ finna.layout = (function finnaLayout() {
       if (!tipInnerEl) {
         return;
       }
-      tipInnerEl.innerHTML = message;
 
       const placement = toggletip.dataset.toggletipPlacement || 'bottom';
       const popperInst = Popper.createPopper(
