@@ -836,10 +836,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *   - type Model type preview_3d or provided_3d as key
      *          url to model as value
      *
-     * @param string            $url          Model url
-     * @param string            $format       Model format
-     * @param string            $type         Model type
-     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
+     * @param string             $url          Model url
+     * @param string             $format       Model format
+     * @param string             $type         Model type
+     * @param ?\SimpleXmlElement $measurements Measurements
      *
      * @return array
      */
@@ -932,10 +932,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * - type   Type what type is the audio file
      * - embed  Type of embed is audio
      *
-     * @param string            $url          Url of the audio
-     * @param string            $format       Format of the audio
-     * @param string            $description  Description of the audio
-     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
+     * @param string             $url          Url of the audio
+     * @param string             $format       Format of the audio
+     * @param string             $description  Description of the audio
+     * @param ?\SimpleXmlElement $measurements Measurements
      *
      * @return array
      */
@@ -970,10 +970,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *  - src           Different sources for the video
      *  - type          Codec type
      *
-     * @param string            $url          Url of the video
-     * @param string            $format       Format of the video
-     * @param string            $description  Description of the video
-     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
+     * @param string             $url          Url of the video
+     * @param string             $format       Format of the video
+     * @param string             $description  Description of the video
+     * @param ?\SimpleXmlElement $measurements Measurements
      *
      * @return array
      */
