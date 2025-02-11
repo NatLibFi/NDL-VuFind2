@@ -5,7 +5,7 @@
 
   // Set up page title:
   $this->headTitle($list ? $list->getTitle() : $this->translate('saved_items'));
-  $this->layout()->finnaUseraccountHeader = 'useraccount-content-header';
+  $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
   // Set up breadcrumbs:
   $currPage = $list ? 'List' : 'saved_items';
@@ -44,7 +44,7 @@
     <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->getId())?>">
     <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->getTitle())?>">
   <?php endif; ?>
-  <div id="useraccount-content-header" class="clearfix mylist-header hidden-print" tabindex="0">
+  <div id="useraccount-content-heading" class="clearfix mylist-header hidden-print" tabindex="0">
     <div>
       <?=$this->flashmessages()?>
     </div>

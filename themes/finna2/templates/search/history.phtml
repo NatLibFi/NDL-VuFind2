@@ -2,7 +2,7 @@
 <?php
   // Set page title.
   $this->headTitle($this->translate('Search History'));
-  $this->layout()->finnaUseraccountHeader = 'useraccount-content-header';
+  $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
   $saveSupported = $this->accountCapabilities()->getSavedSearchSetting() === 'enabled';
   $loggedInUser = $this->auth()->getUserObject();
@@ -48,7 +48,7 @@
     <?php endif; ?>
     <?=$this->flashmessages();?>
     <?php if ($saveSupported): ?>
-      <div id="useraccount-content-header" class="useraccount-header" tabindex="0">
+      <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
         <h2><?=$this->transEsc('history_saved_searches')?></h2>
       </div>
       <?php if (!empty($this->saved)): ?>

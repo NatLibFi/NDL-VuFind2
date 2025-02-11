@@ -2,7 +2,7 @@
 <?php
     // Set up page title:
     $this->headTitle($this->translate('My Holds'));
-    $this->layout()->finnaUseraccountHeader = 'useraccount-content-header';
+    $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('My Holds') . '</li>';
     $user = $this->auth()->getUserObject();
@@ -21,7 +21,7 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <div id="useraccount-content-header" class="useraccount-header" tabindex="0">
+    <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('Your Holds and Recalls') ?> (<?=count($this->recordList ?? []);?>)</h2>
     </div>
     <?php if (isset($this->noSupport)): ?>

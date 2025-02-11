@@ -2,7 +2,7 @@
 <?php
     // Set up page title:
     $this->headTitle($this->translate('Interlibrary Loan Requests'));
-    $this->layout()->finnaUseraccountHeader = 'useraccount-content-header';
+    $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
     // Set up breadcrumbs:
     $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
@@ -22,7 +22,7 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <div id="useraccount-content-header" class="useraccount-header" tabindex="0">
+    <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('Interlibrary Loan Requests') ?> (<?=count($this->recordList ?? []);?>)</h2>
     </div>
     <?php if (isset($this->noSupport)): ?>
