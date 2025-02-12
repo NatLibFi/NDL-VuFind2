@@ -13,7 +13,7 @@
           <a href="https://<?=$this->escapeHtmlAttr($user['institution'])?>.finna.fi"><?=$this->transEsc('institution::' . $user['institution'])?></a>
         <?php endif; ?>
       </td>
-      <td><?= $this->transEsc('login_method_' . $user['authMethod']) ?></td>
+      <td><?= $this->transEscWithPrefix('login_method_', $user['authMethod']) ?></td>
     </tr>
   <?php endforeach; ?>
 </table>
