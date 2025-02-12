@@ -1335,7 +1335,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 'format' => $this->params()->fromQuery('format', 'csv'),
             ]
         );
-        $view->setTemplate('checkouts/download-checkout-history');
+        $view->setTemplate('myresearch/download-checkout-history');
         return $view;
     }
 
