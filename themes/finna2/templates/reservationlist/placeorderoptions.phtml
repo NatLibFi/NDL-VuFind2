@@ -6,7 +6,7 @@
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li><a href="' . $this->url('reservationlist-placeorderoptions') . '">' . $this->transEsc('ReservationList::Choose Option For The Record') . '</a></li>'
     . '<li>' . $this->transEsc($pageTitle) . '</li>';
-  $listTranslations = $this->reservationList()->getListProperties($this->params['rl_institution'], $this->params['rl_config_identifier'])['translation_keys'];
+  $listTranslations = $this->reservationList()->getListProperties($this->params['institution'], $this->params['listIdentifier'])['translation_keys'];
 ?>
 <h2><?= $this->transEsc($pageTitle); ?></h2>
 <div>
@@ -22,11 +22,11 @@
   <?php endif; ?>
   <div>
     <label for="resource_name"><?=$this->transEsc('ReservationList::Resource')?>:</label>
-    <p id="resource_name"><?=$this->transEsc($this->params['rl_record_id'])?></p>
+    <p id="resource_name"><?=$this->transEsc($this->params['recordId'])?></p>
   </div>
   <div>
     <label for="resource_institution"><?=$this->transEsc('ReservationList::Resource Institution')?>:</label>
-    <p id="resource_institution"><?=$this->transEscWithPrefix('source_', $this->params['rl_institution']);?></p>
+    <p id="resource_institution"><?=$this->transEscWithPrefix('source_', $this->params['institution']);?></p>
   </div>
 </div>
 <div class="btn-group">

@@ -35,7 +35,6 @@
 namespace Finna\Controller;
 
 use Exception;
-use Finna\ReservationList\Form\Form;
 use Finna\ReservationList\Handler\AbstractBase as ConnectionAbstractBase;
 use Finna\ReservationList\Handler\PluginManager;
 use Finna\ReservationList\ReservationListService;
@@ -134,9 +133,9 @@ class ReservationListController extends AbstractBase
         }
         $view = $this->createViewModel(
             [
-                'institution' => $this->getParam('rl_institution'),
-                'listIdentifier' => $this->getParam('rl_config_identifier'),
-                'recordId' => $this->getParam('rl_record_id'),
+                'institution' => $this->getParam('institution'),
+                'listIdentifier' => $this->getParam('listIdentifier'),
+                'recordId' => $this->getParam('recordId'),
                 'source' => $this->getParam('source'),
             ]
         );
@@ -207,9 +206,9 @@ class ReservationListController extends AbstractBase
         $view = $this->createViewModel(
             [
                 'source' => $this->getParam('source'),
-                'recordId' => $this->getParam('rl_record_id'),
-                'institution' => $this->getParam('rl_institution'),
-                'listIdentifier' => $this->getParam('rl_config_identifier'),
+                'recordId' => $this->getParam('recordId'),
+                'institution' => $this->getParam('institution'),
+                'listIdentifier' => $this->getParam('listIdentifier'),
             ]
         );
         $listProperties = $this->reservationListService->getListProperties(
@@ -232,8 +231,8 @@ class ReservationListController extends AbstractBase
             $newListValues = [
                 'title' => $title,
                 'desc' => $this->getParam('desc'),
-                'institution' => $this->getParam('rl_institution'),
-                'listIdentifier' => $this->getParam('rl_config_identifier'),
+                'institution' => $this->getParam('institution'),
+                'listIdentifier' => $this->getParam('listIdentifier'),
                 'connection' => ReservationListService::DEFAULT_CONNECTION_HANDLER,
             ];
             $this->reservationListService->updateListFromRequest(
@@ -293,10 +292,10 @@ class ReservationListController extends AbstractBase
     public function placeOrderOptionsAction()
     {
         $viewParams = [
-            'rl_institution' => $this->params()->fromQuery('rl_institution'),
-            'rl_config_identifier' => $this->params()->fromQuery('rl_config_identifier'),
+            'institution' => $this->params()->fromQuery('institution'),
+            'listIdentifier' => $this->params()->fromQuery('listIdentifier'),
             'source' => $this->params()->fromQuery('source'),
-            'rl_record_id' => $this->params()->fromQuery('rl_record_id'),
+            'recordId' => $this->params()->fromQuery('recordId'),
         ];
         return $this->createViewModel(['params' => $viewParams]);
     }
@@ -375,8 +374,8 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $institution = $this->getParam('rl_institution');
-        $listIdentifier = $this->getParam('rl_config_identifier');
+        $institution = $this->getParam('institution');
+        $listIdentifier = $this->getParam('listIdentifier');
         $listProperties = $this->reservationListService->getListProperties(
             $institution,
             $listIdentifier

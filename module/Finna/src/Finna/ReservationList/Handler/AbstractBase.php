@@ -122,8 +122,8 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     ): array {
         $result = [
             'listId' => $list->getId(),
-            'rl_institution' => $list->getInstitution(),
-            'rl_config_identifier' => $list->getListConfigIdentifier(),
+            'institution' => $list->getInstitution(),
+            'listIdentifier' => $list->getListConfigIdentifier(),
             'firstName' => $requestValues['firstName'] ?? $user->getFirstname(),
             'lastName' => $requestValues['lastName'] ?? $user->getLastname(),
             'email' => $requestValues['email'] ?? $user->getEmail(),
@@ -132,15 +132,15 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             'message' => $requestValues['message'] ?? null,
         ];
 
-        if (!isset($requestValues['rl_record_id'])) {
+        if (empty($requestValues['recordId'])) {
             return $result;
         }
 
         $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        $recordID = $requestValues['rl_record_id'];
+        $recordID = $requestValues['recordId'];
         $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
         $record = $recordLoader->load($recordID, $source);
-        $result['rl_record_id'] = $record->getUniqueID();
+        $result['recordId'] = $record->getUniqueID();
         $result['source'] = $record->getSourceIdentifier();
         $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
         $result['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
@@ -156,7 +156,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      */
     public function getPlaceOrderForm(array $prefill = []): Form
     {
-        $form = $this->getService(\Finna\ReservationList\Form\Form::class);
+        $form = $this->getService(Form::class);
         $form->buildFromConfig($this->orderFormConfig, self::FORM_ID, $prefill);
         $form->setData($prefill);
         $form->setName(self::FORM_ID);
@@ -172,7 +172,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      */
     public function getSingleOrderForm(array $prefill = []): Form
     {
-        $form = $this->getService(\Finna\ReservationList\Form\Form::class);
+        $form = $this->getService(Form::class);
         $form->buildFromConfig($this->singleOrderFormConfig, self::FORM_ID, $prefill);
         $form->setData($prefill);
         $form->setName(self::FORM_ID);
@@ -219,7 +219,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             throw new Exception('ReservationList: No forms defined.');
         }
         $this->orderFormConfig = $definedForms['PlaceOrder'][$orderFormKey];
-        $this->singleOrderFormConfig = $definedForms['PlaceSingleOrder'][$orderFormKey];
+        $this->singleOrderFormConfig = $definedForms['PlaceOrder']['single'];
+        if ($extend = $this->singleOrderFormConfig['extends'] ?? false) {
+            $this->singleOrderFormConfig = array_merge(
+                $definedForms['PlaceOrder'][$extend],
+                $this->singleOrderFormConfig
+            );
+        }
         return $this;
     }
 }

@@ -34,7 +34,6 @@ use Exception;
 use Finna\Db\Row\FinnaResourceList;
 use Finna\Db\Service\FinnaResourceListResourceService;
 use Finna\Db\Service\FinnaResourceListService;
-use Finna\ReservationList\Form\Form;
 use Finna\ReservationList\Handler\Disec;
 use Finna\ReservationList\Handler\Email;
 use Finna\ReservationList\Handler\HandlerFactory;
@@ -801,9 +800,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'message' => 'Test message',
             ],
             [
-              'listId' => -1,
-              'rl_institution' => 'Example Institution',
-              'rl_config_identifier' => 'list_with_email',
+              'listId' => null,
+              'institution' => 'Example Institution',
+              'listIdentifier' => 'list_with_email',
               'firstName' => 'Testaaja',
               'lastName' => 'von Testaaja',
               'email' => 'testaaja@testeri.fi',
@@ -811,6 +810,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'record_source_and_ids' => [],
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
+              'phone' => null,
             ],
           ],
           'different name given' => [
@@ -823,9 +823,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'message' => 'Test message',
             ],
             [
-              'listId' => -1,
-              'rl_institution' => 'Example Institution',
-              'rl_config_identifier' => 'list_with_email',
+              'listId' => null,
+              'institution' => 'Example Institution',
+              'listIdentifier' => 'list_with_email',
               'firstName' => 'Pouta',
               'lastName' => 'Pakkanen',
               'email' => 'testaaja@testeri.fi',
@@ -833,6 +833,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'record_source_and_ids' => [],
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
+              'phone' => null,
             ],
           ],
           'disec get list values' => [
@@ -845,9 +846,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'message' => 'Test message',
             ],
             [
-              'listId' => -1,
-              'rl_institution' => 'Example Institution',
-              'rl_config_identifier' => 'list_with_disec',
+              'listId' => null,
+              'institution' => 'Example Institution',
+              'listIdentifier' => 'list_with_disec',
               'firstName' => 'Pouta',
               'lastName' => 'Pakkanen',
               'email' => 'testaaja@testeri.fi',
@@ -855,6 +856,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'record_source_and_ids' => [],
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
+              'phone' => null,
             ],
           ],
         ];
@@ -967,9 +969,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $handler = $this->getDisecHandler();
         $testValues = [
-          'listId' => -1,
-          'rl_institution' => 'Example Institution',
-          'rl_config_identifier' => 'list_with_email',
+          'listId' => null,
+          'institution' => 'Example Institution',
+          'listIdentifier' => 'list_with_email',
           'firstName' => 'Pouta',
           'lastName' => 'Pakkanen',
           'email' => 'testaaja@testeri.fi',
@@ -1001,9 +1003,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $service = $this->getReservationListService('reservationlist/ReservationList.yaml');
         $handler = $this->getEmailHandler();
         $testValues = [
-          'listId' => -1,
-          'rl_institution' => 'Example Institution',
-          'rl_config_identifier' => 'list_with_email',
+          'listId' => null,
+          'institution' => 'Example Institution',
+          'listIdentifier' => 'list_with_email',
           'firstName' => 'Pouta',
           'lastName' => 'Pakkanen',
           'email' => 'testaaja@testeri.fi',

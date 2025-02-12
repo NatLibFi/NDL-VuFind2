@@ -1097,6 +1097,7 @@ $dynamicRoutes = [
         'reservationlist-placeorderoptions' => 'PlaceOrderOptions',
         'reservationlist-displaylists' => 'DisplayLists',
         'reservationlist-displaylist' => 'DisplayList/:listId',
+        // Keep :id optional in placeorder routes for compatibility with form logic
         'reservationlist-placeorder' => 'PlaceOrder/[:id]',
         'reservationlist-placesingleorder' => 'PlaceSingleOrder/[:id]',
         'reservationlist-deletelist' => 'DeleteList/:listId',
