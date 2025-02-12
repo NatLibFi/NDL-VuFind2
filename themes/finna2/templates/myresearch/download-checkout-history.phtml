@@ -15,7 +15,7 @@
   <?= $this->headScript(); ?>
 <?php endif; ?>
 
-<h2><?=$this->transEsc('loan_history_download') . ': ' . $this->transEsc('loan_history_download_' . $this->format); ?></h2>
+<h2><?=$this->transEsc('loan_history_download') . ': ' . $this->transEscWithPrefix('loan_history_download_', $this->format); ?></h2>
 
 <?php if (!$this->translationEmpty('download_checkout_history_info_html')): ?>
   <div class="alert alert-info"><?=$this->translate('download_checkout_history_info_html'); ?></div>

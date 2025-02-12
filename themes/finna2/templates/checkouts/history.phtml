@@ -99,7 +99,7 @@
                                 </li>
                                 <?php foreach (['csv', 'ods', 'xlsx'] as $formatEsc): ?>
                                   <li>
-                                    <a href="<?=$this->url('myresearch-downloadcheckouthistory', [], ['query' => ['format' => $formatEsc]]);?>" class="btn btn-link dropdown-item" data-lightbox="" aria-haspopup="true"><?=$this->transEsc('loan_history_download_' . $formatEsc)?></a>
+                                    <a href="<?=$this->url('myresearch-downloadcheckouthistory', [], ['query' => ['format' => $formatEsc]]);?>" class="btn btn-link dropdown-item" data-lightbox="" aria-haspopup="true"><?=$this->transEscWithPrefix('loan_history_download_', $formatEsc)?></a>
                                   </li>
                                 <?php endforeach; ?>
                               </ul>
