@@ -17,8 +17,8 @@
 
 <h2><?=$this->transEsc('loan_history_download') . ': ' . $this->transEsc('loan_history_download_' . $this->format); ?></h2>
 
-<?php if (!$this->translationEmpty('download_checkout_history_info')): ?>
-  <div class="alert alert-info"><?=$this->translate('download_checkout_history_info'); ?></div>
+<?php if (!$this->translationEmpty('download_checkout_history_info_html')): ?>
+  <div class="alert alert-info"><?=$this->translate('download_checkout_history_info_html'); ?></div>
 <?php endif; ?>
 
 <button class="btn btn-primary js-download-checkout-history" data-format="<?=$this->escapeHtmlAttr($this->format)?>" type="button"></button>
