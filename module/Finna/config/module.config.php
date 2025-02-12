@@ -1091,7 +1091,6 @@ $dynamicRoutes = [
     'LibraryCards' => [
         'newLibraryCardPassword' => 'newPassword/[:id]',
         'librarycards-displaybarcode' => 'displayBarcode/[:id]',
-        'librarycards-getusersconnectedtocard' => 'getUsersConnectedToLibraryCard/[:id]',
     ],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
@@ -1106,7 +1105,7 @@ $dynamicRoutes = [
 ];
 
 $staticRoutes = [
-    'LibraryCards/Recover', 'LibraryCards/Register',
+    'LibraryCards/ConnectedUsers', 'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
     'LocationService/Modal',

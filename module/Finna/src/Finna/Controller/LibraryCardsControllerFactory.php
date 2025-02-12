@@ -67,6 +67,8 @@ class LibraryCardsControllerFactory extends \VuFind\Controller\AbstractBaseFacto
     ) {
         $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
         $session = new \Laminas\Session\Container('LibraryCards', $sessionManager);
-        return parent::__invoke($container, $requestedName, [$session]);
+        $config = $container->get(\VuFind\Config\PluginManager::class);
+        $datasourceConfig = $config->get('datasources')->toArray();
+        return parent::__invoke($container, $requestedName, [$session, $datasourceConfig]);
     }
 }

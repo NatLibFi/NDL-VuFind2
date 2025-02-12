@@ -56,17 +56,27 @@ use function intval;
 class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 {
     /**
+     * Datasource configuration
+     *
+     * @var array
+     */
+    protected $datasourceConfig;
+
+    /**
      * Constructor
      *
-     * @param ServiceLocatorInterface $sm      Service locator
-     * @param SessionContainer        $session Session container for library cards
+     * @param ServiceLocatorInterface $sm               Service locator
+     * @param SessionContainer        $session          Session container for library cards
+     * @param array                   $datasourceConfig Datasource configuration
      */
     public function __construct(
         ServiceLocatorInterface $sm,
         protected SessionContainer $session,
+        array $datasourceConfig = [],
     ) {
         parent::__construct($sm);
         $this->session->LibraryCards ??= [];
+        $this->datasourceConfig = $datasourceConfig;
     }
 
     /**
@@ -964,12 +974,12 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
      *
      * @return mixed
      */
-    public function getUsersConnectedToLibraryCardAction()
+    public function connectedUsersAction()
     {
         if (!($user = $this->getUser())) {
             return $this->forceLogin();
         }
-        if (!($id = $this->params()->fromRoute('id', $this->params()->fromQuery('id')))) {
+        if (!$id = $this->params()->fromQuery('id', '')) {
             return $this->redirect()->toRoute('librarycards-home');
         }
         $userCardService = $this->getDbService(UserCardServiceInterface::class);
@@ -983,18 +993,23 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $users = $userCardService->getUsersForLibraryCard($catUsername);
         $userInfo = [];
         foreach ($users as $user) {
-            [$userInstitution, ] = str_contains($user->username, ':')
+            [$userInstitution] = str_contains($user->username, ':')
                 ? explode(':', $user->username, 2)
-                : ['', ''];
+                : [''];
+            $institution = '';
+            if (isset($this->datasourceConfig[$userInstitution]['mainView'])) {
+                $parts = explode('/', $this->datasourceConfig[$userInstitution]['mainView'], 2);
+                if (isset($parts[1])) {
+                    $institution = $parts[0];
+                }
+            }
             $userInfo[] = [
-                'institution' => $userInstitution,
+                'institution' => $institution,
                 'authMethod' => $user->auth_method,
                 'cardCreated' => $user->user_card_created,
             ];
         }
-        $view = $this->createViewModel();
-        $view->setTemplate('librarycards/users-connected-to-card');
-        $view->users = $userInfo;
+        $view = $this->createViewModel(['users' => $userInfo]);
         return $view;
     }
 
