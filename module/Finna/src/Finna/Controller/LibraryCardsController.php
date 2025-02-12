@@ -983,8 +983,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return $this->redirect()->toRoute('librarycards-home');
         }
         $userCardService = $this->getDbService(UserCardServiceInterface::class);
-        $cards = $userCardService->getLibraryCards($user, $id);
-        $card = current($cards);
+        $card = $userCardService->getLibraryCards($user, $id)[0] ?? null;
         if (!$card) {
             throw new \Exception('Library card not found');
         }
@@ -996,14 +995,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             [$userInstitution] = str_contains($user->username, ':')
                 ? explode(':', $user->username, 2)
                 : [''];
-            $institution = '';
-            if (isset($this->datasourceConfig[$userInstitution]['mainView'])) {
-                $parts = explode('/', $this->datasourceConfig[$userInstitution]['mainView'], 2);
-                if (isset($parts[1])) {
-                    $institution = $parts[0];
-                }
-            }
+            $mainView = $this->datasourceConfig[$userInstitution]['mainView'] ?? '';
+            $institution = $this->datasourceConfig[$userInstitution]['institution'] ?? '';
             $userInfo[] = [
+                'mainView' => $mainView,
                 'institution' => $institution,
                 'authMethod' => $user->auth_method,
                 'cardCreated' => $user->user_card_created,
