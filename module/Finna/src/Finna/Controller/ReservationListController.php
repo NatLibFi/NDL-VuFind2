@@ -331,7 +331,7 @@ class ReservationListController extends AbstractBase
 
         $request = $this->getRequest();
         $handler = $this->reservationListPluginManager->getWithConfig($listProperties);
-        $orderSpecificValues = $handler->getValuesForPlaceOrderForm(
+        $orderSpecificValues = $handler->getValuesForListOrder(
             $list,
             $user,
             $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()

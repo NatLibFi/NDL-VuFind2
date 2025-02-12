@@ -90,7 +90,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      *
      * @return array
      */
-    public function getValuesForPlaceOrderForm(
+    public function getValuesForListOrder(
         FinnaResourceListEntityInterface $list,
         UserEntityInterface $user,
         array $requestValues

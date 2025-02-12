@@ -904,7 +904,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
           'listIdentifier' => $listIdentifier,
           'connection' => $listProperties['Connection']['type'],
         ]);
-        $returned = $handler->getValuesForPlaceOrderForm($list, $user, $requestValues);
+        $returned = $handler->getValuesForListOrder($list, $user, $requestValues);
         $this->assertEquals($expected, $returned);
     }
 
