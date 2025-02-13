@@ -38,11 +38,12 @@
 <?php
   $plotFrom = null;
   $daterangeFacetField = null;
-  if (null === $module || in_array($module, ['blender', 'search', 'primo'])) {
+  if (null === $module || in_array($module, ['blender', 'search', 'primo', 'collection'])) {
     $options = $results->getOptions();
     if (is_callable([$options, 'getDateRangeSearchField'])) {
       $daterangeFacetField = $options->getDateRangeSearchField();
     }
+    $params = $results->getParams();
     if (is_callable([$params, 'getDateRangeFilter'])) {
       $dateRangeFilter = $params->getDateRangeFilter();
     }

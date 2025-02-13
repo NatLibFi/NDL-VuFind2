@@ -104,7 +104,8 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
         \VuFind\Search\SolrAuthor\Results::class =>
             \VuFind\Search\Solr\ResultsFactory::class,
         \VuFind\Search\SolrAuthorFacets\Results::class => ResultsFactory::class,
-        \VuFind\Search\SolrCollection\Results::class => ResultsFactory::class,
+        \VuFind\Search\SolrCollection\Results::class =>
+            \VuFind\Search\SolrCollection\ResultsFactory::class,
         \VuFind\Search\SolrReserves\Results::class => ResultsFactory::class,
         \VuFind\Search\SolrWeb\Results::class => ResultsFactory::class,
         \VuFind\Search\Summon\Results::class => ResultsFactory::class,
