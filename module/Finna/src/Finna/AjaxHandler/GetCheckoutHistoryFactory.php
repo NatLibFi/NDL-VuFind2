@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list controller factory.
+ * Factory for GetCheckoutHistory Ajax handler
  *
  * PHP version 8
  *
@@ -21,32 +21,30 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  AJAX
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\Controller;
+namespace Finna\AjaxHandler;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Controller\AbstractBaseFactory;
+use VuFind\AjaxHandler\AbstractIlsAndUserActionFactory;
 
 /**
- * Reservation list controller factory.
+ * Factory for GetCheckoutHistory Ajax handler
  *
  * @category VuFind
- * @package  Controller
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @package  AJAX
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class ReservationListControllerFactory extends AbstractBaseFactory
+class GetCheckoutHistoryFactory extends AbstractIlsAndUserActionFactory
 {
     /**
      * Create an object
@@ -60,24 +58,21 @@ class ReservationListControllerFactory extends AbstractBaseFactory
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
         array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
-        }
-        return parent::__invoke(
-            $container,
-            $requestedName,
-            [
-                $container->get(\Finna\ReservationList\ReservationListService::class),
-                $container->get('ViewHelperManager')->get('reservationList'),
-                $container->get(\Finna\ReservationList\Handler\PluginManager::class),
-            ]
-        );
+        $config = $container->get(\VuFind\Config\PluginManager::class)->get('config');
+        $options = [
+            $container->get(\VuFind\Record\Loader::class),
+            $config->Catalog->loan_history_download_batch_limit ?? 1000,
+            $config->Catalog->historic_loan_page_size ?? 50,
+        ];
+        return parent::__invoke($container, $requestedName, $options);
     }
 }

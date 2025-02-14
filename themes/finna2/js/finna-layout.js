@@ -51,17 +51,31 @@ finna.layout = (function finnaLayout() {
     var holder = typeof _holder === 'undefined' ? $(document) : _holder;
 
     holder.find('a.location-service.location-service-modal').on('click', function onClickModalLink(/*e*/) {
-      var modal = $('#modal');
-      var dialog = modal.find('.modal-dialog');
-      modal.addClass('location-service');
-      dialog.addClass('modal-lg');
+      const modalEl = document.getElementById('modal');
+      if (!modalEl) {
+        return;
+      }
+      const modalDialogEl = modalEl.querySelector('.modal-dialog');
+      if (!modalDialogEl) {
+        return;
+      }
 
-      modal.one('hidden.bs.modal', function onHiddenModal() {
-        modal.removeClass('location-service location-service-qrcode');
-        dialog.removeClass('modal-lg');
-      });
-      VuFind.loadHtml(modal.find('.modal-body'), $(this).data('lightbox-href') + '&layout=lightbox');
-      modal.modal();
+      modalEl.classList.add('location-service');
+      modalDialogEl.classList.add('modal-lg');
+
+      modalEl.addEventListener(
+        'hidden.bs.modal',
+        () => {
+          modalEl.classList.remove('location-service');
+          modalEl.classList.remove('location-service-qrcode');
+          modalDialogEl.classList.remove('modal-lg');
+        },
+        {once: true}
+      );
+
+
+      VuFind.loadHtml('#modal .modal-body', this.dataset.lightboxHref + '&layout=lightbox');
+      bootstrap.Modal.getOrCreateInstance('#modal').show();
       return false;
     });
   }
@@ -491,9 +505,12 @@ finna.layout = (function finnaLayout() {
    * Initialize modal tooltips
    */
   function initModalToolTips() {
-    $('#modal').on('show.bs.modal', function onShowModal() {
-      initToolTips($(this));
-    });
+    const modalEl = document.getElementById('modal');
+    if (modalEl) {
+      modalEl.addEventListener('shown.bs.modal', () => {
+        initToolTips(modalEl);
+      });
+    }
   }
 
   /**
@@ -695,23 +712,6 @@ finna.layout = (function finnaLayout() {
         cancelRefresh();
       }
     });
-    const modalEl = document.getElementById('modal');
-    if (modalEl) {
-      modalEl.addEventListener('shown.bs.modal', () => {
-        if (modalEl.querySelector('#authcontainer')) {
-          const modalDialogEl = modalEl.querySelector('.modal-dialog');
-          if (modalDialogEl) {
-            modalDialogEl.classList.add('modal-lg', 'modal-lg-dynamic');
-          }
-        }
-      });
-      modalEl.addEventListener('hidden.bs.modal', () => {
-        const modalDialogEl = modalEl.querySelector('.modal-dialog');
-        if (modalDialogEl) {
-          modalDialogEl.classList.remove('modal-lg', 'modal-lg-dynamic');
-        }
-      });
-    }
   }
 
   /**
