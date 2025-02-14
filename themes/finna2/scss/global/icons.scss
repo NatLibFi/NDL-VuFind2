@@ -64,12 +64,12 @@ table .iconlabel {
 .iconlabel[class*="format-1othermicrofilm"]:before,
 .iconlabel[class*="format-feed-othermicrofilm"]:before {
     @extend .fa;
-    content: "\f008";
+    content: "#{$fa-var-film}";
 }
 .iconlabel[class*="format-1otherinterview"]:before,
 .iconlabel[class*="format-feed-otherinterview"]:before {
     @extend .fa;
-    content: "\f130";
+    content: "#{$fa-var-microphone}";
 }
 .iconlabel.format-book:before,
 .iconlabel[class*="format-1book"]:before,
