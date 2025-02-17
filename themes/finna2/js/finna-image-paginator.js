@@ -726,9 +726,6 @@ FinnaPaginator.prototype.loadImageInformation = function loadImageInformation() 
     if (typeof $('.open-link a').attr('href') !== 'undefined') {
       _.setDimensions();
     }
-    _.popup.collapseArea.find('finna-video').on('click', () => {
-      _.setCanvasElement('video');
-    });
     if ($('.imagepopup-holder .feedback-record')[0] || $('.imagepopup-holder .save-record')[0]) {
       $('.imagepopup-holder .feedback-record, .imagepopup-holder .save-record').on('click', function onClickActionLink(/*e*/) {
         $.fn.finnaPopup.closeOpen();
@@ -883,10 +880,8 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
   _.canvasElements = {
     leaflet: popup.find('.leaflet-map-image'),
     noZoom: popup.find('.popup-nonzoom'),
-    video: popup.find('.popup-video')
   };
   _.canvasElements.leaflet.attr('id', 'leaflet-map-image');
-  _.canvasElements.video.attr('id', 'video-player');
   if (_.images.length < 2) {
     _.popup.covers.parent().hide();
     _.popup.leftBrowseBtn.hide();

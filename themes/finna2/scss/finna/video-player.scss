@@ -28,28 +28,24 @@
   height: 100%;
   width: 100%;
 }
-.inline-video, .video-popup, .finna-iframe {
-  &.finna-popup {
-      display: flex;
-      align-content: center;
-      justify-content: center;
-      .popup-iframe-wrapper {
-        // These values are from examples in https://icareus.fi/videosoittimet/
-        position: relative;
-        width: 100%;
-        // This padding-top value prevents the player from overflowing
-        padding-top: 56.25%;
-        margin: auto;
-        iframe {
-          position: absolute;
-          top: 0;
-          bottom: 0;
-          left: 0;
-          right: 0;
-        }
-      }
-    }
+
+// Template for using proper styles, when appending video viewer inside an element.
+%iframe-centering-template {
+  height: $inline-video-player-desktop-height;
+  @media (max-width: $screen-sm-max) {
+    height: $inline-video-player-mobile-height;
+  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  > iframe, > .video-js {
+    // This aspect ratio is result of division from 560/315, which is default aspect-ratio notified in icareus website
+    // It works miracles and using position absolute with padding is nightmare.
+    aspect-ratio: 1.7778/1;
+    height: 100%;
+  }
 }
+
 .inline-video-container {
   width: 100vw;
   position: relative;
@@ -58,13 +54,7 @@
   background-color: black;
   margin-bottom: 10px;
   .inline-video {
-    .embed-responsive-item {
-      height: 100%;
-      width: 100%;
-    }
-    .finna-iframe.modal-holder {
-      max-width: 800px;
-    }
+    @extend %iframe-centering-template;
   }
   .video-accordion {
     padding-top: 15px;
@@ -126,14 +116,6 @@
   }
 }
 
-finna-video {
-  display: inline-block;
-  cursor: pointer;
-  &.btn.btn-link {
-    padding: 0;
-  }
-}
-
 .vjs-airplay-button {
    .vjs-icon-placeholder {
       background:       $icon-airplay--default center center no-repeat;
@@ -149,4 +131,33 @@ finna-video {
          background-image: $icon-airplay--hover;
       }
    }
+}
+
+// Search results specific buttons without any padding to make things look smoother
+.btn.btn-link.video-link-container {
+  padding: 0;
+}
+
+.finna-video-modal,
+.finna-iframe-modal {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  .modal-dialog {
+    flex: 1 1 auto;
+    .modal-content {
+      width: 100%;
+      height: 100%;
+      background-color: transparent;
+      box-shadow: none;
+      border: none;
+      > button.close {
+        right: -20px;
+        top: -20px;
+      }
+      .modal-body {
+        @extend %iframe-centering-template;
+      }
+    }
+  }
 }

@@ -259,7 +259,7 @@ return [
         'vendor/cally.iife.js',
         'finna-multiselect.js',
         'finna-model-viewer.js',
-        'finna-video-element.js',
+        'finna-video-player.js',
         'finna-feed-element.js',
         'finna-carousel-manager.js',
         'finna-select-a11y.js',

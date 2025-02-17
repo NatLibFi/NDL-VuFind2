@@ -13,7 +13,8 @@ var finna = (function finnaModule() {
    * @member {object}
    */
   let promises = {
-    lazyImages: new Promise((resolve) => { resolves.lazyImages = resolve; })
+    lazyImages: new Promise((resolve) => { resolves.lazyImages = resolve; }),
+    videoScripts: new Promise((resolve) => { resolves.videoScripts = resolve; })
   };
 
   var my = {
