@@ -1,4 +1,4 @@
-finna-consent, .embedded-content-placeholder {
+.embedded-content-placeholder {
     background: black;
     color: white;
     display: flex;
@@ -19,6 +19,10 @@ finna-consent, .embedded-content-placeholder {
     }
 }
 
-finna-consent {
-    height: 100%;
+#modal.finna-consent-modal {
+    .modal-content {
+        box-shadow: none;
+        background-color: transparent;
+        border: none;
+    }
 }

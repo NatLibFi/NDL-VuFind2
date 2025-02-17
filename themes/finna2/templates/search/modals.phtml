@@ -49,4 +49,21 @@
     </div>
   </div>
 </div>
+<?php // Consent modal ?>
+<template id="consent-modal">
+  <div class="embedded-content-cookie-info">
+    <div class="embedded-content-heading">
+      <?=$this->transEsc('embedded_content_heading')?>
+    </div>
+    <div class="embedded-content-description">
+      <?=$this->translate('embedded_content_description')?>
+    </div>
+    <div class="embedded-content-actions">
+      <a class="btn btn-primary" href="%%HREF%%" target="_blank">
+        <?=$this->translate('embedded_content_external_link')?> <?= $this->icon('new-window') ?> <span class="sr-only">(<?=$this->transEsc('Open in a new window')?>)</span>
+      </a>
+      <button class="btn btn-default" type="button" aria-haspopup="dialog"><?=$this->transEsc('Cookie Settings')?></button>
+    </div>
+  </div>
+</template>
 <!-- END of: finna - search/modals.phtml -->

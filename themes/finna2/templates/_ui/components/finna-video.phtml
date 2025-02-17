@@ -14,6 +14,7 @@
     'data-vc-index' => $this->index ?? -1,
     'data-vc-inline' => $this->inline ?? false,
     'data-vc-embed' => $embeddedVideo,
+    'data-vc-consent' => $this->consent ?? 'recordvideo',
     'aria-haspopup' => true,
   ];
   $buttonAttributes['class'] .= ' ' . $this->_componentClass;
@@ -30,7 +31,7 @@
 <?php
 $script = <<<JS
     finna.videoPlayer.init();
-    finna.videoPlayer.initVideoButton('{$jsSelector}');
+    document.addEventListener('DOMContentLoaded', () => {finna.videoPlayer.initVideoButton('{$jsSelector}');});
     JS;
 ?>
 <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');?>
