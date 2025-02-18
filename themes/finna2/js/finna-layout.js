@@ -227,9 +227,7 @@ finna.layout = (function finnaLayout() {
    */
   function initMobileNarrowSearch() {
     document.querySelectorAll('.mobile-navigation .sidebar-navigation, .sidebar .mylist-bar h1').forEach(el => {
-      el.addEventListener('click', function onClickMobileNav(e) {
-        toggleMobileSidebar(e);
-      });
+      el.addEventListener('click', toggleMobileSidebar);
     });
     const container = document.querySelector(".side-facets-container-ajax");
     if (container) {
