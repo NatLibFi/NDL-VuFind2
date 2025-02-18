@@ -179,6 +179,7 @@ finna.layout = (function finnaLayout() {
 
   /**
    * Toggle visibility of sidebar on mobile
+   * @param {object} e Event object
    */
   function toggleMobileSidebar(e) {
     e.stopImmediatePropagation();
