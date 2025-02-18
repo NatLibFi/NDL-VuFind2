@@ -234,16 +234,7 @@ finna.layout = (function finnaLayout() {
     const container = document.querySelector(".side-facets-container-ajax");
     if (container) {
       document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
-        el.addEventListener('click', function onClickMobileFacets(e) {
-          toggleMobileSidebar(e);
-          if (document.querySelector('.sidebar').classList.contains('open')) {
-            document.activeElement.blur();
-            container.querySelector('h1').focus();
-          } else {
-            document.activeElement.blur();
-            document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
-          }
-        });
+        el.addEventListener('click', toggleMobileSidebar);
       });
       container.tabIndex = '0';
       container.ariaModal = true;
