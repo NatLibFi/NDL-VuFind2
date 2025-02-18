@@ -1004,8 +1004,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 'cardCreated' => $user->user_card_created,
             ];
         }
-        $view = $this->createViewModel(['users' => $userInfo]);
-        return $view;
+        return $this->createViewModel(['users' => $userInfo]);
     }
 
     /**

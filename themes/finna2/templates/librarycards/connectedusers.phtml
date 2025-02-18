@@ -10,7 +10,7 @@
       <td><?= $this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user['cardCreated']))?></td>
       <td>
         <?php if ($user['mainView']): ?>
-          <?php [$inst, $view] = explode('/', $user['mainView']); ?>
+          <?php [$inst, $view] = explode('/', $user['mainView'] . '/default'); ?>
           <a href="https://<?=$this->escapeHtmlAttr($inst)?>.finna.fi/<?=$view === 'default' ? '' : $this->escapeHtmlAttr($view)?>"><?=$this->transEsc('institution::' . $user['institution'])?></a>
         <?php else: ?>
           <span><?=$this->transEsc('institution::' . $user['institution'])?></span>
