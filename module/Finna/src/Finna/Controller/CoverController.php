@@ -110,18 +110,30 @@ class CoverController extends \VuFind\Controller\CoverController
             return $response;
         }
 
-        $this->loader->setParams($width, $height, $size);
-
+        // Try to find an id from the request to look for datasource specific configuration.
+        // fromQuery('recordid') is used in requests from records which contains no images.
+        // fromQuery('id') is used in requests from records which contains images.
+        $recordId = $params->fromQuery('recordid');
+        $id = $params->fromQuery('id');
         // Cover image configuration for current datasource
         $datasourceCovers = '';
-        if ($recordId = $params->fromQuery('recordid')) {
+        if ($recordId) {
             $datasourceId = strtok($recordId, '.');
             $datasourceCovers = $this->datasourceConfig->$datasourceId->coverimages
                 ?? '';
         }
+        if ($id) {
+            // Check if datasource is set to enforce images to certain sizes.
+            // Reduces image request counts as the images can be cached more easily.
+            $datasourceId = strtok($id, '.');
+            if ($enforced = $this->datasourceConfig->$datasourceId->enforced_image_size ?? null) {
+                $size = $enforced;
+            }
+        }
+        $this->loader->setParams($width, $height, $size);
         $this->loader->setDatasourceConfig($datasourceCovers);
 
-        if ($id = $params->fromQuery('id')) {
+        if ($id) {
             $driver = $this->recordLoader->load(
                 $id,
                 $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
