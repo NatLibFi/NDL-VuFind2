@@ -116,8 +116,10 @@ finna.videoPlayer = (() => {
    */
   function displayConsentWindow(element)
   {
-    const consentModal = document.getElementById('consent-modal');
+    const consentModal = document.getElementById('finna-consent-modal');
     if (consentModal) {
+      // Append the cloned element, as templates return a DocumentFragment instead of node, which does not work
+      // if outerHTML is called.
       const cloned = consentModal.content.cloneNode(true);
       const wrapper = document.createElement('div');
       wrapper.className = 'embedded-content-placeholder';
