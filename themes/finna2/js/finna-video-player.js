@@ -130,13 +130,16 @@ finna.videoPlayer = (() => {
       const description = wrapper.querySelector('.embedded-content-description');
       if (description) {
         const serviceBase = new URL(element.dataset.vcUrl);
-        description.innerText = description.innerText.replace('%%consentCategories%%', element.dataset.vcConsent).replace('%%serviceBaseUrl%%', serviceBase.hostname);
+        description.innerText = description.innerText
+          .replace('%%consentCategories%%', element.dataset.vcConsent)
+          .replace('%%serviceBaseUrl%%', serviceBase.hostname);
       }
       VuFind.lightbox.render(wrapper.outerHTML);
       overrideModalClass('finna-consent-modal');
       const ccPreferences = document.getElementById('modal').querySelector('.embedded-content-actions button');
       if (ccPreferences) {
-        // Set cookie consent preferences event after the modal has been initialized so it properly initialized
+        // Set cookie consent preferences event after the modal has been initialized as the lightbox handles elements
+        // as a string, so it loses all the events applied before rendering
         ccPreferences.addEventListener('click', () => {
           VuFind.modal('hide');
           CookieConsent.showPreferences();
@@ -182,7 +185,6 @@ finna.videoPlayer = (() => {
         element.addEventListener('click', () => { displayConsentWindow(element); });
       }
     });
-
   }
 
   /**
