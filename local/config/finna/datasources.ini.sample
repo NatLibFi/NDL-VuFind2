@@ -26,8 +26,6 @@ institution = Library
 ; defined in config.ini
 ;coverimages = BTJ:customerId
 ;coverimages = BTJ:customerId,Kirjavalitys:customerId
-; Enforces fetching certain sized images and discards the requested size.
-;enforced_image_size = 'small','medium','large' 
 ; Description providers (a comma-separated list in priority order). Available
 ; providers are:
 ; NatLibFi

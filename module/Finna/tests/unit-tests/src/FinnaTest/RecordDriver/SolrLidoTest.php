@@ -121,6 +121,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'identifier' => '607642',
                         'downloadable' => true,
                         'resourceDescription' => 'Kuvan selitys',
+                        'cache_size_key' => [
+                            'small' => 'large',
+                            'medium' => 'large',
+                        ],
                     ],
                     [
                         'urls' => [
@@ -170,6 +174,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'identifier' => '607643',
                         'downloadable' => false,
                         'resourceName' => 'Kuvan nimi',
+                        'cache_size_key' => [
+                            'medium' => 'small',
+                        ],
                     ],
                     2 => [
                         'urls' => [
@@ -189,6 +196,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'highResolution' => [],
                         'identifier' => '607644',
                         'downloadable' => true,
+                        'cache_size_key' => [],
                     ],
                 ],
             ],
