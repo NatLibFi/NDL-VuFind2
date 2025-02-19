@@ -82,7 +82,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                         'downloadable' => false,
-                        'cache_size_key' => [],
+                        'cacheSizes' => [],
                     ],
                 ],
             ],

@@ -211,7 +211,7 @@ trait SolrCommonFinnaTrait
     {
         if ($images = $this->getAllImages()) {
             $image = $images[$index]['urls'][$size] ?? null;
-            $cacheKey = $images[$index]['cache_size_key'][$size] ?? $size;
+            $cacheSize = $images[$index]['cacheSizes'][$size] ?? $size;
             if ($image) {
                 $params = $images[$index]['urls'][$size];
                 if (!is_array($params)) {
@@ -225,7 +225,7 @@ trait SolrCommonFinnaTrait
                 $params['id'] = $this->getUniqueId();
                 $params['pdf'] = !empty($images[$index]['pdf'][$size])
                     || true === ($images[$index]['pdf'] ?? false);
-                $params['cache_size'] = $cacheKey;
+                $params['cacheSize'] = $cacheSize;
                 return $params;
             }
         }

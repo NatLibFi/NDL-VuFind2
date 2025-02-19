@@ -1430,18 +1430,18 @@ trait SolrFinnaTrait
         if (!$hasSmallImage && !$hasMediumImage && !$hasLargeImage) {
             return $images;
         }
-        $images['cache_size_key'] = [];
+        $images['cacheSizes'] = [];
         if (!$hasLargeImage) {
             $images['urls']['large'] = $hasMediumImage ? $images['urls']['medium'] : $images['urls']['small'];
-            $images['cache_size_key']['large'] = $hasMediumImage ? 'medium' : 'small';
+            $images['cacheSizes']['large'] = $hasMediumImage ? 'medium' : 'small';
         }
         if (!$hasSmallImage) {
             $images['urls']['small'] = $hasMediumImage ? $images['urls']['medium'] : $images['urls']['large'];
-            $images['cache_size_key']['small'] = $hasMediumImage ? 'medium' : 'large';
+            $images['cacheSizes']['small'] = $hasMediumImage ? 'medium' : 'large';
         }
         if (!$hasMediumImage) {
             $images['urls']['medium'] = $hasSmallImage ? $images['urls']['small'] : $images['urls']['large'];
-            $images['cache_size_key']['medium'] = $hasSmallImage ? 'small' : 'large';
+            $images['cacheSizes']['medium'] = $hasSmallImage ? 'small' : 'large';
         }
         return $images;
     }
