@@ -2653,14 +2653,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
         }
         foreach ($this->stripTrailingPunctuation($this->getFieldArray('979', ['h', 'i'])) as $lang) {
-            $lang = explode(' ', $lang) ?? $lang;
-            if (is_array($lang)) {
-                foreach ($lang as $lng) {
-                    $result[] = $lng;
-                }
-            } else {
-                $result[] = $lang;
-            }
+            $lang = explode(' ', $lang);
+            $result = array_merge($result, $lang);
         }
         return array_unique(array_filter($result));
     }
