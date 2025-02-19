@@ -39,6 +39,7 @@ use function boolval;
 use function call_user_func_array;
 use function count;
 use function in_array;
+use function intval;
 use function is_array;
 use function is_string;
 use function strlen;
@@ -409,12 +410,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             // so explode the results and sum them if the value is too long.
             // Example of the value to be summed: 400030 400030 21313 223314.
             // Only do this with sizes.
-            if ($type === 'size' && strlen($value) > 15) {
-                $tmpValue = 0;
-                foreach (explode(' ', $value) as $part) {
-                    $tmpValue += (int)$part;
+            if ($type === 'size') {
+                if (strlen($value) > 15) {
+                    $tmpValue = 0;
+                    foreach (explode(' ', $value) as $part) {
+                        $tmpValue += (int)$part;
+                    }
+                    $value = $tmpValue;
                 }
-                $value = $tmpValue;
+                $value = intval(preg_replace('/[^0-9]/', '', $value));
             }
             $results[$type] = [
                 'unit' => $unit,

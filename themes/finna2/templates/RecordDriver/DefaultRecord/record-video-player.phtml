@@ -86,7 +86,7 @@
       <?php
         if ($showDetails && !$inlineVideo):
           if ($fileSize = $url['data']['size'] ?? '') {
-            $fileSize = !empty($fileSize['value']) ? '(' . $this->fileSize(preg_replace('/[^0-9]/', '', $fileSize['value'])) . ')' : '';
+            $fileSize = !empty($fileSize['value']) && $fileSize['unit'] === 'byte' ? '(' . $this->fileSize($fileSize['value']) . ')' : '';
           }
       ?>
         <div class="resource-details">
