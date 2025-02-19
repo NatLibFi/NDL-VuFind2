@@ -196,7 +196,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'highResolution' => [],
                         'identifier' => '607644',
                         'downloadable' => true,
-                        'cacheSizes' => [],
+                        'cacheSizes' => [
+                            'small' => 'large',
+                            'medium' => 'large',
+                        ],
                     ],
                 ],
             ],

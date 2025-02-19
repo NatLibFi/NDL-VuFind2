@@ -558,8 +558,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         );
                         $imageUrls = [];
                     }
-                    $imageUrls['small'] = $imageUrls['medium']
-                        = $imageUrls['large'] = $url;
+                    $imageUrls['large'] = $url;
                     continue;
                 }
 
