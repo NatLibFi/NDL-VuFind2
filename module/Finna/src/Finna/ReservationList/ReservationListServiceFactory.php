@@ -52,11 +52,13 @@ class ReservationListServiceFactory implements FactoryInterface
      *
      * @return ReservationListService
      */
-    public function __invoke(ContainerInterface $container, $name, array $options = null)
+    public function __invoke(ContainerInterface $container, $name, ?array $options = null)
     {
         $serviceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
         $session = new \Laminas\Session\Container('ReservationList', $sessionManager);
+        $reservationListYaml = $container->get(\Finna\Config\YamlReader::class)
+            ->getFinna('ReservationList.yaml', 'config/finna');
         return new ReservationListService(
             $serviceManager->get(\Finna\Db\Service\FinnaResourceListServiceInterface::class),
             $serviceManager->get(\Finna\Db\Service\FinnaResourceListResourceServiceInterface::class),
@@ -65,7 +67,8 @@ class ReservationListServiceFactory implements FactoryInterface
             $container->get(\VuFind\Record\ResourcePopulator::class),
             $container->get(\Finna\Record\Loader::class),
             $container->get(\VuFind\Record\Cache::class),
-            $session
+            $session,
+            $reservationListYaml ?: []
         );
     }
 }

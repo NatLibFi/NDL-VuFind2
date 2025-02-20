@@ -32,11 +32,13 @@
 namespace Finna\ReservationList;
 
 use DateTime;
+use Exception;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
+use TypeError;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceAwareInterface;
@@ -52,6 +54,8 @@ use VuFind\Record\Loader as RecordLoader;
 use VuFind\Record\ResourcePopulator;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 use VuFind\RecordDriver\DefaultRecord;
+
+use function is_string;
 
 /**
  * Reservation list service
@@ -76,6 +80,33 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     public const RESOURCE_LIST_TYPE = 'reservationlist';
 
     /**
+     * Default connection handler used for list connections
+     *
+     * @var string
+     */
+    public const DEFAULT_CONNECTION_HANDLER = 'email';
+
+    /**
+     * Default values for list config
+     *
+     * @var array
+     */
+    protected const RESERVATION_LIST_DEFAULT_VALUES  = [
+        'Enabled' => false,
+        'Recipient' => [],
+        'Datasources' => [],
+        'Information' => [],
+        'LibraryCardSources' => [],
+        'Forms' => [
+            'PlaceOrder' => 'default',
+        ],
+        'Connection' =>  [
+            'type' => self::DEFAULT_CONNECTION_HANDLER,
+        ],
+        'Identifier' => false,
+    ];
+
+    /**
      * Constructor
      *
      * @param FinnaResourceListServiceInterface         $resourceListService         Resource list database service
@@ -88,6 +119,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * @param ?RecordCache                              $recordCache                 Record cache (optional)
      * @param ?Container                                $session                     Session container for remembering
      *                                                                               state (optional)
+     * @param array                                     $reservationListConfig       Reservation list configuration
      */
     public function __construct(
         protected FinnaResourceListServiceInterface $resourceListService,
@@ -97,27 +129,31 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         protected ResourcePopulator $resourcePopulator,
         protected RecordLoader $recordLoader,
         protected ?RecordCache $recordCache = null,
-        protected ?Container $session = null
+        protected ?Container $session = null,
+        protected array $reservationListConfig = []
     ) {
     }
 
     /**
      * Create a new list object for the specified user
      *
-     * @param ?UserEntityInterface $user Logged in user (null if logged out)
+     * @param ?UserEntityInterface $user    Logged in user (null if logged out)
+     * @param array                $prefill Prefill the list with these values.
      *
      * @return FinnaResourceListEntityInterface
      * @throws LoginRequiredException
      */
-    public function createListForUser(?UserEntityInterface $user): FinnaResourceListEntityInterface
+    public function createListForUser(?UserEntityInterface $user, array $prefill = []): FinnaResourceListEntityInterface
     {
         if (!$user) {
             throw new LoginRequiredException('Log in to create lists.');
         }
 
-        return $this->resourceListService->createEntity()
-            ->setUser($user)
-            ->setCreated(new DateTime());
+        $list = $this->resourceListService->createEntity()->setUser($user)->setCreated(new DateTime());
+        if ($prefill) {
+            $list = $this->populateListValues($list, $user, $prefill);
+        }
+        return $list;
     }
 
     /**
@@ -274,21 +310,26 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Set list ordered
      *
-     * @param UserEntityInterface              $user    User to check for rights to list
-     * @param FinnaResourceListEntityInterface $list    List entity or id of the list
-     * @param Parameters                       $request Parameters to get values from
+     * @param UserEntityInterface              $user      User to check for rights to list
+     * @param FinnaResourceListEntityInterface $list      List entity or id of the list
+     * @param array                            $newValues New values to update as key value pairs
      *
      * @return void
      */
     public function setListOrdered(
         UserEntityInterface $user,
         FinnaResourceListEntityInterface $list,
-        Parameters $request
+        array $newValues
     ): void {
         if (!$this->userCanEditList($user, $list)) {
             throw new ListPermissionException('list_access_denied');
         }
-        $list->setPickupDate(DateTime::createFromFormat('Y-m-d', $request->get('pickup_date')))->setOrdered();
+        if (!isset($newValues['pickup_date'])) {
+            throw new Exception('Missing pickup date');
+        }
+        $list->setPickupDate(DateTime::createFromFormat('Y-m-d', $newValues['pickup_date']))->setOrdered();
+        $list->setExternalId($newValues['external_id'] ?? null);
+        $list->setConnection($newValues['connection'] ?? self::DEFAULT_CONNECTION_HANDLER);
         $this->resourceListService->persistEntity($list);
     }
 
@@ -321,9 +362,9 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * Update and save the list object using a request object -- useful for
      * sharing form processing between multiple actions.
      *
-     * @param FinnaResourceListEntityInterface $list    List to update
-     * @param UserEntityInterface              $user    Logged-in user
-     * @param Parameters                       $request Request to process
+     * @param FinnaResourceListEntityInterface $list       List to update
+     * @param UserEntityInterface              $user       Logged-in user
+     * @param array                            $listValues List values as key value pairs
      *
      * @return int ID of newly created row
      * @throws ListPermissionException
@@ -332,17 +373,41 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     public function updateListFromRequest(
         FinnaResourceListEntityInterface $list,
         UserEntityInterface $user,
-        Parameters $request
+        array $listValues
     ): int {
-        $list->setTitle($request->get('title'))
-            ->setDescription($request->get('desc'))
-            ->setInstitution($request->get('institution'))
-            ->setListConfigIdentifier($request->get('listIdentifier'))
-            ->setUser($user)
-            ->setListType(self::RESOURCE_LIST_TYPE)
-            ->setConnection($request->get('connection', 'database'));
+        $list = $this->populateListValues($list, $user, $listValues);
         $this->saveListForUser($list, $user);
         return $list->getId();
+    }
+
+    /**
+     * Populate list with values, useful for cases where the list is not saved instantly.
+     *
+     * @param FinnaResourceListEntityInterface $list       List to update
+     * @param UserEntityInterface              $user       Logged-in user
+     * @param array                            $listValues List values as key value pairs
+     *
+     * @return FinnaResourceListEntityInterface List populated
+     * @throws ListPermissionException
+     * @throws MissingFieldException
+     */
+    public function populateListValues(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user,
+        array $listValues
+    ): FinnaResourceListEntityInterface {
+        try {
+            $list->setTitle($listValues['title'])
+                ->setDescription($listValues['desc'])
+                ->setInstitution($listValues['institution'])
+                ->setListConfigIdentifier($listValues['listIdentifier'])
+                ->setUser($user)
+                ->setListType(self::RESOURCE_LIST_TYPE)
+                ->setConnection($listValues['connection']);
+        } catch (TypeError $e) {
+            throw new Exception('Missing values to populate list');
+        }
+        return $list;
     }
 
     /**
@@ -389,12 +454,12 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Get resource list as an array containing formatted dates to be displayed in templates
      *
-     * @param int                 $listId List id
-     * @param UserEntityInterface $user   User entity object
+     * @param int                  $listId List id
+     * @param ?UserEntityInterface $user   User entity object
      *
      * @return FinnaResourceListEntityInterface
      */
-    public function getListById(int $listId, UserEntityInterface $user = null): FinnaResourceListEntityInterface
+    public function getListById(int $listId, ?UserEntityInterface $user = null): FinnaResourceListEntityInterface
     {
         $list = $this->resourceListService->getResourceListById($listId);
         // Validate incoming list ID:
@@ -473,15 +538,15 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     /**
      * Get lists containing a specific record.
      *
-     * @param UserEntityInterface $user           User entity object or ID
-     * @param DefaultRecord       $record         Resource entity to look for
-     * @param string              $listIdentifier Identifier of the list used by institution
-     * @param string              $institution    Institution name
+     * @param ?UserEntityInterface $user           User entity object or ID
+     * @param DefaultRecord        $record         Resource entity to look for
+     * @param string               $listIdentifier Identifier of the list used by institution
+     * @param string               $institution    Institution name
      *
      * @return FinnaResourceListEntityInterface[]
      */
     public function getListsContainingRecord(
-        UserEntityInterface $user = null,
+        ?UserEntityInterface $user,
         DefaultRecord $record,
         string $listIdentifier = '',
         string $institution = ''
@@ -494,5 +559,71 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             $institution,
             self::RESOURCE_LIST_TYPE
         );
+    }
+
+    /**
+     * Get list properties defined by institution and list identifier in ReservationList.yaml,
+     * institution specified information and
+     * formed translation_keys for the list.
+     *
+     * Institution information contains keys and values:
+     *     - name => Example institution name
+     *     - address => Example institution address
+     *     - postal => Example institution postal
+     *     - city => Example institution city
+     *     - email => Example institution email
+     *
+     * Translation keys formed:
+     *     - title => list_title_{$institution}_{$listIdentifier},
+     *     - description => list_description_{$institution}_{$listIdentifier},
+     *
+     * @param string $institution    Lists controlling institution
+     * @param string $listIdentifier List identifier
+     *
+     * @return array
+     */
+    public function getListProperties(
+        string $institution,
+        string $listIdentifier
+    ): array {
+        foreach ($this->reservationListConfig['Institutions'][$institution]['Lists'] ?? [] as $list) {
+            $list = $this->ensureListKeys($list);
+            if ($list['Identifier'] === $listIdentifier) {
+                return [
+                    'properties' => $list,
+                    'institution_information'
+                        => $this->reservationListConfig['Institutions'][$institution]['Information'] ?? [],
+                    'translation_keys' => [
+                        'title' => "ReservationList::list_title_{$institution}_{$listIdentifier}",
+                        'description' => "ReservationList::list_description_{$institution}_{$listIdentifier}",
+                    ],
+                ];
+            }
+        }
+        return [
+            'properties' => self::RESERVATION_LIST_DEFAULT_VALUES,
+            'institution_information' => [],
+            'translation_keys' => [
+                'title' => '',
+                'description' => '',
+            ],
+        ];
+    }
+
+    /**
+     * Ensure that lists have all the required keys defined needed in other places.
+     * Sets the list disabled if list identifier is not set or is not a string.
+     *
+     * @param array $list Properties of the list to ensure
+     *
+     * @return array
+     */
+    public function ensureListKeys(array $list): array
+    {
+        $merged = array_merge(self::RESERVATION_LIST_DEFAULT_VALUES, $list);
+        if (!is_string($merged['Identifier'])) {
+            $merged['Enabled'] = false;
+        }
+        return $merged;
     }
 }

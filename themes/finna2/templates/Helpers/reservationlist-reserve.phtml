@@ -6,7 +6,7 @@ return;
 <?php
   $user = $this->auth()->getManager()->getUserObject();
 ?>
-<div class="record-holdings-table table reservation-request-table">
+<div class="record-holdings-table reservation-request-table">
   <div class="headers">
     <span class="holdings-title"><?=$this->transEsc('ReservationList::Add To Reservation List')?></span>
   </div>
@@ -24,22 +24,24 @@ return;
             <?php endif; ?>
           </div>
           <div class="location-link text-right">
-            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-additemtolist', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox="" data-toggle="modal" data-target="" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Add To Reservation List'])?></a>
+            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorderoptions', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $institution, 'listIdentifier' => $list['Identifier']]]))?>" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Reserve Resource'])?></a>
           </div>
         </div>
       </div>
     <?php endforeach; ?>
   <?php endforeach; ?>
   <?php if ($listsContainingRecord = $this->reservationList($user)->getListsContainingRecord($this->driver)): ?>
-    <div class="saved-reservation-lists alert-info savedLists loaded">
-      <strong><?=$this->transEsc('Saved in')?>:</strong><br/>
-      <ul>
-        <?php foreach ($listsContainingRecord as $list): ?>
-          <li>
-            <a href="<?= $this->url('reservationlist-displaylist', ['id' => $list->getId()]) ?>"><?= $this->escapeHtml($list->getTitle()); ?></a><br/>
-          </li>
-        <?php endforeach; ?>
-      </ul>
+    <div class="holdings-group saved-reservation-lists">
+      <div class="alert alert-info savedLists loaded">
+        <strong><?=$this->transEsc('Saved in')?>:</strong><br>
+        <ul>
+          <?php foreach ($listsContainingRecord as $list): ?>
+            <li>
+              <a href="<?= $this->url('reservationlist-displaylist', ['listId' => $list->getId()]) ?>"><?= $this->escapeHtml($list->getTitle()); ?></a><br>
+            </li>
+          <?php endforeach; ?>
+        </ul>
+      </div>
     </div>
   <?php endif; ?>
 </div>

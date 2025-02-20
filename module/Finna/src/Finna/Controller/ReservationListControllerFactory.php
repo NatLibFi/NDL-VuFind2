@@ -3,7 +3,7 @@
 /**
  * Reservation list controller factory.
  *
- * PHP version 8.1
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -65,7 +65,7 @@ class ReservationListControllerFactory extends AbstractBaseFactory
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
@@ -76,6 +76,7 @@ class ReservationListControllerFactory extends AbstractBaseFactory
             [
                 $container->get(\Finna\ReservationList\ReservationListService::class),
                 $container->get('ViewHelperManager')->get('reservationList'),
+                $container->get(\Finna\ReservationList\Handler\PluginManager::class),
             ]
         );
     }

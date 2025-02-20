@@ -1031,7 +1031,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options
      *
      * @throws \VuFind\Exception\ILS
@@ -1041,7 +1041,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $function = 'GetHoldings';
         $functionResult = 'GetHoldingResult';
@@ -1120,11 +1120,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      *
      * @param array  $organisationHoldings Organisation holdings
      * @param string $id                   The record id to retrieve the holdings
-     * @param array  $journalInfo          Jornal information
+     * @param ?array $journalInfo          Jornal information
      *
      * @return array
      */
-    protected function parseHoldings($organisationHoldings, $id, $journalInfo = null)
+    protected function parseHoldings(array $organisationHoldings, string $id, ?array $journalInfo = null)
     {
         if ($organisationHoldings[0]->status == 'noHolding') {
             return [];

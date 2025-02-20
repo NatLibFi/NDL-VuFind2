@@ -882,12 +882,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *          - resourceID    ID to which resource belongs to
      *          - url           Url of the image
      *
-     * @param string            $url          Url of the resourceset
-     * @param string            $type         Type of the image
-     * @param string            $language     Language to get information
-     * @param string            $id           ID of the resourceset
-     * @param string            $format       Format of the image
-     * @param \SimpleXmlElement $measurements Measurements SimpleXmlElement
+     * @param string             $url          Url of the resourceset
+     * @param string             $type         Type of the image
+     * @param string             $language     Language to get information
+     * @param string             $id           ID of the resourceset
+     * @param string             $format       Format of the image
+     * @param ?\SimpleXmlElement $measurements Measurements SimpleXmlElement
      *
      * @return array
      */
@@ -897,7 +897,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $language,
         string $id = '',
         string $format = '',
-        \SimpleXmlElement $measurements = null
+        ?\SimpleXmlElement $measurements = null
     ): array {
         // Check if the image is really an image
         // Original images can be any type and are not displayed
@@ -1268,6 +1268,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             }
         }
         return $this->getAllLanguageSpecificItems($results, $this->getLocale());
+    }
+
+    /**
+     * Get archive type
+     *
+     * @return string
+     */
+    public function getArchiveType(): string
+    {
+        return 'collection';
     }
 
     /**
@@ -2077,11 +2087,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             if (!in_array($type, $this->nonPlaceEvents)) {
                 $displayDate = $node->event->eventDate->displayDate ?? null;
                 if (!empty($displayDate)) {
-                    $date = (string)($this->getLanguageSpecificItem(
-                        $displayDate,
-                        $language
-                    ));
-                    $headings[] = ['data' => $date];
+                    $date = trim((string)$this->getLanguageSpecificItem($displayDate, $language));
+                    if (!empty($date)) {
+                        $headings[] = ['data' => $date];
+                    }
                 }
             }
         }
@@ -2422,8 +2431,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * Get identifiers by type
      *
      * @param bool  $includeType Whether to include identifier type in parenthesis
-     * @param array $include     Type attributes to include
-     * @param array $exclude     Type attributes to exclude
+     * @param array $include     Type and label attributes to include
+     * @param array $exclude     Type and label attributes to exclude
      *
      * @return array
      */
@@ -2439,16 +2448,18 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             ->repositorySet ?? [] as $repository
         ) {
             foreach ($repository->workID ?? [] as $node) {
-                $type = $node->attributes()->type ?? '';
+                $label = trim((string)($node->attributes()->label ?? ''));
+                $type = trim((string)($node->attributes()->type ?? ''));
+                $typesLC = [mb_strtolower($label, 'UTF-8'), mb_strtolower($type, 'UTF-8')];
                 if (
-                    ($include && !in_array($type, $include))
-                    || ($exclude && in_array($type, $exclude))
+                    ($include && !array_intersect($typesLC, $include))
+                    || ($exclude && array_intersect($typesLC, $exclude))
                 ) {
                     continue;
                 }
                 if ($identifier = trim((string)$node ?? '')) {
-                    if ($type && $includeType) {
-                        $identifier .= " ($type)";
+                    if (($label || $type) && $includeType) {
+                        $identifier .= ' (' . ($label ?: $type) . ')';
                     }
                     $results[] = $identifier;
                 }
@@ -2730,7 +2741,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         if ($titleValues) {
             $titleValues = $this->getAllLanguageSpecificItems(
                 $titleValues,
-                $language
+                $language,
+                true
             );
             //Discard values matching the object title
             $titleValues = $this->compareWithTitle($titleValues);

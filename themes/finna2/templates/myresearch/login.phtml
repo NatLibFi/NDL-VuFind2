@@ -4,7 +4,7 @@
   $this->headTitle($this->translate('Login'));
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc('Login') . '</li>';
+  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Login') . '</li>';
 
   // Convenience variables:
   $account = $this->auth()->getManager();
@@ -28,7 +28,7 @@
 <?php else: ?>
   <?php if ($this->fromTermsPage): ?>
     <?php // Force lightbox login to display ?>
-    <div class="flash-message alert-danger hidden"></div>
+    <div class="flash-message alert alert-danger hidden"></div>
   <?php endif; ?>
   <?=$this->auth()->getLogin()?>
 <?php endif; ?>

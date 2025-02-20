@@ -13,6 +13,9 @@
     p {
       margin: 0;
     }
+    &.js-reservation-list-status.pending {
+      display: none;
+    }
   }
   .list-controls {
     margin-top: 10px;
@@ -48,6 +51,7 @@
 }
 .reservation-request-table {
   .reservation-request-buttons {
+    padding: 10px 15px;
     display: flex;
     align-items: center;
     justify-content: start;
@@ -67,8 +71,7 @@
     }
   }
   .saved-reservation-lists {
-    padding: 4px;
-    margin: 2px;
+    padding: 10px 15px;
   }
 }
 

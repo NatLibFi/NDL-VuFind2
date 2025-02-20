@@ -3,7 +3,7 @@
 /**
  * Table Definition for finna_resource_list
  *
- * PHP version 8.1
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2024.
  * Copyright (C) The National Library of Finland 2024.
@@ -59,7 +59,7 @@ class FinnaResourceList extends Gateway implements DbServiceAwareInterface
      * @param Adapter       $adapter Database adapter
      * @param PluginManager $tm      Table manager
      * @param array         $cfg     Laminas configuration
-     * @param RowGateway    $rowObj  Row prototype object (null for default)
+     * @param ?RowGateway   $rowObj  Row prototype object (null for default)
      * @param ?Container    $session Session container (must use same
      * namespace as container provided to \VuFind\View\Helper\Root\UserList).
      * @param string        $table   Name of database table to interface with

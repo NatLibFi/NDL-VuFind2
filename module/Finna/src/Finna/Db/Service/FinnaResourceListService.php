@@ -3,7 +3,7 @@
 /**
  * Resource list service
  *
- * PHP version 8.1
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2024.
  *
@@ -93,7 +93,7 @@ class FinnaResourceListService extends AbstractDbService implements
         ResourceEntityInterface $resource,
         string $listIdentifier = '',
         string $institution = '',
-        string $listType = null
+        ?string $listType = null
     ): array {
         $listsContaining = iterator_to_array(
             $this->getDbTable(FinnaResourceListResource::class)->select(
@@ -159,7 +159,7 @@ class FinnaResourceListService extends AbstractDbService implements
         UserEntityInterface $user,
         string $listIdentifier = '',
         string $institution = '',
-        string $listType = null
+        ?string $listType = null
     ): array {
         $callback = function ($select) use ($user, $listIdentifier, $listType, $institution) {
             $select->where->equalTo('user_id', $user->getId());
@@ -195,7 +195,7 @@ class FinnaResourceListService extends AbstractDbService implements
         ResourceEntityInterface $resource,
         string $listIdentifier = '',
         string $institution = '',
-        string $listType = null
+        ?string $listType = null
     ): array {
         $listsContaining = iterator_to_array(
             $this->getDbTable(FinnaResourceListResource::class)->select(
