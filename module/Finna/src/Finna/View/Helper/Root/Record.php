@@ -1290,6 +1290,22 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * 
+     */
+    public function renderTemplate($name, $context = null, $throw = true, $checkLegacy = true)
+    {
+        if ($checkLegacy) {
+            // Check if the requested template is marked as a legacy template.
+            // If so, download required template from the legacy/ path
+            // This is usually required if the Site has template overwritten inside a custom theme
+            $className = get_class($this->driver);
+            $legacyHelper = $this->getView()->plugin('legacy');
+            $name = ($legacyHelper)($name, $className);
+        }
+        return parent::renderTemplate($name, $context, $throw);
+    }
+
+    /**
      * Returns a translated copyright text.
      *
      * @param string $copyright Copyright
