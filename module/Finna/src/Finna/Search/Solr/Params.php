@@ -30,7 +30,7 @@
 
 namespace Finna\Search\Solr;
 
-use Laminas\Config\Config;
+use VuFind\Config\Config;
 use VuFind\Solr\Utils;
 
 use function in_array;
@@ -700,11 +700,11 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize facet limit from a Config object.
      *
-     * @param Config $config Configuration
+     * @param ?Config $config Configuration
      *
      * @return void
      */
-    protected function initFacetLimitsFromConfig(Config $config = null)
+    protected function initFacetLimitsFromConfig(?Config $config = null)
     {
         parent::initFacetLimitsFromConfig($config);
         $this->constrainFacetLimits();
