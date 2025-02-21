@@ -149,4 +149,56 @@ class Comments extends \VuFind\Db\Table\Comments
         };
         return $callback;
     }
+
+    /**
+     * Get all comments by a given user ID
+     *
+     * @return \Laminas\Paginator\Paginator
+     */
+    public function getByUserId($userId, $limit, $page)
+    {
+        $sql = $this->getSql();
+        $select = $sql->select();
+        $select->where->equalTo('comments.user_id', $userId);
+        $select->join(
+            ['r' => 'ratings'],
+            'comments.user_id = r.user_id and comments.resource_id = r.resource_id',
+            ['rating']
+        )->join(
+            ['re' => 'resource'],
+            'comments.resource_id = re.id',
+            ['record_id']
+        );
+        if ($limit > 0 ) {
+            $select->limit($limit);
+        }
+        if (null !== $page) {
+            $select->limit($limit);
+            $select->offset($limit * ($page - 1));
+        }
+        $adapter = new \Laminas\Paginator\Adapter\LaminasDb\DbSelect($select, $sql);
+        $paginator = new \Laminas\Paginator\Paginator($adapter);
+        $paginator->setItemCountPerPage($limit);
+        if (null !== $page) {
+            $paginator->setCurrentPageNumber($page);
+        }
+        return $paginator;
+    }
+
+    /**
+     * Delete comments by given user and comment ids
+     *
+     * @param array $ids    Array of comment ids
+     * @param int   $userId User ID 
+     *
+     * @return void
+     */
+    public function deleteByIdsAndUserId(array $ids, int $userId): void
+    {
+        $callback = function ($select) use ($ids, $userId) {
+            $select->where->in('id', $ids);
+            $select->where->equalTo('user_id', $userId);
+        };
+        $this->delete($callback);
+    }
 }

@@ -1105,7 +1105,7 @@ $dynamicRoutes = [
 ];
 
 $staticRoutes = [
-    'Comments/MyComments',
+    'Comments/MyComments', 'Comments/DeleteComments',
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',

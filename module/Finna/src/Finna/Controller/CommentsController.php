@@ -100,8 +100,30 @@ class CommentsController extends \VuFind\Controller\AbstractBase
                 ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
+        $limit = $this->fromQuery('limit', 0);
+        $offset = $this->fromQuery('offset', 0);
         $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
-        $comments = $service->getCommentsByUser($user->id);
+        $comments = $service->getCommentsByUser($user->id, $limit, $offset);
         return $this->createViewModel(['comments' => $comments]);
+    }
+
+    public function deleteCommentsAction()
+    {
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->redirect()->toRoute(
+                'default',
+                ['controller' => 'MyResearch', 'action' => 'Login']
+            );
+        }
+        $comments = $this->params()->fromPost('deleteSelectedComments', []);
+        $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
+        $service->deleteByIdsAndUserId($comments, $user->getId());
+
+        return $this->redirect()->toRoute(
+            'default',
+            ['controller' => 'Comments', 'action' => 'MyComments']
+        );
+ 
     }
 }

@@ -1019,8 +1019,14 @@ finna.layout = (function finnaLayout() {
       if (purgeSelected) {
         purgeSelected.toggleAttribute('disabled', checkedHistory === null);
       }
+    } else if (element.closest('form').id === 'select_all_comments') {
+      var checkedComments = document.querySelector('form[name="select_all_comments"] .checkbox input[type=checkbox]:checked');
+      var commentSelected = document.getElementById('deleteSelected');
+      if (commentSelected) {
+        commentSelected.toggleAttribute('disabled', checkedComments === null);
+      }
     }
-  }
+  } 
 
   /**
    * Initialize buttons to select all checkboxes
@@ -1032,6 +1038,11 @@ finna.layout = (function finnaLayout() {
       });
     });
     document.querySelectorAll('form[name="purge_history"] .checkbox').forEach(element => {
+      element.addEventListener('change', function disableButtons() {
+        toggleButtonsForSelected(element);
+      });
+    });
+    document.querySelectorAll('form[name="select_all_comments"] .checkbox').forEach(element => {
       element.addEventListener('change', function disableButtons() {
         toggleButtonsForSelected(element);
       });

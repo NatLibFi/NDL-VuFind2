@@ -117,11 +117,16 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Finn
     /**
      * Get all comments by a given user
      *
-     * @return ?CommentsEntityInterface
+     * @param int $userId User Id
+     * @param int $limit  Limit
+     * @param int $offset Offset
+     *
+     * @return \Laminas\Paginator\Paginator
      */
-    public function getCommentsByUser(int $userId)
+    public function getCommentsByUser(int $userId, int $limit = 0, int $offset = 0)
     {
-        $callback = function ($select) use ($userId) {
+        return $this->getDbTable('Comments')->getByUser($userId, $limit, $offset);
+        $callback = function ($select) use ($userId, $limit, $offset) {
             $select->where->equalTo('comments.user_id', $userId);
             $select->join(
                 ['r' => 'ratings'],
@@ -132,7 +137,26 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Finn
                 'comments.resource_id = re.id',
                 ['record_id']
             );
+            if ($limit > 0 ) {
+                $select->limit($limit);
+            }
+            if ($offset > 0) {
+                $select->offset($offset);
+            }
         };
-        return $this->getDbTable('comments')->select($callback);
+        return iterator_to_array($this->getDbTable('comments')->select($callback));
+    }
+
+    /**
+     * Delete comments by given user and comment ids
+     *
+     * @param array $ids    Array of comment ids
+     * @param int   $userId User ID 
+     *
+     * @return void
+     */
+    public function deleteByIdsAndUserId(array $ids, int $userId): void
+    {
+        $this->getDbTable('Comments')->deleteByIdsAndUserId($ids, $userId);
     }
 }
