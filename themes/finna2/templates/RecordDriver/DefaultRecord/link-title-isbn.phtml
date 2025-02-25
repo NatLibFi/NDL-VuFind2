@@ -1,0 +1,15 @@
+<?php
+  $searchBackendId = $this->driver->getSearchBackendIdentifier();
+  $options = $this->searchOptions($searchBackendId);
+  $searchRoute = $this->searchAction ?: $options->getSearchAction();
+  if (!($isbn = $this->isbn)) {
+    $query = ['lookfor' => $this->lookfor, 'type' => 'AllFields'];
+  } else {
+    $query = ['lookfor' => sprintf('(%s) OR (%s:("%s")^100000)', $this->lookfor, 'isbn', $this->isbn)];
+    }
+  if (($limit = $this->searchMemory()->getLastLimit($searchBackendId))
+    && $limit !== $options->getDefaultLimit()
+  ) {
+    $query['limit'] = $limit;
+  }
+  echo $this->url($searchRoute, [], compact('query'));

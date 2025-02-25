@@ -1116,6 +1116,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
             if (!empty($node->relatedWork->displayObject)) {
                 $title = trim((string)$node->relatedWork->displayObject);
+                if (preg_match('{^(.*)(s\. [0-9]*)$}', $title, $matches)) {
+                    $searchTitle = $matches[1];
+                }
                 $attributes = $node->relatedWork->displayObject->attributes();
                 $label = !empty($attributes->label)
                     ? (string)$attributes->label : '';
@@ -1124,10 +1127,17 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 $termLC = mb_strtolower($term, 'UTF-8');
                 if ($title && in_array($termLC, $publicationTypes)) {
                     $term = $termLC != 'julkaisu' ? $term : '';
+                    foreach ($node->relatedWork->object->objectID ?? [] as $identifier) {
+                        if (preg_match('{^(URN:ISBN:)(.*)}', $identifier, $matches)) {
+                            $isbn = $matches[2];
+                        }
+                    }
                     $results[] = [
                       'title' => $title,
+                      'searchTitle' => $searchTitle ?? $title,
                       'label' => $label ?: $term,
                       'url' => '',
+                      'isbn' => $isbn ?? '',
                     ];
                 }
             }
