@@ -499,7 +499,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get unit dates
+     * Test get images
      *
      * @return void
      */
