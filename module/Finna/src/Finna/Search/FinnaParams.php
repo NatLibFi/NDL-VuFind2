@@ -30,6 +30,7 @@
 namespace Finna\Search;
 
 use function in_array;
+use function is_array;
 use function is_callable;
 
 /**
@@ -43,6 +44,14 @@ use function is_callable;
  */
 trait FinnaParams
 {
+    // Date range index field (VuFind1)
+    public string $spatialDaterangeFieldVF1 = 'search_sdaterange_mv';
+
+    public string $spatialDaterangeFieldTypeVF1 = 'search_sdaterange_mvtype';
+
+    // Default daterange type value
+    public string $spatialDateRangeDefaultType = 'overlap';
+
     /**
      * Build a string for onscreen display showing the
      *   query used in the search (not the filters).
@@ -171,6 +180,80 @@ trait FinnaParams
         }
 
         return false;
+    }
+
+    /**
+     * Initialize date range filter (search_daterange_mv)
+     *
+     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
+     * request.
+     *
+     * @return void
+     */
+    public function initSpatialDateRangeFilter($request): void
+    {
+        $dateRangeField = $this->getDateRangeSearchField();
+        if (!$dateRangeField) {
+            return;
+        }
+        $type = $request->get("{$dateRangeField}_type");
+        if (!$type) {
+            // VuFind 1
+            $type = $request->get($this->spatialDaterangeFieldTypeVF1);
+        }
+        if (!$type) {
+            $type = $this->spatialDateRangeDefaultType;
+        }
+
+        $from = $to = null;
+        $found = false;
+        // Date range filter
+        if (($reqFilters = $request->get('filter')) && is_array($reqFilters)) {
+            foreach ($reqFilters as $f) {
+                [$field, $value] = $this->parseFilter($f);
+                if (
+                    $field == $dateRangeField
+                    || $field == $this->spatialDaterangeFieldVF1
+                ) {
+                    if ($range = $this->parseDateRangeFilter($f)) {
+                        $from = $range['from'];
+                        $to = $range['to'];
+                        if (
+                            isset($range['type'])
+                            && $range['type'] !== $this->spatialDateRangeDefaultType
+                        ) {
+                            $type = $range['type'];
+                        }
+                        $found = true;
+                        break;
+                    }
+                }
+            }
+        }
+
+        // Uninitialized VuFind1 date range query
+        if (!$found && $request->get('sdaterange')) {
+            // Search for VuFind1 search_sdaterange_mvfrom, search_sdaterange_mvto
+            $from = $request->get('search_sdaterange_mvfrom');
+            $to = $request->get('search_sdaterange_mvto');
+            if (!empty($from) || !empty($to)) {
+                if (empty($from)) {
+                    $from = -9999;
+                }
+                if (empty($to)) {
+                    $to = 9999;
+                }
+                $found = true;
+            }
+        }
+
+        if (!$found) {
+            return;
+        }
+
+        // Add filter. The final Solr filter is constructed in getFilterSettings.
+        $filter = "$dateRangeField:$type|[$from TO $to]";
+        parent::addFilter($filter);
     }
 
     /**

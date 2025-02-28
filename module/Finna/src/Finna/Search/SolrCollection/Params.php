@@ -30,7 +30,6 @@
 
 namespace Finna\Search\SolrCollection;
 
-use function is_array;
 use function strlen;
 
 /**
@@ -61,12 +60,6 @@ class Params extends \VuFind\Search\SolrCollection\Params
      */
     protected $dateConverter;
 
-    // Date range index field (VuFind1)
-    public const SPATIAL_DATERANGE_FIELD_VF1 = 'search_sdaterange_mv';
-
-    // Default daterange type value
-    public const DATERANGE_DEFAULT_TYPE = 'overlap';
-
     /**
      * Does the object already contain the specified filter?
      *
@@ -81,7 +74,7 @@ class Params extends \VuFind\Search\SolrCollection\Params
 
         if (
             $field == $this->getDateRangeSearchField()
-            || $field == self::SPATIAL_DATERANGE_FIELD_VF1
+            || $field == $this->spatialDaterangeFieldVF1
         ) {
             // Date range filters are processed
             // separately (see initSpatialDateRangeFilter)
@@ -102,60 +95,6 @@ class Params extends \VuFind\Search\SolrCollection\Params
     {
         parent::initFilters($request);
         $this->initSpatialDateRangeFilter($request);
-    }
-
-    /**
-     * Initialize date range filter (search_daterange_mv)
-     *
-     * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
-     * request.
-     *
-     * @return void
-     */
-    public function initSpatialDateRangeFilter($request)
-    {
-        $dateRangeField = $this->getDateRangeSearchField();
-        if (!$dateRangeField) {
-            return;
-        }
-        $type = $request->get("{$dateRangeField}_type");
-        if (!$type) {
-            $type = self::DATERANGE_DEFAULT_TYPE;
-        }
-
-        $from = $to = null;
-        $found = false;
-        // Date range filter
-        if (($reqFilters = $request->get('filter')) && is_array($reqFilters)) {
-            foreach ($reqFilters as $f) {
-                [$field, $value] = $this->parseFilter($f);
-                if (
-                    $field == $dateRangeField
-                    || $field == self::SPATIAL_DATERANGE_FIELD_VF1
-                ) {
-                    if ($range = $this->parseDateRangeFilter($f)) {
-                        $from = $range['from'];
-                        $to = $range['to'];
-                        if (
-                            isset($range['type'])
-                            && $range['type'] !== self::DATERANGE_DEFAULT_TYPE
-                        ) {
-                            $type = $range['type'];
-                        }
-                        $found = true;
-                        break;
-                    }
-                }
-            }
-        }
-
-        if (!$found) {
-            return;
-        }
-
-        // Add filter. The final Solr filter is constructed in getFilterSettings.
-        $filter = "$dateRangeField:$type|[$from TO $to]";
-        parent::addFilter($filter);
     }
 
     /**
