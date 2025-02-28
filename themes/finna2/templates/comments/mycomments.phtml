@@ -35,12 +35,13 @@
                 <?php endif; ?>
               </td>
               <td><?=$comment['created'] ?? ''?></td>
-              <td><?=$comment['record_id'] ?? ''?><?=$this->url('record', ['id' => $comment['record_id']])?></td>
+              <td><?=($comment['record_id'] ?? '') . ' testi; ' . var_dump($comment['recordLink'])?><?=$this->url('record', ['id' => $comment['record_id']])?></td>
               <td><?=$this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => ['rating' => $comment['rating'], 'count' => 1]])?></td>
               <td><?=$comment['comment'] ?? ''?></td>
           </tr>
         <?php endforeach; ?>
       </table>
     </form>
+    <?=$this->paginationControl($this->comments, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params])?>
   </div>
 </div>

@@ -90,6 +90,7 @@ class CommentsController extends \VuFind\Controller\AbstractBase
     /**
      * Get all comments for the logged in user
      *
+     * @return View
      */
     public function myCommentsAction()
     {
@@ -100,13 +101,31 @@ class CommentsController extends \VuFind\Controller\AbstractBase
                 ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
-        $limit = $this->fromQuery('limit', 0);
-        $offset = $this->fromQuery('offset', 0);
+        $limit = $this->params()->fromQuery('limit', 2);
+        $page = $this->params()->fromQuery('page', 0);
         $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
-        $comments = $service->getCommentsByUser($user->id, $limit, $offset);
-        return $this->createViewModel(['comments' => $comments]);
+        $comments = $service->getCommentsByUser($user->id, $limit, $page);
+        $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
+        $ids = [];
+        foreach ($comments as $comment) {
+            $id = $comment['id'] ?? '';
+            $source = DEFAULT_SEARCH_BACKEND;
+            $ids[] = compact('id', 'source');
+        }
+        $records = $recordLoader->loadBatch($ids, true);
+  //      var_dump(count($records));
+        foreach ($comments as $i => $c) {
+            $c['recordLink'] = $records[$i]->tryMethod('getDedupData');
+       //     $c['recordLink'] = $records[$i]->getMergedRecordData;
+        }
+        return $this->createViewModel(['comments' => $comments, 'params' => $this->params()->fromQuery()]);
     }
 
+    /**
+     * Delete given comments by the logged in user
+     *
+     * @return View
+     */
     public function deleteCommentsAction()
     {
         $user = $this->getUser();

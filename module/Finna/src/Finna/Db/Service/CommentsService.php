@@ -29,6 +29,7 @@
 
 namespace Finna\Db\Service;
 
+use Laminas\Paginator\Paginator;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceAwareTrait;
 use VuFind\Db\Table\DbTableAwareTrait;
@@ -121,11 +122,11 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Finn
      * @param int $limit  Limit
      * @param int $offset Offset
      *
-     * @return \Laminas\Paginator\Paginator
+     * @return Paginator
      */
-    public function getCommentsByUser(int $userId, int $limit = 0, int $offset = 0)
+    public function getCommentsByUser(int $userId, int $limit = 0, int $page = 0): Paginator
     {
-        return $this->getDbTable('Comments')->getByUser($userId, $limit, $offset);
+        return $this->getDbTable('Comments')->getByUserId($userId, $limit, $page);
         $callback = function ($select) use ($userId, $limit, $offset) {
             $select->where->equalTo('comments.user_id', $userId);
             $select->join(
