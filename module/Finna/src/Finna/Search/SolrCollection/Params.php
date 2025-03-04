@@ -30,8 +30,6 @@
 
 namespace Finna\Search\SolrCollection;
 
-use function strlen;
-
 /**
  * Solr Search Parameters
  *
@@ -44,6 +42,7 @@ use function strlen;
  */
 class Params extends \VuFind\Search\SolrCollection\Params
 {
+    use \Finna\Search\DateRangeFilterTrait;
     use \Finna\Search\FinnaParams;
 
     /**
@@ -61,29 +60,6 @@ class Params extends \VuFind\Search\SolrCollection\Params
     protected $dateConverter;
 
     /**
-     * Does the object already contain the specified filter?
-     *
-     * @param string $filter A filter string from url : "field:value"
-     *
-     * @return void
-     */
-    public function addFilter($filter)
-    {
-        // Extract field and value from URL string:
-        [$field, $value] = $this->parseFilter($filter);
-
-        if (
-            $field == $this->getDateRangeSearchField()
-            || $field == $this->spatialDaterangeFieldVF1
-        ) {
-            // Date range filters are processed
-            // separately (see initSpatialDateRangeFilter)
-            return;
-        }
-        parent::addFilter($filter);
-    }
-
-    /**
      * Add filters to the object based on values found in the request object.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
@@ -91,56 +67,9 @@ class Params extends \VuFind\Search\SolrCollection\Params
      *
      * @return void
      */
-    protected function initFilters($request)
+    protected function initFilters($request): void
     {
         parent::initFilters($request);
         $this->initSpatialDateRangeFilter($request);
-    }
-
-    /**
-     * Return current date range filter.
-     *
-     * @return mixed false|array Filter
-     */
-    public function getDateRangeFilter()
-    {
-        $filterList = $this->getFilterList();
-        foreach ($filterList as $facet => $filters) {
-            foreach ($filters as $filter) {
-                if ($this->isDateRangeFilter($filter['field'])) {
-                    return $filter;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Return the current filters as an array of strings ['field:filter']
-     *
-     * @return array $filterQuery
-     */
-    public function getFilterSettings()
-    {
-        $result = parent::getFilterSettings();
-
-        // Special processing for date range filters
-        $dateRangeField = $this->getDateRangeSearchField();
-        if ($dateRangeField) {
-            foreach ($result as &$filter) {
-                $dateRange = strncmp(
-                    $filter,
-                    "$dateRangeField:",
-                    strlen($dateRangeField) + 1
-                ) == 0;
-                if ($dateRange) {
-                    [, $value] = $this->parseFilter($filter);
-                    [$op, $range] = explode('|', $value);
-                    $op = $op == 'within' ? 'Within' : 'Intersects';
-                    $filter = "{!field f=$dateRangeField op=$op}$range";
-                }
-            }
-        }
-        return $result;
     }
 }

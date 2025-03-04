@@ -89,7 +89,7 @@ class Options extends \VuFind\Search\SolrCollection\Options
      *
      * @return string
      */
-    public function getDateRangeSearchField()
+    public function getDateRangeSearchField(): string
     {
         [$field] = explode(':', $this->dateRangeVis);
         return $field;
