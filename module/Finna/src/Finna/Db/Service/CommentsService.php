@@ -124,7 +124,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Finn
      *
      * @return Paginator
      */
-    public function getCommentsByUser(int $userId, int $limit = 0, int $page = 0): Paginator
+    public function getCommentsByUser(int $userId, int $limit = -1, int $page = 0): Paginator
     {
         return $this->getDbTable('Comments')->getByUserId($userId, $limit, $page);
         $callback = function ($select) use ($userId, $limit, $offset) {

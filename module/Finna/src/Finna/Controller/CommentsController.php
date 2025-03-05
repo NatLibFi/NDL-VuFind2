@@ -101,22 +101,21 @@ class CommentsController extends \VuFind\Controller\AbstractBase
                 ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
-        $limit = $this->params()->fromQuery('limit', 2);
+        $limit = $this->params()->fromQuery('limit', -1);
         $page = $this->params()->fromQuery('page', 0);
         $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
         $comments = $service->getCommentsByUser($user->id, $limit, $page);
         $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
         $ids = [];
         foreach ($comments as $comment) {
-            $id = $comment['id'] ?? '';
-            $source = DEFAULT_SEARCH_BACKEND;
-            $ids[] = compact('id', 'source');
+            $ids[] = $comment['source'] . '|' . $comment['record_id'];
         }
         $records = $recordLoader->loadBatch($ids, true);
-  //      var_dump(count($records));
-        foreach ($comments as $i => $c) {
-            $c['recordLink'] = $records[$i]->tryMethod('getDedupData');
-       //     $c['recordLink'] = $records[$i]->getMergedRecordData;
+        if (count($records) > 0) {
+            foreach ($comments as $i => $c) {
+                $c['mergedData'] = $records[$i]->tryMethod('getMergedRecordData');
+                $c['recordTitle'] = $records[$i]->getTitle() ?? '';
+            }
         }
         return $this->createViewModel(['comments' => $comments, 'params' => $this->params()->fromQuery()]);
     }

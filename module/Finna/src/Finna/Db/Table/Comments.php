@@ -163,11 +163,13 @@ class Comments extends \VuFind\Db\Table\Comments
         $select->join(
             ['r' => 'ratings'],
             'comments.user_id = r.user_id and comments.resource_id = r.resource_id',
-            ['rating']
+            ['rating'],
+            $select::JOIN_LEFT
         )->join(
             ['re' => 'resource'],
             'comments.resource_id = re.id',
-            ['record_id']
+            ['record_id', 'source'],
+            $select::JOIN_LEFT
         );
         if ($limit > 0 ) {
             $select->limit($limit);
