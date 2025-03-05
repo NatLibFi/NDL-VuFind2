@@ -907,8 +907,9 @@ $config = [
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrBrowse\Results' => 'VuFind\Search\Solr\ResultsFactory',
-                    'Finna\Search\SolrCollection\Results' => 'VuFind\Search\SolrCollection\ResultsFactory',
+                    'Finna\Search\SolrCollection\Results' => 'Finna\Search\SolrCollection\ResultsFactory',
                     'Finna\Search\L1\Results' => 'Finna\Search\L1\ResultsFactory',
+                    'VuFind\Search\SolrCollection\Results' => 'Finna\Search\SolrCollection\ResultsFactory',
                 ],
                 'aliases' => [
                     'VuFind\Search\Blender\Results' => 'Finna\Search\Blender\Results',
