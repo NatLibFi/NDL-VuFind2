@@ -1,11 +1,11 @@
 <?php
 
 /**
- * User row gateway factory.
+ * OpenIDConnect authentication plugin factory.
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2019.
+ * Copyright (C) R-Bit Technology 2018-2024.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,34 +21,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Db_Row
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Authentication
+ * @author   Josef Moravec <josef.moravec@gmail.com>
+ * @author   Radek Šiman <rbit@rbit.cz>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\Db\Row;
+namespace VuFind\Auth;
 
+use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
+use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Laminas\ServiceManager\Factory\FactoryInterface;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * User row gateway factory.
+ * OpenIDConnect authentication plugin factory.
  *
  * @category VuFind
- * @package  Db_Row
- * @author   Demian Katz <demian.katz@villanova.edu>
+ * @package  Authentication
+ * @author   Josef Moravec <josef.moravec@gmail.com>
+ * @author   Radek Šiman <rbit@rbit.cz>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class UserFactory extends \VuFind\Db\Row\UserFactory
+class OpenIDConnectFactory implements FactoryInterface
 {
-    /**
-     * Class name for private user class.
-     *
-     * @var string
-     */
-    protected $privateUserClass = __NAMESPACE__ . '\PrivateUser';
-
     /**
      * Create an object
      *
@@ -68,12 +67,15 @@ class UserFactory extends \VuFind\Db\Row\UserFactory
         $requestedName,
         ?array $options = null
     ) {
-        $result = parent::__invoke($container, $requestedName, $options);
-        $ils = $container->get(\VuFind\ILS\Connection::class);
-        $result->setILS($ils);
-        // TODO: Use deprecated function set config for bc.
-        $config = $container->get(\VuFind\Config\PluginManager::class)->get('config');
-        $result->setConfig($config);
-        return $result;
+        if (!empty($options)) {
+            throw new \Exception('Unexpected options sent to factory.');
+        }
+        $session = new \Laminas\Session\Container(
+            'OpenIDConnect',
+            $container->get(\Laminas\Session\SessionManager::class)
+        );
+        $config = $container->get(\VuFind\Config\PluginManager::class)->get('OpenIDConnectClient')->toArray();
+        $ilsAuthenticator = $container->get(\VuFind\Auth\ILSAuthenticator::class);
+        return new $requestedName($session, $config, $ilsAuthenticator);
     }
 }
