@@ -2652,9 +2652,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $result[] = $this->stripTrailingPunctuation($this->getSubfield($field, 'h')) ?? '';
             }
         }
-        foreach ($this->stripTrailingPunctuation($this->getFieldArray('979', ['h', 'i'])) as $lang) {
-            $lang = explode(' ', $lang);
-            $result = array_merge($result, $lang);
+        foreach ($this->stripTrailingPunctuation($this->getFieldArray('979', ['h', 'i'], false)) as $lang) {
+            $result[] = $lang;
         }
         return array_unique(array_filter($result));
     }
