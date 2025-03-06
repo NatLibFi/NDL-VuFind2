@@ -125,6 +125,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Publisher or Distributor Number',
             'Record Links',
             'Related Items',
+            'Related Material',
             'Related Places',
             'Scale',
             'Security Classification',

@@ -2657,4 +2657,20 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return array_unique(array_filter($result));
     }
+
+    /**
+     * Get related material from field 777, subfield t
+     *
+     * @return array
+     */
+    public function getRelatedMaterial()
+    {
+        $result = [];
+        foreach ($this->getMarcReader()->getFields('777') as $field) {
+            if ($field['i1'] == 0) {
+                $result[] = $this->stripTrailingPunctuation($this->getSubfield($field, 't')) ?? '';
+            }
+        }
+        return $result;
+    }
 }
