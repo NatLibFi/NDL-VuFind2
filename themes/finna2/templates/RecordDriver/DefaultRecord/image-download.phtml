@@ -37,10 +37,9 @@
                                 if ($dimensions) {
                                     $imageInfoHtml = '<span class="image-dimensions">(' . $this->escapeHtml($dimensions);
                                     if ($imageSize) {
-                                        $imageInfoHtml .= ', ' . $this->escapeHtml($imageSize) . ')</span>';
-                                    } else {
-                                        $imageInfoHtml .= ')</span>';
+                                        $imageInfoHtml .= ', ' . $this->escapeHtml($imageSize);
                                     }
+                                    $imageInfoHtml .= ')</span>';
                                 }
                                 if (!$dimensions && $imageSize) {
                                     $imageInfoHtml = '<span class="image-dimensions">(' . $this->escapeHtml($imageSize) . ')</span>';
