@@ -3,19 +3,26 @@
   <div class="truncate-field">
     <?php foreach ($data as $publication): ?>
       <div class="related-publications">
+      <?php
+        $contentAfterLinkEscaped = '';
+        $searchIsbn = '';
+        if (!empty($publication['isbn'])) {
+          $contentAfterLinkEscaped .= ', ISBN ' . $this->escapeHtml($publication['isbn']);
+          if ($isbn = \VuFindCode\ISBN::normalizeISBN($publication['isbn'])) {
+            $isbnObj = new \VuFindCode\ISBN($isbn);
+            $searchIsbn = $isbnObj->get13();
+          }
+        }
+        if (!empty($publication['label'])) {
+            $contentAfterLinkEscaped .= ' (' . $this->escapeHtml($publication['label']) . ')';
+        }
+        ?>
         <?php if (!empty($publication['url'])): ?>
-          <a href="<?=$this->escapeHtmlAttr($publication['url'])?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($publication['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)"><?=$this->icon('external-link') ?><?=$this->escapeHtml($publication['title'])?></a><?php if (!empty($publication['isbn'])):?>, ISBN <?=$this->escapeHtml($publication['isbn'])?><?php endif; ?><?php if (!empty($publication['label'])): ?> (<?=$this->escapeHtml($publication['label'])?>)<?php endif; ?>
-        <?php elseif (!empty($publication['searchTitle']) or !empty($publication['isbn'])): ?>
-          <?php
-            $searchIsbn = '';
-            if ($isbn = \VuFindCode\ISBN::normalizeISBN($publication['isbn'])) {
-              $isbnObj = new \VuFindCode\ISBN($isbn);
-              $searchIsbn = $isbnObj->get13();
-            }
-          ?>
-          <a class="backlink" title="<?=$this->escapeHtmlAttr($publication['title'])?>" href="<?=$this->record($this->driver)->getLink('title-isbn', $publication['searchTitle'] ?: $publication['title'], params: ['isbn' => $searchIsbn])?>"><?=$this->escapeHtml($publication['title'])?></a><?php if (!empty($publication['isbn'])):?>, ISBN <?=$this->escapeHtml($publication['isbn'])?><?php endif; ?><?php if (!empty($publication['label'])): ?> (<?=$this->escapeHtml($publication['label'])?>)<?php endif; ?>
+          <a href="<?=$this->escapeHtmlAttr($publication['url'])?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($publication['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)"><?=$this->icon('external-link') ?> <?=$this->escapeHtml($publication['title'])?></a><?=$contentAfterLinkEscaped?>
+        <?php elseif ($publication['searchTitle'] or $searchIsbn): ?>
+          <a class="backlink" title="<?=$this->escapeHtmlAttr($publication['title'])?>" href="<?=$this->record($this->driver)->getLink('title-isbn', $publication['searchTitle'], params: ['isbn' => $searchIsbn])?>"><?=$this->escapeHtml($publication['title'])?></a><?=$contentAfterLinkEscaped?>
         <?php else: ?>
-          <?=$this->escapeHtml($publication['title'])?><?php if (!empty($publication['label'])): ?> (<?=$this->escapeHtml($publication['label'])?>)<?php endif; ?>
+          <?=$this->escapeHtml($publication['title'])?><?=$contentAfterLinkEscaped?>
         <?php endif; ?>
       </div>
     <?php endforeach; ?> 
