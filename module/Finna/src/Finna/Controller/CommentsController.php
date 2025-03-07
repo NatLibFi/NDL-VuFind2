@@ -134,9 +134,23 @@ class CommentsController extends \VuFind\Controller\AbstractBase
                 ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
-        $comments = $this->params()->fromPost('deleteSelectedComments', []);
-        $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
-        $service->deleteByIdsAndUserId($comments, $user->getId());
+        $commentsAndRatings = $this->params()->fromPost('deleteSelectedComments', []);
+        $comments = [];
+        $ratings = [];
+        foreach ($commentsAndRatings as $cr) {
+            [$comment, $rating] = explode(':', $cr);
+            if (!empty($comment)) {
+                $comments[] = $comment;
+            }
+            if (!empty($rating)) {
+                $ratings[] = $rating;
+            }
+        }
+        $commentsService = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
+        $commentsService->deleteByIdsAndUserId($comments, $user->getId());
+
+        $ratingsService = $this->getDbService(\VuFind\Db\Service\RatingsServiceInterface::class);
+        $ratingsService->deleteByIdsAndUserId($ratings, $user->getId());
 
         return $this->redirect()->toRoute(
             'default',

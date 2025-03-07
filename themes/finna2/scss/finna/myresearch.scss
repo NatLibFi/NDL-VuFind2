@@ -1051,3 +1051,14 @@ form#renewals, form#update_holds, form#purge_history {
     vertical-align: middle;
   }
 }
+ .my-comments-table {
+  .mycomments-table-hidden {
+    width: 10%;
+  }
+  .mycomments-table-comment {
+    width: 30%;
+  }
+  .finna-tooltip-btn {
+    color: $red;
+  }
+ }

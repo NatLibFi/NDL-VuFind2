@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Database service for Ratings.
+ * Table Definition for ratings
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2024.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,47 +21,39 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Database
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Db_Table
+ * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://vufind.org Main Site
  */
 
-namespace Finna\Db\Service;
-
-use VuFind\Db\Entity\RatingsEntityInterface;
+namespace Finna\Db\Table;
 
 /**
- * Database service for Ratings.
+ * Table Definition for ratings
  *
  * @category VuFind
- * @package  Database
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Db_Table
+ * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://vufind.org Main Site
  */
-class RatingsService extends \VuFind\Db\Service\RatingsService implements FinnaRatingsServiceInterface
+class Ratings extends \VuFind\Db\Table\Ratings
 {
     /**
-     * Create a ratings entity object.
+     * Delete comments by given user and comment ids
      *
-     * @return RatingsEntityInterface
-     */
-    public function createEntity(): RatingsEntityInterface
-    {
-        return $this->getDbTable('Ratings')->createRow();
-    }
-
-    /**
-     * Delete ratings by given user and rating ids
-     *
-     * @param array $ids    Array of rating ids
+     * @param array $ids    Array of comment ids
      * @param int   $userId User ID 
      *
      * @return void
      */
     public function deleteByIdsAndUserId(array $ids, int $userId): void
     {
-        $this->getDbTable('Ratings')->deleteByIdsAndUserId($ids, $userId);
+        $callback = function ($select) use ($ids, $userId) {
+            $select->where->in('id', $ids);
+            $select->where->equalTo('user_id', $userId);
+        };
+        $this->delete($callback);
     }
 }

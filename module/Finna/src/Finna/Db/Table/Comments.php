@@ -29,6 +29,8 @@
 
 namespace Finna\Db\Table;
 
+use Laminas\Db\Sql\Select;
+
 /**
  * Table Definition for comments
  *
@@ -159,25 +161,66 @@ class Comments extends \VuFind\Db\Table\Comments
     {
         $sql = $this->getSql();
         $select = $sql->select();
-        $select->where->equalTo('comments.user_id', $userId);
-        $select->join(
-            ['r' => 'ratings'],
-            'comments.user_id = r.user_id and comments.resource_id = r.resource_id',
-            ['rating'],
-            $select::JOIN_LEFT
-        )->join(
-            ['re' => 'resource'],
-            'comments.resource_id = re.id',
-            ['record_id', 'source'],
-            $select::JOIN_LEFT
-        );
-        if ($limit > 0 ) {
-            $select->limit($limit);
-        }
-        if (null !== $page) {
-            $select->limit($limit);
-            $select->offset($limit * ($page - 1));
-        }
+     //   $select1 = new Select('comments');
+            $resourceSubQuery = new Select();
+            $resourceSubQuery->from('comments')->columns(['resource_id'])->where->equalTo('comments.user_id', $userId);
+            $selectRating = new Select();
+            $selectRating->from('ratings')->columns(['resource_id'])->where->equalTo('ratings.user_id', $userId);
+            $resourceSubQuery->combine(
+                $selectRating,
+                Select::COMBINE_UNION
+            );
+            
+            // Main select
+            $select = new Select();
+            $select->from(['r' => $resourceSubQuery]);
+         //   $select = $resourceSubQuery;
+            $select->join(
+                ['c' => 'comments'],
+                'c.resource_id = r.resource_id',
+                ['comment_id' => 'id', 'comment', 'comment_user_id' => 'user_id', 'finna_visible', 'created'],
+                Select::JOIN_LEFT
+            );
+            
+            $select->join(
+                ['rt' => 'ratings'],
+                'rt.resource_id = r.resource_id',
+                ['rating_id' => 'id', 'rating', 'rating_user_id' => 'user_id', 'rating_created' => 'created'],
+                Select::JOIN_LEFT
+            );
+
+            $select->join(
+                    ['re' => 'resource'],
+                    'c.resource_id = re.id OR rt.resource_id = re.id',
+                    ['record_id', 'source'],
+                    $select::JOIN_LEFT
+                );
+                 
+
+        // $select->where->equalTo('comments.user_id', $userId);
+        // $select->join(
+        //     ['r' => 'ratings'],
+        //     'comments.user_id = r.user_id and comments.resource_id = r.resource_id',
+        //     ['rating', 'rating_id' => 'id'],
+        //     $select::JOIN_LEFT
+        // )->join(
+        //     ['r2' => 'ratings'],
+        //     'comments.user_id = r2.user_id and comments.resource_id = r2.resource_id',
+        //     ['rating', 'rating_id' => 'id'],
+        //     $select::JOIN_RIGHT
+        // )->join(
+        //     ['re' => 'resource'],
+        //     'comments.resource_id = re.id',
+        //     ['record_id', 'source'],
+        //     $select::JOIN_LEFT
+        // );
+        // if ($limit > 0 ) {
+        //     $select->limit($limit);
+        // }
+        // if (null !== $page) {
+        //     $select->limit($limit);
+        //     $select->offset($limit * ($page - 1));
+        // }
         $adapter = new \Laminas\Paginator\Adapter\LaminasDb\DbSelect($select, $sql);
         $paginator = new \Laminas\Paginator\Paginator($adapter);
         $paginator->setItemCountPerPage($limit);
