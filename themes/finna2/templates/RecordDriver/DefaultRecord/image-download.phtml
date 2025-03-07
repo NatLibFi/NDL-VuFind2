@@ -33,20 +33,20 @@
                                     $cleanHeight = preg_replace('/[^0-9]/', '', $height['value']);
                                     $dimensions = "$cleanWidth x $cleanHeight px";
                                 }
-                                $imageInfoHtml = '';
+                                $imageInfo = '';
                                 if ($dimensions) {
-                                    $imageInfoHtml = '<span class="image-dimensions">(' . $this->escapeHtml($dimensions);
+                                    $imageInfo = '(' . $this->escapeHtml($dimensions);
                                     if ($imageSize) {
-                                        $imageInfoHtml .= ', ' . $this->escapeHtml($imageSize);
+                                        $imageInfo .= ', ' . $this->escapeHtml($imageSize);
                                     }
-                                    $imageInfoHtml .= ')</span>';
+                                    $imageInfo .= ')';
                                 }
                                 if (!$dimensions && $imageSize) {
-                                    $imageInfoHtml = '<span class="image-dimensions">(' . $this->escapeHtml($imageSize) . ')</span>';
+                                    $imageInfo = '(' . $this->escapeHtml($imageSize) . ')';
                                 }
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
                             ?>
-                            <li><a class="dropdown-item" download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <?=$imageInfoHtml?>  <?=$this->escapeHtml($info['format'] ?? '')?></a></li>
+                            <li><a class="dropdown-item" download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$imageInfo?></span>  <?=$this->escapeHtml($info['format'] ?? '')?></a></li>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
