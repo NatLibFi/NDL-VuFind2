@@ -35,18 +35,18 @@
                                 }
                                 $imageInfo = '';
                                 if ($dimensions) {
-                                    $imageInfo = '(' . $this->escapeHtml($dimensions);
+                                    $imageInfo = '(' . $dimensions;
                                     if ($imageSize) {
-                                        $imageInfo .= ', ' . $this->escapeHtml($imageSize);
+                                        $imageInfo .= ', ' . $imageSize;
                                     }
                                     $imageInfo .= ')';
                                 }
                                 if (!$dimensions && $imageSize) {
-                                    $imageInfo = '(' . $this->escapeHtml($imageSize) . ')';
+                                    $imageInfo = '(' . $imageSize . ')';
                                 }
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
                             ?>
-                            <li><a class="dropdown-item" download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$imageInfo?></span>  <?=$this->escapeHtml($info['format'] ?? '')?></a></li>
+                            <li><a class="dropdown-item" download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$this->escapeHtml($imageInfo)?></span>  <?=$this->escapeHtml($info['format'] ?? '')?></a></li>
                         <?php endforeach; ?>
                     <?php endforeach; ?>
                 <?php endif; ?>
