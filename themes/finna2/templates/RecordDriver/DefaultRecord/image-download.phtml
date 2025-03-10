@@ -20,30 +20,22 @@
                     <?php foreach ($hiRes as $size => $img): ?>
                         <?php foreach ($img as $key => $info): ?>
                             <?php
-                                $imgSize = $info['data']['size'] ?? [];
-                                $imageSize = '';
-                                if ($imgSize) {
-                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'byte' ? $this->fileSize($imgSize['value']) : '';
-                                }
+                                $imageInfoParts = [];
                                 $width = $info['data']['width'] ?? [];
                                 $height = $info['data']['height'] ?? [];
-                                $dimensions = '';
                                 if (!empty($width['value']) && !empty($height['value']) && $height['unit'] === 'pixel' && $width['unit'] === 'pixel') {
                                     $cleanWidth = preg_replace('/[^0-9]/', '', $width['value']);
                                     $cleanHeight = preg_replace('/[^0-9]/', '', $height['value']);
-                                    $dimensions = "$cleanWidth x $cleanHeight px";
+                                    $imageInfoParts[] = "$cleanWidth x $cleanHeight px";
                                 }
-                                $imageInfo = '';
-                                if ($dimensions) {
-                                    $imageInfo = '(' . $dimensions;
+                                $imgSize = $info['data']['size'] ?? [];
+                                if ($imgSize) {
+                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'byte' ? $this->fileSize($imgSize['value']) : '';
                                     if ($imageSize) {
-                                        $imageInfo .= ', ' . $imageSize;
+                                        $imageInfoParts[] = $imageSize;
                                     }
-                                    $imageInfo .= ')';
                                 }
-                                if (!$dimensions && $imageSize) {
-                                    $imageInfo = '(' . $imageSize . ')';
-                                }
+                                $imageInfo = $imageInfoParts ? '(' . implode(', ', $imageInfoParts) . ')' : '';
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
                             ?>
                             <li><a class="dropdown-item" download="<?=$downloadName?>" href="<?=$this->escapeHtmlAttr($this->url('record-downloadfile', [], ['query' => $info['params']]))?>" rel="nofollow"> <?=$this->transEsc('high_resolution_image')?> <span class="image-dimensions"><?=$this->escapeHtml($imageInfo)?></span>  <?=$this->escapeHtml($info['format'] ?? '')?></a></li>
