@@ -28,12 +28,9 @@
                                     $cleanHeight = preg_replace('/[^0-9]/', '', $height['value']);
                                     $imageInfoParts[] = "$cleanWidth x $cleanHeight px";
                                 }
-                                $imgSize = $info['data']['size'] ?? [];
-                                if ($imgSize) {
-                                    $imageSize = !empty($imgSize['value']) && $imgSize['unit'] === 'byte' ? $this->fileSize($imgSize['value']) : '';
-                                    if ($imageSize) {
-                                        $imageInfoParts[] = $imageSize;
-                                    }
+                                $imageSize = $info['data']['size'] ?? [];
+                                if (!empty($imageSize['value']) && $imageSize['unit'] === 'byte') {
+                                    $imageInfoParts[] = $this->fileSize($imageSize['value']);
                                 }
                                 $imageInfo = $imageInfoParts ? '(' . implode(', ', $imageInfoParts) . ')' : '';
                                 $downloadName = str_replace('.', '-', $this->driver->getUniqueID()) . '-' . ($info['resourceID'] ?? $index) . '-' . $size;
