@@ -492,7 +492,7 @@ $organisation-info-max-w: 400px !default;
                             flex: 1;
 
                             .distance {
-                                color: $brand-success;
+                                color: $success;
                             }
                         }
 
@@ -635,36 +635,6 @@ $organisation-info-max-w: 400px !default;
             @media (min-width: $screen-sm-min) {
                 width: 32%;
                 float: left;
-            }
-        }
-        .personnel {
-            table {
-                th,
-                td {
-                    width: 50%;
-                }
-                th:nth-of-type(2),
-                td:nth-of-type(2) {
-                    display: none;
-                }
-                .job-title {
-                    display: block;
-                }
-            }
-            @media (min-width: $screen-sm-min) {
-                table {
-                    th,
-                    td {
-                        width: calc(100%/3);
-                    }
-                    th:nth-of-type(2),
-                    td:nth-of-type(2) {
-                        display: table-cell;
-                    }
-                    .job-title {
-                        display: none;
-                    }
-                }
             }
         }
         .accessibility-details {

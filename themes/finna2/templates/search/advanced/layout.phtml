@@ -7,11 +7,11 @@
   $this->layout()->searchbox = false;
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li>';
+  $this->layout()->breadcrumbs = '<li class="breadcrumb-item">';
   $lastSearchLink = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
   $this->layout()->breadcrumbs .= !empty($lastSearchLink)
     ? $lastSearchLink : $this->transEsc('Search');
-  $this->layout()->breadcrumbs .= '</li> <li class="active">' . $this->transEsc('Advanced') . '</li>';
+  $this->layout()->breadcrumbs .= '</li> <li class="breadcrumb-item active">' . $this->transEsc('Advanced') . '</li>';
 
   // Set up saved search details:
   if (isset($this->saved) && is_object($this->saved)) {
@@ -91,20 +91,12 @@
       <div class="header-container">
         <h2><?=$this->transEsc('adv_search_label')?></h2>
         <?php if (!$this->translationEmpty("tooltip_{$tooltipSource}_advanced_html")): ?>
-          <?php
-          $tooltipKey = "tooltip_{$tooltipSource}_advanced_html";
-
-          $tooltipElement = [
-            'class' => 'tooltip-' . $tooltipSource . '-advanced',
-            'data-toggle' => 'tooltip',
-            'data-placement' => 'bottom',
-            'data-html' => 'true',
-            'data-original-title' => (!$this->translationEmpty($tooltipKey)) ? $this->translate($tooltipKey) : '',
-          ];
-          ?>
-          <button type="button" <?=$this->htmlElement()->getAttributes($tooltipElement)?>><?=$this->icon('help') ?>
-            <span> <?=$this->transEsc('Help with Advanced Search')?> </span>
-          </button>
+          <?=$this->component('finna-toggletip', [
+            'icon' => 'help',
+            'contentHtml' => $this->translate("tooltip_{$tooltipSource}_advanced_html"),
+            'labelHtml' => $this->transEsc('Help with Advanced Search'),
+            'class' => 'tooltip-pci-advanced pull-right',
+          ])?>
         <?php endif; ?>
       </div>
       <input type="hidden" name="sort" value="relevance">
@@ -139,7 +131,7 @@
               <div class="adv-search-group">
                 <div class="adv-group-match match">
                   <label class="search_bool"><?=$msgSearchMatch?>:</label>
-                  <select name="bool<?=$group ?>[]" id="search_bool<?=$group ?>" class="form-control form-inline">
+                  <select name="bool<?=$group ?>[]" id="search_bool<?=$group ?>" class="form-control form-inline form-select">
                     <option value="AND"<?php if (isset($setSearchGroups[$group]) && 'AND' == $setSearchGroups[$group]):?> selected<?php endif;?>><?=$msgSearchAnd?></option>
                     <option value="OR"<?php if (isset($setSearchGroups[$group]) && 'OR' == $setSearchGroups[$group]):?> selected<?php endif;?>><?=$msgSearchOr?></option>
                     <option value="NOT"<?php if (isset($setSearchGroups[$group]) && 'NOT' == $setSearchGroups[$group]):?> selected<?php endif;?>><?=$msgSearchNot?></option>
@@ -222,7 +214,7 @@
       <div class="group-join-container">
         <div id="groupJoin" class="form text-center">
           <label for="groupJoinOptions"><?=$this->transEsc('adv_search_group_join')?>:</label>
-          <select id="groupJoinOptions" name="join" class="form-control form-inline">
+          <select id="groupJoinOptions" name="join" class="form-control form-inline form-select">
             <option value="AND"<?php if ($searchDetails && $searchDetails->getOperator() == 'ALL'):?> selected<?php endif?>><?= $this->transEsc('group_AND') ?></option>
             <option value="OR"<?php if ($searchDetails && $searchDetails->getOperator() == 'OR'):?> selected<?php endif?>><?= $this->transEsc('group_OR') ?></option>
           </select>

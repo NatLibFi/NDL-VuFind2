@@ -3,7 +3,7 @@
   // Get search results
   $results = $this->tab->getResults();
   $params = $this->tab->getParams();
-  $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1, 'isCollection' => true];
+  $searchDetails = ['results' => $results, 'params' => $params, 'indexStart' => 1, 'isCollection' => true, 'context' => 'CollectionList'];
 ?>
 <div class="collection-list-controls">
   <div class="filter-input">
@@ -17,12 +17,10 @@
           <?php endforeach; ?>
           <input type="hidden" name="view" value="<?=$this->escapeHtmlAttr($params->getView()) ?>">
           <input type="hidden" name="sort" value="<?=$this->escapeHtmlAttr($params->getSort()) ?>">
-          <span class="input-group-btn">
-            <button class="btn btn-primary" type="submit" name="submitButton" >
-              <?=$this->icon('search')?>
-              <span><?=$this->transEsc('Find')?></span>
-            </button>
-          </span>
+          <button class="btn btn-primary" type="submit" name="submitButton" >
+            <?=$this->icon('search')?>
+            <span><?=$this->transEsc('Find')?></span>
+          </button>
       </div>
     </form>
   </div>

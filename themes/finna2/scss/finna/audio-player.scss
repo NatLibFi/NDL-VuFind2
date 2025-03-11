@@ -11,6 +11,9 @@
   .open-link:not(.download-audio) {
     font-size: $font-size-small;
   }
+  .open-link a:focus-visible {
+    outline: 2px solid $action-link-color;
+  }
 }
 
 .audio-accordion {
@@ -28,7 +31,7 @@
 }
 
 .audio-title-wrapper {
-  background-color: $brand-primary;
+  background-color: $primary;
   color: white;
   border-radius: 5px;
   position: relative;
@@ -45,7 +48,7 @@
     display: inline-block;
     border-radius: 10px;
     text-align: center;
-    color: $brand-primary;
+    color: $primary;
     position: absolute;
     top:  calc(50% - 10px);
     left: 5px;
@@ -61,6 +64,9 @@
   .play {
     font-size: 35px;
     color: $action-link-color;
+    &:focus-visible {
+      outline: 2px solid $action-link-color;
+    }
   }
 }
 
@@ -90,7 +96,7 @@
 
 .vjs-audio {
   background: transparent;
-  color: $brand-primary;
+  color: $primary;
   height: 60px !important;
   padding: 0;
   width: 100%;
@@ -119,6 +125,9 @@
       height: 3em;
       position: absolute;
     }
+    > button:focus-visible {
+      outline: 2px solid $action-link-color;
+    }
   }
 
   .vjs-play-control {
@@ -131,7 +140,7 @@
       width: 30px;
       height: 30px;
       border-radius: 15px;
-      background-color: $brand-primary;
+      background-color: $primary;
       color: white;
       left: calc((100% - 30px) / 2);
     }
@@ -146,7 +155,7 @@
     display: block;
     top: 0%;
     width: 15%;
-    padding: 0;   
+    padding: 0;
   }
 
   .vjs-current-time {
@@ -163,7 +172,7 @@
     top: 0;
 
     .vjs-play-progress {
-      background-color: $brand-primary;
+      background-color: $primary;
     }
   }
 

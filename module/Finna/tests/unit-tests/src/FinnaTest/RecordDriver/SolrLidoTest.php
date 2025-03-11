@@ -63,6 +63,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'url' => 'https://gltfmalli.gltf',
                                 'format' => 'gltf',
                                 'type' => 'preview',
+                                'data' => [
+                                    'size' => [
+                                        'unit' => 'byte',
+                                        'value' => '60840000',
+                                    ],
+                                ],
                             ],
                             [
                                 'url' => 'https://glbmalli.glb',
@@ -121,6 +127,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'identifier' => '607642',
                         'downloadable' => true,
                         'resourceDescription' => 'Kuvan selitys',
+                        'cacheSizes' => [
+                            'small' => 'large',
+                            'medium' => 'large',
+                        ],
                     ],
                     [
                         'urls' => [
@@ -170,6 +180,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'identifier' => '607643',
                         'downloadable' => false,
                         'resourceName' => 'Kuvan nimi',
+                        'cacheSizes' => [
+                            'medium' => 'small',
+                        ],
                     ],
                     2 => [
                         'urls' => [
@@ -189,6 +202,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'highResolution' => [],
                         'identifier' => '607644',
                         'downloadable' => true,
+                        'cacheSizes' => [
+                            'small' => 'large',
+                            'medium' => 'large',
+                        ],
                     ],
                 ],
             ],
@@ -213,6 +230,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'type' => 'video/mp4',
                         ],
                         'resourceName' => 'VideoTesti.mp4',
+                        'data' => [
+                            'size' => [
+                                'unit' => 'byte',
+                                'value' => '74576596',
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -861,7 +884,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $record = new SolrLido(
             [],
             [],
-            new \Laminas\Config\Config([])
+            new \VuFind\Config\Config([])
         );
         $record->setRawData(
             [
@@ -1185,11 +1208,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        $config = new \Laminas\Config\Config($config);
+        $config = new \VuFind\Config\Config($config);
         $record = new SolrLido(
             $config,
             $config,
-            new \Laminas\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig)
         );
         $defaultData = [
             'id' => 'knp-247394',

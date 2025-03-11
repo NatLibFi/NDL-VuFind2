@@ -961,15 +961,14 @@ class SolrEad3 extends SolrEad
         ];
         $xml = $this->getXmlRecord();
         $addToResults = function ($imageData) use (&$result) {
+            $imageData = $this->ensureImageSizes($imageData);
             $sizes = ['small', 'medium', 'large'];
             $formatted = $imageData;
             if (!empty($imageData['urls'])) {
                 foreach ($sizes as $size) {
-                    if (!isset($imageData['urls'][$size])) {
-                        $formatted['urls'][$size] = reset($imageData['urls']);
-                    }
-                    if (!isset($imageData['pdf'][$size])) {
-                        $formatted['pdf'][$size] = reset($imageData['pdf']);
+                    $from = $imageData['cacheSizes'][$size] ?? null;
+                    if ($from) {
+                        $formatted['pdf'][$size] = $imageData['pdf'][$from];
                     }
                 }
             }
@@ -1008,9 +1007,7 @@ class SolrEad3 extends SolrEad
                 }
                 // localtype could be defined for daoset or for dao-element
                 $parentType = (string)($attr->localtype ?? '');
-                $parentType = self::IMAGE_MAP[$parentType] ?? self::IMAGE_LARGE;
-                $parentSize = $parentType === self::IMAGE_FULLRES
-                        ? self::IMAGE_LARGE : $parentType;
+                $parentSize = $this->determineImageSize($parentType, self::IMAGE_LARGE);
                 $displayImage = [];
                 $highResolution = [];
                 foreach ($set->dao as $dao) {
@@ -1068,15 +1065,7 @@ class SolrEad3 extends SolrEad
                         ];
                     }
 
-                    if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
-                        if (false === $size) {
-                            $size = $parentSize;
-                        } else {
-                            $size = ($size === self::IMAGE_FULLRES)
-                                ? self::IMAGE_LARGE
-                                : $size;
-                        }
-
+                    if ($size = $this->determineImageSize($type, $parentSize)) {
                         if (isset($displayImage['urls'][$size])) {
                             // Add old stash to results.
                             $displayImage['highResolution'] = $highResolution;
@@ -1128,6 +1117,20 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Determine image size
+     *
+     * @param string $type    Type given in metadata
+     * @param string $default Default to return
+     *
+     * @return string
+     */
+    public function determineImageSize(string $type, string $default = ''): string
+    {
+        $size = self::IMAGE_MAP[$type] ?? $default;
+        return $size === self::IMAGE_FULLRES ? self::IMAGE_LARGE : $size;
+    }
+
+    /**
      * Get an array of physical descriptions of the item.
      *
      * @return array
@@ -1138,8 +1141,8 @@ class SolrEad3 extends SolrEad
         if (!isset($xml->did)) {
             return [];
         }
-        $results = $this->getDisplayLabel($xml->did, 'physdesc');
-        $localeResults = $this->getDisplayLabel($xml->did, 'physdesc', true);
+        $results = $localeResults = [];
+        // Check structured physical descriptions first
         foreach ($xml->did->physdescstructured ?? [] as $desc) {
             $lang = $this->detectNodeLanguage($desc);
             $quantity = trim((string)($desc->quantity ?? ''));
@@ -1151,8 +1154,8 @@ class SolrEad3 extends SolrEad
                 }
             }
         }
-
-        return $localeResults ?: $results;
+        // If no structured descriptions were found, use unstructured descriptions
+        return $localeResults ?: $results ?: $this->getDisplayLabel($xml->did, 'physdesc');
     }
 
     /**

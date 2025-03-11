@@ -5,10 +5,11 @@
 
   // Set up page title:
   $this->headTitle($list ? $list->getTitle() : $this->translate('saved_items'));
+  $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
   // Set up breadcrumbs:
   $currPage = $list ? 'List' : 'saved_items';
-  $this->layout()->breadcrumbs = '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="active">' . $this->transEsc($currPage) . '</li>';
+  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc($currPage) . '</li>';
 
   // Load Javascript dependencies into header:
   $this->headScript()->appendFile('check_item_statuses.js');
@@ -43,7 +44,7 @@
     <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->getId())?>">
     <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->getTitle())?>">
   <?php endif; ?>
-  <div class="clearfix mylist-header hidden-print">
+  <div id="useraccount-content-heading" class="clearfix mylist-header hidden-print" tabindex="0">
     <div>
       <?=$this->flashmessages()?>
     </div>
@@ -167,15 +168,15 @@
       <ul class="dropdown-menu useraccount-confirm">
         <li class="disabled"><?=$this->transEsc('confirm_delete_list_text')?></li>
         <li>
-          <a class="confirm" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-          <a class="cancel" href="#"><?=$this->transEsc('confirm_dialog_no')?></a>
+          <a class="dropdown-item confirm" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+          <a class="dropdown-item cancel" href="#"><?=$this->transEsc('confirm_dialog_no')?></a>
         </li>
       </ul>
     </form>
   <?php endif; ?>
   <div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
     <ul>
-      <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
+      <li class="sidebar-navigation"><?=$this->icon('sidebar-expand', 'expand-icon') ?><?=$this->icon('sidebar-collapse', 'collapse-icon hidden') ?> <?=$this->transEsc('Your Lists')?></li>
     </ul>
   </div>
 

@@ -84,8 +84,9 @@ class RecordController extends \VuFind\Controller\RecordController
     /**
      * Create archive request form and send to correct recipient.
      *
-     * @return \Laminas\View\Model\ViewModel
-     * @throws \Exception
+     * @return     \Laminas\View\Model\ViewModel
+     * @throws     \Exception
+     * @deprecated Use ReservationList::placeSingleOrderAction
      */
     public function archiveRequestAction()
     {
@@ -191,13 +192,13 @@ class RecordController extends \VuFind\Controller\RecordController
      * init() method since we don't want to perform an expensive search twice
      * when homeAction() forwards to another method.
      *
-     * @param ParamBag $params Search backend parameters
-     * @param bool     $force  Set to true to force a reload of the record, even if
+     * @param ?ParamBag $params Search backend parameters
+     * @param bool      $force  Set to true to force a reload of the record, even if
      * already loaded (useful if loading a record using different parameters)
      *
      * @return AbstractRecordDriver
      */
-    protected function loadRecord(ParamBag $params = null, bool $force = false)
+    protected function loadRecord(?ParamBag $params = null, bool $force = false)
     {
         $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
         // 0 = preview record
