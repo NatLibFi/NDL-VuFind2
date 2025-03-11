@@ -1187,6 +1187,20 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'isbn' => '951-746-543-2',
                     ],
                     1 => [
+                        'title' => 'Multiple titles in one field; Should be discarded from search',
+                        'searchTitle' => '',
+                        'label' => 'Julkaistu teoksessa',
+                        'url' => '',
+                        'isbn' => '',
+                    ],
+                    2 => [
+                        'title' => 'Online publication, discarded from search',
+                        'searchTitle' => '',
+                        'label' => 'Verkkojulkaisu',
+                        'url' => '',
+                        'isbn' => '',
+                    ],
+                    3 => [
                         'title' => 'This is a very long title and for better result, only the first 30 words'
                             . ' should be included in search title, which means that its last word should be this.'
                             . ' The rest of the title should be included only in display title.',
@@ -1196,7 +1210,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'url' => '',
                         'isbn' => '951-772-866-2',
                     ],
-                    2 => [
+                    4 => [
                         'title' => 'A publication with no valid ISBN',
                         'searchTitle' => 'A publication with no valid ISBN',
                         'label' => 'kirjallisuus',

@@ -175,6 +175,22 @@
           </relatedWorkSet>
           <relatedWorkSet>
             <relatedWork>
+              <displayObject label="Julkaistu teoksessa">Multiple titles in one field; Should be discarded from search</displayObject>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is reproduced in</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject label="Verkkojulkaisu">Online publication, discarded from search</displayObject>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is reproduced in</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
               <displayObject>This is a very long title and for better result, only the first 30 words should be included in search title, which means that its last word should be this. The rest of the title should be included only in display title.</displayObject>
               <object>
                 <objectWebResource/>
