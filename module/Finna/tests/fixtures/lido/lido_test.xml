@@ -175,7 +175,7 @@
           </relatedWorkSet>
           <relatedWorkSet>
             <relatedWork>
-              <displayObject label="Julkaistu teoksessa">Multiple titles in one field; Should be discarded from search</displayObject>
+              <displayObject>Multiple titles in one field; Should be discarded from search</displayObject>
             </relatedWork>
             <relatedWorkRelType>
               <term>is reproduced in</term>

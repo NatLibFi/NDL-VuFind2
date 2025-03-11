@@ -1189,7 +1189,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     1 => [
                         'title' => 'Multiple titles in one field; Should be discarded from search',
                         'searchTitle' => '',
-                        'label' => 'Julkaistu teoksessa',
+                        'label' => '',
                         'url' => '',
                         'isbn' => '',
                     ],

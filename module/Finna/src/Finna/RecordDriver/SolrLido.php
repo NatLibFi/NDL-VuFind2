@@ -1122,7 +1122,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 $termLC = mb_strtolower($term, 'UTF-8');
                 if (in_array($termLC, $publicationTypes)) {
                     $label = trim((string)($node->relatedWork->displayObject->attributes()->label ?? ''));
-                    $term = $termLC != 'julkaisu' ? $term : '';
+                    $term = !in_array($termLC, ['julkaisu', 'is reproduced in']) ? $term : '';
                     // Check if title can be used as search link.
                     // Discard titles containing excessive information and multiple titles combined in one field.
                     if (
