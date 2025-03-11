@@ -2,10 +2,8 @@
   $searchBackendId = $this->driver->getSearchBackendIdentifier();
   $options = $this->searchOptions($searchBackendId);
   $searchRoute = $this->searchAction ?: $options->getSearchAction();
-  if ($this->lookfor && $isbn = $this->isbn) {
+  if ($isbn = $this->isbn) {
     $query = ['lookfor' => sprintf('(%s) OR (%s:("%s")^100000)', $this->lookfor, 'isbn', $isbn)];
-  } elseif ($isbn = $this->isbn) {
-    $query = ['lookfor' => sprintf('%s:("%s")^100000', 'isbn', $isbn)];
   } else {
     $query = ['lookfor' => $this->lookfor, 'type' => 'AllFields'];
   }
