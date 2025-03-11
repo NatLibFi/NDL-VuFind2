@@ -35,6 +35,7 @@ namespace Finna\RecordDriver;
 
 use VuFind\I18n\TranslatableString;
 
+use function array_slice;
 use function boolval;
 use function call_user_func_array;
 use function count;
@@ -1110,34 +1111,47 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     public function getRelatedPublications()
     {
         $results = [];
-        $publicationTypes = ['kirjallisuus', 'lähteet', 'julkaisu'];
-        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/'
-            . 'relatedWorkSet';
-        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
-            if (!empty($node->relatedWork->displayObject)) {
-                $title = trim((string)$node->relatedWork->displayObject);
-                if (preg_match('{^(.*)(s\. [0-9]*)$}', $title, $matches)) {
-                    $searchTitle = $matches[1];
-                }
-                $attributes = $node->relatedWork->displayObject->attributes();
-                $label = !empty($attributes->label)
-                    ? (string)$attributes->label : '';
-                $term = !empty($node->relatedWorkRelType->term)
-                    ? (string)$node->relatedWorkRelType->term : '';
+        $publicationTypes = ['is reproduced in', 'kirjallisuus', 'lähteet', 'julkaisu'];
+        $titleTypesExcludedFromSearch = ['verkkojulkaisu'];
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata->objectRelationWrap->relatedWorksWrap
+            ->relatedWorkSet ?? [] as $node
+        ) {
+            if ($title = $searchTitle = trim((string)($node->relatedWork->displayObject ?? ''))) {
+                $term = trim((string)($node->relatedWorkRelType->term ?? ''));
                 $termLC = mb_strtolower($term, 'UTF-8');
-                if ($title && in_array($termLC, $publicationTypes)) {
+                if (in_array($termLC, $publicationTypes)) {
+                    $label = trim((string)($node->relatedWork->displayObject->attributes()->label ?? ''));
                     $term = $termLC != 'julkaisu' ? $term : '';
+                    // Check if title can be used as search link.
+                    // Discard titles containing excessive information and multiple titles combined in one field.
+                    if (
+                        in_array(mb_strtolower($label, 'UTF-8'), $titleTypesExcludedFromSearch)
+                        || strlen($searchTitle) > 400
+                        || str_contains($searchTitle, ';')
+                    ) {
+                        $searchTitle = '';
+                    }
+                    // Remove page numbers like "s. 36-38, s. 196" from the end of the search title
+                    if (preg_match('{^(.*?),[s\.,\-–\s\d]+$}', $searchTitle, $matches)) {
+                        $searchTitle = $matches[1];
+                    }
+                    // Limit search title to 30 words for better result
+                    $searchTitle = implode(' ', array_slice(explode(' ', $searchTitle), 0, 30));
+                    $isbn = '';
                     foreach ($node->relatedWork->object->objectID ?? [] as $identifier) {
-                        if (preg_match('{^(URN:ISBN:)(.*)}', $identifier, $matches)) {
-                            $isbn = $matches[2];
+                        $trimmed = trim((string)preg_replace('/\s+/', ' ', $identifier));
+                        if (preg_match('{^(URN:ISBN:)(.*)}', $trimmed, $matches)) {
+                            $isbn = trim($matches[2]);
+                            continue;
                         }
                     }
                     $results[] = [
                       'title' => $title,
-                      'searchTitle' => $searchTitle ?? $title,
+                      'searchTitle' => $searchTitle,
                       'label' => $label ?: $term,
                       'url' => '',
-                      'isbn' => $isbn ?? '',
+                      'isbn' => $isbn,
                     ];
                 }
             }
