@@ -35,7 +35,6 @@ namespace Finna\RecordDriver;
 
 use VuFind\I18n\TranslatableString;
 
-use function array_slice;
 use function boolval;
 use function call_user_func_array;
 use function count;
@@ -1124,7 +1123,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     $label = trim((string)($node->relatedWork->displayObject->attributes()->label ?? ''));
                     $term = !in_array($termLC, ['julkaisu', 'is reproduced in']) ? $term : '';
                     // Check if title can be used as search link.
-                    // Discard titles containing excessive information and multiple titles combined in one field.
+                    // Discard titles that are extremely long as they usually contain excessive information
+                    // or contain semicolons which are commonly used to combine multiple titles in one field.
                     if (
                         in_array(mb_strtolower($label, 'UTF-8'), $titleTypesExcludedFromSearch)
                         || strlen($searchTitle) > 400
@@ -1137,7 +1137,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         $searchTitle = $matches[1];
                     }
                     // Limit search title to 30 words for better result
-                    $searchTitle = implode(' ', array_slice(explode(' ', $searchTitle), 0, 30));
+                    if (preg_match('{((.+?\s+){29}\S*).*}', $searchTitle, $matches)) {
+                        $searchTitle = $matches[1];
+                    }
                     $isbn = '';
                     foreach ($node->relatedWork->object->objectID ?? [] as $identifier) {
                         $trimmed = trim((string)preg_replace('/\s+/', ' ', $identifier));
