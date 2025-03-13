@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr aspect of the Search Multi-class (Options)
+ * Solr Collection aspect of the Search Multi-class (Options)
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\Search\SolrCollection;
 
 /**
- * Solr Search Options
+ * Solr Collection Search Options
  *
  * @category VuFind
  * @package  Search_Solr

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Factory for Solr search params objects.
+ * Factory for Solr Collection search params objects.
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2018.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -35,7 +35,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for Solr search params objects.
+ * Factory for Solr Collection search params objects.
  *
  * @category VuFind
  * @package  Search_Solr

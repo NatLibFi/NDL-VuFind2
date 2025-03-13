@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Search Parameters
+ * Solr Collection Search Parameters
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\Search\SolrCollection;
 
 /**
- * Solr Search Parameters
+ * Solr Collection Search Parameters
  *
  * @category VuFind
  * @package  Search_Solr

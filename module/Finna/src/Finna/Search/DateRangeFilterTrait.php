@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library 2015-2016.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,13 +22,15 @@
  *
  * @category VuFind
  * @package  Search
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 
 namespace Finna\Search;
 
+use function in_array;
 use function is_array;
 use function strlen;
 
@@ -37,13 +39,18 @@ use function strlen;
  *
  * @category VuFind
  * @package  Search
- * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
  */
 trait DateRangeFilterTrait
 {
-    // Date range index field (VuFind1)
+    /**
+     *  Date range index field (VuFind1)
+     *
+     * @var string
+     */
     public string $spatialDateRangeFieldVF1 = 'search_sdaterange_mv';
 
     public string $spatialDateRangeFieldTypeVF1 = 'search_sdaterange_mvtype';
@@ -103,19 +110,20 @@ trait DateRangeFilterTrait
 
         // Special processing for date range filters
         $dateRangeField = $this->getDateRangeSearchField();
-        if ($dateRangeField) {
-            foreach ($result as &$filter) {
-                $dateRange = strncmp(
-                    $filter,
-                    "$dateRangeField:",
-                    strlen($dateRangeField) + 1
-                ) == 0;
-                if ($dateRange) {
-                    [, $value] = $this->parseFilter($filter);
-                    [$op, $range] = explode('|', $value);
-                    $op = $op == 'within' ? 'Within' : 'Intersects';
-                    $filter = "{!field f=$dateRangeField op=$op}$range";
-                }
+        if (!$dateRangeField) {
+            return $result;
+        }
+        foreach ($result as &$filter) {
+            $dateRange = strncmp(
+                $filter,
+                "$dateRangeField:",
+                strlen($dateRangeField) + 1
+            ) == 0;
+            if ($dateRange) {
+                [, $value] = $this->parseFilter($filter);
+                [$op, $range] = explode('|', $value);
+                $op = $op == 'within' ? 'Within' : 'Intersects';
+                $filter = "{!field f=$dateRangeField op=$op}$range";
             }
         }
         return $result;
@@ -151,21 +159,19 @@ trait DateRangeFilterTrait
             foreach ($reqFilters as $f) {
                 [$field, ] = $this->parseFilter($f);
                 if (
-                    $field == $dateRangeField
-                    || $field == $this->spatialDateRangeFieldVF1
+                    in_array($field, [$dateRangeField, $this->spatialDateRangeFieldVF1])
+                    && $range = $this->parseDateRangeFilter($f)
                 ) {
-                    if ($range = $this->parseDateRangeFilter($f)) {
-                        $from = $range['from'];
-                        $to = $range['to'];
-                        if (
-                            isset($range['type'])
-                            && $range['type'] !== $this->spatialDateRangeDefaultType
-                        ) {
-                            $type = $range['type'];
-                        }
-                        $found = true;
-                        break;
+                    $from = $range['from'];
+                    $to = $range['to'];
+                    if (
+                        isset($range['type'])
+                        && $range['type'] !== $this->spatialDateRangeDefaultType
+                    ) {
+                        $type = $range['type'];
                     }
+                    $found = true;
+                    break;
                 }
             }
         }
@@ -175,11 +181,11 @@ trait DateRangeFilterTrait
             // Search for VuFind1 search_sdaterange_mvfrom, search_sdaterange_mvto
             $from = $request->get('search_sdaterange_mvfrom');
             $to = $request->get('search_sdaterange_mvto');
-            if (!empty($from) || !empty($to)) {
-                if (empty($from)) {
+            if ($from || $to) {
+                if (!$from) {
                     $from = -9999;
                 }
-                if (empty($to)) {
+                if (!$to) {
                     $to = 9999;
                 }
                 $found = true;
