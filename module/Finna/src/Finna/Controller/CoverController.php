@@ -75,15 +75,19 @@ class CoverController extends \VuFind\Controller\CoverController
      * @param SessionSettings       $ss           Session settings
      * @param \VuFind\Config\Config $datasources  Data source settings
      * @param \VuFind\Record\Loader $recordLoader Record loader
+     * @param array                 $config       Main config
+     * @param \Finna\File\Loader    $fileLoader   File loader
      */
     public function __construct(
         Loader $loader,
         CachingProxy $proxy,
         SessionSettings $ss,
         \VuFind\Config\Config $datasources,
-        \VuFind\Record\Loader $recordLoader
+        \VuFind\Record\Loader $recordLoader,
+        array $config,
+        protected \Finna\File\Loader $fileLoader
     ) {
-        parent::__construct($loader, $proxy, $ss);
+        parent::__construct($loader, $proxy, $ss, $config);
         $this->datasourceConfig = $datasources;
         $this->recordLoader = $recordLoader;
     }
@@ -176,6 +180,65 @@ class CoverController extends \VuFind\Controller\CoverController
                 }
             }
         }
+        return $response;
+    }
+
+    /**
+     * Pipe an image from provider, without caching. Requires permissions to be used.
+     * Permission must be granted for the datasource in datasources.ini.
+     *
+     * @return \Laminas\Http\Response
+     */
+    protected function pipeAction(): \Laminas\Http\Response
+    {
+        $this->sessionSettings->disableWrite(); // avoid session write timing bug
+        $key = $this->params()->fromHeader('X-API-KEY');
+        // TODO: temporary way of implementing api-key functionality
+        // After permissions and api-keys have been implemented, adjust this to match
+        // the new functionality
+        $passKeys = $this->config['api_keys'] ?? [];
+        $response = $this->getResponse();
+
+        if (!$passKeys || !$key) {
+            $response->setStatusCode(401);
+            return $response;
+        }
+        if (!in_array($key->getFieldValue(), $passKeys)) {
+            $response->setStatusCode(401);
+            return $response;
+        }
+
+        $params = $this->params();
+        $id = $params->fromQuery('id');
+        if (!$id) {
+            $response->setStatusCode(400);
+            return $response;
+        }
+        $driver = $this->recordLoader->load(
+            $id,
+            $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
+        );
+        $datasource = $driver->getDatasource();
+        $datasourceAllowsPiping = $this->datasourceConfig[$datasource]['allow_image_piping'] ?? false;
+        if (!$datasourceAllowsPiping) {
+            $response->setStatusCode(401);
+            return $response;
+        }
+        $size = $this->params()->fromQuery('size');
+        $index = $this->params()->fromQuery('index');
+        $image = $driver->tryMethod('getRecordImage', [$size, $index]);
+        if (!$image) {
+            $response->setStatusCode(404);
+            return $response;
+        }
+        $format = $this->params()->fromQuery('format', 'jpg');
+        $formedFilename = "$id-$index.$format";
+        $success = $this->fileLoader->proxyFileLoad($image['url'], $formedFilename, $format);
+        if (!$success) {
+            $response->setStatusCode(500);
+            return $response;
+        }
+        $response->setStatusCode(200);
         return $response;
     }
 

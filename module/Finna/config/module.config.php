@@ -1128,6 +1128,7 @@ $staticRoutes = [
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
     'LocationService/Modal',
+    'Cover/Pipe',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
     'MyResearch/SaveCustomOrder', 'MyResearch/SaveHistoricLoans',
     'MyResearch/DownloadCheckoutHistory',
