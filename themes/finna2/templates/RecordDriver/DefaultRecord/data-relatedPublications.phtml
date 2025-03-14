@@ -5,13 +5,8 @@
       <div class="related-publications">
       <?php
         $contentAfterLinkEscaped = '';
-        $searchIsbn = '';
         if (!empty($publication['isbn'])) {
           $contentAfterLinkEscaped .= ', ISBN ' . $this->escapeHtml($publication['isbn']);
-          if ($normalized = \VuFindCode\ISBN::normalizeISBN($publication['isbn'])) {
-            $isbnObj = new \VuFindCode\ISBN($normalized);
-            $searchIsbn = $isbnObj->get13();
-          }
         }
         if (!empty($publication['label'])) {
             $contentAfterLinkEscaped .= ' (' . $this->escapeHtml($publication['label']) . ')';
@@ -20,7 +15,7 @@
         <?php if (!empty($publication['url'])): ?>
           <a href="<?=$this->escapeHtmlAttr($publication['url'])?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($publication['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)"><?=$this->icon('external-link') ?> <?=$this->escapeHtml($publication['title'])?></a><?=$contentAfterLinkEscaped?>
         <?php elseif ($publication['searchTitle']): ?>
-          <a class="backlink" title="<?=$this->escapeHtmlAttr($publication['title'])?>" href="<?=$this->record($this->driver)->getLink('title-isbn', $publication['searchTitle'], params: ['isbn' => $searchIsbn])?>"><?=$this->escapeHtml($publication['title'])?></a><?=$contentAfterLinkEscaped?>
+          <a class="backlink" title="<?=$this->escapeHtmlAttr($publication['title'])?>" href="<?=$this->record($this->driver)->getLink('title-isbn', $publication['searchTitle'], params: ['isbn' => $publication['isbn'] ?? ''])?>"><?=$this->escapeHtml($publication['title'])?></a><?=$contentAfterLinkEscaped?>
         <?php else: ?>
           <?=$this->escapeHtml($publication['title'])?><?=$contentAfterLinkEscaped?>
         <?php endif; ?>

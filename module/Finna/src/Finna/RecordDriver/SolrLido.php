@@ -239,6 +239,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     protected $displayDownloadLinks = ['provided_video'];
 
     /**
+     * Array of related work relation types for related publications
+     *
+     * @var array
+     */
+    protected $relatedPulicationRelationTypes = ['is reproduced in', 'kirjallisuus', 'lähteet', 'julkaisu'];
+
+    /**
+     * Array of related publication title labels excluded from search
+     *
+     * @var array
+     */
+    protected $relatedPulicationTitlesExcludedFromSearch = ['verkkojulkaisu'];
+
+    /**
      * Events used for author information.
      *
      * Key is event type, value is priority (lower is more important),
@@ -1110,8 +1124,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     public function getRelatedPublications()
     {
         $results = [];
-        $publicationTypes = ['is reproduced in', 'kirjallisuus', 'lähteet', 'julkaisu'];
-        $titleTypesExcludedFromSearch = ['verkkojulkaisu'];
         foreach (
             $this->getXmlRecord()->lido->descriptiveMetadata->objectRelationWrap->relatedWorksWrap
             ->relatedWorkSet ?? [] as $node
@@ -1119,14 +1131,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             if ($title = $searchTitle = trim((string)($node->relatedWork->displayObject ?? ''))) {
                 $term = trim((string)($node->relatedWorkRelType->term ?? ''));
                 $termLC = mb_strtolower($term, 'UTF-8');
-                if (in_array($termLC, $publicationTypes)) {
+                if (in_array($termLC, $this->relatedPulicationRelationTypes)) {
                     $label = trim((string)($node->relatedWork->displayObject->attributes()->label ?? ''));
                     $term = !in_array($termLC, ['julkaisu', 'is reproduced in']) ? $term : '';
                     // Check if title can be used as search link.
                     // Discard titles that are extremely long as they usually contain excessive information
                     // or contain semicolons which are commonly used to combine multiple titles in one field.
                     if (
-                        in_array(mb_strtolower($label, 'UTF-8'), $titleTypesExcludedFromSearch)
+                        in_array(mb_strtolower($label, 'UTF-8'), $this->relatedPulicationTitlesExcludedFromSearch)
                         || strlen($searchTitle) > 400
                         || str_contains($searchTitle, ';')
                     ) {
