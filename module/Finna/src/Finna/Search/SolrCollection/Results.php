@@ -30,7 +30,7 @@
 namespace Finna\Search\SolrCollection;
 
 /**
- * Solr Collection Search Parameters
+ * Solr Collection Search Results
  *
  * @category VuFind
  * @package  Search_Solr
