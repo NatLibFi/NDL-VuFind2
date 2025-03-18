@@ -56,7 +56,7 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
-class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\LoggerAwareInterface
+class SolrLido extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -366,11 +366,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * - dateTaken   Photo date taken
      * - perspectives Image perspectives
      *
-     * @param string $language Language for textual information
+     * @param string $language   Language for textual information
+     * @param bool   $includePdf Whether to include first PDF file when no image
+     * links are found
      *
      * @return array
      */
-    public function getAllImages($language = null)
+    public function getAllImages($language = null, $includePdf = false)
     {
         $language ??= $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
