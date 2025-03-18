@@ -53,9 +53,18 @@ trait DateRangeFilterTrait
      */
     public string $spatialDateRangeFieldVF1 = 'search_sdaterange_mv';
 
+    /**
+     * Date range index field type (VuFind1)
+     *
+     * @var string
+     */
     public string $spatialDateRangeFieldTypeVF1 = 'search_sdaterange_mvtype';
 
-    // Default date range type value
+    /**
+     * Default date range type value
+     *
+     * @var string
+     */
     public string $spatialDateRangeDefaultType = 'overlap';
 
     /**
