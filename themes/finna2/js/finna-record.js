@@ -494,7 +494,7 @@ finna.record = (function finnaRecord() {
       $recordTabs.find('.' + tabid + '-tab').addClass('active');
       if (accordion.hasClass('initiallyActive')) {
         if (tabid === 'collectionlist' && window.location.search) {
-          $('#keywordFilter_lookfor').focus();
+          $('#keywordFilter_lookfor').trigger('focus');
           $recordTabs.get(0).scrollIntoView({ behavior: 'smooth'});
         }
         removeHashFromLocation();
