@@ -164,8 +164,6 @@ class Comments extends \VuFind\Db\Table\Comments
      */
     public function getByUserId($userId, $limit, $page)
     {
-        $sql = $this->getSql();
-
         // Get all comments, record IDs and ratings if present for the record
         $commentSelect = new Select();
         $commentSelect->from('comments')
@@ -236,7 +234,7 @@ class Comments extends \VuFind\Db\Table\Comments
             $paginatedSelect->limit($limit);
         }
 
-        $adapter = new \Laminas\Paginator\Adapter\LaminasDb\DbSelect($paginatedSelect, $sql);
+        $adapter = new \Laminas\Paginator\Adapter\LaminasDb\DbSelect($paginatedSelect, $this->getSql());
         $paginator = new \Laminas\Paginator\Paginator($adapter);
         $paginator->setItemCountPerPage($limit);
         if (null !== $page) {

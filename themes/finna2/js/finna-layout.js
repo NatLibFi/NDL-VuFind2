@@ -1026,7 +1026,7 @@ finna.layout = (function finnaLayout() {
         commentSelected.toggleAttribute('disabled', checkedComments === null);
       }
     }
-  } 
+  }
 
   /**
    * Initialize buttons to select all checkboxes
