@@ -697,7 +697,6 @@ $config = [
                     'Finna\Db\Table\FinnaRecordViewRecordFormat' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaRecordViewRecordRights' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\FinnaSessionStats' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\Ratings' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\Resource' => 'VuFind\Db\Table\ResourceFactory',
                     'Finna\Db\Table\Search' => 'VuFind\Db\Table\GatewayFactory',
                     'Finna\Db\Table\Transaction' => 'VuFind\Db\Table\GatewayFactory',
@@ -710,7 +709,6 @@ $config = [
                 ],
                 'aliases' => [
                     'VuFind\Db\Table\Comments' => 'Finna\Db\Table\Comments',
-                    'VuFind\Db\Table\Ratings' => 'Finna\Db\Table\Ratings',
                     'VuFind\Db\Table\Resource' => 'Finna\Db\Table\Resource',
                     'VuFind\Db\Table\Search' => 'Finna\Db\Table\Search',
                     'VuFind\Db\Table\User' => 'Finna\Db\Table\User',

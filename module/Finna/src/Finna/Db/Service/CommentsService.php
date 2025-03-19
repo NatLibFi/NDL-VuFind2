@@ -116,48 +116,33 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Finn
     }
 
     /**
-     * Get all comments by a given user
+     * Get all comments and ratings by a given user
      *
      * @param int $userId User Id
      * @param int $limit  Limit
-     * @param int $offset Offset
+     * @param int $page   Page
      *
      * @return Paginator
      */
-    public function getCommentsByUser(int $userId, int $limit = -1, int $page = 0): Paginator
+    public function getCommentsByUserId(int $userId, int $limit, int $page): Paginator
     {
         return $this->getDbTable('Comments')->getByUserId($userId, $limit, $page);
-        $callback = function ($select) use ($userId, $limit, $offset) {
-            $select->where->equalTo('comments.user_id', $userId);
-            $select->join(
-                ['r' => 'ratings'],
-                'comments.user_id = r.user_id and comments.resource_id = r.resource_id',
-                ['rating']
-            )->join(
-                ['re' => 'resource'],
-                'comments.resource_id = re.id',
-                ['record_id']
-            );
-            if ($limit > 0 ) {
-                $select->limit($limit);
-            }
-            if ($offset > 0) {
-                $select->offset($offset);
-            }
-        };
-        return iterator_to_array($this->getDbTable('comments')->select($callback));
     }
 
     /**
      * Delete comments by given user and comment ids
      *
      * @param array $ids    Array of comment ids
-     * @param int   $userId User ID 
+     * @param int   $userId User ID
      *
      * @return void
      */
     public function deleteByIdsAndUserId(array $ids, int $userId): void
     {
-        $this->getDbTable('Comments')->deleteByIdsAndUserId($ids, $userId);
+        $callback = function ($select) use ($ids, $userId) {
+            $select->where->in('id', $ids);
+            $select->where->equalTo('user_id', $userId);
+        };
+        $this->getDbTable('Comments')->delete($callback);
     }
 }

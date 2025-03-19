@@ -56,12 +56,16 @@ class RatingsService extends \VuFind\Db\Service\RatingsService implements FinnaR
      * Delete ratings by given user and rating ids
      *
      * @param array $ids    Array of rating ids
-     * @param int   $userId User ID 
+     * @param int   $userId User ID
      *
      * @return void
      */
     public function deleteByIdsAndUserId(array $ids, int $userId): void
     {
-        $this->getDbTable('Ratings')->deleteByIdsAndUserId($ids, $userId);
+        $callback = function ($select) use ($ids, $userId) {
+            $select->where->in('id', $ids);
+            $select->where->equalTo('user_id', $userId);
+        };
+        $this->getDbTable('Ratings')->delete($callback);
     }
 }

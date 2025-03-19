@@ -1,3 +1,8 @@
+<!-- START of: finna - comments/mycomments.phtml -->
+<?php
+  $user = $this->auth()->getUserObject();
+  $username = $user->getFinnaNickname() ?? $user->getDisplayName();
+?>
 <?php $this->headTitle($this->translate('comments_and_ratings'));?>
 <?=$this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'mycomments']); ?>
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
@@ -5,50 +10,61 @@
     <div class="useraccount-header">
       <h2><?=$this->transEsc('comments_and_ratings')?></h2>
     </div>
+    <div class="mycomments-username"><span class="mycomments-username-text"><?=$this->transEsc('finna_nickname')?>: </span></span><?=$username?></div>
     <?php if (count($this->comments) !== 0): ?>
       <form action="<?=$this->url('comments-deletecomments');?>" name="select_all_comments" id="select_all_comments" method="post">
-        <label>
-          <input type="checkbox" name="selectAll" class="checkbox-select-all">
-          <?=$this->transEsc('select_all_on_page')?>
-        </label>
-        <input type="submit" name="deleteSelected" value="<?=$this->transEscAttr('delete_selected')?>" class="btn btn-danger">
-        <table class="myresearch-table useraccount-table my-comments-table">
-            <?php foreach ($this->comments as $comment):?>
-            <tr>
-                <td class="checkbox-col">
-                  <div class="checkbox-container">
-                    <div class="checkbox">
-                      <label>
-                        <span class="sr-only"><?=$this->transEsc('Select');?></span>
-                        <input class="checkbox-select-item" type="checkbox" name="deleteSelectedComments[]" value="<?=$this->escapeHtmlAttr(($comment['comment_id'] ?? '') . ':' . ($comment['rating_id'] ?? ''))?>" id="checkbox_comment<?=$comment['comment_id'] ?? $comment['rating_id'] ?? ''?>">
-                      </label>
-                    </div>
+        <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
+        <div class="mycomments-controls">
+          <label class="mycomments-select-all">
+            <div class="checkbox-container">
+              <input type="checkbox" name="selectAll" class="checkbox-select-all">
+            </div>
+            <?=$this->transEsc('select_all_on_page')?>
+          </label>
+          <input type="submit" name="submitButton" value="<?=$this->transEscAttr('delete_selected')?>" class="btn btn-danger">
+          <div class="pagination-container">
+            <?=$this->paginationControl($this->comments, 'Sliding', 'Helpers/pagination-simple.phtml', ['params' => $this->params])?>
+          </div>
+        </div>
+        <table class="myresearch-table mycomments-table">
+          <?php foreach ($this->comments as $comment):?>
+            <tr class="myresearch-row">
+              <td class="checkbox-col">
+                <div class="checkbox-container">
+                  <div class="checkbox">
+                    <label>
+                      <span class="sr-only"><?=$this->transEsc('Select');?></span>
+                      <input class="checkbox-select-item" type="checkbox" name="deleteSelectedComments[]" value="<?=$this->escapeHtmlAttr(($comment['comment_id'] ?? '') . ':' . ($comment['rating_id'] ?? ''))?>" id="checkbox_comment<?=$comment['comment_id'] ?? $comment['rating_id'] ?? ''?>">
+                    </label>
                   </div>
-                </td>
-                <td class="mycomments-table-hidden">
-                  <?php if ($comment['finna_visible']): ?>
-                    <?php $tooltipBtn = [
-                        'label' => $this->transEsc('comment_hidden'),
-                        'aria-label' => $this->transEscAttr('comment_hidden'),
-                        'content' => '<h4>' . $this->transEsc('comment_hidden') . '</h4>' . $this->translate('comment_hidden_by_admin_html')
-                    ];?>
-                  <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
-                  <?php endif; ?>
-                </td>
-                <td><?=$comment['created'] ?? $comment['rating_created'] ?? ''?></td>
-                <td>
-                  <div class="truncate-field other-organisation-links" data-rows="1" data-label=<?=$this->transEscAttr('show_instances')?>>
-                    <p><?=$comment['recordTitle']?></p>
-                    <?php foreach ($comment['mergedData']['records'] ?? [] as  $current): ?>
-                      <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
-                        <?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?>
-                      </a>
-                      <br>
-                    <?php endforeach; ?>
-                  </div>
-                </td>
-                <td><?= isset($comment['rating']) ? $this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => ['rating' => $comment['rating'], 'count' => 1]]) : ''?></td>
-                <td class="mycomments-table-comment"><div class="truncate-field" data-rows="1"><?=$this->escapeHtml($comment['comment'] ?? '')?></div></td>
+                </div>
+              </td>
+              <td class="mycomments-table-hidden">
+                <?php if (($comment['finna_visible'] === 0)): ?>
+                  <?php
+                    $tooltipBtn = [
+                      'label' => $this->transEsc('comment_hidden'),
+                      'aria-label' => $this->transEscAttr('comment_hidden'),
+                      'content' => '<h4>' . $this->transEsc('comment_hidden') . '</h4>' . $this->translate('comment_hidden_by_admin_html'),
+                    ];
+                  ?>
+                <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
+                <?php endif; ?>
+              </td>
+              <td><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment['created'] ?? $comment['rating_created'])?></td>
+              <td>
+                <div class="truncate-field other-organisation-links" data-rows="1" data-label="<?=$this->transEscAttr('show_instances')?>">
+                  <p><?=$comment['recordTitle']?></p>
+                  <?php foreach ($comment['mergedData']['records'] ?? [] as  $current): ?>
+                    <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
+                      <?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?>
+                    </a>
+                    <br>
+                  <?php endforeach; ?>
+                </div>
+              </td>
+              <td><?=isset($comment['rating']) ? $this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => ['rating' => $comment['rating'], 'count' => 1]]) : ''?></td>
+              <td class="mycomments-table-comment"><div class="truncate-field" data-rows="1"><?=$this->escapeHtml($comment['comment'] ?? '')?></div></td>
             </tr>
           <?php endforeach; ?>
         </table>
@@ -57,3 +73,4 @@
     <?=$this->paginationControl($this->comments, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params])?>
   </div>
 </div>
+<!-- END of: finna - comments/mycomments.phtml -->

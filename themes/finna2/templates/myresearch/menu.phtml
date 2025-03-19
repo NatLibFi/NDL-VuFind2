@@ -8,6 +8,8 @@
     $ilsOffline = 'ils-none' === $this->ils()->getOfflineMode();
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
     $activeToLower = strtolower($this->active ?? '');
+    $socialConfig = $this->config()->get('config')['Social'];
+    $showMyComments = !empty($socialConfig['comments']) || !empty($socialConfig['rating']);
 
     //Get the data for vertical menu to show lists on correct site
     if ($listOpen) {
@@ -98,7 +100,8 @@
       ],
       'mycomments' => [
         'url' => 'comments-mycomments',
-        'translation' => 'comments_and_ratings'
+        'translation' => 'comments_and_ratings',
+        'show' => $showMyComments,
       ],
       'logout' => [
         'url' => 'myresearch-logout',

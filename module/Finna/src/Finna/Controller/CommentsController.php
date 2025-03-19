@@ -31,6 +31,7 @@
 namespace Finna\Controller;
 
 use Finna\Db\Service\FinnaCommentsServiceInterface;
+use VuFind\Validator\CsrfInterface;
 
 use function assert;
 
@@ -101,21 +102,19 @@ class CommentsController extends \VuFind\Controller\AbstractBase
                 ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
-        $limit = $this->params()->fromQuery('limit', -1);
+        $limit = 50;
         $page = $this->params()->fromQuery('page', 0);
         $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
-        $comments = $service->getCommentsByUser($user->id, $limit, $page);
+        $comments = $service->getCommentsByUserId($user->id, $limit, $page);
         $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
         $ids = [];
         foreach ($comments as $comment) {
             $ids[] = $comment['source'] . '|' . $comment['record_id'];
         }
         $records = $recordLoader->loadBatch($ids, true);
-        if (count($records) > 0) {
-            foreach ($comments as $i => $c) {
-                $c['mergedData'] = $records[$i]->tryMethod('getMergedRecordData');
-                $c['recordTitle'] = $records[$i]->getTitle() ?? '';
-            }
+        foreach ($comments as $i => $c) {
+            $c['mergedData'] = $records[$i]->tryMethod('getMergedRecordData');
+            $c['recordTitle'] = $records[$i]->getTitle() ?? '';
         }
         return $this->createViewModel(['comments' => $comments, 'params' => $this->params()->fromQuery()]);
     }
@@ -134,6 +133,14 @@ class CommentsController extends \VuFind\Controller\AbstractBase
                 ['controller' => 'MyResearch', 'action' => 'Login']
             );
         }
+        if ($this->formWasSubmitted()) {
+            $csrf = $this->getService(CsrfInterface::class);
+            if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
+                throw new \VuFind\Exception\BadRequest(
+                    'error_inconsistent_parameters'
+                );
+            }
+        }
         $commentsAndRatings = $this->params()->fromPost('deleteSelectedComments', []);
         $comments = [];
         $ratings = [];
@@ -146,16 +153,20 @@ class CommentsController extends \VuFind\Controller\AbstractBase
                 $ratings[] = $rating;
             }
         }
-        $commentsService = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
-        $commentsService->deleteByIdsAndUserId($comments, $user->getId());
 
-        $ratingsService = $this->getDbService(\VuFind\Db\Service\RatingsServiceInterface::class);
-        $ratingsService->deleteByIdsAndUserId($ratings, $user->getId());
+        if (!empty($comments)) {
+            $commentsService = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
+            $commentsService->deleteByIdsAndUserId($comments, $user->getId());
+        }
+
+        if (!empty($ratings)) {
+            $ratingsService = $this->getDbService(\VuFind\Db\Service\RatingsServiceInterface::class);
+            $ratingsService->deleteByIdsAndUserId($ratings, $user->getId());
+        }
 
         return $this->redirect()->toRoute(
             'default',
             ['controller' => 'Comments', 'action' => 'MyComments']
         );
- 
     }
 }

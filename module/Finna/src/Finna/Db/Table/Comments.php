@@ -153,97 +153,95 @@ class Comments extends \VuFind\Db\Table\Comments
     }
 
     /**
-     * Get all comments by a given user ID
+     * Get a paginated result of all comments and ratings
+     * made by the user
+     *
+     * @param int $userId User ID
+     * @param int $limit  Limit
+     * @param int $page   Page
      *
      * @return \Laminas\Paginator\Paginator
      */
     public function getByUserId($userId, $limit, $page)
     {
         $sql = $this->getSql();
-        $select = $sql->select();
-     //   $select1 = new Select('comments');
-            $resourceSubQuery = new Select();
-            $resourceSubQuery->from('comments')->columns(['resource_id'])->where->equalTo('comments.user_id', $userId);
-            $selectRating = new Select();
-            $selectRating->from('ratings')->columns(['resource_id'])->where->equalTo('ratings.user_id', $userId);
-            $resourceSubQuery->combine(
-                $selectRating,
-                Select::COMBINE_UNION
-            );
-            
-            // Main select
-            $select = new Select();
-            $select->from(['r' => $resourceSubQuery]);
-         //   $select = $resourceSubQuery;
-            $select->join(
-                ['c' => 'comments'],
-                'c.resource_id = r.resource_id',
-                ['comment_id' => 'id', 'comment', 'comment_user_id' => 'user_id', 'finna_visible', 'created'],
-                Select::JOIN_LEFT
-            );
-            
-            $select->join(
-                ['rt' => 'ratings'],
-                'rt.resource_id = r.resource_id',
-                ['rating_id' => 'id', 'rating', 'rating_user_id' => 'user_id', 'rating_created' => 'created'],
-                Select::JOIN_LEFT
-            );
 
-            $select->join(
-                    ['re' => 'resource'],
-                    'c.resource_id = re.id OR rt.resource_id = re.id',
-                    ['record_id', 'source'],
-                    $select::JOIN_LEFT
-                );
-                 
+        // Get all comments, record IDs and ratings if present for the record
+        $commentSelect = new Select();
+        $commentSelect->from('comments')
+            ->where->equalTo('comments.user_id', $userId);
+        $commentSelect->columns([
+            'resource_id',
+            'comment_id' => 'id',
+            'comment',
+            'user_id',
+            'created',
+            'finna_visible',
+        ])->join(
+            ['r' => 'ratings'],
+            'r.resource_id = comments.resource_id AND r.user_id = comments.user_id',
+            [
+                'rating_id' => 'id',
+                'rating',
+                'rating_user_id' => 'user_id',
+                'rating_created' => 'created',
+            ],
+            Select::JOIN_LEFT
+        )
+        ->join(
+            ['re' => 'resource'],
+            'comments.resource_id = re.id',
+            ['record_id', 'source'],
+            Select::JOIN_LEFT
+        );
 
-        // $select->where->equalTo('comments.user_id', $userId);
-        // $select->join(
-        //     ['r' => 'ratings'],
-        //     'comments.user_id = r.user_id and comments.resource_id = r.resource_id',
-        //     ['rating', 'rating_id' => 'id'],
-        //     $select::JOIN_LEFT
-        // )->join(
-        //     ['r2' => 'ratings'],
-        //     'comments.user_id = r2.user_id and comments.resource_id = r2.resource_id',
-        //     ['rating', 'rating_id' => 'id'],
-        //     $select::JOIN_RIGHT
-        // )->join(
-        //     ['re' => 'resource'],
-        //     'comments.resource_id = re.id',
-        //     ['record_id', 'source'],
-        //     $select::JOIN_LEFT
-        // );
-        // if ($limit > 0 ) {
-        //     $select->limit($limit);
-        // }
-        // if (null !== $page) {
-        //     $select->limit($limit);
-        //     $select->offset($limit * ($page - 1));
-        // }
-        $adapter = new \Laminas\Paginator\Adapter\LaminasDb\DbSelect($select, $sql);
+        // Get all ratings that don't have a comment for the same resource
+        $commentSub = new Select();
+        $commentSub->from('comments')
+            ->columns(['resource_id'])
+            ->where->equalTo('comments.user_id', $userId);
+
+        $ratingSelect = new Select();
+        $ratingSelect->from('ratings')
+        ->columns([
+            'resource_id',
+            'comment_id' => null,
+            'comment' => null,
+            'user_id',
+            'created',
+            'finna_visible' => null,
+            'rating_id' => 'id',
+            'rating',
+            'rating_user_id' => 'user_id',
+            'rating_created' => 'created',
+        ])
+        ->join(
+            ['re' => 'resource'],
+            'ratings.resource_id = re.id',
+            ['record_id', 'source'],
+            Select::JOIN_LEFT
+        )
+        ->where->equalTo('ratings.user_id', $userId)
+        ->where->notIn('ratings.resource_id', $commentSub);
+
+        $commentSelect->combine($ratingSelect, Select::COMBINE_UNION);
+
+        $paginatedSelect = new Select();
+        $paginatedSelect->from(['c' => $commentSelect]);
+        $paginatedSelect->order('created DESC');
+        if ($page > 0) {
+            $paginatedSelect->offset($page);
+        }
+        if (null !== $limit) {
+            $paginatedSelect->limit($limit);
+        }
+
+        $adapter = new \Laminas\Paginator\Adapter\LaminasDb\DbSelect($paginatedSelect, $sql);
         $paginator = new \Laminas\Paginator\Paginator($adapter);
         $paginator->setItemCountPerPage($limit);
         if (null !== $page) {
             $paginator->setCurrentPageNumber($page);
         }
         return $paginator;
-    }
-
-    /**
-     * Delete comments by given user and comment ids
-     *
-     * @param array $ids    Array of comment ids
-     * @param int   $userId User ID 
-     *
-     * @return void
-     */
-    public function deleteByIdsAndUserId(array $ids, int $userId): void
-    {
-        $callback = function ($select) use ($ids, $userId) {
-            $select->where->in('id', $ids);
-            $select->where->equalTo('user_id', $userId);
-        };
-        $this->delete($callback);
     }
 }
