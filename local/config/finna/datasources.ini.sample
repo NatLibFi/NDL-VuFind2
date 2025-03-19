@@ -139,6 +139,6 @@ archiveRequestRequireFilingUnit = true
 ;hidden_record_fields[] = 'Subject'
 
 ; Permissive settings for a datasource
-; Allow piping large images from provider, must have a permission which is granted by the
+; Allow piping images from provider, must have a permission which is granted by the
 ; provider. Used in CoverController::PipeAction.
 ;allow_image_piping = 1
