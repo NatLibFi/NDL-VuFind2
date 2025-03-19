@@ -53,15 +53,19 @@
               </td>
               <td><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment['created'] ?? $comment['rating_created'])?></td>
               <td>
-                <div class="truncate-field other-organisation-links" data-rows="1" data-label="<?=$this->transEscAttr('show_instances')?>">
-                  <p><?=$comment['recordTitle']?></p>
-                  <?php foreach ($comment['mergedData']['records'] ?? [] as  $current): ?>
-                    <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
-                      <?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?>
-                    </a>
-                    <br>
-                  <?php endforeach; ?>
-                </div>
+                <?php if (empty($comment['mergedData'])): ?>
+                  <a href="<?=$this->url('record', ['id' => $comment['record_id']])?>"><?=$comment['recordTitle']?></a>
+                <?php else: ?>
+                  <div class="truncate-field other-organisation-links" data-rows="1" data-label="<?=$this->transEscAttr('show_instances')?>">
+                    <p><?=$comment['recordTitle']?></p>
+                    <?php foreach ($comment['mergedData']['records'] ?? [] as  $current): ?>
+                      <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
+                        <?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?>
+                      </a>
+                      <br>
+                    <?php endforeach; ?>
+                  </div>
+                <?php endif; ?>
               </td>
               <td><?=isset($comment['rating']) ? $this->render('Helpers/star-rating.phtml', ['readonly' => true, 'ratingData' => ['rating' => $comment['rating'], 'count' => 1]]) : ''?></td>
               <td class="mycomments-table-comment"><div class="truncate-field" data-rows="1"><?=$this->escapeHtml($comment['comment'] ?? '')?></div></td>
