@@ -7,11 +7,11 @@
   $this->layout()->searchbox = false;
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li class="breadcrumb">';
+  $this->layout()->breadcrumbs = '<li class="breadcrumb-item">';
   $lastSearchLink = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
   $this->layout()->breadcrumbs .= !empty($lastSearchLink)
     ? $lastSearchLink : $this->transEsc('Search');
-  $this->layout()->breadcrumbs .= '</li> <li class="breadcrumb active">' . $this->transEsc('Advanced') . '</li>';
+  $this->layout()->breadcrumbs .= '</li> <li class="breadcrumb-item active">' . $this->transEsc('Advanced') . '</li>';
 
   // Set up saved search details:
   if (isset($this->saved) && is_object($this->saved)) {
@@ -91,21 +91,12 @@
       <div class="header-container">
         <h2><?=$this->transEsc('adv_search_label')?></h2>
         <?php if (!$this->translationEmpty("tooltip_{$tooltipSource}_advanced_html")): ?>
-          <?php
-          $tooltipKey = "tooltip_{$tooltipSource}_advanced_html";
-
-          $tooltipElement = [
-            'class' => 'tooltip-' . $tooltipSource . '-advanced',
-            'data-bs-toggle' => 'tooltip',
-            'data-bs-placement' => 'bottom',
-            'data-bs-html' => 'true',
-            'data-bs-title' => (!$this->translationEmpty($tooltipKey)) ? $this->translate($tooltipKey) : '',
-            'data-bs-trigger' => 'click',
-          ];
-          ?>
-          <button type="button" <?=$this->htmlElement()->getAttributes($tooltipElement)?>><?=$this->icon('help') ?>
-            <span> <?=$this->transEsc('Help with Advanced Search')?> </span>
-          </button>
+          <?=$this->component('finna-toggletip', [
+            'icon' => 'help',
+            'contentHtml' => $this->translate("tooltip_{$tooltipSource}_advanced_html"),
+            'labelHtml' => $this->transEsc('Help with Advanced Search'),
+            'class' => 'tooltip-pci-advanced pull-right',
+          ])?>
         <?php endif; ?>
       </div>
       <input type="hidden" name="sort" value="relevance">

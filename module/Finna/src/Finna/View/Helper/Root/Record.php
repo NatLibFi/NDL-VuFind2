@@ -39,7 +39,7 @@ use Finna\RecordDriver\SolrAipa;
 use Finna\RecordTab\TabManager;
 use Finna\Search\Solr\AuthorityHelper;
 use Finna\Service\UserPreferenceService;
-use Laminas\Config\Config;
+use VuFind\Config\Config;
 use VuFind\Record\Loader;
 use VuFind\Search\UrlQueryHelper;
 use VuFind\Tags\TagsService;
@@ -408,7 +408,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             $params
         );
 
-        if ($link && $searchTabsFilters) {
+        if ($link && $searchTabsFilters && !in_array($type, ['cites', 'citedBy'])) {
             $prepend = (!str_contains($link, '?')) ? '?' : '&amp;';
 
             $hiddenFilters = null;

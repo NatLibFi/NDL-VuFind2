@@ -55,7 +55,9 @@
     > li {
       max-width: none;
       border: none;
-
+      > h1 {
+        width: 100%;
+      }
       > a {
         padding: 3px 20px;
         &.active {
@@ -119,6 +121,12 @@
   .add-new-list-holder {
     padding: 0 20px;
     margin: 5px 0 10px 0px;
+    #add-new-list-item-btn {
+      border: none;
+      &:not(:hover){
+        background: none;
+      }
+    }
     .add-new-list {
       border: 1px solid $gray-lighter;
       display: -webkit-flex;
@@ -138,7 +146,7 @@
         }
       }
       .list-add-icon {
-        text-align: right;
+        text-align: center;
         width: 20px;
         cursor: pointer;
         color: $action-link-color;

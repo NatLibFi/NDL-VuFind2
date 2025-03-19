@@ -495,6 +495,10 @@ $config = [
                         'Finna\AjaxHandler\GetUserListFactory',
                     'Finna\AjaxHandler\GetUserLists' =>
                         'Finna\AjaxHandler\GetUserListsFactory',
+                    'Finna\AjaxHandler\GetCheckoutHistory' =>
+                        'Finna\AjaxHandler\GetCheckoutHistoryFactory',
+                    'Finna\AjaxHandler\GetCheckoutHistoryFile' =>
+                        'Finna\AjaxHandler\GetCheckoutHistoryFactory',
                     'Finna\AjaxHandler\ReservationList' =>
                         'Finna\AjaxHandler\ReservationListFactory',
                     'Finna\AjaxHandler\ImportFavorites' =>
@@ -517,6 +521,8 @@ $config = [
                     'getAccountNotifications' => 'Finna\AjaxHandler\GetAccountNotifications',
                     'getAuthorityInfo' => 'Finna\AjaxHandler\GetAuthorityInfo',
                     'getAuthorityFullInfo' => 'Finna\AjaxHandler\GetAuthorityFullInfo',
+                    'getCheckoutHistory' => 'Finna\AjaxHandler\GetCheckoutHistory',
+                    'getCheckoutHistoryFile' => 'Finna\AjaxHandler\GetCheckoutHistoryFile',
                     'getContentFeed' => 'Finna\AjaxHandler\GetContentFeed',
                     'getDescription' => 'Finna\AjaxHandler\GetDescription',
                     'getModel' => 'Finna\AjaxHandler\GetModel',
@@ -594,7 +600,7 @@ $config = [
                     'Finna\Db\Row\FinnaRecordViewRecordFormat' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaRecordViewRecordRights' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\FinnaSessionStats' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\PrivateUser' => 'VuFind\Db\Row\UserFactory',
+                    'Finna\Db\Row\PrivateUser' => 'Finna\Db\Row\UserFactory',
                     'Finna\Db\Row\Resource' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Search' => 'VuFind\Db\Row\RowGatewayFactory',
                     'Finna\Db\Row\Session' => 'Finna\Db\Row\SessionFactory',
@@ -795,6 +801,16 @@ $config = [
                     'ontology' => 'Finna\Recommend\Ontology',
                     'ontologydeferred' => 'Finna\Recommend\OntologyDeferred',
                     'sidefacetsdeferred' => 'Finna\Recommend\SideFacetsDeferred',
+                ],
+            ],
+            'recorddataformatter_specs' => [
+                'factories' => [
+                    \Finna\RecordDataFormatter\Specs\DefaultRecord::class
+                        => \VuFind\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                ],
+                'aliases' => [
+                    \VuFind\RecordDataFormatter\Specs\DefaultRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecord::class,
                 ],
             ],
             'resolver_driver' => [
@@ -1094,11 +1110,14 @@ $dynamicRoutes = [
     ],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [
+        'reservationlist-placeorderoptions' => 'PlaceOrderOptions',
         'reservationlist-displaylists' => 'DisplayLists',
-        'reservationlist-displaylist' => 'DisplayList/[:id]',
+        'reservationlist-displaylist' => 'DisplayList/:listId',
+        // Keep :id optional in placeorder routes for compatibility with form logic
         'reservationlist-placeorder' => 'PlaceOrder/[:id]',
-        'reservationlist-deletelist' => 'DeleteList/[:id]',
-        'reservationlist-deletebulk' => 'DeleteBulk/[:id]',
+        'reservationlist-placesingleorder' => 'PlaceSingleOrder/[:id]',
+        'reservationlist-deletelist' => 'DeleteList/:listId',
+        'reservationlist-deletebulk' => 'DeleteBulk/:listId',
         'reservationlist-additemtolist' => 'AddItemToList',
         'reservationlist-createlist' => 'CreateList',
     ],
@@ -1111,8 +1130,8 @@ $staticRoutes = [
     'LibraryCards/ResetPassword',
     'LocationService/Modal',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
-    'MyResearch/DownloadLoanHistory',
     'MyResearch/SaveCustomOrder', 'MyResearch/SaveHistoricLoans',
+    'MyResearch/DownloadCheckoutHistory',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',
     'Search/StreetSearch',

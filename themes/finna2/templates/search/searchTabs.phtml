@@ -20,7 +20,7 @@
           $toggletip = [
             'icon' => 'help',
             'ariaLabel' => $this->translate('Help') . ' - ' . $this->translate($tab['label']),
-            'content' => $this->translate($toggletipKeyHtml),
+            'contentHtml' => $this->translate($toggletipKeyHtml),
             'class' => 'tooltip-' . $tab['label'], // for back-compatibility
           ];
         } else {
@@ -38,7 +38,7 @@
       <?php endforeach; ?>
       <?php if (!$hasSelectedTab && !$this->translationEmpty('temporary_search_tab_title')): ?>
         <li class="nav-item active">
-          <a class="nav-link"><?=$this->transEsc('temporary_search_tab_title')?></a>
+          <a class="nav-link active"><?=$this->transEsc('temporary_search_tab_title')?></a>
         </li>
       <?php endif; ?>
     </ul>

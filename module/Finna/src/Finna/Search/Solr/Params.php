@@ -30,7 +30,7 @@
 
 namespace Finna\Search\Solr;
 
-use Laminas\Config\Config;
+use VuFind\Config\Config;
 use VuFind\Solr\Utils;
 
 use function in_array;
@@ -700,11 +700,11 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Initialize facet limit from a Config object.
      *
-     * @param Config $config Configuration
+     * @param ?Config $config Configuration
      *
      * @return void
      */
-    protected function initFacetLimitsFromConfig(Config $config = null)
+    protected function initFacetLimitsFromConfig(?Config $config = null)
     {
         parent::initFacetLimitsFromConfig($config);
         $this->constrainFacetLimits();
@@ -741,6 +741,13 @@ class Params extends \VuFind\Search\Solr\Params
      */
     public function setSort($sort, $force = false)
     {
+        // We used to include the tie breaker in all sort options, so strip it out before doing anything else so that
+        // any saved searches or links containing it still work properly and display the correct value:
+        if ($sort && ($tieBreaker = $this->getOptions()->getSortTieBreaker())) {
+            if (str_ends_with($sort, ",$tieBreaker")) {
+                $sort = substr($sort, 0, -strlen($tieBreaker) - 1);
+            }
+        }
         if (!$force) {
             // Check if we need to convert the sort to a currently valid option
             // (it must be a prefix of a currently valid option):

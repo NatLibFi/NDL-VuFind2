@@ -2,9 +2,10 @@
 <?php
     // Set up page title:
     $this->headTitle($this->translate('Loan History'));
+    $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li class="breadcrumb"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb active">' . $this->transEsc('Loan History') . '</li>';
+    $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Loan History') . '</li>';
 
     $recordCount = $this->paginator ? $this->paginator->getTotalItemCount() : count($this->transactions ?? []);
     $catalog = $this->ils();
@@ -25,7 +26,7 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <div class="useraccount-header">
+    <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('Loan History')?> (<?=$recordCount;?>)</h2>
     </div>
     <?php if (isset($this->noSupport)): ?>
@@ -89,17 +90,17 @@
                         </div>
                         <?php if (!empty($this->transactions)): ?>
                           <div class="btn-group">
-                            <div class="dropdown loan-history-download">
-                              <button class="btn btn-primary btn-finna-toolbar dropdown-toggle download" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?=$this->transEsc('loan_history_download')?> <span class="caret"></span>
+                            <div class="dropdown loan-history-download js-download-loan-history">
+                              <button class="btn btn-primary btn-finna-toolbar dropdown-toggle download js-history-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <?=$this->transEsc('loan_history_download')?> <?=$this->icon('caret-down')?>
                               </button>
                               <ul class="dropdown-menu dropdown-menu-<?php if ($purgeSelectedAllowed): ?>right<?php else: ?>left<?php endif;?> download">
                                 <li>
                                   <a class="dropdown-item" data-lightbox href="<?=$this->url('myresearch-savehistoricloans') ?>"><?=$this->transEsc('loan_history_save')?></a>
                                 </li>
-                                <?php foreach (['csv', 'ods', 'xlsx'] as $format): ?>
+                                <?php foreach (['csv', 'ods', 'xlsx'] as $formatEsc): ?>
                                   <li>
-                                    <a class="dropdown-item" href="<?=$this->url('myresearch-downloadloanhistory', [], ['query' => ['format' => $format]])?>"><?=$this->transEsc('loan_history_download_' . $format)?></a>
+                                    <a href="<?=$this->url('myresearch-downloadcheckouthistory', [], ['query' => ['format' => $formatEsc]]);?>" class="btn btn-link dropdown-item" data-lightbox="" aria-haspopup="true"><?=$this->transEscWithPrefix('loan_history_download_', $formatEsc)?></a>
                                   </li>
                                 <?php endforeach; ?>
                               </ul>
@@ -183,6 +184,7 @@
                   </tr>
                 <?php endforeach; ?>
               </table>
+              <h3 class="sr-only"><?=$this->transEsc('End of List')?></h3>
               <div class="loan-history-buttons-bottom">
                 <?php if ($purgeAllAllowed): ?>
                   <div class="dropdown loan-history-purge-all">
