@@ -35,6 +35,7 @@ namespace Finna\Controller;
 
 use Finna\Cover\Loader;
 use VuFind\Cover\CachingProxy;
+use VuFind\RecordDriver\Missing;
 use VuFind\Session\Settings as SessionSettings;
 
 use function in_array;
@@ -189,7 +190,7 @@ class CoverController extends \VuFind\Controller\CoverController
      *
      * @return \Laminas\Http\Response
      */
-    protected function pipeAction(): \Laminas\Http\Response
+    public function pipeAction(): \Laminas\Http\Response
     {
         $this->sessionSettings->disableWrite(); // avoid session write timing bug
         $key = $this->params()->fromHeader('X-API-KEY');
@@ -216,8 +217,13 @@ class CoverController extends \VuFind\Controller\CoverController
         }
         $driver = $this->recordLoader->load(
             $id,
-            $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND
+            $params->fromQuery('source') ?? DEFAULT_SEARCH_BACKEND,
+            true
         );
+        if ($driver instanceof Missing) {
+            $response->setStatusCode(404);
+            return $response;
+        }
         $datasource = $driver->getDatasource();
         $datasourceAllowsPiping = $this->datasourceConfig[$datasource]['allow_image_piping'] ?? false;
         if (!$datasourceAllowsPiping) {
@@ -227,7 +233,7 @@ class CoverController extends \VuFind\Controller\CoverController
         $size = $this->params()->fromQuery('size');
         $index = $this->params()->fromQuery('index');
         $image = $driver->tryMethod('getRecordImage', [$size, $index]);
-        if (!$image) {
+        if (!isset($image['url'])) {
             $response->setStatusCode(404);
             return $response;
         }
