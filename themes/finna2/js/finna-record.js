@@ -493,6 +493,10 @@ finna.record = (function finnaRecord() {
     if ($recordTabs.find('.' + tabid + '-tab').length > 0) {
       $recordTabs.find('.' + tabid + '-tab').addClass('active');
       if (accordion.hasClass('initiallyActive')) {
+        if (tabid === 'collectionlist' && window.location.search) {
+          $('#keywordFilter_lookfor').focus();
+          accordion.get(0).scrollIntoView({ behavior: 'smooth'});
+        }
         removeHashFromLocation();
       }
     }
