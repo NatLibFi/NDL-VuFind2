@@ -731,8 +731,6 @@ finna.record = (function finnaRecord() {
     loadRecordDriverRelatedRecords();
     finna.authority.initAuthorityResultInfo();
     initPopovers();
-    console.log(document.activeElement);
-
   }
 
   var my = {
