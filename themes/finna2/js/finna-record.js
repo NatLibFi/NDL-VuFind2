@@ -494,7 +494,6 @@ finna.record = (function finnaRecord() {
       $recordTabs.find('.' + tabid + '-tab').addClass('active');
       if (accordion.hasClass('initiallyActive')) {
         if (tabid === 'collectionlist' && window.location.search) {
-          $('#keywordFilter_lookfor').trigger('focus');
           $recordTabs.get(0).scrollIntoView({ behavior: 'smooth'});
         }
         removeHashFromLocation();
@@ -732,6 +731,8 @@ finna.record = (function finnaRecord() {
     loadRecordDriverRelatedRecords();
     finna.authority.initAuthorityResultInfo();
     initPopovers();
+    console.log(document.activeElement);
+
   }
 
   var my = {
