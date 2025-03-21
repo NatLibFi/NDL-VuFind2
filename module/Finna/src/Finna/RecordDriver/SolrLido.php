@@ -366,9 +366,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * - dateTaken   Photo date taken
      * - perspectives Image perspectives
      *
-     * @param string $language   Language for textual information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param string $language Language for textual information
      *
      * @return array
      */
