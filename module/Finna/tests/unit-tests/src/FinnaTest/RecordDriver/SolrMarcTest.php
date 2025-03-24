@@ -32,7 +32,6 @@ namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrMarc;
 use Generator;
-use VuFind\XSLT\Import\VuFind;
 
 /**
  * SolrMarc Record Driver Test Class
