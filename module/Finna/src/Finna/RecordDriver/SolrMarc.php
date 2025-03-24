@@ -941,6 +941,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $result[] = [
                     'id' => $parentId,
                     'sourceId' => $sourceId,
+                    'linkingId' => '',
                     'title' => $title,
                     'reference' => '',
                     'publishingInfo' => '',
@@ -948,9 +949,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
             return $result;
         }
-
+        $prefixIn003 = $this->getMarcReader()->getField('003');
         foreach ($fields as $field) {
             $id = '';
+            $linkingId = '';
             $title = '';
             $reference = '';
             $publishingInfo = '';
@@ -959,9 +961,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
                     case 'w':
-                        $id = $data;
-                        // Remove any source in parenthesis to create a working link
-                        $id = preg_replace('/\\(.+\\)/', '', $id);
+                        if ($legacyId = $this->getIdFromLinkingField($data)) {
+                            $id = $legacyId;
+                            break;
+                        }
+                        if ($this->getIdFromLinkingField($data, $prefixIn003)) {
+                            $linkingId = $data;
+                        }
                         break;
                     case 't':
                         $title = $this->stripTrailingPunctuation($data, '.-');
@@ -992,6 +998,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
             $result[] = [
                 'id' => $id,
+                'linkingId' => $linkingId,
                 'sourceId' => $sourceId,
                 'title' => $title,
                 'reference' => $reference,
@@ -1864,7 +1871,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             ?? 'id,oclc,dlc,isbn,issn,title';
         $linkTypes = explode(',', $linkTypeSetting);
         $linkFields = $this->getSubfields($field, 'w');
-
+        $prefixIn003 = $this->getMarcReader()->getField('003');
         // Run through the link types specified in the config.
         // For each type, check field for reference
         // If reference found, exit loop and go straight to end
@@ -1912,6 +1919,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     break;
                 case 'title':
                     $link = ['type' => 'title', 'value' => $title];
+                    break;
+                case 'linkingId':
+                    foreach ($linkFields as $current) {
+                        if ($bibLink = $this->getIdFromLinkingField($current, $prefixIn003)) {
+                            $link = ['type' => 'linkingId', 'value' => $current];
+                        }
+                    }
                     break;
             }
             // Exit loop if we have a link

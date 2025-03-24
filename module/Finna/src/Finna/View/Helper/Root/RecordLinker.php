@@ -147,6 +147,8 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
      */
     public function related($link, $source = DEFAULT_SEARCH_BACKEND)
     {
+        $driver = $this->getView()->plugin('record')->getDriver();
+
         if ('identifier' === $link['type']) {
             $urlHelper = $this->getView()->plugin('url');
             $baseUrl = $urlHelper($this->getSearchActionForSource($source));
@@ -154,11 +156,15 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
             $result = $baseUrl
                 . '?lookfor=' . urlencode($link['value'])
                 . '&type=Identifier&jumpto=1';
+        } elseif ('linkingId' === $link['type']) {
+            $urlHelper = $this->getView()->plugin('url');
+            $baseUrl = $urlHelper($this->getSearchActionForSource($source));
+            $result = $baseUrl
+                . '?lookfor=linking_id_str_mv:"' . urlencode($link['value']) . '" AND datasource_str_mv:"'
+                . $driver->getDataSource() . '"&jumpto=1';
         } else {
             $result = parent::related($link, $source);
         }
-
-        $driver = $this->getView()->plugin('record')->getDriver();
 
         $prepend = (!str_contains($result, '?')) ? '?' : '&amp;';
         $hiddenFilters = null;
