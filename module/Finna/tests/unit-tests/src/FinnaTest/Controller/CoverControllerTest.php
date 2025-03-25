@@ -30,11 +30,12 @@
 namespace FinnaTest\Controller;
 
 use Finna\Controller\CoverController;
-use Finna\Controller\CoverControllerFactory;
 use Finna\Cover\Loader;
+use Finna\Db\Service\AccessTokenService;
 use Finna\File\Loader as FileLoader;
 use Finna\RecordDriver\SolrLido;
 use Generator;
+use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Http\Headers;
 use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Stdlib\Parameters;
@@ -42,11 +43,12 @@ use VuFind\Config\Config;
 use VuFind\Config\PluginManager;
 use VuFind\Cover\CachingProxy;
 use VuFind\Cover\Loader as CoverLoader;
+use VuFind\Db\Row\AccessToken as RowAccessToken;
+use VuFind\Db\Table\AccessToken;
 use VuFind\Http\PhpEnvironment\Request;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\RecordDriver\Missing;
 use VuFind\Session\Settings;
-use VuFindTest\Container\MockContainer;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
@@ -70,6 +72,40 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     protected $container;
 
     /**
+     * Database containing access tokens
+     *
+     * @var array
+     */
+    protected array $accessTokenDb = [
+      [
+        'id' => 1,
+        'type' => 'access_token_other',
+        'user_id' => 1,
+        'created' => '2020-01-01 00:00:00',
+        'data' => [
+          'something' => 'else',
+        ],
+        'revoked' => 0,
+      ],
+      [
+        'id' => 2,
+        'type' => 'api_key',
+        'user_id' => 2,
+        'created' => '2020-01-01 00:00:00',
+        'data' => 'test_key_123',
+        'revoked' => 0,
+      ],
+      [
+        'id' => 3,
+        'type' => 'api_key',
+        'user_id' => 3,
+        'created' => '2020-01-01 00:00:00',
+        'data' => 'not_going_to_work_123',
+        'revoked' => 1,
+      ],
+    ];
+
+    /**
      * Standard setup method.
      *
      * @return void
@@ -84,6 +120,32 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         $sessionSettings = $this->container->createMock(Settings::class);
         $this->container->set(Settings::class, $sessionSettings);
         $this->container->set(PluginManager::class, $this->container);
+        $accessTokenService = $this->container->createMock(AccessTokenService::class, ['getDbTable']);
+
+        $accessTokenRow = $this->container->createMock(RowAccessToken::class, ['isRevoked']);
+
+        $accessTokens = $this->accessTokenDb;
+
+        $resultSetRow = $this->container->createMock(ResultSet::class, ['current']);
+
+        $dbTable = $this->container->createMock(AccessToken::class, ['select']);
+        $dbTable->expects($this->any())->method('select')->willReturnCallback(
+            function ($query) use ($accessTokens, $accessTokenRow, $resultSetRow) {
+                $foundTokens = [];
+                foreach ($accessTokens as $token) {
+                    if ($token['type'] === $query['type'] && $token['data'] === $query['data']) {
+                        $clonedToken = clone $accessTokenRow;
+                        $clonedToken->expects($this->any())->method('isRevoked')->willReturn(!!$token['revoked']);
+                        $foundTokens[] = $clonedToken;
+                    }
+                }
+                $resultSetRow->expects($this->any())->method('current')->willReturn($foundTokens[0] ?? null);
+                return $resultSetRow;
+            }
+        );
+
+        $accessTokenService->expects($this->any())->method('getDbTable')->willReturn($dbTable);
+        $this->container->set(\VuFind\Db\Service\AccessTokenService::class, $accessTokenService);
 
         $imagesResponseMocked = [
           [
@@ -136,7 +198,9 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         ];
         $datasourceConfigPiped = [
           'test' => [
-            'allow_image_piping' => true,
+            'permissions' => [
+              'image_piping' => true,
+            ],
           ],
         ];
         $requestWithApiKey = [
@@ -174,7 +238,9 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         ];
         $datasourceConfigUnPiped = [
           'test' => [
-            'something_here' => true,
+            'permissions' => [
+              'image_piping' => false,
+            ],
           ],
         ];
         $requestWithoutApiKey = [
@@ -276,15 +342,8 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
      */
     public function testImagePiped(array $config, array $datasourceConfig, array $params, Response $expected): void
     {
-        $coverController = $this->getCoverController($config, $datasourceConfig);
-        $testRequest = new Request();
-        $headers = new Headers();
-        $headers->addHeaders($params['headers'] ?? []);
-        $testRequest->setHeaders($headers);
-        $query = new Parameters($params['query'] ?? []);
-        $testRequest->setQuery($query);
-        $coverController->setRequest($testRequest);
-        $result = $coverController->pipeAction($testRequest);
+        $coverController = $this->getCoverController($config, $datasourceConfig, $params);
+        $result = $coverController->pipeAction();
         $this->assertEquals($expected, $result);
     }
 
@@ -293,129 +352,52 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
      *
      * @param array $config           Main config
      * @param array $datasourceConfig Datasource config
+     * @param array $params           Test params for requesting image
      *
      * @return CoverController
      */
-    protected function getCoverController(array $config = [], array $datasourceConfig = []): CoverController
-    {
-        $factory = new CoverControllerFactory();
+    protected function getCoverController(
+        array $config = [],
+        array $datasourceConfig = [],
+        array $params = []
+    ): CoverController {
         $this->container->set('config', new Config($config));
         $this->container->set('datasources', new Config($datasourceConfig));
-        $mockedParamsPlugin = new class () {
-            /**
-             * Request object
-             *
-             * @var Request
-             */
-            protected Request $request;
 
-            /**
-             * Init
-             *
-             * @param Request $request Request to set
-             *
-             * @return void
-             */
-            public function init(Request $request)
-            {
-                $this->request = $request;
-            }
+        $testRequest = new Request();
+        $headers = new Headers();
+        $headers->addHeaders($params['headers'] ?? []);
+        $testRequest->setHeaders($headers);
+        $query = new Parameters($params['query'] ?? []);
+        $testRequest->setQuery($query);
 
-            /**
-             * Proxy fromQuery
-             *
-             * @param ?string $param   Param to get
-             * @param mixed   $default Default to return
-             *
-             * @return mixed
-             */
-            public function fromQuery($param = null, mixed $default = null)
-            {
-                if (null !== $param) {
-                    return $this->request->getQuery($param, $default);
-                }
-                return $this->request->getQuery();
+        $mockedParams = $this->container->createMock(
+            \Laminas\Mvc\Controller\Plugin\Params::class,
+            ['fromHeader', 'fromQuery']
+        );
+        $mockedParams->expects($this->any())->method('fromHeader')->willReturnCallback(
+            function ($header, $default = null) use ($testRequest) {
+                return $testRequest->getHeaders($header, $default);
             }
+        );
+        $mockedParams->expects($this->any())->method('fromQuery')->willReturnCallback(
+            function ($query, $default = null) use ($testRequest) {
+                return $testRequest->getQuery($query, $default);
+            }
+        );
 
-            /**
-             * Proxy fromPost
-             *
-             * @param ?string $param   Param to get
-             * @param mixed   $default Default to return
-             *
-             * @return mixed
-             */
-            public function fromPost($param = null, mixed $default = null)
-            {
-                if (null !== $param) {
-                    return $this->request->getPost($param, $default);
-                }
-                return $this->request->getPost();
-            }
-
-            /**
-             * Proxy fromHeader
-             *
-             * @param ?string $param   Param to get
-             * @param mixed   $default Default to return
-             *
-             * @return mixed
-             */
-            public function fromHeader($param = null, mixed $default = null)
-            {
-                if (null !== $param) {
-                    return $this->request->getHeaders($param, $default);
-                }
-                return $this->request->getHeaders();
-            }
-        };
-        $mockedCoverController = new class ($this->container, $mockedParamsPlugin) extends CoverController {
-            /**
-             * Constructor
-             *
-             * @param MockContainer $container    Mocked container
-             * @param mixed         $mockedParams Mocked params plugin
-             *
-             * @return void
-             */
-            public function __construct(
-                protected MockContainer $container,
-                protected $mockedParams
-            ) {
-                parent::__construct(
-                    $container->get(CoverLoader::class),
-                    $container->get(CachingProxy::class),
-                    $container->get(Settings::class),
-                    $container->get('datasources'),
-                    $container->get(RecordLoader::class),
-                    $container->get('config')?->Content?->toArray() ?? [],
-                    $container->get(FileLoader::class)
-                );
-            }
-
-            /**
-             * Set request
-             *
-             * @param Request $request Set request acting like user request
-             *
-             * @return void
-             */
-            public function setRequest(Request $request)
-            {
-                $this->request = $request;
-                $this->mockedParams->init($request);
-            }
-
-            /**
-             * Override $this->params to get mocked request to actually test for the function
-             *
-             * @return mixed
-             */
-            public function params()
-            {
-                return $this->mockedParams;
-            }
-        };
-        return $mockedCoverController;
+        $coverControllerMock = $this->getMockBuilder(CoverController::class)
+          ->onlyMethods(['__call'])->setConstructorArgs([
+            $this->container->get(CoverLoader::class),
+            $this->container->get(CachingProxy::class),
+            $this->container->get(Settings::class),
+            $this->container->get('datasources'),
+            $this->container->get(RecordLoader::class),
+            $this->container->get('config')?->Content?->toArray() ?? [],
+            $this->container->get(FileLoader::class),
+            $this->container->get(\VuFind\Db\Service\AccessTokenService::class),
+          ])->getMock();
+        $coverControllerMock->expects($this->any())->method('__call')->with('params')->willReturn($mockedParams);
+        return $coverControllerMock;
     }
 }
