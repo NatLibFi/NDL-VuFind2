@@ -10,7 +10,7 @@
     <div class="truncate-field">
       <span class="recordPublished"><?=$this->transEsc('Published in')?>: </span>
       <?php if ($hostRecords): ?>
-        <?= $this->render('RecordDriver/DefaultRecord/host-records.phtml', compact('hostRecords', 'driver')); ?>
+        <?= $this->record($this->driver)->renderTemplate('host-records.phtml', compact('hostRecords', 'driver')); ?>
       <?php else: ?>
         <?php $link = $containerID ? $this->recordLinker()->getUrl($containerSource . '|' . $containerID) : $this->record($this->driver)->getLink('title', $containerTitle); ?>
         <a href="<?=$this->escapeHtmlAttr($link)?>"><?=$this->escapeHtml($containerTitle)?></a>

@@ -3,7 +3,6 @@
   <?php
     $label = $hostRecord['title'] ?: $hostRecord['mainHeading'];
     $link = '';
-    $linkingId = '';
     if ($hostRecord['id']) {
       $link = $this->recordLinker()->getUrl($hostRecord['sourceId'] . '|' . $hostRecord['id']);
     } elseif ($linkingId = $hostRecord['linkingId']) {
