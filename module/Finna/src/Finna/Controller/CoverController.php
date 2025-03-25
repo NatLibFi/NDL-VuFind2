@@ -35,6 +35,7 @@ namespace Finna\Controller;
 
 use Finna\Cover\Loader;
 use VuFind\Cover\CachingProxy;
+use VuFind\Db\Service\AccessTokenService;
 use VuFind\RecordDriver\Missing;
 use VuFind\Session\Settings as SessionSettings;
 
@@ -71,13 +72,14 @@ class CoverController extends \VuFind\Controller\CoverController
     /**
      * Constructor
      *
-     * @param Loader                $loader       Cover loader
-     * @param CachingProxy          $proxy        Proxy loader
-     * @param SessionSettings       $ss           Session settings
-     * @param \VuFind\Config\Config $datasources  Data source settings
-     * @param \VuFind\Record\Loader $recordLoader Record loader
-     * @param array                 $config       Main config
-     * @param \Finna\File\Loader    $fileLoader   File loader
+     * @param Loader                $loader             Cover loader
+     * @param CachingProxy          $proxy              Proxy loader
+     * @param SessionSettings       $ss                 Session settings
+     * @param \VuFind\Config\Config $datasources        Data source settings
+     * @param \VuFind\Record\Loader $recordLoader       Record loader
+     * @param array                 $config             Main config
+     * @param \Finna\File\Loader    $fileLoader         File loader
+     * @param AccessTokenService    $accessTokenService Access token service
      */
     public function __construct(
         Loader $loader,
@@ -86,7 +88,8 @@ class CoverController extends \VuFind\Controller\CoverController
         \VuFind\Config\Config $datasources,
         \VuFind\Record\Loader $recordLoader,
         array $config,
-        protected \Finna\File\Loader $fileLoader
+        protected \Finna\File\Loader $fileLoader,
+        protected AccessTokenService $accessTokenService
     ) {
         parent::__construct($loader, $proxy, $ss, $config);
         $this->datasourceConfig = $datasources;
@@ -194,21 +197,14 @@ class CoverController extends \VuFind\Controller\CoverController
     {
         $this->sessionSettings->disableWrite(); // avoid session write timing bug
         $key = $this->params()->fromHeader('X-API-KEY');
+        $response = $this->getResponse();
         // TODO: temporary way of implementing api-key functionality
         // After permissions and api-keys have been implemented, adjust this to match
         // the new functionality
-        $passKeys = $this->config['api_keys'] ?? [];
-        $response = $this->getResponse();
-
-        if (!$passKeys || !$key) {
+        if (!$key || !$this->accessTokenService->isApiKeyActive($key->getFieldValue())) {
             $response->setStatusCode(401);
             return $response;
         }
-        if (!in_array($key->getFieldValue(), $passKeys)) {
-            $response->setStatusCode(401);
-            return $response;
-        }
-
         $params = $this->params();
         $id = $params->fromQuery('id');
         if (!$id) {
@@ -225,7 +221,7 @@ class CoverController extends \VuFind\Controller\CoverController
             return $response;
         }
         $datasource = $driver->getDatasource();
-        $datasourceAllowsPiping = $this->datasourceConfig[$datasource]['allow_image_piping'] ?? false;
+        $datasourceAllowsPiping = $this->datasourceConfig[$datasource]['permissions']['image_piping'] ?? false;
         if (!$datasourceAllowsPiping) {
             $response->setStatusCode(401);
             return $response;
@@ -242,9 +238,7 @@ class CoverController extends \VuFind\Controller\CoverController
         $success = $this->fileLoader->proxyFileLoad($image['url'], $formedFilename, $format);
         if (!$success) {
             $response->setStatusCode(500);
-            return $response;
         }
-        $response->setStatusCode(200);
         return $response;
     }
 
