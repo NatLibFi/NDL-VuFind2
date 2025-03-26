@@ -9,6 +9,7 @@
             "FinnaConsole\\": "module/FinnaConsole/src/FinnaConsole",
             "FinnaCustom\\": "module/FinnaCustom/src/FinnaCustom",
             "FinnaSearch\\": "module/FinnaSearch/src/FinnaSearch",
+            "FinnaTest\\": ["module/Finna/src/FinnaTest", "module/Finna/tests/unit-tests/src/FinnaTest"],
             "FinnaTheme\\": "module/FinnaTheme/src/FinnaTheme"
         }
     },
