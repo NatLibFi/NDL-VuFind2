@@ -39,10 +39,9 @@ use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Http\Headers;
 use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Stdlib\Parameters;
+use PHPUnit\Framework\MockObject\MockObject;
 use VuFind\Config\Config;
-use VuFind\Config\PluginManager;
 use VuFind\Cover\CachingProxy;
-use VuFind\Cover\Loader as CoverLoader;
 use VuFind\Db\Row\AccessToken as RowAccessToken;
 use VuFind\Db\Table\AccessToken;
 use VuFind\Http\PhpEnvironment\Request;
@@ -50,6 +49,8 @@ use VuFind\Record\Loader as RecordLoader;
 use VuFind\RecordDriver\Missing;
 use VuFind\Session\Settings;
 use VuFindTest\Feature\FixtureTrait;
+
+use function in_array;
 
 /**
  * CoverController test class
@@ -113,73 +114,6 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     public function setUp(): void
     {
         $this->container = new \VuFindTest\Container\MockContainer($this);
-        $coverLoader = $this->container->createMock(Loader::class);
-        $this->container->set(\VuFind\Cover\Loader::class, $coverLoader);
-        $cachingProxy = $this->container->createMock(CachingProxy::class);
-        $this->container->set(CachingProxy::class, $cachingProxy);
-        $sessionSettings = $this->container->createMock(Settings::class);
-        $this->container->set(Settings::class, $sessionSettings);
-        $this->container->set(PluginManager::class, $this->container);
-        $accessTokenService = $this->container->createMock(AccessTokenService::class, ['getDbTable']);
-
-        $accessTokenRow = $this->container->createMock(RowAccessToken::class, ['isRevoked']);
-
-        $accessTokens = $this->accessTokenDb;
-
-        $resultSetRow = $this->container->createMock(ResultSet::class, ['current']);
-
-        $dbTable = $this->container->createMock(AccessToken::class, ['select']);
-        $dbTable->expects($this->any())->method('select')->willReturnCallback(
-            function ($query) use ($accessTokens, $accessTokenRow, $resultSetRow) {
-                $foundTokens = [];
-                foreach ($accessTokens as $token) {
-                    if ($token['type'] === $query['type'] && $token['data'] === $query['data']) {
-                        $clonedToken = clone $accessTokenRow;
-                        $clonedToken->expects($this->any())->method('isRevoked')->willReturn(!!$token['revoked']);
-                        $foundTokens[] = $clonedToken;
-                    }
-                }
-                $resultSetRow->expects($this->any())->method('current')->willReturn($foundTokens[0] ?? null);
-                return $resultSetRow;
-            }
-        );
-
-        $accessTokenService->expects($this->any())->method('getDbTable')->willReturn($dbTable);
-        $this->container->set(\VuFind\Db\Service\AccessTokenService::class, $accessTokenService);
-
-        $imagesResponseMocked = [
-          [
-            'urls' => [
-              'large' => 'https://largekuvanlinkki.com',
-              'small' => 'https://largekuvanlinkki.com',
-              'medium' => 'https://largekuvanlinkki.com',
-            ],
-          ],
-        ];
-
-        $recordLoader = $this->container->createMock(RecordLoader::class, ['load']);
-        $recordLoader->expects($this->any())->method('load')->willReturnCallback(
-            function ($id, $source) use ($imagesResponseMocked) {
-                if ($id === 'test.missing') {
-                    $mockedMissing = $this->container->createMock(Missing::class, []);
-                    return $mockedMissing;
-                }
-                $mockRecord = $this->container->createMock(
-                    SolrLido::class,
-                    ['getDatasource', 'getAllImages', 'getUniqueID', 'getIdentifiersByType']
-                );
-                $splitted = explode('.', $id, 2);
-                $mockRecord->expects($this->any())->method('getDatasource')->willReturn($splitted[0]);
-                $mockRecord->expects($this->any())->method('getAllImages')->willReturn($imagesResponseMocked);
-                $mockRecord->expects($this->any())->method('getUniqueID')->willReturn($id);
-                $mockRecord->expects($this->any())->method('getIdentifiersByType')->willReturn([]);
-                return $mockRecord;
-            }
-        );
-        $this->container->set(RecordLoader::class, $recordLoader);
-        $fileLoader = $this->container->createMock(FileLoader::class, ['proxyFileLoad']);
-        $fileLoader->expects($this->any())->method('proxyFileLoad')->willReturn(true);
-        $this->container->set(FileLoader::class, $fileLoader);
     }
 
     /**
@@ -222,7 +156,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
             'id' => 'test.123',
             'source' => DEFAULT_SEARCH_BACKEND,
             'size' => 'large',
-            'index' => 1,
+            'index' => 10,
           ],
         ];
         $requestWithWrongApiKey = [
@@ -293,7 +227,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         ];
 
         $expectedResponse = new Response();
-        $expectedResponse->setStatusCode(Response::STATUS_CODE_401);
+        $expectedResponse->setStatusCode(Response::STATUS_CODE_403);
         yield 'test with no permission to pipe image but has api key' => [
           $configWithKeys,
           $datasourceConfigUnPiped,
@@ -361,9 +295,6 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         array $datasourceConfig = [],
         array $params = []
     ): CoverController {
-        $this->container->set('config', new Config($config));
-        $this->container->set('datasources', new Config($datasourceConfig));
-
         $testRequest = new Request();
         $headers = new Headers();
         $headers->addHeaders($params['headers'] ?? []);
@@ -385,19 +316,87 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
                 return $testRequest->getQuery($query, $default);
             }
         );
+        $fileLoader = $this->container->createMock(FileLoader::class, ['proxyFileLoad']);
+        $fileLoader->expects($this->any())->method('proxyFileLoad')->willReturn(true);
 
         $coverControllerMock = $this->getMockBuilder(CoverController::class)
           ->onlyMethods(['__call'])->setConstructorArgs([
-            $this->container->get(CoverLoader::class),
-            $this->container->get(CachingProxy::class),
-            $this->container->get(Settings::class),
-            $this->container->get('datasources'),
-            $this->container->get(RecordLoader::class),
-            $this->container->get('config')?->Content?->toArray() ?? [],
-            $this->container->get(FileLoader::class),
-            $this->container->get(\VuFind\Db\Service\AccessTokenService::class),
+            $this->container->createMock(Loader::class),
+            $this->container->createMock(CachingProxy::class),
+            $this->container->createMock(Settings::class),
+            new Config($datasourceConfig),
+            $this->getMockedRecordLoader(),
+            $config['Content'] ?? [],
+            $fileLoader,
+            $this->getMockedAccessTokenService(),
           ])->getMock();
         $coverControllerMock->expects($this->any())->method('__call')->with('params')->willReturn($mockedParams);
         return $coverControllerMock;
+    }
+
+    /**
+     * Get mocked database for testing API-keys
+     *
+     * @return MockObject
+     */
+    protected function getMockedAccessTokenService(): MockObject
+    {
+
+        $accessTokenService = $this->container->createMock(AccessTokenService::class, ['getDbTable']);
+        $accessTokenRow = $this->container->createMock(RowAccessToken::class, ['isRevoked']);
+        $resultSetRow = $this->container->createMock(ResultSet::class, ['current']);
+
+        $accessTokens = $this->accessTokenDb;
+
+        $dbTable = $this->container->createMock(AccessToken::class, ['select']);
+        $dbTable->expects($this->any())->method('select')->willReturnCallback(
+            function ($query) use ($accessTokens, $accessTokenRow, $resultSetRow) {
+                $foundTokens = [];
+                foreach ($accessTokens as $token) {
+                    if ($token['type'] === $query['type'] && $token['data'] === $query['data']) {
+                        $clonedToken = clone $accessTokenRow;
+                        $clonedToken->expects($this->any())->method('isRevoked')->willReturn(!!$token['revoked']);
+                        $foundTokens[] = $clonedToken;
+                    }
+                }
+                $resultSetRow->expects($this->any())->method('current')->willReturn($foundTokens[0] ?? null);
+                return $resultSetRow;
+            }
+        );
+
+        $accessTokenService->expects($this->any())->method('getDbTable')->willReturn($dbTable);
+        return $accessTokenService;
+    }
+
+    /**
+     * Get mocked record loader for loading records
+     *
+     * @param array $missingRecords List of ids which should return Missing record object
+     *
+     * @return MockObject
+     */
+    protected function getMockedRecordLoader(array $missingRecords = ['test.missing']): MockObject
+    {
+        $recordLoader = $this->container->createMock(RecordLoader::class, ['load']);
+        $recordLoader->expects($this->any())->method('load')->willReturnCallback(
+            function ($id, $source) use ($missingRecords) {
+                if (in_array($id, $missingRecords)) {
+                    $mockedMissing = $this->container->createMock(Missing::class, []);
+                    return $mockedMissing;
+                }
+                $fixture = $this->getFixture('lido/lido_test.xml', 'Finna');
+                $record = new SolrLido();
+                $splitted = explode('.', $id, 2);
+                $record->setRawData([
+                  'datasource_str_mv' => [
+                    $splitted[0],
+                  ],
+                  'id' => $id,
+                  'fullrecord' => $fixture,
+                ]);
+                return $record;
+            }
+        );
+        return $recordLoader;
     }
 }

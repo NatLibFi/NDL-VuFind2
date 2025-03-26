@@ -223,7 +223,7 @@ class CoverController extends \VuFind\Controller\CoverController
         $datasource = $driver->getDatasource();
         $datasourceAllowsPiping = $this->datasourceConfig[$datasource]['permissions']['image_piping'] ?? false;
         if (!$datasourceAllowsPiping) {
-            $response->setStatusCode(401);
+            $response->setStatusCode(403);
             return $response;
         }
         $size = $this->params()->fromQuery('size');
