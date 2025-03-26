@@ -31,6 +31,7 @@ namespace FinnaTest\Search\SolrCollection;
 
 use Finna\Search\SolrCollection\Options;
 use Finna\Search\SolrCollection\Params;
+use Laminas\Stdlib\Parameters;
 use VuFind\Config\PluginManager;
 
 /**
@@ -89,7 +90,7 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
             $this->getMockConfigPluginManager(
                 ['Collection' => [
                     'SpecialFacets' => [
-                        'dateRangeVis' => 'search_daterange_mv:abc',
+                        'dateRangeVis' => 'search_daterange_mv',
                     ],
                 ]]
             )
@@ -120,9 +121,32 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
         $params->removeFilter('~hierarchical:abc');
         $this->assertEquals('', $params->getBackendParameters()->get('fq'));
 
-        // Is specified as date range filter and not added through same route
+        // Is specified as date range filter and not added through method
         $params->addFilter('search_daterange_mv:"[0503 TO 1061]');
         $this->assertEquals('', $params->getBackendParameters()->get('fq'));
+
+        // Date range filter added
+        $query = [
+            'filter' => ['search_daterange_mv:"[1000 TO 2000]"'],
+        ];
+        $params->initSpatialDateRangeFilter(new Parameters($query));
+        $this->assertEquals(
+            [
+                '{!field f=search_daterange_mv op=Intersects}[1000 TO 2000]',
+            ],
+            $params->getBackendParameters()->get('fq')
+        );
+
+        // Date range not defined as special facet
+        $options = $this->getOptions(
+            $this->getMockConfigPluginManager(['Collection' => ['SpecialFacets' => [],]])
+        );
+        $params = $this->getParams($options);
+        $params->initSpatialDateRangeFilter(new Parameters($query));
+        $this->assertEquals(
+            null,
+            $params->getBackendParameters()->get('fq')
+        );
     }
 
     /**
