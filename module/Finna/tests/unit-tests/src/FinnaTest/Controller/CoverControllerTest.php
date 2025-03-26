@@ -341,7 +341,6 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
      */
     protected function getMockedAccessTokenService(): MockObject
     {
-
         $accessTokenService = $this->container->createMock(AccessTokenService::class, ['getDbTable']);
         $accessTokenRow = $this->container->createMock(RowAccessToken::class, ['isRevoked']);
         $resultSetRow = $this->container->createMock(ResultSet::class, ['current']);
