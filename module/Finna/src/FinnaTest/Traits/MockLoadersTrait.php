@@ -29,9 +29,15 @@
 
 namespace FinnaTest\Traits;
 
+use Finna\Cache\Manager;
 use Finna\File\Loader as FileLoader;
 use Finna\Record\Loader;
-use PHPUnit\Framework\MockObject\MockObject;
+use FinnaSearch\Backend\Solr\Response\Json\RecordCollection;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Response;
+use Laminas\Mvc\I18n\Translator;
+use VuFind\Config\Config;
+use VuFind\Http\GuzzleService;
 use VuFind\RecordDriver\Missing;
 
 use function in_array;
@@ -48,64 +54,117 @@ use function in_array;
 trait MockLoadersTrait
 {
     /**
-     * Get an instance of a very basic record loader, with load methods mocked
+     * Get Finna Record Loader.
      *
      * @param array $records Array containing data for each record
      *                       [
-     *                       'type' => Class for the record from path::class,
-     *                       'fixture' => Path of the fixture to load or omit for none,
-     *                       'raw_data' => Raw data for the record i.e index fields
+     *                          'type' => Class for the record from path::class,
+     *                          'fixture' => Path of the fixture to load or omit for none,
+     *                          'raw_data' => Raw data for the record i.e index fields
      *                       ];
      *
-     * @return MockObject
+     * @return Loader
      */
-    public function getFinnaRecordLoader(array $records = []): MockObject
+    public function getFinnaRecordLoader(array $records = []): Loader
     {
-        $createdRecords = [];
-        foreach ($records as $record) {
-            if (!str_starts_with($record['type'], '\\')) {
-                $record['type'] = '\\' . $record['type'];
+        $searchService = $this->container->createMock(\VuFindSearch\Service::class, ['invoke']);
+        $searchService->expects($this->any())->method('invoke')->willReturnCallback(function ($command) use ($records) {
+            $backendIdentifier = $command->getTargetIdentifier();
+            $recordIdentifier = $command->getRecordIdentifier();
+            $foundRecords = [];
+            foreach ($records as $record) {
+                if (
+                    $record['raw_data']['id'] === $recordIdentifier &&
+                    $record['raw_data']['source'] === $backendIdentifier
+                ) {
+                    if (!str_starts_with($record['type'], '\\')) {
+                        $record['type'] = '\\' . $record['type'];
+                    }
+                    $obj = new $record['type']();
+                    $fixture = $record['fixture'] ?? false ? $this->getFixture($record['fixture'], 'Finna') : '';
+                    $rawData = $record['raw_data'] ?? [];
+                    if ($fixture) {
+                        $rawData['fullrecord'] = $fixture;
+                    }
+                    $obj->setRawData($rawData);
+                    $foundRecords[] = $obj;
+                }
             }
-            $obj = new $record['type']();
-            $fixture = $record['fixture'] ?? false ? $this->getFixture($record['fixture'], 'Finna') : '';
-            $rawData = $record['raw_data'] ?? [];
-            if ($fixture) {
-                $rawData['fullrecord'] = $fixture;
-            }
-            $obj->setRawData($rawData);
-            $createdRecords[] = $obj;
-        }
+            $mockedCommand = $this->container->createMock(\VuFindSearch\Command\RetrieveCommand::class, ['getResult']);
+            $recordCollection = $this->container->createMock(RecordCollection::class, ['getRecords']);
+            $recordCollection->expects($this->any())->method('getRecords')->willReturn($foundRecords);
+            $mockedCommand->expects($this->any())->method('getResult')->willReturn($recordCollection);
+            return $mockedCommand;
+        });
 
-        $methods = [
-        'load' => function ($id, $source, $tolerateMissing = false, $params = null) use ($createdRecords) {
-            foreach ($createdRecords as $record) {
-                if ($record->getUniqueID() === $id && $record->getSourceIdentifier() === $source) {
-                    return $record;
-                }
-                if ($tolerateMissing) {
-                    return new Missing();
-                }
-                throw new \Exception('Record not found');
-            }
-        },
-        ];
-        return $this->getMockedObject(Loader::class, $methods);
+        // Use the real class for improving test coverage passively
+        return new \Finna\Record\Loader(
+            $searchService,
+            $this->getRecordDriverPluginManager(),
+        );
     }
 
     /**
-     * Get Finna file loader as mocked object
+     * Get record driver plugin manager
      *
-     * @param array $urls Urls to be tested
+     * @param array $config Main config
      *
-     * @return MockObject
+     * @return \Finna\RecordDriver\PluginManager
      */
-    public function getFinnaFileLoader(array $urls = []): MockObject
+    public function getRecordDriverPluginManager(array $config = []): \Finna\RecordDriver\PluginManager
     {
-        $methods = [
-        'proxyFileLoad' => function ($url, $fileName, $format) use ($urls) {
-            return in_array($url, $urls);
-        },
+        $configContainer = $this->container->createMock(\VuFind\Config\PluginManager::class, ['get']);
+        $configMap = [
+            ['config', null, new Config($config)],
         ];
-        return $this->getMockedObject(FileLoader::class, $methods);
+
+        $dbTablePluginManager = $this->container->createMock(\VuFind\Db\Table\PluginManager::class);
+        $dbServicePluginManager = $this->container->createMock(\VuFind\Db\Service\PluginManager::class);
+        $translator = $this->container->createMock(Translator::class);
+
+        $configContainer->expects($this->any())->method('get')->willReturnMap($configMap);
+        // Create a mock container for factory
+        $mockContainer = $this->container->createMock(\VuFind\Config\PluginManager::class);
+        $serviceMap = [
+            ['Missing', null, new Missing()],
+            [\VuFind\Config\PluginManager::class, null, $configContainer],
+            [\VuFind\Db\Table\PluginManager::class, null, $dbTablePluginManager],
+            [\VuFind\Db\Service\PluginManager::class, null, $dbServicePluginManager],
+            [Translator::class, null, $translator],
+        ];
+        $mockContainer->expects($this->any())->method('get')->willReturnMap($serviceMap);
+
+        // Use the real class for improving test coverage passively
+        return new \Finna\RecordDriver\PluginManager(
+            $mockContainer,
+            []
+        );
+    }
+
+    /**
+     * Get a Finna file loader object.
+     *
+     * @param array $urls Urls which results in response 200
+     *
+     * @return FileLoader
+     */
+    public function getFinnaFileLoader(array $urls = []): FileLoader
+    {
+        $mockedGuzzle = $this->container->createMock(GuzzleService::class, ['createClient']);
+        $mockedGuzzleClient = $this->container->createMock(Client::class, ['request']);
+        $mockedGuzzleClient->expects($this->any())->method('request')->willReturnCallback(
+            function ($method, $uri, $options = []) use ($urls) {
+                if (in_array($uri, $urls)) {
+                    return new Response();
+                }
+                return new Response(404);
+            }
+        );
+        $mockedGuzzle->expects($this->any())->method('createClient')->willReturn($mockedGuzzleClient);
+        return new FileLoader(
+            $this->container->createMock(Manager::class),
+            new \VuFind\Config\Config([]),
+            $mockedGuzzle
+        );
     }
 }

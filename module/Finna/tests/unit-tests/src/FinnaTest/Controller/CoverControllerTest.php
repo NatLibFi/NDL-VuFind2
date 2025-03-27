@@ -296,13 +296,15 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
             'raw_data' => [
               'datasource_str_mv' => ['test'],
               'id' => 'test.123',
+              'source' => DEFAULT_SEARCH_BACKEND,
             ],
           ],
         ]);
 
-        $record = $recordLoader->load('test.123', DEFAULT_SEARCH_BACKEND);
-        $image = $record->getRecordImage($params['query']['size'], $params['query']['index']);
-        $fileLoader = $this->getFinnaFileLoader([$image['url'] ?? '']);
+        $fileLoader = $this->getFinnaFileLoader([
+          'https://largekuvanlinkki2.com',
+          'https://largekuvanlinkki.com',
+        ]);
 
         $accessTokenService = $this->getFinnaAccessTokenService($this->accessTokenDb);
 

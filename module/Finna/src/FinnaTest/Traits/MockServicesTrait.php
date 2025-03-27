@@ -70,7 +70,7 @@ trait MockServicesTrait
      * Create a mocked row object
      *
      * @param string $name Row class name
-     * @param array  $data Array containing data as key value
+     * @param array  $data Array containing data as key => value
      *
      * @return MockObject
      */
@@ -95,8 +95,8 @@ trait MockServicesTrait
      */
     public function getMockedTableObject(string $name, array $dbRows): MockObject
     {
-        $methods = [
-        'select' => function ($query) use ($dbRows) {
+        $mockedTable = $this->container->createMock($name, ['select']);
+        $mockedTable->expects($this->any())->method('select')->willReturnCallback(function ($query) use ($dbRows) {
             $resultSetRow = $this->container->createMock(ResultSet::class, ['current']);
             $foundEntity = null;
             foreach ($dbRows as $entity) {
@@ -111,8 +111,7 @@ trait MockServicesTrait
             }
             $resultSetRow->expects($this->any())->method('current')->willReturn($foundEntity);
             return $resultSetRow;
-        },
-        ];
-        return $this->getMockedObject($name, $methods);
+        });
+        return $mockedTable;
     }
 }
