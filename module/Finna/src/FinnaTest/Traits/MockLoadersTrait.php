@@ -58,9 +58,9 @@ trait MockLoadersTrait
      *
      * @param array $records Array containing data for each record
      *                       [
-     *                          'type' => Class for the record from path::class,
-     *                          'fixture' => Path of the fixture to load or omit for none,
-     *                          'raw_data' => Raw data for the record i.e index fields
+     *                       'type' => Class for the record from path::class,
+     *                       'fixture' => Path of the fixture to load or omit for none,
+     *                       'raw_data' => Raw data for the record i.e index fields
      *                       ];
      *
      * @return Loader
