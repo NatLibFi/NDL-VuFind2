@@ -32,7 +32,6 @@ namespace FinnaTest\Controller;
 use Finna\Controller\CoverController;
 use Finna\Cover\Loader;
 use Finna\RecordDriver\SolrLido;
-use FinnaTest\Traits\FinnaHelperTrait;
 use FinnaTest\Traits\MockLoadersTrait;
 use FinnaTest\Traits\MockServicesTrait;
 use Generator;
@@ -57,7 +56,6 @@ use VuFindTest\Feature\FixtureTrait;
 class CoverControllerTest extends \PHPUnit\Framework\TestCase
 {
     use FixtureTrait;
-    use FinnaHelperTrait;
     use MockLoadersTrait;
     use MockServicesTrait;
 
