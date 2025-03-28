@@ -94,7 +94,7 @@
               <?=!empty($summAuthor) ? '' : ' '?>
               <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
               <?php if (!empty($coverType)): ?>
-                <span class="cover-type"><?=implode('&ndash;', array_map($this->escapeHtml, $coverType));?></span>
+                <span class="cover-type"><?=$this->escapeHtml($coverType[0])?></span>
               <?php endif; ?>
             <?php endif; ?>
           </div>
