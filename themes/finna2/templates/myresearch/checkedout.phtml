@@ -15,6 +15,8 @@
     $totalCount = $this->paginator ? $this->paginator->getTotalItemCount() : count($this->transactions ?? []);
 
     $sortList = $this->sortList;
+
+    $connectionError = in_array('ils_connection_failed', $this->blocks);
 ?>
 
 <!-- Leftside navigationbar -->
@@ -28,6 +30,9 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
+    <?php if ($connectionError) {
+      return;
+    } ?>
     <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('Your Checked Out Items')?> (<?=$totalCount?>)</h2>
     </div>

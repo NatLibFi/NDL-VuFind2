@@ -9,6 +9,7 @@
         . '<li class="breadcrumb-item active">' . $this->transEsc('Interlibrary Loan Requests') . '</li>';
 
     $user = $this->auth()->getUserObject();
+    $connectionError = in_array('ils_connection_failed', $this->blocks);
 ?>
 
 <!-- Leftside navigationbar -->
@@ -22,6 +23,9 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
+    <?php if ($connectionError) {
+      return;
+    } ?>
     <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('Interlibrary Loan Requests') ?> (<?=count($this->recordList ?? []);?>)</h2>
     </div>
