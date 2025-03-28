@@ -2657,6 +2657,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return array_unique(array_filter($result));
     }
+
     /**
      * Get book cover type from fields 340 subfield l, field 020 subfield q or field 563 subfield a
      *
@@ -2695,6 +2696,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return array_unique($results);
     }
+
     /**
      * Get physical descriptions extended with cover type
      *
