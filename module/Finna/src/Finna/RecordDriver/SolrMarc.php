@@ -2667,7 +2667,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $results = [];
         $formats = $this->getFormats();
         if (isset($formats[1])) {
-            $parts = explode("/",$formats[1]);
+            $parts = explode('/', $formats[1]);
             if (isset($parts[2])) {
                 $format = $parts[2];
             }
