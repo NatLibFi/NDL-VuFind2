@@ -2704,6 +2704,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getExtendedPhysicalDescriptions()
     {
-        return array_filter([...$this->getPhysicalDescriptions(), ...($this->getCoverType())]);
+        return array_filter([...$this->getPhysicalDescriptions(), ...$this->getCoverType()]);
     }
 }
