@@ -2672,7 +2672,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $format = $parts[2];
             }
         }
-        if (isset($format) && $format == "Book") {
+        if (isset($format) && $format == 'Book') {
             foreach ($this->getMarcReader()->getFields('340') as $field) {
                 foreach ($this->getSubfields($field, 'l') as $type) {
                     $results[] = $this->stripTrailingPunctuation($type);
