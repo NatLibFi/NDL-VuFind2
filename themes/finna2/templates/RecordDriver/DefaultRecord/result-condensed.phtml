@@ -4,6 +4,7 @@
   $formats = $this->driver->tryMethod('getFormats');
   $database = $this->record($this->driver)->getFormatClass(end($formats)) === '0database';
   $ejournal = $this->record($this->driver)->getFormatClass(end($formats)) === '1journaleserial';
+  $coverType = $this->driver->tryMethod('getCoverType');
   // Thumbnail
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
@@ -92,6 +93,9 @@
             <?php elseif (!empty($summDate)): ?>
               <?=!empty($summAuthor) ? '' : ' '?>
               <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
+              <?php if (!empty($coverType)): ?>
+                <span class="cover-type"><?=implode('&ndash;', array_map($this->escapeHtml, $coverType));?></span>
+              <?php endif; ?>
             <?php endif; ?>
           </div>
         </div>

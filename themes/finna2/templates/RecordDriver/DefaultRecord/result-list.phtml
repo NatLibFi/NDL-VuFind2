@@ -6,6 +6,7 @@
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $recordLinker = $this->recordLinker($this->results);
   $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'medium', $recordLinker->getUrl($this->driver));
+  $coverType = $this->driver->tryMethod('getCoverType');
   if ($img) {
     $thumbnail = $img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]);
   }
@@ -113,7 +114,10 @@
             <?php elseif (!empty($summDate)): ?>
               <?=!empty($summAuthor) ? '' : ' '?>
               <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
-            <?php endif; ?>
+              <?php if (!empty($coverType)): ?>
+                <span class="cover-type"><?=$this->escapeHtml($coverType[0])?></span>
+              <?php endif; ?>              
+            <?php endif; ?>                        
             <?php if ($classifications = $this->driver->tryMethod('getClassifications')): ?>
               <div class="resultClassification">
                 <?php foreach ($classifications as $class => $field): ?>

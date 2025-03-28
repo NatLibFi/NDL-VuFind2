@@ -2657,4 +2657,51 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return array_unique(array_filter($result));
     }
+    /**
+     * Get book cover type from fields 340 subfield l, field 020 subfield q or field 563 subfield a
+     *
+     * @return array
+     */
+    public function getCoverType()
+    {
+        $results = [];
+        $formats = $this->getFormats();
+        if (isset($formats[1])) {
+            $parts = explode("/",$formats[1]);
+            if (isset($parts[2])) {
+                $format = $parts[2];
+            }
+        }
+        if (isset($format) && $format == "Book") {
+            foreach ($this->getMarcReader()->getFields('340') as $field) {
+                foreach ($this->getSubfields($field, 'l') as $type) {
+                    $results[] = $this->stripTrailingPunctuation($type);
+                }
+            }
+            if (empty($results)) {
+                foreach ($this->getMarcReader()->getFields('020') as $field) {
+                    foreach ($this->getSubfields($field, 'q') as $type) {
+                        $results[] = $this->stripTrailingPunctuation($type);
+                    }
+                }
+            }
+            if (empty($results)) {
+                foreach ($this->getMarcReader()->getFields('563') as $field) {
+                    foreach ($this->getSubfields($field, 'a') as $type) {
+                        $results[] = $this->stripTrailingPunctuation($type);
+                    }
+                }
+            }
+        }
+        return array_unique($results);
+    }
+    /**
+     * Get physical descriptions extended with cover type
+     *
+     * @return array
+     */
+    public function getExtendedPhysicalDescriptions()
+    {
+        return array_filter([...$this->getPhysicalDescriptions(), ...($this->getCoverType())]);
+    }
 }

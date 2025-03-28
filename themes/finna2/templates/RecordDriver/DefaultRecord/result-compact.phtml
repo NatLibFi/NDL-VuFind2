@@ -4,6 +4,7 @@
   $database = $this->record($this->driver)->getFormatClass(end($formats)) === '0database';
   $ejournal = $this->record($this->driver)->getFormatClass(end($formats)) === '1journaleserial';
   $recordLinker = $this->recordLinker($this->results);
+  $coverType = $this->driver->tryMethod('getCoverType');
 ?>
 <div class="record-container<?=$this->driver->supportsAjaxStatus() ? ' ajaxItem ' : ''?> list-view">
   <div class="main-content">
@@ -82,6 +83,9 @@
           <?php elseif (!empty($summDate)): ?>
             <?=!empty($summAuthor) ? '' : ' '?>
             <span class="publish-year"><?=implode('&ndash;', array_map($this->escapeHtml, $summDate));?></span>
+            <?php if (!empty($coverType)): ?>
+              <span class="cover-type"><?=implode('&ndash;', array_map($this->escapeHtml, $coverType));?></span>
+            <?php endif; ?>
           <?php endif; ?>
         <?php endif; ?>
       </div>
