@@ -66,7 +66,8 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
         if (ini_get('max_execution_time') < 3600) {
             ini_set('max_execution_time', '3600');
         }
-
+        // Clear realpath cache for all the cached files
+        clearstatcache(true);
         try {
             $cacheList = $this->getRequest()->getQuery()->get('id')
                 ?: $this->getDefaultCachesToClear();
