@@ -137,3 +137,6 @@ archiveRequestRequireFilingUnit = true
 ; Each value is a field label defined in RecordDataFormatterFactory
 ;hidden_record_fields[] = 'Archive'
 ;hidden_record_fields[] = 'Subject'
+
+; Used for linking records with linkingId. Checks if prefix in 003 should match with the linkable records
+;prefixIn003 = true

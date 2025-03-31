@@ -34,6 +34,8 @@ namespace Finna\View\Helper\Root;
 use Finna\Search\UrlQueryHelper;
 use VuFind\Search\Memory;
 
+use function sprintf;
+
 /**
  * RecordLinker view helper
  *
@@ -151,17 +153,34 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
 
         if ('identifier' === $link['type']) {
             $urlHelper = $this->getView()->plugin('url');
-            $baseUrl = $urlHelper($this->getSearchActionForSource($source));
-
-            $result = $baseUrl
-                . '?lookfor=' . urlencode($link['value'])
-                . '&type=Identifier&jumpto=1';
+            $result = $urlHelper(
+                $this->getSearchActionForSource($source),
+                [],
+                [
+                    'query' => [
+                        'lookfor' => urlencode($link['value']),
+                        'type' => 'Identifier',
+                        'jumpto' => 1,
+                    ],
+                ],
+            );
         } elseif ('linkingId' === $link['type']) {
             $urlHelper = $this->getView()->plugin('url');
-            $baseUrl = $urlHelper($this->getSearchActionForSource($source));
-            $result = $baseUrl
-                . '?lookfor=linking_id_str_mv:"' . urlencode($link['value']) . '" AND datasource_str_mv:"'
-                . $driver->getDataSource() . '"&jumpto=1';
+            $lookFor = sprintf(
+                'linking_id_str_mv:"%s" AND datasource_str_mv:"%s"',
+                $link['value'],
+                $driver->getDataSource()
+            );
+            $result = $urlHelper(
+                $this->getSearchActionForSource($source),
+                [],
+                [
+                        'query' => [
+                            'lookfor' => $lookFor,
+                            'jumpto' => 1,
+                        ],
+                    ],
+            );
         } else {
             $result = parent::related($link, $source);
         }

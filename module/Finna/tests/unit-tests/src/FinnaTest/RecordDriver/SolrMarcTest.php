@@ -112,14 +112,15 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testRecordLinking
+     * Data provider for testHostRecordsData
      *
      * @return Generator
      */
-    public static function getTestRecordLinkingData(): Generator
+    public static function getTestHostRecordsData(): Generator
     {
         yield 'legacy record links' => [
             'marc/legacy_linking_ids.xml',
+            [],
             [
                 [
                     'id' => 'test.123456',
@@ -141,14 +142,56 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        yield 'record link' => [
+        yield 'record link with prefix' => [
             'marc/linking_ids.xml',
+            [
+                'test' => [
+                    'prefixIn003' => true,
+                ],
+            ],
             [
                 [
                     'id' => '',
                     'linkingId' => '(FI-MELINDA)123456789',
                     'sourceId' => 'Solr',
                     'title' => 'United records parent',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                ],
+                [
+                    'id' => '',
+                    'linkingId' => '(FI-MELINDA)555',
+                    'sourceId' => 'Solr',
+                    'title' => 'United records Top',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                ],
+            ],
+        ];
+        yield 'record link with no prefix' => [
+            'marc/linking_ids_no_prefix.xml',
+            [
+                'test' => [
+                    'prefixIn003' => false,
+                ],
+            ],
+            [
+                [
+                    'id' => '',
+                    'linkingId' => '123456789',
+                    'sourceId' => 'Solr',
+                    'title' => 'United records parent',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                ],
+                [
+                    'id' => '',
+                    'linkingId' => '555',
+                    'sourceId' => 'Solr',
+                    'title' => 'United records Top',
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
@@ -161,19 +204,32 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
      * Test record linking with Legacy and new way
      *
      * @param string $fixture  Fixture path to test file
+     * @param array  $dsConfig Datasource configuration
      * @param array  $expected Array of expected results
      *
-     * @dataProvider getTestRecordLinkingData
+     * @dataProvider getTestHostRecordsData
      *
      * @return void
      */
-    public function testGetHostRecords(string $fixture, array $expected): void
+    public function testGetHostRecords(string $fixture, array $dsConfig, array $expected): void
     {
         $xml = $this->getFixture($fixture, 'Finna');
-        $record = new \VuFind\Marc\MarcReader($xml);
-        $obj = $this->getMockBuilder(SolrMarc::class)
-            ->onlyMethods(['getMarcReader'])->getMock();
-        $obj->expects($this->any())->method('getMarcReader')->willReturn($record);
+        $config = new \VuFind\Config\Config([
+            'Record' => [
+                'marc_links' => '760,762,765,767,770,772,773,775,776,780,785',
+                'marc_links_link_types' => 'linkingId,id,oclc,dlc,isbn,issn,title',
+            ],
+        ]);
+
+        $obj = new SolrMarc($config);
+        $obj->setRawData(
+            [
+                'datasource_str_mv' => ['test'],
+                'fullrecord' => $xml,
+            ],
+        );
+        $obj->attachDatasourceSettings($dsConfig);
+
         $this->assertEquals($expected, $obj->getHostRecords());
     }
 
@@ -186,6 +242,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     {
         yield 'legacy record links' => [
             'marc/legacy_linking_ids.xml',
+            [],
             [
                 [
                     'value' => 'United records parent',
@@ -205,8 +262,13 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        yield 'record link' => [
+        yield 'record link with prefixes' => [
             'marc/linking_ids.xml',
+            [
+                'test' => [
+                    'prefixIn003' => true,
+                ],
+            ],
             [
                 [
                     'value' => 'United records parent',
@@ -214,6 +276,40 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'link' => [
                         'type' => 'linkingId',
                         'value' => '(FI-MELINDA)123456789',
+                    ],
+                ],
+                [
+                    'value' => 'United records Top',
+                    'title' => 'Another United',
+                    'link' => [
+                        'type' => 'linkingId',
+                        'value' => '(FI-MELINDA)555',
+                    ],
+                ],
+            ],
+        ];
+        yield 'record link without prefixes' => [
+            'marc/linking_ids_no_prefix.xml',
+            [
+                'test' => [
+                    'prefixIn003' => false,
+                ],
+            ],
+            [
+                [
+                    'value' => 'United records parent',
+                    'title' => 'United',
+                    'link' => [
+                        'type' => 'linkingId',
+                        'value' => '123456789',
+                    ],
+                ],
+                [
+                    'value' => 'United records Top',
+                    'title' => 'Another United',
+                    'link' => [
+                        'type' => 'linkingId',
+                        'value' => '555',
                     ],
                 ],
             ],
@@ -224,25 +320,32 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
      * Test getAllRecordLinks
      *
      * @param string $fixture  Fixture path to test file
+     * @param array  $dsConfig Datasource configuration
      * @param array  $expected Array of expected results
      *
      * @dataProvider getTestAllRecordLinksData
      *
      * @return void
      */
-    public function testGetAllRecordLinks(string $fixture, array $expected): void
+    public function testGetAllRecordLinks(string $fixture, array $dsConfig, array $expected): void
     {
         $xml = $this->getFixture($fixture, 'Finna');
-        $record = new \VuFind\Marc\MarcReader($xml);
         $config = new \VuFind\Config\Config([
             'Record' => [
                 'marc_links' => '760,762,765,767,770,772,773,775,776,780,785',
-                'marc_links_link_types' => 'id,linkingId,oclc,dlc,isbn,issn,title',
+                'marc_links_link_types' => 'linkingId,id,oclc,dlc,isbn,issn,title',
             ],
         ]);
-        $obj = $this->getMockBuilder(SolrMarc::class)
-            ->onlyMethods(['getMarcReader'])->setConstructorArgs([$config, null, null])->getMock();
-        $obj->expects($this->any())->method('getMarcReader')->willReturn($record);
+
+        $obj = new SolrMarc($config);
+        $obj->setRawData(
+            [
+                'datasource_str_mv' => ['test'],
+                'fullrecord' => $xml,
+            ],
+        );
+        $obj->attachDatasourceSettings($dsConfig);
+
         $this->assertEquals($expected, $obj->getAllRecordLinks());
     }
 }
