@@ -9,7 +9,7 @@
         . '<li class="breadcrumb-item active">' . $this->transEsc('Interlibrary Loan Requests') . '</li>';
 
     $user = $this->auth()->getUserObject();
-    $connectionError = in_array('ils_connection_failed', $this->blocks);
+    $alert = $this->flashmessages();
 ?>
 
 <!-- Leftside navigationbar -->
@@ -18,12 +18,12 @@
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="my-research-content myresearch-grid-list">
     <?php if (!$this->translationEmpty('ill_requests_instructions_html')): ?><p class="no-content-message"><?=$this->transEsc('ill_requests_instructions_html')?></p><?php endif; ?>
-    <?=$this->flashmessages()?>
+    <?=$alert?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <?php if ($connectionError) {
+    <?php if (str_contains($alert ?? '', $this->transEsc('ils_connection_failed'))) {
       return;
     } ?>
     <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
