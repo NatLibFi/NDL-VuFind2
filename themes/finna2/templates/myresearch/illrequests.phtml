@@ -9,7 +9,7 @@
         . '<li class="breadcrumb-item active">' . $this->transEsc('Interlibrary Loan Requests') . '</li>';
 
     $user = $this->auth()->getUserObject();
-    $alert = $this->flashmessages();
+    $alert = $this->flashmessages() ?? '';
 ?>
 
 <!-- Leftside navigationbar -->
@@ -23,7 +23,7 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <?php if (str_contains($alert ?? '', $this->transEsc('ils_connection_failed'))) {
+    <?php if (str_contains($alert, $this->transEsc('ils_connection_failed'))) {
       return;
     } ?>
     <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
