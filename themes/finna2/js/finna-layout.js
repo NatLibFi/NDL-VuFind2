@@ -213,9 +213,9 @@ finna.layout = (function finnaLayout() {
         document.activeElement.blur();
         container.querySelector('h1').focus();
       } else {
+        container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
         document.activeElement.blur();
         document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
-        container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
         container.removeAttribute('aria-modal');
         container.removeAttribute('tabindex');
         container.querySelector('h1').removeAttribute('tabindex');
@@ -248,7 +248,7 @@ finna.layout = (function finnaLayout() {
       });
       document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
-          onKeyPressMobileSidebar(e, container);
+          onKeyPressMobileSidebar(e);
         });
       });
     }
