@@ -12,6 +12,7 @@
     $user = $this->auth()->getUserObject();
     $patron = $user ? $this->auth()->getILSPatron() : false;
     $sortList = $this->sortList;
+    $alert = $this->flashmessages();
 ?>
 
 <!-- Leftside navigationbar -->
@@ -22,10 +23,13 @@
     <?php if (!$this->translationEmpty('loan_history_instructions_html')): ?>
       <p class="no-content-message"><?=$this->translate('loan_history_instructions_html')?></p>
     <?php endif; ?>
-    <?=$this->flashmessages()?>
+    <?=$alert?>
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
+    <?php if (str_contains($alert ?? '', $this->transEsc('ils_connection_failed'))) {
+      return;
+    } ?>
     <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('Loan History')?> (<?=$recordCount;?>)</h2>
     </div>
