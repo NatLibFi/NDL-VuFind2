@@ -32,6 +32,12 @@ namespace FinnaTest\Traits;
 use Finna\Cache\Manager;
 use Finna\File\Loader as FileLoader;
 use Finna\Record\Loader;
+use Finna\RecordDriver\SolrAipa;
+use Finna\RecordDriver\SolrEad;
+use Finna\RecordDriver\SolrEad3;
+use Finna\RecordDriver\SolrLido;
+use Finna\RecordDriver\SolrMarc;
+use Finna\RecordDriver\SolrQdc;
 use FinnaSearch\Backend\Solr\Response\Json\RecordCollection;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
@@ -58,7 +64,6 @@ trait MockLoadersTrait
      *
      * @param array $records Array containing data for each record
      *                       [
-     *                       'type' => Class for the record from path::class,
      *                       'fixture' => Path of the fixture to load or omit for none,
      *                       'raw_data' => Raw data for the record i.e index fields
      *                       ];
@@ -67,7 +72,8 @@ trait MockLoadersTrait
      */
     public function getFinnaRecordLoader(array $records = []): Loader
     {
-        $searchService = $this->container->createMock(\VuFindSearch\Service::class, ['invoke']);
+        $searchService = $this->getMockBuilder(\VuFindSearch\Service::class)->onlyMethods(['invoke'])
+            ->disableOriginalConstructor()->getMock();
         $searchService->expects($this->any())->method('invoke')->willReturnCallback(function ($command) use ($records) {
             $backendIdentifier = $command->getTargetIdentifier();
             $recordIdentifier = $command->getRecordIdentifier();
@@ -77,31 +83,39 @@ trait MockLoadersTrait
                     $record['raw_data']['id'] === $recordIdentifier &&
                     $record['raw_data']['source'] === $backendIdentifier
                 ) {
-                    if (!str_starts_with($record['type'], '\\')) {
-                        $record['type'] = '\\' . $record['type'];
-                    }
-                    $obj = new $record['type']();
-                    $fixture = $record['fixture'] ?? false ? $this->getFixture($record['fixture'], 'Finna') : '';
+                    $split = explode('/', $record['fixture'], 2);
+                    $recordClass = match ($split[0]) {
+                        'marc' => SolrMarc::class,
+                        'lido' => SolrLido::class,
+                        'ead3' => SolrEad3::class,
+                        'ead' => SolrEad::class,
+                        'qdc' => SolrQdc::class,
+                        'aipa' => SolrAipa::class,
+                        default => Missing::class,
+                    };
+                    $mockedRecord = $this->getMockBuilder($recordClass)->onlyMethods([])
+                        ->disableOriginalConstructor()->getMock();
+                    $fixture = $this->getFixture($record['fixture'], 'Finna');
                     $rawData = $record['raw_data'] ?? [];
-                    if ($fixture) {
-                        $rawData['fullrecord'] = $fixture;
-                    }
-                    $obj->setRawData($rawData);
-                    $foundRecords[] = $obj;
+                    $rawData['fullrecord'] = $fixture;
+                    $mockedRecord->setRawData($rawData);
+                    $foundRecords[] = $mockedRecord;
                 }
             }
-            $mockedCommand = $this->container->createMock(\VuFindSearch\Command\RetrieveCommand::class, ['getResult']);
-            $recordCollection = $this->container->createMock(RecordCollection::class, ['getRecords']);
+            $mockedCommand = $this->getMockBuilder(\VuFindSearch\Command\RetrieveCommand::class)
+                ->onlyMethods(['getResult'])->disableOriginalConstructor()->getMock();
+            $recordCollection = $this->getMockBuilder(RecordCollection::class)->onlyMethods(['getRecords'])
+                ->disableOriginalConstructor()->getMock();
             $recordCollection->expects($this->any())->method('getRecords')->willReturn($foundRecords);
             $mockedCommand->expects($this->any())->method('getResult')->willReturn($recordCollection);
             return $mockedCommand;
         });
 
         // Use the real class for improving test coverage passively
-        return new \Finna\Record\Loader(
+        return $this->getMockBuilder(Loader::class)->onlyMethods([])->setConstructorArgs([
             $searchService,
             $this->getRecordDriverPluginManager(),
-        );
+        ])->getMock();
     }
 
     /**
@@ -113,18 +127,23 @@ trait MockLoadersTrait
      */
     public function getRecordDriverPluginManager(array $config = []): \Finna\RecordDriver\PluginManager
     {
-        $configContainer = $this->container->createMock(\VuFind\Config\PluginManager::class, ['get']);
+        $configContainer = $this->getMockBuilder(\VuFind\Config\PluginManager::class)->onlyMethods(['get'])
+            ->disableOriginalConstructor()->getMock();
         $configMap = [
             ['config', null, new Config($config)],
         ];
-
-        $dbTablePluginManager = $this->container->createMock(\VuFind\Db\Table\PluginManager::class);
-        $dbServicePluginManager = $this->container->createMock(\VuFind\Db\Service\PluginManager::class);
-        $translator = $this->container->createMock(Translator::class);
-
         $configContainer->expects($this->any())->method('get')->willReturnMap($configMap);
+
+        $dbTablePluginManager = $this->getMockBuilder(\VuFind\Db\Table\PluginManager::class)->onlyMethods([])
+            ->disableOriginalConstructor()->getMock();
+        $dbServicePluginManager = $this->getMockBuilder(\VuFind\Db\Service\PluginManager::class)->onlyMethods([])
+            ->disableOriginalConstructor()->getMock();
+        $translator = $this->getMockBuilder(Translator::class)->onlyMethods([])
+            ->disableOriginalConstructor()->getMock();
+
         // Create a mock container for factory
-        $mockContainer = $this->container->createMock(\VuFind\Config\PluginManager::class);
+        $mockContainer = $this->getMockBuilder(\VuFind\Config\PluginManager::class)->onlyMethods(['get'])
+            ->disableOriginalConstructor()->getMock();
         $serviceMap = [
             ['Missing', null, new Missing()],
             [\VuFind\Config\PluginManager::class, null, $configContainer],
@@ -133,12 +152,8 @@ trait MockLoadersTrait
             [Translator::class, null, $translator],
         ];
         $mockContainer->expects($this->any())->method('get')->willReturnMap($serviceMap);
-
-        // Use the real class for improving test coverage passively
-        return new \Finna\RecordDriver\PluginManager(
-            $mockContainer,
-            []
-        );
+        return $this->getMockBuilder(\Finna\RecordDriver\PluginManager::class)->onlyMethods([])
+            ->setConstructorArgs([$mockContainer, []])->getMock();
     }
 
     /**
@@ -150,8 +165,10 @@ trait MockLoadersTrait
      */
     public function getFinnaFileLoader(array $urls = []): FileLoader
     {
-        $mockedGuzzle = $this->container->createMock(GuzzleService::class, ['createClient']);
-        $mockedGuzzleClient = $this->container->createMock(Client::class, ['request']);
+        $mockedGuzzle = $this->getMockBuilder(GuzzleService::class)->onlyMethods(['createClient'])
+            ->disableOriginalConstructor()->getMock();
+        $mockedGuzzleClient = $this->getMockBuilder(Client::class)->onlyMethods(['request'])
+            ->disableOriginalConstructor()->getMock();
         $mockedGuzzleClient->expects($this->any())->method('request')->willReturnCallback(
             function ($method, $uri, $options = []) use ($urls) {
                 if (in_array($uri, $urls)) {
@@ -161,10 +178,11 @@ trait MockLoadersTrait
             }
         );
         $mockedGuzzle->expects($this->any())->method('createClient')->willReturn($mockedGuzzleClient);
-        return new FileLoader(
-            $this->container->createMock(Manager::class),
-            new \VuFind\Config\Config([]),
-            $mockedGuzzle
-        );
+        $mockedCacheManager = $this->getMockBuilder(Manager::class)->onlyMethods([])
+            ->disableOriginalConstructor()->getMock();
+
+        $config = new \VuFind\Config\Config([]);
+        return $this->getMockBuilder(FileLoader::class)->onlyMethods([])
+            ->setConstructorArgs([$mockedCacheManager, $config, $mockedGuzzle])->getMock();
     }
 }

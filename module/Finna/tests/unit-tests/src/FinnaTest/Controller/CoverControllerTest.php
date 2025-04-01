@@ -31,7 +31,6 @@ namespace FinnaTest\Controller;
 
 use Finna\Controller\CoverController;
 use Finna\Cover\Loader;
-use Finna\RecordDriver\SolrLido;
 use FinnaTest\Traits\MockLoadersTrait;
 use FinnaTest\Traits\MockServicesTrait;
 use Generator;
@@ -58,13 +57,6 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
     use MockLoadersTrait;
     use MockServicesTrait;
-
-    /**
-     * Mock container
-     *
-     * @var \VuFindTest\Container\MockContainer
-     */
-    protected $container;
 
     /**
      * Database containing access tokens
@@ -97,16 +89,6 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         'revoked' => 1,
       ],
     ];
-
-    /**
-     * Standard setup method.
-     *
-     * @return void
-     */
-    public function setUp(): void
-    {
-        $this->container = new \VuFindTest\Container\MockContainer($this);
-    }
 
     /**
      * Data provider for testing image piping
@@ -287,9 +269,8 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         array $datasourceConfig = [],
         array $params = []
     ): CoverController {
-        $recordLoader = $this->getFinnaRecordLoader([
+        $records = [
           [
-            'type' => SolrLido::class,
             'fixture' => 'lido/lido_test.xml',
             'raw_data' => [
               'datasource_str_mv' => ['test'],
@@ -297,7 +278,8 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
               'source' => DEFAULT_SEARCH_BACKEND,
             ],
           ],
-        ]);
+        ];
+        $recordLoader = $this->getFinnaRecordLoader($records);
 
         $fileLoader = $this->getFinnaFileLoader([
           'https://largekuvanlinkki2.com',
@@ -308,9 +290,9 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
 
         $coverControllerMock = $this->getMockBuilder(CoverController::class)
           ->onlyMethods(['getRequest'])->setConstructorArgs([
-            $this->container->createMock(Loader::class),
-            $this->container->createMock(CachingProxy::class),
-            $this->container->createMock(Settings::class),
+            $this->getMockBuilder(Loader::class)->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder(CachingProxy::class)->disableOriginalConstructor()->getMock(),
+            $this->getMockBuilder(Settings::class)->disableOriginalConstructor()->getMock(),
             new Config($datasourceConfig),
             $recordLoader,
             $config['Content'] ?? [],

@@ -55,7 +55,8 @@ trait MockServicesTrait
      */
     public function getFinnaAccessTokenService(array $dbEntities = []): MockObject
     {
-        $accessTokenService = $this->container->createMock(AccessTokenService::class, ['getDbTable']);
+        $accessTokenService = $this->getMockBuilder(AccessTokenService::class)->onlyMethods(['getDbTable'])
+            ->disableOriginalConstructor()->getMock();
 
         $accessTokens = [];
         foreach ($dbEntities as $entity) {
@@ -95,21 +96,22 @@ trait MockServicesTrait
      */
     public function getMockedTableObject(string $name, array $dbRows): MockObject
     {
-        $mockedTable = $this->container->createMock($name, ['select']);
+        $mockedTable = $this->getMockBuilder($name)->onlyMethods(['select'])
+            ->disableOriginalConstructor()->getMock();
         $mockedTable->expects($this->any())->method('select')->willReturnCallback(function ($query) use ($dbRows) {
-            $resultSetRow = $this->container->createMock(ResultSet::class, ['current']);
-            $foundEntity = null;
+            $resultSetRow = $this->getMockBuilder(ResultSet::class)->onlyMethods(['current'])
+                ->disableOriginalConstructor()->getMock();
+            $foundEntities = [];
             foreach ($dbRows as $entity) {
-                // Check if each query in select matches with the entity, if they do, then it is a match.
+                // Loop through select query keys and values and compare those to the object
                 foreach ($query as $key => $value) {
                     if ($entity->__get($key) !== $value) {
                         continue 2;
                     }
                 }
-                $foundEntity = $entity;
-                break;
+                $foundEntities[] = $entity;
             }
-            $resultSetRow->expects($this->any())->method('current')->willReturn($foundEntity);
+            $resultSetRow->expects($this->any())->method('current')->willReturn($foundEntities[0] ?? null);
             return $resultSetRow;
         });
         return $mockedTable;
