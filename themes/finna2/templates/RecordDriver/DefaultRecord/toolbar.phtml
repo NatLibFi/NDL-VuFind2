@@ -9,7 +9,7 @@
   $largeThumb = $this->record($this->driver)->getThumbnail('large');
 ?>
 <div class="hidden-xs record-toolbar">
-  <ul class="nav nav-pills hidden-print" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
+  <ul class="nav nav-pills hidden-print" role="presentation" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
   <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
     <li><a class="nav-link save-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a></li>
   <?php endif; ?>
