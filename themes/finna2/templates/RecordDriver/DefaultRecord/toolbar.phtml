@@ -41,9 +41,9 @@
   <li class="dropdown">
     <a class="nav-link dropdown-toggle qrcodeLink" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow" aria-expanded="false"><?=$this->icon('qrcode') ?><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
     <ul class="dropdown-menu qrcode" role="presentation">
-      <li class="text-center" role="presentation">
+      <li class="text-center" role="image" aria-label="<?=$this->transEsc('qr_code_alt_text')?>">
         <script type="text/template" class="qrCodeImgTag">
-          <img src="<?=$this->escapeHtmlAttr($QRCode);?>" alt="<?=$this->transEsc('qr_code_alt_text')?>" class="qrcode">
+          <img src="<?=$this->escapeHtmlAttr($QRCode);?>" alt="" class="qrcode">
         </script>
       </li>
     </ul>
