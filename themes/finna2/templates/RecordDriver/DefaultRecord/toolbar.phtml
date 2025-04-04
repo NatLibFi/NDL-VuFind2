@@ -24,7 +24,7 @@
       <ul class="dropdown-menu" id="export-options">
         <?php foreach ($exportFormats as $exportFormat): ?>
           <li>
-            <a class="dropdown-item" <?php if ($this->export()->needsRedirect($exportFormat)): ?> target="<?=$this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>?style=<?=$this->escapeHtmlAttr($exportFormat)?>" rel="nofollow" role="menuitem">
+            <a class="dropdown-item" <?php if ($this->export()->needsRedirect($exportFormat)): ?> target="<?=$this->escapeHtmlAttr($exportFormat)?>Main" <?php endif; ?>href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>?style=<?=$this->escapeHtmlAttr($exportFormat)?>" rel="nofollow">
               <?=$this->transEsc('export_to', ['%%target%%' => $this->translate($this->export()->getLabelForFormat($exportFormat))])?>
             </a>
           </li>
@@ -41,7 +41,7 @@
   <li class="dropdown">
     <a class="nav-link dropdown-toggle qrcodeLink" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow" aria-expanded="false"><?=$this->icon('qrcode') ?><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
     <ul class="dropdown-menu qrcode" role="presentation">
-      <li class="text-center" role="image" aria-label="<?=$this->transEsc('qr_code_alt_text')?>">
+      <li class="text-center" role="img" aria-label="<?=$this->transEsc('qr_code_alt_text')?>">
         <script type="text/template" class="qrCodeImgTag">
           <img src="<?=$this->escapeHtmlAttr($QRCode);?>" alt="" class="qrcode">
         </script>
