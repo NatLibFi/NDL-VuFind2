@@ -9,7 +9,7 @@
   $largeThumb = $this->record($this->driver)->getThumbnail('large');
 ?>
 <div class="hidden-xs record-toolbar">
-  <ul class="nav nav-pills hidden-print" role="presentation" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
+  <ul class="nav nav-pills hidden-print" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
   <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
     <li><a class="nav-link save-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a></li>
   <?php endif; ?>
@@ -41,7 +41,7 @@
   <li class="dropdown">
     <a class="nav-link dropdown-toggle qrcodeLink" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow" aria-expanded="false"><?=$this->icon('qrcode') ?><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
     <ul class="dropdown-menu qrcode" role="presentation">
-      <li class="text-center" role="img" aria-label="<?=$this->transEsc('qr_code_alt_text')?>">
+      <li class="text-center" role="img" aria-label="<?=$this->transEsc('QR Code') ?>">
         <script type="text/template" class="qrCodeImgTag">
           <img src="<?=$this->escapeHtmlAttr($QRCode);?>" alt="" class="qrcode">
         </script>
