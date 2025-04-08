@@ -197,28 +197,31 @@ finna.layout = (function finnaLayout() {
    * @param {object} e Event object
    */
   function toggleMobileSidebar(e) {
-    const container = document.querySelector('.side-facets-container-ajax');
     e.stopImmediatePropagation();
-    document.querySelector('.sidebar').classList.toggle('open');
-    document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
-      el.classList.toggle('hidden');
-    });
-    document.querySelector('body').classList.toggle('prevent-scroll');
-    if (container) {
-      if (document.querySelector('.sidebar').classList.contains('open')) {
-        container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
-        container.ariaModal = true;
-        container.tabIndex = '0';
-        container.querySelector('h1').tabIndex = '0';
-        document.activeElement.blur();
-        container.querySelector('h1').focus();
-      } else {
-        container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
-        document.activeElement.blur();
-        document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
-        container.removeAttribute('aria-modal');
-        container.removeAttribute('tabindex');
-        container.querySelector('h1').removeAttribute('tabindex');
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('open');
+      const container = document.querySelector('.side-facets-container-ajax');
+      document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
+        el.classList.toggle('hidden');
+      });
+      document.querySelector('body').classList.toggle('prevent-scroll');
+      if (container) {
+        if (sidebar.classList.contains('open')) {
+          container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
+          container.ariaModal = true;
+          container.tabIndex = '0';
+          container.querySelector('h1').tabIndex = '0';
+          document.activeElement.blur();
+          container.querySelector('h1').focus();
+        } else {
+          container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
+          document.activeElement.blur();
+          document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
+          container.removeAttribute('aria-modal');
+          container.removeAttribute('tabindex');
+          container.querySelector('h1').removeAttribute('tabindex');
+        }
       }
     }
   }
