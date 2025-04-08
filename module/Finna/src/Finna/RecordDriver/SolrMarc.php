@@ -928,6 +928,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $result = [];
         $sourceId = $this->getSourceIdentifier();
         $fields = $this->getMarcReader()->getFields('773');
+
         if (
             !empty($this->fields['hierarchy_parent_id'])
             && count($this->fields['hierarchy_parent_id']) > count($fields)
