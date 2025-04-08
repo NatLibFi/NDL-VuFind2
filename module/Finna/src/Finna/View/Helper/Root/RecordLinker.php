@@ -158,7 +158,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
                 [],
                 [
                     'query' => [
-                        'lookfor' => urlencode($link['value']),
+                        'lookfor' => $link['value'],
                         'type' => 'Identifier',
                         'jumpto' => 1,
                     ],

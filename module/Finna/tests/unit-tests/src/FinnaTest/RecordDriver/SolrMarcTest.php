@@ -118,7 +118,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
      */
     public static function getTestHostRecordsData(): Generator
     {
-        yield 'legacy record links' => [
+        yield 'legacy host record links' => [
             'marc/legacy_linking_ids.xml',
             [],
             [
@@ -142,7 +142,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        yield 'record link with prefix' => [
+        yield 'host record link with prefix' => [
             'marc/linking_ids.xml',
             [
                 'test' => [
@@ -170,7 +170,63 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        yield 'record link with no prefix' => [
+        yield 'host record link with prefix mismatch' => [
+            'marc/linking_ids_prefix_mismatch.xml',
+            [
+                'test' => [
+                    'prefixIn003' => true,
+                ],
+            ],
+            [
+                [
+                    'id' => '',
+                    'linkingId' => '',
+                    'sourceId' => 'Solr',
+                    'title' => 'United records parent',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                ],
+                [
+                    'id' => '',
+                    'linkingId' => '',
+                    'sourceId' => 'Solr',
+                    'title' => 'United records Top',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                ],
+            ],
+        ];
+        yield 'host record link with dots' => [
+            'marc/linking_ids_with_dots.xml',
+            [
+                'test' => [
+                    'prefixIn003' => true,
+                ],
+            ],
+            [
+                [
+                    'id' => '',
+                    'linkingId' => '(FI-MELINDA)link.withdot1',
+                    'sourceId' => 'Solr',
+                    'title' => 'United records parent',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                ],
+                [
+                    'id' => '',
+                    'linkingId' => '(FI-MELINDA)link.withdot2',
+                    'sourceId' => 'Solr',
+                    'title' => 'United records parent',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                ],
+            ],
+        ];
+        yield 'host record link with no prefix' => [
             'marc/linking_ids_no_prefix.xml',
             [
                 'test' => [
@@ -310,6 +366,87 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'link' => [
                         'type' => 'linkingId',
                         'value' => '555',
+                    ],
+                ],
+            ],
+        ];
+        yield 'record link check linking id with wrong prefix' => [
+            'marc/linking_ids_prefix_mismatch.xml',
+            [
+                'test' => [
+                    'prefixIn003' => true,
+                ],
+            ],
+            [
+                [
+                    'value' => 'United records parent',
+                    'title' => 'United',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'United records parent',
+                    ],
+                ],
+                [
+                    'value' => 'United records Top',
+                    'title' => 'Another United',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'United records Top',
+                    ],
+                ],
+            ],
+        ];
+        yield 'record link check linking id with a dot' => [
+            'marc/linking_ids_with_dots.xml',
+            [
+                'test' => [
+                    'prefixIn003' => true,
+                ],
+            ],
+            [
+                [
+                    'value' => 'United records parent',
+                    'title' => 'United',
+                    'link' => [
+                        'type' => 'linkingId',
+                        'value' => '(FI-MELINDA)link.withdot1',
+                    ],
+                ],
+                [
+                    'value' => 'United records parent',
+                    'title' => 'United',
+                    'link' => [
+                        'type' => 'linkingId',
+                        'value' => '(FI-MELINDA)link.withdot2',
+                    ],
+                ],
+            ],
+        ];
+        yield 'record link force checking legacy ids' => [
+            'marc/linking_ids.xml',
+            [
+                'test' => [
+                    'prefixIn003' => false,
+                    'legacy_settings' => [
+                        'linking_id' => true,
+                    ],
+                ],
+            ],
+            [
+                [
+                    'value' => 'United records parent',
+                    'title' => 'United',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'United records parent',
+                    ],
+                ],
+                [
+                    'value' => 'United records Top',
+                    'title' => 'Another United',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'United records Top',
                     ],
                 ],
             ],
