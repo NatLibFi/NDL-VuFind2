@@ -8,7 +8,7 @@
 
   $user = $this->auth()->isLoggedIn();
   $recordTotal = $this->results->getResultTotal();
-  $listProperties = $this->reservationList($user)->getListProperties($this->list->getInstitution(), $this->list->getListConfigIdentifier());
+  $listConfig = $this->reservationList($user)->getListConfiguration($this->list->getInstitution(), $this->list->getListConfigIdentifier());
 ?>
 
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationlist']); ?>
@@ -21,19 +21,19 @@
     <?= $this->flashmessages() ?>
     <?php // TODO: create a component which handles the defaulting into prettier form ?>
     <div class="description-wrapper">
-      <?php if (!$this->translationEmpty($listProperties['translation_keys']['title'])): ?>
-        </p><?= $this->transEsc($listProperties['translation_keys']['title']); ?></p>
+      <?php if ($title = $listConfig->getTitle($this->layout()->userLang)): ?>
+        </p><?= $this->escapeHtml($title); ?></p>
       <?php else: ?>
-        <p><?= $this->transEscWithPrefix('source_', $this->list->getInstitution()) . ': ' . $this->escapeHtml($this->list->getListConfigIdentifier()); ?></p>
+        <p><?= $this->transEscWithPrefix('source_', $listConfig->getInstitution()) . ': ' . $this->escapeHtml($listConfig->getIdentifier()); ?></p>
       <?php endif; ?>
     </div>
-    <?php if (!$this->translationEmpty($listProperties['translation_keys']['description'])): ?>
+    <?php if ($description = $listConfig->getDescription($this->layout()->userLang)): ?>
       <div class="description-wrapper">
-        <p><?= $this->transEsc($listProperties['translation_keys']['description']); ?></p>
+        <p><?= $this->escapeHtml($description); ?></p>
       </div>
     <?php endif; ?>
     <div class="description-wrapper">
-      <?php foreach ($listProperties['properties']['Information'] ?: $listProperties['institution_information'] as $value): ?>
+      <?php foreach ($listConfig->getAddress() as $value): ?>
         <p><?=$this->escapeHtml($value);?></p>
       <?php endforeach; ?>
     </div>
@@ -62,7 +62,7 @@
       </div>
     <?php endif; ?>
     <div class="list-controls">
-      <?php if (!$this->list->getOrdered() && $this->results->getResults() && $listProperties['properties']['Enabled']): ?>
+      <?php if ($listConfig->isEnabled() && !$this->list->getOrdered() && $this->results->getResults()): ?>
         <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', [], ['query' => ['listId' => $this->list->getId()]]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
       <?php endif; ?>
       <?=

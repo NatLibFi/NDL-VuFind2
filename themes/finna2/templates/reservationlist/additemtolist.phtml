@@ -6,20 +6,20 @@
   // Set up breadcrumbs:
   $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('reservationlist-additemtolist') . '">' . $this->transEsc('ReservationList::Add To Reservation List') . '</a></li>'
     . '<li class="breadcrumb-item active">' . $this->transEsc($pageTitle) . '</li>';
-  $listTranslations = $this->reservationList($user)->getListProperties($this->institution, $this->listIdentifier)['translation_keys'];
+  $listConfig = $this->reservationList($user)->getListConfiguration($this->institution, $this->listIdentifier);
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>
 
 <?php // TODO: create a component which handles the defaulting into prettier form ?>
-<?php if (!$this->translationEmpty($listTranslations['title'])): ?>
-  <strong><?= $this->transEsc($listTranslations['title']); ?></strong>
+<?php if ($title = $listConfig->getTitle($this->layout()->userLang)): ?>
+  <strong><?= $this->escapeHtml($title); ?></strong>
 <?php else: ?>
-  <strong><?= $this->transEscWithPrefix('source_', $this->institution) . ': ' . $this->escapeHtml($this->listIdentifier); ?></strong>
+  <strong><?= $this->transEscWithPrefix('source_', $listConfig->getInstitution()) . ': ' . $this->escapeHtml($listConfig->getIdentifier()); ?></strong>
 <?php endif; ?>
 
-<?php if (!$this->translationEmpty($listTranslations['description'])): ?>
-  <p><?= $this->transEsc($listTranslations['description']); ?></p>
+<?php if ($description = $listConfig->getDescription($this->layout()->userLang)): ?>
+  <p><?= $this->escapeHtml($description); ?></p>
 <?php endif; ?>
 
 <?php if (!empty($this->listsContaining)): ?>
@@ -55,5 +55,5 @@
       </div>
     </form>
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['institution' => $this->institution, 'listIdentifier' => $this->listIdentifier, 'newList' => '1', 'recordId' => urlencode($this->recordId), 'source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['institution' => $listConfig->getInstitution(), 'listIdentifier' => $listConfig->getIdentifier(), 'newList' => '1', 'recordId' => urlencode($this->recordId), 'source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
 </div>

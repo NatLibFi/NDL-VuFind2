@@ -29,6 +29,17 @@
 # "list_description_{$institution}_{$identifier}" 
 # Generic description about the list i.e These reservations will be delivered to nnn etc.
 #
+# General settings for how to fetch list configurations
+# Settings:
+# Methods available yaml, api. If yaml is selected, will read list configurations from this file,
+# method: [yaml, api]
+# url: if api is selected, will fetch configurations from api endpoint
+# ttl: How long does cached config live, default is 36000 (1 hour)
+#
+Settings:
+  method: yaml
+  #url:
+  ttl: 36000
 Institutions:
   Example Institution:
     Information:

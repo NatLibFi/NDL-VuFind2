@@ -18,7 +18,7 @@
   <ul class="reservations-list-home-ul">
     <?php foreach ($this->lists ?? [] as $list): ?>
       <?php
-        $listTranslations = $this->reservationList($this->auth()->getUserObject())->getListProperties($list->getInstitution(), $list->getListConfigIdentifier())['translation_keys'];
+        $listConfig = $this->reservationList($this->auth()->getUserObject())->getListConfiguration($list->getInstitution(), $list->getListConfigIdentifier());
       ?>
       <li class="reservations-list-home-li">
         <div class="reservation-list-header">
@@ -43,10 +43,10 @@
         <div class="reservation-list-info">
           <?php // TODO: create a component which handles the defaulting into prettier form ?>
           <div class="location">
-            <?php if (!$this->translationEmpty($listTranslations['title'])): ?>
-              <?= $this->transEsc($listTranslations['title']); ?>
+            <?php if ($title = $listConfig->getTitle($this->layout()->userLang)): ?>
+              <?= $this->escapeHtml($title); ?>
             <?php else: ?>
-              <?= $this->transEscWithPrefix('source_', $list->getInstitution()) . ': ' . $this->escapeHtml($list->getListConfigIdentifier()); ?>
+              <?= $this->transEscWithPrefix('source_', $listConfig->getInstitution()) . ': ' . $this->escapeHtml($listConfig->getIdentifier()); ?>
             <?php endif; ?>
           </div>
           <?php if ($list->getOrdered()): ?>

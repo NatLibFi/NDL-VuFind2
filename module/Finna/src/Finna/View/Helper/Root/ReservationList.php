@@ -30,12 +30,11 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\ReservationList\Handler\HandlerInterface;
 use Finna\ReservationList\ReservationListService;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
-
-use function in_array;
 
 /**
  * Reservation list view helper
@@ -103,13 +102,13 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      * @param string $institution    Lists controlling institution
      * @param string $listIdentifier List identifier
      *
-     * @return array
+     * @return HandlerInterface
      */
-    public function getListProperties(
+    public function getListConfiguration(
         string $institution,
         string $listIdentifier
-    ): array {
-        return $this->reservationListService->getListProperties($institution, $listIdentifier);
+    ): HandlerInterface {
+        return $this->reservationListService->getListConfiguration($institution, $listIdentifier);
     }
 
     /**
@@ -142,51 +141,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function getAvailableListsForRecord(DefaultRecord $driver): array
     {
-        $datasource = $driver->tryMethod('getDatasource');
-        if (!$datasource) {
-            return [];
-        }
-        $result = [];
-        foreach ($this->reservationListConfig['Institutions'] ?? [] as $institution => $settings) {
-            $current = [$institution => []];
-            foreach ($settings['Lists'] ?? [] as $list) {
-                $list = $this->reservationListService->ensureListKeys($list);
-                if (
-                    $list['Enabled']
-                    && in_array($datasource, $list['Datasources'])
-                    && $this->checkUserRightsForList($list)
-                ) {
-                    $current[$institution][] = $list;
-                    continue;
-                }
-            }
-            if ($current[$institution]) {
-                $result = array_merge($result, $current);
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Check if the user has proper requirements to order records.
-     * Function checks if there is required LibraryCardSources
-     * which are used to check if user has an active connection to ils
-     * defined in the list.
-     *
-     * @param array $list List as configuration
-     *
-     * @return bool
-     */
-    public function checkUserRightsForList(array $list): bool
-    {
-        if (!$list['LibraryCardSources']) {
-            return true;
-        }
-        $patron = $this->ilsAuthenticator->storedCatalogLogin();
-        if (!$patron) {
-            return false;
-        }
-        return in_array($patron['source'], $list['LibraryCardSources']);
+        return $this->reservationListService->getAvailableListsForRecord($driver);
     }
 
     /**
