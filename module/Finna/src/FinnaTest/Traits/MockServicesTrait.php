@@ -29,14 +29,10 @@
 
 namespace FinnaTest\Traits;
 
-use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Row\FinnaResourceList;
-use Finna\Db\Row\User;
 use Finna\Db\Service\AccessTokenService;
 use Finna\Db\Service\FinnaResourceListService;
-use Finna\Db\Service\UserService;
 use Finna\Db\Table\FinnaResourceList as TableFinnaResourceList;
-use Finna\Db\Table\User as TableUser;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Http\Client;
 use Laminas\Http\Response;
@@ -109,26 +105,6 @@ trait MockServicesTrait
     }
 
     /**
-     * Get Finna user service
-     *
-     * @param array $dbEntities Array containing db entities to use as a database
-     *
-     * @return MockObject
-     */
-    public function getFinnaUserService(array $dbEntities): MockObject
-    {
-        $userService = $this->getMockBuilder(UserService::class)->onlyMethods(['getDbTable'])
-            ->disableOriginalConstructor()->getMock();
-        $users = [];
-        foreach ($dbEntities as $entity) {
-            $users[] = $this->getMockedRowObject(User::class, $entity);
-        }
-        $userTable = $this->getMockedTableObject(TableUser::class, $users);
-        $userService->expects($this->any())->method('getDbTable')->willReturn($userTable);
-        return $userService;
-    }
-
-    /**
      * Get http service
      *
      * @param array $urlAndResponseMap Url and response map
@@ -152,21 +128,6 @@ trait MockServicesTrait
         }
 
         return $httpService;
-    }
-
-    /**
-     * Get a mocked ILS Authenticator
-     *
-     * @param array $patron Patron logged in
-     *
-     * @return MockObject
-     */
-    public function getFinnaIlsAuthenticator(array $patron): MockObject
-    {
-        $ilsAuthenticator = $this->getMockBuilder(ILSAuthenticator::class)->onlyMethods(['storedCatalogLogin'])
-            ->disableOriginalConstructor()->getMock();
-        $ilsAuthenticator->expects($this->any())->method('storedCatalogLogin')->willReturn($patron);
-        return $ilsAuthenticator;
     }
 
     /**
