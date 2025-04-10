@@ -77,6 +77,7 @@ trait MockServicesTrait
      * Get Finna resource list service as a mocked service
      *
      * @param array       $dbEntities  Array containing db entities to use as a database
+     * @param array       $dbTableMap  A map to be returned from services getDbTable
      * @param ?MockObject $table       Mocked table
      * @param ?MockObject $rowTemplate Mocked row template as db entity
      *
@@ -84,6 +85,7 @@ trait MockServicesTrait
      */
     public function getFinnaResourceListService(
         array $dbEntities = [],
+        array $dbTableMap = [],
         ?MockObject $table = null,
         ?MockObject $rowTemplate = null
     ): MockObject {
@@ -94,20 +96,27 @@ trait MockServicesTrait
         foreach ($dbEntities as $entity) {
             $resourceLists[] = $this->getMockedRowObject(FinnaResourceList::class, $entity, $rowTemplate);
         }
-        $resourceListTable = $this->getMockedTableObject(
+        $resourceListTable = $table ?? $this->getMockedTableObject(
             TableFinnaResourceList::class,
             $resourceLists,
             $table,
             $rowTemplate
         );
-        $resourceListService->expects($this->any())->method('getDbTable')->willReturn($resourceListTable);
+        if (!$dbTableMap) {
+            $dbTableMap = [
+                [TableFinnaResourceList::class, $resourceListTable],
+            ];
+        }
+        $resourceListService->expects($this->any())->method('getDbTable')->willReturnMap($dbTableMap);
         return $resourceListService;
     }
 
     /**
      * Get http service
      *
-     * @param array $urlAndResponseMap Url and response map
+     * @param array $urlAndResponseMap Url and response map. Url is the parameter for createClient.
+     *                                 Value is an array containing keys 'success', 'body'
+     *                                 which will be returned by isSuccess and getBody functions as a response.
      *
      * @return MockObject
      */

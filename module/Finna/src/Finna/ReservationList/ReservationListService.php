@@ -612,7 +612,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         } elseif ($this->reservationListConfig['Settings']['method'] === 'api') {
             $client = $this->httpService->createClient($this->reservationListConfig['Settings']['url']);
             $response = $client->send();
-            if ($response->isOk()) {
+            if ($response->isSuccess()) {
                 $config = json_decode($response->getBody(), true);
                 return $config['data'];
             }

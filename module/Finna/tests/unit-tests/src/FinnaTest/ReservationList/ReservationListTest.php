@@ -42,6 +42,7 @@ use Finna\ReservationList\Handler\Disec;
 use Finna\ReservationList\Handler\Email;
 use Finna\ReservationList\Handler\PluginManager as HandlerPluginManager;
 use Finna\ReservationList\ReservationListService;
+use Generator;
 use Laminas\Session\Container;
 use Laminas\View\Renderer\PhpRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -787,5 +788,66 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
           'pickup_date' => '2025-01-01',
           'success' => true,
         ], $result);
+    }
+
+    /**
+     * Data provider for testGetListConfigurationFromApi
+     *
+     * @return Generator
+     */
+    public static function getTestGetListConfigurationFromApiData(): Generator
+    {
+        $fixturePath = 'reservationlist/ReservationList_api.yaml';
+        yield 'test working url' => [
+            true,
+            $fixturePath,
+            [
+              'type' => 'email',
+              'Sender' => [
+                'name' => 'sender_test',
+                'email' => 'sender_email@email.fi',
+              ],
+              'Subject' => 'Reservation List',
+            ],
+        ];
+        yield 'test nonworking url' => [
+          false,
+          $fixturePath,
+          [],
+        ];
+    }
+
+    /**
+     * Test list fetch from an api endpoint
+     *
+     * @param bool   $success     Is the request successful
+     * @param string $fixturePath Fixture path
+     * @param array  $expected    Expected results
+     *
+     * @return       void
+     * @dataProvider getTestGetListConfigurationFromApiData
+     */
+    public function testGetListConfigurationFromApi(bool $success, string $fixturePath, array $expected): void
+    {
+        $config = Yaml::parse($this->getFixture($fixturePath, 'Finna'));
+        $configJSON = json_encode($config);
+        $urlAndClientMap = [
+            $config['Settings']['url'] => [
+              'success' => $success,
+              'body' => '{"data":' . $configJSON . '}',
+            ],
+        ];
+        $httpService = $this->getHttpService($urlAndClientMap);
+        $listPluginManager = $this->getPluginManager(
+            httpService: $httpService
+        );
+        $service = $this->getReservationListService(
+            listPluginManager: $listPluginManager,
+            reservationListConfig: $config,
+            mockHttpService: $httpService
+        );
+        $listConfig = $service->getListConfiguration('Example Institution', 'list_with_email');
+        $this->assertEquals($expected, $listConfig->getConnectionSettings());
+        $this->assertEquals($success, $listConfig->isEnabled());
     }
 }

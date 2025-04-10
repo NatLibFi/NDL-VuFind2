@@ -1,3 +1,6 @@
+Settings:
+  method: api
+  url: http//testapi.url.fi/getLists
 Institutions:
   Example Institution:
     Information:
