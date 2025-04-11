@@ -51,7 +51,7 @@
   <?php endif; ?>
   <?php if ($this->cart()->isActive()): ?>
     <li>
-        <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier()]); ?>
+      <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier(), 'inToolBar' => true]); ?>
     </li>
   <?php endif; ?>
   <?php if ($this->permission()->allowDisplay('access.finna.StaffUiLink') && ($staffLink = $this->recordLinker()->getStaffUiUrl($this->driver))): ?>
