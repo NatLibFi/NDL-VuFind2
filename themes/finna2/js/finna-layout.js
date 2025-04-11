@@ -442,7 +442,7 @@ finna.layout = (function finnaLayout() {
 
       // Close on outside click
       document.addEventListener('click', (e) => {
-        if (toggletip !== e.target) {
+        if (toggletip !== e.target && !toggletip.contains(e.target)) {
           tipEl.classList.remove('show');
           tipInnerEl.innerHTML = '';
         }
@@ -458,8 +458,11 @@ finna.layout = (function finnaLayout() {
 
       // Remove on blur
       toggletip.addEventListener('blur', () => {
-        tipEl.classList.remove('show');
-        tipInnerEl.innerHTML = '';
+        // Delay hide so that any link clicks can be processed:
+        window.setTimeout(() => {
+          tipEl.classList.remove('show');
+          tipInnerEl.innerHTML = '';
+        }, 100);
       });
     });
   }
