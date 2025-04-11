@@ -442,7 +442,7 @@ finna.layout = (function finnaLayout() {
 
       // Close on outside click
       document.addEventListener('click', (e) => {
-        if (toggletip !== e.target && !toggletip.contains(e.target)) {
+        if (tipEl !== e.target && !tipEl.contains(e.target)) {
           tipEl.classList.remove('show');
           tipInnerEl.innerHTML = '';
         }
@@ -454,15 +454,6 @@ finna.layout = (function finnaLayout() {
           tipEl.classList.remove('show');
           tipInnerEl.innerHTML = '';
         }
-      });
-
-      // Remove on blur
-      toggletip.addEventListener('blur', () => {
-        // Delay hide so that any link clicks can be processed:
-        window.setTimeout(() => {
-          tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
-        }, 100);
       });
     });
   }
