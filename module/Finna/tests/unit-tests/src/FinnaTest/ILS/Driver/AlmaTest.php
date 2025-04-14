@@ -27,7 +27,7 @@
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
 
-namespace FinnaTest\RecordDriver;
+namespace FinnaTest\ILS\Driver;
 
 use Finna\ILS\Driver\Alma;
 use Generator;
