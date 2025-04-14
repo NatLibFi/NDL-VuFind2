@@ -400,10 +400,13 @@ finna.layout = (function finnaLayout() {
       // Reset focus from any active element in the toggletip:
       const activeElement = document.activeElement;
       const parentEl = tipEl.closest('.finna-toggletip');
-      if (parentEl && parentEl.contains(activeElement)) {
+      if (parentEl) {
         const buttonEl = parentEl.querySelector('.finna-toggletip__button');
         if (buttonEl) {
-          buttonEl.focus();
+          buttonEl.setAttribute('aria-expanded', 'false');
+          if (parentEl.contains(activeElement)) {
+            buttonEl.focus();
+          }
         }
       }
 
@@ -483,6 +486,7 @@ finna.layout = (function finnaLayout() {
             tipInnerEl.innerHTML = message;
             tipEl.classList.add('show');
             popperInst.update();
+            toggletip.setAttribute('aria-expanded', 'true');
           }, 100);
         }
       });
