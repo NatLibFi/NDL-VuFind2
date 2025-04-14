@@ -174,8 +174,9 @@ class CuratedRecord extends SolrDefault implements
         $record = clone $this->getXmlRecord();
         $filterFields = ['comment'];
         foreach ($filterFields as $filterField) {
-            while ($record->{$filterField}) {
-                unset($record->{$filterField}[0]);
+            if ($record->{$filterField}) {
+                $t = dom_import_simplexml($record->{$filterField});
+                $t->parentNode->removeChild($t);
             }
         }
         // Only the URL of the single encapsulated record is in the XML record, so
