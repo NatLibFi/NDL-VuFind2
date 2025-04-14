@@ -136,7 +136,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     /**
      * Get mocked alma record driver
      *
-     * @param array $makeRequestMap Map requests in makeRequest functions and corresponding returins.
+     * @param array $makeRequestMap Map for requests in makeRequest function.
      *                              0 => url, 1 => method, 2 => response, expected => if assertEquals is required
      *
      * @return MockObject
