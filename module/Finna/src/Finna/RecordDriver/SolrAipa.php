@@ -242,8 +242,8 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         $record = parent::getFilteredXMLElement();
         $filterFields = ['abstract', 'description'];
         foreach ($filterFields as $filterField) {
-            if ($record->{$filterField}) {
-                $t = dom_import_simplexml($record->{$filterField});
+            while ($field = $record->{$filterField}) {
+                $t = dom_import_simplexml($field);
                 $t->parentNode->removeChild($t);
             }
         }

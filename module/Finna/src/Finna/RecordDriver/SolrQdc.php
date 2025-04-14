@@ -467,7 +467,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
             $description = mb_strtolower((string)$node, 'UTF-8');
             $firstWords = array_slice(preg_split('/\s/', $description), 0, 5);
             if (array_intersect($firstWords, $filterTerms)) {
-                unset($record->description[$i]);
+                $t = dom_import_simplexml($record->description[$i]);
+                $t->parentNode->removeChild($t);
             }
         }
 

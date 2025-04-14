@@ -357,8 +357,8 @@ class AipaLrmi extends SolrLrmi implements
         array $filterFields
     ): void {
         foreach ($filterFields as $filterField) {
-            if ($baseElement->{$filterField}) {
-                $t = dom_import_simplexml($baseElement->{$filterField});
+            while ($field = $baseElement->{$filterField}) {
+                $t = dom_import_simplexml($field);
                 $t->parentNode->removeChild($t);
             }
         }
