@@ -75,6 +75,29 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
         'alma/user.xml',
         'alma/user_address_updated.xml',
         ];
+
+        yield 'empty entries' => [
+          [
+            'id' => '123456',
+          ],
+          [
+            'address1' => '',
+            'email' => '',
+            'phone' => '',
+          ],
+          [
+            'updateProfile' => [
+                'fields' => [
+                    'Address:address1',
+                    'Email:email',
+                    'Phone:phone',
+                ],
+            ],
+          ],
+          'alma/user.xml',
+          'alma/user_empty_address_updated.xml',
+        ];
+
         yield 'multiple addresses' => [
         [
           'id' => '123456',
