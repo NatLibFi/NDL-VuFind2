@@ -227,6 +227,19 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Return the collection search ID for this record.
+     *
+     * @return string
+     */
+    public function getCollectionSearchId(): string
+    {
+        if ($this->mainConfig->Hierarchy->showFullHierarchyTree ?? false) {
+            return $this->getHierarchyTopID()[0] ?? $this->getUniqueID();
+        }
+        return $this->getUniqueID();
+    }
+
+    /**
      * Return geographic center point
      *
      * @return array lon, lat
@@ -760,7 +773,7 @@ trait SolrFinnaTrait
      */
     public function getFirstIndexed()
     {
-        return $this->fields['first_indexed'] ?? '';
+        return $this->fields['catalog_date'] ?? $this->fields['first_indexed'] ?? '';
     }
 
     /**
@@ -1413,5 +1426,36 @@ trait SolrFinnaTrait
             $url = '//' . $url;
         }
         return parse_url($url, $component);
+    }
+
+    /**
+     * Ensure that small, medium and large images do exist in the image array.
+     *
+     * @param array $images Array containing key 'urls' and respective sizes.
+     *
+     * @return array Images and duplicate image information
+     */
+    protected function ensureImageSizes(array $images): array
+    {
+        $hasSmallImage = isset($images['urls']['small']);
+        $hasMediumImage = isset($images['urls']['medium']);
+        $hasLargeImage = isset($images['urls']['large']);
+        $images['cacheSizes'] = [];
+        if (!$hasSmallImage && !$hasMediumImage && !$hasLargeImage) {
+            return $images;
+        }
+        if (!$hasLargeImage) {
+            $images['urls']['large'] = $hasMediumImage ? $images['urls']['medium'] : $images['urls']['small'];
+            $images['cacheSizes']['large'] = $hasMediumImage ? 'medium' : 'small';
+        }
+        if (!$hasSmallImage) {
+            $images['urls']['small'] = $hasMediumImage ? $images['urls']['medium'] : $images['urls']['large'];
+            $images['cacheSizes']['small'] = $hasMediumImage ? 'medium' : 'large';
+        }
+        if (!$hasMediumImage) {
+            $images['urls']['medium'] = $hasSmallImage ? $images['urls']['small'] : $images['urls']['large'];
+            $images['cacheSizes']['medium'] = $hasSmallImage ? 'small' : 'large';
+        }
+        return $images;
     }
 }
