@@ -75,6 +75,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         '690' => 'topic',
     ];
 
+    protected $hierarchicalLinkingShownSource = 'Kansalliskirjasto';
+
+    protected $hierarchicalLinkingShownDatasource = [
+        'fikka',
+    ];
+
+    protected $includedIn = 'Sisältyy kokoelmaan';
+
     /**
      * Constructor
      *
@@ -767,6 +775,67 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Whether linked component parts are shown
+     *
+     * @return boolean
+     */
+    public function isHierarchicalLinkingShown(): bool
+    {
+        $isShown = false;
+        //Top level
+        if (!isset($this->fields['hierarchical_top_id'])) {
+            foreach ($this->getMarcReader()->getFields('264') as $field) {
+                foreach ($this->getSubfieldArray($field, ['b']) as $subfield) {
+                    if ($isShown = str_contains($subfield, $this->hierarchicalLinkingShownSource)) {
+                        continue;
+                    }
+                }
+            }
+        }
+        //Lower levels
+        foreach ($this->getMarcReader()->getFields('773') as $field) {
+            foreach ($this->getSubfieldArray($field, ['i']) as $subfield) {
+                if ($isShown = str_contains($subfield, $this->includedIn)) {
+                    continue;
+                }
+            }
+        }
+        return $isShown && in_array($this->getDataSource(), $this->hierarchicalLinkingShownDatasource);
+    }
+
+    /**
+     * Get the amount of embedded parts
+     *
+     * @return string
+     */
+    public function getAmountOfEmbeddedParts(): string
+    {
+        if ($this->isHierarchicalLinkingShown()) {
+            if ($amount = count($this->getEmbeddedComponentParts())) {
+                return (string)$amount . ' ' . $this->translate('items');
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Get records linked to record
+     *
+     * @return array
+     */
+    public function getHierarchicalEmbeddedComponentParts(): array
+    {
+        if ($this->isHierarchicalLinkingShown()) {
+            if (!empty($this->getHierarchyParentID())) {
+                return $this->getHostRecords(true);
+            } else {
+                return $this->getEmbeddedComponentParts();
+            }
+        }
+        return [];
+    }
+
+    /**
      * Get extended composition information from field 382.
      *
      * Returns an array where each entry contains a set of subfields with a type code
@@ -921,9 +990,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *   reference
      *   Place, publisher, and date of publication
      *
+     * @param bool $ignoreFieldNumber If the field number is ignored
+     *
      * @return array
      */
-    public function getHostRecords()
+    public function getHostRecords($ignoreFieldNumber = false)
     {
         $result = [];
         $sourceId = $this->getSourceIdentifier();
@@ -931,7 +1002,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
         if (
             !empty($this->fields['hierarchy_parent_id'])
-            && count($this->fields['hierarchy_parent_id']) > count($fields)
+            && (count($this->fields['hierarchy_parent_id']) > count($fields)
+            || $ignoreFieldNumber)
         ) {
             // Can't use 773 fields since they don't represent the actual links
             foreach ($this->fields['hierarchy_parent_id'] as $key => $parentId) {

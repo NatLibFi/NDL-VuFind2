@@ -1,4 +1,8 @@
-<!-- START of: finna - RecordDriver/DefaultRecord/container-links.phtml -->
+<?php
+  if (!empty($data)) {
+    $hostRecords = $data;
+  }
+?>
 <?php $containerTitle = $this->driver->getContainerTitle(); ?>
 <?php $hostRecords = $this->driver->tryMethod('getHostRecords'); ?>
 <?php if ($containerTitle || $hostRecords): ?>
@@ -6,11 +10,14 @@
     <?php
       $containerSource = $this->driver->getSourceIdentifier();
       $containerID = $this->driver->getContainerRecordID();
+      $isHoldings = true;
     ?>
     <div class="truncate-field">
-      <span class="recordPublished"><?=$this->transEsc('Published in')?>: </span>
+      <?php if (empty($data)): ?>
+        <div class="recordPublished"><?=$this->transEsc($this->driver->tryMethod('isHierarchicalLinkingShown') ? 'Included in the collections' : 'Published in')?>: </div>
+      <?php endif; ?>
       <?php if ($hostRecords): ?>
-        <?= $this->record($this->driver)->renderTemplate('host-records.phtml', compact('hostRecords', 'driver')); ?>
+        <?= $this->record($this->driver)->renderTemplate('host-records.phtml', compact('hostRecords', 'driver', 'isHoldings')); ?>
       <?php else: ?>
         <?php $link = $containerID ? $this->recordLinker()->getUrl($containerSource . '|' . $containerID) : $this->record($this->driver)->getLink('title', $containerTitle); ?>
         <a href="<?=$this->escapeHtmlAttr($link)?>"><?=$this->escapeHtml($containerTitle)?></a>
@@ -22,4 +29,3 @@
     </div>
   </div>
 <?php endif; ?>
-<!-- END of: finna - RecordDriver/DefaultRecord/container-links.phtml -->

@@ -126,6 +126,30 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 $lines[$key] = [true, $dataMethod, $callback, $options];
             };
         $setTemplateLine(
+            'hierarchical_content',
+            'getHierarchicalEmbeddedComponentParts',
+            'data-componentparts.phtml',
+            [
+                'context' => ['class' => 'recordIncludedIn'],
+                'labelFunction' => function ($data, $driver) {
+                    return !empty($driver->getHierarchyParentID())
+                    ? 'Included in the collections'
+                    : 'Contains collections';
+                },
+            ]
+        );
+        $setTemplateLine(
+            'contents_parts_amount',
+            'getAmountOfEmbeddedParts',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPublications',
+                    'title' => 'Contents/Parts',
+                ],
+            ]
+        );
+        $setTemplateLine(
             'Genre',
             'getGenres',
             'data-genres.phtml',

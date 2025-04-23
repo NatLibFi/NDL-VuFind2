@@ -227,8 +227,6 @@
         </div>
       <?php endif; ?>
 
-      <?=$this->record($driver)->renderTemplate('container-links.phtml');?>
-
       <?php $publications = $this->driver->getPublicationDetails();
       if (!empty($publications)): ?>
         <span class="recordPublications">
@@ -252,6 +250,19 @@
         <span class="recordEdition">
           <span><?=$this->escapeHtml($edition)?></span>
         </span>
+      <?php endif; ?>
+      
+      <?php if (
+          isset($this->tabs['ComponentParts'])
+          && $this->driver->tryMethod('isHierarchicalLinkingShown')
+          && $this->driver->tryMethod('hasEmbeddedComponentParts')
+        ): ?>
+        <div class="record-to-componentparts">
+          <a class="icon-link" href="#componentparts">
+            <?=$this->icon('more', 'icon-link__icon') ?>
+            <span class="icon-link__label"><?=$this->transEsc('Show contents')?></span>
+          </a>
+        </div>
       <?php endif; ?>
 
       <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
