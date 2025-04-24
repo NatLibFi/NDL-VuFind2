@@ -183,12 +183,14 @@
           }
         ?>
         <input id="searchForm_type" type="hidden" name="type" value="<?=$this->escapeHtmlAttr($value)?>" class="searchForm_type">
-        <a role="button" href="#" class="dropdown-toggle" aria-expanded="false" aria-label="<?= $this->transEsc('Narrow Search') ?>" data-bs-toggle="dropdown"><span><?=$this->transEsc($label)?></span> <?=$this->icon('type-dropdown-open') ?></a>
+        <a role="button" href="#" class="dropdown-toggle" aria-expanded="false" aria-label="<?=$this->transEsc('Narrow Search') . ': ' . $this->transEsc($label) . ' ' . $this->transEsc('selected')?>" data-bs-toggle="dropdown"><span><?=$this->transEsc($label)?></span> <?=$this->icon('type-dropdown-open') ?></a>
         <ul class="dropdown-menu" role="menu">
           <?php foreach ($handlers as $handler): ?>
             <li>
               <input type="hidden" value="<?=$this->escapeHtmlAttr($handler['value'])?>">
-              <a role="menuitem" class="dropdown-item select-type" href="#"><?=$this->transEsc($handler['label'])?></a>
+              <a role="menuitem" class="dropdown-item select-type" href="#" <?php if ($handler['label'] === $label):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>>
+                <?=$this->transEsc($handler['label'])?>
+              </a>
             </li>
           <?php endforeach; ?>
         </ul>
