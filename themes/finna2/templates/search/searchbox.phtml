@@ -186,7 +186,7 @@
         <a role="button" href="#" class="dropdown-toggle" aria-expanded="false" aria-label="<?=$this->transEsc('Narrow Search') . ': ' . $this->transEsc($label) . ' ' . $this->transEsc('selected')?>" data-bs-toggle="dropdown"><span><?=$this->transEsc($label)?></span> <?=$this->icon('type-dropdown-open') ?></a>
         <ul class="dropdown-menu" role="menu">
           <?php foreach ($handlers as $handler): ?>
-            <li>
+            <li role="none">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($handler['value'])?>">
               <a role="menuitem" class="dropdown-item select-type" href="#" <?php if ($handler['label'] === $label):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>>
                 <?=$this->transEsc($handler['label'])?>
