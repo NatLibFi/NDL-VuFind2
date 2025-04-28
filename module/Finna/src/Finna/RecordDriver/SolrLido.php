@@ -1217,6 +1217,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Get online URLs
+     *
+     * @return array
+     */
+    public function getOnlineURLs(): array
+    {
+        return $this->getDocuments();
+    }
+
+    /**
      * Get an array of classifications for the record.
      *
      * @return array
