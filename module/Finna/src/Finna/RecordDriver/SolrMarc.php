@@ -2740,7 +2740,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
             if (empty($rawResults)) {
                 foreach ($this->getMarcReader()->getFields('340') as $field) {
-                    foreach ($this->getSubfields($field, 'l') as $subfied) {
+                    foreach ($this->getSubfields($field, 'l') as $subfield) {
                         $rawResults[] = $subfield;
                     }
                 }
