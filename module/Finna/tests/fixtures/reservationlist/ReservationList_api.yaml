@@ -1,6 +1,7 @@
 Settings:
   method: api
   url: http//testapi.url.fi/getLists
+  ttl: 0
 Institutions:
   Example Institution:
     Information:

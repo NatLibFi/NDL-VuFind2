@@ -613,9 +613,9 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             $cacheDir = $this->cacheManager->getCache('object')->getOptions()->getCacheDir();
             $cacheFile = "$cacheDir/ReservationList.json";
             $maxAge = $this->reservationListConfig['Settings']['ttl'] ?? 60;
-
             if (
-                is_readable($cacheFile)
+                $maxAge > 0
+                && is_readable($cacheFile)
                 && time() - filemtime($cacheFile) < $maxAge * 60
                 && ($content = file_get_contents($cacheFile)) !== false
             ) {
@@ -627,7 +627,10 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             if ($response->isSuccess()) {
                 $config = json_decode($response->getBody(), true);
                 $config = $config['data'];
-                file_put_contents($cacheFile, json_encode($config));
+                // Cache only if ttl is set to over 0
+                if ($maxAge > 0) {
+                    file_put_contents($cacheFile, json_encode($config));
+                }
                 return $config;
             }
         }

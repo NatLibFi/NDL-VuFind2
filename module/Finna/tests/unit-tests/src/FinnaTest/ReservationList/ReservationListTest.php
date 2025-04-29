@@ -43,6 +43,8 @@ use Finna\ReservationList\Handler\Email;
 use Finna\ReservationList\Handler\PluginManager as HandlerPluginManager;
 use Finna\ReservationList\ReservationListService;
 use Generator;
+use Laminas\Cache\Storage\Adapter\FilesystemOptions;
+use Laminas\Cache\Storage\StorageInterface;
 use Laminas\Session\Container;
 use Laminas\View\Renderer\PhpRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -101,6 +103,11 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         ?MockObject $listPluginManager = null,
         array $reservationListConfig = [],
     ): MockObject {
+        $adapterOptions = new FilesystemOptions();
+        $storage = $this->getMockBuilder(StorageInterface::class)->disableOriginalConstructor()->getMock();
+        $storage->expects($this->any())->method('getOptions')->willReturn($adapterOptions);
+        $cacheManager = $this->getMockBuilder(Manager::class)->disableOriginalConstructor()->getMock();
+        $cacheManager->expects($this->any())->method('getCache')->willReturn($storage);
         $service = $this->getMockBuilder(ReservationListService::class)->onlyMethods(['createListForUser'])
         ->setConstructorArgs([
           $this->container->createMock(FinnaResourceListService::class),
@@ -113,7 +120,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
           $this->container->createMock(Container::class),
           $mockHttpService ??= $this->container->createMock(HttpService::class),
           $this->container->createMock(ILSAuthenticator::class),
-          $this->container->createMock(Manager::class),
+          $cacheManager,
           $listPluginManager ??= $this->container->createMock(HandlerPluginManager::class),
           $reservationListConfig,
         ])->getMock();
@@ -758,7 +765,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      *
      * @return Generator
      */
-    public static function getTestgetListHandlerFromApiData(): Generator
+    public static function getTestGetListHandlerFromApiData(): Generator
     {
         $fixturePath = 'reservationlist/ReservationList_api.yaml';
         yield 'test working url' => [
@@ -790,7 +797,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      * @return       void
      * @dataProvider getTestgetListHandlerFromApiData
      */
-    public function testgetListHandlerFromApi(bool $success, string $fixturePath, array $expected): void
+    public function testGetListHandlerFromApi(bool $success, string $fixturePath, array $expected): void
     {
         $config = Yaml::parse($this->getFixture($fixturePath, 'Finna'));
         $configJSON = json_encode($config);
