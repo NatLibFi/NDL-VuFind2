@@ -212,14 +212,14 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      */
     public function init(array $config): static
     {
-        $orderFormKey = $config['Forms']['PlaceOrder'] ?? 'default';
         $definedForms = $this->getService(\Finna\Config\YamlReader::class)
             ->getFinna('ReservationList.yaml', 'config/finna', true)['Forms'] ?? [];
         if (!$definedForms) {
             throw new Exception('ReservationList: No forms defined.');
         }
+        $orderFormKey = $config['Forms']['PlaceOrder'] ?? 'default';
         $this->orderFormConfig = $definedForms['PlaceOrder'][$orderFormKey];
-        $this->singleOrderFormConfig = $definedForms['PlaceOrder']['single'];
+        $this->singleOrderFormConfig = $definedForms['PlaceOrder']['single'] ?? $this->orderFormConfig;
         if ($extend = $this->singleOrderFormConfig['extends'] ?? false) {
             $this->singleOrderFormConfig = array_merge(
                 $definedForms['PlaceOrder'][$extend],
