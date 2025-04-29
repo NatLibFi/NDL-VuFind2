@@ -610,11 +610,25 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         if (($this->reservationListConfig['Settings']['method'] ??= 'yaml') === 'yaml') {
             return $this->reservationListConfig;
         } elseif ($this->reservationListConfig['Settings']['method'] === 'api') {
+            $cacheDir = $this->cacheManager->getCache('object')->getOptions()->getCacheDir();
+            $cacheFile = "$cacheDir/ReservationList.json";
+            $maxAge = $this->reservationListConfig['Settings']['ttl'] ?? 60;
+
+            if (
+                is_readable($cacheFile)
+                && time() - filemtime($cacheFile) < $maxAge * 60
+                && ($content = file_get_contents($cacheFile)) !== false
+            ) {
+                return json_decode($content, true);
+            }
             $client = $this->httpService->createClient($this->reservationListConfig['Settings']['url']);
             $response = $client->send();
+
             if ($response->isSuccess()) {
                 $config = json_decode($response->getBody(), true);
-                return $config['data'];
+                $config = $config['data'];
+                file_put_contents($cacheFile, json_encode($config));
+                return $config;
             }
         }
         return [];
