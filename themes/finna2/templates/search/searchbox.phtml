@@ -165,7 +165,7 @@
       <div class="keyboard-box">
         <div class="simple-keyboard"></div>
       </div>
-      <form id="searchForm" role="search" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' : ''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
+      <form id="searchForm" class="searchForm navbar-form navbar-left  <?=$handlerCount < 2 ? 'input-field-only' : ''; ?>" method="get" action="<?=$this->url($basicSearch)?>" name="searchForm" autocomplete="off">
       <label for="searchForm_lookfor" class="sr-only" hidden><?=$this->transEsc('Find')?></label>
       <input<?=$this->htmlAttributes($searchboxAttributes)?>>
       <button id="searchForm-reset" class="searchForm-reset hidden" type="reset" tabindex="-1" aria-label="<?=$this->transEsc('searchform_reset_button')?>"><?=$this->icon('ui-reset-search');?></button>
