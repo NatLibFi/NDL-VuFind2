@@ -1,6 +1,6 @@
 <!-- START of: finna - Recommend/SideFacets.phtml -->
 <?php
-  $this->headScript()->appendFile('facets.js');
+  $this->assetManager()->appendScriptLink('facets.js');
 
   // Save results/options to $this so they are available to sub-templates:
   $this->results = $results = $this->recommend->getResults();
@@ -9,8 +9,8 @@
   $resultsTotal = $results->getResultTotal();
 ?>
 <?php if ($resultsTotal > 0): ?>
-  <h2><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?><?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?><span class="tooltip-facet pull-right" data-bs-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_facet_html')?>"><?=$this->icon('help') ?></span><?php endif; ?><span role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></span></h2>
-  <span class="sr-only"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
+  <h2><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?><?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?><span class="tooltip-facet float-end" data-bs-toggle="tooltip" data-placement="auto" data-html="true" data-original-title="<?=$this->transEsc('tooltip_facet_html')?>"><?=$this->icon('help') ?></span><?php endif; ?><span role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></span></h2>
+  <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
 <?php endif; ?>
 <?php $checkboxFilters = $results->getParams()->getCheckboxFacets(); ?>
 <?php $checkboxesShown = false; ?>
@@ -24,36 +24,27 @@
   ?>
   <?php if ($checkboxesShown): ?>
     <fieldset>
-      <legend class="sr-only"><?=$this->transEsc('checkbox_filter')?></legend>
+      <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
       <div class="checkbox-filters">
         <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results]); ?>
       </div>
     </fieldset>
   <?php endif; ?>
 <?php endif; ?>
-<?php $extraFilters = $this->extraSideFacetFilters ?? []; ?>
-<?php $collapsedFacets = $this->recommend->getCollapsedFacets(); ?>
-<?php $filterList = array_merge($results->getParams()->getFilterList(true), $extraFilters); ?>
-<?php $module = $this->layout()->templateDir; ?>
 <?php
+  $extraFilters = $this->extraSideFacetFilters ?? [];
+  $collapsedFacets = $this->recommend->getCollapsedFacets();
+  $filterList = array_merge($results->getParams()->getFilterList(true), $extraFilters);
   $plotFrom = null;
   $daterangeFacetField = null;
-  if (null === $module || in_array($module, ['blender', 'search', 'primo'])) {
-    $options = $results->getOptions();
-    if (is_callable([$options, 'getDateRangeSearchField'])) {
-      $daterangeFacetField = $options->getDateRangeSearchField();
-    }
-    if (is_callable([$params, 'getDateRangeFilter'])) {
-      $dateRangeFilter = $params->getDateRangeFilter();
+  if (is_callable([$options, 'getDateRangeSearchField'])) {
+    $daterangeFacetField = $options->getDateRangeSearchField();
+  }
+  if ($this->fromStreetSearch) {
+    if (($key = array_search('geographic_facet', $collapsedFacets)) !== false) {
+      unset($collapsedFacets[$key]);
     }
   }
-?>
-<?php
-if ($this->fromStreetSearch) {
-  if (($key = array_search('geographic_facet', $collapsedFacets)) !== false) {
-    unset($collapsedFacets[$key]);
-  }
-}
 ?>
 <?=$this->sideFacetExtraControls ?? '' ?>
 <?php $sideFacetSet = $this->recommend->getFacetSet(); ?>
@@ -79,11 +70,12 @@ if ($this->fromStreetSearch) {
                   'facet' => $title,
                   'cluster' => $cluster,
                   'collapsedFacets' => $collapsedFacets,
+                  'plotImmediately' => false,
               ]
           )?>
       </div>
     </div>
   <?php endforeach; ?>
 <?php endif; ?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'registerSideFacetTruncation();', 'SET');?>
+<?=$this->assetManager()->outputInlineScriptString('registerSideFacetTruncation();');?>
 <!-- END of: finna - Recommend/SideFacets.phtml -->

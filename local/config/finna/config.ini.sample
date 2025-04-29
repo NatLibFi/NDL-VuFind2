@@ -145,8 +145,11 @@ indexBasedNewItems = true
 ; Whether to hide email address in patron profile. Default is false
 ;hideProfileEmailAddress = true
 ; Scale for advanced search year slider. Current year + 1 is always added to the end.
-; Default scale is "0,900,1800,1910"
-;advSearchYearScale = "1600,1800,2000,2010"
+; Default scale is "-1000,0,900,1800,1910"
+; DEPRECATED - Only the first value is used as fallback. Use the facet-specific settings in facets configuration
+; (e.g. [Facet_search_daterange_mv] in facets.ini or [Facet_creationdate] in Primo.ini) instead.
+;
+;advSearchYearScale = "1600"
 
 ; This section allows you to configure the mechanism used for storing user
 ; sessions.  Available types: File, Memcache, Database.
@@ -1222,7 +1225,7 @@ marc_links = "760,762,765,767,770,772,775,776,780,785"
 ; until it finds one that matches. If you don't have id numbers in the fields,
 ; you can also use title to construct a title based search. id represents a raw
 ; bib id, dlc represents an LCCN.  Default setting:
-;marc_links_link_types = id,oclc,dlc,isbn,issn,title
+;marc_links_link_types = linkingId,id,oclc,dlc,isbn,issn,title
 ; Set use_visibility_indicator to false if you want to show links that are marked as
 ; "Do not show" in the MARC record (indicator 1). Otherwise, these links will be
 ; suppressed. (Default = true)
@@ -1328,6 +1331,10 @@ arranger_roles[] = "arranger"
 arranger_roles[] = "arrangör"
 arranger_roles[] = "sov"
 arranger_roles[] = "sovittaja"
+
+; Hidden author roles for authors that are not displayed as authors at all
+hidden_author_roles[] = "kustantaja"
+hidden_author_roles[] = "utgivare"
 
 ; Datasource specific EAD record link templates
 ; Currently supports the following placeholders for record data:

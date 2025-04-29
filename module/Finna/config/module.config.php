@@ -636,6 +636,7 @@ $config = [
             'db_service' => [
                 'factories' => [
                     \Finna\Db\Service\CommentsService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\AccessTokenService::class => \VuFind\Db\Service\AccessTokenServiceFactory::class,
                     \Finna\Db\Service\FinnaCacheService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaDueDateReminderService::class
                         => \VuFind\Db\Service\AbstractDbServiceFactory::class,
@@ -666,6 +667,7 @@ $config = [
                     \VuFind\Db\Service\UserResourceService::class => \Finna\Db\Service\UserResourceService::class,
                     \VuFind\Db\Service\UserService::class => \Finna\Db\Service\UserService::class,
                     \VuFind\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardService::class,
+                    \VuFind\Db\Service\AccessTokenService::class => \Finna\Db\Service\AccessTokenService::class,
 
                     \Finna\Db\Service\FinnaCacheServiceInterface::class => \Finna\Db\Service\FinnaCacheService::class,
                     \Finna\Db\Service\FinnaDueDateReminderServiceInterface::class
@@ -842,6 +844,7 @@ $config = [
                     'Finna\Search\Solr\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\SolrAuth\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\SolrBrowse\Options' => 'VuFind\Search\Options\OptionsFactory',
+                    'Finna\Search\SolrCollection\Options' => 'VuFind\Search\Options\OptionsFactory',
 
                     'Finna\Search\L1\Options' => 'VuFind\Search\OptionsFactory',
                 ],
@@ -852,6 +855,7 @@ $config = [
                     'VuFind\Search\Primo\Options' => 'Finna\Search\Primo\Options',
                     'VuFind\Search\Solr\Options' => 'Finna\Search\Solr\Options',
                     'VuFind\Search\SolrAuth\Options' => 'Finna\Search\SolrAuth\Options',
+                    'VuFind\Search\SolrCollection\Options' => 'Finna\Search\SolrCollection\Options',
 
                     // Counterpart for EmptySet Params:
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
@@ -874,6 +878,7 @@ $config = [
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrBrowse\Params' => 'Finna\Search\Solr\ParamsFactory',
+                    'Finna\Search\SolrCollection\Params' => 'Finna\Search\SolrCollection\ParamsFactory',
 
                     'Finna\Search\L1\Params' => 'Finna\Search\Solr\ParamsFactory',
                 ],
@@ -885,6 +890,7 @@ $config = [
                     'VuFind\Search\Favorites\Params' => 'Finna\Search\Favorites\Params',
                     'VuFind\Search\MixedList\Params' => 'Finna\Search\MixedList\Params',
                     'VuFind\Search\Solr\Params' => 'Finna\Search\Solr\Params',
+                    'VuFind\Search\SolrCollection\Params' => 'Finna\Search\SolrCollection\Params',
 
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
                     'ReservationList' => \Finna\Search\ReservationList\Params::class,
@@ -903,6 +909,7 @@ $config = [
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrBrowse\Results' => 'VuFind\Search\Solr\ResultsFactory',
+                    'Finna\Search\SolrCollection\Results' => 'Finna\Search\SolrCollection\ResultsFactory',
                     'Finna\Search\L1\Results' => 'Finna\Search\L1\ResultsFactory',
                 ],
                 'aliases' => [
@@ -912,6 +919,7 @@ $config = [
                     'VuFind\Search\Primo\Results' => 'Finna\Search\Primo\Results',
                     'VuFind\Search\Solr\Results' => 'Finna\Search\Solr\Results',
                     'VuFind\Search\SolrAuth\Results' => 'Finna\Search\SolrAuth\Results',
+                    'VuFind\Search\SolrCollection\Results' => 'Finna\Search\SolrCollection\Results',
 
                     'EncapsulatedRecords' => 'Finna\Search\EncapsulatedRecords\Results',
                     'L1' => 'Finna\Search\L1\Results',
@@ -1128,6 +1136,7 @@ $staticRoutes = [
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
     'LibraryCards/ResetPassword',
     'LocationService/Modal',
+    'Cover/Pipe',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
     'MyResearch/SaveCustomOrder', 'MyResearch/SaveHistoricLoans',
     'MyResearch/DownloadCheckoutHistory',
