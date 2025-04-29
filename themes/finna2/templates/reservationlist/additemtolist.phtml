@@ -8,19 +8,19 @@
   $this->breadcrumbs()->set(...$this->recordLinker()->getBreadcrumbParams($this->driver))
     ->add($pageTitle, active: true);
 
-  $listConfig = $this->reservationList($user)->getListConfiguration($this->institution, $this->listIdentifier);
+  $listHandler = $this->reservationList($user)->getListHandler($this->institution, $this->listIdentifier);
 ?>
 
 <h2><?= $this->transEsc($pageTitle); ?></h2>
 
 <?php // TODO: create a component which handles the defaulting into prettier form ?>
-<?php if ($title = $listConfig->getTitle($this->layout()->userLang)): ?>
+<?php if ($title = $listHandler->getTitle($this->layout()->userLang)): ?>
   <strong><?= $this->escapeHtml($title); ?></strong>
 <?php else: ?>
-  <strong><?= $this->transEscWithPrefix('source_', $listConfig->getInstitution()) . ': ' . $this->escapeHtml($listConfig->getIdentifier()); ?></strong>
+  <strong><?= $this->transEscWithPrefix('source_', $listHandler->getInstitution()) . ': ' . $this->escapeHtml($listHandler->getIdentifier()); ?></strong>
 <?php endif; ?>
 
-<?php if ($description = $listConfig->getDescription($this->layout()->userLang)): ?>
+<?php if ($description = $listHandler->getDescription($this->layout()->userLang)): ?>
   <p><?= $this->escapeHtml($description); ?></p>
 <?php endif; ?>
 
@@ -57,5 +57,5 @@
       </div>
     </form>
   <?php endif; ?>
-  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['institution' => $listConfig->getInstitution(), 'listIdentifier' => $listConfig->getIdentifier(), 'newList' => '1', 'recordId' => urlencode($this->recordId), 'source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
+  <a class="btn btn-link" id="make-list" href="<?=$this->url('reservationlist-createlist', [], ['query' => ['institution' => $listHandler->getInstitution(), 'listIdentifier' => $listHandler->getIdentifier(), 'newList' => '1', 'recordId' => urlencode($this->recordId), 'source' => urlencode($this->source)]])?>"><?=$this->transEsc('ReservationList::Create New Reservation List')?></a>
 </div>

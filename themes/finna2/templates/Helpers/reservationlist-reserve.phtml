@@ -10,19 +10,19 @@ return;
   <div class="headers">
     <span class="holdings-title"><?=$this->transEsc('ReservationList::Add To Reservation List')?></span>
   </div>
-  <?php foreach ($this->lists as $listConfig): ?>
+  <?php foreach ($this->lists as $listHandler): ?>
     <div class="holdings-group">
       <div class="holdings-container-heading">
         <?php // TODO: create a component which handles the defaulting into prettier form ?>
         <div class="location">
-          <?php if ($title = $listConfig->getTitle($this->layout()->userLang)): ?>
+          <?php if ($title = $listHandler->getTitle($this->layout()->userLang)): ?>
             <?= $this->escapeHtml($title); ?>
           <?php else: ?>
-            <?= $this->transEscWithPrefix('source_', $listConfig->getInstitution()) . ': ' . $this->escapeHtml($listConfig->getIdentifier()); ?>
+            <?= $this->transEscWithPrefix('source_', $listHandler->getInstitution()) . ': ' . $this->escapeHtml($listHandler->getIdentifier()); ?>
           <?php endif; ?>
         </div>
         <div class="location-link text-right">
-          <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorderoptions', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $listConfig->getInstitution(), 'listIdentifier' => $listConfig->getIdentifier()]]))?>" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Reserve Resource'])?></a>
+          <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorderoptions', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $listHandler->getInstitution(), 'listIdentifier' => $listHandler->getIdentifier()]]))?>" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Reserve Resource'])?></a>
         </div>
       </div>
     </div>

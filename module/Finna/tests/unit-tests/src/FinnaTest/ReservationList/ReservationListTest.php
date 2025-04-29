@@ -684,7 +684,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             listPluginManager: $listPluginManager,
             reservationListConfig: $reservationListConfig
         );
-        $handler = $service->getListConfiguration($institution, $listIdentifier);
+        $handler = $service->getListHandler($institution, $listIdentifier);
 
         $list = $service->createListForUser($ownerUser, [
           'title' => 'Test List Title',
@@ -722,7 +722,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             reservationListConfig: $reservationListConfig,
             mockHttpService: $httpService
         );
-        $handler = $service->getListConfiguration('Example Institution', 'list_with_disec');
+        $handler = $service->getListHandler('Example Institution', 'list_with_disec');
         $testValues = [
           'listId' => null,
           'institution' => 'Example Institution',
@@ -768,7 +768,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             reservationListConfig: $reservationListConfig,
             mockHttpService: $httpService
         );
-        $handler = $service->getListConfiguration('Example Institution', 'list_with_email');
+        $handler = $service->getListHandler('Example Institution', 'list_with_email');
         $testValues = [
           'listId' => null,
           'institution' => 'Example Institution',
@@ -791,11 +791,11 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testGetListConfigurationFromApi
+     * Data provider for testgetListHandlerFromApi
      *
      * @return Generator
      */
-    public static function getTestGetListConfigurationFromApiData(): Generator
+    public static function getTestgetListHandlerFromApiData(): Generator
     {
         $fixturePath = 'reservationlist/ReservationList_api.yaml';
         yield 'test working url' => [
@@ -825,9 +825,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      * @param array  $expected    Expected results
      *
      * @return       void
-     * @dataProvider getTestGetListConfigurationFromApiData
+     * @dataProvider getTestgetListHandlerFromApiData
      */
-    public function testGetListConfigurationFromApi(bool $success, string $fixturePath, array $expected): void
+    public function testgetListHandlerFromApi(bool $success, string $fixturePath, array $expected): void
     {
         $config = Yaml::parse($this->getFixture($fixturePath, 'Finna'));
         $configJSON = json_encode($config);
@@ -846,8 +846,8 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             reservationListConfig: $config,
             mockHttpService: $httpService
         );
-        $listConfig = $service->getListConfiguration('Example Institution', 'list_with_email');
-        $this->assertEquals($expected, $listConfig->getConnectionSettings());
-        $this->assertEquals($success, $listConfig->isEnabled());
+        $listHandler = $service->getListHandler('Example Institution', 'list_with_email');
+        $this->assertEquals($expected, $listHandler->getConnectionSettings());
+        $this->assertEquals($success, $listHandler->isEnabled());
     }
 }

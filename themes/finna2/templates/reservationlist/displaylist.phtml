@@ -11,7 +11,7 @@
 
   $user = $this->auth()->isLoggedIn();
   $recordTotal = $this->results->getResultTotal();
-  $listConfig = $this->reservationList($user)->getListConfiguration($this->list->getInstitution(), $this->list->getListConfigIdentifier());
+  $listHandler = $this->reservationList($user)->getListHandler($this->list->getInstitution(), $this->list->getListConfigIdentifier());
 ?>
 
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationlist']); ?>
@@ -24,19 +24,19 @@
     <?= $this->flashmessages() ?>
     <?php // TODO: create a component which handles the defaulting into prettier form ?>
     <div class="description-wrapper">
-      <?php if ($title = $listConfig->getTitle($this->layout()->userLang)): ?>
+      <?php if ($title = $listHandler->getTitle($this->layout()->userLang)): ?>
         </p><?= $this->escapeHtml($title); ?></p>
       <?php else: ?>
-        <p><?= $this->transEscWithPrefix('source_', $listConfig->getInstitution()) . ': ' . $this->escapeHtml($listConfig->getIdentifier()); ?></p>
+        <p><?= $this->transEscWithPrefix('source_', $listHandler->getInstitution()) . ': ' . $this->escapeHtml($listHandler->getIdentifier()); ?></p>
       <?php endif; ?>
     </div>
-    <?php if ($description = $listConfig->getDescription($this->layout()->userLang)): ?>
+    <?php if ($description = $listHandler->getDescription($this->layout()->userLang)): ?>
       <div class="description-wrapper">
         <p><?= $this->escapeHtml($description); ?></p>
       </div>
     <?php endif; ?>
     <div class="description-wrapper">
-      <?php foreach ($listConfig->getAddress() as $value): ?>
+      <?php foreach ($listHandler->getAddress() as $value): ?>
         <p><?=$this->escapeHtml($value);?></p>
       <?php endforeach; ?>
     </div>
@@ -65,7 +65,7 @@
       </div>
     <?php endif; ?>
     <div class="list-controls">
-      <?php if ($listConfig->isEnabled() && !$this->list->getOrdered() && $this->results->getResults()): ?>
+      <?php if ($listHandler->isEnabled() && !$this->list->getOrdered() && $this->results->getResults()): ?>
         <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', [], ['query' => ['listId' => $this->list->getId()]]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
       <?php endif; ?>
       <?=

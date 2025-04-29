@@ -552,7 +552,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      *
      * @return HandlerInterface
      */
-    public function getListConfiguration(
+    public function getListHandler(
         string $institution,
         string $listIdentifier
     ): HandlerInterface {
