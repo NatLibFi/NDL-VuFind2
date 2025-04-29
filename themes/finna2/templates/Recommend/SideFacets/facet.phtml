@@ -60,7 +60,6 @@
   <?=$this->context($this)->renderInContext('Recommend/SideFacets/new-item-facet.phtml', ['results' => $results, 'title' => $facet, 'newItemsFacets' => $newItemsFacets]); ?>
 <?php elseif ($daterangeFacet): ?>
   <div class="list-group-item daterange">
-  <?php $this->plotImmediately ??= !in_array($facet, $collapsedFacets); ?>
     <?=$this->partial('Recommend/DateRangeVisAjax.phtml', [
       'submitLabel' => 'Update',
       'from' => $fromVal,
@@ -72,7 +71,7 @@
       'backend' => $backendId,
       'daterangeFacet' => $daterangeFacetField,
       'plotFrom' => $plotFrom,
-      'plotImmediately' => $this->plotImmediately,
+      'plotImmediately' => $this->plotImmediately ?? !in_array($facet, $collapsedFacets),
     ]);
     ?>
   </div>
