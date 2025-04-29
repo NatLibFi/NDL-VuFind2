@@ -177,18 +177,6 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-  /**
-   * Toggle visibility of sidebar on mobile
-   * @param {object} e Event object
-   */
-  function toggleMobileSidebar(e) {
-    e.stopImmediatePropagation();
-    document.querySelector('.sidebar').classList.toggle('open');
-    document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
-      el.classList.toggle('hidden');
-    });
-    document.querySelector('body').classList.toggle('prevent-scroll');
-  }
 
   /**
    * Check and keep focus within the search facet list
@@ -197,28 +185,55 @@ finna.layout = (function finnaLayout() {
   function onFocusOutOfFacetContainer(e) {
     const container = document.querySelector('.side-facets-container-ajax');
     if (!container.contains(e.relatedTarget)) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      document.activeElement.blur();
       container.focus();
+    }
+  }
+
+  /**
+   * Toggle visibility of sidebar on mobile
+   * @param {object} e Event object
+   */
+  function toggleMobileSidebar(e) {
+    e.stopImmediatePropagation();
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar) {
+      sidebar.classList.toggle('open');
+      const container = document.querySelector('.side-facets-container-ajax');
+      document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
+        el.classList.toggle('hidden');
+      });
+      document.querySelector('body').classList.toggle('prevent-scroll');
+      if (container) {
+        if (sidebar.classList.contains('open')) {
+          container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
+          container.ariaModal = true;
+          container.tabIndex = '0';
+          container.querySelector('h1').tabIndex = '0';
+          document.activeElement.blur();
+          container.querySelector('h1').focus();
+        } else {
+          container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
+          document.activeElement.blur();
+          document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
+          container.removeAttribute('aria-modal');
+          container.removeAttribute('tabindex');
+          container.querySelector('h1').removeAttribute('tabindex');
+        }
+      }
     }
   }
 
   /**
    * On keypress of mobile sidebar
    * @param {object} e Event object
-   * @param {HTMLElement} container Container of elements
    */
-  function onKeyPressMobileSidebar(e, container) {
+  function onKeyPressMobileSidebar(e) {
     if (e.which === 32 || e.which === 13) {
       e.preventDefault();
       toggleMobileSidebar(e);
-      if (document.querySelector('.sidebar').classList.contains('open')) {
-        container.addEventListener('focusout', onFocusOutOfFacetContainer);
-        document.activeElement.blur();
-        container.querySelector('h1').focus();
-      } else {
-        document.activeElement.blur();
-        document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
-        container.removeEventListener('focusout', onFocusOutOfFacetContainer);
-      }
     }
   }
 
@@ -234,12 +249,9 @@ finna.layout = (function finnaLayout() {
       document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
       });
-      container.tabIndex = '0';
-      container.ariaModal = true;
-      container.querySelector('h1').tabIndex = '0';
       document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
-          onKeyPressMobileSidebar(e, container);
+          onKeyPressMobileSidebar(e);
         });
       });
     }
@@ -379,6 +391,57 @@ finna.layout = (function finnaLayout() {
    * @param {HTMLElement} holder Holder to look for toggletip elements from
    */
   function initToggleTips(holder) {
+
+    /**
+     * Close a ToggleTip
+     * @param {HTMLElement} tipEl Tip container element
+     */
+    function closeToggleTip(tipEl) {
+      // Reset focus from any active element in the toggletip:
+      const activeElement = document.activeElement;
+      const parentEl = tipEl.closest('.finna-toggletip');
+      if (parentEl) {
+        const buttonEl = parentEl.querySelector('.finna-toggletip__button');
+        if (buttonEl) {
+          buttonEl.setAttribute('aria-expanded', 'false');
+          if (parentEl.contains(activeElement)) {
+            buttonEl.focus();
+          }
+        }
+      }
+
+      tipEl.classList.remove('show');
+      const tipInnerEl = tipEl.querySelector('.js-status-inner');
+      if (tipInnerEl) {
+        tipInnerEl.innerHTML = '';
+      }
+      // If focus was in the toggletip, return it to the button:
+    }
+
+    /**
+     * Click event handler that closes all toggletips not being clicked
+     * @param {object} e Event object
+     */
+    function closeToggleTipsOnClick(e) {
+      document.querySelectorAll('.finna-toggletip .js-status.show').forEach((tipEl) => {
+        if (tipEl !== e.target && !tipEl.contains(e.target)) {
+          closeToggleTip(tipEl);
+        }
+      });
+    }
+
+    /**
+     * Keydown event handler that closes all toggletips
+     * @param {object} e Event object
+     */
+    function closeToggleTipsOnEsc(e) {
+      if ((e.keyCode || e.which) === 27) {
+        document.querySelectorAll('.finna-toggletip .js-status.show').forEach((tipEl) => {
+          closeToggleTip(tipEl);
+        });
+      }
+    }
+
     holder.querySelectorAll('[data-toggle="finna-toggletip"]').forEach(toggletip => {
       if (toggletip.dataset.initialized) {
         return;
@@ -417,38 +480,22 @@ finna.layout = (function finnaLayout() {
       );
       toggletip.addEventListener('click', () => {
         if (tipEl.classList.contains('show')) {
-          tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
+          closeToggleTip(tipEl);
         } else {
           window.setTimeout(() => {
             tipInnerEl.innerHTML = message;
             tipEl.classList.add('show');
             popperInst.update();
+            toggletip.setAttribute('aria-expanded', 'true');
           }, 100);
         }
       });
 
       // Close on outside click
-      document.addEventListener('click', (e) => {
-        if (toggletip !== e.target) {
-          tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
-        }
-      });
+      document.addEventListener('click', closeToggleTipsOnClick);
 
       // Remove toggletip on Esc
-      toggletip.addEventListener('keydown', (e) => {
-        if ((e.keyCode || e.which) === 27) {
-          tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
-        }
-      });
-
-      // Remove on blur
-      toggletip.addEventListener('blur', () => {
-        tipEl.classList.remove('show');
-        tipInnerEl.innerHTML = '';
-      });
+      document.addEventListener('keydown', closeToggleTipsOnEsc);
     });
   }
 
