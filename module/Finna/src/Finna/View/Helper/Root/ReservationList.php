@@ -228,7 +228,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if single order is plausible
+     * Check if single order is possible
      *
      * @return bool
      */
