@@ -6,7 +6,7 @@
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $recordLinker = $this->recordLinker($this->results);
   $coverDetails = $this->record($this->driver)->getCoverDetails('result-list', 'medium', $recordLinker->getUrl($this->driver));
-  $coverType = $this->driver->tryMethod('getCoverType');
+  $binding = $this->driver->tryMethod('getBinding');
   if ($img) {
     $thumbnail = $img->render('list', ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 250, 'h' => 250]]);
   }
@@ -46,6 +46,9 @@
           <div class="resultItemFormat">
             <?=$this->record($this->driver)->getFormatList() ?>
             <?=$this->record($this->driver)->getLabelList() ?>
+            <?php if (!empty($binding)): ?>
+              <span class="iconlabel label-binding"><?=$this->transEsc($this->escapeHtml($binding))?></span>
+            <?php endif; ?> 
           </div>
 
           <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
@@ -113,10 +116,7 @@
               </div>
             <?php elseif (!empty($summDate)): ?>
               <?=!empty($summAuthor) ? '' : ' '?>
-              <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
-              <?php if (!empty($coverType)): ?>
-                <span class="cover-type"><?=$this->escapeHtml($coverType[0])?></span>
-              <?php endif; ?>              
+              <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>             
             <?php endif; ?>                        
             <?php if ($classifications = $this->driver->tryMethod('getClassifications')): ?>
               <div class="resultClassification">

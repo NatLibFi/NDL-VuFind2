@@ -416,7 +416,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         );
         $setTemplateLine(
             'Physical Description',
-            'getExtendedPhysicalDescriptions',
+            'getPhysicalDescriptions',
             'data-escapeHtml.phtml',
             [
                 'context' => ['class' => 'physicalDescriptions'],

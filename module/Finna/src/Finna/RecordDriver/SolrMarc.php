@@ -2659,51 +2659,73 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get book cover type from fields 340 subfield l, field 020 subfield q or field 563 subfield a
+     * Get book binding from fields 020 subfield q, 340 subfield l or 500 subfield a
      *
-     * @return array
+     * @return string
      */
-    public function getCoverType()
+    public function getBinding()
     {
-        $results = [];
+        $result = '';
         $formats = $this->getFormats();
-        if (isset($formats[1])) {
-            $parts = explode('/', $formats[1]);
-            if (isset($parts[2])) {
-                $format = $parts[2];
+        foreach ($formats as $format) {
+            $parts = explode('/', $format);
+            if (($parts[0] == '1') && (isset($parts[2]))) {
+                $formatType = $parts[2];
             }
         }
-        if (isset($format) && $format == 'Book') {
-            foreach ($this->getMarcReader()->getFields('340') as $field) {
-                foreach ($this->getSubfields($field, 'l') as $type) {
-                    $results[] = $this->stripTrailingPunctuation($type);
+        if ((isset($formatType)) && ($formatType == 'Book')) {
+            foreach ($this->getMarcReader()->getFields('020') as $field) {
+                foreach ($this->getSubfields($field, 'q') as $subfield) {
+                    $rawResults[] = $subfield;
                 }
             }
-            if (empty($results)) {
-                foreach ($this->getMarcReader()->getFields('020') as $field) {
-                    foreach ($this->getSubfields($field, 'q') as $type) {
-                        $results[] = $this->stripTrailingPunctuation($type);
+            if (empty($rawResults)) {
+                foreach ($this->getMarcReader()->getFields('340') as $field) {
+                    foreach ($this->getSubfields($field, 'l') as $subfied) {
+                        $rawResults[] = $subfield;
                     }
                 }
             }
-            if (empty($results)) {
-                foreach ($this->getMarcReader()->getFields('563') as $field) {
-                    foreach ($this->getSubfields($field, 'a') as $type) {
-                        $results[] = $this->stripTrailingPunctuation($type);
+            if (empty($rawResults)) {
+                foreach ($this->getMarcReader()->getFields('500') as $field) {
+                    foreach ($this->getSubfields($field, 'a') as $subfield) {
+                        $rawResults[] = $subfield;
                     }
                 }
             }
+            if (isset($rawResults)) {
+                $stitched = [
+                    'nidottu'   => true,
+                    'nid'       => true,
+                    'häftad'    => true,
+                    'hft'       => true,
+                ];
+                $bound = [
+                    'sidottu'   => true,
+                    'sid'       => true,
+                    'inbunden'  => true,
+                    'inb'       => true,
+                ];
+                $paperback = ['pehmeäkantinen' => true];
+                $hardcover = ['kovakantinen' => true];
+                foreach ($rawResults as $rawResult) {
+                    // only letters wanted
+                    $rawResult = mb_strtolower(mb_ereg_replace('[^A-ZÅÄÖa-zåäö]', '', $rawResult));
+                    if (isset($stitched[$rawResult])) {
+                        $bindings[] = 'stitched';
+                    } elseif (isset($bound[$rawResult])) {
+                        $bindings[] = 'bound';
+                    } elseif (isset($paperback[$rawResult])) {
+                        $bindings[] = 'paperback';
+                    } elseif (isset($hardcover[$rawResult])) {
+                        $bindings[] = 'hardcover';
+                    }
+                }
+                if ((isset($bindings) && (count(array_unique($bindings)) === 1))) {
+                    $result = $bindings[0];
+                }
+            }
         }
-        return array_unique($results);
-    }
-
-    /**
-     * Get physical descriptions extended with cover type
-     *
-     * @return array
-     */
-    public function getExtendedPhysicalDescriptions()
-    {
-        return array_filter([...$this->getPhysicalDescriptions(), ...$this->getCoverType()]);
+        return $result;
     }
 }
