@@ -109,8 +109,8 @@
               </div>
             <?php elseif (!empty($summDate)): ?>
               <?=!empty($summAuthor) ? '' : ' '?>
-              <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>             
-            <?php endif; ?>                        
+              <span class="publish-year"><?=$this->escapeHtml($summDate[0])?></span>
+            <?php endif; ?>
             <?php if ($classifications = $this->driver->tryMethod('getClassifications')): ?>
               <div class="resultClassification">
                 <?php foreach ($classifications as $class => $field): ?>
