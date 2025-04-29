@@ -215,16 +215,17 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $definedForms = $this->getService(\Finna\Config\YamlReader::class)
             ->getFinna('ReservationList.yaml', 'config/finna', true)['Forms'] ?? [];
         // Check that single order and multi order forms exists, if they don't
-        $orderFormConfig = $definedForms['PlaceOrder']['default'] ?? null;
-        $singleOrderFormConfig = $definedForms['PlaceOrder']['single'] ?? null;
-        if (!$orderFormConfig && !$singleOrderFormConfig) {
+        $orderFormConfig = $definedForms['PlaceOrder']['default'] ?? [];
+        if (!$orderFormConfig) {
             throw new Exception('ReservationList: No forms defined.');
         }
         // Allow selecting preferred forms in future.
         $selectedOrderForm = $config['Forms']['PlaceOrder'] ?? 'default';
-        $selectedSingleOrderForm = $config['Forms']['PlaceSingleOrder'] ?? 'single';
         $this->orderFormConfig = $definedForms['PlaceOrder'][$selectedOrderForm]
             ?? $orderFormConfig;
+
+        $singleOrderFormConfig = $definedForms['PlaceOrder']['single'] ?? [];
+        $selectedSingleOrderForm = $config['Forms']['PlaceSingleOrder'] ?? 'single';
         $this->singleOrderFormConfig = $definedForms['PlaceOrder'][$selectedSingleOrderForm]
             ?? $singleOrderFormConfig;
 
