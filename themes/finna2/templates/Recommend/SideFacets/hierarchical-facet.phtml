@@ -31,14 +31,14 @@
 ?>
 <?php if ('building' === $this->title && count($this->cluster['list']) > 15): ?>
   <div class="building-filter">
-    <label for="building_filter" class="sr-only"><?=$this->transEsc('Organisation')?></label>
+    <label for="building_filter" class="visually-hidden"><?=$this->transEsc('Organisation')?></label>
     <input type="search" class="form-control" id="building_filter" placeholder="<?=$this->transEscAttr('Organisation') . '...'?>">
   </div>
   <?php $script = <<<JS
       $(function () { finna.layout.initBuildingFilter('#side-collapse-{$this->escapeHtml($this->title)}'); });
     JS;
   ?>
-  <?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+  <?=$this->assetManager()->outputInlineScriptString($script); ?>
 <?php endif; ?>
 <ul class="facet-tree<?php if ($truncateSettings): ?> truncate-hierarchical-facets" data-truncate="<?=$this->htmlSafeJsonEncode($truncateSettings)?><?php endif; ?>">
   <?=$this->render('Recommend/SideFacets/hierarchical-facet-level.phtml', [

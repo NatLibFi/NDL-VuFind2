@@ -3,7 +3,7 @@
   <?=$results->getUrlQuery()->asHiddenFields(['page' => '/./'])?>
   <?php $searchFilters = $results->getParams()->getFilterList(true);?>
   <div class="modal-map"></div>
-  <button class="btn btn-lg btn-primary pull-right" type="submit"><?=$this->transEsc('Find')?></button>
+  <button class="btn btn-lg btn-primary float-end" type="submit"><?=$this->transEsc('Find')?></button>
 </form>
 
 <?php
@@ -21,5 +21,5 @@
           finna.MapFacet.initMapModal($options);
         });
       JS;
-  echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+  echo $this->assetManager()->outputInlineScriptString($script);
 ?>
