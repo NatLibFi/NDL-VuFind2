@@ -29,10 +29,7 @@
 
 namespace FinnaTest\Traits;
 
-use Finna\Db\Row\FinnaResourceList;
 use Finna\Db\Service\AccessTokenService;
-use Finna\Db\Service\FinnaResourceListService;
-use Finna\Db\Table\FinnaResourceList as TableFinnaResourceList;
 use Laminas\Db\ResultSet\ResultSet;
 use Laminas\Http\Client;
 use Laminas\Http\Response;
@@ -71,44 +68,6 @@ trait MockServicesTrait
         $accessTokenTable = $this->getMockedTableObject(TableAccessToken::class, $accessTokens);
         $accessTokenService->expects($this->any())->method('getDbTable')->willReturn($accessTokenTable);
         return $accessTokenService;
-    }
-
-    /**
-     * Get Finna resource list service as a mocked service
-     *
-     * @param array       $dbEntities  Array containing db entities to use as a database
-     * @param array       $dbTableMap  A map to be returned from services getDbTable
-     * @param ?MockObject $table       Mocked table
-     * @param ?MockObject $rowTemplate Mocked row template as db entity
-     *
-     * @return MockObject
-     */
-    public function getFinnaResourceListService(
-        array $dbEntities = [],
-        array $dbTableMap = [],
-        ?MockObject $table = null,
-        ?MockObject $rowTemplate = null
-    ): MockObject {
-        $resourceListService = $this->getMockBuilder(FinnaResourceListService::class)
-            ->onlyMethods(['getDbTable', 'persistEntity'])->disableOriginalConstructor()->getMock();
-
-        $resourceLists = [];
-        foreach ($dbEntities as $entity) {
-            $resourceLists[] = $this->getMockedRowObject(FinnaResourceList::class, $entity, $rowTemplate);
-        }
-        $resourceListTable = $table ?? $this->getMockedTableObject(
-            TableFinnaResourceList::class,
-            $resourceLists,
-            $table,
-            $rowTemplate
-        );
-        if (!$dbTableMap) {
-            $dbTableMap = [
-                [TableFinnaResourceList::class, $resourceListTable],
-            ];
-        }
-        $resourceListService->expects($this->any())->method('getDbTable')->willReturnMap($dbTableMap);
-        return $resourceListService;
     }
 
     /**

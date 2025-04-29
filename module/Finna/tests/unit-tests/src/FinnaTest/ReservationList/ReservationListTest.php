@@ -90,52 +90,46 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     /**
      * Get mocked reservation list service
      *
-     * @param ?MockObject $finnaResourceListService         Resource list service
-     * @param ?MockObject $finnaResourceListResourceService Resource list resource  service
-     * @param ?MockObject $resourceService                  Resource service
-     * @param ?MockObject $userService                      User service
-     * @param ?MockObject $resourcePopulator                Resource populator
-     * @param ?MockObject $recordLoader                     Record loader
-     * @param ?MockObject $cache                            Record cache
-     * @param ?MockObject $container                        Container
-     * @param ?MockObject $mockHttpService                  Http service
-     * @param ?MockObject $ilsAuthenticator                 ILS Authenticator
-     * @param ?MockObject $manager                          Cache manager
-     * @param ?MockObject $listPluginManager                List plugin manager
-     * @param array       $reservationListConfig            Reservation list config
+     * @param ?MockObject $mockHttpService       Http service
+     * @param ?MockObject $listPluginManager     List plugin manager
+     * @param array       $reservationListConfig Reservation list config
      *
      * @return MockObject
      */
     protected function getReservationListService(
-        ?MockObject $finnaResourceListService = null,
-        ?MockObject $finnaResourceListResourceService = null,
-        ?MockObject $resourceService = null,
-        ?MockObject $userService = null,
-        ?MockObject $resourcePopulator = null,
-        ?MockObject $recordLoader = null,
-        ?MockObject $cache = null,
-        ?MockObject $container = null,
         ?MockObject $mockHttpService = null,
-        ?MockObject $ilsAuthenticator = null,
-        ?MockObject $manager = null,
         ?MockObject $listPluginManager = null,
-        array $reservationListConfig = []
+        array $reservationListConfig = [],
     ): MockObject {
-        return $this->getMockBuilder(ReservationListService::class)->onlyMethods([])->setConstructorArgs([
-          $finnaResourceListService ??= $this->container->createMock(FinnaResourceListService::class),
-          $finnaResourceListResourceService ??= $this->container->createMock(FinnaResourceListResourceService::class),
-          $resourceService ??= $this->container->createMock(ResourceService::class),
-          $userService ??= $this->container->createMock(UserService::class),
-          $resourcePopulator ??= $this->container->createMock(ResourcePopulator::class),
-          $recordLoader ??= $this->container->createMock(RecordLoader::class),
-          $cache ??= $this->container->createMock(Cache::class),
-          $container ??= $this->container->createMock(Container::class),
+        $service = $this->getMockBuilder(ReservationListService::class)->onlyMethods(['createListForUser'])
+        ->setConstructorArgs([
+          $this->container->createMock(FinnaResourceListService::class),
+          $this->container->createMock(FinnaResourceListResourceService::class),
+          $this->container->createMock(ResourceService::class),
+          $this->container->createMock(UserService::class),
+          $this->container->createMock(ResourcePopulator::class),
+          $this->container->createMock(RecordLoader::class),
+          $this->container->createMock(Cache::class),
+          $this->container->createMock(Container::class),
           $mockHttpService ??= $this->container->createMock(HttpService::class),
-          $ilsAuthenticator ??= $this->container->createMock(ILSAuthenticator::class),
-          $manager ??= $this->container->createMock(Manager::class),
+          $this->container->createMock(ILSAuthenticator::class),
+          $this->container->createMock(Manager::class),
           $listPluginManager ??= $this->container->createMock(HandlerPluginManager::class),
           $reservationListConfig,
         ])->getMock();
+        $newListTemplate = $this->getMockBuilder(FinnaResourceList::class)->onlyMethods(['getUser'])
+          ->disableOriginalConstructor()->getMock();
+        $service->expects($this->any())->method('createListForUser')->willReturnCallback(
+            function ($user, $params) use ($newListTemplate, $service) {
+                $cloned = clone $newListTemplate;
+                if ($params) {
+                    $cloned = $service->populateListValues($cloned, $user, $params);
+                }
+                $cloned->expects($this->any())->method('getUser')->willReturn($user);
+                return $cloned;
+            }
+        );
+        return $service;
     }
 
     /**
@@ -225,13 +219,8 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function testListCreation(int $id, array $prefill): void
     {
         $user = $this->getMockUser($id);
-        $rowTemplate = $this->getMockBuilder(FinnaResourceList::class)
-          ->onlyMethods(['getUser'])->disableOriginalConstructor()->getMock();
-        $rowTemplate->expects($this->any())->method('getUser')->willReturn($user);
 
-        $service = $this->getReservationListService(
-            finnaResourceListService: $this->getFinnaResourceListService(rowTemplate: $rowTemplate)
-        );
+        $service = $this->getReservationListService();
         $newList = $service->createListForUser($user, $prefill);
         $this->assertEquals($id, $newList->getUser()->getId());
     }
@@ -304,13 +293,8 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function testUserAccessSuccess(int $ownerId, int $currentId): void
     {
         $ownerUser = $this->getMockUser($ownerId);
-        $rowTemplate = $this->getMockBuilder(FinnaResourceList::class)
-          ->onlyMethods(['getUser'])->disableOriginalConstructor()->getMock();
-        $rowTemplate->expects($this->any())->method('getUser')->willReturn($ownerUser);
 
-        $service = $this->getReservationListService(
-            finnaResourceListService: $this->getFinnaResourceListService(rowTemplate: $rowTemplate)
-        );
+        $service = $this->getReservationListService();
         $newList = $service->createListForUser($ownerUser);
         $currentUser = $this->getMockUser($currentId);
         $this->assertEquals(true, $service->userCanEditList($currentUser, $newList));
@@ -328,12 +312,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     public function testUserAccessFailure(int $ownerId, ?int $currentId = null): void
     {
         $ownerUser = $this->getMockUser($ownerId);
-        $rowTemplate = $this->getMockBuilder(FinnaResourceList::class)
-          ->onlyMethods(['__get', 'getUser'])->disableOriginalConstructor()->getMock();
-        $rowTemplate->expects($this->any())->method('getUser')->willReturn($ownerUser);
-        $service = $this->getReservationListService(
-            finnaResourceListService: $this->getFinnaResourceListService(rowTemplate: $rowTemplate)
-        );
+        $service = $this->getReservationListService();
         $newList = $service->createListForUser($ownerUser);
         $currentUser = $currentId === null ? null : $this->getMockUser($currentId);
         $this->assertEquals(false, $service->userCanEditList($currentUser, $newList));
@@ -383,13 +362,8 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             $this->expectExceptionMessage($expected);
         }
         $ownerUser = $this->getMockUser($ownerId);
-        $rowTemplate = $this->getMockBuilder(FinnaResourceList::class)->onlyMethods(['getUser'])
-          ->disableOriginalConstructor()->getMock();
-        $rowTemplate->expects($this->any())->method('getUser')->willReturn($ownerUser);
 
-        $service = $this->getReservationListService(
-            finnaResourceListService: $this->getFinnaResourceListService(rowTemplate: $rowTemplate)
-        );
+        $service = $this->getReservationListService();
         $newList = $service->createListForUser($ownerUser);
         $currentUser = $currentId === null ? null : $this->getMockUser($currentId);
         $service->destroyList($newList, $currentUser);
@@ -473,13 +447,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             $this->expectExceptionMessage('Missing pickup date');
         }
         $ownerUser = $this->getMockUser($ownerId);
-        $rowTemplate = $this->getMockBuilder(FinnaResourceList::class)->onlyMethods(['getUser'])
-          ->disableOriginalConstructor()->getMock();
-        $rowTemplate->expects($this->any())->method('getUser')->willReturn($ownerUser);
-
-        $service = $this->getReservationListService(
-            finnaResourceListService: $this->getFinnaResourceListService(rowTemplate: $rowTemplate)
-        );
+        $service = $this->getReservationListService();
 
         $newList = $service->createListForUser($ownerUser);
         $service->setListOrdered($ownerUser, $newList, $data);
@@ -673,14 +641,9 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         array $expected
     ): void {
         $ownerUser = $this->getMockUser(1);
-        $rowTemplate = $this->getMockBuilder(FinnaResourceList::class)->onlyMethods(['getUser'])
-          ->disableOriginalConstructor()->getMock();
-        $rowTemplate->expects($this->any())->method('getUser')->willReturn($ownerUser);
-
         $reservationListConfig = Yaml::parse($this->getFixture('reservationlist/ReservationList.yaml', 'Finna'));
         $listPluginManager = $this->getPluginManager();
         $service = $this->getReservationListService(
-            finnaResourceListService: $this->getFinnaResourceListService(rowTemplate: $rowTemplate),
             listPluginManager: $listPluginManager,
             reservationListConfig: $reservationListConfig
         );
