@@ -214,7 +214,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     {
         $definedForms = $this->getService(\Finna\Config\YamlReader::class)
             ->getFinna('ReservationList.yaml', 'config/finna', true)['Forms'] ?? [];
-        // Check that single order and multi order forms exists
+        // Check that single order and multi order forms exist
         $orderFormConfig = $definedForms['PlaceOrder']['default'] ?? [];
         if (!$orderFormConfig) {
             throw new Exception('ReservationList: No forms defined.');
