@@ -1,7 +1,7 @@
 <!-- START of: finna - reservationlist/displaylist.phtml -->
 <?php
   // Set up page title:
-  $pageTitle = $this->translate('ReservationList::Reservation List') . ': ' . $this->translate($list->getTitle());
+  $pageTitle = $this->translate($list->getTitle());
   $this->headTitle($pageTitle);
 
   // Set up breadcrumbs:
@@ -19,7 +19,7 @@
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <div class="my-research-content">
     <div class="title-wrapper">
-      <h2><?=$this->translate($pageTitle) ?></h2>
+      <h2><?=$this->escapeHtml($pageTitle) ?></h2>
     </div>
     <?= $this->flashmessages() ?>
     <?php // TODO: create a component which handles the defaulting into prettier form ?>
@@ -73,7 +73,7 @@
             'confirm-button',
             [
               'buttonLink' => $this->url('reservationlist-deletelist', ['listId' => $list->getId()]),
-              'buttonLabel' => 'delete_list',
+              'buttonLabel' => 'ReservationList::Delete List',
               'buttonClass' => 'btn btn-primary',
               'confirmLink' => $this->url('reservationlist-deletelist', ['listId' => $list->getId()], ['query' => ['confirm' => 1]]),
               'header' => 'confirm_delete_list_text',

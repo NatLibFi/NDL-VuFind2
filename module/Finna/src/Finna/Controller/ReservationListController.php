@@ -175,16 +175,17 @@ class ReservationListController extends AbstractBase
                 $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
                 return $view;
             }
-            $this->reservationListService->saveRecordToReservationList(
+            $result = $this->reservationListService->saveRecordToReservationList(
                 $this->getRequest()
                     ->getPost()
                     ->set('institution', $view->institution),
                 $user,
                 $driver,
             );
-            return $this->inLightbox()  // different behavior for lightbox context
-                ? $this->getRefreshResponse()
-                : $this->redirect()->toRoute('reservationlist-displaylists');
+            $listEntity = $this->reservationListService->getListById($result['listId'], $user);
+            $view->setTemplate('reservationlist/postadditem');
+            $view->listEntity = $listEntity;
+            return $view;
         }
         return $view;
     }
