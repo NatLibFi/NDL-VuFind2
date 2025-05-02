@@ -1,5 +1,5 @@
 <!-- START of: finna - Helpers/reservationlist-reserve.phtml -->
-<?php if (empty($this->lists)) {
+<?php if (empty($this->listHandlers)) {
 return;
 } ?>
 
@@ -10,7 +10,7 @@ return;
   <div class="headers">
     <span class="holdings-title"><?=$this->transEsc('ReservationList::Add To Reservation List')?></span>
   </div>
-  <?php foreach ($this->lists as $listHandler): ?>
+  <?php foreach ($this->listHandlers as $listHandler): ?>
     <div class="holdings-group">
       <div class="holdings-container-heading">
         <?php // TODO: create a component which handles the defaulting into prettier form ?>
@@ -32,9 +32,9 @@ return;
       <div class="alert alert-info savedLists loaded">
         <strong><?=$this->transEsc('Saved in')?>:</strong><br>
         <ul>
-          <?php foreach ($listsContainingRecord as $list): ?>
+          <?php foreach ($listsContainingRecord as $listEntity): ?>
             <li>
-              <a href="<?= $this->url('reservationlist-displaylist', ['listId' => $list->getId()]) ?>"><?= $this->escapeHtml($list->getTitle()); ?></a><br>
+              <a href="<?= $this->url('reservationlist-displaylist', ['listId' => $listEntity->getId()]) ?>"><?= $this->escapeHtml($listEntity->getTitle()); ?></a><br>
             </li>
           <?php endforeach; ?>
         </ul>

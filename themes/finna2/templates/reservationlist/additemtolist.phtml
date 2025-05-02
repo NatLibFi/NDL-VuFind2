@@ -26,14 +26,14 @@
 
 <?php if (!empty($this->listsContaining)): ?>
   <p><?=$this->transEsc('This item is already part of the following list/lists') ?>:
-  <?php foreach ($this->listsContaining as $i => $list): ?>
-    <a href="<?=$this->url('reservationlist-displaylist', ['listId' => $list->getId()]) ?>" data-lightbox-ignore><?=$this->escapeHtml($list->getTitle())?></a><?php if ($i < count($this->listsContaining) - 1): ?>, <?php endif; ?>
+  <?php foreach ($this->listsContaining as $i => $listEntity): ?>
+    <a href="<?=$this->url('reservationlist-displaylist', ['listId' => $listEntity->getId()]) ?>" data-lightbox-ignore><?=$this->escapeHtml($listEntity->getTitle())?></a><?php if ($i < count($this->listsContaining) - 1): ?>, <?php endif; ?>
   <?php endforeach; ?>
   </p><hr>
 <?php endif; ?>
 
 <div>
-  <?php if (!empty($this->lists)): ?>
+  <?php if (!empty($this->listEntities)): ?>
     <form method="post" name="AddItemToReservationList" data-lightbox-onclose="VuFind.refreshPage" action="<?=$this->url('reservationlist-additemtolist'); ?>">
       <input type="hidden" name="recordId" value="<?=$this->escapeHtmlAttr($this->recordId)?>">
       <input type="hidden" name="source" value="<?=$this->escapeHtmlAttr($this->source)?>">
@@ -43,8 +43,8 @@
       <label class="form-label" for="save_list"><?=$this->transEsc('ReservationList::Choose a List') ?></label>
       <div class="form-group">
         <select class="form-select" id="save_list" name="list">
-          <?php foreach ($this->lists as $list): ?>
-            <option value="<?=$this->escapeHtmlAttr($list->getId())?>"><?=$this->escapeHtml($list->getTitle())?></option>
+          <?php foreach ($this->listEntities as $listEntity): ?>
+            <option value="<?=$this->escapeHtmlAttr($listEntity->getId())?>"><?=$this->escapeHtml($listEntity->getTitle())?></option>
           <?php endforeach; ?>
         </select>
       </div>

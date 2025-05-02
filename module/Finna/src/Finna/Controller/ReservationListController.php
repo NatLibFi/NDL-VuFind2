@@ -165,7 +165,7 @@ class ReservationListController extends AbstractBase
             $listHandler->getInstitution()
         );
         // Filter out already ordered lists
-        $view->lists = array_filter(
+        $view->listEntities = array_filter(
             $lists,
             fn ($list) => !$list->getOrdered()
         );
@@ -278,7 +278,7 @@ class ReservationListController extends AbstractBase
         }
         $results = $this->getListAsResults();
         $viewParams = [
-            'list' => $list,
+            'listEntity' => $list,
             'results' => $results,
             'params' => $results->getParams(),
             'enabled' => true,
@@ -533,7 +533,7 @@ class ReservationListController extends AbstractBase
         }
         $lists = $this->reservationListService->getReservationListsForUser($user);
         $view = $this->createViewModel(
-            ['lists' => $lists]
+            ['listEntities' => $lists]
         );
         return $view;
     }

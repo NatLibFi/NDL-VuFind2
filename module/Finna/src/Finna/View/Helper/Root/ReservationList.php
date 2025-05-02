@@ -125,11 +125,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
             return '';
         }
         // Collect lists where we could potentially save this:
-        $lists = $this->getAvailableListsForRecord($driver);
+        $listHandlers = $this->getAvailableListsForRecord($driver);
 
         // Set up the needed context in the view:
         $view = $this->getView();
-        return $view->render('Helpers/reservationlist-reserve.phtml', compact('lists', 'driver'));
+        return $view->render('Helpers/reservationlist-reserve.phtml', compact('listHandlers', 'driver'));
     }
 
     /**
