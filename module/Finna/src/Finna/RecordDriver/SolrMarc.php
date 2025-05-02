@@ -75,12 +75,25 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         '690' => 'topic',
     ];
 
-    protected $hierarchicalLinkingShownSource = 'Kansalliskirjasto';
+    /**
+     * Hierarchical items from specified source are displayed
+     *
+     * @var string
+     */
+    protected $hierarchicalLinkingShownFromSource = 'Kansalliskirjasto';
 
-    protected $hierarchicalLinkingShownDatasource = [
-        'fikka',
-    ];
+    /**
+     * Hierarchical items from specified datasource are displayed
+     *
+     * @var string
+     */
+    protected $hierarchicalLinkingShownFromDatasource = 'fikka';
 
+    /**
+     * Hierarchical items specified with term are displayed
+     *
+     * @var string
+     */
     protected $includedIn = 'Sisältyy kokoelmaan';
 
     /**
@@ -775,18 +788,21 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Whether linked component parts are shown
+     * Whether linked component parts are shown on record page
      *
      * @return boolean
      */
     public function isHierarchicalLinkingShown(): bool
     {
+        if ($this->getDataSource() !== $this->hierarchicalLinkingShownFromDatasource) {
+            return false;
+        }
         $isShown = false;
         //Top level
-        if (!isset($this->fields['hierarchical_top_id'])) {
+        if (!isset($this->fields['hierarchical_parent_id'])) {
             foreach ($this->getMarcReader()->getFields('264') as $field) {
                 foreach ($this->getSubfieldArray($field, ['b']) as $subfield) {
-                    if ($isShown = str_contains($subfield, $this->hierarchicalLinkingShownSource)) {
+                    if ($isShown = str_contains($subfield, $this->hierarchicalLinkingShownFromSource)) {
                         continue;
                     }
                 }
@@ -800,7 +816,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 }
             }
         }
-        return $isShown && in_array($this->getDataSource(), $this->hierarchicalLinkingShownDatasource);
+        return $isShown;
     }
 
     /**
