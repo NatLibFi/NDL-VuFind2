@@ -11,7 +11,7 @@
   line-height: 1;
   margin-left: -14px;
   &::before {
-    font-family: $font-family-sans-serif;
+    font-family: inherit;
     content: ", ";
     font-size: inherit;
     padding-right: 0;
