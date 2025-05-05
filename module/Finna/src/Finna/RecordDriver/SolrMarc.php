@@ -798,7 +798,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             return false;
         }
         $isShown = false;
-        //Top level
         if (!isset($this->fields['hierarchical_parent_id'])) {
             foreach ($this->getMarcReader()->getFields('264') as $field) {
                 foreach ($this->getSubfieldArray($field, ['b']) as $subfield) {
@@ -808,7 +807,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 }
             }
         }
-        //Lower levels
         foreach ($this->getMarcReader()->getFields('773') as $field) {
             foreach ($this->getSubfieldArray($field, ['i']) as $subfield) {
                 if ($isShown = str_contains($subfield, $this->includedIn)) {
