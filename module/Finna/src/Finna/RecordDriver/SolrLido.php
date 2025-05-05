@@ -1139,6 +1139,30 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * If item has 3D resources
+     *
+     * @return boolean
+     */
+    public function hasModelResources(): bool
+    {
+        foreach ($this->getXmlRecord()->lido->administrativeMetadata->resourceWrap->resourceSet ?? [] as $resourceSet) {
+            foreach ($resourceSet->resourceRepresentation as $representation) {
+                $linkResource = $representation->linkResource;
+                $url = trim((string)$linkResource);
+                if (!$url || !$this->isUrlLoadable($url, $this->getUniqueID())) {
+                    continue;
+                }
+                if ($type = (string)($representation['type'] ?? '')) {
+                    if (in_array($type, array_keys($this->modelTypes))) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
      * Can model preview images be shown
      *
      * @return bool
