@@ -178,35 +178,6 @@ class Aipa extends AbstractHelper
     }
 
     /**
-     * Render an extended subject headings field.
-     *
-     * @param array  $data  Field data
-     * @param string $label Field label
-     *
-     * @return string
-     */
-    public function renderSubjectHeadingsExtended(array $data, string $label): string
-    {
-        if (empty($data)) {
-            return '';
-        }
-        $items = [];
-        foreach ($data as $field) {
-            $items[] = $this->getView()->plugin('record')->getLinkedFieldElement(
-                $field['type'],
-                $field['heading'][0],
-                $field,
-                ['class' => ['backlink']]
-            );
-        }
-        return $this->getView()->plugin('component')('finna-tag-list', [
-            'title' => $label,
-            'items' => $items,
-            'htmlItems' => true,
-        ]);
-    }
-
-    /**
      * Render educational levels and educational subjects.
      *
      * @param array $educationalData Educational data from record driver
