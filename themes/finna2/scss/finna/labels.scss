@@ -11,8 +11,8 @@
   line-height: 1;
   margin-left: -14px;
   &::before {
-    font-family: inherit;
     content: ", ";
+    font-family: inherit;
     font-size: inherit;
     padding-right: 0;
   }  
