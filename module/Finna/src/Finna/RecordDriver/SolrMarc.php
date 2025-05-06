@@ -2765,19 +2765,17 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     $this->getFieldArray($field, $subfields),
                 );
             }
-            if (isset($values)) {
-                $bindings = array_filter(array_map(
-                    function ($s) {
-                        $s = mb_strtolower(mb_ereg_replace('[^A-ZÅÄÖa-zåäö]', '', $s));
-                        if (array_key_exists($s, $this->bindingMappings)) {
-                            return $this->bindingMappings[$s];
-                        }
-                    },
-                    $values
-                ));
-                if (isset($bindings) && count(array_unique($bindings)) === 1) {
-                    return $bindings[0];
-                }
+            $bindings = array_filter(array_map(
+                function ($s) {
+                    $s = mb_strtolower(mb_ereg_replace('[^A-ZÅÄÖa-zåäö]', '', $s));
+                    if (array_key_exists($s, $this->bindingMappings)) {
+                        return $this->bindingMappings[$s];
+                    }
+                },
+                $values
+            ));
+            if (isset($bindings) && count(array_unique($bindings)) === 1) {
+                return $bindings[0];
             }
         }
         return '';
