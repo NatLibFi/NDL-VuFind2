@@ -51,8 +51,8 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
     use LrmiDriverTrait;
 
-    public const AIPA_TYPE_EDUCATION = 'aipa:education';
-    public const AIPA_TYPE_RESEARCH = 'aipa:research';
+    public const AIPA_TYPE_EDUCATION = 'aipa-education';
+    public const AIPA_TYPE_RESEARCH = 'aipa-research';
 
     /**
      * Encapsulated content type records.
