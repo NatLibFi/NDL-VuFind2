@@ -31,6 +31,7 @@
 
 namespace Finna\RecordDriver;
 
+use function array_key_exists;
 use function array_slice;
 use function count;
 use function in_array;
@@ -73,6 +74,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         '653' => '',
         '656' => 'occupation',
         '690' => 'topic',
+    ];
+
+    /**
+     * Accepted book binding strings mapped to translation key strings
+     *
+     * @var array
+     */
+    protected $bindingMappings = [
+        'nidottu'         => 'stitched',
+        'nid'             => 'stitched',
+        'häftad'          => 'stitched',
+        'hft'             => 'stitched',
+        'sidottu'         => 'bound',
+        'sid'             => 'bound',
+        'inbunden'        => 'bound',
+        'inb'             => 'bound',
+        'pehmeäkantinen'  => 'paperback',
+        'kovakantinen'    => 'hardcover',
     ];
 
     /**
@@ -2722,69 +2741,45 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *
      * @return string
      */
-    public function getBinding()
+    public function getBinding(): string
     {
-        $result = '';
+        $formatType = null;
         $formats = $this->getFormats();
         foreach ($formats as $format) {
             $parts = explode('/', $format);
-            if (($parts[0] == '1') && (isset($parts[2]))) {
+            if ($parts[0] === '1' && isset($parts[2])) {
                 $formatType = $parts[2];
+                break;
             }
         }
-        if ((isset($formatType)) && ($formatType == 'Book')) {
-            foreach ($this->getMarcReader()->getFields('020') as $field) {
-                foreach ($this->getSubfields($field, 'q') as $subfield) {
-                    $rawResults[] = $subfield;
-                }
+        if ($formatType == 'Book') {
+            $fields = [
+                '020' => ['q'],
+                '340' => ['l'],
+                '500' => ['a'],
+            ];
+            $values = [];
+            foreach ($fields as $field => $subfields) {
+                $values = array_merge(
+                    $values,
+                    $this->getFieldArray($field, $subfields),
+                );
             }
-            if (empty($rawResults)) {
-                foreach ($this->getMarcReader()->getFields('340') as $field) {
-                    foreach ($this->getSubfields($field, 'l') as $subfield) {
-                        $rawResults[] = $subfield;
-                    }
-                }
-            }
-            if (empty($rawResults)) {
-                foreach ($this->getMarcReader()->getFields('500') as $field) {
-                    foreach ($this->getSubfields($field, 'a') as $subfield) {
-                        $rawResults[] = $subfield;
-                    }
-                }
-            }
-            if (isset($rawResults)) {
-                $stitched = [
-                    'nidottu'   => true,
-                    'nid'       => true,
-                    'häftad'    => true,
-                    'hft'       => true,
-                ];
-                $bound = [
-                    'sidottu'   => true,
-                    'sid'       => true,
-                    'inbunden'  => true,
-                    'inb'       => true,
-                ];
-                $paperback = ['pehmeäkantinen' => true];
-                $hardcover = ['kovakantinen' => true];
-                foreach ($rawResults as $rawResult) {
-                    // only letters wanted
-                    $rawResult = mb_strtolower(mb_ereg_replace('[^A-ZÅÄÖa-zåäö]', '', $rawResult));
-                    if (isset($stitched[$rawResult])) {
-                        $bindings[] = 'stitched';
-                    } elseif (isset($bound[$rawResult])) {
-                        $bindings[] = 'bound';
-                    } elseif (isset($paperback[$rawResult])) {
-                        $bindings[] = 'paperback';
-                    } elseif (isset($hardcover[$rawResult])) {
-                        $bindings[] = 'hardcover';
-                    }
-                }
-                if ((isset($bindings) && (count(array_unique($bindings)) === 1))) {
-                    $result = $bindings[0];
+            if (isset($values)) {
+                $bindings = array_filter(array_map(
+                    function ($s) {
+                        $s = mb_strtolower(mb_ereg_replace('[^A-ZÅÄÖa-zåäö]', '', $s));
+                        if (array_key_exists($s, $this->bindingMappings)) {
+                            return $this->bindingMappings[$s];
+                        }
+                    },
+                    $values
+                ));
+                if (isset($bindings) && count(array_unique($bindings)) === 1) {
+                    return $bindings[0];
                 }
             }
         }
-        return $result;
+        return '';
     }
 }

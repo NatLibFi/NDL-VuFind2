@@ -24,10 +24,10 @@
       <div class="resultOtherLinks">
         <div class="resultItemFormat">
           <?=$this->record($this->driver)->getFormatList() ?>
-          <?=$this->record($this->driver)->getLabelList() ?>
           <?php if (!empty($binding)): ?>
-            <span class="iconlabel label-binding"><?=$this->transEsc($this->escapeHtml($binding))?></span>
-          <?php endif; ?> 
+            <span class="iconlabel label-binding"><?=$this->transEsc($binding)?></span>
+          <?php endif; ?>
+          <?=$this->record($this->driver)->getLabelList() ?>
         </div>
         <?php if ($results = $this->driver->tryMethod('getOtherLinks')): ?>
           <?php $prevOtherLinkHeading = ''; ?>
