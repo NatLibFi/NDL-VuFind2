@@ -94,7 +94,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *
      * @var string
      */
-    protected $includedIn = 'Sisältyy kokoelmaan';
+    protected $includedInCollection = 'Sisältyy kokoelmaan';
 
     /**
      * Constructor
@@ -809,7 +809,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         foreach ($this->getMarcReader()->getFields('773') as $field) {
             foreach ($this->getSubfieldArray($field, ['i']) as $subfield) {
-                if ($isShown = str_contains($subfield, $this->includedIn)) {
+                if ($isShown = str_contains($subfield, $this->includedInCollection)) {
                     continue;
                 }
             }
