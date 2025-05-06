@@ -181,4 +181,14 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     {
         return !empty($this->configSection['enabled']);
     }
+
+    /**
+     * Check if single order is possible
+     *
+     * @return bool
+     */
+    public function singleOrderEnabled(): bool
+    {
+        return $this->reservationListService->singleOrderEnabled();
+    }
 }
