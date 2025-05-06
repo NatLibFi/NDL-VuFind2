@@ -2774,7 +2774,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 },
                 $values
             ));
-            if (isset($bindings) && count(array_unique($bindings)) === 1) {
+            if (count(array_unique($bindings)) === 1) {
                 return $bindings[0];
             }
         }
