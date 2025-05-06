@@ -122,8 +122,6 @@ finna.layout = (function finnaLayout() {
         var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + VuFind.icon('show-more') + '</button>');
         var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + VuFind.icon('show-less') + '</button>');
 
-        var firstChild = self.children(':first');
-
         if (self.attr('tabindex') === '-1') {
           moreLink.attr('tabindex', '-1');
           lessLink.attr('tabindex', '-1');
@@ -136,9 +134,6 @@ finna.layout = (function finnaLayout() {
         lessLink.on('click', function showLess() {
           self.siblings('.less-link').hide();
           self.siblings('.more-link').show();
-          if (topLink && firstChild.hasClass('component-parts')) {
-            firstChild.css('padding-top', '1.2rem');
-          }
           self.css('height', truncation[index] - 1 + 'px');
           self.blur();
           self.siblings('.more-link').focus();
@@ -146,9 +141,6 @@ finna.layout = (function finnaLayout() {
         moreLink.on('click', function showMore() {
           self.siblings('.more-link').hide();
           self.siblings('.less-link').show();
-          if (topLink && firstChild.hasClass('component-parts')) {
-            firstChild.css('padding-top', '0');
-          }
           self.css('height', 'auto');
           self.blur();
           self.parent().focus();

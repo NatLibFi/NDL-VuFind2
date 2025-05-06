@@ -255,11 +255,8 @@ table.content-table {
     table-layout: fixed;
   }
   .recordIncludedIn {
-    .component-parts {
-      padding-top: 1rem;
-      &:first-child {
-        padding-top: 1.2rem;
-      }
+    .component-parts:not(:last-child) {
+      padding-bottom: 0.5rem;
     }
   }
 }
