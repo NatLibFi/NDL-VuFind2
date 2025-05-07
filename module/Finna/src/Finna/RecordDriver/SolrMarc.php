@@ -31,7 +31,6 @@
 
 namespace Finna\RecordDriver;
 
-use function array_key_exists;
 use function array_slice;
 use function count;
 use function in_array;
@@ -2768,9 +2767,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $bindings = array_filter(array_map(
                 function ($s) {
                     $s = mb_strtolower(mb_ereg_replace('[^A-ZÅÄÖa-zåäö]', '', $s));
-                    if (array_key_exists($s, $this->bindingMappings)) {
-                        return $this->bindingMappings[$s] ?? null;
-                    }
+                    return $this->bindingMappings[$s] ?? null;
                 },
                 $values
             ));
