@@ -142,6 +142,7 @@ class Aipa extends AbstractHelper
     ) {
         $template = 'RecordDriver/%s/' . $name;
         $className = match ($this->driver->getType()) {
+            'aipa:education' => AipaLrmi::class, // For BC, to be removed later.
             SolrAipa::AIPA_TYPE_EDUCATION => AipaLrmi::class,
             default => SolrQdc::class,
         };
