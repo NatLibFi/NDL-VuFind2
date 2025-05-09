@@ -50,6 +50,11 @@
         <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->listEntity->getCreated()->format('d.m.Y')]) ?></p>
       </div>
     <?php endif; ?>
+    <?php if (!$listHandler->isEnabled()): ?>
+      <div class="list-info">
+        <p><?= $this->transEsc('ReservationList::Disabled') ?></p>
+      </div>
+    <?php endif; ?>
     <?php if ($this->listEntity->getOrdered() ?? false): ?>
       <div class="list-info">
         <p><?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $this->listEntity->getOrdered()->format('d.m.Y')]) ?></p>

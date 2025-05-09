@@ -169,7 +169,7 @@ class ReservationListController extends AbstractBase
             $lists,
             fn ($list) => !$list->getOrdered()
         );
-
+        $view->listHandler = $listHandler;
         if ($this->formWasSubmitted('list_selected')) {
             if (!$this->validateCsrf()) {
                 $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
@@ -306,13 +306,16 @@ class ReservationListController extends AbstractBase
             $this->params()->fromQuery('source') ?: DEFAULT_SEARCH_BACKEND,
             false
         );
-        $viewParams = [
-            'institution' => $this->params()->fromQuery('institution'),
-            'listIdentifier' => $this->params()->fromQuery('listIdentifier'),
+        $listHandler = $this->reservationListService->getListHandler(
+            $this->params()->fromQuery('institution'),
+            $this->params()->fromQuery('listIdentifier')
+        );
+        return $this->createViewModel([
+            'driver' => $driver,
             'source' => $this->params()->fromQuery('source'),
             'recordId' => $this->params()->fromQuery('recordId'),
-        ];
-        return $this->createViewModel(['driver' => $driver, 'params' => $viewParams]);
+            'listHandler' => $listHandler,
+        ]);
     }
 
     /**

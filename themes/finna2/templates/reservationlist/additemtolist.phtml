@@ -1,17 +1,15 @@
 <?php
-  $pageTitle = $this->translate('ReservationList::Reserve to Research Room');
+  $pageTitleEsc = $this->transEscWithPrefix('ReservationList::reserve_to_', $this->listHandler->getListType());
   // Set up page title:
-  $this->headTitle($pageTitle);
-  $user = $this->auth()->getUserObject();
+  $this->headTitle($pageTitleEsc);
 
   // Set up breadcrumbs:
   $this->breadcrumbs()->set(...$this->recordLinker()->getBreadcrumbParams($this->driver))
-    ->add($pageTitle, active: true);
-
-  $listHandler = $this->reservationList($user)->getListHandler($this->institution, $this->listIdentifier);
+    ->add($pageTitleEsc, active: true);
+  $user = $this->auth()->getUserObject();
 ?>
 
-<h2><?= $this->transEsc($pageTitle); ?></h2>
+<h2><?= $pageTitleEsc; ?></h2>
 
 <?php // TODO: create a component which handles the defaulting into prettier form ?>
 <?php if ($title = $listHandler->getTitle($this->layout()->userLang)): ?>

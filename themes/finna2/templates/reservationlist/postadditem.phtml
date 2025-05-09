@@ -1,17 +1,15 @@
 <?php
-  $pageTitle = $this->translate('ReservationList::Reserve to Research Room');
+  $pageTitleEsc = $this->transEscWithPrefix('ReservationList::reserve_to_', $this->listHandler->getListType());
   // Set up page title:
-  $this->headTitle($pageTitle);
+  $this->headTitle($pageTitleEsc);
   $user = $this->auth()->getUserObject();
 
   // Set up breadcrumbs:
   $this->breadcrumbs()->set(...$this->recordLinker()->getBreadcrumbParams($this->driver))
-    ->add($pageTitle, active: true);
-
-  $listTranslations = $this->reservationList($user)->getListProperties($this->institution, $this->listIdentifier)['translation_keys'];
+    ->add($pageTitleEsc, active: true);
 ?>
 
-<h2><?= $this->transEsc($pageTitle); ?></h2>
+<h2><?= $pageTitleEsc ?></h2>
 
 <p><?=$this->transEsc('ReservationList::resource_added_to_reservation_list', ['%%resource%%' => $this->driver->getTitle(), '%%list%%' => $this->listEntity->getTitle()]);?></p>
 

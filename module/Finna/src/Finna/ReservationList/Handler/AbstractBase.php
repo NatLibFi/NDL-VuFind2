@@ -151,6 +151,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     protected bool $enabled;
 
     /**
+     * Specific type of the list
+     *
+     * @var string
+     */
+    protected string $listType;
+
+    /**
      * List configuration as an array
      *
      * @var array
@@ -209,6 +216,16 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public function getRecipient(): array
     {
         return $this->recipient;
+    }
+
+    /**
+     * Get list type
+     *
+     * @return string
+     */
+    public function getListType(): string
+    {
+        return $this->listType ?? 'research_room';
     }
 
     /**
@@ -500,6 +517,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $this->connectionType = $config['Connection']['type'] ?? '';
         $this->connectionSettings = $config['Connection'] ?? [];
         $this->enabled = $config['Enabled'] ?? false;
+        $this->listType = $config['Type'] ?? 'research_room';
         $this->institution = $institution;
         $this->listConfiguration = $config;
 
