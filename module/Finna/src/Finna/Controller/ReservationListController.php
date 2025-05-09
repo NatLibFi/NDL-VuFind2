@@ -40,12 +40,15 @@ use Finna\ReservationList\Handler\PluginManager;
 use Finna\ReservationList\ReservationListService;
 use Finna\View\Helper\Root\ReservationList;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use Laminas\Stdlib\Parameters;
 use VuFind\Controller\AbstractBase;
 use VuFind\Controller\Feature\ListItemSelectionTrait;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
+
+use function sprintf;
 
 /**
  * Reservation List Controller
@@ -71,6 +74,13 @@ class ReservationListController extends AbstractBase
      * @var string
      */
     protected const RESERVATION_LISTS_DISABLED = 'Reservation lists disabled';
+
+    /**
+     * Single order list title template
+     *
+     * @var string
+     */
+    protected const SINGLE_LIST_TITLE_TEMPLATE = 'Order %s %s';
 
     /**
      * Constructor
@@ -399,16 +409,16 @@ class ReservationListController extends AbstractBase
         if (!$listHandler->isEnabled()) {
             throw new \VuFind\Exception\Forbidden('ReservationList: No list properties found.');
         }
-        $singularListValues = [
-            'title' => 'temporary_title',
+        $request = $this->getRequest();
+        $listValues = [
+            'title' => 'tmptitle',
             'desc' => '',
             'institution' => $listHandler->getInstitution(),
             'listIdentifier' => $listHandler->getIdentifier(),
             'connection' => $listHandler->getConnectionType(),
         ];
-        $request = $this->getRequest();
         // Create an empty list for the user, but do not save it.
-        $list = $this->reservationListService->createListForUser($user, $singularListValues);
+        $list = $this->reservationListService->createListForUser($user, $listValues);
         $formId = ConnectionAbstractBase::FORM_ID;
         $queryValues = $listHandler->getValuesForSingleOrder(
             $list,
@@ -428,6 +438,20 @@ class ReservationListController extends AbstractBase
         }
         $result = $listHandler->placeOrder($queryValues, $user);
         if ($result['success']) {
+            $listValues['title'] = sprintf(
+                self::SINGLE_LIST_TITLE_TEMPLATE,
+                $queryValues['recordId'],
+                (new \DateTime())->format('Y-m-d H:i:s')
+            );
+            $this->reservationListService->populateListValues($list, $user, $listValues);
+            $this->reservationListService->setListOrdered($user, $list, $result);
+            $params = new Parameters(['list' => $list->getId()]);
+            $driver = $this->getRecordLoader()->load(
+                $queryValues['recordId'],
+                $queryValues['source'],
+                false
+            );
+            $this->reservationListService->saveRecordToReservationList($params, $user, $driver);
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         }
