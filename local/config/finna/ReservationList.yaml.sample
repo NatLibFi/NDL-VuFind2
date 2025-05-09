@@ -10,6 +10,7 @@
 # List can contain same information as under institution information to be more specific
 # about where the order is being delivered
 # LibraryCardSources is used to check for active connection to ILS to be able to use lists
+#
 # Connection defines how the orders are handled with institutions:
 # Type:
 # email: Uses email to place orders
@@ -21,7 +22,8 @@
 #   base_url: Api base url
 #   secret:   Api specific secret
 #   use_cat_id: [Optional] Use catalog id for user instead of firstName, lastName, email. Default false.
-#
+# Translations holds values for Title and Description. Supported keys are fi, sv, en-gb and se
+# 
 # General settings for how to fetch list configurations
 # Settings:
 # Methods available yaml, api. If yaml is selected, will read list configurations from this file,
@@ -61,6 +63,17 @@ Institutions:
           - PlaceOrder: default
         LibraryCardSources:
           - connection_established_to_use_lists
+        Translations:
+          Title:
+            fi: list title in finnish
+            en-gb: list title in english
+            sv: list title in swedish
+            se: list title in sami
+          Description:
+            fi: list description in finnish
+            en-gb: list description in english
+            sv: list description in swedish
+            se: list description in sami
         Connection:
           type: email
           Sender:
