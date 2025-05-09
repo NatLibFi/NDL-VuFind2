@@ -517,7 +517,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $this->connectionType = $config['Connection']['type'] ?? '';
         $this->connectionSettings = $config['Connection'] ?? [];
         $this->enabled = $config['Enabled'] ?? false;
-        $this->listType = $config['Type'] ?? 'research_room';
+        $this->listType = $config['Type'] ?? 'default';
         $this->institution = $institution;
         $this->listConfiguration = $config;
 
