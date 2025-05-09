@@ -552,6 +552,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      * @param ?MockObject $viewRenderer           View renderer
      * @param ?MockObject $reservationListService Reservation list service
      * @param ?MockObject $httpService            Http service
+     * @param ?MockObject $ilsAuthenticator       ILS Authenticator
      * @param array       $listConfig             Reservation list config
      * @param array       $handlerServices        Handler services mapping for plugin manager
      *
@@ -565,6 +566,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         ?MockObject $viewRenderer = null,
         ?MockObject $reservationListService = null,
         ?MockObject $httpService = null,
+        ?MockObject $ilsAuthenticator = null,
         array $listConfig = [],
         array $handlerServices = [],
     ): MockObject {
@@ -582,6 +584,14 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             $viewRenderer->expects($this->any())->method('render')->willReturn('');
         }
 
+        if (null === $ilsAuthenticator) {
+            $ilsAuthenticator = $this->getMockBuilder(ILSAuthenticator::class)->disableOriginalConstructor()->getMock();
+            $ilsAuthenticator->expects($this->any())->method('storedCatalogLogin')->willReturn([
+            'firstname' => 'Testaaja',
+            'lastname' => 'von Testaaja',
+            ]);
+        }
+
         $reservationListService ??= $this->getReservationListService();
         $httpService ??= $this->getHttpService([]);
 
@@ -593,15 +603,16 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
 
         if (!$handlerServices) {
             $handlerServices = [
-              [\Finna\Config\YamlReader::class, $yamlReader],
-              [\VuFindHttp\HttpService::class, $httpService],
-              [\VuFind\Record\Loader::class, $this->getFinnaRecordLoader()],
-              [\Finna\ReservationList\Form\Form::class, $mockForm],
-              ['ViewRenderer', $viewRenderer],
-              [
-                \Finna\ReservationList\ReservationListService::class,
-                $this->getReservationListService(reservationListConfig: $listConfig),
-              ],
+            [\Finna\Config\YamlReader::class, $yamlReader],
+            [\VuFindHttp\HttpService::class, $httpService],
+            [\VuFind\Record\Loader::class, $this->getFinnaRecordLoader()],
+            [\Finna\ReservationList\Form\Form::class, $mockForm],
+            [ILSAuthenticator::class, $ilsAuthenticator],
+            ['ViewRenderer', $viewRenderer],
+            [
+              \Finna\ReservationList\ReservationListService::class,
+              $this->getReservationListService(reservationListConfig: $listConfig),
+            ],
             ];
         }
 

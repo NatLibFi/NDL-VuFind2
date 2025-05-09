@@ -30,6 +30,7 @@
 namespace Finna\ReservationList\Handler;
 
 use Exception;
+use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
 use Psr\Container\ContainerInterface;
@@ -397,12 +398,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         UserEntityInterface $user,
         array $requestValues
     ): array {
+        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
         $result = [
             'listId' => $list->getId(),
             'institution' => $list->getInstitution(),
             'listIdentifier' => $list->getListConfigIdentifier(),
-            'firstName' => $requestValues['firstName'] ?? $user->getFirstname(),
-            'lastName' => $requestValues['lastName'] ?? $user->getLastname(),
+            'firstName' => $requestValues['firstName'] ?? $patron['firstname'] ?? $user->getFirstname(),
+            'lastName' => $requestValues['lastName'] ?? $patron['lastname'] ?? $user->getLastname(),
             'email' => $requestValues['email'] ?? $user->getEmail(),
             'phone' => $requestValues['phone'] ?? null,
             'pickup_date' => $requestValues['pickup_date'] ?? null,

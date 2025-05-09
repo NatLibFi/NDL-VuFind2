@@ -29,6 +29,7 @@
 
 namespace Finna\ReservationList\Handler;
 
+use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
@@ -86,7 +87,8 @@ class Disec extends AbstractBase
             'contentInfo' => $formValues['message'] . PHP_EOL,
         ];
         $data['contentInfo'] .= 'Delivery date: ' . $formValues['pickup_date'] . PHP_EOL;
-        if ($catId = $user->getCatId()) {
+        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
+        if ($catId = $patron['id'] ?? null) {
             [, $id] = explode('.', $catId);
             if ($this->getUsePatronId()) {
                 $data['kohaId'] = (int)$id;
