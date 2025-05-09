@@ -2,13 +2,13 @@
 <?php if (!empty($data)): ?>
   <div class="truncate-field" data-rows="5">
     <?php foreach ($data as $field): ?>
-        <div class="subjectLine component-parts">
-            <?php if (!empty($field['id'])): ?>
-              <a class="backlink" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($field['id'])) ?>"><?=$this->escapeHtml($field['title']) ?></a>
-            <?php else: ?>
-              <?=$this->escapeHtml($field['title']) ?>
-            <?php endif; ?>
-        </div>
+      <div class="subjectLine component-parts">
+        <?php if (!empty($field['id'])): ?>
+          <a class="backlink" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($field['id'])) ?>"><?=$this->escapeHtml($field['title']) ?></a>
+        <?php else: ?>
+          <?=$this->escapeHtml($field['title']) ?>
+        <?php endif; ?>
+      </div>
     <?php endforeach; ?>
   </div>
 <?php endif; ?>

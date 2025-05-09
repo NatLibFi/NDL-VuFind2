@@ -133,7 +133,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 'context' => ['class' => 'recordIncludedIn'],
                 'labelFunction' => function ($data, $driver) {
                     return !empty($driver->getHierarchyParentID())
-                    ? 'Included in the collections'
+                    ? 'Included in collections'
                     : 'Contains collections';
                 },
             ]
