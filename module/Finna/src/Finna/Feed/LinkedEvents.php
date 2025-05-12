@@ -67,9 +67,9 @@ class LinkedEvents implements
     /**
      * Publisher ID
      *
-     * @var string
+     * @var ?string
      */
-    protected $publisherId = '';
+    protected $publisherId = null;
 
     /**
      * Language
@@ -122,14 +122,6 @@ class LinkedEvents implements
     protected $includeSuperEvents;
 
     /**
-     * Include publisher id in request?
-     * Legacy compatibility
-     *
-     * @var bool
-     */
-    protected $includePublisherId;
-
-    /**
      * Default parameters used in search
      *
      * @var array
@@ -166,12 +158,11 @@ class LinkedEvents implements
         if (!str_ends_with($this->apiUrl, '/')) {
             $this->apiUrl .= '/';
         }
-        $this->publisherId = $config->LinkedEvents->publisher_id ?? '';
+        $this->publisherId = $config->LinkedEvents->publisher_id ?? null;
         // Exclude super events from results by default
         $this->includeSuperEvents
             = $config->LinkedEvents->include_super_events ?? false;
-        $this->includePublisherId
-            = $config->LinkedEvents->include_publisher_id ?? true;
+
         $this->defaultParams = $config->LinkedEvents?->default_params?->toArray() ?? [
             'include' => 'location',
             'sort' => 'start_time',
@@ -194,7 +185,7 @@ class LinkedEvents implements
      */
     public function getEvents($params)
     {
-        if (empty($this->apiUrl) || empty($this->publisherId)) {
+        if (empty($this->apiUrl)) {
             $this->logError('Missing LinkedEvents configuration');
             return false;
         }
@@ -229,7 +220,7 @@ class LinkedEvents implements
                  'sub_events,super_event';
             } else {
                 $paramArray['language'] = $this->getLanguage();
-                if ($this->includePublisherId) {
+                if ($this->publisherId) {
                     $paramArray['publisher'] = $this->publisherId;
                 }
                 if ($this->defaultParams) {

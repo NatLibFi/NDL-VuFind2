@@ -2,12 +2,13 @@
 relative_path = ../finna/OrganisationInfo.ini
 
 [LinkedEvents]
+; Publisher id.
+; Omit or set to an empty value to not limit events to a publisher.
+;publisher_id = 
+
 ; Uncomment to enable super events in the results.
 ; Used for Legacy compatibility
 ;include_super_events = true
-; Uncomment to not include publisher id in results by default.
-; Used for Legacy compatibility
-;include_publisher_id = false
 
 ; Default parameters used to fetch results from linked events api
 ; Default sort used by finna
