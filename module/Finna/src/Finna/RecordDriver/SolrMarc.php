@@ -2767,7 +2767,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $bindings = array_filter(array_map(
                 function ($s) {
                     $s = mb_strtolower(mb_ereg_replace('[^A-ZÅÄÖa-zåäö]', '', $s));
-                    return $this->bindingMappings[$s] ?? null;
+                    return $this->bindingMappings[$s] ?? '';
                 },
                 $values
             ));
