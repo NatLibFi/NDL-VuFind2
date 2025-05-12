@@ -115,10 +115,26 @@ class LinkedEvents implements
 
     /**
      * Include super events in response?
+     * Legacy compatibility
      *
      * @var bool
      */
     protected $includeSuperEvents;
+
+    /**
+     * Include publisher id in request?
+     * Legacy compatibility
+     *
+     * @var bool
+     */
+    protected $includePublisherId;
+
+    /**
+     * Default parameters used in search
+     *
+     * @var array
+     */
+    protected $defaultParams = [];
 
     /**
      * How many related events (if available) are displayed on
@@ -154,6 +170,12 @@ class LinkedEvents implements
         // Exclude super events from results by default
         $this->includeSuperEvents
             = $config->LinkedEvents->include_super_events ?? false;
+        $this->includePublisherId
+            = $config->LinkedEvents->include_publisher_id ?? true;
+        $this->defaultParams = $config->LinkedEvents?->default_params?->toArray() ?? [
+            'include' => 'location',
+            'sort' => 'start_time',
+        ];
         $this->dateConverter = $dateConverter;
         $this->url = $url;
         $this->cleanHtml = $cleanHtml;
@@ -191,7 +213,7 @@ class LinkedEvents implements
                     $paramArray['start']
                 );
             } elseif (empty($paramArray['end'])) {
-                $paramArray['start'] = date('Y-m-d');
+                $paramArray['start'] = 'today';
             }
             if (isset($paramArray['end'])) {
                 $paramArray['end'] = $this->dateConverter->convert(
@@ -200,19 +222,22 @@ class LinkedEvents implements
                     $paramArray['end']
                 );
             }
-            $paramArray['language'] = $this->getLanguage();
             $url = $this->apiUrl . 'event/';
+
             if (!empty($paramArray['id'])) {
                 $url .= $paramArray['id'] . '/?include=location,audience,keywords,' .
                  'sub_events,super_event';
             } else {
-                $url .= '?'
-                . 'publisher=' . urlencode($this->publisherId) . '&'
-                . http_build_query($paramArray)
-                . '&sort=start_time'
-                . '&include=location';
+                $paramArray['language'] = $this->getLanguage();
+                if ($this->includePublisherId) {
+                    $paramArray['publisher'] = $this->publisherId;
+                }
+                if ($this->defaultParams) {
+                    $paramArray = array_merge($this->defaultParams, $paramArray);
+                }
+                $url .= '?' . http_build_query($paramArray);
             }
-            if (!$this->includeSuperEvents) {
+            if (!$this->includeSuperEvents && empty($paramArray['super_event_type'])) {
                 $url .= '&super_event_type=none';
             }
         }
