@@ -235,10 +235,10 @@ class LinkedEvents implements
                 if ($this->defaultParams) {
                     $paramArray = array_merge($this->defaultParams, $paramArray);
                 }
+                if (!$this->includeSuperEvents && empty($paramArray['super_event_type'])) {
+                    $paramArray['super_event_type'] = 'none';
+                } 
                 $url .= '?' . http_build_query($paramArray);
-            }
-            if (!$this->includeSuperEvents && empty($paramArray['super_event_type'])) {
-                $url .= '&super_event_type=none';
             }
         }
 
