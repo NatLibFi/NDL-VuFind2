@@ -237,7 +237,7 @@ class LinkedEvents implements
                 }
                 if (!$this->includeSuperEvents && empty($paramArray['super_event_type'])) {
                     $paramArray['super_event_type'] = 'none';
-                } 
+                }
                 $url .= '?' . http_build_query($paramArray);
             }
         }
