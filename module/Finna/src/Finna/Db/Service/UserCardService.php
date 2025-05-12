@@ -78,7 +78,7 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
         ?string $catUsername = null
     ): array {
         $cards = parent::getLibraryCards($userOrId, $id, $catUsername);
-        // Filter cards by active login targets unless we were requested a specific card:
+        // Filter cards by active login targets unless a specific subset of cards was requested:
         if ($cards && null === $id && null === $catUsername) {
             $prefixes = ($this->getLoginTargetPrefixes)();
             $cards = array_filter(
