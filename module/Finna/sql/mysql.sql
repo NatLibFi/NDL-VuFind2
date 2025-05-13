@@ -12,40 +12,40 @@
 --
 -- Additional columns for comments
 --
-ALTER TABLE comments ADD COLUMN `finna_visible` tinyint(1) DEFAULT '1';
-ALTER TABLE comments ADD COLUMN `finna_updated` datetime DEFAULT NULL;
-ALTER TABLE comments ADD INDEX `finna_visible` (`finna_visible`);
+ALTER TABLE comments ADD COLUMN IF NOT EXISTS `finna_visible` tinyint(1) DEFAULT '1';
+ALTER TABLE comments ADD COLUMN IF NOT EXISTS `finna_updated` datetime DEFAULT NULL;
+ALTER TABLE comments ADD INDEX IF NOT EXISTS `finna_visible` (`finna_visible`);
 --
 -- Additional columns for user
 --
-ALTER TABLE `user` ADD COLUMN `finna_due_date_reminder` int(11) NOT NULL DEFAULT 0;
-ALTER TABLE `user` ADD COLUMN `finna_last_expiration_reminder` datetime NOT NULL DEFAULT '2000-01-01 00:00:00';
-ALTER TABLE `user` ADD COLUMN `finna_nickname` varchar(255) DEFAULT NULL UNIQUE;
-ALTER TABLE `user` ADD COLUMN `finna_protected` tinyint(1) DEFAULT '0' NOT NULL;
-CREATE INDEX `finna_user_due_date_reminder_key` ON user (`finna_due_date_reminder`);
-CREATE INDEX `finna_user_email` ON user (`email`);
+ALTER TABLE `user` ADD COLUMN IF NOT EXISTS `finna_due_date_reminder` int(11) NOT NULL DEFAULT 0;
+ALTER TABLE `user` ADD COLUMN IF NOT EXISTS `finna_last_expiration_reminder` datetime NOT NULL DEFAULT '2000-01-01 00:00:00';
+ALTER TABLE `user` ADD COLUMN IF NOT EXISTS `finna_nickname` varchar(255) DEFAULT NULL UNIQUE;
+ALTER TABLE `user` ADD COLUMN IF NOT EXISTS `finna_protected` tinyint(1) DEFAULT '0' NOT NULL;
+CREATE INDEX IF NOT EXISTS `finna_user_due_date_reminder_key` ON user (`finna_due_date_reminder`);
+CREATE INDEX IF NOT EXISTS `finna_user_email` ON user (`email`);
 
 --
 -- Additional columns for user_card
 --
-ALTER TABLE `user_card` ADD COLUMN `finna_due_date_reminder` int(11) NOT NULL DEFAULT 0;
+ALTER TABLE `user_card` ADD COLUMN IF NOT EXISTS `finna_due_date_reminder` int(11) NOT NULL DEFAULT 0;
 -- To initialize: UPDATE user_card SET finna_due_date_reminder=(SELECT finna_due_date_reminder FROM user WHERE user.id=user_card.user_id);
 
 --
 -- Additional columns for user_list
 --
-ALTER TABLE user_list ADD COLUMN `finna_updated` datetime DEFAULT NULL;
-ALTER TABLE user_list ADD COLUMN `finna_protected` tinyint(1) DEFAULT '0' NOT NULL;
+ALTER TABLE user_list ADD COLUMN IF NOT EXISTS `finna_updated` datetime DEFAULT NULL;
+ALTER TABLE user_list ADD COLUMN IF NOT EXISTS `finna_protected` tinyint(1) DEFAULT '0' NOT NULL;
 
 --
 -- Additional columns for user_resource
 --
-ALTER TABLE `user_resource` ADD COLUMN `finna_custom_order_index` int DEFAULT NULL;
+ALTER TABLE `user_resource` ADD COLUMN IF NOT EXISTS `finna_custom_order_index` int DEFAULT NULL;
 
 --
 -- Additional columns for ratings
 --
-ALTER TABLE `ratings` ADD COLUMN `finna_checked` datetime NOT NULL DEFAULT '2000-01-01 00:00:00';
+ALTER TABLE `ratings` ADD COLUMN IF NOT EXISTS `finna_checked` datetime NOT NULL DEFAULT '2000-01-01 00:00:00';
 
 --
 -- Proper collation to resource sort columns
@@ -58,7 +58,7 @@ alter online table resource change column `author` `author` varchar(255) COLLATE
 --
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_comments_record` (
+CREATE TABLE IF NOT EXISTS `finna_comments_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `record_id` varchar(255) NOT NULL,
   `comment_id` int(11) NOT NULL,
@@ -71,7 +71,7 @@ CREATE TABLE `finna_comments_record` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_comments_inappropriate` (
+CREATE TABLE IF NOT EXISTS `finna_comments_inappropriate` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT NULL,
   `comment_id` int(11) NOT NULL,
@@ -87,7 +87,7 @@ CREATE TABLE `finna_comments_inappropriate` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 collate utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE `finna_due_date_reminder` (
+CREATE TABLE IF NOT EXISTS `finna_due_date_reminder` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `loan_id` varchar(255) NOT NULL,
@@ -100,7 +100,7 @@ CREATE TABLE `finna_due_date_reminder` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_transaction` (
+CREATE TABLE IF NOT EXISTS `finna_transaction` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `transaction_id` varchar(255) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -127,7 +127,7 @@ CREATE TABLE `finna_transaction` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_transaction_event_log` (
+CREATE TABLE IF NOT EXISTS `finna_transaction_event_log` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `transaction_id` int(11) NOT NULL,
   `date` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
@@ -143,7 +143,7 @@ CREATE TABLE `finna_transaction_event_log` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_fee` (
+CREATE TABLE IF NOT EXISTS `finna_fee` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `transaction_id` int(11) NOT NULL,
@@ -163,7 +163,7 @@ CREATE TABLE `finna_fee` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_cache` (
+CREATE TABLE IF NOT EXISTS `finna_cache` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `resource_id` varchar(255) NOT NULL,
   `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -176,7 +176,7 @@ CREATE TABLE `finna_cache` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_feedback` (
+CREATE TABLE IF NOT EXISTS `finna_feedback` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) DEFAULT null,
   `ui_url` varchar(255) NOT NULL,
@@ -195,7 +195,7 @@ CREATE TABLE `finna_feedback` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_page_view_stats` (
+CREATE TABLE IF NOT EXISTS `finna_page_view_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
   -- Note: `crawler` is actually a bitmap for request type, but the name remains for
@@ -211,7 +211,7 @@ CREATE TABLE `finna_page_view_stats` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_session_stats` (
+CREATE TABLE IF NOT EXISTS `finna_session_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
   -- Note: `crawler` is actually a bitmap for request type, but the name remains for
@@ -225,7 +225,7 @@ CREATE TABLE `finna_session_stats` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_record_stats` (
+CREATE TABLE IF NOT EXISTS `finna_record_stats` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
   -- Note: `crawler` is actually a bitmap for request type, but the name remains for
@@ -243,7 +243,7 @@ CREATE TABLE `finna_record_stats` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_record_stats_log` (
+CREATE TABLE IF NOT EXISTS `finna_record_stats_log` (
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
   -- Note: `crawler` is actually a bitmap for request type, but the name remains for
@@ -265,7 +265,7 @@ CREATE TABLE `finna_record_stats_log` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `finna_record_view_record_format` (
+CREATE TABLE IF NOT EXISTS `finna_record_view_record_format` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `formats` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -275,7 +275,7 @@ CREATE TABLE `finna_record_view_record_format` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `finna_record_view_record_rights` (
+CREATE TABLE IF NOT EXISTS `finna_record_view_record_rights` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `usage_rights` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
@@ -285,7 +285,7 @@ CREATE TABLE `finna_record_view_record_rights` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `finna_record_view_record` (
+CREATE TABLE IF NOT EXISTS `finna_record_view_record` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `backend` varchar(128) NOT NULL,
   `source` varchar(255) NOT NULL,
@@ -304,7 +304,7 @@ CREATE TABLE `finna_record_view_record` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `finna_record_view_inst_view` (
+CREATE TABLE IF NOT EXISTS `finna_record_view_inst_view` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `institution` varchar(255) NOT NULL,
   `view` varchar(255) NOT NULL,
@@ -315,7 +315,7 @@ CREATE TABLE `finna_record_view_inst_view` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `finna_record_view` (
+CREATE TABLE IF NOT EXISTS `finna_record_view` (
   `inst_view_id` int(11) NOT NULL,
   `crawler` tinyint(1) NOT NULL,
   `date` DATE NOT NULL,
@@ -329,7 +329,7 @@ CREATE TABLE `finna_record_view` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_resource_list` (
+CREATE TABLE IF NOT EXISTS `finna_resource_list` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `title` varchar(200) NOT NULL,
@@ -350,7 +350,7 @@ CREATE TABLE `finna_resource_list` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
-CREATE TABLE `finna_resource_list_resource` (
+CREATE TABLE IF NOT EXISTS `finna_resource_list_resource` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `resource_id` int(11) NOT NULL,
   `list_id` int(11) NOT NULL,
