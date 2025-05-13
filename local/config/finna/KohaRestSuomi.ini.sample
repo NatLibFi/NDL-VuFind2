@@ -192,3 +192,13 @@ userPassword = '1234'
 ; Link the SMS number to the following Koha fields. Default for Finna is
 ; "smsalertnumber,phone".
 ;fields = "smsalertnumber,phone"
+
+; Block methods during given times. Format is "method:setting = date"
+; where method is a method in ILS driver, setting is startDate, endDate,
+; recurringStart or recurringEnd and date is a date for start/endDate
+; and time for recurringStart/End
+[TimedBlocks]
+;markFeesAsPaid:recurringStart = 23:45
+;markFeesAsPaid:recurringEnd = 00:20
+;renewMyItems:startDate = 01.01.2025
+;renewMyItems:endDate = 02.01.2025
