@@ -58,7 +58,6 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     use \VuFind\Log\LoggerAwareTrait {
         logError as error;
     }
-    use \Finna\ILS\Feature\TimedBlocksTrait;
     use \VuFind\Cache\CacheTrait;
 
     /**
@@ -1639,9 +1638,6 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
      */
     public function supportsMethod($method, $params)
     {
-        if ($this->checkTimedBlock($method)) {
-            return false;
-        }
         // Special case: change password is only available if properly configured.
         if ($method == 'changePassword') {
             return isset($this->config['changePassword']);

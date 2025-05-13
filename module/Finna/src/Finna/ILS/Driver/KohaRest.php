@@ -52,6 +52,8 @@ use function is_array;
  */
 class KohaRest extends \VuFind\ILS\Driver\KohaRest
 {
+    use \Finna\ILS\Feature\TimedBlocksTrait;
+
     /**
      * Mappings from Koha messaging preferences
      *
@@ -168,6 +170,26 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $this->minimumPayableAmount = $paymentConfig['minimumFee'] ?? 0;
         $this->nonPayableTypes = (array)($paymentConfig['nonPayableTypes'] ?? []);
         $this->nonPayableStatuses = (array)($paymentConfig['nonPayableStatuses'] ?? []);
+    }
+
+    /**
+     * Helper method to determine whether or not a certain method can be
+     * called on this driver. Required method for any smart drivers.
+     *
+     * @param string $method The name of the called method.
+     * @param array  $params Array of passed parameters
+     *
+     * @return bool True if the method can be called with the given parameters,
+     * false otherwise.
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function supportsMethod($method, $params)
+    {
+        if ($this->checkTimedBlock($method)) {
+            return false;
+        }
+        return parent::supportsMethod($method, $params);
     }
 
     /**
