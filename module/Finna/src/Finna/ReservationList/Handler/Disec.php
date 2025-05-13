@@ -88,12 +88,11 @@ class Disec extends AbstractBase
         ];
         $data['contentInfo'] .= 'Delivery date: ' . $formValues['pickup_date'] . PHP_EOL;
         $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
-        if ($catId = $patron['id'] ?? null) {
-            [, $id] = explode('.', $catId);
+        if ($patronId = $patron['local_id']) {
             if ($this->getUsePatronId()) {
-                $data['kohaId'] = (int)$id;
+                $data['kohaId'] = (int)$patronId;
             }
-            $data['contentInfo'] .= 'cat_id: ' . $id;
+            $data['contentInfo'] .= 'id: ' . $patronId;
         }
         if (empty($data['kohaId'])) {
             $data['customer'] = [

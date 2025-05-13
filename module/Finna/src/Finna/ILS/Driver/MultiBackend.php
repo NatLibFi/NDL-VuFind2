@@ -118,6 +118,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
         $patron = $this->callMethodIfSupported(null, 'patronLogin', func_get_args());
         if (is_array($patron)) {
             $patron['source'] = $this->getSource($username);
+            $patron['local_id'] = $this->getLocalId($patron['id'] ?? '');
+            $patron['local_cat_username'] = $this->getLocalId($patron['cat_username'] ?? '');
         }
         return $patron;
     }
