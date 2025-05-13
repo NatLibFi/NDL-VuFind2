@@ -491,6 +491,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
               'phone' => null,
+              'card_info' => 'test_cat_username',
             ],
           ],
           'different name given' => [
@@ -514,6 +515,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
               'phone' => null,
+              'card_info' => 'test_cat_username',
             ],
           ],
           'disec get list values' => [
@@ -537,6 +539,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
               'phone' => null,
+              'card_info' => 'test_cat_username',
             ],
           ],
         ];
@@ -587,8 +590,10 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         if (null === $ilsAuthenticator) {
             $ilsAuthenticator = $this->getMockBuilder(ILSAuthenticator::class)->disableOriginalConstructor()->getMock();
             $ilsAuthenticator->expects($this->any())->method('storedCatalogLogin')->willReturn([
-            'firstname' => 'Testaaja',
-            'lastname' => 'von Testaaja',
+              'firstname' => 'Testaaja',
+              'lastname' => 'von Testaaja',
+              'local_id' => 'testid',
+              'local_cat_username' => 'test_cat_username',
             ]);
         }
 

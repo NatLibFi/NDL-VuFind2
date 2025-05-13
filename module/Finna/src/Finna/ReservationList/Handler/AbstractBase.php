@@ -409,6 +409,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             'phone' => $requestValues['phone'] ?? null,
             'pickup_date' => $requestValues['pickup_date'] ?? null,
             'message' => $requestValues['message'] ?? null,
+            'card_info' => $patron['local_cat_username'] ?? '',
         ];
 
         if (empty($requestValues['recordId'])) {
