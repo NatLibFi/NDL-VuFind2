@@ -223,6 +223,9 @@
         </div>
       <?php endif; ?>
 
+      <?php if (!$this->driver->tryMethod('getLinkedParents')): ?>
+        <?=$this->record($driver)->renderTemplate('container-links.phtml'); ?>
+      <?php endif; ?>
       <?php $publications = $this->driver->getPublicationDetails();
       if (!empty($publications)): ?>
         <span class="recordPublications">
@@ -250,8 +253,7 @@
       
       <?php if (
           isset($this->tabs['ComponentParts'])
-          && $this->driver->tryMethod('isHierarchicalLinkingShown')
-          && $this->driver->tryMethod('hasEmbeddedComponentParts')
+          && $this->driver->tryMethod('getLinkedComponentParts', [true])
         ): ?>
         <div class="record-to-componentparts">
           <a class="icon-link" href="#componentparts">

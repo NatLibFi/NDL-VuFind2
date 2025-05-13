@@ -76,20 +76,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
-     * Hierarchical items from specified source are displayed
-     *
-     * @var string
-     */
-    protected $hierarchicalLinkingShownFromSource = 'Kansalliskirjasto';
-
-    /**
-     * Hierarchical items from specified datasource are displayed
-     *
-     * @var string
-     */
-    protected $hierarchicalLinkingShownFromDatasource = 'fikka';
-
-    /**
      * Hierarchical items specified with term are displayed
      *
      * @var string
@@ -788,46 +774,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Whether linked component parts are shown on record page
-     *
-     * @return boolean
-     */
-    public function isHierarchicalLinkingShown(): bool
-    {
-        if ($this->getDataSource() !== $this->hierarchicalLinkingShownFromDatasource) {
-            return false;
-        }
-        $isShown = false;
-        if (!isset($this->fields['hierarchical_parent_id'])) {
-            foreach ($this->getMarcReader()->getFields('264') as $field) {
-                foreach ($this->getSubfieldArray($field, ['b']) as $subfield) {
-                    if ($isShown = str_contains($subfield, $this->hierarchicalLinkingShownFromSource)) {
-                        continue;
-                    }
-                }
-            }
-        }
-        foreach ($this->getMarcReader()->getFields('773') as $field) {
-            foreach ($this->getSubfieldArray($field, ['i']) as $subfield) {
-                if ($isShown = str_contains($subfield, $this->includedInCollection)) {
-                    continue;
-                }
-            }
-        }
-        return $isShown;
-    }
-
-    /**
-     * Get the amount of embedded parts
+     * Get the amount of linked parts
      *
      * @return string
      */
-    public function getAmountOfEmbeddedParts(): string
+    public function getLinkedComponentPartCount(): string
     {
-        if ($this->isHierarchicalLinkingShown()) {
-            if ($amount = count($this->getEmbeddedComponentParts())) {
-                return (string)$amount . ' ' . $this->translate('items');
-            }
+        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
+        if (!($datasourceSettings['hierarchical_linking_shown'] ?? false)) {
+            return '';
+        }
+        if ($amount = count($this->getLinkedComponentParts(true))) {
+            return (string)$amount . ' ' . $this->translate('items');
         }
         return '';
     }
@@ -835,15 +793,44 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     /**
      * Get records linked to record
      *
+     * @param bool $ignoreSource Get records regardless of source
+     *
      * @return array
      */
-    public function getHierarchicalEmbeddedComponentParts(): array
+    public function getLinkedComponentParts($ignoreSource = false): array
     {
-        if ($this->isHierarchicalLinkingShown()) {
-            if (!empty($this->getHierarchyParentID())) {
-                return $this->getHostRecords(true);
-            } else {
-                return $this->getEmbeddedComponentParts();
+        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
+        if (!($datasourceSettings['hierarchical_linking_shown'] ?? false)) {
+            return [];
+        }
+        if (!isset($this->fields['hierarchy_parent_id']) || $ignoreSource) {
+            foreach ($this->getMarcReader()->getFields('264') as $field) {
+                foreach ($this->getSubfieldArray($field, ['b']) as $subfield) {
+                    if (str_contains($subfield, $datasourceSettings['hierarchical_linking_shown_source'] ?? false)) {
+                        return $this->getEmbeddedComponentParts();
+                    }
+                }
+            }
+        }
+        return [];
+    }
+
+    /**
+     * Get records record is linked to
+     *
+     * @return array
+     */
+    public function getLinkedParents(): array
+    {
+        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
+        if (!($datasourceSettings['hierarchical_linking_shown'] ?? false)) {
+            return [];
+        }
+        foreach ($this->getMarcReader()->getFields('773') as $field) {
+            foreach ($this->getSubfieldArray($field, ['i']) as $subfield) {
+                if (str_contains($subfield, $this->includedInCollection)) {
+                    return $this->getHostRecords(true);
+                }
             }
         }
         return [];
@@ -1004,11 +991,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *   reference
      *   Place, publisher, and date of publication
      *
-     * @param bool $ignoreFieldNumber If the field number is ignored
+     * @param bool $preferIndexFields Use hierarchy fields in the index instead of 773 when possible
      *
      * @return array
      */
-    public function getHostRecords($ignoreFieldNumber = false)
+    public function getHostRecords($preferIndexFields = false)
     {
         $result = [];
         $sourceId = $this->getSourceIdentifier();
@@ -1017,7 +1004,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         if (
             !empty($this->fields['hierarchy_parent_id'])
             && (count($this->fields['hierarchy_parent_id']) > count($fields)
-            || $ignoreFieldNumber)
+            || $preferIndexFields)
         ) {
             // Can't use 773 fields since they don't represent the actual links
             foreach ($this->fields['hierarchy_parent_id'] as $key => $parentId) {

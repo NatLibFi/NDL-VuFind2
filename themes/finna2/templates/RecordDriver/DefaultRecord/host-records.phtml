@@ -1,8 +1,5 @@
-<?php $isHoldings ??= false; ?> 
 <?php foreach ($hostRecords as $i => $hostRecord): ?>
-  <?php if (!$isHoldings): ?>
-    <?=$i > 0 ? '<br>' : ''?>
-  <?php endif; ?>
+  <?=$i > 0 ? '<br>' : ''?>
   <?php
     $label = $hostRecord['title'] ?: $hostRecord['mainHeading'];
     $link = '';

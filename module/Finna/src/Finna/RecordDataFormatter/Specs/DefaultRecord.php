@@ -126,21 +126,30 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 $lines[$key] = [true, $dataMethod, $callback, $options];
             };
         $setTemplateLine(
-            'hierarchical_content',
-            'getHierarchicalEmbeddedComponentParts',
+            'linked_to_content',
+            'getLinkedParents',
             'data-componentparts.phtml',
             [
-                'context' => ['class' => 'recordIncludedIn'],
-                'labelFunction' => function ($data, $driver) {
-                    return !empty($driver->getHierarchyParentID())
-                    ? 'Included in collections'
-                    : 'Contains collections';
-                },
+                'context' => [
+                    'class' => 'recordIncludedIn',
+                    'title' => 'Included in collections',
+                ],
+            ]
+        );
+        $setTemplateLine(
+            'contains_linked_content',
+            'getLinkedComponentParts',
+            'data-componentparts.phtml',
+            [
+                'context' => [
+                    'class' => 'recordIncludedIn',
+                    'title' => 'Contains collections',
+                ],
             ]
         );
         $setTemplateLine(
             'contents_parts_amount',
-            'getAmountOfEmbeddedParts',
+            'getLinkedComponentPartCount',
             'data-escapeHtml.phtml',
             [
                 'context' => [
