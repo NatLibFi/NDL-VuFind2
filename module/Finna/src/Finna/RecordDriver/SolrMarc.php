@@ -76,13 +76,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
-     * Hierarchical items specified with term are displayed
-     *
-     * @var string
-     */
-    protected $includedInCollection = 'Sisältyy kokoelmaan';
-
-    /**
      * Accepted book binding strings mapped to translation key strings
      *
      * @var array
@@ -99,6 +92,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         'pehmeäkantinen'  => 'paperback',
         'kovakantinen'    => 'hardcover',
     ];
+
+    /**
+     * Hierarchical items specified with term are displayed
+     *
+     * @var string
+     */
+    protected $includedInCollection = 'Sisältyy kokoelmaan';
 
     /**
      * Constructor
