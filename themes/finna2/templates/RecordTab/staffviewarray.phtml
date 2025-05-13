@@ -23,16 +23,15 @@
       echo '<pre id="record-data">' . $this->escapeHtml($dom->saveXML()) . '</pre>';
       $script = <<<JS
             $(document).ready(function() {
-              finna.scriptLoader.load(
-                {"vendor-highlight": 'vendor/highlight.pack.js'},
-                () => {
-                  const recordData = document.getElementById('record-data');
-                  if (recordData) {
+              const recordData = document.getElementById('record-data');
+              if (recordData) {
+                finna.scriptLoader.load(
+                  {"vendor-highlight": 'vendor/highlight.pack.js'},
+                  () => {
                     hljs.highlightBlock(recordData);
                   }
-                }
-              );
-
+                );
+              }
             });
           JS;
       echo $this->assetManager()->outputInlineScriptString($script);
