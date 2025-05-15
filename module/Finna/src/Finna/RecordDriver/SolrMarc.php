@@ -844,14 +844,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         if (!($datasourceSettings['hierarchical_linking_shown'] ?? false)) {
             return [];
         }
-        foreach ($this->getMarcReader()->getFields('773') as $field) {
-            foreach ($this->getSubfieldArray($field, ['i']) as $subfield) {
-                if (str_contains($subfield, $this->includedInCollection)) {
-                    return $this->getHostRecords(true);
-                }
-            }
-        }
-        return [];
+        return $this->getHostRecords(true);
     }
 
     /**
@@ -1009,20 +1002,20 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *   reference
      *   Place, publisher, and date of publication
      *
-     * @param bool $preferIndexFields Use hierarchy fields in the index instead of 773 when possible
+     * @param bool $onlyLinked Only include records that have hierarchical linking to other records
      *
      * @return array
      */
-    public function getHostRecords($preferIndexFields = false)
+    public function getHostRecords($onlyLinked = false)
     {
         $result = [];
+        $resultLinkedOnly = [];
         $sourceId = $this->getSourceIdentifier();
         $fields = $this->getMarcReader()->getFields('773');
 
         if (
             !empty($this->fields['hierarchy_parent_id'])
-            && (count($this->fields['hierarchy_parent_id']) > count($fields)
-            || $preferIndexFields)
+            && (count($this->fields['hierarchy_parent_id']) > count($fields))
         ) {
             // Can't use 773 fields since they don't represent the actual links
             foreach ($this->fields['hierarchy_parent_id'] as $key => $parentId) {
@@ -1056,6 +1049,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $reference = '';
             $publishingInfo = '';
             $author = '';
+            $isLinked = false;
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
@@ -1086,6 +1080,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     case 't':
                         $title = $this->stripTrailingPunctuation($data, '.-');
                         break;
+                    case 'i':
+                        $isLinked = str_contains($data, $this->includedInCollection);
+                        break;
                     case 'g':
                         $reference = $data;
                         break;
@@ -1110,7 +1107,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 }
             }
 
-            $result[] = [
+            $item = [
                 'id' => $id,
                 'linkingId' => $linkingId,
                 'sourceId' => $sourceId,
@@ -1119,8 +1116,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'publishingInfo' => $publishingInfo,
                 'mainHeading' => $author,
             ];
+            if ($isLinked && ($id || $linkingId)) {
+                $resultLinkedOnly[] = $item;
+            } else {
+                $result[] = $item;
+            }
         }
-        return $result;
+        return $onlyLinked ? $resultLinkedOnly : $result;
     }
 
     /**

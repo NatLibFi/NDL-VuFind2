@@ -128,7 +128,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         $setTemplateLine(
             'linked_to_content',
             'getLinkedParents',
-            'data-componentparts.phtml',
+            'data-linkedparents.phtml',
             [
                 'context' => [
                     'class' => 'recordIncludedIn',

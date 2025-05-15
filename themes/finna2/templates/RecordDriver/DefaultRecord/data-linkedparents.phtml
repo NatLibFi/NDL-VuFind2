@@ -1,0 +1,20 @@
+<?php //Don't add START and END comments ?>
+<?php if (!empty($data)): ?>
+  <div class="truncate-field" data-rows="5">
+    <?php foreach ($data as $field): ?>
+      <div class="subjectLine component-parts">
+      <?php
+        $label = $field['title'] ?: $field['mainHeading'];
+        $link = '';
+        if ($field['id']) {
+          $link = $this->recordLinker()->getUrl($field['sourceId'] . '|' . $field['id']);
+        } else {
+          $link = $this->recordLinker()->related(['type' => 'linkingId', 'value' => $field['linkingId']]);
+        }
+      ?>
+      <?php if ($link): ?>
+        <a class="backlink" href="<?=$this->escapeHtmlAttr($link)?>"><?=$label?></a>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>

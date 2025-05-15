@@ -224,9 +224,7 @@
         </div>
       <?php endif; ?>
 
-      <?php if (!$this->driver->tryMethod('getLinkedParents')): ?>
-        <?=$this->record($driver)->renderTemplate('container-links.phtml'); ?>
-      <?php endif; ?>
+      <?=$this->record($driver)->renderTemplate('container-links.phtml', ['inRecordInfo' => true]); ?>
       <?php $publications = $this->driver->getPublicationDetails();
       if (!empty($publications)): ?>
         <span class="recordPublications">
