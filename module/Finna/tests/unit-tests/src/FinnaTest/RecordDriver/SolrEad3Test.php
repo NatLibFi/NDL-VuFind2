@@ -485,7 +485,6 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                     ],
                     'ead3_test2.xml' => [
                         '9 koteloa',
-                        '9 mappar',
                     ],
                 ],
             ],
