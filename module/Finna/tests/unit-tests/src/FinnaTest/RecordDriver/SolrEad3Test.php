@@ -344,6 +344,8 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+            ],
+            [
                 'sv',
                 [
                     'ead3_test.xml' => [
@@ -370,6 +372,14 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                             'type' => 'topic',
                             'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
                         ],
+                        [
+                            'id' => 'http://www.yso.fi/onto/koko/p9492',
+                            'source' => 'KOKO',
+                            'detail' => 'asiasana',
+                            'heading' => ['writing contests'],
+                            'type' => 'topic',
+                            'authType' => null,
+                        ],
                     ],
                     'ead3_test2.xml' => [
                         [
@@ -382,7 +392,9 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'en',
+            ],
+            [
+                'en-gb',
                 [
                     'ead3_test.xml' => [
                         [
@@ -452,6 +464,8 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                         '9 koteloa',
                     ],
                 ],
+            ],
+            [
                 'sv',
                 [
                     'ead3_test.xml' => [
@@ -461,7 +475,9 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                         '9 mappar',
                     ],
                 ],
-                'en',
+            ],
+            [
+                'en-gb',
                 [
                     'ead3_test.xml' => [
                         'Hyllymetriä järjestetty 0.96 hm',
@@ -469,6 +485,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                     ],
                     'ead3_test2.xml' => [
                         '9 koteloa',
+                        '9 mappar',
                     ],
                 ],
             ],
@@ -587,7 +604,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                 ],
             ],
             [
-                'en',
+                'en-gb',
                 [
                     'Aineisto on digitoitu',
                     'Aineisto on osa Unescon maailmanperintöä',
