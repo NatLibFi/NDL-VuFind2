@@ -572,6 +572,59 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected general notes data
+     *
+     * @return array
+     */
+    public static function getGeneralNotesData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    'Aineisto on digitoitu',
+                    'Aineisto on osa Unescon maailmanperintöä',
+                ],
+            ],
+            [
+                'en',
+                [
+                    'Aineisto on digitoitu',
+                    'Aineisto on osa Unescon maailmanperintöä',
+                ],
+            ],
+            [
+                'sv',
+                [
+                    'Samlingen är digitaliserad',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getGeneralNotes
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getGeneralNotesData
+     *
+     * @return void
+     */
+    public function testGetGeneralNotes(
+        string $language,
+        array $expected
+    ): void {
+        $driver = $this->getDriver('ead3_test5.xml');
+        $driver->setPreferredLanguage($language);
+        $this->assertEquals(
+            $expected,
+            $driver->getGeneralNotes()
+        );
+    }
+
+    /**
      * Get a record driver with fake data.
      *
      * @param string $recordXml    Xml record to use for the test

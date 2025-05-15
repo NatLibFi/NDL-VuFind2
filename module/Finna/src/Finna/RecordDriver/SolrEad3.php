@@ -2243,6 +2243,17 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get general notes on the record.
+     *
+     * @return array
+     */
+    public function getGeneralNotes(): array
+    {
+        $xml = $this->getXmlRecord();
+        return $this->getDisplayLabel($xml->did, 'didnote');
+    }
+
+    /**
      * Helper function for returning an array of summary strings or summary items for
      * the record.
      *

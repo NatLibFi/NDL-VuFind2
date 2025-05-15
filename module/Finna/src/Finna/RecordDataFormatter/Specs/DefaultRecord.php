@@ -463,6 +463,14 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ]
         );
         $setTemplateLine(
+            'Item Notes',
+            'getGeneralNotes',
+            'data-escapeHtml.phtml',
+            [
+                'context' => ['class' => 'recordDescription'],
+            ]
+        );
+        $setTemplateLine(
             'Local Note',
             'getLocalNotes',
             'data-escapeHtml.phtml',
@@ -1763,7 +1771,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         $spec->setLine('Review', 'getReviewNotes');
         $spec->setLine('Content Advice', 'getContentAdviceNotes');
         $spec->setLine('Published', 'getDateSpan');
-        $spec->setLine('Item Description', 'getGeneralNotes');
+        $spec->setLine('Item Notes', 'getGeneralNotes');
         $spec->setLine('Physical Description', 'getPhysicalDescriptions');
         $spec->setLine('Publication Frequency', 'getPublicationFrequency');
         $spec->setLine('Playing Time', 'getPlayingTimes');
