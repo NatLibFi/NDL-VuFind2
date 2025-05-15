@@ -2414,7 +2414,7 @@ class SolrEad3 extends SolrEad
     protected function detectNodeLanguage(
         \SimpleXMLElement $node,
         string $languageAttribute = 'lang',
-        string $defaultLanguage = 'fin'
+        string $defaultLanguage = 'fi'
     ): ?array {
         if (!isset($node->attributes()->{$languageAttribute})) {
             return null;
@@ -2427,7 +2427,7 @@ class SolrEad3 extends SolrEad
         $lang = (string)$node->attributes()->{$languageAttribute};
         return [
             'value' => $lang,
-            'default' => $defaultLanguage === $lang,
+            'default' => in_array($lang, $this->mapLanguageCode($defaultLanguage)),
             'preferred' => in_array($lang, $languages),
         ];
     }
