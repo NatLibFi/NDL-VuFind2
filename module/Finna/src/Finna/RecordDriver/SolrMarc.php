@@ -1116,7 +1116,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'publishingInfo' => $publishingInfo,
                 'mainHeading' => $author,
             ];
-            if ($isLinked && ($id || $linkingId)) {
+            if ($isLinked) {
                 $resultLinkedOnly[] = $item;
             } else {
                 $result[] = $item;

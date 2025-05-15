@@ -8,8 +8,10 @@
         $link = '';
         if ($field['id']) {
           $link = $this->recordLinker()->getUrl($field['sourceId'] . '|' . $field['id']);
+        } elseif ($linkingId = $field['linkingId']) {
+          $link = $this->recordLinker()->related(['type' => 'linkingId', 'value' => $linkingId]);
         } else {
-          $link = $this->recordLinker()->related(['type' => 'linkingId', 'value' => $field['linkingId']]);
+          $link = $this->record($this->driver)->getLink('title', $field['title']);
         }
       ?>
       <?php if ($link): ?>
