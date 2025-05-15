@@ -2132,11 +2132,11 @@ class SolrEad3 extends SolrEad
     protected function getTopics(): array
     {
         $record = $this->getXmlRecord();
-        $results = $localeResults = [];
+        $results = $localeResults = $defaultResults = [];
         foreach ($record->controlaccess as $controlaccess) {
             foreach ($controlaccess->subject as $subject) {
                 $attr = $subject->attributes();
-                $parts = $localeParts = [];
+                $parts = $localeParts = $defaultParts = [];
                 $langS = $this-> detectNodeLanguage($subject);
                 // Collect all part elements to be displayed
                 foreach ($subject->part as $part) {
@@ -2151,11 +2151,21 @@ class SolrEad3 extends SolrEad
                         if ($lang['preferred'] ?? false) {
                             $localeParts[] = $name;
                         }
+                        if ($lang['default'] ?? false) {
+                            $defaultParts[] = $name;
+                        }
                     }
                 }
                 if ($localeParts) {
                     $localeResults[] = [
                         'data' => implode(', ', $localeParts),
+                        'id' => (string)$attr->identifier,
+                        'source' => (string)$attr->source,
+                        'detail' => (string)$subject->attributes()->relator,
+                    ];
+                } elseif ($defaultParts) {
+                    $defaultResults[] = [
+                        'data' => implode(', ', $defaultParts),
                         'id' => (string)$attr->identifier,
                         'source' => (string)$attr->source,
                         'detail' => (string)$subject->attributes()->relator,
@@ -2170,7 +2180,7 @@ class SolrEad3 extends SolrEad
                 }
             }
         }
-        return $localeResults ?: $results;
+        return $localeResults ?: $defaultResults ?: $results;
     }
 
     /**

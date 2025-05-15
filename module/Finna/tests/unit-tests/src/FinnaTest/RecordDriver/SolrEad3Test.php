@@ -372,14 +372,6 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                             'type' => 'topic',
                             'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
                         ],
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['writing contests'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
                     ],
                     'ead3_test2.xml' => [
                         [
