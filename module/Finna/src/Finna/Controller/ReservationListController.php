@@ -76,13 +76,6 @@ class ReservationListController extends AbstractBase
     protected const RESERVATION_LISTS_DISABLED = 'Reservation lists disabled';
 
     /**
-     * Single order list title template
-     *
-     * @var string
-     */
-    protected const SINGLE_LIST_TITLE_TEMPLATE = 'Order %s %s';
-
-    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm                           Service locator
@@ -439,7 +432,7 @@ class ReservationListController extends AbstractBase
         $result = $listHandler->placeOrder($queryValues, $user);
         if ($result['success']) {
             $listValues['title'] = sprintf(
-                self::SINGLE_LIST_TITLE_TEMPLATE,
+                'Order %s %s',
                 $queryValues['recordId'],
                 (new \DateTime())->format('Y-m-d H:i:s')
             );
