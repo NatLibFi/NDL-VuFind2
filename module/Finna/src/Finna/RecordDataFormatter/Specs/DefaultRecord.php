@@ -455,14 +455,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ]
         );
         $setTemplateLine(
-            'Item Description',
-            'getGeneralNotes',
-            'data-escapeHtml.phtml',
-            [
-                'context' => ['class' => 'recordDescription'],
-            ]
-        );
-        $setTemplateLine(
             'Item Notes',
             'getGeneralNotes',
             'data-escapeHtml.phtml',
