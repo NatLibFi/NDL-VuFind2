@@ -48,8 +48,6 @@ use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 
-use function sprintf;
-
 /**
  * Reservation List Controller
  *
@@ -403,8 +401,9 @@ class ReservationListController extends AbstractBase
             throw new \VuFind\Exception\Forbidden('ReservationList: No list properties found.');
         }
         $request = $this->getRequest();
+        $requestValues = $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray();
         $listValues = [
-            'title' => 'tmptitle',
+            'title' => $requestValues['list_title'] ?? 'tmp_title',
             'desc' => '',
             'institution' => $listHandler->getInstitution(),
             'listIdentifier' => $listHandler->getIdentifier(),
@@ -416,7 +415,7 @@ class ReservationListController extends AbstractBase
         $queryValues = $listHandler->getValuesForSingleOrder(
             $list,
             $user,
-            $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()
+            $requestValues
         );
         $form = $listHandler->getSingleOrderForm($queryValues);
         $view = $this->createViewModel(compact('formId', 'user', 'form'));
@@ -429,26 +428,30 @@ class ReservationListController extends AbstractBase
         if (!$form->isValid()) {
             return $view;
         }
+        // Save single order into a list before placing the order.
+        $driver = $this->getRecordLoader()->load(
+            $queryValues['recordId'],
+            $queryValues['source'],
+            false
+        );
+
+        $this->reservationListService->populateListValues($list, $user, $listValues);
+        $this->reservationListService->saveListForUser($list, $user);
+        $params = new Parameters(['list' => $list->getId()]);
+        $this->reservationListService->saveRecordToReservationList($params, $user, $driver);
+
         $result = $listHandler->placeOrder($queryValues, $user);
         if ($result['success']) {
-            $listValues['title'] = sprintf(
-                'Order %s %s',
-                $queryValues['recordId'],
-                (new \DateTime())->format('Y-m-d H:i:s')
-            );
-            $this->reservationListService->populateListValues($list, $user, $listValues);
             $this->reservationListService->setListOrdered($user, $list, $result);
-            $params = new Parameters(['list' => $list->getId()]);
-            $driver = $this->getRecordLoader()->load(
-                $queryValues['recordId'],
-                $queryValues['source'],
-                false
-            );
-            $this->reservationListService->saveRecordToReservationList($params, $user, $driver);
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         }
-        $this->flashMessenger()->addErrorMessage('could_not_process_feedback');
+        // Display a message saying that an error has been occurred and the order has been saved into
+        // a list
+        $this->flashMessenger()->addErrorMessage('ReservationList::Reservation Failed');
+        $view->setTemplate('reservationlist/ordererror.phtml');
+        $view->listEntity = $list;
+        $view->driver = $driver;
         return $view;
     }
 

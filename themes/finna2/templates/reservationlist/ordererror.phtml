@@ -1,0 +1,22 @@
+<?php
+  $pageTitle = $this->translate('ReservationList::Reservation Failed');
+  // Set up page title:
+  $this->headTitle($this->translate($pageTitle));
+  $user = $this->auth()->getUserObject();
+
+  // Set up breadcrumbs:
+  $this->breadcrumbs()->set(...$this->recordLinker()->getBreadcrumbParams($this->driver))
+    ->add($pageTitle, active: true);
+
+?>
+<h2><?= $this->escapeHtml($pageTitle); ?></h2>
+<?=$this->flashmessages();?>
+<div>
+  <p><?=$this->transEsc('ReservationList::saved_to_list', ['%%list%%' => $this->listEntity->getTitle()])?></p>
+</div>
+<div class="btn-group">
+  <a class="btn btn-primary" href="<?=$this->url('reservationlist-displaylist', ['listId' => $this->listEntity->getId()])?>" data-lightbox-ignore><?=$this->transEsc('Show')?></a>
+</div>
+<div class="btn-group">
+  <button class="btn btn-primary lightbox-only" data-bs-dismiss="modal"><?=$this->transEsc('close') ?></button>
+</div>

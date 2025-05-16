@@ -37,6 +37,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Service\GetServiceTrait;
 
 use function in_array;
+use function sprintf;
 
 /**
  * Abstract handler
@@ -417,6 +418,10 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $recordID = $requestValues['recordId'];
         $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
         $record = $recordLoader->load($recordID, $source);
+        $result['list_title'] = $requestValues['list_title'] ?? sprintf(
+            'Order %s',
+            (new \DateTime())->format('Y-m-d H:i:s')
+        );
         $result['recordId'] = $record->getUniqueID();
         $result['source'] = $record->getSourceIdentifier();
         $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
@@ -521,11 +526,17 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             ?? $singleOrderFormConfig;
 
         // Extend form as required
-        if ($extend = $this->singleOrderFormConfig['extends'] ?? false) {
+        $extend = $this->singleOrderFormConfig['extends'] ?? false;
+        if ($parentForm = $definedForms['PlaceOrder'][$extend] ?? false) {
+            $mergedFields = array_merge(
+                $parentForm['fields'] ?? [],
+                $this->singleOrderFormConfig['fields'] ?? []
+            );
             $this->singleOrderFormConfig = array_merge(
                 $definedForms['PlaceOrder'][$extend],
                 $this->singleOrderFormConfig
             );
+            $this->singleOrderFormConfig['fields'] = $mergedFields;
         }
         return $this;
     }
