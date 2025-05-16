@@ -593,7 +593,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'firstname' => 'Testaaja',
               'lastname' => 'von Testaaja',
               'local_id' => 'testid',
-              'local_cat_username' => 'test_cat_username',
+              '__local_cat_username' => 'test_cat_username',
             ]);
         }
 
