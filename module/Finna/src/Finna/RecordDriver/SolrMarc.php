@@ -1015,7 +1015,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
         if (
             !empty($this->fields['hierarchy_parent_id'])
-            && (count($this->fields['hierarchy_parent_id']) > count($fields))
+            && count($this->fields['hierarchy_parent_id']) > count($fields)
         ) {
             // Can't use 773 fields since they don't represent the actual links
             foreach ($this->fields['hierarchy_parent_id'] as $key => $parentId) {
