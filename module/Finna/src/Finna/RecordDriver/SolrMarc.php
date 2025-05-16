@@ -969,10 +969,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
 
         $recordSource = $this->getDataSource();
-
+        if ($linkPrefixes = $this->datasourceSettings[$recordSource]['link_prefixes'] ?? []) {
+            $linkPrefixes = explode(',', $linkPrefixes);
+        }
         if ($prefixIn003 = $this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
-            $field003 = $this->getMarcReader()->getField('003');
-            $prefixIn003 = $field003 ? trim($field003) : null;
+            $prefixIn003 = trim($this->getMarcReader()->getField('003'));
+            if (!in_array($prefixIn003, $linkPrefixes)) {
+                $linkPrefixes[] = $prefixIn003;
+            }
         }
         // TODO: Remove old way of linking records in: [FINNA-3437]
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
@@ -993,18 +997,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                             $id = $this->getIdFromLinkingField($data);
                             break;
                         }
-                        // Datasource has been set to check for prefix from 003 and is most likely using new linking
-                        if ($prefixIn003 && $this->getIdFromLinkingField($data, $prefixIn003)) {
-                            $linkingId = $data;
-                            break;
+                        foreach ($linkPrefixes as $prefix) {
+                            if ($this->getIdFromLinkingField($data, $prefix)) {
+                                $linkingId = $data;
+                                break 2;
+                            }
                         }
                         $found = $this->getIdFromLinkingField($data);
                         if (!$found) {
-                            break;
-                        }
-                        // Determine if the id starts like (datasource.) and if it does, it is most likely a legacy id
-                        if (str_starts_with($found, "$recordSource.")) {
-                            $id = $found;
                             break;
                         }
                         // If id does not match any of the previous, then assume it is a linking id without a prefix.
@@ -1922,9 +1922,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $linkFields = $this->getSubfields($field, 'w');
         $recordSource = $this->getDataSource();
 
+        if ($linkPrefixes = $this->datasourceSettings[$recordSource]['link_prefixes'] ?? []) {
+            $linkPrefixes = explode(',', $linkPrefixes);
+        }
         if ($prefixIn003 = $this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
-            $field003 = $this->getMarcReader()->getField('003');
-            $prefixIn003 = $field003 ? trim($field003) : null;
+            $prefixIn003 = trim($this->getMarcReader()->getField('003'));
+            if (!in_array($prefixIn003, $linkPrefixes)) {
+                $linkPrefixes[] = $prefixIn003;
+            }
         }
         // TODO: Remove old way of linking records in: [FINNA-3437]
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
@@ -1980,14 +1985,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     if ($useLegacyLinkingId) {
                         break;
                     }
-                    // TODO: Remove old way of linking records in: [FINNA-3437]
                     foreach ($linkFields as $current) {
-                        if (
-                            !str_starts_with($current, "$recordSource.")
-                            && $this->getIdFromLinkingField($current, $prefixIn003)
-                        ) {
-                            $link = ['type' => 'linkingId', 'value' => $current];
-                        }
+                        $link = ['type' => 'linkingId', 'value' => $current];
                     }
                     break;
             }

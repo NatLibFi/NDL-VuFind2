@@ -120,7 +120,13 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     {
         yield 'legacy host record links' => [
             'marc/legacy_linking_ids.xml',
-            [],
+            [
+                'test' => [
+                    'legacy_settings' => [
+                        'linking_id' => true,
+                    ],
+                ],
+            ],
             [
                 [
                     'id' => 'test.123456',
@@ -298,7 +304,13 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     {
         yield 'legacy record links' => [
             'marc/legacy_linking_ids.xml',
-            [],
+            [
+                'test' => [
+                    'legacy_settings' => [
+                        'linking_id' => true,
+                    ],
+                ],
+            ],
             [
                 [
                     'value' => 'United records parent',
@@ -370,11 +382,11 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        yield 'record link check linking id with wrong prefix' => [
+        yield 'record link check linking id with multiple prefixes' => [
             'marc/linking_ids_prefix_mismatch.xml',
             [
                 'test' => [
-                    'prefixIn003' => true,
+                    'link_prefixes' => 'FI-MELINDA,FI-NL',
                 ],
             ],
             [
@@ -382,16 +394,16 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'value' => 'United records parent',
                     'title' => 'United',
                     'link' => [
-                        'type' => 'title',
-                        'value' => 'United records parent',
+                        'type' => 'linkingId',
+                        'value' => '(FI-MELINDA)123456789',
                     ],
                 ],
                 [
                     'value' => 'United records Top',
                     'title' => 'Another United',
                     'link' => [
-                        'type' => 'title',
-                        'value' => 'United records Top',
+                        'type' => 'linkingId',
+                        'value' => '(FI-NL)555',
                     ],
                 ],
             ],
