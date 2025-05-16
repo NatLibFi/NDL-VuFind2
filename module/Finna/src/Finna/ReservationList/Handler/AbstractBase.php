@@ -404,7 +404,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $cardInfo = $patron['__local_cat_username'] ?? $patron['cat_username'] ?? '';
         if ($cardEntity = $cardService->getLibraryCards($user, null, $user->getCatUsername())) {
             $cardEntity = reset($cardEntity);
-            $cardInfo = $cardEntity->getCardName() ?: $cardEntity->getCatUsername();
+            $cardInfo = $cardEntity->getCardName() ?: $cardInfo;
         }
         $result = [
             'listId' => $list->getId(),
