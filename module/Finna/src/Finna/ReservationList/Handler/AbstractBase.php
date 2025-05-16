@@ -35,6 +35,7 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
 use Psr\Container\ContainerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Service\GetServiceTrait;
 
 use function in_array;
@@ -399,6 +400,12 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         array $requestValues
     ): array {
         $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
+        $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
+        $cardInfo = $patron['__local_cat_username'] ?? $patron['cat_username'] ?? '';
+        if ($cardEntity = $cardService->getLibraryCards($user, null, $user->getCatUsername())) {
+            $cardEntity = reset($cardEntity);
+            $cardInfo = $cardEntity->getCardName() ?: $cardEntity->getCatUsername();
+        }
         $result = [
             'listId' => $list->getId(),
             'institution' => $list->getInstitution(),
@@ -409,7 +416,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             'phone' => $requestValues['phone'] ?? null,
             'pickup_date' => $requestValues['pickup_date'] ?? null,
             'message' => $requestValues['message'] ?? null,
-            'card_info' => $patron['__local_cat_username'] ?? $patron['cat_username'] ?? '',
+            'card_info' => $cardInfo,
         ];
 
         if (empty($requestValues['recordId'])) {

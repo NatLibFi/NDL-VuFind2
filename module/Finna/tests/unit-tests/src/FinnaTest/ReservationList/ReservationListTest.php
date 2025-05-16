@@ -50,7 +50,10 @@ use Laminas\View\Renderer\PhpRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Yaml\Yaml;
 use VuFind\Db\Row\User;
+use VuFind\Db\Service\PluginManager;
 use VuFind\Db\Service\ResourceService;
+use VuFind\Db\Service\UserCardService;
+use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Record\Cache;
 use VuFind\Record\ResourcePopulator;
 use VuFindHttp\HttpService;
@@ -556,6 +559,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      * @param ?MockObject $reservationListService Reservation list service
      * @param ?MockObject $httpService            Http service
      * @param ?MockObject $ilsAuthenticator       ILS Authenticator
+     * @param ?MockObject $userCardService        User card service
      * @param array       $listConfig             Reservation list config
      * @param array       $handlerServices        Handler services mapping for plugin manager
      *
@@ -570,6 +574,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         ?MockObject $reservationListService = null,
         ?MockObject $httpService = null,
         ?MockObject $ilsAuthenticator = null,
+        ?MockObject $userCardService = null,
         array $listConfig = [],
         array $handlerServices = [],
     ): MockObject {
@@ -597,6 +602,16 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             ]);
         }
 
+        if (null === $userCardService) {
+            $userCardService = $this->getMockBuilder(UserCardService::class)->disableOriginalConstructor()->getMock();
+            $userCardService->expects($this->any())->method('getLibraryCards')->willReturn([]);
+        }
+
+        $dbPluginManager = $this->getMockBuilder(PluginManager::class)->disableOriginalConstructor()->getMock();
+        $dbPluginManager->expects($this->any())->method('get')->willReturnMap([
+          [UserCardServiceInterface::class, null, $userCardService],
+        ]);
+
         $reservationListService ??= $this->getReservationListService();
         $httpService ??= $this->getHttpService([]);
 
@@ -613,6 +628,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             [\VuFind\Record\Loader::class, $this->getFinnaRecordLoader()],
             [\Finna\ReservationList\Form\Form::class, $mockForm],
             [ILSAuthenticator::class, $ilsAuthenticator],
+            [PluginManager::class, $dbPluginManager],
             ['ViewRenderer', $viewRenderer],
             [
               \Finna\ReservationList\ReservationListService::class,

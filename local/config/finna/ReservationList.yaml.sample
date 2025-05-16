@@ -123,6 +123,11 @@ Forms:
           label: ReservationList::Message
           settings:
             - [rows, 3]
+        - name: card_info
+          type: text
+          label: Library Card
+          settings:
+            - readonly: true
     single:
       extends: default
       formActionRoute: reservationlist-placesingleorder
