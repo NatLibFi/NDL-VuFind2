@@ -51,7 +51,7 @@ class Loader extends \VuFind\Record\Loader
     /**
      * Preferred language for display strings from RecordDriver
      *
-     * @var string
+     * @var ?string
      */
     protected $preferredLanguage = null;
 
