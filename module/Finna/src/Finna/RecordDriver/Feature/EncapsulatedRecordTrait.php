@@ -109,7 +109,7 @@ trait EncapsulatedRecordTrait
             throw new \LogicException('Record loading not needed');
         } elseif ($record->getUniqueID() !== $needed['id']) {
             // Try previous ID.
-            if ($record->getPreviousUniqueID() !== $needed['id']) {
+            if ($record->tryMethod('getPreviousUniqueID') !== $needed['id']) {
                 throw new \LogicException('Record ID does not match needed record ID');
             }
         } elseif ($record->getSourceIdentifier() !== $needed['source']) {
