@@ -29,8 +29,6 @@
 
 namespace Finna\Search\Solr;
 
-use function array_slice;
-
 /**
  * Solr Search Parameters
  *
@@ -43,51 +41,4 @@ use function array_slice;
 class Results extends \VuFind\Search\Solr\Results
 {
     use \Finna\Search\Results\SearchResultsTrait;
-
-    /**
-     * Returns the stored list of facets for the last search
-     *
-     * @param array $filter Array of field => on-screen description listing
-     * all of the desired facet fields; set to null to get all configured values.
-     *
-     * @return array        Facets data arrays
-     */
-    public function getFacetList($filter = null)
-    {
-        $list = parent::getFacetList($filter);
-
-        // Append date range facet to the list so that it gets
-        // included even when facet counts are zero.
-        $dateRangeField = $this->getParams()->getDateRangeSearchField();
-        if (
-            !isset($list[$dateRangeField])
-            && (null === $filter || isset($filter[$dateRangeField]))
-        ) {
-            // Resolve facet index in list
-            $ind = 0;
-            $filter = $filter ?: $this->getParams()->getFacetConfig();
-
-            if (!isset($filter[$dateRangeField])) {
-                return $list;
-            }
-
-            foreach (array_keys($filter) as $field) {
-                if ($field == $dateRangeField) {
-                    break;
-                }
-                $ind++;
-            }
-
-            $data = [];
-            $filter = $filter[$dateRangeField];
-            $data['label'] = $filter;
-            $data['list'] = $filter;
-
-            $list
-                = array_slice($list, 0, $ind)
-                + [$dateRangeField => $data]
-                + array_slice($list, $ind);
-        }
-        return $list;
-    }
 }

@@ -366,11 +366,9 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             'getOriginationExtended',
             'data-origination.phtml',
             [
-                'context' => ['class' => 'record-origination',],
-                'labelFunction' => function ($data, $driver) {
-                    return $driver->tryMethod('getArchiveType') === 'collection'
-                        ? 'CreatorRoles::rda:collector' : 'Archive Origination';
-                },
+                'context' => [
+                    'class' => 'record-origination',
+                ],
             ]
         );
         $setTemplateLine(
@@ -706,7 +704,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         $setTemplateLine(
             'Subject Date',
             'getSubjectDates',
-            'data-escapeHtml.phtml',
+            'data-subjectDate.phtml',
             [
                 'context' => ['class' => 'recordSubjects'],
             ]
@@ -1717,6 +1715,33 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             'data-citations.phtml',
             [
                 'context' => ['class' => 'record-citations'],
+            ]
+        );
+        $setTemplateLine(
+            'Related Events',
+            'getRelatedEventsExtended',
+            'data-allSubjectHeadingsExtended.phtml',
+            [
+                'context' => ['class' => 'recordRelatedEvents'],
+            ]
+        );
+        $setTemplateLine(
+            'Provenance',
+            'getProvenance',
+            'data-provenance.phtml',
+            [
+                'context' => ['class' => 'recordProvenance'],
+            ]
+        );
+        $setTemplateLine(
+            'Additional Information AIPA',
+            'getAdditionalInformation',
+            'data-additionalInformation.phtml',
+            [
+                'context' => [
+                    'class' => 'recordAdditionalInformation',
+                    'title' => 'Additional Information',
+                ],
             ]
         );
 

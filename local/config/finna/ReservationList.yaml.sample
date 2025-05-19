@@ -29,6 +29,17 @@
 # "list_description_{$institution}_{$identifier}" 
 # Generic description about the list i.e These reservations will be delivered to nnn etc.
 #
+# General settings for how to fetch list configurations
+# Settings:
+# Methods available yaml, api. If yaml is selected, will read list configurations from this file,
+# method: [yaml, api]
+# url: if api is selected, will fetch configurations from api endpoint
+# ttl: How long does cached config live, default is 60 minutes
+#
+Settings:
+  method: yaml
+  #url:
+  ttl: 60
 Institutions:
   Example Institution:
     Information:
@@ -112,3 +123,6 @@ Forms:
           label: ReservationList::Message
           settings:
             - [rows, 3]
+    single:
+      extends: default
+      formActionRoute: reservationlist-placesingleorder

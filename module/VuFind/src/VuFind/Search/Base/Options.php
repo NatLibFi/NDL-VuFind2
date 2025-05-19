@@ -162,6 +162,13 @@ abstract class Options implements TranslatorAwareInterface
     protected $limitOptions = [];
 
     /**
+     * If result scroller is used.
+     *
+     * @var bool
+     */
+    protected bool $resultScrollerActive = false;
+
+    /**
      * Default view option
      *
      * @var string
@@ -401,6 +408,13 @@ abstract class Options implements TranslatorAwareInterface
     protected bool $showRestrictedViewWarning;
 
     /**
+     * Facet settings
+     *
+     * @var array
+     */
+    protected array $facetSettings;
+
+    /**
      * Constructor
      *
      * @param \VuFind\Config\PluginManager $configLoader Config loader
@@ -410,9 +424,10 @@ abstract class Options implements TranslatorAwareInterface
         $this->setConfigLoader($configLoader);
 
         $id = $this->getSearchClassId();
-        $facetSettings = $configLoader->get($this->facetsIni);
-        if (isset($facetSettings->AvailableFacetSortOptions[$id])) {
-            $sortArray = $facetSettings->AvailableFacetSortOptions[$id]->toArray();
+        $baseConfig = $configLoader->get('config');
+        $this->facetSettings = $configLoader->get($this->facetsIni)?->toArray() ?? [];
+        if (isset($this->facetSettings['AvailableFacetSortOptions'][$id])) {
+            $sortArray = (array)$this->facetSettings['AvailableFacetSortOptions'][$id];
             foreach ($sortArray as $facet => $sortOptions) {
                 $this->facetSortOptions[$facet] = [];
                 foreach (explode(',', $sortOptions) as $fieldAndLabel) {
@@ -422,15 +437,18 @@ abstract class Options implements TranslatorAwareInterface
             }
         }
         $this->filterHierarchicalFacetsInAdvanced
-            = !empty($facetSettings->Advanced_Settings->enable_hierarchical_filters);
-        $this->hierarchicalExcludeFilters
-            = $facetSettings?->HierarchicalExcludeFilters?->toArray() ?? [];
-        $this->hierarchicalFacetFilters
-            = $facetSettings?->HierarchicalFacetFilters?->toArray() ?? [];
+            = !empty($this->facetSettings['Advanced_Settings']['enable_hierarchical_filters']);
+        $this->hierarchicalExcludeFilters = $this->facetSettings['HierarchicalExcludeFilters'] ?? [];
+        $this->hierarchicalFacetFilters = $this->facetSettings['HierarchicalFacetFilters'] ?? [];
 
         $searchSettings = $configLoader->get($this->searchIni);
         $this->retainFiltersByDefault = $searchSettings->General->retain_filters_by_default ?? true;
         $this->alwaysDisplayResetFilters = $searchSettings->General->always_display_reset_filters ?? false;
+        $this->resultScrollerActive = (bool)(
+            $searchSettings->Record->next_prev_navigation
+            ?? $baseConfig->Record->next_prev_navigation
+            ?? false
+        );
         $this->loadResultsWithJs = (bool)($searchSettings->General->load_results_with_js ?? true);
         $this->topPaginatorStyle = $searchSettings->General->top_paginator
             ?? ($this->loadResultsWithJs ? 'simple' : false);
@@ -558,6 +576,16 @@ abstract class Options implements TranslatorAwareInterface
             $this->limitOptions = [$this->getDefaultLimit()];
         }
         return $this->limitOptions;
+    }
+
+    /**
+     * If result scroller is used.
+     *
+     * @return bool
+     */
+    public function resultScrollerActive(): bool
+    {
+        return $this->resultScrollerActive;
     }
 
     /**
@@ -1329,11 +1357,10 @@ abstract class Options implements TranslatorAwareInterface
      */
     public function limitOrderOverride($limit)
     {
-        $facetSettings = $this->configLoader->get($this->getFacetsIni());
-        $limits = $facetSettings->Advanced_Settings->limitOrderOverride ?? null;
-        $delimiter = $facetSettings->Advanced_Settings->limitDelimiter ?? '::';
-        $limitConf = $limits ? $limits->get($limit) : '';
-        return array_map('trim', explode($delimiter, $limitConf ?? ''));
+        $limits = $this->facetSettings['Advanced_Settings']['limitOrderOverride'] ?? [];
+        $delimiter = $this->facetSettings['Advanced_Settings']['limitDelimiter'] ?? '::';
+        $limitConf = $limits[$limit] ?? '';
+        return array_map('trim', explode($delimiter, $limitConf));
     }
 
     /**
@@ -1389,6 +1416,30 @@ abstract class Options implements TranslatorAwareInterface
     }
 
     /**
+     * Get minimum value for date range sliders.
+     *
+     * @param string $field Field name
+     *
+     * @return ?int
+     */
+    public function getDateRangeSliderMinValue(string $field): ?int
+    {
+        return $this->parseDateRangeSliderSetting($this->facetSettings["Facet_$field"]['slider_min_value'] ?? '');
+    }
+
+    /**
+     * Get maximum value for date range sliders.
+     *
+     * @param string $field Field name
+     *
+     * @return ?int
+     */
+    public function getDateRangeSliderMaxValue(string $field): ?int
+    {
+        return $this->parseDateRangeSliderSetting($this->facetSettings["Facet_$field"]['slider_max_value'] ?? '');
+    }
+
+    /**
      * Configure autocomplete preferences from an .ini file.
      *
      * @param ?Config $searchSettings Object representation of .ini file
@@ -1427,5 +1478,27 @@ abstract class Options implements TranslatorAwareInterface
                 'pattern' => $pattern,
             ];
         }
+    }
+
+    /**
+     * Parse a date range slider value setting.
+     *
+     * @param string $setting Setting to parse
+     *
+     * @return ?int
+     */
+    protected function parseDateRangeSliderSetting(string $setting): ?int
+    {
+        if ('' === $setting) {
+            return null;
+        }
+
+        if (preg_match('/^-?\d+$/', $setting)) {
+            return (int)$setting;
+        }
+        if (false !== ($time = strtotime($setting))) {
+            return date('Y', $time);
+        }
+        return null;
     }
 }

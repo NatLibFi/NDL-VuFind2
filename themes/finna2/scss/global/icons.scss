@@ -207,7 +207,11 @@ table .iconlabel {
     content: "\e002";
 }
 .iconlabel.format-0aipa:before,
-.iconlabel.format-feed-aipa:before {
+.iconlabel.format-feed-aipa:before,
+.iconlabel.format-1aipaeducation::before,
+.iconlabel.format-feed-aipaeducation:before,
+.iconlabel.format-1aiparesearch::before,
+.iconlabel.format-feed-aiparesearch:before {
     content: "\e8cc";
 }
 .iconlabel.format-0learningmaterial:before,
@@ -288,7 +292,7 @@ table .iconlabel {
     background: url('../../finna/images/finnafi-logo.svg');
     background-repeat: no-repeat;
     background-size: 100%;
-    @media (max-width: $screen-xs-max) {
+    @include media-breakpoint-down(sm) {
            width: (250px*0.8);
            height: (63px*0.8);
     }

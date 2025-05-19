@@ -1,5 +1,12 @@
 <!-- START of: finna - RecordTab/holdingsarchive.phtml -->
-<?= $this->reservationList($this->auth()->getUserObject())->renderReserveTemplate($driver); ?>
+<?php if ($user = $this->auth()->getUserObject()): ?>
+  <?= $this->reservationList($user)->renderReserveTemplate($driver); ?>
+<?php else: ?>
+  <div class="text-right">
+    <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
+  </div>
+<?php endif; ?>
+
 
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
 
@@ -97,7 +104,7 @@
   <?php endforeach; ?>
 <?php endif; ?>
 <?php
-  $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, 'finna.record.setupHoldingsArchiveTab();', 'SET');
+  $this->assetManager()->outputInlineScriptString('finna.record.setupHoldingsArchiveTab();');
   echo $this->inlineScript();
 ?>
 <!-- END of: finna - RecordTab/holdingsarchive.phtml -->

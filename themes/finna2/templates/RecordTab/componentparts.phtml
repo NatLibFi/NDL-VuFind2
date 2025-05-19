@@ -66,8 +66,8 @@ $translations = json_encode(
         'infoFiltered' => $this->transEsc('component_parts_filtered'),
         'info' => $this->transEsc('component_parts_entries_on_page'),
         'paginate' => [
-            'next' => $this->icon('page-next') . ' <span class="sr-only">' . $this->transEsc('component_parts_next') . '</span>',
-            'previous' => '<span class="sr-only">' . $this->transEsc('component_parts_previous') . '</span> ' . $this->icon('page-prev'),
+            'next' => $this->icon('page-next') . ' <span class="visually-hidden">' . $this->transEsc('component_parts_next') . '</span>',
+            'previous' => '<span class="visually-hidden">' . $this->transEsc('component_parts_previous') . '</span> ' . $this->icon('page-prev'),
         ],
         'thousands' => $this->transEsc('number_thousands_separator'),
         'aria' => [
@@ -86,5 +86,5 @@ $script = <<<JS
     });
     JS;
 ?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET'); ?>
+<?=$this->assetManager()->outputInlineScriptString($script); ?>
 <!-- END of: finna - RecordTab/componentparts.phtml -->

@@ -805,6 +805,16 @@ $config = [
                     'sidefacetsdeferred' => 'Finna\Recommend\SideFacetsDeferred',
                 ],
             ],
+            'record_fallbackloader' => [
+                'factories' => [
+                    \Finna\Record\FallbackLoader\Solr::class => \Finna\Record\FallbackLoader\SolrFactory::class,
+                    \Finna\Record\FallbackLoader\SolrAuth::class => \Finna\Record\FallbackLoader\SolrFactory::class,
+                ],
+                'aliases' => [
+                    'solrauth' => \Finna\Record\FallbackLoader\SolrAuth::class,
+                    \VuFind\Record\FallbackLoader\Solr::class => \Finna\Record\FallbackLoader\Solr::class,
+                ],
+            ],
             'recorddataformatter_specs' => [
                 'factories' => [
                     \Finna\RecordDataFormatter\Specs\DefaultRecord::class
@@ -844,6 +854,7 @@ $config = [
                     'Finna\Search\Solr\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\SolrAuth\Options' => 'VuFind\Search\Options\OptionsFactory',
                     'Finna\Search\SolrBrowse\Options' => 'VuFind\Search\Options\OptionsFactory',
+                    'Finna\Search\SolrCollection\Options' => 'VuFind\Search\Options\OptionsFactory',
 
                     'Finna\Search\L1\Options' => 'VuFind\Search\OptionsFactory',
                 ],
@@ -854,6 +865,7 @@ $config = [
                     'VuFind\Search\Primo\Options' => 'Finna\Search\Primo\Options',
                     'VuFind\Search\Solr\Options' => 'Finna\Search\Solr\Options',
                     'VuFind\Search\SolrAuth\Options' => 'Finna\Search\SolrAuth\Options',
+                    'VuFind\Search\SolrCollection\Options' => 'Finna\Search\SolrCollection\Options',
 
                     // Counterpart for EmptySet Params:
                     'Finna\Search\EmptySet\Options' => 'VuFind\Search\EmptySet\Options',
@@ -876,6 +888,7 @@ $config = [
                     'Finna\Search\Solr\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrAuth\Params' => 'Finna\Search\Solr\ParamsFactory',
                     'Finna\Search\SolrBrowse\Params' => 'Finna\Search\Solr\ParamsFactory',
+                    'Finna\Search\SolrCollection\Params' => 'Finna\Search\SolrCollection\ParamsFactory',
 
                     'Finna\Search\L1\Params' => 'Finna\Search\Solr\ParamsFactory',
                 ],
@@ -887,6 +900,7 @@ $config = [
                     'VuFind\Search\Favorites\Params' => 'Finna\Search\Favorites\Params',
                     'VuFind\Search\MixedList\Params' => 'Finna\Search\MixedList\Params',
                     'VuFind\Search\Solr\Params' => 'Finna\Search\Solr\Params',
+                    'VuFind\Search\SolrCollection\Params' => 'Finna\Search\SolrCollection\Params',
 
                     'VuFind\Search\SolrAuth\Params' => 'Finna\Search\SolrAuth\Params',
                     'ReservationList' => \Finna\Search\ReservationList\Params::class,
@@ -905,6 +919,7 @@ $config = [
                     'Finna\Search\Solr\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrAuth\Results' => 'VuFind\Search\Solr\ResultsFactory',
                     'Finna\Search\SolrBrowse\Results' => 'VuFind\Search\Solr\ResultsFactory',
+                    'Finna\Search\SolrCollection\Results' => 'Finna\Search\SolrCollection\ResultsFactory',
                     'Finna\Search\L1\Results' => 'Finna\Search\L1\ResultsFactory',
                 ],
                 'aliases' => [
@@ -914,6 +929,7 @@ $config = [
                     'VuFind\Search\Primo\Results' => 'Finna\Search\Primo\Results',
                     'VuFind\Search\Solr\Results' => 'Finna\Search\Solr\Results',
                     'VuFind\Search\SolrAuth\Results' => 'Finna\Search\SolrAuth\Results',
+                    'VuFind\Search\SolrCollection\Results' => 'Finna\Search\SolrCollection\Results',
 
                     'EncapsulatedRecords' => 'Finna\Search\EncapsulatedRecords\Results',
                     'L1' => 'Finna\Search\L1\Results',
@@ -961,6 +977,8 @@ $config = [
                         'Finna\RecordDriver\AipaLrmiFactory',
                     'Finna\RecordDriver\CuratedRecord' =>
                         'VuFind\RecordDriver\AbstractBaseFactory',
+                    'Finna\RecordDriver\CuratedRecordList' =>
+                        'Finna\RecordDriver\CuratedRecordListFactory',
                     'Finna\RecordDriver\EDS' =>
                         'VuFind\RecordDriver\NameBasedConfigFactory',
                     'Finna\RecordDriver\SolrDefault' =>
@@ -993,6 +1011,7 @@ $config = [
                 'aliases' => [
                     'AipaLrmi' => 'Finna\RecordDriver\AipaLrmi',
                     'CuratedRecord' => 'Finna\RecordDriver\CuratedRecord',
+                    'CuratedRecordList' => 'Finna\RecordDriver\CuratedRecordList',
                     'SolrAipa' => 'Finna\RecordDriver\SolrAipa',
                     'SolrAuthEaccpf' => 'Finna\RecordDriver\SolrAuthEaccpf',
                     'SolrAuthForwardAuthority' => 'Finna\RecordDriver\SolrAuthForward',
