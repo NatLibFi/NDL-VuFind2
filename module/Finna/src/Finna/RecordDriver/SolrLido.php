@@ -934,7 +934,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
     /**
      * Function to return an audio in associative array
-     * - desc   Default is false
+     * - desc   Default is null
      * - url    Url to audio file
      * - codec  Codec type of the audio
      * - type   Type what type is the audio file
@@ -955,7 +955,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     ): array {
         if ($codec = $this->supportedAudioFormats[$format] ?? false) {
             $audio = [
-                'desc' => $description ?: false,
+                'desc' => $description ?: null,
                 'url' => $url,
                 'codec' => $format,
                 'type' => 'audio',
@@ -971,7 +971,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
     /**
      * Function to return a video in associative array
-     * - desc           Default is false
+     * - desc           Default is null
      * - url            Video url
      * - embed          Video embed is video
      * - videosources
@@ -994,14 +994,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         $mediaType = $this->supportedVideoFormats[$format] ?? false;
         $video = match ($mediaType) {
             'text/html' => [
-                'desc' => $description ?: false,
+                'desc' => $description ?: null,
                 'url' => $url,
                 'embed' => 'iframe',
                 'format' => $format,
             ],
             false => [],
             default => [
-                'desc' => $description ?: false,
+                'desc' => $description ?: null,
                 'url' => $url,
                 'embed' => 'video',
                 'format' => $format,

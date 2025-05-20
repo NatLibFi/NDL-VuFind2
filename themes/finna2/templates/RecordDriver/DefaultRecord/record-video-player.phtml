@@ -51,8 +51,8 @@
         break;
         case 'lido':
           $showDetails = true;
-          $desc = $desc ?: $this->translate('format_Video');
-        break;
+          $desc = $desc !== $url['url'] ? $url['desc'] : $this->translate('format_Video');
+          break;
         default:
           $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;
         break;
