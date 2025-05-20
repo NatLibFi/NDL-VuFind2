@@ -621,6 +621,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                             $documentDesc,
                             $documentRights,
                             $linkType,
+                            $type,
                         )
                     ) {
                         $documentUrls = array_merge($documentUrls, $document);
@@ -1032,6 +1033,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @param string $description Description of the document
      * @param array  $rights      Array of document rights
      * @param bool   $linkType    Type of document link, default is 'proxy-link'.
+     * @param string $type        Type of resource.
      *
      * @return array
      */
@@ -1040,19 +1042,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $format,
         string $description,
         array $rights,
-        string $linkType = 'proxy-link'
+        string $linkType = 'proxy-link',
+        string $type = '',
     ): array {
         $format = strtolower($format);
         // Do not display text/html mediatype
         if ('text/html' === $format) {
             $format = '';
         }
+        $label = $type === 'provided_3D' ? '3D' : '';
         return [
             'description' => $description ?: false,
             'url' => $url,
             'format' => $format,
             'rights' => $rights,
             'linkType' => $linkType,
+            'label' => $label,
         ];
     }
 
@@ -1146,27 +1151,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
-     * If item has 3D resources
+     * Get item label
      *
-     * @return boolean
+     * @return string
      */
-    public function hasModelResources(): bool
+    public function getResourceLabel(): string
     {
-        foreach ($this->getXmlRecord()->lido->administrativeMetadata->resourceWrap->resourceSet ?? [] as $resourceSet) {
-            foreach ($resourceSet->resourceRepresentation as $representation) {
-                $linkResource = $representation->linkResource;
-                $url = trim((string)$linkResource);
-                if (!$url || !$this->isUrlLoadable($url, $this->getUniqueID())) {
-                    continue;
-                }
-                if ($type = (string)($representation['type'] ?? '')) {
-                    if (in_array($type, array_keys($this->modelTypes))) {
-                        return true;
-                    }
+        if ($this->getModels()) {
+            return '3D';
+        }
+        if ($documents = $this->getDocuments()) {
+            foreach ($documents as $document) {
+                if ($document['label'] === '3D') {
+                    return '3D';
                 }
             }
         }
-        return false;
+        return '';
     }
 
     /**
