@@ -221,6 +221,6 @@ ODUE2 = "Overdue Return Request"
 ;markFeesAsPaid:recurringStart = 23:45
 ;markFeesAsPaid:recurringEnd = 00:20
 ;markFeesAsPaid:message = "timed_block_onlinepayment"
-;renewMyItems:startDate = 01.01.2025
-;renewMyItems:endDate = 02.01.2025
+;renewMyItems:startDate = 2025-01-01 06:00
+;renewMyItems:endDate = 2025-01-02 23:00
 
