@@ -52,7 +52,7 @@ use function is_array;
  */
 class KohaRest extends \VuFind\ILS\Driver\KohaRest
 {
-    use \Finna\ILS\Feature\TimedBlocksTrait;
+    use \Finna\ILS\Feature\TimedMethodBlocksTrait;
 
     /**
      * Mappings from Koha messaging preferences
@@ -186,7 +186,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function supportsMethod($method, $params)
     {
-        if ($this->checkTimedBlock($method)) {
+        if ($this->methodIsBlocked($method)) {
             return false;
         }
         return parent::supportsMethod($method, $params);

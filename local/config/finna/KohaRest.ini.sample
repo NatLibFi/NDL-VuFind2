@@ -210,13 +210,17 @@ enabled = true
 ODUE = "Overdue Return Request"
 ODUE2 = "Overdue Return Request"
 
-; Block methods during given times. Format is "method:setting = date"
-; where method is a method in ILS driver, setting is startDate, endDate,
-; recurringStart or recurringEnd and date is a date for start/endDate
-; and time for recurringStart/End
+; Block methods during given times. Format is "method:setting = value"
+; method  - a method in ILS driver (for example markFeesAsPaid)
+; setting - Valid settings are startDate, endDate, recurringStart, recurringEnd, message
+: value   - Date for startDate/endDate (YYYY-MM-DD HH:MM),
+;           time for recurringStart/recurringEnd (HH:MM),
+;           translation key for message. Start and end dates are passed to the translator
+;           by default as %%startDate%% and %%endDate%%
 [TimedBlocks]
 ;markFeesAsPaid:recurringStart = 23:45
 ;markFeesAsPaid:recurringEnd = 00:20
+;markFeesAsPaid:message = "timed_block_onlinepayment"
 ;renewMyItems:startDate = 01.01.2025
 ;renewMyItems:endDate = 02.01.2025
 
