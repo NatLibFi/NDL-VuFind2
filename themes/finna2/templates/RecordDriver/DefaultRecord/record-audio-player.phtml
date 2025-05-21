@@ -8,7 +8,7 @@
     $showDetails = $showFormat = false;
     if ($format === 'lido') {
       $showDetails = true;
-      $showFormat = $url['desc'] === $url['url'] ? true : false;
+      $showFormat = $url['desc'] === $url['url'];
     }
   ?>
   <div class="audio-item-wrapper">
