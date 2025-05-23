@@ -99,6 +99,9 @@ div.facet {
   .more-less-btn-wrapper {
     border-bottom: none;
     padding: 1px;
+    .icon + span {
+      margin-left: 3px;
+    }
   }
 
   .more-less-btn-wrapper .btn, a.more-narrow-toggle {
@@ -458,6 +461,7 @@ span.badge.cb-facet {
     .facet-tree__toggle-expanded {
       color: $text-color;
       // Fix focus ring:
+      margin-top: 6px;
       margin-right: 3px;
     }
   }

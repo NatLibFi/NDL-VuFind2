@@ -319,6 +319,11 @@ a.authority {
       }
     }
   }
+  .more-link, .less-link {
+    .icon {
+      margin-left: 3px;
+    }
+  }
 }
 .record-alt-titles {
   color: $gray-slightly-lighter;
