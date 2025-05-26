@@ -970,7 +970,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
         $recordSource = $this->getDataSource();
         $linkPrefixes = $this->getRecordLinkingPrefixes($recordSource);
-        // TODO: Remove old way of linking records in: [FINNA-3437]
+
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
         foreach ($fields as $field) {
             $id = '';
@@ -983,7 +983,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
                     case 'w':
-                        // TODO: Remove old way of linking records in: [FINNA-3437]
                         // Datasource has been forced to use legacy linking method
                         if ($useLegacyLinkingId) {
                             $id = $this->getIdFromLinkingField($data);
@@ -1915,7 +1914,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $recordSource = $this->getDataSource();
         $linkPrefixes = $this->getRecordLinkingPrefixes($recordSource);
 
-        // TODO: Remove old way of linking records in: [FINNA-3437]
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
         // Run through the link types specified in the config.
         // For each type, check field for reference
