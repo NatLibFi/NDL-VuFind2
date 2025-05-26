@@ -56,11 +56,11 @@ services:
     # in alphabetical order
     configs:
       - source: vufind_sql
-        target: /docker-entrypoint-initdb.d/002-vufind.sql
+        target: /docker-entrypoint-initdb.d/001-vufind.sql
       - source: finna_sql
-        target: /docker-entrypoint-initdb.d/003-finna.sql
+        target: /docker-entrypoint-initdb.d/002-finna.sql
       - source: grants_sql
-        target: /docker-entrypoint-initdb.d/004-grants.sql
+        target: /docker-entrypoint-initdb.d/003-grants.sql
     env_file: .env
     environment:
       MARIADB_ROOT_PASSWORD_FILE: /run/secrets/db_root_passwd
