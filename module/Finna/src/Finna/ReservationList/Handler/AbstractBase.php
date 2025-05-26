@@ -429,7 +429,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     }
 
     /**
-     * Get preferred card info as associative array. Shibbooleth login saves the whole name into last name so
+     * Get preferred card info as associative array. Shibboleth login saves the whole name into last name so
      * try to get users name from patron primarily. Prefer card name from database and use local name (without prefix)
      * as fallback. Get local patron id (without prefix).
      *
