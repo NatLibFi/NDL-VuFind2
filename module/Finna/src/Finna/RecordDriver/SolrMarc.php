@@ -969,15 +969,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
 
         $recordSource = $this->getDataSource();
-        if ($linkPrefixes = $this->datasourceSettings[$recordSource]['link_prefixes'] ?? []) {
-            $linkPrefixes = explode(',', $linkPrefixes);
-        }
-        if ($prefixIn003 = $this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
-            $prefixIn003 = trim($this->getMarcReader()->getField('003'));
-            if (!in_array($prefixIn003, $linkPrefixes)) {
-                $linkPrefixes[] = $prefixIn003;
-            }
-        }
+        $linkPrefixes = $this->getRecordLinkingPrefixes($recordSource);
         // TODO: Remove old way of linking records in: [FINNA-3437]
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
         foreach ($fields as $field) {
@@ -1007,8 +999,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         if (!$found) {
                             break;
                         }
-                        // If id does not match any of the previous, then assume it is a linking id without a prefix.
-                        $linkingId = $found;
+                        // If id does not match any of the previous, then assume its bib id.
+                        $id = $found;
                         break;
                     case 't':
                         $title = $this->stripTrailingPunctuation($data, '.-');
@@ -1921,16 +1913,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $linkTypes = explode(',', $linkTypeSetting);
         $linkFields = $this->getSubfields($field, 'w');
         $recordSource = $this->getDataSource();
+        $linkPrefixes = $this->getRecordLinkingPrefixes($recordSource);
 
-        if ($linkPrefixes = $this->datasourceSettings[$recordSource]['link_prefixes'] ?? []) {
-            $linkPrefixes = explode(',', $linkPrefixes);
-        }
-        if ($prefixIn003 = $this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
-            $prefixIn003 = trim($this->getMarcReader()->getField('003'));
-            if (!in_array($prefixIn003, $linkPrefixes)) {
-                $linkPrefixes[] = $prefixIn003;
-            }
-        }
         // TODO: Remove old way of linking records in: [FINNA-3437]
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
         // Run through the link types specified in the config.
@@ -1985,8 +1969,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     if ($useLegacyLinkingId) {
                         break;
                     }
-                    foreach ($linkFields as $current) {
-                        $link = ['type' => 'linkingId', 'value' => $current];
+                    foreach ($linkPrefixes as $prefix) {
+                        foreach ($linkFields as $current) {
+                            if ($id = $this->getIdFromLinkingField($current, $prefix)) {
+                                $link = ['type' => 'linkingId', 'value' => $id];
+                                break 2;
+                            }
+                        }
                     }
                     break;
             }
@@ -2775,5 +2764,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
         }
         return '';
+    }
+
+    /**
+     * Get record linking settings
+     *
+     * @param string $recordSource Record source
+     *
+     * @return array
+     */
+    protected function getRecordLinkingPrefixes(string $recordSource): array
+    {
+        if ($linkPrefixes = $this->datasourceSettings[$recordSource]['link_prefixes'] ?? []) {
+            $linkPrefixes = explode(',', $linkPrefixes);
+        }
+        if ($this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
+            $field003 = $this->getMarcReader()->getField('003');
+            $linkPrefixes[] = trim($field003);
+        }
+        return array_filter(array_unique($linkPrefixes));
     }
 }
