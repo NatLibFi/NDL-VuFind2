@@ -399,24 +399,18 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         UserEntityInterface $user,
         array $requestValues
     ): array {
-        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
-        $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
-        $cardInfo = $patron['__local_cat_username'] ?? $patron['cat_username'] ?? '';
-        if ($cardEntity = $cardService->getLibraryCards($user, null, $user->getCatUsername())) {
-            $cardEntity = reset($cardEntity);
-            $cardInfo = $cardEntity->getCardName() ?: $cardInfo;
-        }
+        $cardInfo = $this->getPreferredCardInfo($user);
         $result = [
             'listId' => $list->getId(),
             'institution' => $list->getInstitution(),
             'listIdentifier' => $list->getListConfigIdentifier(),
-            'firstName' => $requestValues['firstName'] ?? $patron['firstname'] ?? $user->getFirstname(),
-            'lastName' => $requestValues['lastName'] ?? $patron['lastname'] ?? $user->getLastname(),
+            'firstName' => $requestValues['firstName'] ?? $cardInfo['firstname'],
+            'lastName' => $requestValues['lastName'] ?? $cardInfo['lastname'],
             'email' => $requestValues['email'] ?? $user->getEmail(),
             'phone' => $requestValues['phone'] ?? null,
             'pickup_date' => $requestValues['pickup_date'] ?? null,
             'message' => $requestValues['message'] ?? null,
-            'card_info' => $cardInfo,
+            'card_info' => $cardInfo['card_name'],
         ];
 
         if (empty($requestValues['recordId'])) {
@@ -432,6 +426,35 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
         $result['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
         return $result;
+    }
+
+    /**
+     * Get preferred card info as associative array. Shibbooleth login saves the whole name into last name so
+     * try to get users name from patron primarily. Prefer card name from database and use local name (without prefix)
+     * as fallback. Get local patron id (without prefix).
+     *
+     * @param UserEntityInterface $user User to get information for
+     *
+     * @return array [firstname, lastname, patron_id, card_name]
+     */
+    protected function getPreferredCardInfo(UserEntityInterface $user): array
+    {
+        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
+        $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
+        $catUsername = $patron['cat_username'] ?? '';
+        $cardName = $patron['__local_cat_username'] ?? $catUsername;
+        if ($cardEntity = $cardService->getLibraryCards($user, null, $user->getCatUsername())) {
+            $cardEntity = reset($cardEntity);
+            if ($dbCardName = $cardEntity->getCardName()) {
+                $cardName = $dbCardName === $catUsername ? $cardName : $dbCardName;
+            }
+        }
+        return [
+            'firstname' => $patron['firstname'] ?? $user->getFirstname() ?? '',
+            'lastname' => $patron['lastname'] ?? $user->getLastname() ?? '',
+            'patron_id' => $patron['__local_id'] ?? $patron['id'] ?? '',
+            'card_name' => $cardName,
+        ];
     }
 
     /**
