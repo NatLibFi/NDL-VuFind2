@@ -404,8 +404,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             'listId' => $list->getId(),
             'institution' => $list->getInstitution(),
             'listIdentifier' => $list->getListConfigIdentifier(),
-            'firstName' => $requestValues['firstName'] ?? $cardInfo['firstname'],
-            'lastName' => $requestValues['lastName'] ?? $cardInfo['lastname'],
+            'full_name' => $requestValues['full_name'] ?? $cardInfo['full_name'],
             'email' => $requestValues['email'] ?? $user->getEmail(),
             'phone' => $requestValues['phone'] ?? null,
             'pickup_date' => $requestValues['pickup_date'] ?? null,
@@ -449,9 +448,23 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
                 $cardName = $dbCardName === $catUsername ? $cardName : $dbCardName;
             }
         }
+        // Prioritize name from patron
+        $firstName = $patron['firstname'] ?? null;
+        $lastName = $patron['lastname'] ?? null;
+
+        // If either field from patron is empty, then use name from db
+        if (!$firstName || !$lastName) {
+            $firstName = $user->getFirstname();
+            $lastName = $user->getLastname();
+        }
+
+        // Form full name from the obtained data
+        $fullName = trim(implode(' ', [$firstName, $lastName]));
+
         return [
-            'firstname' => $patron['firstname'] ?? $user->getFirstname() ?? '',
-            'lastname' => $patron['lastname'] ?? $user->getLastname() ?? '',
+            'firstname' => $firstName,
+            'lastname' => $lastName,
+            'full_name' => $fullName,
             'patron_id' => $patron['__local_id'] ?? $patron['id'] ?? '',
             'card_name' => $cardName,
         ];
