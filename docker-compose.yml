@@ -40,7 +40,7 @@ services:
         source: $SSH_KNOWN_HOSTS
         target: /tmp/ssh_known_hosts
       - type: bind
-        source: $SSH_USER_DIR/config
+        source: $SSH_CONFIG
         target: /tmp/ssh.conf
       - type: bind
         source: ./ssh-auth.sock
