@@ -293,6 +293,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $part = $this->getSubfield($url, '3');
                 // Only take large image. Thumbnail is too small.
                 $image = strcasecmp($part, 'Image') === 0;
+                if (!$image) {
+                    $image = 'Kansikuva' === $this->getSubfield($url, 'z');
+                }
             }
 
             if (
