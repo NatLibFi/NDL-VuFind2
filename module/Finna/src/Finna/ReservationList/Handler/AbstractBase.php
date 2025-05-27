@@ -462,8 +462,8 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $fullName = trim(implode(' ', [$firstName, $lastName]));
 
         return [
-            'firstname' => $firstName,
-            'lastname' => $lastName,
+            'first_name' => $firstName,
+            'last_name' => $lastName,
             'full_name' => $fullName,
             'patron_id' => $patron['__local_id'] ?? $patron['id'] ?? '',
             'card_name' => $cardName,

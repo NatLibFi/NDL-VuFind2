@@ -97,8 +97,8 @@ class Disec extends AbstractBase
             $data['kohaId'] = $patronId;
         } else {
             $data['customer'] = [
-                'firstName' => $cardInfo['firstname'],
-                'lastName' => $cardInfo['lastname'],
+                'firstName' => $cardInfo['first_name'],
+                'lastName' => $cardInfo['last_name'],
                 'email' => $formValues['email'] ?? $user->getEmail(),
             ];
         }
