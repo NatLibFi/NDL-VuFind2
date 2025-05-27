@@ -33,7 +33,7 @@ RUN set -e; \
 
 COPY --from=composer:2.7 /usr/bin/composer /usr/local/bin/composer
 COPY vufind-start.sh /usr/local/bin/vufind-start.sh
-COPY xdebug.ini /usr/local/etc/php/conf.d/vscode-xdebug.ini
+COPY debug.ini /usr/local/etc/php/conf.d/debug.ini
 
 RUN set -e; \
     mv "$PHP_INI_DIR/php.ini-development" "$PHP_INI_DIR/php.ini"; \
