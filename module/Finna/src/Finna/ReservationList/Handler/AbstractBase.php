@@ -459,7 +459,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         }
 
         // Form full name from the obtained data
-        $fullName = trim(implode(' ', [$firstName, $lastName]));
+        $fullName = trim("$firstName $lastName");
 
         return [
             'first_name' => $firstName,
