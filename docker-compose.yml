@@ -80,9 +80,9 @@ services:
 
 configs:
   site_config:
-    file: local/config/httpd/vufind2.conf
+    file: local/docker/vufind2.conf
   grants_sql:
-    file: local/config/sql/grants.sql
+    file: local/docker/grants.sql
   vufind_sql:
     file: module/VuFind/sql/mysql.sql
   finna_sql:
