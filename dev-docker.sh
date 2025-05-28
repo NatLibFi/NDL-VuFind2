@@ -5,7 +5,7 @@
 # Install socat, docker, docker-compose and docker buildx.
 #
 # For configuration, fill in:
-#   * .env
+#   * .env (see template in env.sample)
 #   * local/db_root_passwd.secret
 #   * ~/.ssh/ssh_config (including the jump sequence to $SOCKS5_PROXY_DST)
 #
