@@ -221,16 +221,6 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     }
 
     /**
-     * Get list type
-     *
-     * @return string
-     */
-    public function getListType(): string
-    {
-        return $this->listType ?? 'research_room';
-    }
-
-    /**
      * Check if library card matches to allowed sources
      *
      * @param string $libraryCardSource Library card source

@@ -70,14 +70,14 @@
     <?php endif; ?>
     <div class="list-controls">
       <?php if ($this->listHandler->isEnabled() && !$this->listEntity->getOrdered() && $this->results->getResults()): ?>
-        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', [], ['query' => ['listId' => $this->listEntity->getId()]]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
+        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', [], ['query' => ['listId' => $this->listEntity->getId()]]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Send the hold request')?></a>
       <?php endif; ?>
       <?=
         $this->component(
             'confirm-button',
             [
               'buttonLink' => $this->url('reservationlist-deletelist', ['listId' => $this->listEntity->getId()]),
-              'buttonLabel' => 'ReservationList::Delete List',
+              'buttonLabel' => 'Delete',
               'buttonClass' => 'btn btn-primary',
               'confirmLink' => $this->url('reservationlist-deletelist', ['listId' => $this->listEntity->getId()], ['query' => ['confirm' => 1]]),
               'header' => 'confirm_delete_list_text',

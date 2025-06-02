@@ -475,7 +475,7 @@ class ReservationListController extends AbstractBase
             try {
                 $list = $this->reservationListService->getListById((int)$listID, $user);
                 $this->reservationListService->destroyList($list, $user);
-                $this->flashMessenger()->addSuccessMessage('ReservationList::List Deleted');
+                $this->flashMessenger()->addSuccessMessage('ReservationList::List deleted');
             } catch (LoginRequiredException | ListPermissionException $e) {
                 if ($user == false) {
                     return $this->forceLogin();
