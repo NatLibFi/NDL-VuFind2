@@ -1,5 +1,5 @@
 Settings:
-  method: api
+  method: database
   url: http//testapi.url.fi/getLists
   ttl: 0
 Institutions:
@@ -35,23 +35,6 @@ Institutions:
             name: sender_test
             email: sender_email@email.fi
           Subject: Reservation List
-      - Identifier: list_with_disec
-        Enabled: true
-        Datasources:
-          - datasource_1
-          - datasource_2
-        Information:
-          Address: teststreet 10
-          Postal: 000001
-          City: Test city
-        Forms:
-          PlaceOrder: default
-        LibraryCardSources:
-          - connection_established_to_use_lists
-        Connection:
-          type: disec
-          base_url: "http://disectest.url.fi/"
-          secret: verysecretphrase
       - Identifier: list_not_enabled
         Enabled: false
         Datasources:
@@ -89,6 +72,25 @@ Institutions:
             name: Service sender
             email: test@noreply.fi
           Subject: Reservation List
+  Example Institution 2:
+    Lists:
+      - Identifier: list_with_disec
+        Enabled: true
+        Datasources:
+          - datasource_1
+          - datasource_2
+        Information:
+          Address: teststreet 10
+          Postal: 000001
+          City: Test city
+        Forms:
+          PlaceOrder: default
+        LibraryCardSources:
+          - connection_established_to_use_lists
+        Connection:
+          type: disec
+          base_url: "http://disectest.url.fi/"
+          secret: verysecretphrase
 Forms:
   PlaceOrder:
     default:

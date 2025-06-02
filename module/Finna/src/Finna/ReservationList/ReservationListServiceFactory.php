@@ -62,6 +62,7 @@ class ReservationListServiceFactory implements FactoryInterface
             ->getFinna('ReservationList.yaml', 'config/finna');
         return new ReservationListService(
             $serviceManager->get(\Finna\Db\Service\FinnaResourceListServiceInterface::class),
+            $serviceManager->get(\Finna\Db\Service\FinnaResourceListHandlerServiceInterface::class),
             $serviceManager->get(\Finna\Db\Service\FinnaResourceListResourceServiceInterface::class),
             $serviceManager->get(\VuFind\Db\Service\ResourceServiceInterface::class),
             $serviceManager->get(\VuFind\Db\Service\UserServiceInterface::class),

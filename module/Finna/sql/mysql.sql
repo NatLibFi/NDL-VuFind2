@@ -350,6 +350,20 @@ CREATE TABLE `finna_resource_list` (
 
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `finna_resource_list_handler` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `institution` int(10) unsigned NOT NULL,
+  `identifier` varchar(255) NOT NULL,
+  `enabled` int(1) NOT NULL DEFAULT 0,
+  `data` json DEFAULT '',
+  `created` datetime NOT NULL DEFAULT '2000-01-01 00:00:00',
+  PRIMARY KEY (`id`),
+  KEY `institution` (`institution`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `finna_resource_list_resource` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `resource_id` int(11) NOT NULL,

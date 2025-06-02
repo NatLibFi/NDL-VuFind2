@@ -35,6 +35,7 @@ use DateTime;
 use Exception;
 use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\Db\Service\FinnaResourceListHandlerServiceInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
 use Finna\ReservationList\Handler\HandlerInterface;
@@ -93,6 +94,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * Constructor
      *
      * @param FinnaResourceListServiceInterface         $resourceListService         Resource list database service
+     * @param FinnaResourceListHandlerServiceInterface  $resourceListHandlerService  Resource list handler service
      * @param FinnaResourceListResourceServiceInterface $resourceListResourceService Resource and list relation
      *                                                                               database service
      * @param ResourceServiceInterface                  $resourceService             Resource database service
@@ -110,6 +112,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      */
     public function __construct(
         protected FinnaResourceListServiceInterface $resourceListService,
+        protected FinnaResourceListHandlerServiceInterface $resourceListHandlerService,
         protected FinnaResourceListResourceServiceInterface $resourceListResourceService,
         protected ResourceServiceInterface $resourceService,
         protected UserServiceInterface $userService,
@@ -609,7 +612,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     {
         if (($this->reservationListConfig['Settings']['method'] ??= 'yaml') === 'yaml') {
             return $this->reservationListConfig;
-        } elseif ($this->reservationListConfig['Settings']['method'] === 'api') {
+        } elseif ($this->reservationListConfig['Settings']['method'] === 'database') {
             $cacheDir = $this->cacheManager->getCache('object')->getOptions()->getCacheDir();
             $cacheFile = "$cacheDir/ReservationList.json";
             $maxAge = $this->reservationListConfig['Settings']['ttl'] ?? 60;
@@ -621,18 +624,26 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
             ) {
                 return json_decode($content, true);
             }
-            $client = $this->httpService->createClient($this->reservationListConfig['Settings']['url']);
-            $response = $client->send();
+            $configuration = [
+                'Institutions' => [
 
-            if ($response->isSuccess()) {
-                $config = json_decode($response->getBody(), true);
-                $config = $config['data'];
-                // Cache only if ttl is set to over 0
-                if ($maxAge > 0) {
-                    file_put_contents($cacheFile, json_encode($config));
+                ],
+            ];
+            // Get Reservation List handlers from database and cache them into a file
+            foreach ($this->resourceListHandlerService->getResourceListHandlers() as $handler) {
+                if (!$handler->getEnabled()) {
+                    continue;
                 }
-                return $config;
+                $institution = $handler->getInstitution();
+                $handlerAsArray = $handler->toArray();
+                $configuration['Institutions'][$institution] ??= ['Lists' => []];
+                $configuration['Institutions'][$institution]['Lists'][] = $handlerAsArray;
             }
+            // Cache only if ttl is set to over 0
+            if ($maxAge > 0) {
+                file_put_contents($cacheFile, json_encode($configuration));
+            }
+            return $configuration;
         }
         return [];
     }
