@@ -293,6 +293,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $part = $this->getSubfield($url, '3');
                 // Only take large image. Thumbnail is too small.
                 $image = strcasecmp($part, 'Image') === 0;
+                if (!$image) {
+                    // Some Quria records do not have subfield q, check subfield z
+                    $image = 'Kansikuva' === $this->getSubfield($url, 'z');
+                }
             }
 
             if (
@@ -2772,7 +2776,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $values
             ));
             if (count(array_unique($bindings)) === 1) {
-                return $bindings[0];
+                return reset($bindings);
             }
         }
         return '';
