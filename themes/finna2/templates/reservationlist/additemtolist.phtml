@@ -1,5 +1,5 @@
 <?php
-  $pageTitle = $this->translate('ReservationList::Add to reservation list');
+  $pageTitle = $this->translate('ReservationList::reserve_to_research_room');
   // Set up page title:
   $this->headTitle($pageTitle);
 
@@ -51,7 +51,7 @@
         <textarea class="form-control" id="add_notes" name="desc" rows="3"></textarea>
       </div>
       <div class="form-group">
-        <input class="btn btn-primary" type="submit" name="list_selected" value="<?=$this->escapeHtml($pageTitle) ?>">
+        <input class="btn btn-primary" type="submit" name="list_selected" value="<?=$this->transEsc('Save')?>">
       </div>
     </form>
   <?php endif; ?>
