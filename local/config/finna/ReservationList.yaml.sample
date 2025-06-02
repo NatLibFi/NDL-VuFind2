@@ -31,14 +31,12 @@
 #
 # General settings for how to fetch list configurations
 # Settings:
-# Methods available yaml, api. If yaml is selected, will read list configurations from this file,
-# method: [yaml, api]
-# url: if api is selected, will fetch configurations from api endpoint
+# Methods available yaml, database. If yaml is selected, will read list configurations from this file
+# method: [yaml, database]
 # ttl: How long does cached config live, default is 60 minutes
 #
 Settings:
   method: yaml
-  #url:
   ttl: 60
 Institutions:
   Example Institution:

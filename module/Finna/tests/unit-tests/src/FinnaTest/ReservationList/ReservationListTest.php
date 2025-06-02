@@ -58,7 +58,6 @@ use VuFind\Db\Service\UserCardService;
 use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Record\Cache;
 use VuFind\Record\ResourcePopulator;
-use VuFindHttp\HttpService;
 use VuFindTest\Container\MockContainer;
 
 /**
@@ -97,7 +96,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     /**
      * Get mocked reservation list service
      *
-     * @param ?MockObject $mockHttpService            Http service
      * @param ?MockObject $listPluginManager          List plugin manager
      * @param array       $reservationListConfig      Reservation list config
      * @param ?MockObject $resourceListHandlerService Resource list handler service
@@ -105,7 +103,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
      * @return MockObject
      */
     protected function getReservationListService(
-        ?MockObject $mockHttpService = null,
         ?MockObject $listPluginManager = null,
         array $reservationListConfig = [],
         ?MockObject $resourceListHandlerService = null
@@ -126,7 +123,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               $this->container->createMock(RecordLoader::class),
               $this->container->createMock(Cache::class),
               $this->container->createMock(Container::class),
-              $mockHttpService ??= $this->container->createMock(HttpService::class),
               $this->container->createMock(ILSAuthenticator::class),
               $cacheManager,
               $listPluginManager ??= $this->container->createMock(HandlerPluginManager::class),
@@ -723,8 +719,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         );
         $service = $this->getReservationListService(
             listPluginManager: $listPluginManager,
-            reservationListConfig: $reservationListConfig,
-            mockHttpService: $httpService
+            reservationListConfig: $reservationListConfig
         );
         $handler = $service->getListHandler('Example Institution', 'list_with_disec');
         $testValues = [
@@ -769,8 +764,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         );
         $service = $this->getReservationListService(
             listPluginManager: $listPluginManager,
-            reservationListConfig: $reservationListConfig,
-            mockHttpService: $httpService
+            reservationListConfig: $reservationListConfig
         );
         $handler = $service->getListHandler('Example Institution', 'list_with_email');
         $testValues = [

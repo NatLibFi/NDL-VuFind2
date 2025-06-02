@@ -59,7 +59,6 @@ use VuFind\Record\Loader as RecordLoader;
 use VuFind\Record\ResourcePopulator;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 use VuFind\RecordDriver\DefaultRecord;
-use VuFindHttp\HttpService;
 
 /**
  * Reservation list service
@@ -104,7 +103,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      * @param RecordCache                               $recordCache                 Record cache
      * @param Container                                 $session                     Session container for remembering
      *                                                                               state
-     * @param HttpService                               $httpService                 Http service
      * @param ILSAuthenticator                          $ilsAuthenticator            Ils authenticator
      * @param Manager                                   $cacheManager                Cache manager
      * @param PluginManager                             $listPluginManager           Plugin manager for lists
@@ -120,7 +118,6 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         protected RecordLoader $recordLoader,
         protected RecordCache $recordCache,
         protected Container $session,
-        protected HttpService $httpService,
         protected ILSAuthenticator $ilsAuthenticator,
         protected Manager $cacheManager,
         protected PluginManager $listPluginManager,
