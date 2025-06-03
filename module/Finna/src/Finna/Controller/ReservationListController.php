@@ -384,7 +384,7 @@ class ReservationListController extends AbstractBase
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         }
-        $this->flashMessenger()->addErrorMessage('could_not_process_feedback');
+        $this->flashMessenger()->addErrorMessage('od_hold_place_failure');
         return $view;
     }
 
@@ -450,15 +450,14 @@ class ReservationListController extends AbstractBase
         if (!$form->isValid()) {
             return $view;
         }
-        // Save single order into a list before placing the order.
-        $driver = $this->getRecordLoader()->load(
-            $queryValues['recordId'],
-            $queryValues['source'],
-            false
-        );
 
         $result = $listHandler->placeOrder($queryValues, $user);
         if ($result['success']) {
+            $driver = $this->getRecordLoader()->load(
+                $queryValues['recordId'],
+                $queryValues['source'],
+                false
+            );
             // Save single order into a list
             $this->reservationListService->populateListValues($listEntity, $user, $listValues);
             $this->reservationListService->setListOrdered($user, $listEntity, $result);
