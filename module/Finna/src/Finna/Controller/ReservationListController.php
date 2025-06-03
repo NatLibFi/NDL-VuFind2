@@ -416,9 +416,8 @@ class ReservationListController extends AbstractBase
         }
         $request = $this->getRequest();
         $requestValues = $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray();
-        $timeNow = (new \DateTime())->format('Y-m-d H:i:s');
         $listValues = [
-            'title' => "Order: $timeNow",
+            'title' => $requestValues['list_title'] ?? 'tmp_title',
             'desc' => '',
             'institution' => $listHandler->getInstitution(),
             'listIdentifier' => $listHandler->getIdentifier(),
