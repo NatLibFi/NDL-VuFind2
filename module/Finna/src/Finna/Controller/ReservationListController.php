@@ -416,18 +416,20 @@ class ReservationListController extends AbstractBase
         }
         $request = $this->getRequest();
         $requestValues = $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray();
+        $timeNow = (new \DateTime())->format('Y-m-d H:i:s');
         $listValues = [
-            'title' => $requestValues['list_title'] ?? 'tmp_title',
+            'title' => "Order: $timeNow",
             'desc' => '',
             'institution' => $listHandler->getInstitution(),
             'listIdentifier' => $listHandler->getIdentifier(),
             'connection' => $listHandler->getConnectionType(),
         ];
+
         // Create an empty list for the user, but do not save it.
-        $list = $this->reservationListService->createListForUser($user, $listValues);
+        $listEntity = $this->reservationListService->createListForUser($user, $listValues);
         $formId = ConnectionAbstractBase::FORM_ID;
         $queryValues = $listHandler->getValuesForSingleOrder(
-            $list,
+            $listEntity,
             $user,
             $requestValues
         );
@@ -456,23 +458,22 @@ class ReservationListController extends AbstractBase
             false
         );
 
-        $this->reservationListService->populateListValues($list, $user, $listValues);
-        $this->reservationListService->saveListForUser($list, $user);
-        $params = new Parameters(['list' => $list->getId()]);
-        $this->reservationListService->saveRecordToReservationList($params, $user, $driver);
-
         $result = $listHandler->placeOrder($queryValues, $user);
         if ($result['success']) {
-            $this->reservationListService->setListOrdered($user, $list, $result);
-            $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
-            return $this->getRefreshResponse();
+            // Save single order into a list
+            $this->reservationListService->populateListValues($listEntity, $user, $listValues);
+            $this->reservationListService->setListOrdered($user, $listEntity, $result);
+
+            $params = new Parameters(['list' => $listEntity->getId()]);
+            $this->reservationListService->saveRecordToReservationList($params, $user, $driver);
+            $view->setTemplate('reservationlist/postadditem');
+            $view->listEntity = $listEntity;
+            $view->driver = $driver;
+            $view->ordered = true;
+            $view->title = $form->getSubmitResponse();
+            return $view;
         }
-        // Display a message saying that an error has been occurred and the order has been saved into
-        // a list
-        $this->flashMessenger()->addErrorMessage('ReservationList::Reservation Failed');
-        $view->setTemplate('reservationlist/ordererror.phtml');
-        $view->listEntity = $list;
-        $view->driver = $driver;
+        $this->flashMessenger()->addErrorMessage('od_hold_place_failure');
         return $view;
     }
 
