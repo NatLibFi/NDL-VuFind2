@@ -134,8 +134,3 @@ Forms:
     single:
       extends: default
       formActionRoute: reservationlist-placesingleorder
-      fields:
-        - name: list_title
-          type: text
-          label: ReservationList::Reservation List Name
-          required: true
