@@ -467,8 +467,6 @@ class ReservationListController extends AbstractBase
             $view->setTemplate('reservationlist/postadditem');
             $view->listEntity = $listEntity;
             $view->driver = $driver;
-            $view->ordered = true;
-            $view->title = $form->getSubmitResponse();
             return $view;
         }
         $this->flashMessenger()->addErrorMessage('od_hold_place_failure');

@@ -1,6 +1,6 @@
 <?php
-  $pageTitleKey = $this->title ?? 'ReservationList::Add to reservation list';
-  $toListKey = ($this->ordered ?? false) ? 'go_to_list' : 'ReservationList::Continue to sending the hold request';
+  $pageTitleKey = $this->listEntity->getOrdered() ? 'ReservationList::form_email_subject' : 'ReservationList::Add to reservation list';
+  $toListKey = $this->listEntity->getOrdered() ? 'go_to_list' : 'ReservationList::Continue to sending the hold request';
   $pageTitle = $this->translate($pageTitleKey);
   // Set up page title:
   $this->headTitle($pageTitle);
