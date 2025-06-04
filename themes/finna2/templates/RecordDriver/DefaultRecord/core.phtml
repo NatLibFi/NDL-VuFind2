@@ -252,7 +252,7 @@
       
       <?php if (
           isset($this->tabs['ComponentParts'])
-          && $this->driver->tryMethod('getLinkedComponentParts', [true])
+          && $this->driver->tryMethod('getEmbeddedComponentParts')
         ): ?>
         <div class="record-to-componentparts">
           <a class="icon-link" href="#componentparts">

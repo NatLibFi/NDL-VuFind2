@@ -254,7 +254,7 @@ table.content-table {
   @include media-breakpoint-up(sm) {
     table-layout: fixed;
   }
-  .recordIncludedIn {
+  .record-included-in {
     .component-parts:not(:last-child) {
       padding-bottom: 0.5rem;
     }

@@ -136,6 +136,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
                 [
                     'id' => '',
@@ -145,6 +146,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
             ],
         ];
@@ -164,6 +166,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
                 [
                     'id' => '',
@@ -173,6 +176,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
             ],
         ];
@@ -192,6 +196,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
                 [
                     'id' => '',
@@ -201,6 +206,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
             ],
         ];
@@ -220,6 +226,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
                 [
                     'id' => 'link.withdot2',
@@ -229,6 +236,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
             ],
         ];
@@ -248,6 +256,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
                 [
                     'id' => '555',
@@ -257,6 +266,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'linkRelation' => 'Published in',
                 ],
             ],
         ];

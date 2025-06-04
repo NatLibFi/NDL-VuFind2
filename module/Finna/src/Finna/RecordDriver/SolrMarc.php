@@ -94,11 +94,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
-     * Hierarchical items specified with term are displayed
+     * Relation data mapped to translation key strings
      *
      * @var string
      */
-    protected $includedInCollection = 'Sisältyy kokoelmaan';
+    protected $linkRelationMappings = [
+        'Sisältyy kokoelmaan:' => 'Included in collection',
+        'default'              => 'Published in',
+    ];
 
     /**
      * Constructor
@@ -798,57 +801,58 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     /**
      * Get the amount of linked parts
      *
-     * @return string
+     * @return int
      */
-    public function getLinkedComponentPartCount(): string
+    public function getCollectionsComponentPartsCount(): int
     {
         $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
-        if (!($datasourceSettings['hierarchical_linking_shown'] ?? false)) {
-            return '';
+        if (!isset($datasourceSettings['display_linking']) || !$datasourceSettings['display_linking']) {
+            return 0;
         }
-        if ($amount = count($this->getLinkedComponentParts(true))) {
-            return (string)$amount . ' ' . $this->translate('items');
+        if ($amount = count($this->getCollectionsComponentParts(false))) {
+            return $amount;
         }
-        return '';
+        return 0;
     }
 
     /**
      * Get records linked to record
      *
-     * @param bool $ignoreSource Get records regardless of source
+     * @param bool $onlyTopLevel Only gets parts for top level items
      *
      * @return array
      */
-    public function getLinkedComponentParts($ignoreSource = false): array
+    public function getCollectionsComponentParts($onlyTopLevel = true): array
     {
         $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
-        if (!($datasourceSettings['hierarchical_linking_shown'] ?? false)) {
+        if (!isset($datasourceSettings['display_linking']) || !$datasourceSettings['display_linking']) {
             return [];
         }
-        if (!isset($this->fields['hierarchy_parent_id']) || $ignoreSource) {
-            foreach ($this->getMarcReader()->getFields('264') as $field) {
-                foreach ($this->getSubfieldArray($field, ['b']) as $subfield) {
-                    if (str_contains($subfield, $datasourceSettings['hierarchical_linking_shown_source'] ?? false)) {
-                        return $this->getEmbeddedComponentParts();
-                    }
-                }
+        $isCollection = false;
+        foreach ($this->getFormats() as $format) {
+            $parts = explode('/', $format);
+            if ($isCollection = $parts[2] === 'Collection') {
+                break;
             }
         }
-        return [];
+        if (!$isCollection || (isset($this->fields['hierarchy_parent_id']) && $onlyTopLevel)) {
+            return [];
+        }
+        return $this->getEmbeddedComponentParts();
     }
 
     /**
-     * Get records record is linked to
+     * Get linked host records, which are collections
      *
      * @return array
      */
-    public function getLinkedParents(): array
+    public function getLinkedParentCollections(): array
     {
         $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
-        if (!($datasourceSettings['hierarchical_linking_shown'] ?? false)) {
+        if (!isset($datasourceSettings['display_linking']) || !$datasourceSettings['display_linking']) {
             return [];
         }
-        return $this->getHostRecords(true);
+        return $this->getHostRecords('Included in collection');
     }
 
     /**
@@ -1006,14 +1010,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *   reference
      *   Place, publisher, and date of publication
      *
-     * @param bool $onlyLinked Only include records that have hierarchical linking to other records
+     * @param string $relation Only include records that have specific relation to host
      *
      * @return array
      */
-    public function getHostRecords($onlyLinked = false)
+    public function getHostRecords($relation = '')
     {
         $result = [];
-        $resultLinkedOnly = [];
+        $resultWithRelation = [];
         $sourceId = $this->getSourceIdentifier();
         $fields = $this->getMarcReader()->getFields('773');
 
@@ -1049,7 +1053,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $reference = '';
             $publishingInfo = '';
             $author = '';
-            $isLinked = false;
+            $linkRelation = $default = $this->linkRelationMappings['default'];
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
@@ -1076,7 +1080,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         $title = $this->stripTrailingPunctuation($data, '.-');
                         break;
                     case 'i':
-                        $isLinked = str_contains($data, $this->includedInCollection);
+                        $linkRelation = $this->linkRelationMappings[$data] ?? $default;
                         break;
                     case 'g':
                         $reference = $data;
@@ -1110,14 +1114,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'reference' => $reference,
                 'publishingInfo' => $publishingInfo,
                 'mainHeading' => $author,
+                'linkRelation' => $linkRelation,
             ];
-            if ($isLinked) {
-                $resultLinkedOnly[] = $item;
+            if ($linkRelation === $relation) {
+                $resultWithRelation[] = $item;
             } else {
                 $result[] = $item;
             }
         }
-        return $onlyLinked ? $resultLinkedOnly : $result;
+        return $relation ? $resultWithRelation : $result;
     }
 
     /**

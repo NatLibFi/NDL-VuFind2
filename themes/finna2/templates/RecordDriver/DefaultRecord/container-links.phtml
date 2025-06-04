@@ -7,7 +7,10 @@
     <?php
       $containerSource = $this->driver->getSourceIdentifier();
       $containerID = $this->driver->getContainerRecordID();
-      $linkedItems = $this->driver->tryMethod('getLinkedParents');
+      $linkedItems = $this->driver->tryMethod('getLinkedParentCollections');
+      if ($linkedItems) {
+        $hostRecords = $this->driver->tryMethod('getHostRecords', ['Published in']);
+      }
     ?>
     <div class="truncate-field">
       <?php if (empty($data) && ($hostRecords || (!$linkedItems && $containerID))): ?>
@@ -27,7 +30,7 @@
       <?php endif; ?>
       <?php if (empty($data) && $linkedItems && !$this->inRecordInfo): ?>
         <div class="includedIn">
-          <div class="recordIncludedIn"><?=$this->transEsc('Included in collections')?>: </div>
+          <div class="record-included-in"><?=$this->transEsc('Included in collections')?>: </div>
           <?= $this->record($this->driver)->renderTemplate('host-records.phtml', ['hostRecords' => $linkedItems, 'driver']); ?>
         </div>
       <?php endif; ?>
