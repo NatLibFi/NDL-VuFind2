@@ -816,7 +816,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get records linked to record
+     * Get records linked to collection
      *
      * @param bool $onlyTopLevel Only gets parts for top level items
      *
