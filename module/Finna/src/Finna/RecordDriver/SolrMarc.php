@@ -802,11 +802,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     /**
      * Get records linked to collection
      *
-     * @param bool $onlyTopLevel Only gets parts for top level items
-     *
      * @return array
      */
-    public function getCollectionsComponentParts($onlyTopLevel = true): array
+    public function getCollectionsComponentParts(): array
     {
         $isCollection = false;
         foreach ($this->getFormats() as $format) {
@@ -815,7 +813,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 break;
             }
         }
-        if (!$isCollection || (isset($this->fields['hierarchy_parent_id']) && $onlyTopLevel)) {
+        if (!$isCollection || isset($this->fields['hierarchy_parent_id'])) {
             return [];
         }
         $collectionParts = array_map(
