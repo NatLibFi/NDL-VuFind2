@@ -642,7 +642,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         break;
                     case 'd':
                         $partAuthors[] = $data;
-                        $format = $this->getLinkRelations()[$data] ?? '';
+                        $format = $this->getLinkRelation($data);
                         break;
                     case 'e':
                         $uniformTitle = $data;
@@ -806,14 +806,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getCollectionsComponentParts(): array
     {
-        $isCollection = false;
-        foreach ($this->getFormats() as $format) {
-            $parts = explode('/', $format);
-            if ($isCollection = $parts[2] === 'Collection') {
-                break;
-            }
-        }
-        if (!$isCollection || isset($this->fields['hierarchy_parent_id'])) {
+        if (isset($this->fields['hierarchy_parent_id'])) {
             return [];
         }
         $collectionParts = array_map(
@@ -1058,7 +1051,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         $title = $this->stripTrailingPunctuation($data, '.-');
                         break;
                     case 'i':
-                        $format = $this->getLinkRelations()[$data] ?? '';
+                        $format = $this->getLinkRelation($data);
                         break;
                     case 'g':
                         $reference = $data;
@@ -1171,13 +1164,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     /**
      * Get link relation mappings
      *
-     * @return mixed
+     * @param string $relation Relation info to be checked
+     *
+     * @return string
      */
-    public function getLinkRelations(): mixed
+    public function getLinkRelation($relation): string
     {
-        return
+        $linkRelation =
             $this->datasourceSettings[$this->getDataSource()]['link_relation_mappings']
             ?? $this->defaultLinkRelationMappings;
+        return $linkRelation[$relation] ?? '';
     }
 
     /**
