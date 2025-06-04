@@ -1364,9 +1364,6 @@ trait SolrFinnaTrait
      */
     public function getChildRecordCount()
     {
-        if ($this->tryMethod('getCollectionsComponentPartsCount')) {
-            return 0;
-        }
         // Shortcut: if this record is not part of a hierarchy, let's not find out the count.
         if (
             !$this->containerLinking
