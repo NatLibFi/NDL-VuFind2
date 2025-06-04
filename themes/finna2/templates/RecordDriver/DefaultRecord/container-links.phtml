@@ -9,7 +9,7 @@
       $containerID = $this->driver->getContainerRecordID();
       $linkedItems = $this->driver->tryMethod('getLinkedParentCollections');
       if ($linkedItems) {
-        $hostRecords = $this->driver->tryMethod('getHostRecords', ['Published in']);
+        $hostRecords = array_filter($hostRecords, function ($record) {return $record['format'] !== 'collection'; });
       }
     ?>
     <div class="truncate-field">

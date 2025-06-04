@@ -94,13 +94,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
-     * Relation data mapped to translation key strings
+     * Link relations mapped to format
      *
-     * @var string
+     * @var array
      */
-    protected $linkRelationMappings = [
-        'Sisältyy kokoelmaan:' => 'Included in collection',
-        'default'              => 'Published in',
+    protected $defaultLinkRelationMappings = [
+        'Sisältyy kokoelmaan:' => 'collection',
     ];
 
     /**
@@ -643,6 +642,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         break;
                     case 'd':
                         $partAuthors[] = $data;
+                        $format = $this->getLinkRelations()[$data] ?? '';
                         break;
                     case 'e':
                         $uniformTitle = $data;
@@ -692,6 +692,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'presenters' => $partPresenters,
                 'arrangers' => $partArrangers,
                 'otherAuthors' => $partOtherAuthors,
+                'format' => $format ?? '',
             ];
         }
 
@@ -799,23 +800,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get the amount of linked parts
-     *
-     * @return int
-     */
-    public function getCollectionsComponentPartsCount(): int
-    {
-        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
-        if (!isset($datasourceSettings['display_linking']) || !$datasourceSettings['display_linking']) {
-            return 0;
-        }
-        if ($amount = count($this->getCollectionsComponentParts(false))) {
-            return $amount;
-        }
-        return 0;
-    }
-
-    /**
      * Get records linked to collection
      *
      * @param bool $onlyTopLevel Only gets parts for top level items
@@ -824,10 +808,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getCollectionsComponentParts($onlyTopLevel = true): array
     {
-        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
-        if (!isset($datasourceSettings['display_linking']) || !$datasourceSettings['display_linking']) {
-            return [];
-        }
         $isCollection = false;
         foreach ($this->getFormats() as $format) {
             $parts = explode('/', $format);
@@ -838,7 +818,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         if (!$isCollection || (isset($this->fields['hierarchy_parent_id']) && $onlyTopLevel)) {
             return [];
         }
-        return $this->getEmbeddedComponentParts();
+        $collectionParts = array_map(
+            fn ($part) => $part['format'] ?? null === 'collection' ? $part : null,
+            $this->getEmbeddedComponentParts()
+        );
+        return array_values(array_filter($collectionParts));
     }
 
     /**
@@ -848,11 +832,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getLinkedParentCollections(): array
     {
-        $datasourceSettings = $this->datasourceSettings[$this->getDataSource()] ?? [];
-        if (!isset($datasourceSettings['display_linking']) || !$datasourceSettings['display_linking']) {
-            return [];
-        }
-        return $this->getHostRecords('Included in collection');
+        $parentCollection = array_map(
+            fn ($part) => $part['format'] ?? null === 'collection' ? $part : null,
+            $this->getHostRecords()
+        );
+        return array_values(array_filter($parentCollection));
     }
 
     /**
@@ -1010,14 +994,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *   reference
      *   Place, publisher, and date of publication
      *
-     * @param string $relation Only include records that have specific relation to host
-     *
      * @return array
      */
-    public function getHostRecords($relation = '')
+    public function getHostRecords()
     {
         $result = [];
-        $resultWithRelation = [];
         $sourceId = $this->getSourceIdentifier();
         $fields = $this->getMarcReader()->getFields('773');
 
@@ -1053,7 +1034,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $reference = '';
             $publishingInfo = '';
             $author = '';
-            $linkRelation = $default = $this->linkRelationMappings['default'];
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
@@ -1080,7 +1060,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         $title = $this->stripTrailingPunctuation($data, '.-');
                         break;
                     case 'i':
-                        $linkRelation = $this->linkRelationMappings[$data] ?? $default;
+                        $format = $this->getLinkRelations()[$data] ?? '';
                         break;
                     case 'g':
                         $reference = $data;
@@ -1106,7 +1086,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 }
             }
 
-            $item = [
+            $result[] = [
                 'id' => $id,
                 'linkingId' => $linkingId,
                 'sourceId' => $sourceId,
@@ -1114,15 +1094,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'reference' => $reference,
                 'publishingInfo' => $publishingInfo,
                 'mainHeading' => $author,
-                'linkRelation' => $linkRelation,
+                'format' => $format ?? '',
             ];
-            if ($linkRelation === $relation) {
-                $resultWithRelation[] = $item;
-            } else {
-                $result[] = $item;
-            }
         }
-        return $relation ? $resultWithRelation : $result;
+        return $result;
     }
 
     /**
@@ -1193,6 +1168,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $result = array_values(array_unique(array_filter($issn)));
         $this->cache[__FUNCTION__] = $result;
         return $result;
+    }
+
+    /**
+     * Get link relation mappings
+     *
+     * @return mixed
+     */
+    public function getLinkRelations(): mixed
+    {
+        return
+            $this->datasourceSettings[$this->getDataSource()]['link_relation_mappings']
+            ?? $this->defaultLinkRelationMappings;
     }
 
     /**

@@ -147,15 +147,12 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ]
         );
         $setTemplateLine(
-            'collection_parts_amount',
-            'getCollectionsComponentPartsCount',
-            'data-componentPartsCount.phtml',
+            'child_records',
+            'getChildRecordCount',
+            'data-childRecords.phtml',
             [
                 'allowZero' => false,
-                'context' => [
-                    'class' => 'recordComponentParts',
-                    'title' => 'Contents/Parts',
-                ],
+                'context' => ['class' => 'recordComponentParts'],
             ]
         );
         $setTemplateLine(
@@ -993,15 +990,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ]
         );
 
-        $setTemplateLine(
-            'child_records',
-            'getChildRecordCount',
-            'data-childRecords.phtml',
-            [
-                'allowZero' => false,
-                'context' => ['class' => 'recordComponentParts'],
-            ]
-        );
         $setTemplateLine(
             'Record Links',
             'getAllRecordLinks',
