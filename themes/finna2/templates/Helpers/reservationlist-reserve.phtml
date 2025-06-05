@@ -1,7 +1,10 @@
 <!-- START of: finna - Helpers/reservationlist-reserve.phtml -->
-<?php if (empty($this->listHandlers)) {
-return;
-} ?>
+<?php if (empty($this->listHandlers)): ?>
+  <div class="alert alert-info">
+    <?=$this->transEsc('no_ils_support_description');?>
+  </div>
+  <?php return; ?>
+<?php endif; ?>
 
 <?php
   $user = $this->auth()->getManager()->getUserObject();
