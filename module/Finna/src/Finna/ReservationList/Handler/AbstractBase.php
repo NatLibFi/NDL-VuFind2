@@ -29,7 +29,6 @@
 
 namespace Finna\ReservationList\Handler;
 
-use DateTime;
 use Exception;
 use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
@@ -428,7 +427,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $recordID = $requestValues['recordId'];
         $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
         $record = $recordLoader->load($recordID, $source);
-        $result['list_title'] = $requestValues['list_title']; 
+        $result['list_title'] = $requestValues['list_title'];
         $result['recordId'] = $record->getUniqueID();
         $result['source'] = $record->getSourceIdentifier();
         $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
