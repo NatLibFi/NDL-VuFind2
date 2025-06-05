@@ -417,7 +417,7 @@ class ReservationListController extends AbstractBase
         $request = $this->getRequest();
         $requestValues = $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray();
         $listValues = [
-            'title' => $requestValues['list_title'] ?? 'tmp_title',
+            'title' => $requestValues['list_title'] ?? '',
             'desc' => '',
             'institution' => $listHandler->getInstitution(),
             'listIdentifier' => $listHandler->getIdentifier(),
