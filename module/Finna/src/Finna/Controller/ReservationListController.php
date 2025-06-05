@@ -417,7 +417,7 @@ class ReservationListController extends AbstractBase
         $request = $this->getRequest();
         $requestValues = $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray();
 
-        // Form a default title for suggestion to be used as a list name
+        // Form a default title as a suggestion to be used as a list name
         $listTranslated = $this->getTranslator()->translate('List');
         $requestValues['list_title'] ??= $listTranslated . ': ' . (new \DateTime())->format('d.m.Y');
 
