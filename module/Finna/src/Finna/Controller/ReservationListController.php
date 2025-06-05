@@ -384,7 +384,7 @@ class ReservationListController extends AbstractBase
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         }
-        $this->flashMessenger()->addErrorMessage('od_hold_place_failure');
+        $this->flashMessenger()->addErrorMessage('hold_error_fail');
         return $view;
     }
 
@@ -469,7 +469,7 @@ class ReservationListController extends AbstractBase
             $view->driver = $driver;
             return $view;
         }
-        $this->flashMessenger()->addErrorMessage('od_hold_place_failure');
+        $this->flashMessenger()->addErrorMessage('hold_error_fail');
         return $view;
     }
 
