@@ -418,8 +418,9 @@ class ReservationListController extends AbstractBase
         $requestValues = $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray();
 
         // Form a default title as a suggestion to be used as a list name
-        $listTranslated = $this->getTranslator()->translate('List');
-        $requestValues['list_title'] ??= $listTranslated . ': ' . (new \DateTime())->format('d.m.Y');
+        $dateConverter = $this->serviceLocator->get(\VuFind\Date\Converter::class);
+        $requestValues['list_title'] ??= $this->getTranslator()->translate('List')
+            . ' ' . $dateConverter->convertToDisplayDate('U', time());
 
         $listValues = [
             'title' => $requestValues['list_title'],
