@@ -789,23 +789,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
-     * Get records linked to collection
-     *
-     * @return array
-     */
-    public function getCollectionsComponentParts(): array
-    {
-        if (isset($this->fields['hierarchy_parent_id'])) {
-            return [];
-        }
-        $collectionParts = array_map(
-            fn ($part) => $part['format'] ?? null === 'collection' ? $part : null,
-            $this->getEmbeddedComponentParts()
-        );
-        return array_values(array_filter($collectionParts));
-    }
-
-    /**
      * Get extended composition information from field 382.
      *
      * Returns an array where each entry contains a set of subfields with a type code
