@@ -126,24 +126,11 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 $lines[$key] = [true, $dataMethod, $callback, $options];
             };
         $setTemplateLine(
-            'Included in collections',
-            'getLinkedParentCollections',
-            'data-linkedparents.phtml',
+            'Record Links',
+            'getAllRecordLinks',
+            'data-allRecordLinks.phtml',
             [
-                'context' => [
-                    'class' => 'record-included-in',
-                ],
-            ]
-        );
-        $setTemplateLine(
-            'Collection contains',
-            'getCollectionsComponentParts',
-            'data-componentparts.phtml',
-            [
-                'context' => [
-                    'class' => 'record-included-in',
-                    'title' => 'Contains collections',
-                ],
+                'context' => ['class' => 'recordLinks', 'title' => ''],
             ]
         );
         $setTemplateLine(
@@ -990,14 +977,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ]
         );
 
-        $setTemplateLine(
-            'Record Links',
-            'getAllRecordLinks',
-            'data-allRecordLinks.phtml',
-            [
-                'context' => ['class' => 'recordLinks', 'title' => ''],
-            ]
-        );
         $setTemplateLine(
             'Related Materials',
             'getAllRecordLinks',

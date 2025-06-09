@@ -94,15 +94,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
-     * Link relations mapped to format
-     *
-     * @var array
-     */
-    protected $defaultLinkRelationMappings = [
-        'Sisältyy kokoelmaan:' => 'collection',
-    ];
-
-    /**
      * Constructor
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
@@ -642,7 +633,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         break;
                     case 'd':
                         $partAuthors[] = $data;
-                        $format = $this->getLinkRelation($data);
                         break;
                     case 'e':
                         $uniformTitle = $data;
@@ -692,7 +682,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'presenters' => $partPresenters,
                 'arrangers' => $partArrangers,
                 'otherAuthors' => $partOtherAuthors,
-                'format' => $format ?? '',
             ];
         }
 
@@ -814,20 +803,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $this->getEmbeddedComponentParts()
         );
         return array_values(array_filter($collectionParts));
-    }
-
-    /**
-     * Get linked host records, which are collections
-     *
-     * @return array
-     */
-    public function getLinkedParentCollections(): array
-    {
-        $parentCollection = array_map(
-            fn ($part) => $part['format'] ?? null === 'collection' ? $part : null,
-            $this->getHostRecords()
-        );
-        return array_values(array_filter($parentCollection));
     }
 
     /**
@@ -1051,7 +1026,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         $title = $this->stripTrailingPunctuation($data, '.-');
                         break;
                     case 'i':
-                        $format = $this->getLinkRelation($data);
+                        $relation = $this->stripTrailingPunctuation($data, ':');
                         break;
                     case 'g':
                         $reference = $data;
@@ -1085,7 +1060,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'reference' => $reference,
                 'publishingInfo' => $publishingInfo,
                 'mainHeading' => $author,
-                'format' => $format ?? '',
+                'relation' => $relation ?? '',
             ];
         }
         return $result;
@@ -1159,21 +1134,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $result = array_values(array_unique(array_filter($issn)));
         $this->cache[__FUNCTION__] = $result;
         return $result;
-    }
-
-    /**
-     * Get link relation mappings
-     *
-     * @param string $relation Relation info to be checked
-     *
-     * @return string
-     */
-    public function getLinkRelation($relation): string
-    {
-        $linkRelation =
-            $this->datasourceSettings[$this->getDataSource()]['link_relation_mappings']
-            ?? $this->defaultLinkRelationMappings;
-        return $linkRelation[$relation] ?? '';
     }
 
     /**
