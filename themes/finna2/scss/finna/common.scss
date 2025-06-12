@@ -255,9 +255,6 @@ table.content-table {
     table-layout: fixed;
   }
   .recordLinks {
-    .linked-record {
-      display: block;
-    }
     .contained-in:not(:last-child) {
       padding-bottom: 0.5rem;
     }
