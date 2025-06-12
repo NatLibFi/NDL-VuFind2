@@ -126,6 +126,14 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 $lines[$key] = [true, $dataMethod, $callback, $options];
             };
         $setTemplateLine(
+            'Mapped Component Parts',
+            'getMappedComponentParts',
+            'data-allRecordLinks.phtml',
+            [
+                'context' => ['class' => 'recordLinks', 'title' => ''],
+            ]
+        );
+        $setTemplateLine(
             'Genre',
             'getGenres',
             'data-genres.phtml',

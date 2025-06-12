@@ -8,16 +8,27 @@
         $allLinks[$link['title']][] = $link;
       }
     }
+    $truncate = false;
+    if (isset($data[0]['isMapped'])) {
+      $class = 'contained-in';
+      $truncate = true;
+    }
   ?>
   <?php if ($useLinkTitles):?>
     <?php foreach ($allLinks as $title => $links): ?>
       <tr class="recordLinks">
         <th><?=$this->transEsc($title);?></th>
         <td>
+          <?php if ($truncate): ?>
+            <div class="truncate-field" data-rows="5">
+          <?php endif; ?>
           <?php foreach ($links as $link): ?>
-            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->related($link['link'], $this->driver->getSourceIdentifier()));?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?><?php if (!empty($link['misc'])): ?> / <?=$this->escapeHtml($link['misc'])?><?php endif; ?>
+            <a class="<?=$class?>" href="<?=$this->escapeHtmlAttr($this->recordLinker()->related($link['link'], $this->driver->getSourceIdentifier()));?>"><?=$this->escapeHtml($link['value'] ?: $this->translate($title));?></a><?php if (isset($link['detail'])): ?> (<?=$this->escapeHtml($link['detail'])?>)<?php endif; ?><?php if (!empty($link['misc'])): ?> / <?=$this->escapeHtml($link['misc'])?><?php endif; ?>
             <br>
           <?php endforeach; ?>
+          <?php if ($truncate): ?>
+            </div>
+          <?php endif; ?>
         </td>
       </tr>
     <?php endforeach; ?>

@@ -2039,6 +2039,58 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     }
 
     /**
+     * Map component parts from field 979. Mapping rules are defined in datasources.ini for each datasource.
+     *
+     * @return array
+     */
+    public function getMappedComponentParts(): array
+    {
+        $mappedComponentParts = array_map(
+            fn ($part) => $this->mapComponentPart($part),
+            $this->getEmbeddedComponentParts()
+        );
+        return array_filter(array_values($mappedComponentParts));
+    }
+
+    /**
+     * Map component parts to datasource specific mappings. Return empty array if mapping does not match.
+     * Mappings can be added for each key present in component part array.
+     *
+     * @param array $part Component part
+     *
+     * @return array
+     */
+    protected function mapComponentPart(array $part): array
+    {
+        foreach ($part as $key => $value) {
+            $mappings = $this->datasourceSettings[$this->getDataSource()]['component_parts_mappings_' . $key] ?? [];
+            if (!$mappings) {
+                continue;
+            }
+            foreach ($mappings as $mapping) {
+                $existsInArray = false;
+                if (is_array($value)) {
+                    $existsInArray = in_array($mapping, $value);
+                }
+                if ($mapping == $value || $existsInArray) {
+                    $part['value'] = $part['title'];
+                    $part['title'] = $mappings['title'] ?? 'Contains';
+                    $link = '';
+                    if ($part['id']) {
+                        $link = ['type' => 'bib', 'value' => $part['id']];
+                    } elseif ($part['linkingId']) {
+                        $link = ['type' => 'linkingId', 'value' => $part['linkingId']];
+                    }
+                    $part['link'] = $link;
+                    $part['isMapped'] = true;
+                    return $part;
+                }
+            }
+        }
+        return [];
+    }
+
+    /**
      * Support method for getSeries() -- given a field specification, look for
      * series information in the MARC record.
      *
