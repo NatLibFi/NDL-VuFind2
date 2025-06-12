@@ -2049,7 +2049,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             fn ($part) => $this->mapComponentPart($part),
             $this->getEmbeddedComponentParts()
         );
-        return array_filter(array_values($mappedComponentParts));
+        return array_values(array_filter($mappedComponentParts));
     }
 
     /**
