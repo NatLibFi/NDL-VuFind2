@@ -94,7 +94,7 @@ trait FinnaUrlCheckTrait
 
         // Check for kirjavalitys links seperately as it is an option set in config
         $useKirjavalitysLinks = $config->Record->kirjavalitys_links ?? false;
-        if (strstr($url, 'http://data.kirjavalitys.fi/') && !$useKirjavalitysLinks) {
+        if (str_contains($url, 'http://data.kirjavalitys.fi/') && !$useKirjavalitysLinks) {
             return self::$urlCheckResultCache[$url] = false;
         }
 
