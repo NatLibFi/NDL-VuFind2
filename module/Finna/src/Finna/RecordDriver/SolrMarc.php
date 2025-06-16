@@ -242,9 +242,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     }
                     $tmp['value'] = implode(' ', $line);
                 } elseif ($value == '773') {
-                    $relationField = $this->getSubfield($field, 'i');
                     $tmp['relation'] =
-                        $this->relationMappings[$this->stripTrailingPunctuation($relationField, ':')]
+                        $this->relationMappings[$this->stripTrailingPunctuation($this->getSubfield($field, 'i'), ':')]
                         ?? null;
                     if (isset($tmp['relation'])) {
                         $tmp['title'] = $tmp['relation'];
