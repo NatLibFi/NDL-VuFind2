@@ -1,5 +1,5 @@
 <?php foreach ($hostRecords as $i => $hostRecord): ?>
-  <?=$i > 0 ? '<br>' : ''?>
+  <?=($i > 0 && !$this->includedIn) ? '<br>' : ''?>
   <?php
     $label = $hostRecord['title'] ?: $hostRecord['mainHeading'];
     $link = '';

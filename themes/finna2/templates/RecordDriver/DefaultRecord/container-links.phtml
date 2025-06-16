@@ -9,7 +9,7 @@
       $containerID = $this->driver->getContainerRecordID();
       $linkedItems = [];
       foreach ($hostRecords ?? [] as $hostRecord) {
-        if ($hostRecord['relation'] === 'Sisältyy kokoelmaan') {
+        if ($hostRecord['relation']) {
           $linkedItems[] = $hostRecord;
         } else {
           $arr[] = $hostRecord;
@@ -35,8 +35,8 @@
       <?php endif; ?>
       <?php if (empty($data) && $linkedItems && !$this->inRecordInfo): ?>
         <div class="includedIn">
-          <div class="record-included-in"><?=$this->transEsc('Sisältyy kokoelmaan')?>: </div>
-          <?= $this->record($this->driver)->renderTemplate('host-records.phtml', ['hostRecords' => $linkedItems, 'driver']); ?>
+          <div class="record-included-in"><?=$this->transEsc('Included in collections')?>: </div>
+          <?= $this->record($this->driver)->renderTemplate('host-records.phtml', ['hostRecords' => $linkedItems, 'driver', 'includedIn' => true]); ?>
         </div>
       <?php endif; ?>
     </div>

@@ -94,6 +94,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
+     * Mapped terms for relations
+     *
+     * @var array
+     */
+    protected $relationMappings = [
+        'Sisältyy kokoelmaan' => 'Included in collections',
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
@@ -232,6 +241,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         }
                     }
                     $tmp['value'] = implode(' ', $line);
+                } elseif ($value == '773') {
+                    $relationField = $this->getSubfield($field, 'i');
+                    $tmp['relation'] =
+                        $this->relationMappings[$this->stripTrailingPunctuation($relationField, ':')]
+                        ?? null;
+                    if (isset($tmp['relation'])) {
+                        $tmp['title'] = $tmp['relation'];
+                    }
                 }
                 $result[] = $tmp;
             }
@@ -1009,7 +1026,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         $title = $this->stripTrailingPunctuation($data, '.-');
                         break;
                     case 'i':
-                        $relation = $this->stripTrailingPunctuation($data, ':');
+                        $relation = $this->relationMappings[$this->stripTrailingPunctuation($data, ':')] ?? '';
                         break;
                     case 'g':
                         $reference = $data;
