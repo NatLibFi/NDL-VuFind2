@@ -11,10 +11,9 @@
   ?>
   <?php if ($useLinkTitles):?>
     <?php foreach ($allLinks as $title => $links): ?>
-      <?php $hasRelation = isset($links[0]['relation']); ?>
       <tr class="recordLinks">
         <th><?=$this->transEsc($title);?></th>
-        <?php $class = $hasRelation ? 'contained-in' : ''; ?>
+        <?php $class = isset($links[0]['relation']) ? 'contained-in' : ''; ?>
         <td>
           <?php foreach ($links as $link): ?>
             <div class="subjectLine <?=$class?>">
