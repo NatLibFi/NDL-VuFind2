@@ -301,6 +301,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         );
         $obj->attachDatasourceSettings($dsConfig);
+
         $this->assertEquals($expected, $obj->getHostRecords());
     }
 
