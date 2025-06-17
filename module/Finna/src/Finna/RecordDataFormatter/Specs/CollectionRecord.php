@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) Villanova University 2025.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -22,11 +22,9 @@
  *
  * @category VuFind
  * @package  RecordDataFormatter
- * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Thomas Wagener <wagener@hebis.uni-frankfurt.de>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
- * Wiki
+ * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
  */
 
 namespace Finna\RecordDataFormatter\Specs;
@@ -36,8 +34,7 @@ namespace Finna\RecordDataFormatter\Specs;
  *
  * @category VuFind
  * @package  RecordDataFormatter
- * @author   Demian Katz <demian.katz@villanova.edu>
- * @author   Thomas Wagener <wagener@hebis.uni-frankfurt.de>
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:architecture:record_data_formatter
  * Wiki
@@ -45,24 +42,14 @@ namespace Finna\RecordDataFormatter\Specs;
 class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
 {
     /**
-     * Collection record specific order for fields. Entries are sorted into top of the list.
+     * Collection record specific order for fields.
      *
      * @var array
      */
     protected array $collectionFieldSortOrder = [
-      'Record Links' => [],
-      'child_records' => [],
+        'Record Links',
+        'child_records',
     ];
-
-    /**
-     * Initialize specs.
-     *
-     * @return void
-     */
-    protected function init(): void
-    {
-        parent::init();
-    }
 
     /**
      * Get default specifications for displaying data in core metadata.
@@ -72,10 +59,13 @@ class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
     public function getDefaultCoreSpecs(): array
     {
         $specs = parent::getDefaultCoreSpecs();
-        $intersected = array_intersect_key($specs, $this->collectionFieldSortOrder);
-        foreach ($intersected as $key => $data) {
-          unset($specs[$key]);
+        $result = [];
+        foreach ($this->collectionFieldSortOrder as $key) {
+            if ($value = $specs[$key] ?? false) {
+                $result[$key] = $value;
+                unset($specs[$key]);
+            }
         }
-        return array_merge($intersected, $specs);
+        return array_merge($result, $specs);
     }
 }

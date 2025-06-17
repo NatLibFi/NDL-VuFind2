@@ -1364,6 +1364,9 @@ trait SolrFinnaTrait
      */
     public function getChildRecordCount()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         // Shortcut: if this record is not part of a hierarchy, let's not find out the count.
         if (
             !$this->containerLinking
@@ -1380,8 +1383,24 @@ trait SolrFinnaTrait
         // Disable highlighting for efficiency; not needed here:
         $params = new \VuFindSearch\ParamBag(['hl' => ['false']]);
         $command = new SearchCommand($this->sourceIdentifier, $query, 0, 0, $params);
-        return $this->searchService
-            ->invoke($command)->getResult()->getTotal();
+        $result = $this->searchService->invoke($command)->getResult()->getTotal();
+        $this->cache[__FUNCTION__] = $result;
+        return $result;
+    }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        $useCollectionFields = $this->datasourceSettings[$this->getDataSource()]['record']['use_collection_fields']
+            ?? false;
+        if ($useCollectionFields && $this->getChildRecordCount()) {
+            return \Finna\RecordDataFormatter\Specs\CollectionRecord::class;
+        }
+        return parent::getRecordDataFormatterSpecClass();
     }
 
     /**

@@ -31,8 +31,6 @@
 
 namespace Finna\RecordDriver;
 
-use Finna\RecordDataFormatter\Specs\CollectionRecord;
-
 use function array_slice;
 use function count;
 use function in_array;
@@ -248,19 +246,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
         $this->cache[__FUNCTION__] = $result;
         return $result;
-    }
-
-    /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        if ($this->getChildRecordCount() && $this->datasourceSettings[$this->getSource()]->use_collection_field_specs ?? false) {
-            return CollectionRecord::class;
-        }
-        return parent::getRecordDataFormatterSpecClass();
     }
 
     /**
