@@ -1,0 +1,10 @@
+// Image viewer
+.record .recordcover-holder {
+  margin-bottom: 0;
+}
+.record-media .dropdown .dropdown-item {
+  width: max-content;
+}
+.record-media .image-link .dropdown-toggle, .record-media .toggle-image-information {
+  color: $action-link-color
+}

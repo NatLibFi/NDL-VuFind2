@@ -1,4 +1,4 @@
-/* global finna, VuFind, L, listId */
+  /* global finna, VuFind, L, listId, OpenSeadragon */
 var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print"></a>';
 
 var defaults = {
@@ -7,7 +7,7 @@ var defaults = {
   maxRows: 3,
   enableImageZoom: false,
   recordType: 'default-type',
-  triggerClick: 'modal', // [modal, open, none]
+  triggerClick: 'modal', // [modal, open, zoom, none]
   triggerState: 'images', // [images, model]
   leaflet: {
     offsetPercentage: 4
@@ -21,6 +21,9 @@ var translations = {
   previous: '',
   no_cover: ''
 };
+
+// Variable to hold the viewer instance
+var viewer = null;
 
 /**
  * Initializer function
@@ -65,6 +68,11 @@ function FinnaPaginator(element, images, settings) {
   _.openImageIndex = 0;
   _.imagePopup = $(imageElement).clone();
   _.init();
+
+  // Handle throttled resize
+  $(window).on('throttled-resize.finna', () => {
+    _.setMaxImages();
+  });
 }
 
 /**
@@ -85,6 +93,7 @@ FinnaPaginator.prototype.clearTracks = function clearTracks() {
  * Add an element to an active track
  * @param {HTMLElement} elem Element to append into a track
  */
+
 FinnaPaginator.prototype.appendTracks = function appendTracks(elem) {
   var _ = this;
   if (typeof _.popup.track !== 'undefined') {
@@ -131,6 +140,213 @@ FinnaPaginator.prototype.init = function init() {
   _.onDocumentLoad();
 };
 
+FinnaPaginator.prototype.initializeOpenSeadragonViewer = function initializeOpenSeadragonViewer(osdContainer) {
+  var _ = this;
+
+  // Ensure OpenSeadragon is defined
+  if (typeof OpenSeadragon === 'undefined') {
+    console.error('OpenSeadragon is not defined.');
+    return;
+  }
+
+  // Attempt to find the element with ID 'osd-image' inside the 'osdContainer' element
+  // If 'osdContainer' is null or undefined, 'osdElement' will be set to null
+  var osdElement = osdContainer ? osdContainer.find('#osd-image') : null;
+
+  // Check if the 'osdElement' was found and is not empty
+  if (!osdElement || osdElement.length === 0) {
+    console.error('OSD image element not found in the container.');
+    return;
+  }
+
+  // Retrieve the 'id' attribute of the found element and store it in 'osdImage'
+  var osdImage = osdElement.attr('id');
+
+  var osdSpinner = osdContainer.find('.image-loading-spinner');
+
+  var openSeadragonSettings = {
+    id: osdImage,
+    tileSources: {
+      type: "image",
+    },
+    // defaultZoomLevel: 1, // Initial zoom level
+    // minZoomLevel: 1, // Minimum zoom level
+    maxZoomPixelRatio: 20,
+    zoomPerClick: 1.5,
+    zoomPerScroll: 1.5,
+    // minPixelRatio: 1,
+    visibilityRatio: 1, // Ensures the image is always fully visible
+    constrainDuringPan: true, // Prevents excessive panning that could cause a zoom effect
+    showNavigator: false, // Hide navigator (mini-map)
+    showNavigationControl: false,
+    autoFade: false,
+    gestureSettingsMouse: {
+      clickToZoom: true,
+      scrollToZoom: false,
+      pinchToZoom: true,
+      dragToPan: true,
+    },
+    preserveViewport: true,
+  };
+
+  var imageUrl = _.images[_.openImageIndex]
+
+  imageUrl.src = imageUrl.urls.master
+  || imageUrl.urls.large
+  || imageUrl.urls.small
+  || imageUrl.attr('href');
+
+  osdSpinner.show();
+
+  // Update the tileSources URL in the settings
+  openSeadragonSettings.tileSources.url = imageUrl.src;
+
+  // Create a new viewer instance with the custom settings
+  osdElement.show();
+  viewer = OpenSeadragon(openSeadragonSettings);
+
+  // Ensure normal page scrolling inside OpenSeadragon
+  viewer.innerTracker.scrollHandler = null; // Disable OpenSeadragon's scroll handler
+  _.initializeOpenSeadragonButtons(osdContainer);
+
+
+  // Disable scroll-to-zoom on touch devices to prevent accidental zooming
+  if ('ontouchstart' in window) {
+    viewer.gestureSettingsMouse.scrollToZoom = false;
+  }
+
+  // Allow smooth page scrolling while enabling CTRL+Scroll for zooming
+  viewer.addHandler("canvas-scroll", function handleCanvasScroll(event) {
+    if (event.originalEvent.ctrlKey) {
+      event.preventDefault(); // Prevent default zoom/scroll behavior
+      viewer.viewport.zoomBy(event.scroll > 0 ? 1.2 : 0.8);
+      viewer.viewport.applyConstraints();
+    }
+  });
+
+  viewer.addHandler('open', function handleViewerOpen() {
+    osdElement.show();
+    osdContainer.addClass('open');
+  });
+
+  viewer.addHandler('destroy', function handleViewerDestroy() {
+    osdElement.hide();
+    osdContainer.removeClass('open');
+  });
+
+  viewer.addHandler("canvas-drag", function handleCanvasDrag() {
+    viewer.canvas.classList.add("panning");
+  });
+
+  viewer.addHandler("canvas-drag-end", function handleCanvasDragEnd() {
+    viewer.canvas.classList.remove("panning");
+  });
+
+  // Add a handler to execute when a tile is loaded in the OpenSeadragon viewer
+  viewer.addHandler("tile-loaded", function handleViewerOpen() {
+    osdElement.addClass('loaded');
+    osdSpinner.hide();
+
+    // Get the first image in the viewer's world
+    var image = viewer.world.getItemAt(0);
+
+    // Retrieve the dimensions of the image
+    var imageSize = image.getContentSize();
+
+    // Get the dimensions of the viewer's container
+    var containerWidth = viewer.container.clientWidth;
+    var containerHeight = viewer.container.clientHeight;
+
+    // Calculate the zoom level for a 1:1 pixel ratio between the image and the container
+    var pixelRatioZoom = imageSize.x / containerWidth;
+
+    // Check if the image height is smaller than the container height
+    if (imageSize.y < containerHeight) {
+      // Override the goHome function to use the 1:1 pixel ratio zoom level
+      viewer.viewport.goHome = function goHome(immediately) {
+        this.zoomTo(pixelRatioZoom, null, immediately);
+      };
+
+      // Set the zoom level to match the pixel ratio
+      viewer.viewport.zoomTo(pixelRatioZoom, null, true);
+
+      // Set the minimum zoom level to the pixel ratio zoom level
+      viewer.viewport.minZoomLevel = pixelRatioZoom;
+
+      viewer.viewport.zoomBy(1.5); // Zoom
+
+    } else {
+      // If the image height is larger than the container height, use the default home zoom level
+      var homeZoom = viewer.viewport.getHomeZoom();
+
+      // Set the minimum zoom level to the default home zoom level
+      viewer.viewport.minZoomLevel = homeZoom;
+      // Reset the viewport to the home zoom level without animation
+      viewer.viewport.goHome({
+        animationTime: 0 // Disable animation
+      });
+    }
+    viewer.viewport.zoomBy(1.5); // Zoom
+  });
+}
+
+
+/**
+ * Function to initialize openSeadragon custom buttons
+ */
+FinnaPaginator.prototype.initializeOpenSeadragonButtons = function initializeOpenSeadragonButtons(osdContainer) {
+  var currentRotation = 0; // Store current rotation
+
+  // Add custom controls to the viewer
+  var imageControls = osdContainer.find('.image-controls');
+  var fullscreenButton = osdContainer.find('.image-fullscreen');
+
+  // Custom button actions
+  imageControls.on("click", ".zoom-in", function handleZoomInButton() {
+    if (viewer) {
+      viewer.viewport.zoomBy(1.5); // Zoom in
+      viewer.viewport.applyConstraints();
+    }
+  });
+  imageControls.on("click", ".zoom-out", function handleZoomOutByutton() {
+    if (viewer) {
+      viewer.viewport.zoomBy(0.5); // Zoom out
+      viewer.viewport.applyConstraints()
+    }
+  });
+  imageControls.on("click", ".reset", function handleResetButton() {
+    if (viewer) {
+      viewer.viewport.goHome(); // Reset view
+    }
+  });
+  fullscreenButton.on("click", function handleFullscreenButton() {
+    if (viewer) {
+      viewer.setFullScreen(true); // Toggle fullscreen
+      viewer.addControl(imageControls, {
+        anchor: OpenSeadragon.ControlAnchor.TOP_LEFT
+      });
+    }
+    else {
+      viewer.setFullScreen(true); // Toggle fullscreen
+      viewer.addControl(imageControls, {
+        anchor: OpenSeadragon.ControlAnchor.TOP_LEFT
+      });
+    }
+  });
+  imageControls.on("click", ".rotate-left", function handleRotateLeftButton() {
+    if (viewer) {
+      currentRotation -= 90; // Rotate in steps of 90 degrees
+      viewer.viewport.setRotation(currentRotation);
+    }
+  });
+  imageControls.on("click", ".rotate-right", function handleRotateRightButton() {
+    if (viewer) {
+      currentRotation += 90 ; // Rotate in steps of 90 degrees
+      viewer.viewport.setRotation(currentRotation);
+    }
+  });
+};
+
 /**
  * Function to set references when state of paginator changes or is created
  */
@@ -143,7 +359,7 @@ FinnaPaginator.prototype.setReferences = function setReferences() {
   _.leftBrowseBtn = _.root.find('.next-image.left');
   _.rightBrowseBtn = _.root.find('.next-image.right');
   _.triggerImage = _.trigger.find('img');
-  _.pagerInfo = _.trigger.find('.paginator-info');
+  _.pagerInfo = _.root.find('.paginator-info');
   if (_.images.length < 2) {
     _.covers.hide();
     _.pagerInfo.hide();
@@ -497,14 +713,14 @@ FinnaPaginator.prototype.setButtons = function setButtons() {
 };
 
 /**
- * Function to set correct info for page info, for popup prepend text with image
+ * Function to set correct info for page info
  *
  */
 FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
   var _ = this;
   var imageIndex = +_.openImageIndex + 1;
   var advanced = translations.image + ' ' + imageIndex + ' / ' + _.images.length;
-  var plain = imageIndex + ' / ' + _.images.length;
+  var plain = '<span class="image-current">' +  imageIndex + '</span>' + '/' + '<span class="image-all">'  + _.images.length + '</span>';
 
   if (_.popup.pagerInfo) {
     _.popup.pagerInfo.find('.image-index').html(advanced);
@@ -539,6 +755,11 @@ FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imageP
   img.attr('alt', imagePopup.data('alt'));
   if (_.openImageIndex !== imagePopup.attr('index')) {
     img.css('opacity', 0.5);
+  }
+  if (viewer) {
+    viewer.destroy();
+    viewer = null;
+    img.show();
   }
   /**
    * Set image properties when image has loaded
@@ -836,8 +1057,13 @@ FinnaPaginator.prototype.setMaxImages = function setMaxImages() {
     _.settings.imagesPerPage = _.settings.imagesPerRow = 1;
     return;
   }
-  var images = Math.round((_.popup.track ? _.popup.track.width() : _.track.width()) / (_.popup.track ? 96 : 64));
-  _.settings.imagesPerPage = _.settings.imagesPerRow = images;
+
+var imageSize = 96;
+var trackWidth = _.popup.track ? _.popup.track.width() : _.track.width();
+var images = Math.round(trackWidth / imageSize);
+
+_.settings.imagesPerRow = _.settings.imagesPerPage = images;
+
 };
 
 /**
@@ -909,7 +1135,7 @@ FinnaPaginator.prototype.createPopupObject = function createPopupObject(popup) {
 };
 
 /**
- * Function to set image popup trigger click event and logic when popup is being opened
+ * Function to set image trigger click event
  * @param {jQuery} imagePopup Small image from image track
  */
 FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
@@ -928,8 +1154,36 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   _.setCurrentVisuals();
   var modal = $('#imagepopup-modal').find('.imagepopup-holder').clone();
 
+  if (this.settings.triggerClick === 'zoom') {
+
+    var image = _.images[_.openImageIndex]
+    console.log(image);
+
+    var zoomTrigger = $('<div class="image-trigger zoom"></div>');
+
+    _.trigger.children().appendTo(zoomTrigger);
+    _.trigger.replaceWith(zoomTrigger);
+    _.trigger = zoomTrigger;
+
+    var imageZoomTrigger = _.trigger.find(img);
+    var buttonZoomTrigger = _.trigger.find('.zoom-in');
+
+    imageZoomTrigger.on('click', function handleImageZoomTriggerClick() {
+      if (!viewer) {
+        _.initializeOpenSeadragonViewer(_.trigger);
+        img.hide();
+      }
+    });
+    buttonZoomTrigger.on('click', function handleButtonZoomTriggerClick() {
+      if (!viewer) {
+        _.initializeOpenSeadragonViewer(_.trigger);
+        img.hide();
+      }
+    });
+    return;
+  }
   if (_.settings.triggerClick === 'none') {
-    var noneTrigger = $('<span class="image-popup-trigger"></span>');
+    var noneTrigger = $('<div class="image-trigger none"></div>');
     _.trigger.children().appendTo(noneTrigger);
     _.trigger.replaceWith(noneTrigger);
     _.trigger = noneTrigger;

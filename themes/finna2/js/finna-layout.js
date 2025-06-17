@@ -948,9 +948,20 @@ finna.layout = (function finnaLayout() {
    * Initialize image paginators
    */
   function initImagePaginators() {
-    $('.image-popup-trigger.init').each(function initImages() {
-      $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
-    });
+    if (document.querySelector('.nav-record-media')) {
+      document.querySelectorAll('button[data-bs-toggle="pill"]')
+        .forEach(tabEl => {
+          tabEl.addEventListener('shown.bs.tab', event => {
+            $('.image-trigger.init').each(function initImages() {
+              $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
+            });
+          });
+        });
+    } else {
+      $('.image-trigger.init').each(function initImages() {
+        $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
+      });
+    }
   }
 
   /**

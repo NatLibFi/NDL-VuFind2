@@ -1326,6 +1326,57 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Check if record has media object
+     *
+     * @return bool
+     */
+    public function hasEmbeddedMedia(): bool
+    {
+        if ($this->driver->tryMethod('getModels')) {
+            return true;
+        }
+
+        $language = $this->getView()->layout()->userLang;
+
+        $imageTypes = ['small', 'medium', 'large', 'master'];
+        $images = $this->getAllImages($language, false, false);
+        $hasValidImages = false;
+        foreach ($images as $image) {
+            if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
+                $hasValidImages = true;
+                break;
+            }
+        }
+        if ($hasValidImages) {
+            return true;
+        }
+
+        $hasVideos = false;
+        $videos = array_filter(
+          $this->driver->tryMethod('getURLs'),
+          fn($url) => isset($url['embed']) && ($url['embed'] === 'video' || ($url['embed'] === 'iframe'))
+        );
+        $hasVideos = !empty($videos);
+
+        if ($hasVideos) {
+            return true;
+        }
+
+        $hasAudios = false;
+        $audios = array_filter(
+          $this->driver->tryMethod('getURLs'),
+          fn($url) => isset($url['embed']) && ($url['embed'] === 'audio')
+        );
+        $hasAudios = !empty($audios);
+
+        if ($hasAudios) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Check if large image layout should be used for the record
      *
      * @return bool

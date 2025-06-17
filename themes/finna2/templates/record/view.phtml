@@ -103,23 +103,12 @@
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
-  <?php if ($this->config()->inlineVideoEnabled()): ?>
-    <?php
-      $videoUrls = [];
-      foreach ($this->record($this->driver)->getLinkDetails() as $url) {
-        if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
-          $videoUrls[] = $url;
-        }
-      }
-    ?>
-    <?php if (!empty($videoUrls)): ?>
-      <div class="inline-video-container">
-        <div class="inline-video" id="inline-video"></div>
-        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
-      </div>
-    <?php endif; ?>
-  <?php endif; ?>
-  <div class="record-main <?= (!$fullWidthLayout && !$largeImageLayout) ? 'mainbody left' : ''?>">
+  <?php
+    $hasEmbeddedMedia = $this->record($this->driver)->hasEmbeddedMedia();
+  ?>
+  <?= ($hasEmbeddedMedia) ? $this->record($this->driver)->renderTemplate('record-media.phtml') : ''?>
+
+  <div class="record-main <?= (!$fullWidthLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">
     <?=$this->flashmessages()?>
@@ -220,11 +209,9 @@
     </div>
   </div>
   <?php ob_start(); ?>
-      <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>
-        <div class="organisation-menu">
-            <?=$this->render('record/record-organisation-menu.phtml') ?>
-        </div>
-      <?php endif; ?>
+      <div class="organisation-menu">
+          <?=$this->render('record/record-organisation-menu.phtml') ?>
+      </div>
       <?php foreach ($this->related()->getList($this->driver) as $current): ?>
           <?=$this->related()->render($current)?>
       <?php endforeach; ?>
@@ -235,7 +222,7 @@
       <?php endif; ?>
     <?php $sidebar = ob_get_contents(); ?>
     <?php ob_end_clean(); ?>
-    <?php if ($sidebar && (!$fullWidthLayout && !$largeImageLayout)):?>
+    <?php if ($sidebar && (!$fullWidthLayout)):?>
       <?php // This sidebar is used for larger screens when not in full width or
             // large image layout ?>
       <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
@@ -247,7 +234,7 @@
   <?php if ($sidebar && !$fullWidthLayout):?>
     <?php // This sidebar is used for smaller screens and always in large image
           // layout, but never in full width layout ?>
-    <div class="sidebar left large-image-sidebar<?=$largeImageLayout ? '' : ' visible-xs visible-sm'?>">
+    <div class="sidebar left visible-xs visible-sm'?>">
       <?=$sidebar ?>
     </div>
   <?php endif; ?>

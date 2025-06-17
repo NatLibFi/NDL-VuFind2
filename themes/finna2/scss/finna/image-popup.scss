@@ -605,11 +605,12 @@
 
 .recordcover-container {
     min-width: 60px;
-    .image-popup-trigger {
+    .zoom-active {
+        width: 100%
+    }
+    .image-trigger {
         display: flex;
-        width: 100%;
         justify-content: center;
-        aspect-ratio: 1/1;
         .paginator-info {
             position: absolute;
             right: 10px;
@@ -628,7 +629,6 @@
             align-items: center;
         }
         img {
-            object-fit: contain;
             padding:5px;
             max-height: 600px;
         }
@@ -658,7 +658,7 @@
         }
     }
 }
-.result .image-popup-trigger .paginator-info {
+.result .image-trigger .paginator-info {
     right: initial;
     left: 35px;
 }
@@ -668,7 +668,7 @@
 .recordcover-holder {
     position: relative;
 }
-.grid-image .image-popup-trigger.no-image .iconlabel {
+.grid-image .image-trigger.no-image .iconlabel {
     box-shadow: initial;
 }
 .recordcovers {

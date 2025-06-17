@@ -22,6 +22,7 @@
         </div>
         <div class="leaflet-map-image image-wrapper">
           <img src="<?=$this->imageSrc()->getDataPixel()?>" alt="">
+
           <div class="imagepopup-zoom-container">
             <button class="zoom-in zoom-button" title="<?= $this->transEsc('zoom_in'); ?>"><?=$this->icon('image-zoom-in') ?><span class="sr-only"><?= $this->transEsc('zoom_in'); ?></span></button>
             <button class="zoom-out zoom-button" title="<?= $this->transEsc('zoom_out'); ?>"><?=$this->icon('image-zoom-out') ?><span class="sr-only"><?= $this->transEsc('zoom_out'); ?></span></button>
