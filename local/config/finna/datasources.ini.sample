@@ -138,8 +138,8 @@ archiveRequestRequireFilingUnit = true
 ;hidden_record_fields[] = 'Archive'
 ;hidden_record_fields[] = 'Subject'
 
-; Use collection specific field order for records with child records
-;record[use_collection_fields] = 1
+; Use collection specific field order for records with child records. Default is false.
+;record[use_collection_fields] = true
 
 ; Used for linking records with linkingId. Checks if prefix in 003 should match with the linkable records
 ;prefixIn003 = true
