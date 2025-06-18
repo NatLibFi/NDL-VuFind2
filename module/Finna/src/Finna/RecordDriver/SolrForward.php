@@ -1546,4 +1546,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
 
         return $role;
     }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        return \Finna\RecordDataFormatter\Specs\ForwardRecord::class;
+    }
 }

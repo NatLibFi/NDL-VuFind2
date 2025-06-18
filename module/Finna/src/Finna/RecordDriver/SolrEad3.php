@@ -2552,4 +2552,14 @@ class SolrEad3 extends SolrEad
         }
         return $result;
     }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        return \Finna\RecordDataFormatter\Specs\Ead3Record::class;
+    }
 }

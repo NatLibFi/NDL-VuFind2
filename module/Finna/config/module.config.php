@@ -818,9 +818,27 @@ $config = [
             'recorddataformatter_specs' => [
                 'factories' => [
                     \Finna\RecordDataFormatter\Specs\DefaultRecord::class
-                        => \VuFind\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
                     \Finna\RecordDataFormatter\Specs\CollectionRecord::class
-                        => \VuFind\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\PrimoRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\AipaRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\Ead3Record::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\EadRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\LrmiRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\QdcRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\LidoRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\ForwardRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
+                    \Finna\RecordDataFormatter\Specs\MarcRecord::class
+                        => \Finna\RecordDataFormatter\Specs\DefaultRecordFactory::class,
                 ],
                 'aliases' => [
                     \VuFind\RecordDataFormatter\Specs\DefaultRecord::class

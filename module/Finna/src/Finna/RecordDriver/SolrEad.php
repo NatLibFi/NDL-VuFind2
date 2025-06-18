@@ -872,4 +872,14 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
         }
         return $result;
     }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        return \Finna\RecordDataFormatter\Specs\EadRecord::class;
+    }
 }

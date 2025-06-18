@@ -456,4 +456,14 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
 
         return $driver;
     }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        return \Finna\RecordDataFormatter\Specs\AipaRecord::class;
+    }
 }

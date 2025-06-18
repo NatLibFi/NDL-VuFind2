@@ -2786,4 +2786,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
         return array_filter(array_unique($linkPrefixes));
     }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        return \Finna\RecordDataFormatter\Specs\MarcRecord::class;
+    }
 }

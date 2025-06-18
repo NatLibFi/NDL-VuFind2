@@ -33,6 +33,9 @@ namespace Finna\RecordDataFormatter\Specs;
 
 use Finna\RecordDataFormatter\Specs\Utils\RecordFieldsTrait;
 use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
+use VuFind\View\Helper\Root\SchemaOrg;
+
+use function in_array;
 
 /**
  * DefaultRecord RecordDataFormatter specs.
@@ -234,6 +237,40 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     ];
 
     /**
+     * Record datasource for filtering hidden fields
+     *
+     * @var string
+     */
+    protected string $datasource = '';
+
+    /**
+     * Constructor
+     *
+     * @param array      $config           Config
+     * @param ?SchemaOrg $schemaOrgHelper  schema.org helper
+     * @param array      $datasourceConfig Datasource config
+     */
+    public function __construct(
+        array $config,
+        protected ?SchemaOrg $schemaOrgHelper = null,
+        protected array $datasourceConfig = []
+    ) {
+        parent::__construct($config);
+    }
+
+    /**
+     * Set datasource used to filter fields not to be displayed
+     *
+     * @param string $datasource Record datasource
+     *
+     * @return void
+     */
+    public function setDatasource(string $datasource): void
+    {
+        $this->datasource = $datasource;
+    }
+
+    /**
      * Initialize specs.
      *
      * @return void
@@ -310,7 +347,12 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 $options['pos'] = $pos;
                 $lines[$key] = [true, $dataMethod, $callback, $options];
             };
+
+        $hiddenFields = $this->datasourceConfig[$this->datasource]['hidden_record_fields'] ?? [];
         foreach ($this->recordFieldOrder as $key) {
+            if (in_array($key, $hiddenFields)) {
+                continue;
+            }
             if ($template = $this->singleTemplateLines[$key] ?? false) {
                 $setTemplateLine($key, $template);
                 continue;

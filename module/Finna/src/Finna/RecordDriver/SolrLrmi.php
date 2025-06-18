@@ -575,4 +575,14 @@ class SolrLrmi extends SolrQdc
         }
         return $hazards;
     }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        return \Finna\RecordDataFormatter\Specs\LrmiRecord::class;
+    }
 }
