@@ -30,6 +30,7 @@
 namespace Finna\RecordDataFormatter\Specs\Utils;
 
 use Finna\RecordDataFormatter\Specs\DefaultRecord;
+use VuFind\Controller\AbstractRecord;
 
 use function in_array;
 use function is_array;
@@ -1631,10 +1632,6 @@ trait RecordFieldsTrait
      * @var array
      */
     public array $multiTemplateLines = [
-        'Events' => [
-            'getEvents',
-            [DefaultRecord::class, 'getEvents'],
-        ],
         'Access Restrictions Extended' => [
             'getExtendedAccessRestrictions',
             [DefaultRecord::class, 'getAccessRestrictions'],
@@ -1642,6 +1639,10 @@ trait RecordFieldsTrait
         'Archive Relations' => [
             'getAuthorsWithRoleHeadings',
             [DefaultRecord::class, 'getRelations'],
+        ],
+        'Events' => [
+            'getEvents',
+            [DefaultRecord::class, 'getEvents'],
         ],
         'Music Compositions Extended' => [
             'getExtendedMusicCompositions',
@@ -1657,7 +1658,7 @@ trait RecordFieldsTrait
      *
      * @return string
      */
-    public static function archiveLabel($data, $driver)
+    public static function archiveLabel(array $data, AbstractRecord $driver): string
     {
         return $driver->tryMethod('getArchiveType') === 'collection' ? 'Parent Collection' : 'Parent Archive';
     }
@@ -1669,7 +1670,7 @@ trait RecordFieldsTrait
      *
      * @return string
      */
-    public static function otherLinksLabel($data)
+    public static function otherLinksLabel(array $data): string
     {
         $label = isset($data[0]) ? $data[0]['heading'] : '';
         return $label ?: 'Other Related Material';
@@ -1693,7 +1694,7 @@ trait RecordFieldsTrait
      *
      * @return array
      */
-    public static function getExtendedMusicCompositions($data, $options)
+    public static function getExtendedMusicCompositions(array $data, array $options): array
     {
 
         $final = [];
@@ -1724,7 +1725,7 @@ trait RecordFieldsTrait
      *
      * @return array
      */
-    public static function getRelations($data, $options)
+    public static function getRelations(array $data, array $options): array
     {
         $relationsByRole = [];
         foreach ($data as $relation) {
@@ -1762,7 +1763,7 @@ trait RecordFieldsTrait
      *
      * @return array
      */
-    public static function getAccessRestrictions($data, $options)
+    public static function getAccessRestrictions(array $data, array $options): array
     {
         $final = [];
         $pos = $options['pos'];
@@ -1802,7 +1803,7 @@ trait RecordFieldsTrait
      *
      * @return array
      */
-    public static function getEvents($data, $options)
+    public static function getEvents(array $data, array $options): array
     {
         $final = [];
         $pos = $options['pos'];
