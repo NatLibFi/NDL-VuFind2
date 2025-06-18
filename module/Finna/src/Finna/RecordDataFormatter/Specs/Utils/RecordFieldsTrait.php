@@ -164,9 +164,7 @@ trait RecordFieldsTrait
             [
                 'context' => [
                     'class' => 'recordFile',
-                    'levels' => [
-                        \Finna\RecordDriver\SolrEad::FILE_LEVELS,
-                    ],
+                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS,
                 ],
             ],
         ],
