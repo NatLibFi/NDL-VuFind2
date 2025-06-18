@@ -52,955 +52,21 @@ trait RecordFieldsTrait
      * @var array
      */
     public array $singleTemplateLines = [
-        'Genre' => [
-            'getGenres',
-            'data-genres.phtml',
+        'Access' => [
+            'getAccessRestrictions',
+            'data-accrest.phtml',
             [
                 'context' => [
-                    'class' => 'recordGenres',
+                    'class' => 'extendedAccess',
                 ],
             ],
         ],
-        'Age Limit' => [
-            'getAgeLimit',
-            'data-escapeHtml.phtml',
+        'Access Restrictions' => [
+            'getAccessRestrictions',
+            'data-accrest.phtml',
             [
                 'context' => [
-                    'class' => 'recordAgeLimit',
-                ],
-            ],
-        ],
-        'Original Work' => [
-            'getOriginalWork',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'recordOriginalWork',
-                ],
-            ],
-        ],
-        'Published in' => [
-            'getContainerTitle',
-            'data-containerTitle.phtml',
-            [
-                'context' => [
-                    'class' => 'record-container-link',
-                ],
-            ],
-        ],
-        'New Title' => [
-            'getNewerTitles',
-            'data-titles.phtml',
-            [
-                'context' => [
-                    'class' => 'recordNextTitles',
-                ],
-            ],
-        ],
-        'Previous Title' => [
-            'getPreviousTitles',
-            'data-titles.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPrevTitles',
-                ],
-            ],
-        ],
-        'Secondary Authors' => [
-            'getNonPresenterSecondaryAuthors',
-            'data-contributors.phtml',
-            [
-                'context' => [
-                    'class' => 'recordAuthors',
-                ],
-                'labelFunction' => [DefaultRecord::class, 'secondaryAuthorsLabel',],
-            ],
-        ],
-        'Actors' => [
-            'getPresenters',
-            'data-actors.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPresenters',
-                ],
-            ],
-        ],
-        'Item Description FWD' => [
-            'getGeneralNotes',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'recordDescription',
-                ],
-            ],
-        ],
-        'Description FWD' => [
-            'getDescription',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'recordDescription',
-                ],
-            ],
-        ],
-        'Identifiers' => [
-            'getOtherIdentifiers',
-            'data-lines-with-detail.phtml',
-            [
-                'context' => [
-                    'class' => 'recordIdentifiers',
-                ],
-            ],
-        ],
-        'Press Reviews' => [
-            'getPressReview',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-press-review',
-                ],
-            ],
-        ],
-        'Music' => [
-            'getMusicInfo',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-music',
-                ],
-            ],
-        ],
-        'Projected Publication Date' => [
-            'getProjectedPublicationDate',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'coreProjectedPublicationDate',
-                ],
-            ],
-        ],
-        'Dissertation Note' => [
-            'getDissertationNote',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'coreDissertationNote',
-                ],
-            ],
-        ],
-        'Other Links' => [
-            'getOtherLinks',
-            'data-getOtherLinks.phtml',
-            [
-                'labelFunction' => [DefaultRecord::class, 'otherLinksLabel',],
-                'context' => [
-                    'class' => 'recordOtherLink',
-                ],
-            ],
-        ],
-        'Presenters' => [
-            'getPresenters',
-            'data-presenters.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPresenters',
-                ],
-            ],
-        ],
-        'Presenters Marc' => [
-            'getSecondaryPresenters',
-            'data-presenters.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPresenters',
-                    'title' => 'Presenters',
-                ],
-            ],
-        ],
-        'Other Titles' => [
-            'getAlternativeTitles',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordAltTitles',
-                ],
-            ],
-        ],
-        'Format' => [
-            'getFormats',
-            'format-list.phtml',
-            [
-                'context' => [
-                    'class' => 'recordFormat',
-                ],
-            ],
-        ],
-        'Parent Archive' => [
-            'getParentArchives',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ],
-            ],
-        ],
-        'Parent Collection' => [
-            'getParentCollections',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ],
-            ],
-        ],
-        'Parent Subcollection' => [
-            'getParentSubcollections',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ],
-            ],
-        ],
-        'Parent Series' => [
-            'getParentSeries',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ],
-            ],
-        ],
-        'Parent Work' => [
-            'getParentWorks',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ],
-            ],
-        ],
-        'Parent Unclassified Entity' => [
-            'getParentUnclassifiedEntities',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ],
-            ],
-        ],
-        'Archive Origination' => [
-            'getOriginationExtended',
-            'data-origination.phtml',
-            [
-                'context' => [
-                    'class' => 'record-origination',
-                ],
-            ],
-        ],
-        'Archive' => [
-            'getParentArchives',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHierarchyLinks',
-                ],
-                'labelFunction' => [DefaultRecord::class, 'archiveLabel',],
-            ],
-        ],
-        'Archive Series' => [
-            'getParentSeries',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSeries',
-                ],
-            ],
-        ],
-        'Archive File' => [
-            'getParentFiles',
-            'data-hierarchyLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordFile',
-                    'levels' => \Finna\RecordDriver\SolrEad::FILE_LEVELS,
-                ],
-            ],
-        ],
-        'Physical Medium' => [
-            'getPhysicalMediums',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'physical-medium',
-                ],
-            ],
-        ],
-        'Physical Description' => [
-            'getPhysicalDescriptions',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'physicalDescriptions',
-                ],
-            ],
-        ],
-        'Extent' => [
-            'getPhysicalDescriptions',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-extent',
-                ],
-            ],
-        ],
-        'Language' => [
-            'getLanguages',
-            'data-transEscLangcode.phtml',
-            [
-                'context' => [
-                    'class' => 'recordLanguage',
-                ],
-            ],
-        ],
-        'original_work_language' => [
-            'getOriginalLanguages',
-            'data-transEscLangcode.phtml',
-            [
-                'context' => [
-                    'class' => 'originalLanguage',
-                ],
-            ],
-        ],
-        'Language of Abstract' => [
-            'getAbstractLanguage',
-            'data-transEscLangcode.phtml',
-            [
-                'context' => [
-                    'class' => 'abstract-language',
-                ],
-            ],
-        ],
-        'Item Notes' => [
-            'getGeneralNotes',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordDescription',
-                ],
-            ],
-        ],
-        'Local Note' => [
-            'getLocalNotes',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-local-note',
-                ],
-            ],
-        ],
-        'Organisation' => [
-            'getInstitutions',
-            'data-organisation.phtml',
-            [
-                'context' => [
-                    'class' => 'recordInstitution',
-                ],
-            ],
-        ],
-        'Collection' => [
-            'getCollections',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordCollection',
-                ],
-            ],
-        ],
-        'Content Description' => [
-            'getContentDescription',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordContentDescription',
-                ],
-            ],
-        ],
-        'Item History' => [
-            'getItemHistory',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordHistory',
-                ],
-            ],
-        ],
-        'Inventory ID' => [
-            'getIdentifier',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordIdentifier',
-                ],
-            ],
-        ],
-        'Other ID' => [
-            'getLocalIdentifiers',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordIdentifiers',
-                ],
-            ],
-        ],
-        'Measurements' => [
-            'getMeasurements',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordMeasurements',
-                ],
-            ],
-        ],
-        'Inscriptions' => [
-            'getInscriptions',
-            'data-inscriptions.phtml',
-            [
-                'context' => [
-                    'class' => 'recordInscriptions',
-                ],
-            ],
-        ],
-        'Other Classification' => [
-            'getFormatClassifications',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordClassifications',
-                ],
-            ],
-        ],
-        'Unit ID' => [
-            'getUnitID',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordReferenceCode',
-                ],
-            ],
-        ],
-        'Unit IDs' => [
-            'getUnitIds',
-            'data-lines-with-detail.phtml',
-        ],
-        'Authors' => [
-            'getNonPresenterAuthors',
-            'data-authors.phtml',
-            [
-                'context' => [
-                    'class' => 'recordAuthors',
-                ],
-            ],
-        ],
-        'Publisher' => [
-            'getPublicationDetails',
-            'data-publicationDetails.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPublications',
-                ],
-            ],
-        ],
-        'Published' => [
-            'getPublicationDetails',
-            'data-publicationDetails.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPublications',
-                ],
-            ],
-        ],
-        'Edition' => [
-            'getEdition',
-            'data-edition.phtml',
-            [
-                'context' => [
-                    'class' => 'recordEdition',
-                ],
-            ],
-        ],
-        'Series' => [
-            'getSeries',
-            'data-series.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSeries',
-                ],
-            ],
-        ],
-        'Country of Producing Entity' => [
-            'getCountry',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-country',
-                ],
-            ],
-        ],
-        'Classification' => [
-            'getClassifications',
-            'data-classification.phtml',
-            [
-                'context' => [
-                    'class' => 'recordClassifications',
-                ],
-            ],
-        ],
-        'Dewey Classification' => [
-            'getDeweyClassifications',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordClassifications',
-                ],
-            ],
-        ],
-        'lido_editions' => [
-            'getEditions',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordDisplayEdition',
-                ],
-            ],
-        ],
-        'Subject Detail' => [
-            'getSubjectDetails',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSubjects',
-                ],
-            ],
-        ],
-        'Subject Place' => [
-            'getSubjectPlacesExtended',
-            'data-allSubjectHeadingsExtended.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSubjects',
-                    'headingType' => 'place',
-                ],
-            ],
-        ],
-        'Subject Date' => [
-            'getSubjectDates',
-            'data-subjectDate.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSubjects',
-                ],
-            ],
-        ],
-        'Subject Actor' => [
-            'getSubjectActors',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSubjects',
-                ],
-            ],
-        ],
-        'Subjects' => [
-            'getAllSubjectHeadings',
-            'data-allSubjectHeadings.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSubjects',
-                ],
-            ],
-        ],
-        'SubjectsWithoutPlaces' => [
-            'getAllSubjectHeadingsWithoutPlacesExtended',
-            'data-allSubjectHeadingsExtended.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSubjects',
-                    'title' => 'Subjects',
-                ],
-            ],
-        ],
-        'subjects_extended' => [
-            'getAllSubjectHeadingsExtended',
-            'data-allSubjectHeadingsExtended.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSubjects',
-                ],
-            ],
-        ],
-        'Methodology' => [
-            'getMethodology',
-            'data-methodology-links.phtml',
-            [
-                'context' => [
-                    'class' => 'recordMethodology',
-                ],
-            ],
-        ],
-        'Publications' => [
-            'getRelatedPublications',
-            'data-relatedPublications.phtml',
-            [
-                'context' => [
-                    'class' => 'record-related-publications',
-                ],
-            ],
-        ],
-        'Other Classifications' => [
-            'getOtherClassifications',
-            'data-keywords.phtml',
-            [
-                'context' => [
-                    'class' => 'recordClassifications',
-                    'title' => 'Classification',
-                ],
-            ],
-        ],
-        'Introduction' => [
-            'getIntroduction',
-            'data-markdown.phtml',
-            [
-                'context' => [
-                    'class' => 'record-introduction',
-                ],
-            ],
-        ],
-        'Manufacturer' => [
-            'getManufacturer',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'recordManufacturer',
-                ],
-            ],
-        ],
-        'Production' => [
-            'getProducers',
-            'data-producers.phtml',
-            [
-                'context' => [
-                    'class' => 'record-production',
-                ],
-            ],
-        ],
-        'Production Costs' => [
-            'getProductionCost',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-production-cost',
-                ],
-            ],
-        ],
-        'Funding' => [
-            'getFunders',
-            'data-funding.phtml',
-            [
-                'context' => [
-                    'class' => 'record-funders',
-                ],
-            ],
-        ],
-        'Distribution' => [
-            'getDistributors',
-            'data-distribution.phtml',
-            [
-                'context' => [
-                    'class' => 'record-distributors',
-                ],
-            ],
-        ],
-        'Premiere Night' => [
-            'getPremiereTime',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-premiere-night',
-                ],
-            ],
-        ],
-        'Premiere Theaters' => [
-            'getPremiereTheaters',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-premiere-theaters',
-                ],
-            ],
-        ],
-        'Broadcasting Dates' => [
-            'getBroadcastingInfo',
-            'data-broadcasting-dates.phtml',
-            [
-                'context' => [
-                    'class' => 'record-broadcasting-info',
-                ],
-            ],
-        ],
-        'Number of Viewers' => [
-            'getAmountOfViewers',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-number-of-viewers',
-                ],
-            ],
-        ],
-        'Film Festivals' => [
-            'getFestivalInfo',
-            'data-festival-info.phtml',
-            [
-                'context' => [
-                    'class' => 'record-festival-info',
-                ],
-            ],
-        ],
-        'Foreign Distribution' => [
-            'getForeignDistribution',
-            'data-foreign-distribution.phtml',
-            [
-                'context' => [
-                    'class' => 'record-foreign-distribution',
-                ],
-            ],
-        ],
-        'Film Copies' => [
-            'getNumberOfCopies',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-film-copies',
-                ],
-            ],
-        ],
-        'Other Screenings' => [
-            'getOtherScreenings',
-            'data-other-screenings.phtml',
-            [
-                'context' => [
-                    'class' => 'record-other-screenings',
-                ],
-            ],
-        ],
-        'Movie Thanks' => [
-            'getMovieThanks',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-thanks',
-                    'title' => 'movie_thanks',
-                ],
-            ],
-        ],
-        'Exterior Images' => [
-            'getExteriors',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-exteriors',
-                ],
-            ],
-        ],
-        'Interior Images' => [
-            'getInteriors',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-interiors',
-                ],
-            ],
-        ],
-        'Studios' => [
-            'getStudios',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-studios',
-                ],
-            ],
-        ],
-        'Filming Location Notes' => [
-            'getLocationNotes',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-location-notes',
-                ],
-            ],
-        ],
-        'Filming Date' => [
-            'getFilmingDate',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-filming-date',
-                ],
-            ],
-        ],
-        'Archive Films' => [
-            'getArchiveFilms',
-            'data-forwardFields.phtml',
-            [
-                'context' => [
-                    'class' => 'record-archive-films',
-                ],
-            ],
-        ],
-        'Additional Information' => [
-            'getTitleStatement',
-            'data-addInfo.phtml',
-            [
-                'context' => [
-                    'class' => 'recordTitleStatement',
-                ],
-            ],
-        ],
-        'Additional Information Extended' => [
-            'getTitleStatementsExtended',
-            'data-addInfoExtended.phtml',
-            [
-                'context' => [
-                    'class' => 'recordTitleStatement',
-                    'title' => 'AdditionalInformation',
-                ],
-            ],
-        ],
-        'child_records' => [
-            'getChildRecordCount',
-            'data-childRecords.phtml',
-            [
-                'allowZero' => '',
-                'context' => [
-                    'class' => 'recordComponentParts',
-                ],
-            ],
-        ],
-        'Record Links' => [
-            'getAllRecordLinks',
-            'data-allRecordLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'recordLinks',
-                    'title' => '',
-                ],
-            ],
-        ],
-        'Related Materials' => [
-            'getAllRecordLinks',
-            'data-allRecordLinks.phtml',
-            [
-                'context' => [
-                    'class' => 'relatedMaterials',
-                ],
-            ],
-        ],
-        'Online Access' => [
-            true,
-            'data-onlineAccess.phtml',
-            [
-                'context' => [
-                    'class' => 'webResource',
-                ],
-            ],
-        ],
-        'Source Collection' => [
-            'getSource',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordSource',
-                ],
-            ],
-        ],
-        'Publish date' => [
-            'getDateSpan',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedDateSpan',
-                ],
-            ],
-        ],
-        'Keywords' => [
-            'getKeywords',
-            'data-keywords.phtml',
-            [
-                'context' => [
-                    'class' => 'record-keywords',
-                ],
-            ],
-        ],
-        'Education Programs' => [
-            'getEducationPrograms',
-            'data-education.phtml',
-            [
-                'context' => [
-                    'class' => 'record-education-programs',
-                ],
-            ],
-        ],
-        'Educational Role' => [
-            'getEducationalAudiences',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-educational-audience',
-                ],
-            ],
-        ],
-        'Educational Use' => [
-            'getEducationalUse',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-educational-uses',
-                ],
-            ],
-        ],
-        'Educational Level' => [
-            'getEducationalLevels',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-educational-levels',
-                ],
-            ],
-        ],
-        'Educational Subject' => [
-            'getEducationalSubjects',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-educational-subjects',
-                ],
-            ],
-        ],
-        'Learning Resource Type' => [
-            'getEducationalMaterialType',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-educational-material-type',
-                ],
-            ],
-        ],
-        'Objective and Content' => [
-            'getEducationalAim',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-educational-aim',
+                    'class' => 'extendedAccess',
                 ],
             ],
         ],
@@ -1022,483 +88,111 @@ trait RecordFieldsTrait
                 ],
             ],
         ],
-        'Publication Frequency' => [
-            'getPublicationFrequency',
+        'Actors' => [
+            'getPresenters',
+            'data-actors.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPresenters',
+                ],
+            ],
+        ],
+        'Additional Information' => [
+            'getTitleStatement',
+            'data-addInfo.phtml',
+            [
+                'context' => [
+                    'class' => 'recordTitleStatement',
+                ],
+            ],
+        ],
+        'Additional Information AIPA' => [
+            'getAdditionalInformation',
+            'data-additionalInformation.phtml',
+            [
+                'context' => [
+                    'class' => 'recordAdditionalInformation',
+                    'title' => 'AdditionalInformation',
+                ],
+            ],
+        ],
+        'Additional Information Extended' => [
+            'getTitleStatementsExtended',
+            'data-addInfoExtended.phtml',
+            [
+                'context' => [
+                    'class' => 'recordTitleStatement',
+                    'title' => 'AdditionalInformation',
+                ],
+            ],
+        ],
+        'Age Limit' => [
+            'getAgeLimit',
             'data-escapeHtml.phtml',
             [
                 'context' => [
-                    'class' => 'extendedFrequency',
+                    'class' => 'recordAgeLimit',
                 ],
             ],
         ],
-        'Playing Time' => [
-            'getPlayingTimes',
+        'Appraisal' => [
+            'getAppraisal',
             'data-escapeHtml.phtml',
             [
                 'context' => [
-                    'class' => 'extendedPlayTime',
+                    'class' => 'recordAppraisal',
                 ],
             ],
         ],
-        'Color' => [
-            'getColor',
-            'data-color.phtml',
+        'Archive' => [
+            'getParentArchives',
+            'data-hierarchyLinks.phtml',
             [
                 'context' => [
-                    'class' => 'record-color',
+                    'class' => 'recordHierarchyLinks',
+                ],
+                'labelFunction' => [
+                    DefaultRecord::class,
+                    'archiveLabel',
                 ],
             ],
         ],
-        'Sound' => [
-            'getSound',
-            'data-sound.phtml',
+        'Archive File' => [
+            'getParentFiles',
+            'data-hierarchyLinks.phtml',
             [
                 'context' => [
-                    'class' => 'record-sound',
+                    'class' => 'recordFile',
+                    'levels' => [
+                        \Finna\RecordDriver\SolrEad::FILE_LEVELS,
+                    ],
                 ],
             ],
         ],
-        'Aspect Ratio' => [
-            'getAspectRatio',
-            'data-escapeHtml',
-            [
-                'context' => [
-                    'class' => 'record-aspect-ratio',
-                ],
-            ],
-        ],
-        'Hardware' => [
-            'getHardwareRequirements',
-            'data-hardwareRequirements.phtml',
-            [
-                'context' => [
-                    'class' => 'record-hardware',
-                ],
-            ],
-        ],
-        'System Format' => [
-            'getSystemDetails',
-            'data-systemFormat.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedSystem',
-                ],
-            ],
-        ],
-        'Audience' => [
-            'getTargetAudienceNotes',
-            'data-escapeHtml',
-            [
-                'context' => [
-                    'class' => 'extendedAudience',
-                ],
-            ],
-        ],
-        'Awards' => [
-            'getAwards',
+        'Archive Films' => [
+            'getArchiveFilms',
             'data-forwardFields.phtml',
             [
                 'context' => [
-                    'class' => 'extendedAwards',
+                    'class' => 'record-archive-films',
                 ],
             ],
         ],
-        'Production Credits' => [
-            'getProductionCredits',
-            'data-escapeHtml',
+        'Archive Origination' => [
+            'getOriginationExtended',
+            'data-origination.phtml',
             [
                 'context' => [
-                    'class' => 'extendedCredits',
+                    'class' => 'record-origination',
                 ],
             ],
         ],
-        'Bibliography' => [
-            'getBibliographyNotes',
-            'data-transEsc.phtml',
+        'Archive Series' => [
+            'getParentSeries',
+            'data-hierarchyLinks.phtml',
             [
                 'context' => [
-                    'class' => 'extendedBibliography',
-                ],
-            ],
-        ],
-        'ISBN' => [
-            'getISBNs',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedISBNs',
-                ],
-            ],
-        ],
-        'ISSN' => [
-            'getISSNs',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedISSNs',
-                ],
-            ],
-        ],
-        'DOI' => [
-            'getCleanDOI',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'extended-doi',
-                ],
-            ],
-        ],
-        'Related Items' => [
-            'getRelationshipNotes',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedRelatedItems',
-                ],
-            ],
-        ],
-        'Access Restrictions' => [
-            'getAccessRestrictions',
-            'data-accrest.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedAccess',
-                ],
-            ],
-        ],
-        'Access' => [
-            'getAccessRestrictions',
-            'data-accrest.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedAccess',
-                ],
-            ],
-        ],
-        'Terms of Use' => [
-            'getTermsOfUse',
-            'data-termsOfUse.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedTermsOfUse',
-                ],
-            ],
-        ],
-        'Security Classification' => [
-            'getSecurityClassification',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'security-classification',
-                ],
-            ],
-        ],
-        'Finding Aid' => [
-            'getFindingAids',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedFindingAids',
-                ],
-            ],
-        ],
-        'Finding Aid Extended' => [
-            'getFindingAidsExtended',
-            'data-findingAids.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedFindingAids',
-                    'title' => 'FindingAid',
-                ],
-            ],
-        ],
-        'Publication_Place' => [
-            'getHierarchicalPlaceNames',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'publicationPlace',
-                ],
-            ],
-        ],
-        'Author Notes' => [
-            true,
-            'data-authorNotes.phtml',
-            [
-                'context' => [
-                    'class' => 'extendedAuthorNotes',
-                ],
-            ],
-        ],
-        'Location' => [
-            'getPhysicalLocations',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPhysicalLocation',
-                ],
-            ],
-        ],
-        'Location LIDO' => [
-            'getPhysicalLocationsExtended',
-            'data-locations.phtml',
-            [
-                'context' => [
-                    'class' => 'recordPhysicalLocation',
-                    'title' => 'Location',
-                ],
-            ],
-        ],
-        'Date' => [
-            'getUnitDate',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordDaterange',
-                ],
-            ],
-        ],
-        'Dates' => [
-            'getUnitDates',
-            'data-lines-with-detail.phtml',
-            [
-                'context' => [
-                    'title' => 'Date',
-                ],
-            ],
-        ],
-        'Material Condition' => [
-            'getMaterialCondition',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'materialCondition',
-                ],
-            ],
-        ],
-        'Contained In' => [
-            'getAllRecordLinks',
-            'data-containedIn.phtml',
-            [
-                'context' => [
-                    'class' => 'isPartOf',
-                ],
-            ],
-        ],
-        'Source of Acquisition' => [
-            'getAcquisitionSource',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordAcquisition',
-                ],
-            ],
-        ],
-        'Medium of Performance' => [
-            'getMusicCompositions',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-composition',
-                ],
-            ],
-        ],
-        'Notated Music Format' => [
-            'getNotatedMusicFormat',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordNoteFormat',
-                ],
-            ],
-        ],
-        'Event Notice' => [
-            'getEventNotice',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordEventNotice',
-                ],
-            ],
-        ],
-        'Capture Information' => [
-            'getCaptureInformation',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-capture-information',
-                ],
-            ],
-        ],
-        'First Lyrics' => [
-            'getFirstLyrics',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordFirstLyrics',
-                ],
-            ],
-        ],
-        'Trade Availability Note' => [
-            'getTradeAvailabilityNote',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordTradeNote',
-                ],
-            ],
-        ],
-        'Inspection Details' => [
-            'getInspectionDetails',
-            'data-inspection.phtml',
-            [
-                'context' => [
-                    'class' => 'recordInspection',
-                ],
-            ],
-        ],
-        'Scale' => [
-            'getMapScale',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-map-scale',
-                ],
-            ],
-        ],
-        'Available Online' => [
-            'getWebResources',
-            'data-detailed-urls.phtml',
-            [
-                'context' => [
-                    'class' => 'record-available-online',
-                    'truncateUrl' => true,
-                ],
-            ],
-        ],
-        'Notes' => [
-            'getNotes',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-notes',
-                ],
-            ],
-        ],
-        'Original Version Notes' => [
-            'getOriginalVersionNotes',
-            'data-originalVersionNotes.phtml',
-            [
-                'context' => [
-                    'class' => 'record-original-version-notes',
-                ],
-            ],
-        ],
-        'Place of Origin' => [
-            'getAssociatedPlace',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-associated-place',
-                ],
-            ],
-        ],
-        'Related Places' => [
-            'getRelatedPlacesExtended',
-            'data-lines-with-detail.phtml',
-            [
-                'context' => [
-                    'class' => 'record-related-place',
-                ],
-            ],
-        ],
-        'Time Period of Creation' => [
-            'getTimePeriodOfCreation',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-time-period-creation',
-                ],
-            ],
-        ],
-        'Uniform Title' => [
-            'getCollectiveUniformTitle',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-collective-uniform-title',
-                ],
-            ],
-        ],
-        'Standard Codes' => [
-            'getStandardCodes',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-standard-codes',
-                ],
-            ],
-        ],
-        'Standard Report Number' => [
-            'getStandardReportNumbers',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-standard-report-number',
-                ],
-            ],
-        ],
-        'Study Program Information Notes' => [
-            'getStudyProgramNotes',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-study-program-notes',
-                ],
-            ],
-        ],
-        'Publisher or Distributor Number' => [
-            'getPubDistNumber',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-pubdist-number',
-                ],
-            ],
-        ],
-        'Time Period' => [
-            'getTimePeriod',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-time-period',
-                ],
-            ],
-        ],
-        'Copyright Notes' => [
-            'getCopyrightNotes',
-            'data-transEsc.phtml',
-            [
-                'context' => [
-                    'class' => 'record-copyright-notes',
-                ],
-            ],
-        ],
-        'Language Notes' => [
-            'getLanguageNotes',
-            'data-languageNotes.phtml',
-            [
-                'context' => [
-                    'class' => 'record-language-notes',
-                ],
-            ],
-        ],
-        'Uncontrolled Title' => [
-            'getUncontrolledTitle',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'record-uncontrolled-title',
+                    'class' => 'recordSeries',
                 ],
             ],
         ],
@@ -1521,39 +215,21 @@ trait RecordFieldsTrait
                 ],
             ],
         ],
-        'Appraisal' => [
-            'getAppraisal',
-            'data-escapeHtml.phtml',
+        'Aspect Ratio' => [
+            'getAspectRatio',
+            'data-escapeHtml',
             [
                 'context' => [
-                    'class' => 'recordAppraisal',
+                    'class' => 'record-aspect-ratio',
                 ],
             ],
         ],
-        'Container Information' => [
-            'getContainerInformation',
-            'data-escapeHtml.phtml',
+        'Audience' => [
+            'getTargetAudienceNotes',
+            'data-escapeHtml',
             [
                 'context' => [
-                    'class' => 'recordContainerInformation',
-                ],
-            ],
-        ],
-        'Material Arrangement' => [
-            'getMaterialArrangement',
-            'data-escapeHtml.phtml',
-            [
-                'context' => [
-                    'class' => 'recordMaterialArrangement',
-                ],
-            ],
-        ],
-        'Other Related Material' => [
-            'getOtherRelatedMaterial',
-            'data-otherRelatedMaterial.phtml',
-            [
-                'context' => [
-                    'class' => 'other-related-material',
+                    'class' => 'extendedAudience',
                 ],
             ],
         ],
@@ -1566,12 +242,77 @@ trait RecordFieldsTrait
                 ],
             ],
         ],
-        'Creator Characteristics' => [
-            'getCreatorCharacteristics',
+        'Author Notes' => [
+            true,
+            'data-authorNotes.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedAuthorNotes',
+                ],
+            ],
+        ],
+        'Authors' => [
+            'getNonPresenterAuthors',
+            'data-authors.phtml',
+            [
+                'context' => [
+                    'class' => 'recordAuthors',
+                ],
+            ],
+        ],
+        'Available Online' => [
+            'getWebResources',
+            'data-detailed-urls.phtml',
+            [
+                'context' => [
+                    'class' => 'record-available-online',
+                    'truncateUrl' => true,
+                ],
+            ],
+        ],
+        'Awards' => [
+            'getAwards',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedAwards',
+                ],
+            ],
+        ],
+        'Bibliography' => [
+            'getBibliographyNotes',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedBibliography',
+                ],
+            ],
+        ],
+        'Broadcasting Dates' => [
+            'getBroadcastingInfo',
+            'data-broadcasting-dates.phtml',
+            [
+                'context' => [
+                    'class' => 'record-broadcasting-info',
+                ],
+            ],
+        ],
+        'Capture Information' => [
+            'getCaptureInformation',
             'data-escapeHtml.phtml',
             [
                 'context' => [
-                    'class' => 'creator-characteristics',
+                    'class' => 'record-capture-information',
+                ],
+            ],
+        ],
+        'child_records' => [
+            'getChildRecordCount',
+            'data-childRecords.phtml',
+            [
+                'allowZero' => '',
+                'context' => [
+                    'class' => 'recordComponentParts',
                 ],
             ],
         ],
@@ -1584,12 +325,930 @@ trait RecordFieldsTrait
                 ],
             ],
         ],
-        'Related Events' => [
-            'getRelatedEventsExtended',
-            'data-allSubjectHeadingsExtended.phtml',
+        'Classification' => [
+            'getClassifications',
+            'data-classification.phtml',
             [
                 'context' => [
-                    'class' => 'recordRelatedEvents',
+                    'class' => 'recordClassifications',
+                ],
+            ],
+        ],
+        'Collection' => [
+            'getCollections',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordCollection',
+                ],
+            ],
+        ],
+        'Color' => [
+            'getColor',
+            'data-color.phtml',
+            [
+                'context' => [
+                    'class' => 'record-color',
+                ],
+            ],
+        ],
+        'Contained In' => [
+            'getAllRecordLinks',
+            'data-containedIn.phtml',
+            [
+                'context' => [
+                    'class' => 'isPartOf',
+                ],
+            ],
+        ],
+        'Container Information' => [
+            'getContainerInformation',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordContainerInformation',
+                ],
+            ],
+        ],
+        'Content Description' => [
+            'getContentDescription',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordContentDescription',
+                ],
+            ],
+        ],
+        'Copyright Notes' => [
+            'getCopyrightNotes',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-copyright-notes',
+                ],
+            ],
+        ],
+        'Country of Producing Entity' => [
+            'getCountry',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-country',
+                ],
+            ],
+        ],
+        'Creator Characteristics' => [
+            'getCreatorCharacteristics',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'creator-characteristics',
+                ],
+            ],
+        ],
+        'Date' => [
+            'getUnitDate',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordDaterange',
+                ],
+            ],
+        ],
+        'Dates' => [
+            'getUnitDates',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => [
+                    'title' => 'Date',
+                ],
+            ],
+        ],
+        'Description FWD' => [
+            'getDescription',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'recordDescription',
+                ],
+            ],
+        ],
+        'Dewey Classification' => [
+            'getDeweyClassifications',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordClassifications',
+                ],
+            ],
+        ],
+        'Dissertation Note' => [
+            'getDissertationNote',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'coreDissertationNote',
+                ],
+            ],
+        ],
+        'Distribution' => [
+            'getDistributors',
+            'data-distribution.phtml',
+            [
+                'context' => [
+                    'class' => 'record-distributors',
+                ],
+            ],
+        ],
+        'DOI' => [
+            'getCleanDOI',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'extended-doi',
+                ],
+            ],
+        ],
+        'Edition' => [
+            'getEdition',
+            'data-edition.phtml',
+            [
+                'context' => [
+                    'class' => 'recordEdition',
+                ],
+            ],
+        ],
+        'Education Programs' => [
+            'getEducationPrograms',
+            'data-education.phtml',
+            [
+                'context' => [
+                    'class' => 'record-education-programs',
+                ],
+            ],
+        ],
+        'Educational Level' => [
+            'getEducationalLevels',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-educational-levels',
+                ],
+            ],
+        ],
+        'Educational Role' => [
+            'getEducationalAudiences',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-educational-audience',
+                ],
+            ],
+        ],
+        'Educational Subject' => [
+            'getEducationalSubjects',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-educational-subjects',
+                ],
+            ],
+        ],
+        'Educational Use' => [
+            'getEducationalUse',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-educational-uses',
+                ],
+            ],
+        ],
+        'Event Notice' => [
+            'getEventNotice',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordEventNotice',
+                ],
+            ],
+        ],
+        'Extent' => [
+            'getPhysicalDescriptions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-extent',
+                ],
+            ],
+        ],
+        'Exterior Images' => [
+            'getExteriors',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'record-exteriors',
+                ],
+            ],
+        ],
+        'Film Copies' => [
+            'getNumberOfCopies',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-film-copies',
+                ],
+            ],
+        ],
+        'Film Festivals' => [
+            'getFestivalInfo',
+            'data-festival-info.phtml',
+            [
+                'context' => [
+                    'class' => 'record-festival-info',
+                ],
+            ],
+        ],
+        'Filming Date' => [
+            'getFilmingDate',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'record-filming-date',
+                ],
+            ],
+        ],
+        'Filming Location Notes' => [
+            'getLocationNotes',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'record-location-notes',
+                ],
+            ],
+        ],
+        'Finding Aid' => [
+            'getFindingAids',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedFindingAids',
+                ],
+            ],
+        ],
+        'Finding Aid Extended' => [
+            'getFindingAidsExtended',
+            'data-findingAids.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedFindingAids',
+                    'title' => 'FindingAid',
+                ],
+            ],
+        ],
+        'First Lyrics' => [
+            'getFirstLyrics',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordFirstLyrics',
+                ],
+            ],
+        ],
+        'Foreign Distribution' => [
+            'getForeignDistribution',
+            'data-foreign-distribution.phtml',
+            [
+                'context' => [
+                    'class' => 'record-foreign-distribution',
+                ],
+            ],
+        ],
+        'Format' => [
+            'getFormats',
+            'format-list.phtml',
+            [
+                'context' => [
+                    'class' => 'recordFormat',
+                ],
+            ],
+        ],
+        'Funding' => [
+            'getFunders',
+            'data-funding.phtml',
+            [
+                'context' => [
+                    'class' => 'record-funders',
+                ],
+            ],
+        ],
+        'Genre' => [
+            'getGenres',
+            'data-genres.phtml',
+            [
+                'context' => [
+                    'class' => 'recordGenres',
+                ],
+            ],
+        ],
+        'Hardware' => [
+            'getHardwareRequirements',
+            'data-hardwareRequirements.phtml',
+            [
+                'context' => [
+                    'class' => 'record-hardware',
+                ],
+            ],
+        ],
+        'Identifiers' => [
+            'getOtherIdentifiers',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => [
+                    'class' => 'recordIdentifiers',
+                ],
+            ],
+        ],
+        'Inscriptions' => [
+            'getInscriptions',
+            'data-inscriptions.phtml',
+            [
+                'context' => [
+                    'class' => 'recordInscriptions',
+                ],
+            ],
+        ],
+        'Inspection Details' => [
+            'getInspectionDetails',
+            'data-inspection.phtml',
+            [
+                'context' => [
+                    'class' => 'recordInspection',
+                ],
+            ],
+        ],
+        'Interior Images' => [
+            'getInteriors',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'record-interiors',
+                ],
+            ],
+        ],
+        'Introduction' => [
+            'getIntroduction',
+            'data-markdown.phtml',
+            [
+                'context' => [
+                    'class' => 'record-introduction',
+                ],
+            ],
+        ],
+        'Inventory ID' => [
+            'getIdentifier',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordIdentifier',
+                ],
+            ],
+        ],
+        'ISBN' => [
+            'getISBNs',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedISBNs',
+                ],
+            ],
+        ],
+        'ISSN' => [
+            'getISSNs',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedISSNs',
+                ],
+            ],
+        ],
+        'Item Description FWD' => [
+            'getGeneralNotes',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'recordDescription',
+                ],
+            ],
+        ],
+        'Item History' => [
+            'getItemHistory',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHistory',
+                ],
+            ],
+        ],
+        'Item Notes' => [
+            'getGeneralNotes',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordDescription',
+                ],
+            ],
+        ],
+        'Keywords' => [
+            'getKeywords',
+            'data-keywords.phtml',
+            [
+                'context' => [
+                    'class' => 'record-keywords',
+                ],
+            ],
+        ],
+        'Language' => [
+            'getLanguages',
+            'data-transEscLangcode.phtml',
+            [
+                'context' => [
+                    'class' => 'recordLanguage',
+                ],
+            ],
+        ],
+        'Language Notes' => [
+            'getLanguageNotes',
+            'data-languageNotes.phtml',
+            [
+                'context' => [
+                    'class' => 'record-language-notes',
+                ],
+            ],
+        ],
+        'Language of Abstract' => [
+            'getAbstractLanguage',
+            'data-transEscLangcode.phtml',
+            [
+                'context' => [
+                    'class' => 'abstract-language',
+                ],
+            ],
+        ],
+        'Learning Resource Type' => [
+            'getEducationalMaterialType',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-educational-material-type',
+                ],
+            ],
+        ],
+        'lido_editions' => [
+            'getEditions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordDisplayEdition',
+                ],
+            ],
+        ],
+        'Local Note' => [
+            'getLocalNotes',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-local-note',
+                ],
+            ],
+        ],
+        'Location' => [
+            'getPhysicalLocations',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPhysicalLocation',
+                ],
+            ],
+        ],
+        'Location LIDO' => [
+            'getPhysicalLocationsExtended',
+            'data-locations.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPhysicalLocation',
+                    'title' => 'Location',
+                ],
+            ],
+        ],
+        'Manufacturer' => [
+            'getManufacturer',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'recordManufacturer',
+                ],
+            ],
+        ],
+        'Material Arrangement' => [
+            'getMaterialArrangement',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordMaterialArrangement',
+                ],
+            ],
+        ],
+        'Material Condition' => [
+            'getMaterialCondition',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'materialCondition',
+                ],
+            ],
+        ],
+        'Measurements' => [
+            'getMeasurements',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordMeasurements',
+                ],
+            ],
+        ],
+        'Medium of Performance' => [
+            'getMusicCompositions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-composition',
+                ],
+            ],
+        ],
+        'Methodology' => [
+            'getMethodology',
+            'data-methodology-links.phtml',
+            [
+                'context' => [
+                    'class' => 'recordMethodology',
+                ],
+            ],
+        ],
+        'Movie Thanks' => [
+            'getMovieThanks',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-thanks',
+                    'title' => 'movie_thanks',
+                ],
+            ],
+        ],
+        'Music' => [
+            'getMusicInfo',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'record-music',
+                ],
+            ],
+        ],
+        'New Title' => [
+            'getNewerTitles',
+            'data-titles.phtml',
+            [
+                'context' => [
+                    'class' => 'recordNextTitles',
+                ],
+            ],
+        ],
+        'Notated Music Format' => [
+            'getNotatedMusicFormat',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordNoteFormat',
+                ],
+            ],
+        ],
+        'Notes' => [
+            'getNotes',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-notes',
+                ],
+            ],
+        ],
+        'Number of Viewers' => [
+            'getAmountOfViewers',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-number-of-viewers',
+                ],
+            ],
+        ],
+        'Objective and Content' => [
+            'getEducationalAim',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-educational-aim',
+                ],
+            ],
+        ],
+        'Online Access' => [
+            true,
+            'data-onlineAccess.phtml',
+            [
+                'context' => [
+                    'class' => 'webResource',
+                ],
+            ],
+        ],
+        'Organisation' => [
+            'getInstitutions',
+            'data-organisation.phtml',
+            [
+                'context' => [
+                    'class' => 'recordInstitution',
+                ],
+            ],
+        ],
+        'Original Version Notes' => [
+            'getOriginalVersionNotes',
+            'data-originalVersionNotes.phtml',
+            [
+                'context' => [
+                    'class' => 'record-original-version-notes',
+                ],
+            ],
+        ],
+        'Original Work' => [
+            'getOriginalWork',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'recordOriginalWork',
+                ],
+            ],
+        ],
+        'original_work_language' => [
+            'getOriginalLanguages',
+            'data-transEscLangcode.phtml',
+            [
+                'context' => [
+                    'class' => 'originalLanguage',
+                ],
+            ],
+        ],
+        'Other Classification' => [
+            'getFormatClassifications',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordClassifications',
+                ],
+            ],
+        ],
+        'Other Classifications' => [
+            'getOtherClassifications',
+            'data-keywords.phtml',
+            [
+                'context' => [
+                    'class' => 'recordClassifications',
+                    'title' => 'Classification',
+                ],
+            ],
+        ],
+        'Other ID' => [
+            'getLocalIdentifiers',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordIdentifiers',
+                ],
+            ],
+        ],
+        'Other Links' => [
+            'getOtherLinks',
+            'data-getOtherLinks.phtml',
+            [
+                'labelFunction' => [
+                    DefaultRecord::class,
+                    'otherLinksLabel',
+                ],
+                'context' => [
+                    'class' => 'recordOtherLink',
+                ],
+            ],
+        ],
+        'Other Related Material' => [
+            'getOtherRelatedMaterial',
+            'data-otherRelatedMaterial.phtml',
+            [
+                'context' => [
+                    'class' => 'other-related-material',
+                ],
+            ],
+        ],
+        'Other Screenings' => [
+            'getOtherScreenings',
+            'data-other-screenings.phtml',
+            [
+                'context' => [
+                    'class' => 'record-other-screenings',
+                ],
+            ],
+        ],
+        'Other Titles' => [
+            'getAlternativeTitles',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordAltTitles',
+                ],
+            ],
+        ],
+        'Parent Archive' => [
+            'getParentArchives',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ],
+            ],
+        ],
+        'Parent Collection' => [
+            'getParentCollections',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ],
+            ],
+        ],
+        'Parent Series' => [
+            'getParentSeries',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ],
+            ],
+        ],
+        'Parent Subcollection' => [
+            'getParentSubcollections',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ],
+            ],
+        ],
+        'Parent Unclassified Entity' => [
+            'getParentUnclassifiedEntities',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ],
+            ],
+        ],
+        'Parent Work' => [
+            'getParentWorks',
+            'data-hierarchyLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordHierarchyLinks',
+                ],
+            ],
+        ],
+        'Physical Description' => [
+            'getPhysicalDescriptions',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'physicalDescriptions',
+                ],
+            ],
+        ],
+        'Physical Medium' => [
+            'getPhysicalMediums',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'physical-medium',
+                ],
+            ],
+        ],
+        'Place of Origin' => [
+            'getAssociatedPlace',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-associated-place',
+                ],
+            ],
+        ],
+        'Playing Time' => [
+            'getPlayingTimes',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedPlayTime',
+                ],
+            ],
+        ],
+        'Premiere Night' => [
+            'getPremiereTime',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-premiere-night',
+                ],
+            ],
+        ],
+        'Premiere Theaters' => [
+            'getPremiereTheaters',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-premiere-theaters',
+                ],
+            ],
+        ],
+        'Presenters' => [
+            'getPresenters',
+            'data-presenters.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPresenters',
+                ],
+            ],
+        ],
+        'Presenters Marc' => [
+            'getSecondaryPresenters',
+            'data-presenters.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPresenters',
+                    'title' => 'Presenters',
+                ],
+            ],
+        ],
+        'Press Reviews' => [
+            'getPressReview',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'record-press-review',
+                ],
+            ],
+        ],
+        'Previous Title' => [
+            'getPreviousTitles',
+            'data-titles.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPrevTitles',
+                ],
+            ],
+        ],
+        'Production' => [
+            'getProducers',
+            'data-producers.phtml',
+            [
+                'context' => [
+                    'class' => 'record-production',
+                ],
+            ],
+        ],
+        'Production Costs' => [
+            'getProductionCost',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-production-cost',
+                ],
+            ],
+        ],
+        'Production Credits' => [
+            'getProductionCredits',
+            'data-escapeHtml',
+            [
+                'context' => [
+                    'class' => 'extendedCredits',
+                ],
+            ],
+        ],
+        'Projected Publication Date' => [
+            'getProjectedPublicationDate',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'coreProjectedPublicationDate',
                 ],
             ],
         ],
@@ -1602,15 +1261,367 @@ trait RecordFieldsTrait
                 ],
             ],
         ],
-        'Additional Information AIPA' => [
-            'getAdditionalInformation',
-            'data-additionalInformation.phtml',
+        'Publication Frequency' => [
+            'getPublicationFrequency',
+            'data-escapeHtml.phtml',
             [
                 'context' => [
-                    'class' => 'recordAdditionalInformation',
-                    'title' => 'AdditionalInformation',
+                    'class' => 'extendedFrequency',
                 ],
             ],
+        ],
+        'Publication_Place' => [
+            'getHierarchicalPlaceNames',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'publicationPlace',
+                ],
+            ],
+        ],
+        'Publications' => [
+            'getRelatedPublications',
+            'data-relatedPublications.phtml',
+            [
+                'context' => [
+                    'class' => 'record-related-publications',
+                ],
+            ],
+        ],
+        'Publish date' => [
+            'getDateSpan',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedDateSpan',
+                ],
+            ],
+        ],
+        'Published' => [
+            'getPublicationDetails',
+            'data-publicationDetails.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPublications',
+                ],
+            ],
+        ],
+        'Published in' => [
+            'getContainerTitle',
+            'data-containerTitle.phtml',
+            [
+                'context' => [
+                    'class' => 'record-container-link',
+                ],
+            ],
+        ],
+        'Publisher' => [
+            'getPublicationDetails',
+            'data-publicationDetails.phtml',
+            [
+                'context' => [
+                    'class' => 'recordPublications',
+                ],
+            ],
+        ],
+        'Publisher or Distributor Number' => [
+            'getPubDistNumber',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-pubdist-number',
+                ],
+            ],
+        ],
+        'Record Links' => [
+            'getAllRecordLinks',
+            'data-allRecordLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'recordLinks',
+                    'title' => '',
+                ],
+            ],
+        ],
+        'Related Events' => [
+            'getRelatedEventsExtended',
+            'data-allSubjectHeadingsExtended.phtml',
+            [
+                'context' => [
+                    'class' => 'recordRelatedEvents',
+                ],
+            ],
+        ],
+        'Related Items' => [
+            'getRelationshipNotes',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedRelatedItems',
+                ],
+            ],
+        ],
+        'Related Materials' => [
+            'getAllRecordLinks',
+            'data-allRecordLinks.phtml',
+            [
+                'context' => [
+                    'class' => 'relatedMaterials',
+                ],
+            ],
+        ],
+        'Related Places' => [
+            'getRelatedPlacesExtended',
+            'data-lines-with-detail.phtml',
+            [
+                'context' => [
+                    'class' => 'record-related-place',
+                ],
+            ],
+        ],
+        'Scale' => [
+            'getMapScale',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-map-scale',
+                ],
+            ],
+        ],
+        'Secondary Authors' => [
+            'getNonPresenterSecondaryAuthors',
+            'data-contributors.phtml',
+            [
+                'context' => [
+                    'class' => 'recordAuthors',
+                ],
+                'labelFunction' => [
+                    DefaultRecord::class,
+                    'secondaryAuthorsLabel',
+                ],
+            ],
+        ],
+        'Security Classification' => [
+            'getSecurityClassification',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'security-classification',
+                ],
+            ],
+        ],
+        'Series' => [
+            'getSeries',
+            'data-series.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSeries',
+                ],
+            ],
+        ],
+        'Sound' => [
+            'getSound',
+            'data-sound.phtml',
+            [
+                'context' => [
+                    'class' => 'record-sound',
+                ],
+            ],
+        ],
+        'Source Collection' => [
+            'getSource',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSource',
+                ],
+            ],
+        ],
+        'Source of Acquisition' => [
+            'getAcquisitionSource',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordAcquisition',
+                ],
+            ],
+        ],
+        'Standard Codes' => [
+            'getStandardCodes',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-standard-codes',
+                ],
+            ],
+        ],
+        'Standard Report Number' => [
+            'getStandardReportNumbers',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-standard-report-number',
+                ],
+            ],
+        ],
+        'Studios' => [
+            'getStudios',
+            'data-forwardFields.phtml',
+            [
+                'context' => [
+                    'class' => 'record-studios',
+                ],
+            ],
+        ],
+        'Study Program Information Notes' => [
+            'getStudyProgramNotes',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-study-program-notes',
+                ],
+            ],
+        ],
+        'Subject Actor' => [
+            'getSubjectActors',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSubjects',
+                ],
+            ],
+        ],
+        'Subject Date' => [
+            'getSubjectDates',
+            'data-subjectDate.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSubjects',
+                ],
+            ],
+        ],
+        'Subject Detail' => [
+            'getSubjectDetails',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSubjects',
+                ],
+            ],
+        ],
+        'Subject Place' => [
+            'getSubjectPlacesExtended',
+            'data-allSubjectHeadingsExtended.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSubjects',
+                    'headingType' => 'place',
+                ],
+            ],
+        ],
+        'Subjects' => [
+            'getAllSubjectHeadings',
+            'data-allSubjectHeadings.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSubjects',
+                ],
+            ],
+        ],
+        'subjects_extended' => [
+            'getAllSubjectHeadingsExtended',
+            'data-allSubjectHeadingsExtended.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSubjects',
+                ],
+            ],
+        ],
+        'SubjectsWithoutPlaces' => [
+            'getAllSubjectHeadingsWithoutPlacesExtended',
+            'data-allSubjectHeadingsExtended.phtml',
+            [
+                'context' => [
+                    'class' => 'recordSubjects',
+                    'title' => 'Subjects',
+                ],
+            ],
+        ],
+        'System Format' => [
+            'getSystemDetails',
+            'data-systemFormat.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedSystem',
+                ],
+            ],
+        ],
+        'Terms of Use' => [
+            'getTermsOfUse',
+            'data-termsOfUse.phtml',
+            [
+                'context' => [
+                    'class' => 'extendedTermsOfUse',
+                ],
+            ],
+        ],
+        'Time Period' => [
+            'getTimePeriod',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-time-period',
+                ],
+            ],
+        ],
+        'Time Period of Creation' => [
+            'getTimePeriodOfCreation',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-time-period-creation',
+                ],
+            ],
+        ],
+        'Trade Availability Note' => [
+            'getTradeAvailabilityNote',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordTradeNote',
+                ],
+            ],
+        ],
+        'Uncontrolled Title' => [
+            'getUncontrolledTitle',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'record-uncontrolled-title',
+                ],
+            ],
+        ],
+        'Uniform Title' => [
+            'getCollectiveUniformTitle',
+            'data-transEsc.phtml',
+            [
+                'context' => [
+                    'class' => 'record-collective-uniform-title',
+                ],
+            ],
+        ],
+        'Unit ID' => [
+            'getUnitID',
+            'data-escapeHtml.phtml',
+            [
+                'context' => [
+                    'class' => 'recordReferenceCode',
+                ],
+            ],
+        ],
+        'Unit IDs' => [
+            'getUnitIds',
+            'data-lines-with-detail.phtml',
         ],
     ];
 

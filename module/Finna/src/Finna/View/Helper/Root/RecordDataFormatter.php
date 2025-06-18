@@ -760,10 +760,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
                     break;
                 }
             }
-            // If none of the labels matched, return first label for displaying that a translation is missing
-            if (!$foundLabel) {
-                $foundLabel = reset($label);
-            }
             // Unset current label function as running it second time is unnecessary
             unset($options['labelFunction']);
             $label = $foundLabel;
