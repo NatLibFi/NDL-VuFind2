@@ -38,7 +38,10 @@ namespace Finna\View\Helper\Root;
 use Finna\View\Helper\Root\RecordDataFormatter\FieldGroupBuilder;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
+use function call_user_func;
 use function in_array;
+use function is_array;
+use function is_callable;
 
 /**
  * Record driver data formatting view helper
@@ -729,5 +732,42 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             $intersected = array_diff_key($intersected, array_flip($hide->toArray()));
         }
         return $intersected;
+    }
+
+    /**
+     * Return rendered text (or null if nothing to render).
+     *
+     * @param string $field   Field being rendered (i.e. default label)
+     * @param mixed  $data    Data to render
+     * @param array  $options Rendering options
+     *
+     * @return ?array
+     */
+    protected function render(string $field, mixed $data, array $options): ?array
+    {
+        // Allow dynamic label override:
+        $label = is_callable($options['labelFunction'] ?? null)
+            ? call_user_func($options['labelFunction'], $data, $this->driver)
+            : $field;
+
+        // Support searching for label from array.
+        if (is_array($label)) {
+            $translationEmpty = $this->getView()->plugin('translationEmpty');
+            $foundLabel = '';
+            foreach ($label as $key) {
+                if (!($translationEmpty)($key)) {
+                    $foundLabel = $key;
+                    break;
+                }
+            }
+            // If none of the labels matched, return first label for displaying that a translation is missing
+            if (!$foundLabel) {
+                $foundLabel = reset($label);
+            }
+            // Unset current label function as running it second time is unnecessary
+            unset($options['labelFunction']);
+            $label = $foundLabel;
+        }
+        return parent::render($label, $data, $options);
     }
 }

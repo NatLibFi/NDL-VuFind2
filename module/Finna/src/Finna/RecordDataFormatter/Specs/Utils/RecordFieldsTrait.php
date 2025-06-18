@@ -1807,20 +1807,13 @@ trait RecordFieldsTrait
                     ],
                     'labelFunction' => function ($data, $driver) use ($eventType) {
                         if (!$eventType) {
-                            return'';
+                            return '';
                         }
                         $mainFormat = $driver->getMainFormat();
-                        $keys = [
+                        return [
                             "lido_event_type_{$mainFormat}_$eventType",
                             "lido_event_type_$eventType",
                         ];
-                        foreach ($keys as $key) {
-                            $label = $this->translator->translate($key);
-                            if ($key !== $label) {
-                                return$key;
-                            }
-                        }
-                        return'';
                     },
                 ],
             ];
