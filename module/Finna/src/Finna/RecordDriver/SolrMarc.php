@@ -612,7 +612,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $componentParts = [];
         $partOrderCounter = 0;
         foreach ($this->getMarcReader()->getFields('979') as $field) {
-            if ($onlyCollections && $field['i2'] == 0) {
+            if ($onlyCollections && $field['i2'] !== '1') {
                 continue;
             }
             $partOrderCounter++;
