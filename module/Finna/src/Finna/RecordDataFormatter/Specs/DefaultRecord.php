@@ -62,7 +62,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
      *
      * @var array
      */
-    public array $multiTemplateLines = [];
+    protected array $multiTemplateLines = [];
 
     /**
      * Order of record fields in record page
