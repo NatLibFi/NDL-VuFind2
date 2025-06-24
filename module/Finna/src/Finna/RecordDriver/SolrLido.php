@@ -293,7 +293,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'LidoRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\LidoRecord::class;
 
     /**
      * Return access restriction notes for the record.

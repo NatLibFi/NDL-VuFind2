@@ -98,7 +98,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'MarcRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\MarcRecord::class;
 
     /**
      * Constructor

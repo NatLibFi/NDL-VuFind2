@@ -400,7 +400,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'ForwardRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\ForwardRecord::class;
 
     /**
      * Constructor

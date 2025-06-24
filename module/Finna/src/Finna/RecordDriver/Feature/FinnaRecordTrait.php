@@ -436,19 +436,16 @@ trait FinnaRecordTrait
     {
         $dataSource = $this->tryMethod('getDataSource');
         if (!$dataSource) {
-            return parent::getRecordDataFormatterSpecClass();
+            return $this->defaultRecordSpecsClass ?? parent::getRecordDataFormatterSpecClass();
         }
         $datasourceSpecsClass = $this->datasourceSettings[$dataSource]['record']['record_field_specs']
             ?? '';
         if ($datasourceSpecsClass === 'CollectionRecord' && $this->getChildRecordCount()) {
-            return 'Finna\\RecordDataFormatter\\Specs\\CollectionRecord';
+            return \Finna\RecordDataFormatter\Specs\CollectionRecord::class;
         }
         if ($datasourceSpecsClass && $datasourceSpecsClass !== 'CollectionRecord') {
             return 'Finna\\RecordDataFormatter\\Specs\\' . $datasourceSpecsClass;
         }
-        if ($recordSpecsClass = $this->defaultRecordSpecsClass ?? null) {
-            return 'Finna\\RecordDataFormatter\\Specs\\' . $recordSpecsClass;
-        }
-        return parent::getRecordDataFormatterSpecClass();
+        return $this->defaultRecordSpecsClass ?? parent::getRecordDataFormatterSpecClass();
     }
 }

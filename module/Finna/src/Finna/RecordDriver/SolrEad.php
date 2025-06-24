@@ -71,7 +71,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'EadRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\EadRecord::class;
 
     /**
      * Constructor

@@ -73,7 +73,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'AipaRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\AipaRecord::class;
 
     /**
      * Return an array of image URLs associated with this record with keys:

@@ -108,7 +108,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'QdcRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\QdcRecord::class;
 
     /**
      * Constructor

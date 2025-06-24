@@ -88,7 +88,7 @@ class SolrLrmi extends SolrQdc
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'LrmiRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\LrmiRecord::class;
 
     /**
      * Returns a list of downloadable file formats.

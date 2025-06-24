@@ -187,7 +187,7 @@ class SolrEad3 extends SolrEad
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'Ead3Record';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\Ead3Record::class;
 
     /**
      * Get archive type

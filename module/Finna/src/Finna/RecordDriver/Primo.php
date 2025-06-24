@@ -56,7 +56,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      *
      * @var string
      */
-    protected string $defaultRecordSpecsClass = 'PrimoRecord';
+    protected string $defaultRecordSpecsClass = \Finna\RecordDataFormatter\Specs\PrimoRecord::class;
 
     /**
      * Indicate whether export is disabled for a particular format.
