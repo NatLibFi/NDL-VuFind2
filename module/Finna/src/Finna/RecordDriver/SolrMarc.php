@@ -94,7 +94,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
-     * Mapped terms for relations
+     * Mappings for component part relations
      *
      * @var array
      */
@@ -219,6 +219,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 // Get data for field
                 $tmp = $this->getFieldData($field);
 
+                $tmp['isCollection'] = false;
                 if ($value == '730') {
                     // getfieldData doesn't handle subfield a (it's not the same for
                     // other fields), so do it now if we didn't get a title:
@@ -242,11 +243,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     }
                     $tmp['value'] = implode(' ', $line);
                 } elseif ($value == '773') {
-                    $tmp['relation'] =
+                    if (
+                        $relation =
                         $this->relationMappings[$this->stripTrailingPunctuation($this->getSubfield($field, 'i'), ':')]
-                        ?? null;
-                    if (isset($tmp['relation'])) {
-                        $tmp['title'] = $tmp['relation'];
+                        ?? null
+                    ) {
+                        // Use relation as the field heading:
+                        $tmp['title'] = $relation;
+                        $tmp['isCollection'] = true;
                     }
                 }
                 $result[] = $tmp;

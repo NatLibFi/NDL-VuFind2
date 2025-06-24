@@ -329,7 +329,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'bib',
                         'value' => 'test.123456',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records parent',
@@ -338,7 +338,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'title',
                         'value' => 'United records parent',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
             ],
         ];
@@ -357,7 +357,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'linkingId',
                         'value' => '(FI-MELINDA)123456789',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
@@ -366,7 +366,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'linkingId',
                         'value' => '(FI-MELINDA)555',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
             ],
         ];
@@ -385,7 +385,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'bib',
                         'value' => '123456789',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
@@ -394,7 +394,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'bib',
                         'value' => '555',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
             ],
         ];
@@ -413,7 +413,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'linkingId',
                         'value' => '(FI-MELINDA)123456789',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
@@ -422,7 +422,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'linkingId',
                         'value' => '(FI-NL)555',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
             ],
         ];
@@ -441,7 +441,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'bib',
                         'value' => 'link.withdot1',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records parent',
@@ -450,7 +450,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'bib',
                         'value' => 'link.withdot2',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
             ],
         ];
@@ -472,7 +472,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'title',
                         'value' => 'United records parent',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
@@ -481,7 +481,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'title',
                         'value' => 'United records Top',
                     ],
-                    'relation' => null,
+                    'isCollection' => false,
                 ],
             ],
         ];

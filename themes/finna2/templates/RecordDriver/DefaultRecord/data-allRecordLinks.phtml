@@ -13,7 +13,7 @@
     <?php foreach ($allLinks as $title => $links): ?>
       <tr class="recordLinks">
         <th><?=$this->transEsc($title);?></th>
-        <?php $class = isset($links[0]['relation']) ? 'contained-in' : ''; ?>
+        <?php $class = isset($links[0]['isCollection']) ? 'contained-in' : ''; ?>
         <td>
           <?php foreach ($links as $link): ?>
             <div class="subjectLine <?=$class?>">

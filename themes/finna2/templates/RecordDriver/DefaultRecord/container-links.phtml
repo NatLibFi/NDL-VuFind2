@@ -18,7 +18,8 @@
       $hostRecords = $arr ?? [];
     ?>
     <div class="truncate-field">
-      <?php if (empty($data) && ($hostRecords || (!$linkedItems && $containerID))): ?>
+      <?php // If doesn't have hostRecords check for links to collections before using hierarchy_parent_id linking ?>
+      <?php if ($hostRecords || (!$linkedItems && $containerID)): ?>
         <div class="publishedIn">
           <span class="recordPublished"><?=$this->transEsc('Published in')?>: </span>
           <?php if ($hostRecords): ?>
@@ -33,7 +34,7 @@
           <?php endif; ?>
         </div>
       <?php endif; ?>
-      <?php if (empty($data) && $linkedItems && !$this->inRecordInfo): ?>
+      <?php if ($linkedItems && !$this->inRecordInfo): ?>
         <div class="includedIn">
           <div class="record-included-in"><?=$this->transEsc('Included in collections')?>: </div>
           <?= $this->record($this->driver)->renderTemplate('host-records.phtml', ['hostRecords' => $linkedItems, 'driver', 'includedIn' => true]); ?>
