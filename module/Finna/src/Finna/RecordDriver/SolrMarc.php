@@ -94,6 +94,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
+     * Default specs class used for the records.
+     *
+     * @var string
+     */
+    protected string $defaultRecordSpecsClass = 'MarcRecord';
+
+    /**
      * Constructor
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
@@ -2785,15 +2792,5 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $linkPrefixes[] = trim($field003);
         }
         return array_filter(array_unique($linkPrefixes));
-    }
-
-    /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        return \Finna\RecordDataFormatter\Specs\MarcRecord::class;
     }
 }

@@ -69,6 +69,13 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected $excludedDescriptions = [];
 
     /**
+     * Default specs class used for the records.
+     *
+     * @var string
+     */
+    protected string $defaultRecordSpecsClass = 'AipaRecord';
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -455,15 +462,5 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         $driver->setRawData($data);
 
         return $driver;
-    }
-
-    /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        return \Finna\RecordDataFormatter\Specs\AipaRecord::class;
     }
 }

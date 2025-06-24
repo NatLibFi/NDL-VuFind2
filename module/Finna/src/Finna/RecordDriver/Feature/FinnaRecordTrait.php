@@ -63,13 +63,6 @@ trait FinnaRecordTrait
     protected $datasourceSettings = null;
 
     /**
-     * Default specs class used for the records.
-     *
-     * @var string
-     */
-    protected $defaultRecordSpecsClass = 'DefaultRecord';
-
-    /**
      * Get inappropriate comments for this record reported by the given user.
      *
      * @param ?int $userId Reporter ID or null to use current session
@@ -441,16 +434,21 @@ trait FinnaRecordTrait
      */
     public function getRecordDataFormatterSpecClass(): ?string
     {
-        $defaultSpecsClass = 'Finna\\RecordDataFormatter\\Specs\\' . $this->defaultRecordSpecsClass;
         $dataSource = $this->tryMethod('getDataSource');
         if (!$dataSource) {
-            return $defaultSpecsClass;
+            return parent::getRecordDataFormatterSpecClass();
         }
         $datasourceSpecsClass = $this->datasourceSettings[$dataSource]['record']['record_field_specs']
             ?? '';
         if ($datasourceSpecsClass === 'CollectionRecord' && $this->getChildRecordCount()) {
+            return 'Finna\\RecordDataFormatter\\Specs\\CollectionRecord';
+        }
+        if ($datasourceSpecsClass && $datasourceSpecsClass !== 'CollectionRecord') {
             return 'Finna\\RecordDataFormatter\\Specs\\' . $datasourceSpecsClass;
         }
-        return $defaultSpecsClass;
+        if ($recordSpecsClass = $this->defaultRecordSpecsClass ?? null) {
+            return 'Finna\\RecordDataFormatter\\Specs\\' . $recordSpecsClass;
+        }
+        return parent::getRecordDataFormatterSpecClass();
     }
 }

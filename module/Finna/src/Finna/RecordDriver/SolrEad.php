@@ -67,6 +67,13 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     public const FILE_LEVELS = ['file'];
 
     /**
+     * Default specs class used for the records.
+     *
+     * @var string
+     */
+    protected string $defaultRecordSpecsClass = 'EadRecord';
+
+    /**
      * Constructor
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
@@ -871,15 +878,5 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             ];
         }
         return $result;
-    }
-
-    /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        return \Finna\RecordDataFormatter\Specs\EadRecord::class;
     }
 }

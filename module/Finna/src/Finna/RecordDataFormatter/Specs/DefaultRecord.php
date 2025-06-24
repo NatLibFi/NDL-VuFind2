@@ -36,8 +36,6 @@ use VuFind\View\Helper\Root\RecordDataFormatter\SpecBuilder;
 use VuFind\View\Helper\Root\SchemaOrg;
 
 use function in_array;
-
-use function in_array;
 use function is_array;
 
 /**

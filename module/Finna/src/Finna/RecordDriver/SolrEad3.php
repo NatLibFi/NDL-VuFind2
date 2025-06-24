@@ -183,6 +183,13 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
+     * Default specs class used for the records.
+     *
+     * @var string
+     */
+    protected string $defaultRecordSpecsClass = 'Ead3Record';
+
+    /**
      * Get archive type
      *
      * @return string
@@ -2551,15 +2558,5 @@ class SolrEad3 extends SolrEad
             }
         }
         return $result;
-    }
-
-    /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        return \Finna\RecordDataFormatter\Specs\Ead3Record::class;
     }
 }

@@ -84,6 +84,13 @@ class SolrLrmi extends SolrQdc
     protected $excludedDescriptions = [];
 
     /**
+     * Default specs class used for the records.
+     *
+     * @var string
+     */
+    protected string $defaultRecordSpecsClass = 'LrmiRecord';
+
+    /**
      * Returns a list of downloadable file formats.
      *
      * @return array
@@ -574,15 +581,5 @@ class SolrLrmi extends SolrQdc
             $hazards[] = trim((string)$hazard);
         }
         return $hazards;
-    }
-
-    /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        return \Finna\RecordDataFormatter\Specs\LrmiRecord::class;
     }
 }

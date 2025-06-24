@@ -52,6 +52,13 @@ class Primo extends \VuFind\RecordDriver\Primo
     use Feature\FinnaRecordTrait;
 
     /**
+     * Default specs class used for the records.
+     *
+     * @var string
+     */
+    protected string $defaultRecordSpecsClass = 'PrimoRecord';
+
+    /**
      * Indicate whether export is disabled for a particular format.
      *
      * @param string $format Export format
@@ -513,15 +520,5 @@ class Primo extends \VuFind\RecordDriver\Primo
             }
         }
         return $params;
-    }
-
-    /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        return \Finna\RecordDataFormatter\Specs\PrimoRecord::class;
     }
 }
