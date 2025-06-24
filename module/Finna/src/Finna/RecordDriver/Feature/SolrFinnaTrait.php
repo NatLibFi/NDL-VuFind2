@@ -1389,21 +1389,6 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get class name for RecordDataFormatter spec.
-     *
-     * @return ?string
-     */
-    public function getRecordDataFormatterSpecClass(): ?string
-    {
-        $useCollectionFields = $this->datasourceSettings[$this->getDataSource()]['record']['use_collection_fields']
-            ?? false;
-        if ($useCollectionFields && $this->getChildRecordCount()) {
-            return \Finna\RecordDataFormatter\Specs\CollectionRecord::class;
-        }
-        return parent::getRecordDataFormatterSpecClass();
-    }
-
-    /**
      * Add versions search filters to params
      *
      * @param \VuFindSearch\ParamBag $paramBag Params
