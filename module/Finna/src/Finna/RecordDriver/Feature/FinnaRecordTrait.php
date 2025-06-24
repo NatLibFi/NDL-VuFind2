@@ -63,6 +63,13 @@ trait FinnaRecordTrait
     protected $datasourceSettings = null;
 
     /**
+     * Default specs class used for the records.
+     *
+     * @var string
+     */
+    protected $defaultRecordSpecsClass = 'DefaultRecord';
+
+    /**
      * Get inappropriate comments for this record reported by the given user.
      *
      * @param ?int $userId Reporter ID or null to use current session
