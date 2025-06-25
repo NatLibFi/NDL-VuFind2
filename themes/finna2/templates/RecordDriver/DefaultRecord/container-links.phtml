@@ -18,7 +18,6 @@
       $hostRecords = $arr ?? [];
     ?>
     <div class="truncate-field">
-      <?php // If doesn't have hostRecords check for links to collections before using hierarchy_parent_id linking ?>
       <?php if ($hostRecords || (!$linkedItems && $containerID)): ?>
         <div class="publishedIn">
           <span class="recordPublished"><?=$this->transEsc('Published in')?>: </span>
