@@ -455,12 +455,14 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         string $institution = '',
         string $listIdentifier = ''
     ): array {
-        return $this->resourceListService->getResourceListsForUser(
+        $lists = $this->resourceListService->getResourceListsForUser(
             $user,
             $listIdentifier,
             $institution,
             self::RESOURCE_LIST_TYPE
         );
+        // Adjusted service to be more like userlist, add legacy support here.
+        return array_column($lists, 'list_entity');
     }
 
     /**

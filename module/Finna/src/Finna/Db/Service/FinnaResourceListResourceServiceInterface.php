@@ -54,14 +54,14 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
      * @param FinnaResourceListEntityInterface $list     Entity
      * @param string                           $notes    Notes to associate with link
      *
-     * @return FinnaResourceListResourceEntityInterface
+     * @return FinnaResourceListResourceEntityInterface|false
      */
     public function createOrUpdateLink(
         ResourceEntityInterface $resource,
         UserEntityInterface $user,
         FinnaResourceListEntityInterface $list,
         string $notes = ''
-    ): FinnaResourceListResourceEntityInterface;
+    ): FinnaResourceListResourceEntityInterface|false;
 
     /**
      * Unlink rows for the specified resource.
@@ -95,13 +95,6 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
      * @return void
      */
     public function changeResourceId(int $old, int $new): void;
-
-    /**
-     * Deduplicate rows (sometimes necessary after merging foreign key IDs).
-     *
-     * @return void
-     */
-    public function deduplicate(): void;
 
     /**
      * Get resources for a resource list
