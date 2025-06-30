@@ -48,7 +48,7 @@ use VuFind\Log\LoggerAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class FinnaResourceListService extends AbstractDbService implements
+class FinnaResourceListResourceService extends AbstractDbService implements
     FinnaResourceListResourceServiceInterface,
     LoggerAwareInterface,
     DbServiceAwareInterface
