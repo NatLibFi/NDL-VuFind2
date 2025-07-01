@@ -405,7 +405,10 @@ class Schematron
                         // Maybe it should move to SchematronXPath, but we would have to deal with paths
                         // as neither DOMDocument or XPATH holds information about the file, so is it really
                         // worth the trouble?
-                        $parts = explode('//', $testStatement);
+
+                        // Commented ou for now. This simple check fails with rules that contain // in a string.
+
+                        /*$parts = explode('//', $testStatement);
                         if (count($parts) == 2) {
                             if ($parts[0]) {
                                 if (strpos($parts[0], 'document(') == 0) {
@@ -423,7 +426,7 @@ class Schematron
                                     $testStatement = '//' . $parts[1];
                                 }
                             }
-                        }
+                        }*/
                         if ($statement->isAssert ^ $xpathToEval->evaluate("boolean($testStatement)", $nodeToEval)) {
                             $message = $this->statementToMessage($statement->node, $xpath, $currentNode, $lets);
 
