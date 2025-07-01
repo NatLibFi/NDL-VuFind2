@@ -55,6 +55,7 @@ class SchematronXPath extends Milo\SchematronXPath
      */
     public function evaluate($expression, ?DOMNode $context = null, $registerNodeNS = false): mixed
     {
+        // Emulate XSLT 2.0 'matches' function:
         if (preg_match('/^boolean\(matches\((.*),\s*\'(.*)\'\)\)$/', $expression, $matches)) {
             $subExpression = $matches[1];
             $matchExpression = $matches[2];
