@@ -36,6 +36,8 @@ use Finna\Record\Schema\Milo\SchematronException;
 use Finna\Record\Schema\Milo\SchematronHelpers;
 use InvalidArgumentException;
 
+use function in_array;
+
 /**
  * ISO Schematron validator extensions.
  *
