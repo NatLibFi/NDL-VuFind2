@@ -197,6 +197,26 @@ finna.common = (function finnaCommon() {
     }
   }
 
+  /**
+   * Add an event handler that allows selecting of all content with double-click when the element has the
+   * data-double-click-select-all attribute
+   */
+  function initDoubleClickSelectHandler() {
+    document.addEventListener('dblclick', (ev) => {
+      if (!ev.target) {
+        return;
+      }
+      if ('doubleClickSelectAll' in ev.target.dataset) {
+        window.getSelection().selectAllChildren(ev.target);
+      } else {
+        const parentEl = ev.target.closest('[data-double-click-select-all]');
+        if (parentEl) {
+          window.getSelection().selectAllChildren(parentEl);
+        }
+      }
+    });
+  }
+
   var my = {
     decodeHtml: decodeHtml,
     getField: getField,
@@ -212,6 +232,7 @@ finna.common = (function finnaCommon() {
         }
       );
       finna.resolvePromise('lazyImages');
+      initDoubleClickSelectHandler();
     },
     initResultScripts: initResultScripts,
     getCookie: getCookie,
