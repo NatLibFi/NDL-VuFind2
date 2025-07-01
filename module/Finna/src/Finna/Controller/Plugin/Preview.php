@@ -271,14 +271,14 @@ class Preview extends AbstractPlugin
         $document = new DOMDocument();
         $document->loadXML($xml);
         [$formatNs, $formatNsUri] = match ($format) {
-            'dc' => ['', ''],
+            'dc' => ['dc', 'http://purl.org/dc/elements/1.1/'],
             'qdc' => ['', ''],
             'ead' => ['', ''],
             'ead3' => ['ead3', 'http://ead3.archivists.org/schema/'],
             'aipa' => ['', ''],
             'forward' => ['', ''],
             'lido' => ['lido', 'http://www.lido-schema.org'],
-            'marc' => ['', ''],
+            'marc' => ['marc', 'http://www.loc.gov/MARC21/slim'],
         };
         if (!$formatNs) {
             return $document;
