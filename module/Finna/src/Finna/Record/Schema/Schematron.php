@@ -29,8 +29,11 @@
 
 namespace Finna\Record\Schema;
 
+use DOMDocument;
 use DOMElement;
 use DOMNode;
+use Finna\Record\Schema\Milo\SchematronException;
+use Finna\Record\Schema\Milo\SchematronHelpers;
 use InvalidArgumentException;
 
 /**
@@ -55,6 +58,41 @@ class Schematron extends Milo\Schematron
     {
         static::$xPathClass = SchematronXPath::class;
         parent::__construct($namespace);
+    }
+
+    /**
+     * Fills object members by basics schema properties.
+     *
+     * @param DOMDocument $schema Schema
+     *
+     * @return void
+     *
+     * @throws SchematronException
+     */
+    protected function loadSchemaBasics(DOMDocument $schema)
+    {
+        $list = $this->xPath->query('//sch:schema', $schema);
+        if ($list->length > 1) {
+            throw new SchematronException("Only one <schema> element in document is allowed, but $list->length found.");
+        } elseif ($list->length < 1) {
+            if (!($this->options & self::ALLOW_MISSING_SCHEMA_ELEMENT)) {
+                throw new SchematronException('<schema> element not found.');
+            }
+        } else {
+            $element = $list->item(0);
+
+            $this->version = SchematronHelpers::getAttribute($element, 'schemaVersion', null);
+            $this->defaultPhase = SchematronHelpers::getAttribute($element, 'defaultPhase', self::PHASE_ALL);
+            $binding = SchematronHelpers::getAttribute($element, 'queryBinding', 'xslt');
+            if (!in_array(strtolower($binding), ['xslt', 'xslt2'])) {
+                throw new SchematronException("Query binding '$binding' is not supported.");
+            }
+
+            $titleElements = $this->xPath->query('sch:title', $element);
+            if ($titleElements->length > 0) {
+                $this->title = $titleElements->item(0)->textContent;
+            }
+        }
     }
 
     /**

@@ -160,70 +160,70 @@ class Schematron
      *
      * @var bool
      */
-    private $loaded = false;
+    protected $loaded = false;
 
     /**
      * Options
      *
      * @var int
      */
-    private $options = self::DEFAULT_OPTIONS;
+    protected $options = self::DEFAULT_OPTIONS;
 
     /**
      * Schema namespace
      *
      * @var string
      */
-    private $ns;
+    protected $ns;
 
     /**
      * Absolute path for <sch:include> relative paths
      *
      * @var ?string
      */
-    private $directory;
+    protected $directory;
 
     /**
      * LibXML options which were used for schema loading
      *
      * @var int
      */
-    private $domOptions;
+    protected $domOptions;
 
     /**
      * Version from @schemaVersion in <sch:schema>
      *
      * @var ?string
      */
-    private $version;
+    protected $version;
 
     /**
      * Title from <sch:title> in <sch:schema>
      *
      * @var ?string
      */
-    private $title;
+    protected $title;
 
     /**
      * Default validation phase
      *
      * @var string
      */
-    private $defaultPhase = self::PHASE_ALL;
+    protected $defaultPhase = self::PHASE_ALL;
 
     /**
      * Restrictions on <sch:include>; self::INCLUDE_* value/mask
      *
      * @var int|false|null
      */
-    private $allowedInclude = self::INCLUDE_RELATIVE_PATH;
+    protected $allowedInclude = self::INCLUDE_RELATIVE_PATH;
 
     /**
      * How deep can be <sch:include>
      *
      * @var int
      */
-    private $maxIncludeDepth = 10;
+    protected $maxIncludeDepth = 10;
 
     /**
      * XPath handler
@@ -850,7 +850,7 @@ class Schematron
      *
      * @return stdClass
      */
-    private function instantiatePattern(stdClass $abstract, array $parameters)
+    protected function instantiatePattern(stdClass $abstract, array $parameters)
     {
         $instance = clone $abstract;
         foreach ($instance->rules as & $rule) {
