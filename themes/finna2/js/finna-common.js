@@ -206,13 +206,9 @@ finna.common = (function finnaCommon() {
       if (!ev.target) {
         return;
       }
-      if ('doubleClickSelectAll' in ev.target.dataset) {
-        window.getSelection().selectAllChildren(ev.target);
-      } else {
-        const parentEl = ev.target.closest('[data-double-click-select-all]');
-        if (parentEl) {
-          window.getSelection().selectAllChildren(parentEl);
-        }
+      const dblClickEl = ev.target.closest('[data-double-click-select-all]');
+      if (dblClickEl) {
+        window.getSelection().selectAllChildren(dblClickEl);
       }
     });
   }
