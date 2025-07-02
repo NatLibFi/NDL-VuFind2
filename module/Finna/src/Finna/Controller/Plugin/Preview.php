@@ -270,15 +270,24 @@ class Preview extends AbstractPlugin
     {
         $document = new DOMDocument();
         $document->loadXML($xml);
-        [$formatNs, $formatNsUri] = match ($format) {
-            'dc' => ['dc', 'http://purl.org/dc/elements/1.1/'],
-            'qdc' => ['', ''],
-            'ead' => ['', ''],
-            'ead3' => ['ead3', 'http://ead3.archivists.org/schema/'],
-            'aipa' => ['', ''],
-            'forward' => ['', ''],
-            'lido' => ['lido', 'http://www.lido-schema.org'],
-            'marc' => ['marc', 'http://www.loc.gov/MARC21/slim'],
+        [$formatNs, $formatNsUri, $elementNsMap] = match ($format) {
+            'dc' => ['dc', 'http://purl.org/dc/elements/1.1/', []],
+            'qdc' => ['', '', []],
+            'ead' => ['', '', []],
+            'ead3' => ['ead3', 'http://ead3.archivists.org/schema/', []],
+            'aipa' => ['', '', []],
+            'forward' => ['', '', []],
+            'lido' => [
+                'lido',
+                'http://www.lido-schema.org',
+                [
+                    'Point' => ['gml', 'http://www.opengis.net/gml'],
+                    'LineString' => ['gml', 'http://www.opengis.net/gml'],
+                    'Polygon' => ['gml', 'http://www.opengis.net/gml'],
+                    'pos' => ['gml', 'http://www.opengis.net/gml'],
+                ],
+            ],
+            'marc' => ['marc', 'http://www.loc.gov/MARC21/slim', []],
         };
         if (!$formatNs) {
             return $document;
@@ -294,6 +303,9 @@ class Preview extends AbstractPlugin
         // Add namespace declarations and move any schemaLocation:
         $root = $document->documentElement;
         $root->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:$formatNs", $formatNsUri);
+        foreach ($elementNsMap as $elementNs) {
+            $root->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:$elementNs[0]", $elementNs[1]);
+        }
         if ($schemaLocation = $root->getAttribute('schemaLocation')) {
             $root->removeAttribute('schemaLocation');
             $root->setAttributeNS(
@@ -306,34 +318,47 @@ class Preview extends AbstractPlugin
 
         // Move elements from default namespace to the format's namespace (or xml namespace):
         $xml = $document->saveXML();
+        // Opening tags and self-closing tags:
         $xml = preg_replace_callback(
-            '/<(\w+?)( ([^>]*?)>|>)/',
-            function ($matches) use ($formatNs) {
-                $tag = "$formatNs:$matches[1]";
-                if (isset($matches[3])) {
+            '/<(\w+?)\b *([^>]*?)(\/?>)/',
+            function ($matches) use ($formatNs, $elementNsMap) {
+                [, $tagName, $attrs, $closing] = $matches;
+                $tagNs = $elementNsMap[$tagName][0] ?? $formatNs;
+                $tag = "$tagNs:$tagName";
+                if ('' !== $attrs) {
                     // Attributes:
                     $attrs = preg_replace_callback(
                         '/(^|\s)(\w+)=\s*"([^"]*)"/',
-                        function ($subMatches) use ($formatNs) {
-                            $ns = 'lang' === $subMatches[2] ? 'xml' : $formatNs;
+                        function ($subMatches) use ($tagNs) {
+                            $ns = 'lang' === $subMatches[2] ? 'xml' : $tagNs;
                             return "$subMatches[1]$ns:$subMatches[2]=\"$subMatches[3]\"";
                         },
-                        $matches[3]
+                        $attrs
                     );
-                    return "<$tag $attrs>";
+                    return "<$tag $attrs$closing";
                 } else {
-                    return "<$tag>";
+                    return "<$tag$closing";
                 }
             },
             $xml
         );
+        // Closing tags:
         $xml = preg_replace_callback(
             '/<\/(\w+?)\s*>/',
-            function ($matches) use ($formatNs) {
-                return "</$formatNs:$matches[1]>";
+            function ($matches) use ($formatNs, $elementNsMap) {
+                $tagName = $matches[1];
+                $tagNs = $elementNsMap[$tagName][0] ?? $formatNs;
+                $tag = "$tagNs:$tagName";
+                return "</$tag>";
             },
             $xml
         );
+
+        /*
+        header('Content-type: text/xml');
+        echo $xml;
+        exit();
+        */
 
         // Reload for the changes to take effect:
         $document->loadXML($xml);
