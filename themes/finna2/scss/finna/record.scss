@@ -1277,3 +1277,9 @@ finna-model-viewer .object-editor {
     @extend .label-warning;
   }
 }
+
+
+/* Validation report */
+.validation-report-xml code {
+  white-space: pre-wrap;
+}

@@ -7,7 +7,14 @@
       . implode(
           '',
           array_map(
-              fn ($s) => '<li>' . $this->escapeHtml($s) . '</li>',
+              function ($s) {
+                if (preg_match('/^\[(\d+)\] (.+)/', $s, $matches)) {
+                  $s = "<a href=\"#l$matches[1]\">[$matches[1]]</a> " . $this->escapeHtml($matches[2]);
+                } else {
+                  $s = $this->escapeHtml($s);
+                }
+                return "<li>$s</li>";
+              },
               $items
           )
       )
@@ -33,6 +40,30 @@
 <?php if ($recommendations = $this->validationReport['recommendations'] ?? null): ?>
   <h3><?=$this->transEsc('Recommendations')?></h3>
   <?=$list($recommendations)?>
+<?php endif; ?>
+
+<?php
+  $rawFieldData = $this->driver->getRawData();
+  $formattedXml = null;
+  if ($xml = $rawFieldData['fullrecord'] ?? null) {
+    $dom = new DOMDocument('1.0');
+    $dom->preserveWhiteSpace = false;
+    $dom->formatOutput = true;
+    if ($dom->loadXML($xml)) {
+      $formattedXml = $dom->saveXML();
+    }
+  }
+  if ($formattedXml):
+?>
+  <h2><?=$this->transEsc('Metadata')?></h2>
+
+  <ol class="list-numbers validation-report-xml">
+    <?php foreach (explode("\n", $formattedXml) as $lineNo => $line): ?>
+      <li id="l<?=$lineNo + 1?>">
+        <code><?=$this->escapeHtml($line)?></code>
+      </li>
+    <?php endforeach; ?>
+  </ol>
 <?php endif; ?>
 
 <!-- END of: finna - record/validationreport.phtml -->

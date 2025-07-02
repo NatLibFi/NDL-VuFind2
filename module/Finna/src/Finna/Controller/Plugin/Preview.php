@@ -261,6 +261,8 @@ class Preview extends AbstractPlugin
     /**
      * Create a DOMDocument and inject the default namespace for the given format if necessary
      *
+     * Also pretty-prints the document so that it can be output nicely in a validation report.
+     *
      * @param string $xml    Record
      * @param string $format Format
      *
@@ -269,7 +271,13 @@ class Preview extends AbstractPlugin
     protected function createDOMDocumentWithDefaultNamespace(string $xml, string $format): DOMDocument
     {
         $document = new DOMDocument();
+        $document->preserveWhiteSpace = true;
         $document->loadXML($xml);
+
+        // Pretty-print:
+        $document->formatOutput = true;
+
+        // Handle namespaces:
         [$formatNs, $formatNsUri, $elementNsMap] = match ($format) {
             'dc' => ['dc', 'http://purl.org/dc/elements/1.1/', []],
             'qdc' => ['', '', []],
@@ -289,78 +297,80 @@ class Preview extends AbstractPlugin
             ],
             'marc' => ['marc', 'http://www.loc.gov/MARC21/slim', []],
         };
-        if (!$formatNs) {
-            return $document;
-        }
-        $xpath = new DOMXPath($document);
-        $namespaces = $xpath->query('//namespace::*');
-        foreach ($namespaces as $namespace) {
-            if ($formatNsUri === $namespace->nodeValue) {
-                // Found the default, no need to add it!
-                return $document;
-            }
-        }
-        // Add namespace declarations and move any schemaLocation:
-        $root = $document->documentElement;
-        $root->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:$formatNs", $formatNsUri);
-        foreach ($elementNsMap as $elementNs) {
-            $root->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:$elementNs[0]", $elementNs[1]);
-        }
-        if ($schemaLocation = $root->getAttribute('schemaLocation')) {
-            $root->removeAttribute('schemaLocation');
-            $root->setAttributeNS(
-                'http://www.w3.org/2000/xmlns/',
-                'xmlns:xsi',
-                'http://www.w3.org/2001/XMLSchema-instance'
-            );
-            $root->setAttributeNS('http://www.w3.org/2001/XMLSchema-instance', 'schemaLocation', $schemaLocation);
-        }
-
-        // Move elements from default namespace to the format's namespace (or xml namespace):
-        $xml = $document->saveXML();
-        // Opening tags and self-closing tags:
-        $xml = preg_replace_callback(
-            '/<(\w+?)\b *([^>]*?)(\/?>)/',
-            function ($matches) use ($formatNs, $elementNsMap) {
-                [, $tagName, $attrs, $closing] = $matches;
-                $tagNs = $elementNsMap[$tagName][0] ?? $formatNs;
-                $tag = "$tagNs:$tagName";
-                if ('' !== $attrs) {
-                    // Attributes:
-                    $attrs = preg_replace_callback(
-                        '/(^|\s)(\w+)=\s*"([^"]*)"/',
-                        function ($subMatches) use ($tagNs) {
-                            $ns = 'lang' === $subMatches[2] ? 'xml' : $tagNs;
-                            return "$subMatches[1]$ns:$subMatches[2]=\"$subMatches[3]\"";
-                        },
-                        $attrs
-                    );
-                    return "<$tag $attrs$closing";
-                } else {
-                    return "<$tag$closing";
+        if ($formatNs) {
+            $addNamespaces = true;
+            $xpath = new DOMXPath($document);
+            $namespaces = $xpath->query('//namespace::*');
+            foreach ($namespaces as $namespace) {
+                if ($formatNsUri === $namespace->nodeValue) {
+                    // Found the default, no need to add namespaces!
+                    $addNamespaces = false;
                 }
-            },
-            $xml
-        );
-        // Closing tags:
-        $xml = preg_replace_callback(
-            '/<\/(\w+?)\s*>/',
-            function ($matches) use ($formatNs, $elementNsMap) {
-                $tagName = $matches[1];
-                $tagNs = $elementNsMap[$tagName][0] ?? $formatNs;
-                $tag = "$tagNs:$tagName";
-                return "</$tag>";
-            },
-            $xml
-        );
+            }
+            if ($addNamespaces) {
+                // Add namespace declarations and move any schemaLocation:
+                $root = $document->documentElement;
+                $root->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:$formatNs", $formatNsUri);
+                foreach ($elementNsMap as $elementNs) {
+                    $root->setAttributeNS('http://www.w3.org/2000/xmlns/', "xmlns:$elementNs[0]", $elementNs[1]);
+                }
+                if ($schemaLocation = $root->getAttribute('schemaLocation')) {
+                    $root->removeAttribute('schemaLocation');
+                    $root->setAttributeNS(
+                        'http://www.w3.org/2000/xmlns/',
+                        'xmlns:xsi',
+                        'http://www.w3.org/2001/XMLSchema-instance'
+                    );
+                    $root->setAttributeNS(
+                        'http://www.w3.org/2001/XMLSchema-instance',
+                        'schemaLocation',
+                        $schemaLocation
+                    );
+                }
 
-        /*
-        header('Content-type: text/xml');
-        echo $xml;
-        exit();
-        */
+                // Move elements from default namespace to the format's namespace (or xml namespace):
+                // Opening tags and self-closing tags:
+                $xml = $document->saveXML();
+                $xml = preg_replace_callback(
+                    '/<(\w+?)\b *([^>]*?)(\/?>)/',
+                    function ($matches) use ($formatNs, $elementNsMap) {
+                        [, $tagName, $attrs, $closing] = $matches;
+                        $tagNs = $elementNsMap[$tagName][0] ?? $formatNs;
+                        $tag = "$tagNs:$tagName";
+                        if ('' !== $attrs) {
+                            // Attributes:
+                            $attrs = preg_replace_callback(
+                                '/(^|\s)(\w+)=\s*"([^"]*)"/',
+                                function ($subMatches) use ($tagNs) {
+                                    $ns = 'lang' === $subMatches[2] ? 'xml' : $tagNs;
+                                    return "$subMatches[1]$ns:$subMatches[2]=\"$subMatches[3]\"";
+                                },
+                                $attrs
+                            );
+                            return "<$tag $attrs$closing";
+                        } else {
+                            return "<$tag$closing";
+                        }
+                    },
+                    $xml
+                );
+                // Closing tags:
+                $xml = preg_replace_callback(
+                    '/<\/(\w+?)\s*>/',
+                    function ($matches) use ($formatNs, $elementNsMap) {
+                        $tagName = $matches[1];
+                        $tagNs = $elementNsMap[$tagName][0] ?? $formatNs;
+                        $tag = "$tagNs:$tagName";
+                        return "</$tag>";
+                    },
+                    $xml
+                );
+            }
+        } else {
+            $xml = $document->saveXML();
+        }
 
-        // Reload for the changes to take effect:
+        // Reload for any changes to take effect:
         $document->loadXML($xml);
 
         return $document;
