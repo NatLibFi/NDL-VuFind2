@@ -110,6 +110,9 @@ class Schematron extends Milo\Schematron
     protected function statementToMessage(DOMElement $stmt, Milo\SchematronXPath $xPath, DOMNode $current, $lets = [])
     {
         $result = parent::statementToMessage($stmt, $xPath, $current, $lets);
+        if ($lineNo = $current->getLineNo()) {
+            $result = "[$lineNo] $result";
+        }
         if ($role = $stmt->getAttribute('role')) {
             $result = "[$role] $result";
         }
