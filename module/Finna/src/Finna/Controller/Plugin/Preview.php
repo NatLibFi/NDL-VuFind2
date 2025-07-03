@@ -92,7 +92,7 @@ class Preview extends AbstractPlugin
      */
     public function loadAndValidatePreviewRecord(): array
     {
-        $params = $this->getController()->params();
+        $params = $this->getController()->plugin('params');
         if ($params->fromHeader('Content-Type')?->getFieldValue() === 'application/json') {
             if (!($request = json_decode(file_get_contents('php://input'), true))) {
                 throw new \InvalidArgumentException('Invalid JSON request');
