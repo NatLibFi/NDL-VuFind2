@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for Preview controller plugin.
+ * CachingXmlEntityLoader factory
  *
  * PHP version 8
  *
@@ -21,21 +21,20 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  Controller_Plugins
+ * @package  Util
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
 
-namespace Finna\Controller\Plugin;
+namespace Finna\Util;
 
-use Finna\Util\CachingXmlEntityLoader;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
-use VuFind\Config\PluginManager as ConfigManager;
+use VuFind\Cache\Manager as CacheManager;
 
 /**
  * Factory for Preview controller plugin.
@@ -46,7 +45,7 @@ use VuFind\Config\PluginManager as ConfigManager;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
-class PreviewFactory implements FactoryInterface
+class CachingXmlEntityLoaderFactory implements FactoryInterface
 {
     /**
      * Create an object
@@ -71,10 +70,8 @@ class PreviewFactory implements FactoryInterface
             throw new \Exception('Unexpected options sent to factory.');
         }
 
-        return new $requestedName(
-            $container,
-            $container->get(ConfigManager::class)->get('config')->toArray(),
-            $container->get(CachingXmlEntityLoader::class)
-        );
+        $result = new $requestedName();
+        $result->setCacheStorage($container->get(CacheManager::class)->getCache('object'));
+        return $result;
     }
 }

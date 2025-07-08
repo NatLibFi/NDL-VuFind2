@@ -32,9 +32,12 @@ namespace Finna\Controller\Plugin;
 use DOMDocument;
 use DOMXPath;
 use Finna\Record\Schema\Schematron;
+use Finna\Util\CachingXmlEntityLoader;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Psr\Container\ContainerInterface;
 use VuFind\Config\PathResolver;
+
+use function function_exists;
 
 /**
  * VuFind Action Helper - Record Preview Support Methods
@@ -78,11 +81,15 @@ class Preview extends AbstractPlugin
     /**
      * Constructor
      *
-     * @param ContainerInterface $serviceLocator Service locator
-     * @param array              $config         Main configuration
+     * @param ContainerInterface     $serviceLocator  Service locator
+     * @param array                  $config          Main configuration
+     * @param CachingXmlEntityLoader $xmlEntityLoader XML entity loader for schema validation
      */
-    public function __construct(protected ContainerInterface $serviceLocator, protected array $config)
-    {
+    public function __construct(
+        protected ContainerInterface $serviceLocator,
+        protected array $config,
+        protected CachingXmlEntityLoader $xmlEntityLoader
+    ) {
     }
 
     /**
@@ -217,6 +224,11 @@ class Preview extends AbstractPlugin
             } else {
                 if ($xsd) {
                     $saveInternalErrors = libxml_use_internal_errors(true);
+                    // libxml_get_external_entity_loader is only available with PHP 8.2 onwards:
+                    $saveEntityLoader = function_exists('libxml_get_external_entity_loader')
+                        ? libxml_get_external_entity_loader()
+                        : null;
+                    libxml_set_external_entity_loader([$this->xmlEntityLoader, 'resolve']);
                     try {
                         if (!$document->schemaValidate($pathResolver->getConfigPath($xsd))) {
                             foreach (libxml_get_errors() as $error) {
@@ -228,6 +240,7 @@ class Preview extends AbstractPlugin
                         }
                     } finally {
                         libxml_use_internal_errors($saveInternalErrors);
+                        libxml_set_external_entity_loader($saveEntityLoader);
                     }
                 }
                 if ($schematronRule) {

@@ -31,6 +31,7 @@ namespace FinnaTest\Controller\Plugin;
 
 use Finna\Controller\Plugin\Preview;
 use Finna\Controller\RecordPreviewController;
+use Finna\Util\CachingXmlEntityLoader;
 use FinnaTest\Container\MockContainer;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Session\SessionManager;
@@ -216,8 +217,23 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
             ->with('params', null)
             ->willReturn($params);
 
+        $entityLoader = $this->getMockBuilder(CachingXmlEntityLoader::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $entityLoader->expects($this->any())
+            ->method('resolve')
+            ->willReturnCallback(
+                function ($publicId, $systemId, $context) {
+                    $data = file_get_contents($systemId);
+                    $f = fopen('php://temp', 'r+');
+                    fwrite($f, $data);
+                    rewind($f);
+                    return $f;
+                }
+            );
+
         $preview = $this->getMockBuilder(Preview::class)
-            ->setConstructorArgs([$container, $config])
+            ->setConstructorArgs([$container, $config, $entityLoader])
             ->onlyMethods(['loadPreviewRecordData', 'getController'])
             ->getMock();
 
