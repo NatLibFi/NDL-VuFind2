@@ -24,7 +24,7 @@
  * @package  Util
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://github.com/KDK-Alli/RecordManager
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Util;
@@ -42,7 +42,7 @@ use VuFindHttp\HttpServiceAwareTrait;
  * @package  Util
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://github.com/KDK-Alli/RecordManager
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class CachingXmlEntityLoader implements HttpServiceAwareInterface, LoggerAwareInterface
 {
