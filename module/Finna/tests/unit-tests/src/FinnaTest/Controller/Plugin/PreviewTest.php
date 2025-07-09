@@ -130,7 +130,6 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
         $preview = $this->getPreview($config, $format, $record, $xsd, $schematron);
         $result = $preview->loadAndValidatePreviewRecord();
         $this->assertIsObject($result['driver']);
-        var_dump($result);
     }
 
     /**
