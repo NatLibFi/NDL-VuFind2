@@ -66,18 +66,16 @@
   </pre>
   <?php
       $script = <<<JS
-          $(document).ready(function() {
-            const recordData = document.getElementById('validation-data');
-            if (recordData) {
-              finna.scriptLoader.load(
-                {'vendor-highlight': 'vendor/highlight.pack.js'},
-                () => {
-                  hljs.highlightBlock(recordData);
-                }
-              );
+        const recordData = document.getElementById('validation-data');
+        if (recordData) {
+          finna.scriptLoader.load(
+            {'vendor-highlight': 'vendor/highlight.pack.js'},
+            () => {
+              hljs.highlightBlock(recordData);
             }
-          });
-        JS;
+          );
+        }
+      JS;
       echo $this->assetManager()->outputInlineScriptString($script);
   ?>
 <?php endif; ?>
