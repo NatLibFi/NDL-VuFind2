@@ -65,18 +65,18 @@
     <?php endforeach; ?>
   </pre>
   <?php
-      $script = <<<JS
-        const recordData = document.getElementById('validation-data');
-        if (recordData) {
-          finna.scriptLoader.load(
-            {'vendor-highlight': 'vendor/highlight.pack.js'},
-            () => {
-              hljs.highlightBlock(recordData);
-            }
-          );
-        }
-      JS;
-      echo $this->assetManager()->outputInlineScriptString($script);
+    $script = <<<JS
+      const recordData = document.getElementById('validation-data');
+      if (recordData) {
+        finna.scriptLoader.load(
+          {'vendor-highlight': 'vendor/highlight.pack.js'},
+          () => {
+            hljs.highlightBlock(recordData);
+          }
+        );
+      }
+    JS;
+    echo $this->assetManager()->outputInlineScriptString($script);
   ?>
 <?php endif; ?>
 
