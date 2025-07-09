@@ -57,13 +57,29 @@
 ?>
   <h2><?=$this->transEsc('Metadata')?></h2>
 
-  <ol class="list-numbers validation-report-xml">
+  <pre id="validation-data" class="hljs validation-report-xml">
     <?php foreach (explode("\n", $formattedXml) as $lineNo => $line): ?>
-      <li id="l<?=$lineNo + 1?>">
-        <code><?=$this->escapeHtml($line)?></code>
-      </li>
+      <div class="line">
+        <div class="line__num"><?=$lineNo + 1 . ':'?></div><div class="line__content" id="l<?=$lineNo + 1?>"><?=$this->escapeHtml($line)?></div>
+      </div>
     <?php endforeach; ?>
-  </ol>
+  </pre>
+  <?php
+      $script = <<<JS
+          $(document).ready(function() {
+            const recordData = document.getElementById('validation-data');
+            if (recordData) {
+              finna.scriptLoader.load(
+                {'vendor-highlight': 'vendor/highlight.pack.js'},
+                () => {
+                  hljs.highlightBlock(recordData);
+                }
+              );
+            }
+          });
+        JS;
+      echo $this->assetManager()->outputInlineScriptString($script);
+  ?>
 <?php endif; ?>
 
 <!-- END of: finna - record/validationreport.phtml -->

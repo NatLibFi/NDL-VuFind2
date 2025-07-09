@@ -1280,6 +1280,19 @@ finna-model-viewer .object-editor {
 
 
 /* Validation report */
-.validation-report-xml code {
-  white-space: pre-wrap;
+.validation-report-xml {
+  white-space: pre-line;
+
+  .line {
+    display: inline-flex;
+    gap: 0.75rem;
+
+    .line__num {
+      min-width: 2rem;
+    }
+
+    .line__content {
+      white-space: pre-wrap;
+    }
+  }
 }
