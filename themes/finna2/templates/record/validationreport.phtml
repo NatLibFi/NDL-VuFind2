@@ -1,6 +1,6 @@
 <!-- START of: finna - record/validationreport.phtml -->
 <?php
-  $this->headTitle($this->translate('record_validation_report_title'));
+  $this->headTitle($this->translate('Validation::report_title'));
 
   $list = function (array $items): string {
     return '<ul class="list-bullets">'
@@ -21,24 +21,24 @@
       . '</ul>';
   };
 ?>
-<h2><?=$this->transEsc('record_validation_report_title')?></h2>
+<h2><?=$this->transEsc('Validation::report_title')?></h2>
 
 <?=$this->flashmessages()?>
 
-<?=$this->translate('record_validation_message_html', ['%%url%%' => $this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))])?>
+<?=$this->translate('Validation::report_description_html', ['%%url%%' => $this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))])?>
 
 <?php if ($errors = $this->validationReport['errors'] ?? null): ?>
-  <h3><?=$this->transEsc('Errors')?></h3>
+  <h3><?=$this->escapeHtml('Errors') // Report contents always in English! ?></h3>
   <?=$list($errors)?>
 <?php endif; ?>
 
 <?php if ($warnings = $this->validationReport['warnings'] ?? null): ?>
-  <h3><?=$this->transEsc('Warnings')?></h3>
+  <h3><?=$this->escapeHtml('Warnings') // Report contents always in English! ?></h3>
   <?=$list($warnings)?>
 <?php endif; ?>
 
 <?php if ($recommendations = $this->validationReport['recommendations'] ?? null): ?>
-  <h3><?=$this->transEsc('Recommendations')?></h3>
+  <h3><?=$this->escapeHtml('Recommendations') // Report contents always in English! ?></h3>
   <?=$list($recommendations)?>
 <?php endif; ?>
 

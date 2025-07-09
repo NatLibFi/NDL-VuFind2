@@ -218,8 +218,7 @@ class Preview extends AbstractPlugin
         $xsd = $this->config['NormalizationPreview']['validation_xsd'][$format] ?? null;
         $schematronRule = $this->config['NormalizationPreview']['validation_schematron'][$format] ?? null;
         if ($xsd || $schematronRule) {
-            $document = $this->createDOMDocumentWithDefaultNamespace($metadata, $format);
-            if (!$document) {
+            if (!($document = $this->createDOMDocumentWithDefaultNamespace($metadata, $format))) {
                 $errors[] = 'Could not parse document XML';
             } else {
                 if ($xsd) {

@@ -118,8 +118,8 @@ class RecordController extends \VuFind\Controller\RecordController
         // Add flash messages about any validation issues:
         if ($this->validationResult) {
             $msg = Preview::VALIDATION_ERRORS === $this->validationResult
-                ? 'record_validation_errors_html'
-                : 'record_validation_issues_html';
+                ? 'Validation::metadata_errors_html'
+                : 'Validation::metadata_issues_html';
             try {
                 $this->flashMessenger()->addErrorMessage(
                     [

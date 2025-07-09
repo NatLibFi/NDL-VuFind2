@@ -1,18 +1,5 @@
 <?php
 
-/**
- * Define 'matches' function for limited XSLT 2.0 compatibility
- *
- * @param string $str  String to match against
- * @param string $expr Regular expression
- *
- * @return bool
- */
-function matches(string $str, string $expr): bool
-{
-    return preg_match("/$expr/", $str);
-}
-
 // If the profiler is enabled, set it up now:
 $vufindProfiler = getenv('VUFIND_PROFILER_XHPROF');
 if (!empty($vufindProfiler)) {

@@ -85,15 +85,11 @@ class RecordPreviewController extends \VuFind\Controller\AbstractBase
         array_walk(
             $sources,
             function (&$a) {
-                if ($a['institution'] === '_preview') {
-                    $a['institutionName'] = $this->translate('Generic Preview');
-                } else {
-                    $a['institutionName'] = $this->translate(
-                        '0/' . $a['institution'] . '/',
-                        [],
-                        $a['institution']
-                    );
-                }
+                $a['institutionName'] = $this->translate(
+                    '0/' . $a['institution'] . '/',
+                    [],
+                    $a['institution']
+                );
             }
         );
         $searchConfig = $this->getConfig('searches');
