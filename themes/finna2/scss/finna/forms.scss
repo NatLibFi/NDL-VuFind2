@@ -248,3 +248,10 @@ button.multiselect {
     background-color: white;
   }
 }
+
+.form-label {
+  .required-notice {
+    font-size: $font-size-small;
+    color: $gray-light;
+  }
+}
