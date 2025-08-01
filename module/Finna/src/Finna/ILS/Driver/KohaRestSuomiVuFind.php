@@ -398,18 +398,17 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         if ($code != 200) {
             throw new ILSException('Problem with Koha REST API.');
         }
-
-        return [
-            'id' => $result['borrowernumber'],
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'email' => $result['email'],
-            'major' => null,
-            'college' => null,
-            'home_library' => $result['branchcode'],
-        ];
+        return $this->createPatronArray(
+            id: $result['borrowernumber'],
+            firstname: $result['firstname'],
+            lastname: $result['lastname'],
+            cat_username: $username,
+            cat_password: $password,
+            email: $result['email'],
+            nonDefaultFields: [
+                'home_library' => $result['branchcode'],
+            ]
+        );
     }
 
     /**
@@ -462,18 +461,20 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
                 'Y-m-d',
                 $result['dateexpiry']
             ) : '';
-        return [
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'phone' => $result['mobile'],
-            'email' => $result['email'],
-            'address1' => $result['address'],
-            'address2' => $result['address2'],
-            'zip' => $result['zipcode'],
-            'city' => $result['city'],
-            'country' => $result['country'],
-            'expiration_date' => $expirationDate,
-        ];
+        return $this->createProfileArray(
+            firstname: $result['firstname'],
+            lastname: $result['surname'],
+            phone: $result['mobile'],
+            address1: $result['address'],
+            address2: $result['address2'],
+            zip: $result['zipcode'],
+            city: $result['city'],
+            country: $result['country'],
+            expiration_date: $expirationDate,
+            nonDefaultFields: [
+                'email' => $result['email'],
+            ]
+        );
     }
 
     /**

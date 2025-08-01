@@ -374,7 +374,19 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             $profile['major'] = null;
             $profile['college'] = null;
         }
-        return $profile;
+        return $this->createPatronArray(
+            id: $patronId,
+            cat_username: $username,
+            cat_password: $password,
+            email: $profile['email'],
+            firstname: $profile['firstname'],
+            lastname: $profile['lastname'],
+            nonDefaultFields: [
+                'loan_history' => $profile['loan_history'],
+                'blocked' => $profile['blocked'],
+
+            ]
+        );
     }
 
     /**
@@ -579,27 +591,29 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                ],
             ];
         }
-
-        $profile = [
-            'firstname' => trim($name[1] ?? ''),
-            'lastname' => ucfirst(trim($name[0])),
-            'phone' => !empty($result['MainPhone'])
+        $loanHistory = isset($this->config['updateTransactionHistoryState']['method'])
+            ? $result['StoreBorrowerHistory']
+            : null;
+        $profile = $this->createProfileArray(
+            firstname: trim($name[1] ?? ''),
+            lastname: ucfirst(trim($name[0])),
+            phone: !empty($result['MainPhone'])
                 ? $result['MainPhone'] : $result['Mobile'],
-            'email' => $result['MainEmail'],
-            'address1' => $result['MainAddrLine1'],
-            'address2' => $result['MainAddrLine2'],
-            'zip' => $result['MainZip'],
-            'city' => $result['MainPlace'],
-            'expiration_date' => $expirationDate,
-            'messagingServices' => $messagingSettings,
-            'blocked' => !empty($result['Defaulted']),
-        ];
-
-        if (isset($this->config['updateTransactionHistoryState']['method'])) {
-            $profile['loan_history'] = $result['StoreBorrowerHistory'];
-        }
-
-        $profile = array_merge($patron, $profile);
+            address1: $result['MainAddrLine1'],
+            address2: $result['MainAddrLine2'],
+            zip: $result['MainZip'],
+            city: $result['MainPlace'],
+            expiration_date: $expirationDate,
+            nonDefaultFields: [
+                'email' => $result['MainEmail'],
+                'blocked' => !empty($result['Defaulted']),
+                'cat_username' => $patron['cat_username'],
+                'cat_password' => $patron['cat_password'],
+                'id' => $patron['id'],
+                'loan_history' => $loanHistory,
+                'messagingServices' => $messagingSettings,
+            ],
+        );
         $this->putCachedData($cacheKey, $profile);
         return $profile;
     }

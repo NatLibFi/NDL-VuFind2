@@ -357,29 +357,30 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         $smsField = $this->config['Profile']['smsNumberField']
             ?? 'smsalertnumber';
-
-        return [
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'phone' => $phoneField && !empty($result[$phoneField])
+        return $this->createProfileArray(
+            firstname: $result['firstname'],
+            lastname: $result['surname'],
+            phone: $phoneField && !empty($result[$phoneField])
                 ? $result[$phoneField] : '',
-            'smsnumber' => $smsField ? $result[$smsField] : '',
-            'email' => $result['email'],
-            'address1' => $result['address'],
-            'address2' => $result['address2'],
-            'zip' => $result['zipcode'],
-            'city' => $result['city'],
-            'country' => $result['country'],
-            'category' => $result['categorycode'] ?? '',
-            'expiration_date' => $expirationDate,
-            'hold_identifier' => $result['othernames'],
-            'guarantor' => $guarantor,
-            'guarantees' => $guarantees,
-            'loan_history' => $result['privacy'],
-            'messagingServices' => $messagingSettings,
-            'notes' => $result['opacnote'],
-            'full_data' => $result,
-        ];
+            address1: $result['address'],
+            address2: $result['address2'],
+            zip: $result['zipcode'],
+            city: $result['city'],
+            country: $result['country'],
+            expiration_date: $expirationDate,
+            nonDefaultFields: [
+                'category' => $result['categorycode'] ?? '',
+                'hold_identifier' => $result['othernames'],
+                'guarantor' => $guarantor,
+                'guarantees' => $guarantees,
+                'loan_history' => $result['privacy'],
+                'smsnumber' => $smsField ? $result[$smsField] : '',
+                'email' => $result['email'],
+                'messagingServices' => $messagingSettings,
+                'notes' => $result['opacnote'],
+                'full_data' => $result,
+            ]
+        );
     }
 
     /**

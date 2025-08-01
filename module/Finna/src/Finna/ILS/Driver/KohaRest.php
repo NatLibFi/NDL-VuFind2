@@ -418,37 +418,36 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $holdIdentifierField = $this->config['Profile']['holdIdentifierField'] ?? 'other_name';
         $callingNameField = $this->config['Profile']['callingNameField'] ?? '';
 
-        $profile = [
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'calling_name' => $result[$callingNameField] ?? '',
-            'email' => $result['email'],
-            'address1' => $result['address'],
-            'address2' => $result['address2'],
-            'zip' => $result['postal_code'],
-            'city' => $result['city'],
-            'country' => $result['country'],
-            'category' => $result['category_id'] ?? '',
-            'expiration_date' => $expirationDate,
-            'expiration_soon' => !empty($result['expiry_date_near']),
-            'expired' => !empty($result['blocks']['Patron::CardExpired']),
-            'hold_identifier' => $result[$holdIdentifierField] ?? '',
-            'guarantors' => $guarantors,
-            'guarantees' => $guarantees,
-            'loan_history' => $result['privacy'],
-            'messagingServices' => $messagingSettings,
-            'notes' => $result['opac_notes'],
-            'messages' => $messages,
-            'full_data' => $result,
-        ];
-        if ($phoneField && !empty($result[$phoneField])) {
-            $profile['phone'] = $result[$phoneField];
-        }
-        if ($smsField && !empty($result[$smsField])) {
-            $profile['smsnumber'] = $result[$smsField];
-        }
+        $phone = $phoneField && !empty($result[$phoneField]) ? $result[$phoneField] : null;
+        $smsnumber = $smsField && !empty($result[$smsField]) ? $result[$smsField] : null;
 
-        return $profile;
+        return $this->createProfileArray(
+            firstname: $result['firstname'],
+            lastname: $result['lastname'],
+            phone: $phone,
+            address1: $result['address'],
+            address2: $result['address2'],
+            zip: $result['postal_code'],
+            city: $result['city'],
+            country: $result['country'],
+            expiration_date: $expirationDate,
+            nonDefaultFields: [
+                'calling_name' => $result[$callingNameField] ?? '',
+                'email' => $result['email'],
+                'category' => $result['category_id'] ?? '',
+                'expiration_soon' => !empty($result['expiry_date_near']),
+                'expired' => !empty($result['blocks']['Patron::CardExpired']),
+                'hold_identifier' => $result[$holdIdentifierField] ?? '',
+                'guarantors' => $guarantors,
+                'guarantees' => $guarantees,
+                'notes' => $result['opac_notes'],
+                'messages' => $messages,
+                'full_data' => $result,
+                'smsnumber' => $smsnumber,
+                'messagingServices' => $messagingSettings,
+                'loan_history' => $result['privacy'],
+            ]
+        );
     }
 
     /**

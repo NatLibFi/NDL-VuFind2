@@ -157,6 +157,111 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test patron login
+     *
+     * @return void
+     */
+    public function testPatronLogin(): void
+    {
+        $userFixture = $this->getFixture('alma/patron.xml', 'Finna');
+        $makeRequestMap = [
+        ['/users/1111', 'GET', [new SimpleXMLElement($userFixture), 200]],
+        ];
+        $driver = $this->getDriver($makeRequestMap);
+        $result = $driver->patronLogin('1111', '2121');
+        $this->assertEquals([
+        'id' => '57391',
+        'cat_username' => '1111',
+        'cat_password' => '2121',
+        'firstname' => 'John',
+        'lastname' => 'Smith',
+        'email' => 'pref@email.if',
+        ], $result);
+    }
+
+    /**
+     * Test getMyProfile
+     *
+     * @return void
+     */
+    public function testGetMyProfile(): void
+    {
+        $profileFixture = $this->getFixture('alma/profile.xml', 'Finna');
+        $makeRequestMap = [
+        ['/users/1111', 'GET', new SimpleXMLElement($profileFixture)],
+        ];
+        $driver = $this->getDriver($makeRequestMap);
+        $result = $driver->getMyProfile(['id' => '1111']);
+        $this->assertTrue($result['country'] instanceof \VuFind\I18n\TranslatableString);
+        $this->assertTrue($result['addresses'][0]['country'] instanceof \VuFind\I18n\TranslatableString);
+        $this->assertTrue($result['addresses'][1]['country'] instanceof \VuFind\I18n\TranslatableString);
+        $result['country'] = '';
+        $result['addresses'][0]['country'] = 'country';
+        $result['addresses'][1]['country'] = 'country';
+        $this->assertEquals(
+            [
+            'barcode' => '01924019240',
+            'email' => 'pref@email.if',
+            'group_code' => 'test',
+            'expired' => null,
+            'expiration_soon' => null,
+            'self_service_pin' => null,
+            'address3' => 'Line 3',
+            'homeAddress' => 'Line 1, 00000 City',
+            'workAddress' => 'A street 1, 00000 Far away',
+            'account_type' => 'normal',
+            'language' => 'fi',
+            'firstname' => 'John',
+            'lastname' => 'Smith',
+            'birthdate' => '',
+            'address1' => 'Line 1',
+            'address2' => 'Line 2',
+            'city' => 'City',
+            'country' => '',
+            'zip' => '00000',
+            'phone' => '9876543210',
+            'mobile_phone' => null,
+            'home_library' => null,
+            'expiration_date' => null,
+            'group' => 'descgroup',
+            'addresses' => [
+            [
+              'address1' => 'A street 1',
+              'address2' => '          ',
+              'address3' => 'Not a default field',
+              'country' => 'country',
+              'city' => 'Far away',
+              'zip' => '00000',
+              'types' => [
+                'work',
+                'something',
+              ],
+              'preferred' => false,
+            ],
+            [
+              'address1' => 'Line 1',
+              'address2' => 'Line 2',
+              'address3' => 'Line 3',
+              'country' => 'country',
+              'city' => 'City',
+              'zip' => '00000',
+              'types' => [
+                'Type 1',
+                'home',
+              ],
+              'preferred' => true,
+            ],
+            ],
+            'guarantees' => [
+            ['lastname' => 'Tester Test'],
+            ['lastname' => 'Ttee Tst'],
+            ],
+            ],
+            $result
+        );
+    }
+
+    /**
      * Get mocked alma record driver
      *
      * @param array $makeRequestMap Map for requests in makeRequest function.

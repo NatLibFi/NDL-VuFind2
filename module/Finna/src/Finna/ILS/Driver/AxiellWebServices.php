@@ -1400,78 +1400,64 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
          * GetTransactionHistory
          */
         $patronId = $this->authenticatePatron($username, $password);
+        $user = $this->createPatronArray(
+            id: $patronId,
+            cat_username: $username,
+            cat_password: $password,
+            firstname: $firstname,
+            lastname: $lastname,
+            nonDefaultFields: [
+                // Non  default field for legacy support
+                'patronId' => $patronId,
+            ]
+        );
 
-        $user = [
-            'id' => $info->backendPatronId,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'lastname' => $lastname,
-            'firstname' => $firstname,
-            'major' => null,
-            'college' => null,
-            'patronId' => $patronId,
-        ];
-
-        $userCached = [
-            'id' => $info->backendPatronId,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'lastname' => $lastname,
-            'firstname' => $firstname,
-            'email' => '',
-            'emailId' => '',
-            'address1' => '',
-            'addressId' => '',
-            'zip' => '',
-            'city' => '',
-            'country' => '',
-            'phone' => '',
-            'phoneId' => '',
-            'phoneLocalCode' => '',
-            'phoneAreaCode' => '',
-            'major' => null,
-            'college' => null,
-            'patronId' => $patronId,
-            'loan_history' => (bool)$loanHistoryEnabled,
-        ];
-
+        $email = null;
+        $emailId = null;
         if (!empty($info->emailAddresses->emailAddress)) {
             $emailAddresses
                 =  $this->objectToArray($info->emailAddresses->emailAddress);
-
             foreach ($emailAddresses as $emailAddress) {
                 if ($emailAddress->isActive == 'yes') {
-                    $userCached['email'] = $emailAddress->address ?? '';
-                    $userCached['emailId'] = $emailAddress->id ?? '';
+                    $email = $emailAddress->address ?? '';
+                    $emailId = $emailAddress->id ?? '';
+                    break;
                 }
             }
         }
 
+        $address1 = null;
+        $zip = null;
+        $city = null;
+        $country = null;
+        $addressId = null;
         if (isset($info->addresses->address)) {
             $addresses = $this->objectToArray($info->addresses->address);
             foreach ($addresses as $address) {
                 if ($address->isActive == 'yes') {
-                    $userCached['address1'] = $address->streetAddress ?? '';
-                    $userCached['zip'] = $address->zipCode ?? '';
-                    $userCached['city'] = $address->city ?? '';
-                    $userCached['country'] = $address->country ?? '';
-                    $userCached['addressId'] = $address->id ?? '';
+                    $address1 = $address->streetAddress ?? '';
+                    $zip = $address->zipCode ?? '';
+                    $city = $address->city ?? '';
+                    $country = $address->country ?? '';
+                    $addressId = $address->id ?? '';
                 }
             }
         }
-
+        $phone = null;
+        $phoneLocalCode = null;
+        $phoneAreaCode = null;
+        $phoneId = null;
         if (isset($info->phoneNumbers->phoneNumber)) {
             $phoneNumbers = $this->objectToArray($info->phoneNumbers->phoneNumber);
             foreach ($phoneNumbers as $phoneNumber) {
                 if ($phoneNumber->sms->useForSms == 'yes') {
-                    $userCached['phone'] = $phoneNumber->areaCode ?? '';
-                    $userCached['phoneAreaCode'] = $userCached['phone'];
+                    $phoneAreaCode = $phone = $phoneNumber->areaCode ?? '';
                     if (isset($phoneNumber->localCode)) {
-                        $userCached['phone'] .= $phoneNumber->localCode;
-                        $userCached['phoneLocalCode'] = $phoneNumber->localCode;
+                        $phone .= $phoneNumber->localCode;
+                        $phoneLocalCode = $phoneNumber->localCode;
                     }
                     if (isset($phoneNumber->id)) {
-                        $userCached['phoneId'] = $phoneNumber->id;
+                        $phoneId = $phoneNumber->id;
                     }
                 }
             }
@@ -1479,26 +1465,39 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
         $serviceSendMethod
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
-
-        switch ($serviceSendMethod) {
-            case 'database':
-                $userCached['messagingServices']
-                    = $this->parseEmailMessagingSettings(
-                        $info->messageServices->messageService ?? null
-                    );
-                break;
-            case 'driver':
-                $userCached['messagingServices']
-                    = $this->parseDriverMessagingSettings(
-                        $info->messageServices->messageService ?? null,
-                        $user
-                    );
-                break;
-            default:
-                $userCached['messagingServices'] = [];
-                break;
-        }
-
+        $messagingServices = match ($serviceSendMethod) {
+            'database'  =>  $this->parseEmailMessagingSettings(
+                $info->messageServices->messageService ?? null
+            ),
+            'driver'    =>  $this->parseDriverMessagingSettings(
+                $info->messageServices->messageService ?? null,
+                $user
+            ),
+            'default'   => [],
+        };
+        $userCached = $this->createProfileArray(
+            firstname: $firstname,
+            lastname: $lastname,
+            address1: $address1,
+            zip: $zip,
+            city: $city,
+            country: $country,
+            phone: $phone,
+            nonDefaultFields: [
+                'emailId' => $emailId,
+                'addressId' => $addressId,
+                'phoneId' => $phoneId,
+                'phoneLocalCode' => $phoneLocalCode,
+                'phoneAreaCode' => $phoneAreaCode,
+                'patronId' => $patronId,
+                'id' => $info->backendPatronId,
+                'cat_username' => $username,
+                'cat_password' => $password,
+                'email' => $email,
+                'messagingServices' => $messagingServices,
+                'loan_history' => $loanHistoryEnabled,
+            ]
+        );
         $this->putCachedData($cacheKey, $userCached);
 
         return $user;
