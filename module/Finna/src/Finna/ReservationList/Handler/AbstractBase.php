@@ -153,6 +153,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     protected bool $enabled;
 
     /**
+     * Specific type of the list
+     *
+     * @var string
+     */
+    protected string $listType;
+
+    /**
      * List configuration as an array
      *
      * @var array
@@ -379,7 +386,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $result['record_ids_text'] = '';
         $result['record_source_and_ids'] = [];
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
-            $result['record_ids_text'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
+            $result['record_ids_text'] .= $resource->getTitle() . ' (' . $resource->getRecordId() . ')' . PHP_EOL;
             $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
         }
         return $result;
@@ -420,6 +427,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $recordID = $requestValues['recordId'];
         $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
         $record = $recordLoader->load($recordID, $source);
+        $result['list_title'] = $requestValues['list_title'];
         $result['recordId'] = $record->getUniqueID();
         $result['source'] = $record->getSourceIdentifier();
         $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
@@ -546,6 +554,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $this->connectionType = $config['Connection']['type'] ?? '';
         $this->connectionSettings = $config['Connection'] ?? [];
         $this->enabled = $config['Enabled'] ?? false;
+        $this->listType = $config['Type'] ?? 'default';
         $this->institution = $institution;
         $this->listConfiguration = $config;
 
@@ -568,10 +577,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
 
         // Extend form as required
         if ($extend = $this->singleOrderFormConfig['extends'] ?? false) {
+            $extendFrom = $definedForms['PlaceOrder'][$extend];
+            $mergedFields = [...$extendFrom['fields'], ...$this->singleOrderFormConfig['fields'] ?? []];
             $this->singleOrderFormConfig = array_merge(
-                $definedForms['PlaceOrder'][$extend],
+                $extendFrom,
                 $this->singleOrderFormConfig
             );
+            $this->singleOrderFormConfig['fields'] = $mergedFields;
         }
         return $this;
     }
