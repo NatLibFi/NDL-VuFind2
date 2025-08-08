@@ -180,6 +180,16 @@ trait ContainerFormatTrait
     }
 
     /**
+     * Returns the tag name of the identifier of an encapsulated XML record.
+     *
+     * @return string
+     */
+    protected function getEncapsulatedRecordIdTagName(): string
+    {
+        return 'identifier';
+    }
+
+    /**
      * Return all encapsulated record items.
      *
      * @return array
@@ -205,12 +215,13 @@ trait ContainerFormatTrait
      */
     protected function getEncapsulatedRecordId($item): string
     {
-        // Implementation for XML items with ID specified in an 'id' element
+        // Implementation for XML items
+        $idTagName = $this->getEncapsulatedRecordIdTagName();
         if ($item instanceof \SimpleXMLElement) {
-            return (string)$item->id;
+            return (string)$item->{$idTagName};
         }
         if ($item instanceof \DOMNode) {
-            return $item->getElementsByTagName('id')[0]->nodeValue;
+            return $item->getElementsByTagName($idTagName)[0]->nodeValue;
         }
         throw new \RuntimeException('Unable to determine ID');
     }
@@ -486,7 +497,9 @@ trait ContainerFormatTrait
         $driver->setContainerRecord($this);
 
         $data = [
-            'id' => (string)$item->identifier,
+            'id' => $this->getUniqueID()
+                . ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR
+                . (string)$item->identifier,
             'title' => (string)$item->name,
             'description' => (string)($item->description ?? ''),
             'additionalType' => (string)$item->additionalType,

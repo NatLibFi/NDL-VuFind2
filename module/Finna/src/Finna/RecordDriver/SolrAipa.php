@@ -47,6 +47,7 @@ use function in_array;
 class SolrAipa extends SolrQdc implements ContainerFormatInterface
 {
     use ContainerFormatTrait {
+        getEncapsulatedRecordId as getBaseEncapsulatedRecordId;
         getEncapsulatedRecordFormat as getBaseEncapsulatedRecordFormat;
     }
     use LrmiDriverTrait;
@@ -363,12 +364,26 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      *
      * @return string
      */
-    public function getEncapsulatedRecordElementTagName(): string
+    protected function getEncapsulatedRecordElementTagName(): string
     {
         return match ($this->getType()) {
             'aipa:education' => 'item', // For BC, to be removed later.
             self::AIPA_TYPE_EDUCATION => 'item',
             default => 'curatedRecords',
+        };
+    }
+
+    /**
+     * Returns the tag name of XML elements containing an encapsulated record.
+     *
+     * @return string
+     */
+    protected function getEncapsulatedRecordIdTagName(): string
+    {
+        return match ($this->getType()) {
+            'aipa:education' => 'id', // For BC, to be removed later.
+            self::AIPA_TYPE_EDUCATION => 'id',
+            default => 'identifier',
         };
     }
 
