@@ -30,6 +30,7 @@
 namespace Finna\Db\Table;
 
 use Laminas\Db\Sql\Select;
+
 /**
  * Table Definition for comments
  *
