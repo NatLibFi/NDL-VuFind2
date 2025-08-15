@@ -591,7 +591,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ],
             'Contains collections' => [
                 'getChildCollections',
-                'data-componentParts.phtml',
+                'data-childCollections.phtml',
                 [
                     'context' => ['class' => 'recordLinks'],
                 ],
