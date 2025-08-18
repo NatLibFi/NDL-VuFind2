@@ -243,11 +243,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     }
                     $tmp['value'] = implode(' ', $line);
                 } elseif ($value == '773') {
-                    if (
-                        $relation =
+                    $relation =
                         $this->relationMappings[$this->stripTrailingPunctuation($this->getSubfield($field, 'i'), ':')]
-                        ?? null
-                    ) {
+                        ?? null;
+                    if ($relation) {
                         // Use relation as the field heading:
                         $tmp['title'] = $relation;
                         $tmp['isCollection'] = true;
@@ -999,6 +998,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $reference = '';
             $publishingInfo = '';
             $author = '';
+            $relation = '';
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
@@ -1059,7 +1059,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'reference' => $reference,
                 'publishingInfo' => $publishingInfo,
                 'mainHeading' => $author,
-                'relation' => $relation ?? '',
+                'relation' => $relation,
             ];
         }
         return $result;

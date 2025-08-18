@@ -36,7 +36,7 @@
       <?php if ($linkedItems && !$this->inRecordInfo): ?>
         <div class="includedIn">
           <div class="record-included-in"><?=$this->transEsc('Included in collections')?>: </div>
-          <?= $this->record($this->driver)->renderTemplate('host-records.phtml', ['hostRecords' => $linkedItems, 'driver', 'includedIn' => true]); ?>
+          <?= $this->record($this->driver)->renderTemplate('host-records.phtml', ['hostRecords' => $linkedItems, 'includedIn' => true]); ?>
         </div>
       <?php endif; ?>
     </div>
