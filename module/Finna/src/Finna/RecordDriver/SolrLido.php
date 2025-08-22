@@ -1151,23 +1151,48 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
-     * Get item label
+     * Add labels to record regarding its resources
      *
      * @return string
      */
-    public function getResourceLabel(): string
+    public function addResourceLabels(): void
     {
-        if ($this->getModels()) {
-            return '3D';
-        }
-        if ($documents = $this->getDocuments()) {
-            foreach ($documents as $document) {
-                if ($document['label'] === '3D') {
-                    return '3D';
+        $labelValues = $labelsToAdd = [];
+        if ($labels = $this->getLabels()) {
+            foreach ($labels as $label) {
+                if ($label['class'] === 'resource-type') {
+                    $labelValues[] = $label['label'];
                 }
             }
         }
-        return '';
+        if ($this->has3DResources()) {
+            if (!in_array('3D', $labelValues)) {
+                $labelsToAdd[] = '3D';
+            }
+        }
+        foreach ($labelsToAdd as $addLabel) {
+            $this->addLabel($addLabel, 'resource-type');
+        }
+    }
+
+    /**
+     * If record has 3D resources
+     *
+     * @return bool
+     */
+    public function has3DResources(): bool
+    {
+        if ($this->getModels()) {
+            return true;
+        }
+        if ($documents = $this->getDocuments()) {
+            foreach ($documents as $document) {
+                if (isset($document['label']) && $document['label'] === '3D') {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

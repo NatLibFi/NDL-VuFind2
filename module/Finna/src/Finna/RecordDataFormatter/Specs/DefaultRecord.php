@@ -847,6 +847,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 [
                     'context' => [
                         'class' => 'recordFormat',
+                        'showLabel' => true,
                     ],
                 ],
             ],

@@ -2,7 +2,6 @@
 <?php
   $formatMap = [];
   $formats = (array)$this->driver->tryMethod('getFormats');
-  $label = $this->driver->tryMethod('getResourceLabel');
   if ($formats) {
     // Take last level of each format main type
     foreach ($formats as $format) {
@@ -16,6 +15,6 @@
   }
 ?>
 <?php foreach ($formatMap as $format): ?>
-  <span class="label label-info iconlabel format-<?=$this->record($this->driver)->getFormatClass($format)?>"><?=$this->transEsc($format)?></span> <?php if ($label): ?><span class="label format-label"><?=$label?></span><?php endif; ?>
+  <span class="label label-info iconlabel format-<?=$this->record($this->driver)->getFormatClass($format)?>"><?=$this->transEsc($format)?></span>
 <?php endforeach; ?>
 <?php // <!-- END of: finna - RecordDriver/DefaultRecord/format-list.phtml --> ?>

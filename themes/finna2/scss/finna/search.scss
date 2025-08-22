@@ -310,11 +310,6 @@ mark, .highlight {
   }
   .label {
     display: inline-block;
-    &.format-label {
-      background-color: $gray;
-      margin-left: -8px;
-      padding: 0.2em 0.4em;
-    }
   }
 }
 .result.embedded {

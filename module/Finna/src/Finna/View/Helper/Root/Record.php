@@ -1123,6 +1123,17 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
+     * Render a list of record labels.
+     *
+     * @return string
+     */
+    public function getLabelList(): string
+    {
+        $this->driver->tryMethod('addResourceLabels');
+        return parent::getLabelList();
+    }
+
+    /**
      * Check if the record driver has a tab (regardless of whether it's active)
      *
      * @param string $tab Tab

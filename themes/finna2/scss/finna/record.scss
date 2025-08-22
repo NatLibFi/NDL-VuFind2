@@ -347,6 +347,12 @@ a.authority {
   ul.truncate-field {
     margin-bottom: 0;
   }
+  > .label-resource-type {
+    display: none;
+  }
+  .recordFormat td :not(.label-resource-type):not(.label-info) {
+    display: none;
+  }
 }
 
 .record-links {
@@ -1273,11 +1279,6 @@ finna-model-viewer .object-editor {
 .record .label {
   margin-bottom: 0.5rem;
 
-  &.format-label {
-    background-color: $gray;
-    margin-left: -8px;
-    padding: 0.2em 0.4em;
-  }
   &.label-retraction {
     @extend .label-warning;
   }
