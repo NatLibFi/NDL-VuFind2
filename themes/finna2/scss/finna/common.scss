@@ -254,7 +254,7 @@ table.content-table {
   @include media-breakpoint-up(sm) {
     table-layout: fixed;
   }
-  .recordLinks {
+  .recordLinks, .record-child-collections {
     .contained-in:not(:last-child) {
       padding-bottom: 0.5rem;
     }
