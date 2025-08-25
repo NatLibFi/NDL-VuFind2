@@ -1165,10 +1165,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 }
             }
         }
-        if ($this->has3DResources()) {
-            if (!in_array('3D', $labelValues)) {
-                $labelsToAdd[] = '3D';
-            }
+        if ($this->has3DResources() && !in_array('3D', $labelValues)) {
+            $labelsToAdd[] = '3D';
         }
         foreach ($labelsToAdd as $addLabel) {
             $this->addLabel($addLabel, 'resource-type');
@@ -1187,7 +1185,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         }
         if ($documents = $this->getDocuments()) {
             foreach ($documents as $document) {
-                if (isset($document['label']) && $document['label'] === '3D') {
+                if ($document['label'] === '3D') {
                     return true;
                 }
             }
