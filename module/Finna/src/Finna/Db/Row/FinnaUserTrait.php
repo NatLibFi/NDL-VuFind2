@@ -275,22 +275,19 @@ trait FinnaUserTrait
     }
 
     /**
-     * Get a display name
+     * Get a displayable version of username
      *
      * @return string
      */
-    public function getDisplayName()
+    public function getDisplayableUsername(): string
     {
-        if ($this->firstname && $this->lastname) {
-            return $this->firstname . ' ' . $this->lastname;
+        if (strpos($this->username, ':')) {
+            [, $username] = explode(':', $this->username);
+        } else {
+            $username = $this->username;
         }
-        if ($this->firstname || $this->lastname) {
-            return $this->firstname . $this->lastname;
-        }
-        if ($this->email) {
-            return $this->email;
-        }
-        return $this->getUsername();
+        $parts = explode('.', $username, 2);
+        return $parts[1] ?? $parts[0];
     }
 
     /**
