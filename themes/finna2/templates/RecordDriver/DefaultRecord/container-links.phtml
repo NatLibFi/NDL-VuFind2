@@ -19,7 +19,7 @@
     ?>
     <div class="truncate-field">
       <?php if ($hostRecords || (!$linkedItems && $containerID)): ?>
-        <div class="publishedIn">
+        <div class="published-in">
           <span class="recordPublished"><?=$this->transEsc('Published in')?>: </span>
           <?php if ($hostRecords): ?>
             <?= $this->record($this->driver)->renderTemplate('host-records.phtml', compact('hostRecords', 'driver')); ?>
@@ -34,7 +34,7 @@
         </div>
       <?php endif; ?>
       <?php if ($linkedItems && !$this->inRecordInfo): ?>
-        <div class="includedIn">
+        <div class="included-in">
           <div class="record-included-in"><?=$this->transEsc('Included in collections')?>: </div>
           <?= $this->record($this->driver)->renderTemplate('host-records.phtml', ['hostRecords' => $linkedItems, 'includedIn' => true]); ?>
         </div>

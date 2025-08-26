@@ -110,7 +110,7 @@
       border: 0;
     }
   }
-  .record-versions, .record-to-componentparts {
+  .record-versions, .record-to-componentparts-link {
     font-size: 0.9em;
     margin-top: 6px;
     &:not(.loading) {
@@ -317,6 +317,11 @@ a.authority {
       td:nth-child(2) {
         padding-left: 10px;
       }
+    }
+  }
+  .recordLinks, .record-child-collections {
+    .contained-in:not(:last-child) {
+      padding-bottom: 0.5rem;
     }
   }
 }

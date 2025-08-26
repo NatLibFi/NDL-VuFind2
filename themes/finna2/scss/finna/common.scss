@@ -254,11 +254,6 @@ table.content-table {
   @include media-breakpoint-up(sm) {
     table-layout: fixed;
   }
-  .recordLinks, .record-child-collections {
-    .contained-in:not(:last-child) {
-      padding-bottom: 0.5rem;
-    }
-  }
 }
 
 .table.record-field-groups {
