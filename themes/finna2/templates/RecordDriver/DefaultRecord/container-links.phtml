@@ -18,10 +18,10 @@
       $hostRecords = $nonLinkedItems;
     ?>
     <div class="truncate-field">
-      <?php if ($hostRecords || (!$linkedItems && $containerID)): ?>
+      <?php if ($hostRecords || !$linkedItems): ?>
         <div class="published-in">
           <span class="recordPublished"><?=$this->transEsc('Published in')?>: </span>
-          <?php if (!$hostRecords): ?>
+          <?php if ($hostRecords): ?>
             <?= $this->record($this->driver)->renderTemplate('host-records.phtml', compact('hostRecords', 'driver')); ?>
           <?php else: ?>
             <?php $link = $containerID ? $this->recordLinker()->getUrl($containerSource . '|' . $containerID) : $this->record($this->driver)->getLink('title', $containerTitle); ?>
