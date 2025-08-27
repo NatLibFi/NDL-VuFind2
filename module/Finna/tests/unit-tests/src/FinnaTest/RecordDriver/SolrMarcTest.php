@@ -178,6 +178,16 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'mainHeading' => '',
                     'relation' => '',
                 ],
+                [
+                    'id' => '',
+                    'linkingId' => '(FI-MELINDA)019172566',
+                    'sourceId' => 'Solr',
+                    'title' => 'Art Research',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                    'relation' => 'Included in collections',
+                ],
             ],
         ];
         yield 'host record link with prefix mismatch' => [
@@ -207,6 +217,16 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'publishingInfo' => '',
                     'mainHeading' => '',
                     'relation' => '',
+                ],
+                [
+                    'id' => '',
+                    'linkingId' => '',
+                    'sourceId' => 'Solr',
+                    'title' => 'Art Research',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                    'relation' => 'Included in collections',
                 ],
             ],
         ];
@@ -267,6 +287,16 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'publishingInfo' => '',
                     'mainHeading' => '',
                     'relation' => '',
+                ],
+                [
+                    'id' => '019172566',
+                    'linkingId' => '',
+                    'sourceId' => 'Solr',
+                    'title' => 'Art Research',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                    'relation' => 'Included in collections',
                 ],
             ],
         ];
@@ -368,6 +398,15 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     ],
                     'isCollection' => false,
                 ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'linkingId',
+                        'value' => '(FI-MELINDA)019172566',
+                    ],
+                    'isCollection' => true,
+                ],
             ],
         ];
         yield 'record link without prefixes' => [
@@ -396,6 +435,15 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     ],
                     'isCollection' => false,
                 ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'bib',
+                        'value' => '019172566',
+                    ],
+                    'isCollection' => true,
+                ],
             ],
         ];
         yield 'record link check linking id with multiple prefixes' => [
@@ -423,6 +471,15 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'value' => '(FI-NL)555',
                     ],
                     'isCollection' => false,
+                ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'Art Research',
+                    ],
+                    'isCollection' => true,
                 ],
             ],
         ];
@@ -482,6 +539,15 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'value' => 'United records Top',
                     ],
                     'isCollection' => false,
+                ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'Art Research',
+                    ],
+                    'isCollection' => true,
                 ],
             ],
         ];

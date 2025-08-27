@@ -300,6 +300,12 @@ a.authority {
   .recordPublished {
     font-weight: 700;
   }
+  .published-in {
+    display: flex;
+  }
+  .container-reference-links {
+    padding-left: 1em;
+  }
 }
 
 .record-details {
