@@ -355,7 +355,7 @@ a.authority {
   > .label-resource-type {
     display: none;
   }
-  .recordFormat td .label {
+  .recordFormat .label {
     display: none;
     &.label-info, &.label-resource-type {
       display: inline-block;
