@@ -350,8 +350,11 @@ a.authority {
   > .label-resource-type {
     display: none;
   }
-  .recordFormat td :not(.label-resource-type):not(.label-info) {
+  .recordFormat td .label {
     display: none;
+    &.label-info, &.label-resource-type {
+      display: inline-block;
+    }
   }
 }
 
