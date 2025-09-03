@@ -13,7 +13,7 @@
       <?=$this->icon('search') ?><span><?= $this->transEsc($this->submitLabel); ?></span>
     </button>
     </div>
-    <div class="content">
+    <div class="content" aria-hidden="true">
       <?php $this->assetManager()->appendScriptLink('vendor/jquery.colorhelpers.min.js'); ?>
       <?php $this->assetManager()->appendScriptLink('vendor/jquery.flot.min.js'); ?>
       <?php $this->assetManager()->appendScriptLink('vendor/jquery.flot.selection.min.js'); ?>
@@ -21,7 +21,7 @@
       <div class="date-vis"></div>
       <?=$this->icon('spinner') ?>
     </div>
-    <div class="navigation">
+    <div class="navigation" aria-hidden="true">
       <div class="zoom-in"><?=$this->icon('daterange-zoom-in') ?></div>
       <div class="zoom-out"><?=$this->icon('daterange-zoom-out') ?></div>
       <div class="prev"><?=$this->icon('daterange-prev') ?></div>
@@ -30,12 +30,14 @@
     </div>
     <?php if ($backend != 'primo' && (!isset($hideType) || !$hideType)): ?>
     <div class="range-type">
-      <label class="radiobutton" for="radio_overlap">
-        <input class="timeline_overlap" type="radio" name="type" id="radio_overlap" value="overlap"<?= !$this->type || $this->type == 'overlap' ? ' checked="checked"' : ''; ?>><?= $this->translate('Timeline overlap'); ?>
-      </label>
-      <label class="radiobutton" for="radio_within">
-        <input class="timeline_within" type="radio" name="type" id="radio_within" value="within"<?= $this->type == 'within' ? ' checked="checked"' : ''; ?>><?= $this->translate('Timeline within'); ?>
-      </label>
+      <div class="radiobutton">
+        <input class="timeline_overlap" type="radio" name="type" id="radio_overlap" value="overlap"<?= !$this->type || $this->type == 'overlap' ? ' checked="checked"' : ''; ?>>
+        <label for="radio_overlap"><?= $this->translate('Timeline overlap'); ?></label>
+      </div>
+      <div class="radiobutton">
+        <input class="timeline_within" type="radio" name="type" id="radio_within" value="within"<?= $this->type == 'within' ? ' checked="checked"' : ''; ?>>
+        <label for="radio_within"><?= $this->translate('Timeline within'); ?></label>
+      </div>
     </div>
     <?php endif; ?>
   </form>
