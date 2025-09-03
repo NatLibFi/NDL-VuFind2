@@ -29,8 +29,8 @@
       <div class="expand-modal"><?=$this->icon('daterange-expand') ?></div>
     </div>
     <?php if ($backend != 'primo' && (!isset($hideType) || !$hideType)): ?>
-    <div class="range-type" role="radiogroup" aria-labelledby="range_type_label">
-      <label id="range_type_label" class="visually-hidden"><?=$this->transEsc('Search Type')?>:</label>
+    <div class="range-type" role="radiogroup" aria-labelledby="access_type_label">
+      <label id="access_type_label" class="visually-hidden"><?=$this->transEsc('Search Type')?>:</label>
       <div class="radiobutton">
         <input class="timeline_overlap" type="radio" name="type" id="radio_overlap" value="overlap"<?= !$this->type || $this->type == 'overlap' ? ' checked="checked"' : ''; ?>>
         <label for="radio_overlap"><?= $this->translate('Timeline overlap'); ?></label>
