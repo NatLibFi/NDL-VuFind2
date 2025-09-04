@@ -393,18 +393,18 @@ class SolrExtensionsListener
         }
 
         // Check for config:
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
-        $searchConfig = $config->get($this->searchConfig);
+        $configManager = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
+        $searchConfig = $configManager->get($this->searchConfig);
         if (null === $hideHiddenComponentsPart) {
             $hideHiddenComponentsPart = $searchConfig->General->hide_component_parts ?? false;
         }
 
         // Add the parameter if needed:
         if ($hideHiddenComponentsPart) {
-            if ($searchConfig->General->hidden_component_exception ?? false) {
+            if ($componentPartFilter = $searchConfig->General->displayable_component_part_filter ?? false) {
                 $params->add(
                     'fq',
-                    $searchConfig->General->hidden_component_exception . ' OR (*:* -hidden_component_boolean:true)'
+                    $componentPartFilter . ' OR (*:* -hidden_component_boolean:true)'
                 );
             } else {
                 $params->add('fq', '-hidden_component_boolean:true');
