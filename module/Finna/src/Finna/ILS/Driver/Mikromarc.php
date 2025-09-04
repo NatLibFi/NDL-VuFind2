@@ -33,6 +33,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 
@@ -65,6 +66,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFind\Cache\CacheTrait;
+    use FinnaCommonILSTrait;
 
     /**
      * Date converter object
@@ -370,10 +372,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             'id' => $patronId,
         ];
 
-        if ($profile = $this->getMyProfile($patron)) {
-            $profile['major'] = null;
-            $profile['college'] = null;
-        }
+        $profile = $this->getMyProfile($patron);
         return $this->createPatronArray(
             id: $patronId,
             cat_username: $username,
@@ -384,7 +383,6 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             nonDefaultFields: [
                 'loan_history' => $profile['loan_history'],
                 'blocked' => $profile['blocked'],
-
             ]
         );
     }
@@ -604,14 +602,14 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             zip: $result['MainZip'],
             city: $result['MainPlace'],
             expiration_date: $expirationDate,
+            messagingServices: $messagingSettings,
+            loan_history: $loanHistory,
+            email: $result['MainEmail'],
             nonDefaultFields: [
-                'email' => $result['MainEmail'],
                 'blocked' => !empty($result['Defaulted']),
                 'cat_username' => $patron['cat_username'],
                 'cat_password' => $patron['cat_password'],
                 'id' => $patron['id'],
-                'loan_history' => $loanHistory,
-                'messagingServices' => $messagingSettings,
             ],
         );
         $this->putCachedData($cacheKey, $profile);

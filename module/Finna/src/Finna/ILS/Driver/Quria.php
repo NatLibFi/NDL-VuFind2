@@ -633,7 +633,6 @@ class Quria extends AxiellWebServices
         $names = explode(' ', $info->patronName);
         $lastname = array_pop($names);
         $firstname = implode(' ', $names);
-        $loanHistoryEnabled = $info->isLoanHistoryEnabled ?? false;
 
         /**
          * Request an authentication id used in certain requests e.g:
@@ -673,14 +672,13 @@ class Quria extends AxiellWebServices
         $country = null;
         $addressId = null;
         if (isset($info->addresses->address)) {
-            $addresses = $this->objectToArray($info->addresses->address);
-            foreach ($addresses as $address) {
-                if ($address->isActive == 'yes' || !$address) {
-                    $address = $address->streetAddress ?? '';
-                    $zip = $address->zipCode ?? '';
-                    $city = $address->city ?? '';
-                    $country = $address->country ?? '';
-                    $addressId = $address->id ?? '';
+            foreach ($this->objectToArray($info->addresses->address) as $addressFound) {
+                if ($addressFound->isActive === 'yes') {
+                    $address = $addressFound->streetAddress ?? '';
+                    $zip = $addressFound->zipCode ?? '';
+                    $city = $addressFound->city ?? '';
+                    $country = $addressFound->country ?? '';
+                    $addressId = $addressFound->id ?? '';
                     break;
                 }
             }
@@ -703,16 +701,18 @@ class Quria extends AxiellWebServices
 
         $serviceSendMethod
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
-        $messagingServices = match ($serviceSendMethod) {
-            'database'  =>  $this->parseEmailMessagingSettings(
-                $info->messageServices->messageService ?? null
-            ),
-            'driver'    =>  $this->parseDriverMessagingSettings(
-                $info->messageServices->messageService ?? null,
-                $user
-            ),
-            default => [],
-        };
+        $messagingServices = [];
+        if ($serviceSendMethod === 'driver') {
+            $userMessagingServices
+                = $this->parseObtainedMessagingSettings(
+                    $this->objectToArray($info->messageServices->messageService ?? [])
+                );
+            $messagingServices = $this->parseDriverMessagingSettings($userMessagingServices, $user);
+        } elseif ($serviceSendMethod === 'database') {
+            $messagingServices = $this->parseEmailMessagingSettings(
+                $this->objectToArray($info->messageServices->messageService ?? [])
+            );
+        }
         $userCached = $this->createProfileArray(
             firstname: $firstname,
             lastname: $lastname,
@@ -721,8 +721,10 @@ class Quria extends AxiellWebServices
             city: $city,
             country: $country,
             phone: $phone,
+            loan_history: $info->isLoanHistoryEnabled ?? null,
+            messagingServices: $messagingServices,
+            email: $email,
             nonDefaultFields: [
-                'email' => $email,
                 'addressId' => $addressId,
                 'id' => $info->backendPatronId,
                 'cat_username' => $username,
@@ -730,8 +732,6 @@ class Quria extends AxiellWebServices
                 ...$emails,
                 ...$phones,
                 'patronId' => $patronId,
-                'messagingServices' => $messagingServices,
-                'loan_history' => (bool)$loanHistoryEnabled,
             ]
         );
         $this->putCachedData($cacheKey, $userCached);

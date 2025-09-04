@@ -29,6 +29,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\ILS\Logic\AvailabilityStatus;
@@ -53,6 +54,7 @@ use function sprintf;
 class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use FinnaCommonILSTrait;
 
     /**
      * Simple cache to avoid repeated requests
@@ -608,10 +610,10 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             phone: $phone,
             expiration_date: $expiryDate,
             group: $group,
+            email: $email,
             nonDefaultFields: [
                 'addresses' => $addresses,
                 'barcode' => $barcode,
-                'email' => $email,
                 'group_code' => $group_code,
                 'expired' => $expired,
                 'expiration_soon' => $expiration_soon,

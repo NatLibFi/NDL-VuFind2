@@ -169,14 +169,19 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
         ];
         $driver = $this->getDriver($makeRequestMap);
         $result = $driver->patronLogin('1111', '2121');
-        $this->assertEquals([
-        'id' => '57391',
-        'cat_username' => '1111',
-        'cat_password' => '2121',
-        'firstname' => 'John',
-        'lastname' => 'Smith',
-        'email' => 'pref@email.if',
-        ], $result);
+        $this->assertEquals(
+            [
+            'id' => '57391',
+            'cat_username' => '1111',
+            'cat_password' => '2121',
+            'firstname' => 'John',
+            'lastname' => 'Smith',
+            'email' => 'pref@email.if',
+            'major' => null,
+            'college' => null,
+            ],
+            $result
+        );
     }
 
     /**
@@ -256,6 +261,10 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
             ['lastname' => 'Tester Test'],
             ['lastname' => 'Ttee Tst'],
             ],
+                        'messagingServices' => [
+
+            ],
+                        'loan_history' => null,
             ],
             $result
         );

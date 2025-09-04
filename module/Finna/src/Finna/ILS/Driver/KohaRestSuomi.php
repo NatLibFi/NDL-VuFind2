@@ -368,15 +368,15 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
             city: $result['city'],
             country: $result['country'],
             expiration_date: $expirationDate,
+            messagingServices: $messagingSettings,
+            loan_history: $result['privacy'],
+            email: $result['email'],
             nonDefaultFields: [
                 'category' => $result['categorycode'] ?? '',
                 'hold_identifier' => $result['othernames'],
                 'guarantor' => $guarantor,
                 'guarantees' => $guarantees,
-                'loan_history' => $result['privacy'],
                 'smsnumber' => $smsField ? $result[$smsField] : '',
-                'email' => $result['email'],
-                'messagingServices' => $messagingSettings,
                 'notes' => $result['opacnote'],
                 'full_data' => $result,
             ]

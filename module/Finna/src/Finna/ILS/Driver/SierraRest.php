@@ -29,6 +29,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 
 use function array_key_exists;
@@ -49,6 +50,8 @@ use function strlen;
  */
 class SierraRest extends \VuFind\ILS\Driver\SierraRest
 {
+    use FinnaCommonILSTrait;
+
     /**
      * Fine types that allow online payment
      *
@@ -464,7 +467,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         }
 
         // Checkout history:
-        $result = $this->makeRequest(
+        $historyResult = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
                 'activationStatus',
@@ -484,12 +487,12 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             address1: $address,
             home_library: $result['homeLibraryCode'],
             expiration_date: $expirationDate,
+            loan_history: $historyResult['readingHistoryActivation'] ?? null,
+            email: $result['emails'][0] ?? '',
             nonDefaultFields: [
-                'email' => $result['emails'][0] ?? '',
                 'self_service_library' => $selfServiceLibrary,
                 'expired' => $expired,
                 'expiration_soon' => $expirationSoon,
-                'loan_history' => $result['readingHistoryActivation'] ?? null,
                 'messages' => $messages,
                 'smsnumber' => $sms,
             ]

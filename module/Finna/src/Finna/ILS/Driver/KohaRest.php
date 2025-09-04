@@ -30,6 +30,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
 use VuFind\ILS\Logic\AvailabilityStatus;
@@ -52,6 +53,8 @@ use function is_array;
  */
 class KohaRest extends \VuFind\ILS\Driver\KohaRest
 {
+    use FinnaCommonILSTrait;
+
     /**
      * Mappings from Koha messaging preferences
      *
@@ -431,9 +434,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             city: $result['city'],
             country: $result['country'],
             expiration_date: $expirationDate,
+            messagingServices: $messagingSettings,
+            loan_history: $result['privacy'],
+            email: $result['email'],
             nonDefaultFields: [
                 'calling_name' => $result[$callingNameField] ?? '',
-                'email' => $result['email'],
                 'category' => $result['category_id'] ?? '',
                 'expiration_soon' => !empty($result['expiry_date_near']),
                 'expired' => !empty($result['blocks']['Patron::CardExpired']),
@@ -444,8 +449,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'messages' => $messages,
                 'full_data' => $result,
                 'smsnumber' => $smsnumber,
-                'messagingServices' => $messagingSettings,
-                'loan_history' => $result['privacy'],
             ]
         );
     }

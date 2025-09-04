@@ -29,6 +29,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 
@@ -59,6 +60,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         logError as error;
     }
     use \VuFind\Cache\CacheTrait;
+    use FinnaCommonILSTrait;
 
     /**
      * Date converter object
@@ -471,9 +473,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
             city: $result['city'],
             country: $result['country'],
             expiration_date: $expirationDate,
-            nonDefaultFields: [
-                'email' => $result['email'],
-            ]
+            email: $result['email'],
         );
     }
 
