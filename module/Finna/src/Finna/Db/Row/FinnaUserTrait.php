@@ -301,7 +301,7 @@ trait FinnaUserTrait
     public function getDisplayableUsername(): string
     {
         if (strpos($this->username, ':')) {
-            [$view, $username] = explode(':', $this->username);
+            [$view, $username] = explode(':', $this->username, 2);
         } else {
             $username = $this->username;
         }
