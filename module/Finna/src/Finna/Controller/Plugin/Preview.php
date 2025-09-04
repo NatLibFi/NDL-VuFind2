@@ -179,7 +179,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
                 $result = json_decode($response->getBody(), true);
                 $errors = [
                     'Failed to load preview',
-                    ...array_filter(explode("\n", $result['error_message'])),
+                    ...array_filter(explode("\n", $result['error_message'] ?? '')),
                 ];
                 $metadata = [
                     'id' => '1',
