@@ -112,7 +112,8 @@ class Primo extends \VuFind\RecordDriver\Primo
         // beginning.
         if ($containerTitle && ($p = strpos($partOf, $containerTitle)) !== false) {
             $arrRef = explode(
-                ",", trim(substr($partOf, $p + strlen($containerTitle) + 1)," \t\n\r,")
+                ",",
+                trim(substr($partOf, $p + strlen($containerTitle) + 1), " \t\n\r,")
             );
             // Remove month & day from date
             $arrRef[0] = strtok($arrRef[0], "-");
