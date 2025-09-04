@@ -8,6 +8,7 @@ $aAttrsBase = [
   'aria-expanded' => 'false',
   'aria-haspopup' => 'true',
   'aria-controls' => "field-popover-$fieldId",
+  'role' => 'button',
 ];
 $aAttributes = $this->htmlAttributes($aAttrsBase);
 $aAttributes->add('class', 'show-info');
@@ -49,6 +50,6 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
         <?php endif; ?>
       <?php endif; ?>
     </div>
-    <a href="#" class="hide-info"><span class="link-text"><?=$this->translate('field_hide_info')?></span></a>
+    <a href="#" class="hide-info" role="button"><span class="link-text"><?=$this->translate('field_hide_info')?></span></a>
   </div>
 </div>
