@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AxiellWebServices test class
+ * KohaRestSuomi test class
  *
  * PHP version 7
  *
@@ -37,7 +37,7 @@ use VuFindTest\Feature\FixtureTrait;
 use VuFindTest\Feature\ReflectionTrait;
 
 /**
- * AxiellWebServices test class
+ * KohaRestSuomi test class
  *
  * @category VuFind
  * @package  Tests

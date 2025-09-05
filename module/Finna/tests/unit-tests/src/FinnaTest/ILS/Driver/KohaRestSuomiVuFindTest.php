@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AxiellWebServices test class
+ * KohaRestSuomiVuFind test class
  *
  * PHP version 7
  *
