@@ -29,7 +29,6 @@
 
 namespace FinnaTest\ILS\Driver;
 
-use Finna\ILS\Driver\AxiellWebServices;
 use Finna\ILS\Driver\Quria;
 use Generator;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -312,6 +311,113 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'profile some values missing' => [
+            'quria/profile_partial.xml',
+            [
+                'firstname' => 'Tester',
+                'lastname' => '',
+                'address1' => null,
+                'address2' => null,
+                'city' => null,
+                'country' => null,
+                'zip' => null,
+                'phone' => '1215125125',
+                'mobile_phone' => null,
+                'expiration_date' => null,
+                'group' => null,
+                'email_0' => 'notactive@email.fi',
+                'email_0_id' => '221',
+                'email_0_active' => false,
+                'phone_0' => '1215125125',
+                'phone_0_id' => '123',
+                'phone_0_active' => false,
+                'addressId' => null,
+                'id' => '121212',
+                'cat_username' => '1111',
+                'cat_password' => '2222',
+                'patronId' => '010101',
+                'loan_history' => null,
+                'email' => 'notactive@email.fi',
+                'birthdate' => '',
+                'home_library' => null,
+                'messagingServices' => [
+                    'pickUpNotice' => [
+                        'active' => false,
+                        'type' => 'pickUpNotice',
+                        'sendMethods' => [
+                            'letter' => [
+                                'active' => false,
+                                'method' => 'letter',
+                                'type' => 'letter',
+                            ],
+                            'email' => [
+                                'active' => false,
+                                'method' => 'email',
+                                'type' => 'email',
+                            ],
+                            'sms' => [
+                                'active' => false,
+                                'method' => 'sms',
+                                'type' => 'sms',
+                            ],
+                            'none' => [
+                                'active' => false,
+                                'method' => 'none',
+                                'type' => 'none',
+                            ],
+                        ],
+                    ],
+                    'overdueNotice' => [
+                        'active' => false,
+                        'type' => 'overdueNotice',
+                        'sendMethods' => [
+                            'letter' => [
+                                'active' => false,
+                                'method' => 'letter',
+                                'type' => 'letter',
+                            ],
+                            'email' => [
+                                'active' => false,
+                                'method' => 'email',
+                                'type' => 'email',
+                            ],
+                            'sms' => [
+                                'active' => false,
+                                'method' => 'sms',
+                                'type' => 'sms',
+                            ],
+                            'none' => [
+                                'active' => false,
+                                'method' => 'none',
+                                'type' => 'none',
+                            ],
+                        ],
+                    ],
+                    'dueDateAlert' => [
+                        'active' => false,
+                        'type' => 'dueDateAlertEmail',
+                        'sendMethods' => [
+                            'email' => [
+                                'active' => false,
+                                'method' => 'email',
+                                'type' => 'email',
+                            ],
+                            'none' => [
+                                'active' => false,
+                                'method' => 'none',
+                                'type' => 'none',
+                            ],
+                        ],
+                    ],
+
+                ],
+            ],
+            [
+                'updateMessagingSettings' => [
+                    'method' => 'database',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -373,18 +479,33 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
      */
     public static function getTestPatronLoginData(): Generator
     {
+        // Quria uses the same request for patron and profile data
         yield 'patron all values set' => [
-            'quria/patron.xml',
+            'quria/profile.xml',
             [
                 'patronId' => '010101',
-                'id' => '112211',
-                'email' => null,
+                'id' => '121212',
+                'email' => 'active@email.fi',
                 'firstname' => 'Testi',
                 'lastname' => 'Tester',
                 'cat_username' => '1111',
                 'cat_password' => '2222',
                 'major' => null,
                 'college' => null,
+            ],
+        ];
+        yield 'patron some values missing' => [
+            'quria/profile_partial.xml',
+            [
+                'patronId' => '010101',
+                'id' => '121212',
+                'email' => 'notactive@email.fi',
+                'firstname' => 'Tester',
+                'lastname' => '',
+                'major' => null,
+                'college' => null,
+                'cat_username' => '1111',
+                'cat_password' => '2222',
             ],
         ];
     }

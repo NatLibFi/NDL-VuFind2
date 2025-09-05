@@ -130,6 +130,32 @@ class SierraRestTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'profile some values missing' => [
+            'sierrarest/profile_partial.json',
+            [
+                'self_service_library' => null,
+                'expired' => false,
+                'expiration_soon' => false,
+                'messages' => [],
+                'smsnumber' => '',
+                'messagingServices' => [],
+                'loan_history' => null,
+                'email' => '',
+                'firstname' => '',
+                'lastname' => 'Test',
+                'birthdate' => '',
+                'address1' => '',
+                'address2' => null,
+                'city' => '',
+                'country' => null,
+                'zip' => '',
+                'phone' => '',
+                'mobile_phone' => null,
+                'expiration_date' => null,
+                'group' => null,
+                'home_library' => '',
+            ],
+        ];
     }
 
     /**
@@ -194,6 +220,20 @@ class SierraRestTest extends \PHPUnit\Framework\TestCase
                 'major' => null,
                 'college' => null,
                 'home_library' => '121',
+            ],
+        ];
+        yield 'patron values missing' => [
+            'sierrarest/patron_partial.json',
+            [
+                'id' => '1122',
+                'email' => '',
+                'firstname' => '',
+                'lastname' => 'Test',
+                'cat_username' => '1111',
+                'cat_password' => '2222',
+                'major' => null,
+                'college' => null,
+                'home_library' => '',
             ],
         ];
     }

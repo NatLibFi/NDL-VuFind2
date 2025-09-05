@@ -1,0 +1,10 @@
+[
+    200,
+    {
+        "borrowernumber": "123123",
+        "firstname": "",
+        "lastname": "",
+        "email": "",
+        "branchcode": ""
+    }
+]

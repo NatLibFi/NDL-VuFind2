@@ -118,6 +118,27 @@ class KohaRestSuomiVuFindTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'profile some values missing' => [
+            'koharestsuomivufind/profile_partial.json',
+            [
+                'messagingServices' => [],
+                'loan_history' => null,
+                'email' => '',
+                'firstname' => '',
+                'lastname' => 'Tester',
+                'birthdate' => '',
+                'address1' => '',
+                'address2' => 'Address 2',
+                'city' => '',
+                'country' => '',
+                'zip' => '',
+                'phone' => '',
+                'mobile_phone' => null,
+                'expiration_date' => '',
+                'group' => null,
+                'home_library' => null,
+            ],
+        ];
     }
 
     /**
@@ -170,6 +191,20 @@ class KohaRestSuomiVuFindTest extends \PHPUnit\Framework\TestCase
                 'major' => null,
                 'college' => null,
                 'home_library' => '12',
+            ],
+        ];
+        yield 'patron some values missing' => [
+            'koharestsuomivufind/patron_partial.json',
+            [
+                'email' => '',
+                'firstname' => '',
+                'lastname' => '',
+                'home_library' => '',
+                'id' => '123123',
+                'major' => null,
+                'college' => null,
+                'cat_username' => '1111',
+                'cat_password' => '2222',
             ],
         ];
     }

@@ -132,6 +132,43 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'profile some values missing' => [
+            'mikromarc/profile_partial.json',
+            [
+                'blocked' => false,
+                'cat_username' => '1111',
+                'cat_password' => '2222',
+                'id' => '5',
+                'messagingServices' => [
+                    'dueDateNotice' => [
+                        'type' => 'dueDateNotice',
+                        'settings' => [
+                            'digest' => [
+                                'type' => 'boolean',
+                                'readonly' => false,
+                                'active' => true,
+                                'label' => 'messaging_settings_option_active',
+                            ],
+                        ],
+                    ],
+                ],
+                'loan_history' => null,
+                'email' => '',
+                'firstname' => '',
+                'lastname' => 'Test Some',
+                'birthdate' => '',
+                'address1' => '',
+                'address2' => '',
+                'city' => '',
+                'country' => null,
+                'zip' => '',
+                'phone' => '0123456789',
+                'mobile_phone' => null,
+                'expiration_date' => '',
+                'group' => null,
+                'home_library' => null,
+            ],
+        ];
     }
 
     /**
@@ -166,6 +203,7 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
     {
         yield 'patron all values set' => [
             'mikromarc/patron.json',
+            'mikromarc/profile.json',
             [
                 'id' => '5',
                 'email' => 'test@email.fi',
@@ -179,18 +217,35 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
                 'blocked' => true,
             ],
         ];
+        yield 'patron some values missing' => [
+            'mikromarc/patron_partial.json',
+            'mikromarc/profile_partial.json',
+            [
+                'loan_history' => null,
+                'blocked' => false,
+                'id' => '5',
+                'email' => '',
+                'firstname' => '',
+                'lastname' => 'Test Some',
+                'major' => null,
+                'college' => null,
+                'cat_username' => '1111',
+                'cat_password' => '2222',
+            ],
+        ];
     }
 
     /**
      * Test patronLogin
      *
-     * @param string $fixtureKey Response fixture
-     * @param array  $expected   Expected results for the test
+     * @param string $fixtureKey  Response fixture
+     * @param string $fixtureKey2 Response fixture 2
+     * @param array  $expected    Expected results for the test
      *
      * @return       void
      * @dataProvider getTestPatronLoginData
      */
-    public function testPatronLogin(string $fixtureKey, array $expected): void
+    public function testPatronLogin(string $fixtureKey, string $fixtureKey2, array $expected): void
     {
         $requestMap = [
             [
@@ -207,7 +262,7 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 ['odata', 'Borrowers(5)'],
-                $this->getJsonFixture('mikromarc/profile.json', 'Finna'),
+                $this->getJsonFixture($fixtureKey2, 'Finna'),
             ],
         ];
         $connector = $this->createConnector(requestMap: $requestMap);

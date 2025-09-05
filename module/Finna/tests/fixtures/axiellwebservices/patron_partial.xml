@@ -1,17 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <res>
 <patronInformationResult>
-    <primary_id>57391</primary_id>
-    <first_name>John</first_name>
-    <last_name>Smith</last_name>
-    <user_group desc="descgroup">test</user_group>
-    <account_type>Normal</account_type>
-    <preferred_language>fi</preferred_language>
     <status><type>ok</type></status>
     <patronInformation>
-        <patronName>Testi Tester</patronName>
+        <patronName>Tester</patronName>
         <isLoanHistoryEnabled>true</isLoanHistoryEnabled>
         <backendPatronId>112211</backendPatronId>
     </patronInformation>
 </patronInformationResult>
+
 </res>

@@ -303,6 +303,36 @@ class AxiellWebServicesTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'profile some values missing' => [
+            'axiellwebservices/profile_partial.xml',
+            [
+                'emailId' => null,
+                'addressId' => null,
+                'phoneId' => null,
+                'phoneLocalCode' => null,
+                'phoneAreaCode' => null,
+                'patronId' => '010101',
+                'id' => '121212',
+                'cat_username' => '1111',
+                'cat_password' => '2222',
+                'messagingServices' => [],
+                'loan_history' => null,
+                'firstname' => '',
+                'lastname' => 'Tester',
+                'birthdate' => '',
+                'address1' => null,
+                'address2' => null,
+                'city' => null,
+                'country' => null,
+                'zip' => null,
+                'phone' => null,
+                'mobile_phone' => null,
+                'expiration_date' => null,
+                'group' => null,
+                'home_library' => null,
+                'email' => null,
+            ],
+        ];
     }
 
     /**
@@ -368,6 +398,20 @@ class AxiellWebServicesTest extends \PHPUnit\Framework\TestCase
                 'cat_password' => '2222',
                 'major' => null,
                 'college' => null,
+            ],
+        ];
+        yield 'patron some values missing' => [
+            'axiellwebservices/patron_partial.xml',
+            [
+                'patronId' => '010101',
+                'id' => '010101',
+                'email' => null,
+                'firstname' => '',
+                'lastname' => 'Tester',
+                'major' => null,
+                'college' => null,
+                'cat_username' => '1111',
+                'cat_password' => '2222',
             ],
         ];
     }

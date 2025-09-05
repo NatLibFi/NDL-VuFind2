@@ -639,16 +639,6 @@ class Quria extends AxiellWebServices
          * GetTransactionHistory
          */
         $patronId = $this->authenticatePatron($username, $password);
-        $user = $this->createPatronArray(
-            id: $info->backendPatronId,
-            cat_username: $username,
-            cat_password: $password,
-            lastname: $lastname,
-            firstname: $firstname,
-            nonDefaultFields: [
-                'patronId' => $patronId,
-            ]
-        );
 
         $email = null;
         $emails = [];
@@ -666,6 +656,18 @@ class Quria extends AxiellWebServices
                 $emails['email_' . $i . '_active'] = $emailAddress->isActive == 'yes';
             }
         }
+
+        $user = $this->createPatronArray(
+            id: $info->backendPatronId,
+            cat_username: $username,
+            cat_password: $password,
+            lastname: $lastname,
+            firstname: $firstname,
+            email: $email,
+            nonDefaultFields: [
+                'patronId' => $patronId,
+            ]
+        );
         $address = null;
         $zip = null;
         $city = null;

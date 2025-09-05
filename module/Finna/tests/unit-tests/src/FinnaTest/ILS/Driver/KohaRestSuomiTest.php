@@ -325,6 +325,8 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
             ];
         yield 'profile all values set' => [
             'koharestsuomi/profile.json',
+            'koharestsuomi/guarantors.json',
+            'koharestsuomi/messaging_prefs.json',
             $defaultExpected,
             [
                 'updateMessagingSettings' => [
@@ -332,20 +334,56 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'profile some values missing' => [
+            'koharestsuomi/profile_partial.json',
+            'koharestsuomi/guarantors_partial.json',
+            'koharestsuomi/messaging_prefs_partial.json',
+            [
+                'category' => '',
+                'hold_identifier' => '',
+                'guarantor' => [],
+                'guarantees' => [],
+                'smsnumber' => '0101010101',
+                'notes' => '',
+                'messagingServices' => [],
+                'loan_history' => null,
+                'email' => '',
+                'firstname' => '',
+                'lastname' => 'Tester',
+                'birthdate' => '',
+                'address1' => '',
+                'address2' => 'Address 2',
+                'city' => '',
+                'country' => '',
+                'zip' => '',
+                'phone' => '',
+                'mobile_phone' => null,
+                'expiration_date' => '',
+                'group' => null,
+                'home_library' => null,
+            ],
+        ];
     }
 
     /**
      * Test getMyProfile
      *
-     * @param string $fixtureKey Request fixture path
-     * @param array  $expected   Expected results for the test
-     * @param array  $config     Driver specific configuration
+     * @param string $fixtureKey  Request fixture path
+     * @param string $fixtureKey2 Request 2 fixture path
+     * @param string $fixtureKey3 Request 3 fixture path
+     * @param array  $expected    Expected results for the test
+     * @param array  $config      Driver specific configuration
      *
      * @return       void
      * @dataProvider getTestGetMyProfileData
      */
-    public function testGetMyProfile(string $fixtureKey, array $expected, array $config = []): void
-    {
+    public function testGetMyProfile(
+        string $fixtureKey,
+        string $fixtureKey2,
+        string $fixtureKey3,
+        array $expected,
+        array $config = []
+    ): void {
         $patron = [
             'id' => '5',
             'cat_username' => '1111',
@@ -366,7 +404,7 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
                 ['guarantorid' => $patron['id']],
                 'GET',
                 $patron,
-                $this->getJsonFixture('koharestsuomi/guarantors.json', 'Finna'),
+                $this->getJsonFixture($fixtureKey2, 'Finna'),
             ],
             [
                 ['v1', 'messaging_preferences'],
@@ -374,7 +412,7 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
                 'GET',
                 $patron,
                 true,
-                $this->getJsonFixture('koharestsuomi/messaging_prefs.json', 'Finna'),
+                $this->getJsonFixture($fixtureKey3, 'Finna'),
             ],
         ];
         $connector = $this->createConnector(requestMap: $requestMap, config: $config);
@@ -401,6 +439,20 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
                 'major' => null,
                 'college' => null,
                 'home_library' => '12',
+            ],
+        ];
+        yield 'patron some values missing' => [
+            'koharestsuomi/patron_partial.json',
+            [
+                'home_library' => '',
+                'id' => '123123',
+                'email' => '',
+                'firstname' => '',
+                'lastname' => '',
+                'major' => null,
+                'college' => null,
+                'cat_username' => '1111',
+                'cat_password' => '2222',
             ],
         ];
     }

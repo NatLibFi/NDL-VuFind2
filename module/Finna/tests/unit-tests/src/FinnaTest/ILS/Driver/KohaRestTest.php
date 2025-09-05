@@ -348,6 +348,42 @@ class KohaRestTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'profile some values missing' => [
+            'koharest/profile_partial.json',
+            [
+                'calling_name' => '',
+                'category' => '',
+                'expiration_soon' => false,
+                'expired' => false,
+                'hold_identifier' => 'Other name',
+                'guarantors' => [],
+                'guarantees' => [],
+                'notes' => '',
+                'messages' => [],
+                'smsnumber' => null,
+                'messagingServices' => [],
+                'loan_history' => '',
+                'email' => '',
+                'firstname' => '',
+                'lastname' => 'Tester',
+                'birthdate' => '',
+                'address1' => '',
+                'address2' => 'Address 2',
+                'city' => '',
+                'country' => '',
+                'zip' => '',
+                'phone' => null,
+                'mobile_phone' => null,
+                'expiration_date' => '',
+                'group' => null,
+                'home_library' => null,
+            ],
+            [
+                'updateMessagingSettings' => [
+                    'method' => 'driver',
+                ],
+            ],
+        ];
     }
 
     /**
@@ -408,6 +444,20 @@ class KohaRestTest extends \PHPUnit\Framework\TestCase
                 'home_library' => '5',
             ],
         ];
+        yield 'patron some values missing' => [
+            'koharest/patron_partial.json',
+            [
+                'id' => '12345',
+                'email' => '',
+                'firstname' => '',
+                'lastname' => '',
+                'major' => null,
+                'college' => null,
+                'cat_username' => '1111',
+                'cat_password' => '2222',
+                'home_library' => '',
+            ],
+        ];
     }
 
     /**
@@ -429,7 +479,7 @@ class KohaRestTest extends \PHPUnit\Framework\TestCase
                     'method' => 'POST',
                     'errors' => true,
                 ],
-                $this->getJsonFixture('koharest/patron.json', 'Finna'),
+                $this->getJsonFixture($fixtureKey, 'Finna'),
             ],
         ];
         $connector = $this->createConnector(requestMap: $requestMap);
