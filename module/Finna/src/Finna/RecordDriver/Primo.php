@@ -280,7 +280,7 @@ class Primo extends \VuFind\RecordDriver\Primo
         if (!empty($dates)) {
             foreach ($dates as $date) {
                 $result[] = preg_replace('/\b(\d{4})(-\d{2}){0,2}\b/', '$1', $date);
-              }
+            }
         }
         return $result;
     }
