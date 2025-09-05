@@ -116,7 +116,7 @@ class Primo extends \VuFind\RecordDriver\Primo
                 trim(substr($partOf, $p + strlen($containerTitle) + 1), " \t\n\r,")
             );
             // Remove month & day from date
-            $arrRef[0] = preg_replace('/\b(\d{4})(-\d{2}){0,2}\b/', '$1', $arrRef[0]);
+            $arrRef[0] = preg_replace('/\b(\d{4})(?:-\d{2}){0,2}\b/', '$1', $arrRef[0]);
             return implode(',', $arrRef);
         }
         return $partOf;
@@ -279,7 +279,7 @@ class Primo extends \VuFind\RecordDriver\Primo
         $dates = $this->fields['date'] ?? [];
         if (!empty($dates)) {
             foreach ($dates as $date) {
-                $result[] = preg_replace('/\b(\d{4})(-\d{2}){0,2}\b/', '$1', $date);
+                $result[] = preg_replace('/\b(\d{4})(?:-\d{2}){0,2}\b/', '$1', $date);
             }
         }
         return $result;
