@@ -148,15 +148,15 @@ class AxiellWebServicesTest extends \PHPUnit\Framework\TestCase
                             ],
                             'days_in_advance' => [
                                 'type' => 'select',
-                                'value' => '',
+                                'value' => 2,
                                 'options' => [
                                     1 => [
                                         'name' => 'messaging_settings_num_of_days',
-                                        'active' => true,
+                                        'active' => false,
                                     ],
                                     2 => [
                                         'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
+                                        'active' => true,
                                     ],
                                     3 => [
                                         'name' => 'messaging_settings_num_of_days_plural',
@@ -222,75 +222,91 @@ class AxiellWebServicesTest extends \PHPUnit\Framework\TestCase
         ];
         $legacyMessagingServices = [
             'pickUpNotice' => [
-                'active' => true,
                 'type' => 'pickUpNotice',
-                'sendMethods' => [
-                    'letter' => [
-                        'method' => 'letter',
-                        'active' => false,
-                        'type' => 'letter',
-                    ],
-                    'email' => [
-                        'method' => 'email',
-                        'active' => false,
-                        'type' => 'email',
-                    ],
-                    'sms' => [
-                        'method' => 'sms',
-                        'active' => false,
-                        'type' => 'sms',
-                    ],
-                    'none' => [
-                        'method' => 'none',
-                        'active' => false,
-                        'type' => 'none',
+                'settings' => [
+                    'transport_types' => [
+                        'type' => 'select',
+                        'options' => [
+                            'print' => [
+                                'active' => false,
+                            ],
+                            'email' => [
+                                'active' => false,
+                            ],
+                            'sms' => [
+                                'active' => true,
+                            ],
+                            'inactive' => [
+                                'active' => false,
+                            ],
+                        ],
                     ],
                 ],
-                'numOfDays' => 'none',
             ],
             'overdueNotice' => [
-                'active' => true,
                 'type' => 'overdueNotice',
-                'sendMethods' => [
-                    'letter' => [
-                        'method' => 'letter',
-                        'active' => false,
-                        'type' => 'letter',
-                    ],
-                    'email' => [
-                        'method' => 'email',
-                        'active' => false,
-                        'type' => 'email',
-                    ],
-                    'sms' => [
-                        'method' => 'sms',
-                        'active' => false,
-                        'type' => 'sms',
-                    ],
-                    'none' => [
-                        'method' => 'none',
-                        'active' => false,
-                        'type' => 'none',
+                'settings' => [
+                    'transport_types' => [
+                        'type' => 'select',
+                        'options' => [
+                            'print' => [
+                                'active' => true,
+                            ],
+                            'email' => [
+                                'active' => false,
+                            ],
+                            'sms' => [
+                                'active' => false,
+                            ],
+                            'inactive' => [
+                                'active' => false,
+                            ],
+                        ],
                     ],
                 ],
-                'numOfDays' => 'none',
             ],
             'dueDateAlert' => [
-                'active' => true,
                 'type' => 'dueDateAlertEmail',
-                'sendMethods' => [
-                    'email' => [
-                        'method' => 'email',
-                        'active' => false,
-                        'type' => 'email',
+                'settings' => [
+                    'transport_types' => [
+                        'type' => 'select',
+                        'options' => [
+                            'email' => [
+                                'active' => false,
+                            ],
+                            'inactive' => [
+                                'active' => true,
+                            ],
+                        ],
                     ],
-                    'none' => [
-                        'method' => 'none',
-                        'active' => false,
-                        'type' => 'none',
+                    'days_in_advance' => [
+                        'type' => 'select',
+                        'options' => [
+                            1 => [
+                                'name' => 'messaging_settings_num_of_days',
+                                'active' => false,
+                            ],
+                            2 => [
+                                'name' => 'messaging_settings_num_of_days_plural',
+                                'active' => true,
+                            ],
+                            3 => [
+                                'name' => 'messaging_settings_num_of_days_plural',
+                                'active' => false,
+                            ],
+                            4 => [
+                                'name' => 'messaging_settings_num_of_days_plural',
+                                'active' => false,
+                            ],
+                            5 => [
+                                'name' => 'messaging_settings_num_of_days_plural',
+                                'active' => false,
+                            ],
+                        ],
+                        'value' => '2',
+                        'readonly' => false,
                     ],
                 ],
-                'numOfDays' => 'none',
             ],
         ];
         $defaultExpected['messagingServices'] = $legacyMessagingServices;

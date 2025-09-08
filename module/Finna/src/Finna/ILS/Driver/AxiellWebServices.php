@@ -243,6 +243,18 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
+     * Messaging preference type mappings
+     *
+     * @var array
+     */
+    protected array $messagingPrefTypeMap = [
+        'overdueNotice' => 'overdueNotice',
+        'pickUpNotice' => 'pickUpNotice',
+        'dueDateAlert' => 'dueDateAlert',
+        'dueDateAlertEmail' => 'dueDateAlertEmail',
+    ];
+
+    /**
      * Messaging settings status code mappings
      *
      * @var array
@@ -250,16 +262,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     protected $statuses = [
         'snailMail'             => 'print',
         'ilsDefined'            => 'inactive',
-    ];
-
-    /**
-     * Backwards compatibility for messagingSettings
-     *
-     * @var array
-     */
-    protected $oldStatuses = [
-        'snailMail' => 'letter',
-        'ilsDefined' => 'none',
     ];
 
     /**
@@ -1456,16 +1458,27 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         $serviceSendMethod
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
         $messagingServices = [];
+        // Convert users messaging services into koha style array
         if ($serviceSendMethod === 'driver') {
+            $allowedMessagingServices = $this->getMessageServices($user);
             $userMessagingServices
                 = $this->parseObtainedMessagingSettings(
-                    $this->objectToArray($info->messageServices->messageService ?? [])
+                    $this->objectToArray($info->messageServices->messageService ?? []),
+                    $allowedMessagingServices,
                 );
-            $messagingServices = $this->parseDriverMessagingSettings($userMessagingServices, $user);
-        } elseif ($serviceSendMethod === 'database') {
-            $messagingServices = $this->parseEmailMessagingSettings(
-                $this->objectToArray($info->messageServices->messageService ?? [])
+            $messagingServices = $this->createMessagingSettingsArray(
+                $userMessagingServices,
+                1,
+                5,
+                'select'
             );
+        } elseif ($serviceSendMethod === 'database') {
+            $allowedMessagingServices = $this->getEmailMessagingServices();
+            $messagingServices = $this->parseObtainedMessagingSettings(
+                $this->objectToArray($info->messageServices->messageService ?? []),
+                $allowedMessagingServices
+            );
+            $messagingServices = $this->createMessagingSettingsArray($messagingServices, 1, 5);
         }
 
         $userCached = $this->createProfileArray(
@@ -1499,140 +1512,94 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Helper function to format obtained messaging services from object into common array format
      *
-     * @param ?object $userServices User defined services and methods
+     * @param ?object $userServices    User defined services and methods
+     * @param array   $allowedServices Services allowed, obtained from ILS
      *
      * @return array
      */
-    protected function parseObtainedMessagingSettings($userServices): array
+    protected function parseObtainedMessagingSettings($userServices, $allowedServices): array
     {
-        if (!$userServices) {
+        if (!$userServices || !$allowedServices) {
             return [];
         }
-        $validServices = [
-            'pickUpNotice' => [],
-            'dueDateAlert' => [],
-            'overdueNotice' => [],
-        ];
+
+        // Loop through services found from users profile and parse them into a commonly understandable
+        // form
         foreach ($userServices as $userService) {
             $type = (string)$userService->serviceType;
-            if (!isset($validServices[$type])) {
+            if (!isset($allowedServices[$type])) {
                 continue;
             }
-
-            $validServices[$type] = [
-                'settings' => [
-                    'transport_types' => [
-                        'type' => 'select',
-                        'options' => [],
-                        'value' => '',
-                    ],
-                ],
-            ];
-
             // Loop through users preferred send methods and adjust the returning array with correct values
             foreach ($this->objectToArray($userService->sendMethods) as $method) {
-                $mappedMethod = $this->mapCodeToStatus($method->sendMethod->value ?? 'none');
+                $mappedMethod = $this->mapCodeToStatus($method->sendMethod->value ?? 'inactive');
                 if (
-                    !in_array($mappedMethod, ['none', 'inactive', 'sms', 'print'])
-                    || in_array($mappedMethod, $this->messagingFilters[$type] ?? [])
+                    !isset($allowedServices[$type]['transport_types'][$mappedMethod])
                 ) {
                     continue;
                 }
-
-                $validServices[$type]['settings']['transport_types']['options'][$mappedMethod] = [
-                    'active' => true,
-                ];
-                $validServices[$type]['settings']['transport_types']['value'] = $mappedMethod;
+                $allowedServices[$type]['transport_types'][$mappedMethod]
+                    = ($method->sendMethod->isActive ?? 'no') === 'yes';
             }
-            if ($numOfDays = $userService->nofDays->value ?? null) {
-                $validServices[$type]['days_in_advance'] = [
-                    'value' => (int)$numOfDays,
-                ];
+            if (isset($userService->nofDays->value)) {
+                $allowedServices[$type]['days_in_advance']['value'] = (int)$userService->nofDays->value;
             }
         }
-        return $validServices;
+        return $allowedServices;
     }
 
     /**
      * Function to create an array for using email to change messaging services.
      * This is a Legacy compatibility function.
      *
-     * @param ?object $infoServices Services to parse
-     *
      * @return array parsed services
      */
-    public function parseEmailMessagingSettings($infoServices)
+    public function getEmailMessagingServices()
     {
-        $defaultEmailServices = $this->defaultEmailMessagingServices;
-        foreach ($infoServices as $userService) {
-            $type = (string)$userService->serviceType;
-            if (!isset($defaultEmailServices[$type])) {
-                continue;
-            }
-            $defaultEmailServices[$type]['active'] = $userService->isActive === 'yes';
-            $defaultEmailServices[$type]['numOfDays'] = $numOfDays = $userService->nofDays->value ?? 'none';
-
-            // Loop through users preferred send methods and adjust the returning array with correct values
-            foreach ($this->objectToArray($userService->sendMethods ?? []) as $method) {
-                $mappedMethod = $this->mapOldCodeToStatus($method->sendMethod->value ?? 'none');
-                if (
-                    !in_array($mappedMethod, ['letter', 'email', 'sms', 'none']) ||
-                    in_array($mappedMethod, $this->messagingFilters[$type] ?? [])
-                ) {
-                    continue;
+        $defaultEmailServices = [
+            'pickUpNotice'  => [
+                'transport_types' => [
+                    'print' => false,
+                    'email' => false,
+                    'sms' => false,
+                    'inactive' => false,
+                ],
+                'selectType' => 'select',
+                'type' => 'pickUpNotice',
+            ],
+            'overdueNotice' => [
+                'transport_types' => [
+                    'print' => false,
+                    'email' => false,
+                    'sms' => false,
+                    'inactive' => false,
+                ],
+                'selectType' => 'select',
+                'type' => 'overdueNotice',
+            ],
+            'dueDateAlert' => [
+                'transport_types' => [
+                    'email' => false,
+                    'inactive' => false,
+                ],
+                'selectType' => 'select',
+                'type' => 'dueDateAlertEmail',
+                'days_in_advance' => [
+                    'configurable' => true,
+                ],
+            ],
+        ];
+        $filtered = [];
+        foreach ($defaultEmailServices as $serviceType => $settings) {
+            $filtered[$serviceType] = $settings;
+            foreach ($settings['transport_types'] as $method => $active) {
+                $oldStatus = $this->mapStatusToCode($method);
+                if (in_array($oldStatus, $this->messagingFilters[$serviceType] ?? [])) {
+                    unset($filtered[$serviceType]['transport_types'][$method]);
                 }
-                $methodActive = ($method->sendMethod->isActive ?? 'no') === 'yes';
-                $methodParsed = [
-                    'method' => $mappedMethod,
-                    'active' => $methodActive,
-                    'type' => $mappedMethod,
-                ];
-                if ($methodParsed === 'email' && $defaultEmailServices[$type]['numOfDays'] > 0) {
-                    $translationKey = $numOfDays === 1
-                        ? 'messaging_settings_num_of_days'
-                        : 'messaging_settings_num_of_days_plural';
-                    $methodParsed['method'] =
-                        $this->translate($translationKey, ['%%days%%' => $numOfDays]);
-                }
-                $defaultEmailServices[$type]['sendMethods'][$mappedMethod] = $methodParsed;
             }
         }
-        return $defaultEmailServices;
-    }
-
-    /**
-     * Function to create an array for using driver to change messaging services
-     *
-     * @param ?object $infoServices Services to parse
-     * @param array   $user         User data
-     *
-     * @return array parsed services
-     */
-    public function parseDriverMessagingSettings($infoServices, $user)
-    {
-        $allowedMessageServices = $this->getMessageServices($user);
-        $defaultDriverServices = array_intersect_key($this->defaultDriverMessagingServices, $allowedMessageServices);
-        foreach ($infoServices as $type => $userService) {
-            if (!isset($defaultDriverServices[$type])) {
-                continue;
-            }
-            $defaultOptions = $defaultDriverServices[$type]['settings']['transport_types']['options'];
-            $userOptions = $userService['settings']['transport_types']['options'];
-            $mergedOptions = array_merge(
-                $defaultOptions,
-                $userOptions,
-            );
-            $defaultDriverServices[$type]['settings']['transport_types']['options'] = $mergedOptions;
-            $defaultDriverServices[$type]['settings']['transport_types']['value'] =
-                $userService['settings']['transport_types']['value'];
-            if (!($defaultDriverServices[$type]['settings']['days_in_advance'] ?? [])) {
-                continue;
-            }
-            if ($numOfDays = $userService['settings']['days_in_advance']['value'] ?? false) {
-                $defaultDriverServices[$type]['settings']['days_in_advance']['value'] = $numOfDays;
-            }
-        }
-        return $defaultDriverServices;
+        return $filtered;
     }
 
     /**
@@ -2099,9 +2066,31 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             }
             return [];
         }
-        return $this->parseObtainedMessagingSettings(
-            $this->objectToArray($result->$functionResult->messageServices->messageService)
+        $resultArray = $this->objectToArray(
+            $result->$functionResult->messageServices->messageService
         );
+        $returnable = [];
+        foreach ($resultArray as $sendMethods) {
+            $serviceType = $this->mapCodeToStatus($sendMethods->serviceType);
+            $current = [
+                'transport_types' => [],
+            ];
+            foreach ($sendMethods->sendMethods->sendMethod as $value) {
+                $method = is_object($value) ? $value->value : $value;
+                $mappedMethod = $this->mapCodeToStatus($method);
+                if (in_array($method, $this->messagingFilters[$serviceType] ?? [])) {
+                    continue;
+                }
+                $current['transport_types'][$mappedMethod] = false;
+            }
+            if ($serviceType === 'dueDateAlert') {
+                $current['days_in_advance'] = [
+                    'configurable' => true,
+                ];
+            }
+            $returnable[$serviceType] = $current;
+        }
+        return $returnable;
     }
 
     /**
@@ -3417,31 +3406,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     protected function mapStatusToCode($status)
     {
         $found = array_search($status, $this->statuses);
-        return $found !== false ? $found : $status;
-    }
-
-    /**
-     * Map old code to status
-     *
-     * @param string $code as a string
-     *
-     * @return string Mapped code
-     */
-    protected function mapOldCodeToStatus($code)
-    {
-        return $this->oldStatuses[$code] ?? $code;
-    }
-
-    /**
-     * Map old status to code
-     *
-     * @param string $status as a string
-     *
-     * @return string Mapped status
-     */
-    protected function mapOldStatusToCode($status)
-    {
-        $found = array_search($status, $this->oldStatuses);
         return $found !== false ? $found : $status;
     }
 

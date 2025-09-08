@@ -125,9 +125,10 @@
                 <sendMethods>
                     <sendMethod>
                         <value>ilsDefined</value>
+                        <isActive>yes</isActive>
                     </sendMethod>
                 </sendMethods>
-                <nofDays>2</nofDays>
+                <nofDays><value>2</value></nofDays>
                 <isActive>yes</isActive>
             </messageService>
             <messageService>
@@ -135,15 +136,17 @@
                 <sendMethods>
                     <sendMethod>
                         <value>sms</value>
+                        <isActive>yes</isActive>
                     </sendMethod>
                 </sendMethods>
-                <isActive>yes</isActive>
+
             </messageService>
             <messageService>
                 <serviceType>overdueNotice</serviceType>
                 <sendMethods>
                     <sendMethod>
                         <value>snailMail</value>
+                        <isActive>yes</isActive>
                     </sendMethod>
                 </sendMethods>
                 <isActive>yes</isActive>

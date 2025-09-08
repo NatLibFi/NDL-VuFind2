@@ -147,6 +147,18 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     protected $requestGroupsEnabled = false;
 
     /**
+     * Messaging settings status code mappings
+     *
+     * @var array
+     */
+    protected $statuses = [
+        'Paper'             => 'print',
+        'None'              => 'inactive',
+        'SMS'               => 'sms',
+        'Email'             => 'email',
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
@@ -526,69 +538,55 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
         $name = explode(',', $result['Name'], 2);
         $messagingConf = $this->config['messaging'] ?? null;
 
+        // Parse messaging settings to a common format and create the final array with
+        // createMessagingSettingsArray
         $messagingSettings = [];
-
-        $type = 'dueDateNotice';
-        $dueDateNoticeActive = !$result['RefuseReminderMessages'];
-        $messagingSettings[$type] = [
-           'type' => $type,
-           'settings' => [
-              'digest' => [
-                 'type' => 'boolean',
-                 'readonly' => false,
-                 'active' => $dueDateNoticeActive,
-                 'label' => 'messaging_settings_option_' .
-                    ($dueDateNoticeActive ? 'active' : 'inactive'),
-              ],
-           ],
-        ];
-
-        if (!empty($messagingConf['checkoutNotice'])) {
-            $checkoutNoticeFormat = $result['ReceiptMessageFormat'];
-            $type = 'checkoutNotice';
-            $options = [];
-            foreach ($messagingConf['checkoutNotice'] as $option) {
-                [$key, $label] = explode(':', $option);
-                $options[$key] = [
-                   'name' => $this->translate("messaging_settings_option_$label"),
-                   'value' => $key,
-                   'active' => $checkoutNoticeFormat == $key,
-                ];
+        foreach (['dueDateNotice', 'checkoutNotice', 'notifications'] as $serviceType) {
+            $settings = [];
+            switch ($serviceType) {
+                case 'dueDateNotice':
+                    $settings = [
+                        'digest' => [
+                            'type' => 'boolean',
+                            'configurable' => true,
+                            'value' => !$result['RefuseReminderMessages'],
+                        ],
+                    ];
+                    break;
+                case 'checkoutNotice':
+                    if (empty($messagingConf[$serviceType])) {
+                        continue 2;
+                    }
+                    $activeValue = $result['ReceiptMessageFormat'];
+                    $options = [];
+                    foreach ($messagingConf['checkoutNotice'] as $option) {
+                        [$key, $label] = explode(':', $option);
+                        $mappedKey = $this->mapCodeToStatus($key);
+                        $options[$mappedKey] = $activeValue === $key;
+                    }
+                    $settings['transport_types'] = $options;
+                    $settings['selectType'] = 'select';
+                    break;
+                case 'notifications':
+                    if (empty($messagingConf[$serviceType])) {
+                        continue 2;
+                    }
+                    $map = ['Email' => 'LettersByEmail', 'SMS' => 'LettersBySMS'];
+                    $options = [];
+                    foreach ($messagingConf[$serviceType] as $option) {
+                        [$key, $label] = explode(':', $option);
+                        $mappedKey = $this->mapCodeToStatus($key);
+                        $options[$mappedKey] = $result[$map[$key]];
+                    }
+                    $settings['transport_types'] = $options;
+                    break;
             }
-            $messagingSettings[$type] = [
-               'type' => $type,
-               'settings' => [
-                  'transport_types' => [
-                     'type' => 'select',
-                     'value' => $checkoutNoticeFormat,
-                     'options' => $options,
-                  ],
-               ],
+            $messagingSettings[$serviceType] = [
+                'type' => $serviceType,
+                ...$settings,
             ];
         }
-
-        if (!empty($messagingConf['notifications'])) {
-            $type = 'notifications';
-            $map = ['Email' => 'LettersByEmail', 'SMS' => 'LettersBySMS'];
-            $options = [];
-            foreach ($messagingConf['notifications'] as $option) {
-                [$key, $label] = explode(':', $option);
-                $options[$key] = [
-                   'name' => $this->translate("messaging_settings_option_$label"),
-                   'value' => $key,
-                   'active' => $result[$map[$key]],
-                ];
-            }
-            $messagingSettings[$type] = [
-               'type' => $type,
-               'settings' => [
-                  'transport_types' => [
-                     'type' => 'multiselect',
-                     'options' => $options,
-                  ],
-               ],
-            ];
-        }
+        $messagingSettings = $this->createMessagingSettingsArray($messagingSettings);
         $loanHistory = isset($this->config['updateTransactionHistoryState']['method'])
             ? $result['StoreBorrowerHistory']
             : null;
@@ -2371,5 +2369,17 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             }
         }
         return true;
+    }
+
+    /**
+     * Map ILS code to common status
+     *
+     * @param string $code Code to map
+     *
+     * @return string Mapped code
+     */
+    protected function mapCodeToStatus(string $code): string
+    {
+        return $this->statuses[$code] ?? $code;
     }
 }

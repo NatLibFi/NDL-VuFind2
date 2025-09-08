@@ -110,7 +110,6 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
                             ],
                             'digest' => [
                                 'type' => 'boolean',
-                                'name' => '',
                                 'active' => true,
                                 'readonly' => true,
                             ],
@@ -263,7 +262,6 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
                             ],
                             'digest' => [
                                 'type' => 'boolean',
-                                'name' => '',
                                 'active' => true,
                                 'readonly' => true,
                             ],
@@ -285,7 +283,6 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
                             ],
                             'digest' => [
                                 'type' => 'boolean',
-                                'name' => '',
                                 'active' => true,
                                 'readonly' => true,
                             ],

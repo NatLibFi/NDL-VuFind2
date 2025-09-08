@@ -37,7 +37,7 @@ use VuFindTest\Feature\FixtureTrait;
 use VuFindTest\Feature\ReflectionTrait;
 
 /**
- * AxiellWebServices test class
+ * KohaRestSuomiVufind test class
  *
  * @category VuFind
  * @package  Tests

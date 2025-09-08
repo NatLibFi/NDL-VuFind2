@@ -99,7 +99,38 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'boolean',
                                 'readonly' => false,
                                 'active' => true,
-                                'label' => 'messaging_settings_option_active',
+                            ],
+                        ],
+                    ],
+                    'checkoutNotice' => [
+                        'type' => 'checkoutNotice',
+                        'settings' => [
+                            'transport_types' => [
+                                'type' => 'select',
+                                'options' => [
+                                    'email' => [
+                                        'active' => true,
+                                    ],
+                                    'print' => [
+                                        'active' => false,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                    'notifications' => [
+                        'type' => 'notifications',
+                        'settings' => [
+                            'transport_types' => [
+                                'type' => 'multiselect',
+                                'options' => [
+                                    'email' => [
+                                        'active' => false,
+                                    ],
+                                    'sms' => [
+                                        'active' => true,
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -127,8 +158,15 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
             'mikromarc/profile.json',
             $defaultExpected,
             [
-                'updateMessagingSettings' => [
-                    'method' => 'driver',
+                'messaging' => [
+                    'checkoutNotice' => [
+                        'Email:email',
+                        'Paper:paper',
+                    ],
+                    'notifications' => [
+                        'Email:email',
+                        'SMS:sms',
+                    ],
                 ],
             ],
         ];
@@ -147,7 +185,6 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'boolean',
                                 'readonly' => false,
                                 'active' => true,
-                                'label' => 'messaging_settings_option_active',
                             ],
                         ],
                     ],

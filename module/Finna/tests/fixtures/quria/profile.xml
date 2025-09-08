@@ -61,7 +61,7 @@
                         <value>ilsDefined</value>
                     </sendMethod>
                 </sendMethods>
-                <nofDays>2</nofDays>
+                <nofDays><value>2</value></nofDays>
                 <isActive>yes</isActive>
             </messageService>
             <messageService>

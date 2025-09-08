@@ -701,20 +701,6 @@ class Quria extends AxiellWebServices
             }
         }
 
-        $serviceSendMethod
-            = $this->config['updateMessagingSettings']['method'] ?? 'none';
-        $messagingServices = [];
-        if ($serviceSendMethod === 'driver') {
-            $userMessagingServices
-                = $this->parseObtainedMessagingSettings(
-                    $this->objectToArray($info->messageServices->messageService ?? [])
-                );
-            $messagingServices = $this->parseDriverMessagingSettings($userMessagingServices, $user);
-        } elseif ($serviceSendMethod === 'database') {
-            $messagingServices = $this->parseEmailMessagingSettings(
-                $this->objectToArray($info->messageServices->messageService ?? [])
-            );
-        }
         $userCached = $this->createProfileArray(
             firstname: $firstname,
             lastname: $lastname,
@@ -724,7 +710,6 @@ class Quria extends AxiellWebServices
             country: $country,
             phone: $phone,
             loan_history: $info->isLoanHistoryEnabled ?? null,
-            messagingServices: $messagingServices,
             email: $email,
             nonDefaultFields: [
                 'addressId' => $addressId,

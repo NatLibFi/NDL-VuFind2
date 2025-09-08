@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Common functionality for container record formats.
+ * Common functionality for ILS drivers
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2025.
+ * Copyright (C) The National Library of Finland 2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,8 +21,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  *
  * @category VuFind
- * @package  RecordDrivers
- * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @package  ILS_Drivers
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
@@ -35,180 +35,101 @@ use Stringable;
  * Common functionality for ILS drivers.
  *
  * @category VuFind
- * @package  RecordDrivers
- * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @package  ILS_Drivers
+ * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 trait FinnaCommonILSTrait
 {
     /**
-     * Array containing definitions for default email messaging service settings
+     * Create messaging settings array containing information about services and options
      *
-     * @var array
+     * @param array  $userSettings Users defined settings
+     * @param int    $nofDaysMin   Minimum value for day selection
+     * @param int    $nofDaysMax   Maximum inclusive value for day selection
+     * @param string $selectType   Type of the selection html element. Default is multiselect.
+     *
+     * @return array
      */
-    protected array $defaultEmailMessagingServices = [
-        'pickUpNotice' => [
-            'active' => false,
-            'type' => 'pickUpNotice',
-            'sendMethods' => [
-                'letter' => [
-                    'method' => 'letter',
-                    'active' => false,
-                    'type' => 'letter',
-                ],
-                'email' => [
-                    'method' => 'email',
-                    'active' => false,
-                    'type' => 'email',
-                ],
-                'sms' => [
-                    'method' => 'sms',
-                    'active' => false,
-                    'type' => 'sms',
-                ],
-                'none' => [
-                    'method' => 'none',
-                    'active' => false,
-                    'type' => 'none',
-                ],
-            ],
-        ],
-        'overdueNotice' => [
-            'active' => false,
-            'type' => 'overdueNotice',
-            'sendMethods' => [
-                'letter' => [
-                    'method' => 'letter',
-                    'active' => false,
-                    'type' => 'letter',
-                ],
-                'email' => [
-                    'method' => 'email',
-                    'active' => false,
-                    'type' => 'email',
-                ],
-                'sms' => [
-                    'method' => 'sms',
-                    'active' => false,
-                    'type' => 'sms',
-                ],
-                'none' => [
-                    'method' => 'none',
-                    'active' => false,
-                    'type' => 'none',
-                ],
-            ],
-        ],
-        'dueDateAlert' => [
-            'active' => false,
-            'type' => 'dueDateAlertEmail',
-            'sendMethods' => [
-                'email' => [
-                    'method' => 'email',
-                    'active' => false,
-                    'type' => 'email',
-                ],
-                'none' => [
-                    'method' => 'none',
-                    'active' => false,
-                    'type' => 'none',
-                ],
-            ],
-        ],
-    ];
+    protected function createMessagingSettingsArray(
+        array $userSettings,
+        int $nofDaysMin = 0,
+        int $nofDaysMax = 30,
+        string $selectType = 'multiselect'
+    ): array {
+        $parsedMessagingSettings = [];
+        foreach ($userSettings as $type => $prefs) {
+            $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
+            if (!$typeName) {
+                continue;
+            }
+            $settings = [
+                'type' => $prefs['type'] ?? $typeName,
+            ];
+            if (isset($prefs['transport_types'])) {
+                $settings['settings']['transport_types'] = [
+                    'type' => $prefs['selectType'] ?? $selectType,
+                ];
+                // Only give the name for setting if it has been declared in the ILS driver.
+                // The name will be formed in the front end by using the setting key by default.
+                if ($name = $prefs['transport_types']['name'] ?? false) {
+                    $settings['settings']['transport_types']['name'] = $name;
+                }
+                foreach ($prefs['transport_types'] as $key => $active) {
+                    $settings['settings']['transport_types']['options'][$key] = [
+                        'active' => $active,
+                    ];
+                    if ($active && $selectType === 'select') {
+                        $settings['settings']['transport_types']['value'] = $key;
+                    }
+                }
+                if ($selectType === 'select') {
+                    $settings['settings']['transport_types']['value'] ??= '';
+                }
+            }
 
-    /**
-     * Array containing settings for common driver messaging services
-     *
-     * @var array
-     */
-    protected array $defaultDriverMessagingServices = [
-        'pickUpNotice' => [
-            'type' => 'pickUpNotice',
-            'settings' => [
-                'transport_types' => [
+            if (isset($prefs['digest'])) {
+                $settings['settings']['digest'] = [
+                    'type' => 'boolean',
+                    'active' => $prefs['digest']['value'],
+                    'readonly' => !$prefs['digest']['configurable'],
+                ];
+                if ($settingName = $prefs['digest']['name'] ?? false) {
+                    $settings['settings']['digest']['name'] = $settingName;
+                }
+            }
+            // Create options for days in advance select box.
+            if (
+                isset($prefs['days_in_advance'])
+                && ($prefs['days_in_advance']['configurable']
+                || null !== $prefs['days_in_advance']['value'])
+            ) {
+                $options = [];
+                for ($i = $nofDaysMin; $i <= $nofDaysMax; $i++) {
+                    $options[$i] = [
+                        'name' => $this->translate(
+                            1 === $i ? 'messaging_settings_num_of_days'
+                            : 'messaging_settings_num_of_days_plural',
+                            ['%%days%%' => $i]
+                        ),
+                        'active' => $i == $prefs['days_in_advance']['value'],
+                    ];
+                }
+                $settings['settings']['days_in_advance'] = [
                     'type' => 'select',
-                    'options' => [
-                        'email' => [
-                            'active' => false,
-                        ],
-                        'print' => [
-                            'active' => false,
-                        ],
-                        'sms' => [
-                            'active' => false,
-                        ],
-                    ],
-                ],
-            ],
-        ],
-        'overdueNotice' => [
-            'type' => 'overdueNotice',
-            'settings' => [
-                'transport_types' => [
-                    'type' => 'select',
-                    'options' => [
-                        'email' => [
-                            'active' => false,
-                        ],
-                        'print' => [
-                            'active' => false,
-                        ],
-                        'sms' => [
-                            'active' => false,
-                        ],
-                    ],
-                ],
-            ],
-        ],
-        'dueDateAlert' => [
-            'type' => 'dueDateAlert',
-            'settings' => [
-                'transport_types' => [
-                    'type' => 'select',
-                    'options' => [
-                        'email' => [
-                            'active' => false,
-                        ],
-                        'inactive' => [
-                            'active' => false,
-                        ],
-                        'sms' => [
-                            'active' => false,
-                        ],
-                    ],
-                ],
-                'days_in_advance' => [
-                    'type' => 'select',
-                    'value' => '',
-                    'options' => [
-                        1 => [
-                            'name' => 'messaging_settings_num_of_days',
-                            'active' => true,
-                        ],
-                        2 => [
-                            'name' => 'messaging_settings_num_of_days_plural',
-                            'active' => false,
-                        ],
-                        3 => [
-                            'name' => 'messaging_settings_num_of_days_plural',
-                            'active' => false,
-                        ],
-                        4 => [
-                            'name' => 'messaging_settings_num_of_days_plural',
-                            'active' => false,
-                        ],
-                        5 => [
-                            'name' => 'messaging_settings_num_of_days_plural',
-                            'active' => false,
-                        ],
-                    ],
-                    'readonly' => false,
-                ],
-            ],
-        ],
-    ];
+                    'value' => $prefs['days_in_advance']['value'],
+                    'options' => $options,
+                    'readonly' => !$prefs['days_in_advance']['configurable'],
+                ];
+            }
+            if (isset($prefs['active'])) {
+                $settings['active'] = $prefs['active'];
+            }
+            $parsedMessagingSettings[$type] = $settings;
+        }
+        return $parsedMessagingSettings;
+    }
 
     /**
      * Create a profile array according to getMyProfile specs defined in the documentation.
