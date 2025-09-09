@@ -48,7 +48,7 @@
 
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
     echo $this->assetManager()->outputInlineScriptString(
-      'finna.record.handleRedirect(' . json_encode($oldRecordId) . ', ' . json_encode($this->driver->getUniqueID()) . ');'
+        'finna.record.handleRedirect(' . json_encode($oldRecordId) . ', ' . json_encode($this->driver->getUniqueID()) . ');'
     );
   }
 ?>
