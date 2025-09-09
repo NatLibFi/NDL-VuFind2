@@ -1,6 +1,6 @@
 <?php
   /**
-   * Page title component, which checks if the current template is rendered in lightbox or not. Use only once for each page.
+   * User account page title component, which checks if the current template is rendered in lightbox or not. Use only once for each page.
    * 
    *
    * @param string       title         Translated title to be used as the header element value
@@ -14,14 +14,16 @@
    */
 ?>
 <div id="useraccount-content-heading" class="useraccount-header <?=$this->escapeHtmlAttr($this->_componentClass)?>">
-  <?=$this->component(
-    'page-title',
-    [
+  <?=
+  $this->component(
+      'page-title',
+      [
       'title' => $this->title ?? null,
       'headTitle' => $this->headTitle ?? null,
       'level' => $this->level ?? null,
       'lightboxLevel' => $this->lightboxLevel ?? null,
       'class' => $this->class ?? null,
     ]
-);?>
+  );
+?>
 </div>

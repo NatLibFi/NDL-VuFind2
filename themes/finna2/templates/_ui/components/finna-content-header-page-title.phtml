@@ -1,6 +1,6 @@
 <?php
   /**
-   * Page title component, which checks if the current template is rendered in lightbox or not. Use only once for each page.
+   * Content page title component, which checks if the current template is rendered in lightbox or not. Use only once for each page.
    * 
    *
    * @param string       title         Translated title to be used as the header element value
@@ -13,15 +13,17 @@
    *                                   Appended values are 'vc-page-title' and in lightbox 'vc-page-title lightbox-title'.
    */
 ?>
-<div>
-  <?=$this->component(
-    'page-title',
-    [
-      'title' => $this->title ?? null,
-      'headTitle' => $this->headTitle ?? null,
-      'level' => $this->level ?? 1,
-      'lightboxLevel' => $this->lightboxLevel ?? null,
-      'class' => $this->class ?? 'content-header',
-    ]
-);?>
+<div class="<?=$this->escapeHtmlAttr($this->_componentClass)?>">
+    <?=
+        $this->component(
+            'page-title',
+            [
+            'title' => $this->title ?? null,
+            'headTitle' => $this->headTitle ?? null,
+            'level' => $this->level ?? 1,
+            'lightboxLevel' => $this->lightboxLevel ?? null,
+            'class' => $this->class ?? 'content-header',
+        ]
+        );
+?>
 </div>
