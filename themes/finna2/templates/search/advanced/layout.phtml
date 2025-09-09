@@ -29,7 +29,7 @@
 
   // Search type and tabs
   $this->searchType = 'advanced';
-  $this->layout()->finnaMainHeader = '<div><h1 class="content-header">' . $this->translate('Advanced Search') . '</h1></div>';
+  $this->layout()->finnaMainHeader = $this->component('finna-main-header-page-title', ['title' => $this->translate('Advanced Search'), 'level' => 1]);
   $searchTabs = $this->searchtabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $hiddenFilters, []);
   $this->layout()->finnaMainTabs = $this->context($this)->renderInContext('search/searchTabs', ['searchTabs' => $searchTabs['tabs'], 'hiddenFilters' => $hiddenFilters]);
 
