@@ -16,9 +16,7 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <div class="my-research-content">
-    <div class="title-wrapper">
-      <?=$this->component('page-title', ['title' => $pageTitle]);?>
-    </div>
+    <?=$this->component('finna-useraccount-page-title', ['title' => $pageTitle]);?>
     <?= $this->flashmessages() ?>
     <?php // TODO: create a component which handles the defaulting into prettier form ?>
     <div class="description-wrapper">
