@@ -6,7 +6,7 @@
     $updateAddress = $this->ils()->checkFunction('updateAddress', compact('patron'));
     $needsApproval = $updateAddress['needsApproval'] ?? true;
     // Set up page title:
-    $title = $this->translate(($updatePhone || $updateEmail) ? 'request_address_change' : 'request_contact_information_change');
+    $title = $this->translate(($updatePhone || $updateEmail) ? 'request_contact_information_change' : 'request_address_change');
     $this->headTitle($title);
 
     // Set up breadcrumbs:
