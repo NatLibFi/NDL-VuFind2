@@ -233,23 +233,6 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Sets name and email field values from user object
-     *
-     * @return void
-     */
-    public function setContactInformationFromUser(): void
-    {
-        if ($this->user) {
-            $this->setData(
-                [
-                    'name' => $this->user->getFirstname() . ' ' . $this->user->getLastname(),
-                    'email' => $this->user->getEmail(),
-                ]
-            );
-        }
-    }
-
-    /**
      * Set institution
      *
      * @param string $institution Institution
