@@ -66,4 +66,16 @@ class UserCard extends \VuFind\Db\Row\UserCard implements FinnaUserCardEntityInt
     {
         return $this->finna_due_date_reminder;
     }
+
+    /**
+     * Get displayable card name. Either the value from card_name or cat_username
+     *
+     * @return string
+     */
+    public function getDisplayableName(): string
+    {
+        $catUsername = $this->getCatUsername();
+        $cardName = $this->getCardName();
+        return $catUsername !== $cardName ? $cardName : $catUsername;
+    }
 }

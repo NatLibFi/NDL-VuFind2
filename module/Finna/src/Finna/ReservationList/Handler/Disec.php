@@ -30,6 +30,7 @@
 namespace Finna\ReservationList\Handler;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\ReservationList\Form\Form;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
@@ -56,8 +57,8 @@ class Disec extends AbstractBase
     /**
      * Places an order
      *
-     * @param array               $formValues Values gathered from submitted form
-     * @param UserEntityInterface $user       User entity
+     * @param Form                $form Reservation list form
+     * @param UserEntityInterface $user User entity
      *
      * @return array [
      *  external_id: Id in external service or null,
@@ -66,7 +67,7 @@ class Disec extends AbstractBase
      *  connection Type of the connection
      * ]
      */
-    public function placeOrder(array $formValues, UserEntityInterface $user): array
+    public function placeOrder(Form $form, UserEntityInterface $user): array
     {
         $data = [];
         $orderUrl = $this->getApiUrl() . 'orders';
@@ -75,31 +76,32 @@ class Disec extends AbstractBase
         $client->setMethod(\Laminas\Http\Request::METHOD_POST);
 
         $resources = [];
-        $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        foreach ($recordLoader->loadBatch($formValues['record_source_and_ids']) as $record) {
-            if ($identifiers = $record->tryMethod('getIdentifier', [])) {
-                $resources[] = array_shift($identifiers);
+        foreach ($form->getResources() as $resource) {
+            if ($identifier = $resource->getRecordId()) {
+                $resources[] = $identifier;
             }
         }
+        if (!$resources && $record = $form->getRecord()) {
+            $resources[] = $record->getUniqueID();
+        }
+        $pickupDate = $form->get('pickup_date')->getValue();
         $data = [
             'resourceIds' => $resources,
-            'contentInfo' => $formValues['message'] . PHP_EOL,
+            'contentInfo' => 'message: ' . $form->get('message')->getValue() . PHP_EOL,
         ];
-        $data['contentInfo'] .= 'Delivery date: ' . $formValues['pickup_date'] . PHP_EOL;
-
-        $cardInfo = $this->getPreferredCardInfo($user);
-        $patronId = $cardInfo['patron_id'];
+        $data['contentInfo'] .= 'Delivery date: ' . $pickupDate . PHP_EOL;
         // Throw an error if patron id is not found as this should not be possible
-        if (!$patronId) {
+        $userInformation = $form->getUserInformation();
+        if (!($patronId = $userInformation['patronId'])) {
             throw new \Exception('Patron id not set');
         }
         if ($this->getUsePatronId()) {
             $data['kohaId'] = $patronId;
         } else {
             $data['customer'] = [
-                'firstName' => $cardInfo['first_name'],
-                'lastName' => $cardInfo['last_name'],
-                'email' => $formValues['email'] ?? $user->getEmail(),
+                'firstName' => $userInformation['firstname'],
+                'lastName' => $userInformation['lastname'],
+                'email' => $userInformation['email'],
             ];
         }
         $data['contentInfo'] .= 'id: ' . $patronId;
@@ -112,7 +114,7 @@ class Disec extends AbstractBase
             return [
                 'success' => true,
                 'external_id' => $body['id'],
-                'pickup_date' => $formValues['pickup_date'],
+                'pickup_date' => $pickupDate,
                 'connection' => 'disec',
             ];
         }

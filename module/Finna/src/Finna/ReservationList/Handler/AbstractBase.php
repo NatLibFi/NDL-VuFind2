@@ -30,7 +30,6 @@
 namespace Finna\ReservationList\Handler;
 
 use Exception;
-use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
 use Psr\Container\ContainerInterface;
@@ -368,114 +367,17 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     }
 
     /**
-     * Get values required for placing the order.
-     *
-     * @param FinnaResourceListEntityInterface $list          List being ordered
-     * @param UserEntityInterface              $user          User who owns the list
-     * @param array                            $requestValues Values obtained i.e from post request as array
-     *
-     * @return array
-     */
-    public function getValuesForListOrder(
-        FinnaResourceListEntityInterface $list,
-        UserEntityInterface $user,
-        array $requestValues
-    ): array {
-        $result = $this->getValuesForSingleOrder($list, $user, $requestValues);
-        $reservationListService = $this->getService(\Finna\ReservationList\ReservationListService::class);
-        $result['record_ids_text'] = '';
-        $result['record_source_and_ids'] = [];
-        foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
-            $result['record_ids_text'] .= $resource->getTitle() . ' (' . $resource->getRecordId() . ')' . PHP_EOL;
-            $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
-        }
-        return $result;
-    }
-
-    /**
-     * Get values for placing single order form
-     *
-     * @param FinnaResourceListEntityInterface $list          List being ordered
-     * @param UserEntityInterface              $user          User who owns the list
-     * @param array                            $requestValues Values obtained i.e from post request as array
-     *
-     * @return array
-     */
-    public function getValuesForSingleOrder(
-        FinnaResourceListEntityInterface $list,
-        UserEntityInterface $user,
-        array $requestValues
-    ): array {
-        $cardInfo = $this->getPreferredCardInfo($user);
-        $result = [
-            'listId' => $list->getId(),
-            'institution' => $list->getInstitution(),
-            'listIdentifier' => $list->getListConfigIdentifier(),
-            'full_name' => $requestValues['full_name'] ?? $cardInfo['full_name'],
-            'email' => $requestValues['email'] ?? $user->getEmail(),
-            'phone' => $requestValues['phone'] ?? null,
-            'pickup_date' => $requestValues['pickup_date'] ?? null,
-            'message' => $requestValues['message'] ?? null,
-            'card_info' => $cardInfo['card_name'],
-        ];
-
-        if (empty($requestValues['recordId'])) {
-            return $result;
-        }
-
-        $recordLoader = $this->getService(\VuFind\Record\Loader::class);
-        $recordID = $requestValues['recordId'];
-        $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
-        $record = $recordLoader->load($recordID, $source);
-        $result['list_title'] = $requestValues['list_title'];
-        $result['recordId'] = $record->getUniqueID();
-        $result['source'] = $record->getSourceIdentifier();
-        $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
-        $result['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
-        return $result;
-    }
-
-    /**
-     * Get preferred card info as associative array. Shibboleth login saves the whole name into last name so
-     * try to get users name from patron primarily. Prefer card name from database and use local name (without prefix)
-     * as fallback. Get local patron id (without prefix).
+     * Get users card name from database. Can be user given name or same as cat_username.
      *
      * @param UserEntityInterface $user User to get information for
      *
-     * @return array [firstname, lastname, patron_id, card_name]
+     * @return string
      */
-    protected function getPreferredCardInfo(UserEntityInterface $user): array
+    public function getUserCardName(UserEntityInterface $user): string
     {
-        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
         $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
-        $catUsername = $patron['cat_username'] ?? '';
-        $cardName = $patron['__local_cat_username'] ?? $catUsername;
-        if ($cardEntity = $cardService->getLibraryCards($user, null, $user->getCatUsername())) {
-            $cardEntity = reset($cardEntity);
-            if ($dbCardName = $cardEntity->getCardName()) {
-                $cardName = $dbCardName === $catUsername ? $cardName : $dbCardName;
-            }
-        }
-        // Prioritize name from patron
-        $firstName = $patron['firstname'] ?? null;
-        $lastName = $patron['lastname'] ?? null;
-
-        // If either field from patron is empty, then use name from db
-        if (!$firstName || !$lastName) {
-            $firstName = $user->getFirstname();
-            $lastName = $user->getLastname();
-        }
-
-        // Form full name from the obtained data
-        $fullName = trim("$firstName $lastName");
-
-        return [
-            'first_name' => $firstName,
-            'last_name' => $lastName,
-            'full_name' => $fullName,
-            'patron_id' => $patron['__local_id'] ?? $patron['id'] ?? '',
-            'card_name' => $cardName,
-        ];
+        return $cardService->getLibraryCard($user, null, $user->getCatUsername())?->getDisplayableName()
+            ?: $user->getCatUsername();
     }
 
     /**
@@ -488,8 +390,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public function getPlaceOrderForm(array $prefill = []): Form
     {
         $form = $this->getService(Form::class);
-        $form->buildFromConfig($this->orderFormConfig, self::FORM_ID, $prefill);
-        $form->setData($prefill);
+        $form->buildFromConfig($this->orderFormConfig, self::FORM_ID);
         $form->setName(self::FORM_ID);
         return $form;
     }
@@ -504,8 +405,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public function getSingleOrderForm(array $prefill = []): Form
     {
         $form = $this->getService(Form::class);
-        $form->buildFromConfig($this->singleOrderFormConfig, self::FORM_ID, $prefill);
-        $form->setData($prefill);
+        $form->buildFromConfig($this->singleOrderFormConfig, self::FORM_ID);
         $form->setName(self::FORM_ID);
         return $form;
     }
@@ -513,8 +413,8 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     /**
      * Places an order
      *
-     * @param array               $formValues Values gathered from submitted form
-     * @param UserEntityInterface $user       User entity
+     * @param Form                $form Reservation list form
+     * @param UserEntityInterface $user User entity
      *
      * @return array [
      *  external_id: Id in external service or null,
@@ -523,7 +423,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      *  connection Type of the connection
      * ]
      */
-    abstract public function placeOrder(array $formValues, UserEntityInterface $user): array;
+    abstract public function placeOrder(Form $form, UserEntityInterface $user): array;
 
     /**
      * Check list status. Used for external services.

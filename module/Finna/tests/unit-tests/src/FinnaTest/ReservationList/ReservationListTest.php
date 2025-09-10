@@ -38,6 +38,7 @@ use Finna\Db\Service\FinnaResourceListResourceService;
 use Finna\Db\Service\FinnaResourceListService;
 use Finna\Db\Service\UserService;
 use Finna\Record\Loader as RecordLoader;
+use Finna\ReservationList\Form\Form;
 use Finna\ReservationList\Handler\Disec;
 use Finna\ReservationList\Handler\Email;
 use Finna\ReservationList\Handler\PluginManager as HandlerPluginManager;
@@ -45,6 +46,7 @@ use Finna\ReservationList\ReservationListService;
 use Generator;
 use Laminas\Cache\Storage\Adapter\FilesystemOptions;
 use Laminas\Cache\Storage\StorageInterface;
+use Laminas\Form\Fieldset;
 use Laminas\Session\Container;
 use Laminas\View\Renderer\PhpRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -659,44 +661,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test list value returns for handlers
-     *
-     * @param string $institution    Institution for list
-     * @param string $listIdentifier List identifier for list
-     * @param array  $requestValues  Request values to test
-     * @param array  $expected       Expected values to be returned
-     *
-     * @return       void
-     * @dataProvider getTestHandlerData
-     */
-    public function testHandlers(
-        string $institution,
-        string $listIdentifier,
-        array $requestValues,
-        array $expected
-    ): void {
-        $ownerUser = $this->getMockUser(1);
-        $reservationListConfig = Yaml::parse($this->getFixture('reservationlist/ReservationList.yaml', 'Finna'));
-        $listPluginManager = $this->getPluginManager();
-        $service = $this->getReservationListService(
-            listPluginManager: $listPluginManager,
-            reservationListConfig: $reservationListConfig
-        );
-        $handler = $service->getListHandler($institution, $listIdentifier);
-
-        $list = $service->createListForUser($ownerUser, [
-          'title' => 'Test List Title',
-          'desc' => 'Test List Desc',
-          'institution' => $handler->getInstitution(),
-          'listIdentifier' => $handler->getIdentifier(),
-          'connection' => $handler->getConnectionType(),
-        ]);
-
-        $returned = $handler->getValuesForListOrder($list, $ownerUser, $requestValues);
-        $this->assertEquals($expected, $returned);
-    }
-
-    /**
      * Test disec data sending
      *
      * @return void
@@ -721,19 +685,31 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             mockHttpService: $httpService
         );
         $handler = $service->getListHandler('Example Institution', 'list_with_disec');
-        $testValues = [
-          'listId' => null,
-          'institution' => 'Example Institution',
-          'listIdentifier' => 'list_with_disec',
-          'firstName' => 'Pouta',
-          'lastName' => 'Pakkanen',
-          'email' => 'testaaja@testeri.fi',
-          'record_ids_text' => '',
-          'record_source_and_ids' => [],
-          'pickup_date' => '2025-01-01',
-          'message' => 'Test message',
-        ];
-        $result = $handler->placeOrder($testValues, $user);
+        $form = $this->getMockBuilder(Form::class)->disableOriginalConstructor()
+          ->onlyMethods(['get', 'populateValues'])->getMock();
+        $form->expects($this->any())->method('get')->willReturnCallback(function ($key) {
+            $returnMap = [
+            'pickup_date' => '2025-01-01',
+            'message' => 'Test message',
+            ];
+            $set = $this->getMockBuilder(Fieldset::class)->disableOriginalConstructor()->getMock();
+            $set->expects($this->any())->method('getValue')->willReturn($returnMap[$key]);
+            return $set;
+        });
+        $form->setUser(
+            $user,
+            [],
+            [
+              'firstname' => 'Pouta',
+              'lastname' => 'Pakkanen',
+              'email' => 'testaaja@testeri.fi',
+              '__local_id' => '11111',
+            ]
+        );
+        $form->setContactInformationFromPatron();
+        $form->setResources([]);
+        $form->setData(['pickup_date' => '2025-01-01']);
+        $result = $handler->placeOrder($form, $user);
         $this->assertEquals([
           'external_id' => '123123',
           'connection' => 'disec',
@@ -767,6 +743,17 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             mockHttpService: $httpService
         );
         $handler = $service->getListHandler('Example Institution', 'list_with_email');
+        $form = $this->getMockBuilder(Form::class)->disableOriginalConstructor()
+          ->onlyMethods(['get', 'getEmailValues', 'populateValues'])->getMock();
+        $form->expects($this->any())->method('get')->willReturnCallback(function ($key) {
+            $returnMap = [
+            'pickup_date' => '2025-01-01',
+            'message' => 'Test message',
+            ];
+            $set = $this->getMockBuilder(Fieldset::class)->disableOriginalConstructor()->getMock();
+            $set->expects($this->any())->method('getValue')->willReturn($returnMap[$key]);
+            return $set;
+        });
         $testValues = [
           'listId' => null,
           'institution' => 'Example Institution',
@@ -778,7 +765,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
           'pickup_date' => '2025-01-01',
           'message' => 'Test message',
         ];
-        $result = $handler->placeOrder($testValues, $user);
+        $result = $handler->placeOrder($form, $user);
         $this->assertEquals([
           'external_id' => null,
           'connection' => 'email',

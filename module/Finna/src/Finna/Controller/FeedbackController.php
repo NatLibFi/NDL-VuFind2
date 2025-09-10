@@ -32,6 +32,8 @@
 
 namespace Finna\Controller;
 
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Form\Form;
 use VuFind\Log\LoggerAwareTrait;
 
 /**
@@ -80,5 +82,23 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
         }
 
         return parent::formAction();
+    }
+
+    /**
+     * Prefill form sender fields for logged in users.
+     *
+     * @param Form                 $form Form
+     * @param ?UserEntityInterface $user User
+     *
+     * @return Form
+     */
+    protected function prefillUserInfo(Form $form, ?UserEntityInterface $user)
+    {
+        if ($form->preferPatronInformation()) {
+            $form->setContactInformationFromPatron();
+            return $form;
+        } else {
+            return parent::prefillUserInfo($form, $user);
+        }
     }
 }

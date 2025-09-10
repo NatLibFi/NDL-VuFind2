@@ -181,8 +181,8 @@ interface HandlerInterface
     /**
      * Places an order
      *
-     * @param array               $formValues Values gathered from submitted form
-     * @param UserEntityInterface $user       User entity
+     * @param Form                $form Reservation list form
+     * @param UserEntityInterface $user User entity
      *
      * @return array [
      *  external_id: Id in external service or null,
@@ -191,7 +191,7 @@ interface HandlerInterface
      *  connection Type of the connection
      * ]
      */
-    public function placeOrder(array $formValues, UserEntityInterface $user): array;
+    public function placeOrder(Form $form, UserEntityInterface $user): array;
 
     /**
      * Check list status. Used for external services.
@@ -201,36 +201,6 @@ interface HandlerInterface
      * @return string
      */
     public function getListStatus(FinnaResourceListEntityInterface $list): string;
-
-    /**
-     * Get values required for placing the order.
-     *
-     * @param FinnaResourceListEntityInterface $list          List being ordered
-     * @param UserEntityInterface              $user          User who owns the list
-     * @param array                            $requestValues Values obtained i.e from post request as array
-     *
-     * @return array
-     */
-    public function getValuesForListOrder(
-        FinnaResourceListEntityInterface $list,
-        UserEntityInterface $user,
-        array $requestValues
-    ): array;
-
-    /**
-     * Get values required for placing single record order.
-     *
-     * @param FinnaResourceListEntityInterface $list          List being ordered
-     * @param UserEntityInterface              $user          User who owns the list
-     * @param array                            $requestValues Values obtained i.e from post request as array
-     *
-     * @return array
-     */
-    public function getValuesForSingleOrder(
-        FinnaResourceListEntityInterface $list,
-        UserEntityInterface $user,
-        array $requestValues
-    ): array;
 
     /**
      * Get form used for placing orders.
