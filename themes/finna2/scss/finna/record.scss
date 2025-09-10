@@ -987,6 +987,10 @@ finna-model-viewer .object-editor {
     .popover-external-links {
       margin-top: 1rem;
     }
+    .content, .popover-external-links {
+      display: flex;
+      flex-direction: column;
+    }
   }
   // Note: there can be nested popovers, so make sure to match the immediate child:
   &.open > .field-popover {
