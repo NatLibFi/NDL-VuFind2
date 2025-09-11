@@ -1,4 +1,12 @@
 <?php
+    /**
+     * Component to display an information box with text.
+     *
+     * @param string type Type of the information box to display. Default is info.
+     * @param string class Extra classes to add for the information box. Default is alert alert-info vc-finna-information-box margin-top.
+     * @param string content Translated content without escaping. Escaping is handled inside this component.
+     * @param bool   bold If the text should be bolded. Default is false.
+     */
     $infoTypeClass = match ($this->type ?? '') {
         'info' => 'alert alert-info',
         'danger' => 'alert alert-danger',
