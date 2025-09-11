@@ -267,6 +267,7 @@ return [
         [ 'file' => 'finna-a11y.js' ],
         [ 'file' => 'finna-datepicker.js' ],
         [ 'file' => 'finna-reservation-list.js' ],
+        [ 'file' => 'finna-video-player.js' ],
         [ 'file' => 'components/finna-bazaar-browse-bar.js' ],
         [ 'file' => 'components/finna-md-editable.js' ],
         [ 'file' => 'components/finna-tabs-nav.js' ],

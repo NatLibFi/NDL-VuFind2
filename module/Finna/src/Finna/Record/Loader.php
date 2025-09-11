@@ -148,7 +148,7 @@ class Loader extends \VuFind\Record\Loader
             && $this->fallbackLoader->has($source)
             && null !== $id
             && '' !== $id
-            && $result?->getExtraDetail('cached_record')
+            //&& $result?->getExtraDetail('cached_record')
         ) {
             // Check for a redirected record without overwriting $result
             if ($redirectedRecord = $this->fallbackLoader->get($source)->load((array)$id)) {
