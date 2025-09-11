@@ -100,7 +100,7 @@
                   <div>
                     <p><?=$comment['recordTitle']?></p>
                     <div class="truncate-field other-organisation-links" data-rows="-1" data-label="<?=$this->transEscAttr('show_instances')?>">
-                      <?php foreach ($comment['mergedData']['records'] ?? [] as  $current): ?>
+                      <?php foreach ($comment['mergedData']['records'] ?? [] as $current): ?>
                         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
                           <?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?>
                         </a>

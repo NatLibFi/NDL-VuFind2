@@ -91,7 +91,7 @@
                   <div>
                     <p><?=$rating['recordTitle']?></p>
                     <div class="truncate-field other-organisation-links" data-rows="-1" data-label="<?=$this->transEscAttr('show_instances')?>">
-                        <?php foreach ($rating['mergedData']['records'] ?? [] as  $current): ?>
+                        <?php foreach ($rating['mergedData']['records'] ?? [] as $current): ?>
                         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
                           <?=$this->transEsc("source_{$current['source']}", null, $current['source']) ?>
                         </a>
@@ -103,7 +103,7 @@
               </td>
               <td class="user-rating" data-label="<?=$this->transEscAttr('Rating')?>">
                 <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($rating['source'] . '|' . $rating['record_id'], 'Rating'))?>" data-lightbox>
-                  <?=$this->render('Helpers/star-rating', ['readonly' => true, 'ratingData' => ['rating' => $rating['rating'], 'count' => 1]])?>
+                  <?=$this->component('star-rating', ['readonly' => true, 'ratingData' => ['rating' => $rating['rating'], 'count' => 1]])?>
                 </a>
               </td>
             </tr>
