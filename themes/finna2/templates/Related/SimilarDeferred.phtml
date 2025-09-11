@@ -1,5 +1,3 @@
 <!-- START of: finna - Related/SimilarDeferred.phtml -->
-<div class="similar-records" data-id="<?=$this->escapeHtmlAttr($this->related->getRecordId()) ?>">
-  <?=$this->icon('spinner') ?>
-</div>
+<?=$this->component('finna-js-container', ['class' => 'similar-records', 'method' => 'getSimilarRecords', 'id' => $this->related->getRecordId()]);?>
 <!-- END of: finna - Related/SimilarDeferred.phtml -->

@@ -1,4 +1,4 @@
-/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab */
+/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab, unwrapJQuery */
 finna.record = (function finnaRecord() {
   var accordionTitleHeight = 64;
 
@@ -499,50 +499,34 @@ finna.record = (function finnaRecord() {
   }
 
   /**
-   * Load recommended records
-   * @param {jQuery} container Container to load records to
-   * @param {string} method Method for ajax call
+   * Initialize js container components and try to fetch their contents
    */
-  function loadRecommendedRecords(container, method)
+  function loadJsContainers()
   {
-    if (container.length === 0) {
-      return;
-    }
-    var spinner = container.find('.fa-spinner').removeClass('hide');
-    var data = {
-      method: method,
-      id: container.data('id')
-    };
-    if ('undefined' !== typeof container.data('source')) {
-      data.source = container.data('source');
-    }
-    $.getJSON(VuFind.path + '/AJAX/JSON', data)
-      .done(function onGetRecordsDone(response) {
-        if (response.data.html.length > 0) {
-          container.html(VuFind.updateCspNonce(response.data.html));
+    document.querySelectorAll('.vc-finna-js-container.init').forEach(element => {
+      const method = element.dataset.method;
+      if (method) {
+        const dataId = element.dataset.id;
+        console.log(element.dataset.id);
+        const dataSource = element.dataset.source;
+        const urlParams = {
+          id: dataId,
+          method: method,
         }
-        spinner.addClass('hidden');
-      })
-      .fail(function onGetRecordsFail() {
-        spinner.addClass('hidden');
-        container.text(VuFind.translate('error_occurred'));
-      });
-  }
-
-  /**
-   * Load similar records support function
-   */
-  function loadSimilarRecords()
-  {
-    loadRecommendedRecords($('.sidebar .similar-records'), 'getSimilarRecords');
-  }
-
-  /**
-   * Load record related records support function
-   */
-  function loadRecordDriverRelatedRecords()
-  {
-    loadRecommendedRecords($('.sidebar .record-driver-related-records'), 'getRecordDriverRelatedRecords');
+        if (dataSource) {
+          urlParams.source = dataSource;
+        }
+        fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams(urlParams))
+          .then(response => response.json())
+          .then(result => {
+            if (result.data && result.data.html) {
+              VuFind.setInnerHtml(element, VuFind.updateCspNonce(result.data.html));
+              element.classList.remove('init');
+              element.classList.add('done');
+            }
+          });
+      }
+    });
   }
 
   /**
@@ -724,8 +708,7 @@ finna.record = (function finnaRecord() {
     initAudioAccordion();
     applyRecordAccordionHash(initialToggle);
     $(window).on('hashchange', applyRecordAccordionHash);
-    loadSimilarRecords();
-    loadRecordDriverRelatedRecords();
+    loadJsContainers();
     finna.authority.initAuthorityResultInfo();
     initPopovers();
   }

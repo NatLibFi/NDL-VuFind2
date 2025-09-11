@@ -1,0 +1,21 @@
+<?php
+    /**
+     * Component which uses javascript to obtain its contents.
+     *
+     * @param string class Class for the container. Default is "init vc-finna-js-container".
+     * @param string id Sets data-id attribute.
+     * @param string source Sets data-source attribute.
+     */
+    $containerAttributes = [
+        'class' => trim(($this->class ?? '') . " init $this->_componentClass"),
+        'data-method' => $this->method ?? '',
+    ];
+    if ($dataId = $this->id ?? null) {
+        $containerAttributes['data-id'] = $dataId;
+    }
+    if ($dataSource = $this->source ?? null) {
+        $containerAttributes['data-source'] = $dataSource;
+    }
+?>
+<div<?=$this->htmlAttributes($containerAttributes);?>>
+</div>
