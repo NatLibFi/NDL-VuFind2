@@ -2,20 +2,13 @@
 <table class="table table-striped">
   <tr>
     <th><?=$this->transEsc('library_card_date_of_connection')?></th>
-    <th><?=$this->transEsc('Institution')?></th>
+    <th><?=$this->transEsc('account_username')?></th>
     <th><?=$this->transEsc('account_login_method')?></th>
   </tr>
   <?php foreach ($this->users as $user): ?>
     <tr>
       <td><?= $this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user['cardCreated']))?></td>
-      <td>
-        <?php if ($user['mainView']): ?>
-          <?php [$inst, $view] = explode('/', $user['mainView'] . '/default'); ?>
-          <a href="https://<?=$this->escapeHtmlAttr($inst)?>.finna.fi/<?=$view === 'default' ? '' : $this->escapeHtmlAttr($view)?>"><?=$this->transEsc('institution::' . $user['institution'])?></a>
-        <?php else: ?>
-          <span><?=$this->transEsc('institution::' . $user['institution'])?></span>
-        <?php endif; ?>
-      </td>
+      <td><?=$user['username']?></td>
       <td><?= $this->transEscWithPrefix('login_method_', $user['authMethod']) ?></td>
     </tr>
   <?php endforeach; ?>

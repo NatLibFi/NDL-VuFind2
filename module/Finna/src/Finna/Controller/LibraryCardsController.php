@@ -56,13 +56,6 @@ use function intval;
 class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 {
     /**
-     * Datasource configuration
-     *
-     * @var array
-     */
-    protected $datasourceConfig;
-
-    /**
      * Constructor
      *
      * @param ServiceLocatorInterface $sm               Service locator
@@ -76,7 +69,6 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     ) {
         parent::__construct($sm);
         $this->session->LibraryCards ??= [];
-        $this->datasourceConfig = $datasourceConfig;
     }
 
     /**
@@ -992,14 +984,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $users = $userCardService->getUsersForLibraryCard($catUsername);
         $userInfo = [];
         foreach ($users as $user) {
-            [$userInstitution] = str_contains($user->username, ':')
-                ? explode(':', $user->username, 2)
-                : [''];
-            $mainView = $this->datasourceConfig[$userInstitution]['mainView'] ?? '';
-            $institution = $this->datasourceConfig[$userInstitution]['institution'] ?? '';
             $userInfo[] = [
-                'mainView' => $mainView,
-                'institution' => $institution,
+                'username' => $user->username,
                 'authMethod' => $user->auth_method,
                 'cardCreated' => $user->user_card_created,
             ];
