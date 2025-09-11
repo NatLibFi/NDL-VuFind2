@@ -1,4 +1,0 @@
-; Ini file to handle deprecated content.
-
-[Parent_Config]
-relative_path = "../finna/Legacy.ini"

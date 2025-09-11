@@ -35,7 +35,6 @@ return [
             'Finna\View\Helper\Root\Iframe' => 'Finna\View\Helper\Root\IframeFactory',
             'Finna\View\Helper\Root\ImageSrc' => 'Finna\View\Helper\Root\HelperWithThemeInfoFactory',
             'Finna\View\Helper\Root\LayoutClass' => 'VuFind\View\Helper\Bootstrap5\LayoutClassFactory',
-            \Finna\View\Helper\Root\Legacy::class => \Finna\View\Helper\Root\LegacyFactory::class,
             'Finna\View\Helper\Root\LinkedEventsTabs' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\Markdown' => 'VuFind\View\Helper\Root\MarkdownFactory',
             'Finna\View\Helper\Root\Matomo' => 'Finna\View\Helper\Root\MatomoFactory',
