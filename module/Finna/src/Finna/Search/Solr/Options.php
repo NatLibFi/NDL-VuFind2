@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2020.
+ * Copyright (C) The National Library of Finland 2015-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -70,28 +70,36 @@ class Options extends \VuFind\Search\Solr\Options
     {
         parent::__construct($configLoader);
 
-        $facetSettings = $this->configLoader->get($this->facetsIni);
-        $this->dateRangeVis = $facetSettings->SpecialFacets->dateRangeVis ?? '';
+        $this->dateRangeVis = $this->facetSettings['SpecialFacets']['dateRangeVis'] ?? '';
 
         // Back-compatibility for display_versions setting in config.ini:
-        $searchSettings = $configLoader->get($this->searchIni);
-        if (!isset($searchSettings->General->display_versions)) {
-            $config = $configLoader->get($this->mainIni);
-            if (isset($config->Record->display_versions)) {
-                $this->displayRecordVersions
-                    = (bool)$config->Record->display_versions;
-            }
+        if (
+            !isset($this->searchSettings['General']['display_versions'])
+            && (null !== ($setting = $this->mainConfig['Record']['display_versions'] ?? null))
+        ) {
+            $this->displayRecordVersions = (bool)$setting;
         }
 
         // Back-compatibility for hierarchical facet filters:
         $this->hierarchicalExcludeFilters
-            = $facetSettings?->HierarchicalExcludeFilters?->toArray()
-            ?? $facetSettings?->ExcludeFilters?->toArray()
+            = $this->facetSettings['HierarchicalExcludeFilters']
+            ?? $this->facetSettings['ExcludeFilters']
             ?? [];
         $this->hierarchicalFacetFilters
-            = $facetSettings?->HierarchicalFacetFilters?->toArray()
-            ?? $facetSettings?->FacetFilters?->toArray()
+            = $this->facetSettings['HierarchicalFacetFilters']
+            ?? $this->facetSettings['FacetFilters']
             ?? [];
+
+        // Back-compatibility for sort options that contain id,asc (and Sorting missing from override_full_sections):
+        $cleanSortOptions = [];
+        foreach ($this->sortOptions as $sort => $label) {
+            $sort = $this->convertLegacySort($sort);
+            if (!isset($cleanSortOptions[$sort])) {
+                $cleanSortOptions[$sort] = $label;
+            }
+        }
+        $this->sortOptions = $cleanSortOptions;
+        $this->defaultSort = $this->convertLegacySort($this->defaultSort);
     }
 
     /**
@@ -131,5 +139,20 @@ class Options extends \VuFind\Search\Solr\Options
             return $result;
         }
         return $this->translate("search_field_$field", null, $field);
+    }
+
+    /**
+     * Convert a legacy sort option to current one that excludes a tie breaker
+     *
+     * @param string $sort Sort string
+     *
+     * @return string
+     */
+    protected function convertLegacySort(string $sort): string
+    {
+        if (!$this->sortTieBreaker) {
+            return $sort;
+        }
+        return str_replace([',' . $this->sortTieBreaker, ', ' . $this->sortTieBreaker], '', $sort);
     }
 }

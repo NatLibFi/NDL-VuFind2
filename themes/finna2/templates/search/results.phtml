@@ -35,7 +35,7 @@
     );
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs .= '<li class="active">' . $this->escapeHtml($headTitle) . '</li>';
+  $this->breadcrumbs()->add($headTitle, active: true);
 
   // Set up search controls (avoiding unnecessary rendering):
   if (!$this->slot('search-controls')->isset()) {
@@ -110,11 +110,11 @@
   $recommendations = $this->results->getRecommendations('side');
 ?>
 
-<h1 tabindex="-1" id="results-heading" class="sr-only"><?= $this->transEsc('Search Results'); ?></h1>
+<h1 tabindex="-1" id="results-heading" class="visually-hidden"><?= $this->transEsc('Search Results'); ?></h1>
 <?php if ($recordTotal > 0): ?>
   <div class="finna-search-filter-toggle-trigger visible-xs hidden-print"></div>
   <div class="finna-search-filter-toggle visible-xs hidden-print">
-    <div class="btn btn-primary btn-search-filter">
+    <div role="button" id="narrow-search-filter-toggle" class="btn btn-primary btn-search-filter" tabindex="0">
       <?=$this->transEsc('Narrow Search')?>
       <?php if ($filterCount > 0): ?>
         <span class="active-filter-count">(<?=$filterCount?>)</span>
@@ -246,7 +246,7 @@
     <?php else: ?>
     <div>
       <?=!in_array($this->layout()->templateName, ['cites', 'citedby']) ? $this->authorizationNote($searchClassId) : '' ?>
-      <form id="search-cart-form" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
+      <form id="search-cart-form" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" role="button" data-lightbox data-lightbox-onsubmit="bulkFormHandler">
       </form>
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => '', 'formAttr' => 'search-cart-form'])?>
       <?=$this->render('search/results-list.phtml')?>
@@ -274,7 +274,8 @@
           if (!isset($this->layout()->skiplink)) {
             $this->layout()->skiplink = '';
           }
-          $this->layout()->skiplink .= ' <a class="skip-link" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
+          $this->layout()->skiplink .= ' <a class="skip-link hidden-xs" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
+          $this->layout()->skiplink .= ' <a class="skip-link visible-xs" href="#narrow-search-filter-toggle">' . $this->transEsc('Skip to narrowing options') . '</a>';
           $messageAdded = true;
         }?>
       <?php endforeach; ?>
@@ -295,7 +296,7 @@
     <div class="searchtools hidden-print">
       <a href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><?=$this->icon('rss-feed') ?> <?=$this->transEsc('Get RSS Feed')?></a>
 
-      <a href="<?=$this->url('search-email')?>" class="mailSearch" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('email') ?> <?=$this->transEsc('Email this Search')?></a>
+      <a href="<?=$this->url('search-email')?>" class="mailSearch" role="button" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('email') ?> <?=$this->transEsc('Email this Search')?></a>
 
       <?php if (is_numeric($this->results->getSearchId()) && (is_object($account) && $account->loginEnabled())): ?>
         <?php if ($this->results->isSavedSearch()): ?>

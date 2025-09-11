@@ -30,9 +30,9 @@
 namespace VuFindTest\Command\Util;
 
 use Closure;
-use Laminas\Config\Config;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Tester\CommandTester;
+use VuFind\Config\Config;
 use VuFind\Config\Writer;
 use VuFind\Crypt\BlockCipher;
 use VuFind\Db\Entity\UserCardEntityInterface;
@@ -52,7 +52,7 @@ use VuFindConsole\Command\Util\SwitchDbHashCommand;
  */
 class SwitchDbHashCommandTest extends \PHPUnit\Framework\TestCase
 {
-    use \VuFindTest\Feature\PathResolverTrait;
+    use \VuFindTest\Feature\ConfigRelatedServicesTrait;
     use \VuFindTest\Feature\WithConsecutiveTrait;
 
     /**
@@ -114,6 +114,7 @@ class SwitchDbHashCommandTest extends \PHPUnit\Framework\TestCase
                             return (new BlockCipher())->setAlgorithm($algo)->setKey($key);
                         }
                     ),
+                    $this->getPathResolver(),
                 ]
             )->onlyMethods(['getConfigWriter'])
             ->getMock();

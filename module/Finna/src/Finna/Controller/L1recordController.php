@@ -29,8 +29,8 @@
 
 namespace Finna\Controller;
 
-use Laminas\Config\Config;
 use Laminas\ServiceManager\ServiceLocatorInterface;
+use VuFind\Config\Config;
 
 /**
  * L1 Record Controller
@@ -54,17 +54,5 @@ class L1RecordController extends RecordController
         $this->sourceId = 'L1';
         $this->fallbackDefaultTab = 'Description';
         parent::__construct($sm, $config);
-    }
-
-    /**
-     * Is the result scroller active?
-     *
-     * @return bool
-     */
-    protected function resultScrollerActive()
-    {
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class)
-            ->get('L1');
-        return $config->Record->next_prev_navigation ?? false;
     }
 }

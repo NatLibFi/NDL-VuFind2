@@ -210,7 +210,9 @@ trait SolrCommonFinnaTrait
     public function getRecordImage($size = 'small', $index = 0)
     {
         if ($images = $this->getAllImages()) {
-            if (isset($images[$index]['urls'][$size])) {
+            $image = $images[$index]['urls'][$size] ?? null;
+            $cacheSize = $images[$index]['cacheSizes'][$size] ?? $size;
+            if ($image) {
                 $params = $images[$index]['urls'][$size];
                 if (!is_array($params)) {
                     $params = [
@@ -223,6 +225,7 @@ trait SolrCommonFinnaTrait
                 $params['id'] = $this->getUniqueId();
                 $params['pdf'] = !empty($images[$index]['pdf'][$size])
                     || true === ($images[$index]['pdf'] ?? false);
+                $params['cacheSize'] = $cacheSize;
                 return $params;
             }
         }
@@ -254,9 +257,24 @@ trait SolrCommonFinnaTrait
     }
 
     /**
+     * Return the unique identifier of this record within the index;
+     * useful for retrieving additional information (like tags and user
+     * comments) from the external MySQL database.
+     *
+     * @return string Unique identifier.
+     */
+    public function getUniqueID()
+    {
+        if ($this->getExtraDetail('preview_record')) {
+            return '0';
+        }
+        return parent::getUniqueID();
+    }
+
+    /**
      * Get the VuFind configuration.
      *
-     * @return \Laminas\Config\Config
+     * @return \VuFind\Config\Config
      */
     protected function getConfig()
     {

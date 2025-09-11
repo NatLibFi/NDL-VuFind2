@@ -79,6 +79,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'child_records',
             'Capture Information',
             'Classification',
+            'Contains collections',
             'Copyright Notes',
             'Country of Producing Entity',
             'Creator Characteristics',
@@ -94,7 +95,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISBN',
             'ISSN',
             'Inventory ID',
-            'Item Description',
+            'Item Notes',
             'Keywords',
             'Language',
             'Language Notes',
@@ -220,7 +221,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISBN',
             'ISSN',
             'Inventory ID',
-            'Item Description',
+            'Item Notes',
             'Keywords',
             'Language',
             'New Title',
@@ -281,8 +282,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'ISSN',
             'Identifiers',
             'Inventory ID',
-            'Item Description',
             'Item Description FWD',
+            'Item Notes',
             'Keywords',
             'Language',
             'Learning Resource Type',
@@ -303,7 +304,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Publish date',
             'Published',
             'Published in',
-            'Publisher',
             'Record Links',
             'Related Items',
             'Related Materials',
@@ -347,7 +347,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Genre',
             'ISBN',
             'ISSN',
-            'Item Description',
+            'Item Notes',
             'Keywords',
             'Language',
             'Location',
@@ -408,8 +408,8 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Genre',
             'ISBN',
             'ISSN',
-            'Item Description',
             'Item History',
+            'Item Notes',
             'Keywords',
             'Language',
             'Location',
@@ -461,7 +461,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Finding Aid',
             'ISBN',
             'ISSN',
-            'Item Description',
+            'Item Notes',
             'Language',
             'New Title',
             'Physical Description',
@@ -569,10 +569,15 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
      */
     public function filterAipaFields($coreFields)
     {
-        $aipaFields = $this->filterQDCFields($coreFields);
-        unset($aipaFields['Language']);
-        unset($aipaFields['Subjects']);
-        return $aipaFields;
+        $include = [
+            'Additional Information AIPA',
+            'Provenance',
+            'Related Events',
+            'subjects_extended',
+            'Subject Date',
+            'Subject Place',
+        ];
+        return $this->filterFields($coreFields, $include);
     }
 
     /**

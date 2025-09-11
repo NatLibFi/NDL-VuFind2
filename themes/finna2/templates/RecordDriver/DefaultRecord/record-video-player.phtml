@@ -71,7 +71,7 @@
       ?>
       <?php if ($showDetails && !$inlineVideo): ?>
         <div class="resource-details">
-          <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a></div>
+          <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a> <span class="file-size"><?=$fileSize?></span></div>
           <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
         </div>
       <?php endif; ?>

@@ -29,6 +29,7 @@
 
 namespace Finna\ReservationList;
 
+use Finna\ReservationList\Handler\PluginManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
@@ -52,7 +53,7 @@ class ReservationListServiceFactory implements FactoryInterface
      *
      * @return ReservationListService
      */
-    public function __invoke(ContainerInterface $container, $name, array $options = null)
+    public function __invoke(ContainerInterface $container, $name, ?array $options = null)
     {
         $serviceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
@@ -68,6 +69,10 @@ class ReservationListServiceFactory implements FactoryInterface
             $container->get(\Finna\Record\Loader::class),
             $container->get(\VuFind\Record\Cache::class),
             $session,
+            $container->get(\VuFindHttp\HttpService::class),
+            $container->get(\VuFind\Auth\ILSAuthenticator::class),
+            $container->get(\VuFind\Cache\Manager::class),
+            $container->get(PluginManager::class),
             $reservationListYaml ?: []
         );
     }

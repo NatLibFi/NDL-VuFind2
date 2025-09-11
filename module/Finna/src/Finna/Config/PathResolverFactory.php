@@ -33,6 +33,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Config\PathResolver;
 
 use function defined;
 use function strlen;
@@ -65,7 +66,7 @@ class PathResolverFactory extends \VuFind\Config\PathResolverFactory
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
@@ -79,14 +80,12 @@ class PathResolverFactory extends \VuFind\Config\PathResolverFactory
                     ],
                     [
                         'directory' => LOCAL_OVERRIDE_DIR,
-                        'defaultConfigSubdir' => $this->defaultLocalConfigSubdir,
+                        'defaultConfigSubdir' => PathResolver::DEFAULT_CONFIG_SUBDIR,
                     ],
                 ] : [];
         return new $requestedName(
-            [
-                'directory' => APPLICATION_PATH,
-                'defaultConfigSubdir' => $this->defaultBaseConfigSubdir,
-            ],
+            $container->get(\VuFind\Config\Handler\PluginManager::class),
+            PathResolver::getBaseDirSpec(APPLICATION_PATH),
             $localDirs
         );
     }

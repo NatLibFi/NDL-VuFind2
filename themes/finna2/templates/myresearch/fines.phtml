@@ -2,9 +2,11 @@
 <?php
     // Set up page title:
     $this->headTitle($this->translate('My Fines'));
+    $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Fines') . '</li>';
+    $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
+      ->add($this->translate('Fines'), active: true);
 
     $user = $this->auth()->getUserObject();
 
@@ -52,7 +54,7 @@
           ?>
             <div class="checkbox-container">
                 <label>
-                  <span class="sr-only">
+                  <span class="visually-hidden">
                     <?=$this->transEsc('Select')?>
                     <?=$this->escapeHtml(trim($record['title'] ?? '', '/: '))?>
                     <?=isset($fine) ? ('(' . $this->transEsc($fine) . ')') : ''?>
@@ -116,13 +118,13 @@
       <div class="useraccount-row">
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
-      <div class="useraccount-header">
+      <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
         <h2><?=$this->transEsc('Your Fines') . ' (' . count($this->fines ?? []) . ')'?></h2>
       </div>
     </div>
     <?=$this->flashmessages()?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
-    <div class="fines-info-area">
+    <div class="fines-info-area" tabindex="0">
       <?php if (!empty($this->lastTransaction)): ?>
         <div class="last-transaction-information">
           <div>
@@ -133,7 +135,7 @@
           <div class="text-right">
             <a href="?transactionReport=true" class="btn btn-sm btn-primary" target="_blank">
               <?=$this->transEsc('Payment::download_transaction_breakdown_pdf')?>
-              <span class="sr-only"><?=$this->transEscAttr('Open in a new window')?></span>
+              <span class="visually-hidden"><?=$this->transEscAttr('Open in a new window')?></span>
             </a>
           </div>
         </div>
@@ -226,7 +228,7 @@
                 </div>
               </div>
               <div class="payment-row">
-                <span id="online_payment_selected_sr" class="sr-only" data-template="<?=$this->transEscAttr('online_payment_selected_to_pay') . ' ' . $this->transEscAttr($currencyTemplate)?>">
+                <span id="online_payment_selected_sr" class="visually-hidden" data-template="<?=$this->transEscAttr('online_payment_selected_to_pay') . ' ' . $this->transEscAttr($currencyTemplate)?>">
                   <?=$this->transEscAttr('online_payment_selected_to_pay') . ' ' . $this->safeMoneyFormat(0)?>
                 </span>
                 <input type="submit" id="pay_selected" name="pay" class="btn btn-primary" value="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => ''])?>" data-template="<?=$this->transEscAttr('online_payment_go_to_pay', ['%%amount%%' => $currencyTemplate])?>" disabled>
@@ -234,8 +236,8 @@
             </div>
           </div>
         <?php endif; ?>
-        <table class="table finna-table-striped useraccount-table<?=$this->onlinePayment ? ' online-payment' : ''?> table-responsive fines-table">
-          <caption class="sr-only"><?=$this->transEsc('Your Fines')?></caption>
+        <table class="table finna-table-striped useraccount-table<?=$this->onlinePayment ? ' online-payment' : ''?> table-responsive fines-table" tabindex="0">
+          <caption class="visually-hidden"><?=$this->transEsc('Your Fines')?></caption>
           <thead>
             <tr class="headers">
               <?php foreach ($columns as $header): ?>
@@ -309,7 +311,7 @@
           finna.onlinePayment.registerPayment($paramsJson);
         });
         JS;
-    echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $js, 'SET');
+    echo $this->assetManager()->outputInlineScriptString($js);
   }
 ?>
 

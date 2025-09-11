@@ -17,7 +17,7 @@
     }
   }
 ?>
-<table class="table useraccount-table search-history-table finna-table-striped" id="<?=$this->showSaved ? 'saved-searches' : 'recent-searches'?>">
+<table class="table useraccount-table search-history-table finna-table-striped" id="<?=$this->showSaved ? 'saved-searches' : 'recent-searches'?>" tabindex="0">
   <thead>
     <tr class="headers">
       <th scope="col" class="history_time"><?=$this->transEsc('history_time')?></th>
@@ -68,7 +68,7 @@
           <?php if (isset($this->schedule[$info->getSearchId()])): ?>
             <?php $schedule = $this->schedule[$info->getSearchId()]; ?>
               <form class="form-inline jumpMenuForm" action="<?= $this->url('myresearch-savesearch')?>" method="get" name="schedule">
-                <select name="schedule" class="jumpMenu form-control form-select" aria-haspopup="true" title="<?=$this->transEscAttr('history_schedule')?>">
+                <select name="schedule" class="jumpMenu form-select" aria-haspopup="true" title="<?=$this->transEscAttr('history_schedule')?>">
                   <?php foreach ($scheduleOptions as $scheduleValue => $scheduleLabel): ?>
                     <option value="<?=$this->escapeHtmlAttr($scheduleValue)?>"<?=($schedule == $scheduleValue) ? (' selected') : ('')?>><?=$this->transEsc($scheduleLabel)?></option>
                   <?php endforeach; ?>

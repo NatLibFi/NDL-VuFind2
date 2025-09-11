@@ -245,7 +245,7 @@ class Quria extends AxiellWebServices
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options
      *
      * @throws \VuFind\Exception\ILS
@@ -255,7 +255,7 @@ class Quria extends AxiellWebServices
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $function = 'GetCatalogueRecordDetail';
         $functionResult = 'catalogueRecordDetailResult';
@@ -925,6 +925,10 @@ class Quria extends AxiellWebServices
         $status = $result->$functionResult->status;
 
         if ($status->type != 'ok') {
+            // Quria returns InvalidLogin error for GetLoanHistory if patron has loan history disabled.
+            if ($status->message == 'InvalidLogin') {
+                return ['transactions' => [], 'count' => 0];
+            }
             $message = $this->handleError($function, $status, $username);
             if ($message == 'ils_connection_failed' || $status->type === 'error') {
                 throw new ILSException($message);
@@ -1305,7 +1309,7 @@ class Quria extends AxiellWebServices
             'overdueFeeInvoiceDebt' => '',
             'photocopyFeeDebt' => '',
             'renewFeeDebt' => '',
-            'replacementFeeDebt' => '',
+            'replacementFeeDebt' => 'Lost Item Replacement',
             'reservationFeeDebt' => 'Hold Expired',
             'reservationPickupFeeDebt' => '',
             'smsIllFeeDebt' => '',

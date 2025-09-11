@@ -371,7 +371,7 @@ class Polaris extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options (not currently used)
      *
      * @return mixed         On success, an associative array with the following
@@ -380,7 +380,7 @@ class Polaris extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         return $this->getStatus($id);
     }
@@ -603,19 +603,11 @@ class Polaris extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
         if (!$response->ValidPatron) {
             return null;
         }
-
-        $user = [];
-
-        $user['id']           = $response->PatronID;
-        $user['firstname']    = null;
-        $user['lastname']     = null;
-        $user['cat_username'] = $response->PatronBarcode;
-        $user['cat_password'] = $password;
-        $user['email']        = null;
-        $user['major']        = null;
-        $user['college']      = null;
-
-        return $user;
+        return $this->createPatronArray(
+            id: $response->PatronID,
+            cat_username: $response->PatronBarcode,
+            cat_password: $password
+        );
     }
 
     /**
@@ -674,12 +666,11 @@ class Polaris extends AbstractBase implements \VuFindHttp\HttpServiceAwareInterf
             $patron['cat_password']
         );
         $profile_response = $response->PatronBasicData;
-        $profile = [
-          'firstname' => $profile_response->NameFirst,
-          'lastname'  => $profile_response->NameLast,
-          'phone'     => $profile_response->PhoneNumber,
-        ];
-        return $profile;
+        return $this->createProfileArray(
+            firstname:  $profile_response->NameFirst,
+            lastname:  $profile_response->NameLast,
+            phone:  $profile_response->PhoneNumber
+        );
     }
 
     /**

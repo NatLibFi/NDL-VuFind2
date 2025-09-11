@@ -5,12 +5,13 @@
     $updateEmail = $this->ils()->checkFunction('updateEmail', compact('patron'));
     $updateAddress = $this->ils()->checkFunction('updateAddress', compact('patron'));
     $needsApproval = $updateAddress['needsApproval'] ?? true;
-    // Set up page title:
+    // If user can update contact information separately then display title for address change
     $title = $this->translate(($updatePhone || $updateEmail) ? 'request_address_change' : 'request_contact_information_change');
     $this->headTitle($title);
 
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Profile') . '</li>';
+    $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
+      ->add($this->translate('Profile'), active: true);
 ?>
 
 <h2><?=$this->escapeHtml($title) ?></h2>
@@ -56,10 +57,10 @@
           }
         ?>
         <?php if ('select' === $data['type']): ?>
-          <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
-          <select id="<?=$this->escapeHtmlAttr($field)?>" name="<?=$this->escapeHtmlAttr($field)?>" class="form-control form-select">
+          <label class="form-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
+          <select id="<?=$this->escapeHtmlAttr($field)?>" name="<?=$this->escapeHtmlAttr($field)?>" class="form-select">
             <option value=""><?=$this->transEsc('choose_from_list')?></option>
-            <?php foreach($data['options'] as $optionId => $option): ?>
+            <?php foreach ($data['options'] as $optionId => $option): ?>
               <?php $name = is_string($option) ? $option : ($option['name'] ?? $optionId); ?>
               <option value="<?=$this->escapeHtmlAttr($optionId)?>"<?php if ($optionId == $value): ?> selected<?php endif; ?>><?=$this->transEsc($name)?></option>
             <?php endforeach; ?>
@@ -67,7 +68,7 @@
         <?php elseif ('multiselect' === $data['type']): ?>
           <fieldset>
             <legend class="form-field"><?=$this->transEsc($data['label']) ?>:</legend>
-            <?php foreach($data['options'] as $optionId => $option): ?>
+            <?php foreach ($data['options'] as $optionId => $option): ?>
               <?php $name = is_string($option) ? $option : ($option['name'] ?? $optionId); ?>
               <label>
                 <input type="checkbox" name="<?=$this->escapeHtmlAttr($field)?>[]" value="<?=$this->escapeHtmlAttr($optionId)?>"<?php if (in_array($optionId, (array)$value)): ?> checked<?php endif; ?>> <?=$this->transEsc($name)?>
@@ -77,11 +78,11 @@
           </fieldset>
         <?php elseif ('radio' === $data['type']): ?>
           <fieldset id="<?=$this->escapeHtmlAttr($field)?>">
-            <legend class="control-label radio-label"><?=$this->transEsc($data['label']) ?>:</legend>
-            <?php foreach($data['options'] as $optionId => $option): ?>
+            <legend class="form-label radio-label"><?=$this->transEsc($data['label']) ?>:</legend>
+            <?php foreach ($data['options'] as $optionId => $option): ?>
               <?php $name = is_string($option) ? $option : ($option['name'] ?? $optionId); ?>
               <input type="radio" name="<?=$this->escapeHtmlAttr($field)?>" id="<?=$this->escapeHtmlAttr($field . '_' . $optionId) ?>" class="form-control" value="<?=$this->escapeHtmlAttr($optionId)?>"<?=$optionId == $value ? ' checked' : ''?><?=$data['required'] ?? false ? ' required aria-required="true"' : ''?><?=$data['readonly'] ?? false ? ' readonly' : ''?>>
-              <label class="control-label" for="<?=$this->escapeHtmlAttr($field . '_' . $optionId) ?>"><?=$this->transEsc($name) ?></label>
+              <label class="form-label" for="<?=$this->escapeHtmlAttr($field . '_' . $optionId) ?>"><?=$this->transEsc($name) ?></label>
               <br>
             <?php endforeach; ?>
           </fieldset>
@@ -91,11 +92,11 @@
             <?=$this->transEsc($data['label']) ?>
           </label>
         <?php elseif ('pin4' === $data['type']): ?>
-          <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
+          <label class="form-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
           <input id="<?=$this->escapeHtmlAttr($field)?>" name="<?=$this->escapeHtmlAttr($field)?>" type="password" data-minlength="4" data-minlength-error="<?=$this->transEscAttr('password_minimum_length', ['%%minlength%%' => 4])?>" maxlength="4" pattern="\d+" value="" class="form-control"<?=$data['required'] ? ' required' : ''?>>
           <div class="help-block"><?=$this->transEsc('password_only_numeric') ?></div>
         <?php else: ?>
-          <label class="control-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
+          <label class="form-label" for="<?=$this->escapeHtmlAttr($field)?>"><?=$this->transEsc($data['label']) ?>:</label>
           <?php
               $attrs = [
                 'id' => $field,
@@ -147,7 +148,7 @@
   $script = "$('form[name=requestAddressChange]').validator();";
 
   // Inline the script for lightbox compatibility
-  echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+  echo $this->assetManager()->outputInlineScriptString($script);
 ?>
 
 <!-- END of: finna - myresearch/change-address-settings.phtml -->

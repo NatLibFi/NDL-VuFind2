@@ -77,7 +77,7 @@ class CspHeaderGenerator implements
     /**
      * CspHeaderGenerator constructor.
      *
-     * @param \Laminas\Config\Config          $config         Configuration
+     * @param \VuFind\Config\Config           $config         Configuration
      * @param \VuFind\Security\NonceGenerator $nonceGenerator Nonce generator
      */
     public function __construct($config, $nonceGenerator)
@@ -104,18 +104,6 @@ class CspHeaderGenerator implements
             $headers[] = $nelHeader;
         }
         return $headers;
-    }
-
-    /**
-     * Create CSP header base on given configuration
-     *
-     * @return ContentSecurityPolicy
-     *
-     * @deprecated Use getCspHeader instead
-     */
-    public function getHeader()
-    {
-        return $this->getCspHeader();
     }
 
     /**

@@ -63,6 +63,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'url' => 'https://gltfmalli.gltf',
                                 'format' => 'gltf',
                                 'type' => 'preview',
+                                'data' => [
+                                    'size' => [
+                                        'unit' => 'byte',
+                                        'value' => '60840000',
+                                    ],
+                                ],
                             ],
                             [
                                 'url' => 'https://glbmalli.glb',
@@ -121,6 +127,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'identifier' => '607642',
                         'downloadable' => true,
                         'resourceDescription' => 'Kuvan selitys',
+                        'cacheSizes' => [
+                            'small' => 'large',
+                            'medium' => 'large',
+                        ],
                     ],
                     [
                         'urls' => [
@@ -170,6 +180,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'identifier' => '607643',
                         'downloadable' => false,
                         'resourceName' => 'Kuvan nimi',
+                        'cacheSizes' => [
+                            'medium' => 'small',
+                        ],
                     ],
                     2 => [
                         'urls' => [
@@ -189,6 +202,10 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'highResolution' => [],
                         'identifier' => '607644',
                         'downloadable' => true,
+                        'cacheSizes' => [
+                            'small' => 'large',
+                            'medium' => 'large',
+                        ],
                     ],
                 ],
             ],
@@ -213,6 +230,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'type' => 'video/mp4',
                         ],
                         'resourceName' => 'VideoTesti.mp4',
+                        'data' => [
+                            'size' => [
+                                'unit' => 'byte',
+                                'value' => '74576596',
+                            ],
+                        ],
                     ],
                 ],
             ],
@@ -861,7 +884,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $record = new SolrLido(
             [],
             [],
-            new \Laminas\Config\Config([])
+            new \VuFind\Config\Config([])
         );
         $record->setRawData(
             [
@@ -1159,6 +1182,83 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected related publications data
+     *
+     * @return array
+     */
+    public static function getRelatedPublicationsData(): array
+    {
+        return [
+            [
+                [
+                    0 => [
+                        'title' => 'Helsinki = Empirekaupungin synty 1550-1850, Helsinki, s. 89',
+                        'searchTitle' => 'Helsinki = Empirekaupungin synty 1550-1850, Helsinki',
+                        'label' => 'Julkaistu teoksessa',
+                        'url' => '',
+                        'isbn' => '951-746-543-2',
+                    ],
+                    1 => [
+                        'title' => 'Multiple titles in one field; Should be discarded from search',
+                        'searchTitle' => '',
+                        'label' => '',
+                        'url' => '',
+                        'isbn' => '',
+                    ],
+                    2 => [
+                        'title' => 'Online publication, discarded from search',
+                        'searchTitle' => '',
+                        'label' => 'Verkkojulkaisu',
+                        'url' => '',
+                        'isbn' => '',
+                    ],
+                    3 => [
+                        'title' => 'This is a very long title and for better result, only the first 30 words'
+                            . ' should be included in search title, which means that its last word should be this.'
+                            . ' The rest of the title should be included only in display title.',
+                        'searchTitle' => 'This is a very long title and for better result, only the first 30 words'
+                            . ' should be included in search title, which means that its last word should be this.',
+                        'label' => '',
+                        'url' => '',
+                        'isbn' => '951-772-866-2',
+                    ],
+                    4 => [
+                        'title' => 'A publication with no valid ISBN',
+                        'searchTitle' => 'A publication with no valid ISBN',
+                        'label' => 'kirjallisuus',
+                        'url' => '',
+                        'isbn' => '',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getRelatedPublications
+     *
+     * @param array $expected Result to be expected
+     *
+     * @dataProvider getRelatedPublicationsData
+     *
+     * @return void
+     */
+    public function testGetRelatedPublications(
+        array $expected
+    ): void {
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertEquals(
+            $expected,
+            $driver->getRelatedPublications()
+        );
+    }
+
+    /**
      * Get a record driver with fake data
      *
      * @param string $recordXml    Xml record to use for the test
@@ -1185,11 +1285,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
-        $config = new \Laminas\Config\Config($config);
+        $config = new \VuFind\Config\Config($config);
         $record = new SolrLido(
             $config,
             $config,
-            new \Laminas\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig)
         );
         $defaultData = [
             'id' => 'knp-247394',

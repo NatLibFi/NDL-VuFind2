@@ -2,8 +2,12 @@
 <?php
     // Set up page title:
     $this->headTitle($this->translate('My Profile'));
+    $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
+
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Profile') . '</li>';
+    $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
+      ->add($this->translate('Profile'), active: true);
+
     // Only display home library form if we have multiple pickup locations:
     $showHomeLibForm = (isset($this->pickup) && count($this->pickup) > 1);
     $user = $this->auth()->getUserObject();
@@ -44,7 +48,7 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'profile']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <div class="useraccount-header">
+  <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
     <h2><?=$this->transEsc('Profile')?></h2>
   </div>
   <div class="my-research-content">
@@ -66,14 +70,12 @@
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <div class="logged-in-as">
-        <div class="display-name">
-          <?=$this->icon('profile', 'profile-icon') ?><span class="sr-only"><?=$this->transEsc('logged_in_as')?>: </span><?=$this->escapeHtml($user->getDisplayName()) ?>
-        </div>
         <div>
-          <?php if ($user->getDisplayName() !== $user->getUsername()): ?>
-            <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getUsername())?></span></div>
-          <?php endif; ?>
+          <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getDisplayableUsername())?></span></div>
           <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $user->getAuthMethod())?></span></div>
+          <?php if ($user->email): ?>
+            <div><span class="profile-title"><?=$this->transEsc('account_email')?>: </span><span><?=$this->escapeHtml($user->email)?></span></div>
+          <?php endif; ?>
           <div><span class="profile-title"><?=$this->transEsc('account_creation_date')?>: </span><span><?=$user->getCreated()->format($this->config()->dateFormat())?></span></div>
         </div>
       </div>
@@ -93,7 +95,7 @@
                   // Use ' ** ' for null ()
                   $selected = $this->profile['home_library'] ?? ' ** ';
                 ?>
-                <select id="home_library" name="home_library" class="jumpMenu form-control form-select">
+                <select id="home_library" name="home_library" class="jumpMenu form-select">
                   <option value=""<?='' === $selected ? ' selected="selected"' : ''?>>
                     <?=$this->transEsc('preferred_library_default')?>
                   </option>
@@ -227,7 +229,7 @@
               </div>
               <?php if ($updateLoanHistory): ?>
                 <div class="my-profile-col profile-text-value">
-                  <select id="loan-history" name="loan_history" class="form-control form-select">
+                  <select id="loan-history" name="loan_history" class="form-select">
                     <?php foreach ($updateLoanHistory['options'] as $key => $value): ?>
                       <option value="<?=$this->escapeHtmlAttr($key)?>"<?= $this->profile['loan_history'] == $key ? ' selected="selected"' : '' ?>><?=$this->transEsc($value)?></option>
                     <?php endforeach; ?>

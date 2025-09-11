@@ -961,15 +961,14 @@ class SolrEad3 extends SolrEad
         ];
         $xml = $this->getXmlRecord();
         $addToResults = function ($imageData) use (&$result) {
+            $imageData = $this->ensureImageSizes($imageData);
             $sizes = ['small', 'medium', 'large'];
             $formatted = $imageData;
             if (!empty($imageData['urls'])) {
                 foreach ($sizes as $size) {
-                    if (!isset($imageData['urls'][$size])) {
-                        $formatted['urls'][$size] = reset($imageData['urls']);
-                    }
-                    if (!isset($imageData['pdf'][$size])) {
-                        $formatted['pdf'][$size] = reset($imageData['pdf']);
+                    $from = $imageData['cacheSizes'][$size] ?? null;
+                    if ($from) {
+                        $formatted['pdf'][$size] = $imageData['pdf'][$from];
                     }
                 }
             }
@@ -1008,9 +1007,7 @@ class SolrEad3 extends SolrEad
                 }
                 // localtype could be defined for daoset or for dao-element
                 $parentType = (string)($attr->localtype ?? '');
-                $parentType = self::IMAGE_MAP[$parentType] ?? self::IMAGE_LARGE;
-                $parentSize = $parentType === self::IMAGE_FULLRES
-                        ? self::IMAGE_LARGE : $parentType;
+                $parentSize = $this->determineImageSize($parentType, self::IMAGE_LARGE);
                 $displayImage = [];
                 $highResolution = [];
                 foreach ($set->dao as $dao) {
@@ -1022,11 +1019,11 @@ class SolrEad3 extends SolrEad
                         continue;
                     }
                     $show = (string)($attr->show ?? '');
-                    if ($show === 'none') {
+                    $role = (string)($attr->linkrole ?? '');
+                    if ($show === 'none' || $role === 'text/html') {
                         continue;
                     }
                     $type = (string)($attr->localtype ?? $parentType ?: 'none');
-                    $role = (string)($attr->linkrole ?? '');
                     $sort = (string)($attr->label ?? '');
 
                     // Save image to another array if match is found
@@ -1068,15 +1065,7 @@ class SolrEad3 extends SolrEad
                         ];
                     }
 
-                    if ($size = self::IMAGE_MAP[$type] ?? false || $parentSize) {
-                        if (false === $size) {
-                            $size = $parentSize;
-                        } else {
-                            $size = ($size === self::IMAGE_FULLRES)
-                                ? self::IMAGE_LARGE
-                                : $size;
-                        }
-
+                    if ($size = $this->determineImageSize($type, $parentSize)) {
                         if (isset($displayImage['urls'][$size])) {
                             // Add old stash to results.
                             $displayImage['highResolution'] = $highResolution;
@@ -1128,6 +1117,20 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Determine image size
+     *
+     * @param string $type    Type given in metadata
+     * @param string $default Default to return
+     *
+     * @return string
+     */
+    public function determineImageSize(string $type, string $default = ''): string
+    {
+        $size = self::IMAGE_MAP[$type] ?? $default;
+        return $size === self::IMAGE_FULLRES ? self::IMAGE_LARGE : $size;
+    }
+
+    /**
      * Get an array of physical descriptions of the item.
      *
      * @return array
@@ -1138,21 +1141,27 @@ class SolrEad3 extends SolrEad
         if (!isset($xml->did)) {
             return [];
         }
-        $results = $localeResults = [];
+        $results = $localeResults = $defaultResults = [];
         // Check structured physical descriptions first
         foreach ($xml->did->physdescstructured ?? [] as $desc) {
             $lang = $this->detectNodeLanguage($desc);
             $quantity = trim((string)($desc->quantity ?? ''));
             $unittype = trim((string)($desc->unittype ?? ''));
             if ($result = trim($quantity . ' ' . mb_strtolower($unittype, 'UTF-8'))) {
+                if ($descriptions = implode(', ', $this->getDisplayLabel($desc->descriptivenote, 'p'))) {
+                    $result .= ' (' . $descriptions . ')';
+                }
                 $results[] = $result;
                 if ($lang['preferred'] ?? false) {
                     $localeResults[] = $result;
                 }
+                if ($lang['default'] ?? false) {
+                    $defaultResults[] = $result;
+                }
             }
         }
         // If no structured descriptions were found, use unstructured descriptions
-        return $localeResults ?: $results ?: $this->getDisplayLabel($xml->did, 'physdesc');
+        return $localeResults ?: $defaultResults ?: $results ?: $this->getDisplayLabel($xml->did, 'physdesc');
     }
 
     /**
@@ -2049,16 +2058,18 @@ class SolrEad3 extends SolrEad
         $result = $localeResult = [];
         foreach ($xml->otherfindaid ?? [] as $aid) {
             foreach ($aid->p as $p) {
-                $data = [
-                    'label' => (string)$p,
-                    'url' => $p->ref
-                        ? (string)($p->ref->attributes()->href ?? '')
-                        : '',
-                ];
-                $result[] = $data;
-                $lang = $this->detectNodeLanguage($p);
-                if ($lang['preferred'] ?? false) {
-                    $localeResult[] = $data;
+                if ($label = trim((string)$p)) {
+                    $data = [
+                        'label' => $label,
+                        'url' => $p->ref
+                            ? (string)($p->ref->attributes()->href ?? '')
+                            : '',
+                    ];
+                    $result[] = $data;
+                    $lang = $this->detectNodeLanguage($p);
+                    if ($lang['preferred'] ?? false) {
+                        $localeResult[] = $data;
+                    }
                 }
             }
         }
@@ -2126,11 +2137,11 @@ class SolrEad3 extends SolrEad
     protected function getTopics(): array
     {
         $record = $this->getXmlRecord();
-        $results = $localeResults = [];
+        $results = $localeResults = $defaultResults = [];
         foreach ($record->controlaccess as $controlaccess) {
             foreach ($controlaccess->subject as $subject) {
                 $attr = $subject->attributes();
-                $parts = $localeParts = [];
+                $parts = $localeParts = $defaultParts = [];
                 $langS = $this-> detectNodeLanguage($subject);
                 // Collect all part elements to be displayed
                 foreach ($subject->part as $part) {
@@ -2145,11 +2156,21 @@ class SolrEad3 extends SolrEad
                         if ($lang['preferred'] ?? false) {
                             $localeParts[] = $name;
                         }
+                        if ($lang['default'] ?? false) {
+                            $defaultParts[] = $name;
+                        }
                     }
                 }
                 if ($localeParts) {
                     $localeResults[] = [
                         'data' => implode(', ', $localeParts),
+                        'id' => (string)$attr->identifier,
+                        'source' => (string)$attr->source,
+                        'detail' => (string)$subject->attributes()->relator,
+                    ];
+                } elseif ($defaultParts) {
+                    $defaultResults[] = [
+                        'data' => implode(', ', $defaultParts),
                         'id' => (string)$attr->identifier,
                         'source' => (string)$attr->source,
                         'detail' => (string)$subject->attributes()->relator,
@@ -2164,7 +2185,7 @@ class SolrEad3 extends SolrEad
                 }
             }
         }
-        return $localeResults ?: $results;
+        return $localeResults ?: $defaultResults ?: $results;
     }
 
     /**
@@ -2237,6 +2258,17 @@ class SolrEad3 extends SolrEad
             }
         }
         return $localeResults ?: $results;
+    }
+
+    /**
+     * Get general notes on the record.
+     *
+     * @return array
+     */
+    public function getGeneralNotes(): array
+    {
+        $xml = $this->getXmlRecord();
+        return $this->getDisplayLabel($xml->did, 'didnote');
     }
 
     /**
@@ -2400,7 +2432,7 @@ class SolrEad3 extends SolrEad
     protected function detectNodeLanguage(
         \SimpleXMLElement $node,
         string $languageAttribute = 'lang',
-        string $defaultLanguage = 'fin'
+        string $defaultLanguage = 'fi'
     ): ?array {
         if (!isset($node->attributes()->{$languageAttribute})) {
             return null;
@@ -2413,7 +2445,7 @@ class SolrEad3 extends SolrEad
         $lang = (string)$node->attributes()->{$languageAttribute};
         return [
             'value' => $lang,
-            'default' => $defaultLanguage === $lang,
+            'default' => in_array($lang, $this->mapLanguageCode($defaultLanguage)),
             'preferred' => in_array($lang, $languages),
         ];
     }
@@ -2483,11 +2515,11 @@ class SolrEad3 extends SolrEad
             'informant' => 'Informant',
             'informantti' => 'Informant',
             'inlämnare' => 'rda:former-owner',
-            'insamlare' => 'com',
+            'insamlare' => 'Collector',
             'inspelare' => 'rce',
             'intervjuare' => 'ivr',
             'jäljentäjä' => 'fac',
-            'kerääjä' => 'com',
+            'kerääjä' => 'Collector',
             'kirjoittaja' => 'rda:writer',
             'kokoelmanmuodostaja' => 'rda:collector',
             'kuvataiteilija' => 'art',

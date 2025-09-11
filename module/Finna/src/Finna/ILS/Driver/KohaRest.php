@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2017-2023.
+ * Copyright (C) The National Library of Finland 2017-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -68,6 +68,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         'Ill_ready' => 'illRequestReadyForPickUp',
         'Ill_unavailable' => 'illRequestUnavailable',
         'Ill_update' => 'illRequestUpdate',
+        'Patron_Expiry' => 'cardExpiry',
     ];
 
     /**
@@ -168,6 +169,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $this->minimumPayableAmount = $paymentConfig['minimumFee'] ?? 0;
         $this->nonPayableTypes = (array)($paymentConfig['nonPayableTypes'] ?? []);
         $this->nonPayableStatuses = (array)($paymentConfig['nonPayableStatuses'] ?? []);
+
+        if ($typeMappings = (array)($this->config['MessagingPrefTypeMappings'] ?? [])) {
+            $this->messagingPrefTypeMap = array_merge($this->messagingPrefTypeMap, $typeMappings);
+        }
     }
 
     /**
@@ -177,7 +182,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options
      *
      * @throws \VuFind\Exception\ILS
@@ -187,7 +192,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $data = parent::getHolding($id, $patron);
         // Remove request counts if necessary
@@ -738,84 +743,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get a password recovery token for a user
-     *
-     * @param array $params Required params such as cat_username and email
-     *
-     * @return array Associative array of the results
-     */
-    public function getPasswordRecoveryToken($params)
-    {
-        $result = $this->makeRequest(
-            [
-                'path' => 'v1/patrons',
-                'query' => [
-                    '_match' => 'exact',
-                    'cardnumber' => $params['cat_username'],
-                    'email' => $params['email'],
-                ],
-                'errors' => true,
-            ]
-        );
-
-        if (200 === $result['code']) {
-            if (!empty($result['data'][0])) {
-                return [
-                    'success' => true,
-                    'token' => $result['data'][0]['patron_id'],
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'error' => 'recovery_user_not_found',
-                ];
-            }
-        }
-
-        if (404 !== $result['code']) {
-            throw new ILSException('Problem with Koha REST API.');
-        }
-        return [
-            'success' => false,
-            'error' => 'recovery_user_not_found',
-        ];
-    }
-
-    /**
-     * Recover user's password with a token from getPasswordRecoveryToken
-     *
-     * @param array $params Required params such as cat_username, token and new
-     * password
-     *
-     * @return array Associative array of the results
-     */
-    public function recoverPassword($params)
-    {
-        $request = [
-            'password' => $params['password'],
-            'password_2' => $params['password'],
-        ];
-
-        $result = $this->makeRequest(
-            [
-                'path' => ['v1', 'patrons', $params['token'], 'password'],
-                'json' => $request,
-                'method' => 'POST',
-                'errors' => true,
-            ]
-        );
-        if ($result['code'] >= 300) {
-            return [
-                'success' => false,
-                'error' => $result['data']['error'] ?? $result['code'],
-            ];
-        }
-        return [
-            'success' => true,
-        ];
-    }
-
-    /**
      * Check if patron belongs to staff.
      *
      * @param array $patron The patron array from patronLogin
@@ -972,13 +899,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getConfig($function, $params = null)
     {
-        if (
-            'getPasswordRecoveryToken' === $function
-            || 'recoverPassword' === $function
-        ) {
-            return !empty($this->config['PasswordRecovery']['enabled'])
-                ? $this->config['PasswordRecovery'] : false;
-        } elseif ('getPatronStaffAuthorizationStatus' === $function) {
+        if ('getPatronStaffAuthorizationStatus' === $function) {
             return ['enabled' => true];
         }
         $functionConfig = parent::getConfig($function, $params);
@@ -1429,6 +1350,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Unset read-only fields
         unset($request['anonymized']);
         unset($request['restricted']);
+        unset($request['expired']);
 
         $request = array_merge($request, $fields);
 
