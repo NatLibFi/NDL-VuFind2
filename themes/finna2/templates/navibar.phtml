@@ -54,14 +54,13 @@
                 [
                     'href' => $itemUrl['url'],
                     'class' => ['nav-link'],
-                    'role' => 'button',
                 ]
             );
             if ($this->navibar()->isCurrentPage($itemUrl['url'])) {
               $linkAttrs->add('class', 'active');
               $linkAttrs->add('aria-current', 'page');
             }
-            if($target = $itemUrl['target'] ?? null) {
+            if ($target = $itemUrl['target'] ?? null) {
               $linkAttrs->add('target', $target);
             }
           ?>
@@ -87,7 +86,6 @@
                 [
                     'href' => $url,
                     'class' => ['nav-link'],
-                    'role' => 'button',
                     'id' => 'feedback-link',
                 ]
             );
