@@ -1,4 +1,4 @@
-/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab, unwrapJQuery */
+/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab*/
 finna.record = (function finnaRecord() {
   var accordionTitleHeight = 64;
 
@@ -506,13 +506,11 @@ finna.record = (function finnaRecord() {
     document.querySelectorAll('.vc-finna-js-container.init').forEach(element => {
       const method = element.dataset.method;
       if (method) {
-        const dataId = element.dataset.id;
-        console.log(element.dataset.id);
-        const dataSource = element.dataset.source;
         const urlParams = {
-          id: dataId,
+          id: element.dataset.id,
           method: method,
-        }
+        };
+        const dataSource = element.dataset.source;
         if (dataSource) {
           urlParams.source = dataSource;
         }
