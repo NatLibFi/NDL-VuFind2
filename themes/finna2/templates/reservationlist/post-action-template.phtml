@@ -1,0 +1,35 @@
+<?php
+  $pageTitle = $this->translate('ReservationList::Add to reservation list');
+  $toList = $this->translate('ReservationList::Continue to sending the hold request');
+  if ($this->listEntity->getOrdered()) {
+    $pageTitle = $this->translate('ReservationList::list_ordered', ['%%date%%' => $this->listEntity->getOrdered()->format('d.m.Y')]);
+    $toList = $this->translate('go_to_list');
+  }
+
+  // Set up page title:
+  $this->headTitle($pageTitle);
+  $user = $this->auth()->getUserObject();
+  $contextDriver = $this->driver ?? null;
+  // Set up breadcrumbs:
+  if ($contextDriver) {
+    $this->breadcrumbs()->set(...$this->recordLinker()->getBreadcrumbParams($this->driver))
+      ->add($pageTitle, active: true);
+  }
+?>
+
+<h2><?= $this->escapeHtml($pageTitle) ?></h2>
+
+<?php if (!$this->listEntity->getOrdered() && $contextDriver): ?>
+  <p><?=$this->transEsc('ReservationList::resource_added_to_list', ['%%resource%%' => $this->driver->getTitle(), '%%list%%' => $this->listEntity->getTitle($this->layout()->userLang)]);?></p>
+<?php endif; ?>
+
+<?php if ($this->listEntity->getOrdered()): ?>
+  <?=$this->component('finna-information-box', ['content' => $this->translate('ReservationList::after_order_instructions')]);?>
+<?php endif; ?>
+
+<div class="btn-group">
+  <a class="btn btn-primary" href="<?=$this->url('reservationlist-displaylist', ['listId' => $this->listEntity->getId()])?>" data-lightbox-ignore><?=$this->escapeHtml($toList)?></a>
+</div>
+<div class="btn-group">
+  <button class="btn btn-primary lightbox-only" data-bs-dismiss="modal"><?=$this->transEsc('close') ?></button>
+</div>
