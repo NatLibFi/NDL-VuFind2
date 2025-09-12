@@ -276,11 +276,9 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function getPublicationDates()
     {
         $result = [];
-        $dates = $this->fields['date'] ?? [];
-        if (!empty($dates)) {
-            foreach ($dates as $date) {
-                $result[] = preg_replace('/\b(\d{4})(?:-\d{2}){0,2}\b/', '$1', $date);
-            }
+        $dates = (array)($this->fields['date'] ?? []);
+        foreach ($dates as $date) {
+            $result[] = preg_replace('/\b(\d{4})(?:-\d{2}){0,2}\b/', '$1', $date);
         }
         return $result;
     }
