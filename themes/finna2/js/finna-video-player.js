@@ -2,29 +2,16 @@
 finna.videoPlayer = (() => {
   
   /**
-   * These scripts must be loaded first for additional scripts requested to work properly
+   * Scripts to load in order
    * @member {object} requiredVideoScripts
    */
   const requiredVideoScripts = {
     'videojs': 'vendor/video.min.js',
-    'video-popup': 'finna-video-popup.js'
-  };
-
-  /**
-   * Additional scripts required to load when requesting video with videojs
-   * @member {object} additionalVideoScripts
-   */
-  const additionalVideoScripts = {
+    'video-popup': 'finna-video-popup.js',
     'videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
     'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
     'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
   };
-
-  /**
-   * Is the module already initialized?
-   * @member {boolean}
-   */
-  let initialized = false;
 
   /**
    * Adds a specific class name to VuFind modal and a listener to listen when
@@ -151,60 +138,68 @@ finna.videoPlayer = (() => {
   }
 
   /**
+   * Sets the video elements click event.
+   * @param {HTMLElement} element Element which displays the video popup
+   */
+  function setElementClickEvent(element)
+  {
+    if (VuFind.cookie.isServiceAllowed(element.dataset.vcConsent)) {
+      element.addEventListener('click', () => {
+        document.querySelectorAll('.vc-finna-video').forEach(b => b.classList.remove('active-video'));
+        if (element.dataset.vcEmbed) {
+          onIFrameOpen(element);
+        } else {
+          onVideoOpen(element);
+        }
+        element.classList.add('active-video');
+      });
+      if (element.classList.contains('active-video')) {
+        element.click();
+      }
+    } else {
+      // We should display a consent approval here
+      element.addEventListener('click', () => { displayConsentWindow(element); });
+    }
+  }
+
+  /**
+   * When video scripts have loaded callback
+   * @param {HTMLElement|string} elementOrSelector Either the html element which acts as video player open or selector
+   * @returns 
+   */
+  function onVideoScriptsLoaded(elementOrSelector)
+  {
+      const element = typeof elementOrSelector === 'string'
+        ? document.querySelector(elementOrSelector)
+        : elementOrSelector;
+      if (!element || element.classList.contains('done')) {
+        return;
+      }
+
+      element.classList.add('done');
+      const consentInitialized = VuFind.cookie.getConsentConfig();
+      // If consent configuration has not been initialized, wait for it
+      if (!consentInitialized) {
+        VuFind.listen('cookie-consent-initialized', () => {
+          setElementClickEvent(element);
+        });
+      } else {
+        setElementClickEvent(element);
+      }
+  }
+
+  /**
    * Provide a selector or HTMLButtonElement to initialize a button for videos.
    * @param {HTMLButtonElement|string} elementOrSelector Element or selector
    */
   function initVideoButton(elementOrSelector)
   {
-    const element = typeof elementOrSelector === 'string'
-      ? document.querySelector(elementOrSelector)
-      : elementOrSelector;
-    if (!element) {
-      return;
-    }
-    if (element.classList.contains('done')) {
-      return;
-    }
-    element.classList.add('done');
-    VuFind.listen('cookie-consent-initialized', () => {
-      if (VuFind.cookie.isServiceAllowed(element.dataset.vcConsent)) {
-        finna.getPromise('videoScripts').then(() => {
-          element.addEventListener('click', () => {
-            document.querySelectorAll('.vc-finna-video').forEach(b => b.classList.remove('active-video'));
-            if (element.dataset.vcEmbed) {
-              onIFrameOpen(element);
-            } else {
-              onVideoOpen(element);
-            }
-            element.classList.add('active-video');
-          });
-          if (element.classList.contains('active-video')) {
-            element.click();
-          }
-        });
-      } else {
-        // We should display a consent approval here
-        element.addEventListener('click', () => { displayConsentWindow(element); });
-      }
-    });
-  }
-
-  /**
-   * Initialize the module
-   */
-  function init()
-  {
-    if (initialized) {
-      return;
-    }
-    initialized = true;
-    finna.scriptLoader.loadInOrder(requiredVideoScripts, additionalVideoScripts, () => {
-      finna.resolvePromise('videoScripts');
+    finna.scriptLoader.load(requiredVideoScripts, () => {
+      onVideoScriptsLoaded(elementOrSelector);
     });
   }
 
   return {
     initVideoButton,
-    init
   };
 })();

@@ -10,43 +10,35 @@
 finna.scriptLoader = (() => {
 
   /**
-   * Load given scripts asynchronously.
+   * Asynchronous function to load scripts in given order.
    * @param {object}   scripts        Object of scripts to load
    *                                  Key is an unique identifier used to check if
    *                                  script has already been loaded
    *                                  Value is the js file name to load
    * @param {?Function} scriptsLoaded Callback when the scripts are loaded
    */
-  function load(scripts, scriptsLoaded) {
-    let keyCount = Object.keys(scripts).length;
-    let onScriptLoad;
-    if (keyCount) {
-      onScriptLoad = () => {
-        if (--keyCount === 0) {
-          scriptsLoaded();
-        }
-      };
-    }
+  async function load(scripts, scriptsLoaded = () => {}) {
     for (let [key, value] of Object.entries(scripts)) {
       key = `scriptloader-js-${key}`;
-      const found = document.getElementById(key);
-      if (found) {
-        keyCount--;
-        continue;
+      // Create a promise for the current script to see if it has been resolved/loaded
+      let promise = finna.getPromise(key);
+      if (!promise) {
+        finna.setPromise(key);
+        promise = finna.getPromise(key);
+        const scriptElement = document.createElement('script');
+        scriptElement.async = 'async';
+        scriptElement.src = `${VuFind.path}/themes/finna2/js/${value}?_=${Date.now()}`;
+        scriptElement.addEventListener('load', () => {
+          finna.resolvePromise(key);
+        });
+        scriptElement.id = key;
+        scriptElement.setAttribute('nonce', VuFind.getCspNonce());
+        document.head.appendChild(scriptElement);
       }
-      const scriptElement = document.createElement('script');
-      scriptElement.async = 'async';
-      scriptElement.src = `${VuFind.path}/themes/finna2/js/${value}?_=${Date.now()}`;
-      if (typeof onScriptLoad === 'function' && typeof scriptsLoaded === 'function') {
-        scriptElement.addEventListener('load', onScriptLoad);
-      }
-      scriptElement.id = key;
-      scriptElement.setAttribute('nonce', VuFind.getCspNonce());
-      document.head.appendChild(scriptElement);
+      // Wait until the promise has resolved (Script has loaded) until loading the next one.
+      await promise;
     }
-    if (keyCount === 0 && typeof scriptsLoaded === 'function') {
-      scriptsLoaded();
-    }
+    scriptsLoaded();
   }
 
   /**
@@ -63,9 +55,8 @@ finna.scriptLoader = (() => {
    * @param {?Function} scriptsLoaded Callback when the scripts are loaded
    */
   function loadInOrder(first, last, scriptsLoaded) {
-    load(first, () => {
-      load(last, scriptsLoaded);
-    });
+    let combined = {...first, ...last};
+    load(combined, scriptsLoaded);
   }
 
   return {

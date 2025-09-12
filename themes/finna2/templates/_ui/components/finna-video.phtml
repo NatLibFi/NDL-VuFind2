@@ -5,13 +5,14 @@
   $active = $this->active ?? false;
   $description = $this->description ?? $this->translate('format_Video');
   $videoSources = $this->videoSources ?? [];
+  $videoIndex = $this->index ?? 1;
   $buttonAttributes = [
     'class' => $this->class ?? 'video-link-container',
     'aria-label' => $this->ariaLabel ?? $this->translate('Link to video') . ' ' . $description,
     'title' => $url,
     'data-vc-url' => $url,
+    'data-vc-index' => $index,
     'data-vc-invocation' => $this->_invocation,
-    'data-vc-index' => $this->index ?? -1,
     'data-vc-inline' => $this->inline ?? false,
     'data-vc-embed' => $embeddedVideo,
     'data-vc-consent' => $this->consent ?? 'recordvideo',
@@ -30,8 +31,12 @@
 </button>
 <?php
 $script = <<<JS
-    finna.videoPlayer.init();
-    document.addEventListener('DOMContentLoaded', () => {finna.videoPlayer.initVideoButton('{$jsSelector}');});
+    finna.scriptLoader.load(
+      {'finna-video-player': 'finna-video-player.js'},
+      () => {
+        finna.videoPlayer.initVideoButton('{$jsSelector}');
+      }
+    );
     JS;
 ?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');?>
+<?=$this->assetManager()->outputInlineScriptString($script);?>
