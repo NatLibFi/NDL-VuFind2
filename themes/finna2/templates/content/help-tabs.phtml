@@ -29,6 +29,11 @@
           'label' => $this->translate('tabs_help-favorites'),
           'link' => $this->url('content-page', ['page' => 'help-favorites']),
         ],
+        [
+          'active' => 'help-comments-ratings' === $this->activeTab,
+          'label' => $this->translate('tabs_help-comments-ratings'),
+          'link' => $this->url('content-page', ['page' => 'help-comments-ratings']),
+        ],
       ],
       'toggleBtnLabel' => $this->transEsc('More'),
     ]
