@@ -401,7 +401,7 @@ class SolrExtensionsListener
 
         // Add the parameter if needed:
         if ($hideHiddenComponentsPart) {
-            if ($componentPartFilter = $searchConfig->General->displayable_component_part_filter ?? false) {
+            if ($componentPartFilter = $searchConfig->General->displayable_component_part_filter ?? null) {
                 $params->add(
                     'fq',
                     $componentPartFilter . ' OR (*:* -hidden_component_boolean:true)'
