@@ -90,6 +90,9 @@ class OrganisationDisplayName extends \Laminas\View\Helper\AbstractHelper
         }
 
         if (empty($displayName)) {
+            if ($record->tryMethod('isDataSourceHidden')) {
+                return '';
+            }
             return $datasource;
         }
 
