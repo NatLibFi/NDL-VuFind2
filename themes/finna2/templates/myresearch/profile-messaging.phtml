@@ -11,7 +11,7 @@ if (!isset($capabilityParams)) {
         <h4 class="myresearch-profile-middle-header"><?= $this->transEsc('messaging_settings_title') ?></h4>
     </div>
     <?php foreach ($profile['messagingServices'] as $service): ?>
-        <div class="my-profile-col profile-title"><?=$this->transEscWithPrefix('messaging_settings_type_', $service['type'], [], $service['type'])?></div>
+        <div class="my-profile-col profile-title"><?=$this->transEscWithPrefix('messaging_settings_type_', $service['type'])?></div>
         <div class="profile-text-value">
             <?php
                 // Driver
