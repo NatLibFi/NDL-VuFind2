@@ -37,7 +37,7 @@
               <div class="checkbox">
                 <label>
                   <input type="checkbox" name="<?=$this->escapeHtmlAttr($serviceId . '_' . $settingId)?>" value="1"<?php if ($setting['active']): ?> checked<?php endif; ?><?php if (!empty($setting['readonly'])): ?> disabled<?php endif; ?>>
-                  <?=$settingName?> <?=$this->transEscWithPrefix('messaging_settings_option_', $setting['active'] ? 'active' : 'inactive');?>
+                  <?=$settingName?>
                 </label>
               </div>
             <?php elseif ('multiselect' == $setting['type']): ?>
