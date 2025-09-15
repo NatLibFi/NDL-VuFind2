@@ -606,7 +606,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             case 'qdc':
                 return $this->filterQDCFields($defaults);
             case 'eaccpf':
-                return $defaults;
+                return $this->filterFields($defaults, array_keys($defaults));
             case 'ead':
                 return $this->filterEADFields($defaults);
             case 'ead3':
@@ -725,7 +725,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     {
         $intersected = array_intersect_key($coreFields, array_flip($include));
         $config = $this->getView()->plugin('config')->get('datasources');
-        $source = $this->driver?->tryMethod('getSource');
+        $source = $this->driver?->tryMethod('getDataSource');
         if ($source && $hide = $config->$source?->hidden_record_fields) {
             $intersected = array_diff_key($intersected, array_flip($hide->toArray()));
         }
