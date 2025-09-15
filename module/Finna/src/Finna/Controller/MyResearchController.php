@@ -1034,6 +1034,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     }
                 }
             }
+            unset($setting);
 
             if (isset($config['method']) && 'driver' === $config['method']) {
                 $result = $catalog->updateMessagingSettings($patron, $data);
