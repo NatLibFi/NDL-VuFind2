@@ -73,10 +73,10 @@ class KohaRestSuomiVuFindTest extends \PHPUnit\Framework\TestCase
         $this->cache = [];
         $connector = $this->getMockBuilder(KohaRestSuomiVuFind::class)->setConstructorArgs(
             [
-                    new \VuFind\Date\Converter(),
-                    fn ($namespace) => null,
-                    $this->getMockBuilder(CurrencyFormatter::class)->disableOriginalConstructor()->getMock(),
-                ]
+                new \VuFind\Date\Converter(),
+                fn ($namespace) => null,
+                $this->getMockBuilder(CurrencyFormatter::class)->disableOriginalConstructor()->getMock(),
+            ]
         )->onlyMethods(['makeRequest', 'debug'])
             ->getMock();
         $connector->expects($this->any())->method('makeRequest')->willReturnMap($requestMap);
@@ -92,23 +92,23 @@ class KohaRestSuomiVuFindTest extends \PHPUnit\Framework\TestCase
     public static function getTestGetMyProfileData(): Generator
     {
         $defaultExpected = [
-                'email' => 'test@email.fi',
-                'messagingServices' => [],
-                'loan_history' => null,
-                'firstname' => 'Test',
-                'lastname' => 'Tester',
-                'address1' => 'Address 1',
-                'address2' => 'Address 2',
-                'city' => 'Test city',
-                'country' => 'Test country',
-                'zip' => '010101',
-                'phone' => '0101010101',
-                'mobile_phone' => null,
-                'expiration_date' => '',
-                'group' => null,
-                'home_library' => null,
-                'birthdate' => '',
-            ];
+            'email' => 'test@email.fi',
+            'messagingServices' => [],
+            'loan_history' => null,
+            'firstname' => 'Test',
+            'lastname' => 'Tester',
+            'address1' => 'Address 1',
+            'address2' => 'Address 2',
+            'city' => 'Test city',
+            'country' => 'Test country',
+            'zip' => '010101',
+            'phone' => '0101010101',
+            'mobile_phone' => null,
+            'expiration_date' => '',
+            'group' => null,
+            'home_library' => null,
+            'birthdate' => '',
+        ];
         yield 'profile all values set' => [
             'koharestsuomivufind/profile.json',
             $defaultExpected,

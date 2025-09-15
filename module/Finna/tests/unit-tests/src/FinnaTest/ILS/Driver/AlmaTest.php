@@ -56,73 +56,73 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     public static function getTestUpdateAddressData(): Generator
     {
         yield 'single entries' => [
-        [
-          'id' => '123456',
-        ],
-        [
-          'address1' => 'Test address update',
-          'email' => 'newemail@email.fi',
-          'phone' => '0123456789',
-        ],
-        [
-          'updateProfile' => [
-              'fields' => [
-                  'Address:address1',
-                  'Email:email',
-                  'Phone:phone',
-              ],
-          ],
-        ],
-        'alma/user.xml',
-        'alma/user_address_updated.xml',
+            [
+                'id' => '123456',
+            ],
+            [
+                'address1' => 'Test address update',
+                'email' => 'newemail@email.fi',
+                'phone' => '0123456789',
+            ],
+            [
+                'updateProfile' => [
+                    'fields' => [
+                        'Address:address1',
+                        'Email:email',
+                        'Phone:phone',
+                    ],
+                ],
+            ],
+            'alma/user.xml',
+            'alma/user_address_updated.xml',
         ];
 
         yield 'empty entries' => [
-          [
-            'id' => '123456',
-          ],
-          [
-            'address1' => '',
-            'email' => '',
-            'phone' => '',
-          ],
-          [
-            'updateProfile' => [
-                'fields' => [
-                    'Address:address1',
-                    'Email:email',
-                    'Phone:phone',
+            [
+                'id' => '123456',
+            ],
+            [
+                'address1' => '',
+                'email' => '',
+                'phone' => '',
+            ],
+            [
+                'updateProfile' => [
+                    'fields' => [
+                        'Address:address1',
+                        'Email:email',
+                        'Phone:phone',
+                    ],
                 ],
             ],
-          ],
-          'alma/user.xml',
-          'alma/user_empty_address_updated.xml',
+            'alma/user.xml',
+            'alma/user_empty_address_updated.xml',
         ];
 
         yield 'multiple addresses' => [
-        [
-          'id' => '123456',
-        ],
-        [
-          'addresses' => [
-            'address' => [
-              'address1' => 'Test address 1',
-              'address2' => 'Test address 2',
+            [
+                'id' => '123456',
             ],
-          ],
-        ],
-        [
-          'updateProfile' => [
-              'fields' => [
-                  'Address:address1',
-                  'Address2:address2',
-                  'Email:email',
-                  'Phone:phone',
-              ],
-          ],
-        ],
-        'alma/user_multiple_address.xml',
-        'alma/user_multiple_address_updated.xml',
+            [
+                'addresses' => [
+                    'address' => [
+                        'address1' => 'Test address 1',
+                        'address2' => 'Test address 2',
+                    ],
+                ],
+            ],
+            [
+                'updateProfile' => [
+                    'fields' => [
+                        'Address:address1',
+                        'Address2:address2',
+                        'Email:email',
+                        'Phone:phone',
+                    ],
+                ],
+            ],
+            'alma/user_multiple_address.xml',
+            'alma/user_multiple_address_updated.xml',
         ];
     }
 
@@ -165,30 +165,30 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     public static function getTestPatronLoginData(): Generator
     {
         yield 'patron all values set' => [
-        'alma/patron.xml',
-          [
-            'id' => '57391',
-            'cat_username' => '1111',
-            'cat_password' => '2121',
-            'firstname' => 'John',
-            'lastname' => 'Smith',
-            'email' => 'pref@email.if',
-            'major' => null,
-            'college' => null,
-          ],
+            'alma/patron.xml',
+            [
+                'id' => '57391',
+                'cat_username' => '1111',
+                'cat_password' => '2121',
+                'firstname' => 'John',
+                'lastname' => 'Smith',
+                'email' => 'pref@email.if',
+                'major' => null,
+                'college' => null,
+            ],
         ];
         yield 'patron some values missing' => [
         'alma/patron_partial.xml',
-        [
-            'id' => '57391',
-            'email' => null,
-            'firstname' => 'Test',
-            'lastname' => '',
-            'major' => null,
-            'college' => null,
-            'cat_username' => '1111',
-            'cat_password' => '2121',
-        ],
+            [
+                'id' => '57391',
+                'email' => null,
+                'firstname' => 'Test',
+                'lastname' => '',
+                'major' => null,
+                'college' => null,
+                'cat_username' => '1111',
+                'cat_password' => '2121',
+            ],
         ];
     }
 
@@ -250,41 +250,39 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
                 'expiration_date' => null,
                 'group' => 'descgroup',
                 'addresses' => [
-                [
-                'address1' => 'A street 1',
-                'address2' => '          ',
-                'address3' => 'Not a default field',
-                'country' => new TranslatableString('Far', ''),
-                'city' => 'Far away',
-                'zip' => '00000',
-                'types' => [
-                    'work',
-                    'something',
-                ],
-                'preferred' => false,
-                ],
-                [
-                'address1' => 'Line 1',
-                'address2' => 'Line 2',
-                'address3' => 'Line 3',
-                'country' => new TranslatableString('Country', ''),
-                'city' => 'City',
-                'zip' => '00000',
-                'types' => [
-                    'Type 1',
-                    'home',
-                ],
-                'preferred' => true,
-                ],
+                    [
+                        'address1' => 'A street 1',
+                        'address2' => '          ',
+                        'address3' => 'Not a default field',
+                        'country' => new TranslatableString('Far', ''),
+                        'city' => 'Far away',
+                        'zip' => '00000',
+                        'types' => [
+                            'work',
+                            'something',
+                        ],
+                        'preferred' => false,
+                    ],
+                    [
+                        'address1' => 'Line 1',
+                        'address2' => 'Line 2',
+                        'address3' => 'Line 3',
+                        'country' => new TranslatableString('Country', ''),
+                        'city' => 'City',
+                        'zip' => '00000',
+                        'types' => [
+                            'Type 1',
+                            'home',
+                        ],
+                        'preferred' => true,
+                    ],
                 ],
                 'guarantees' => [
-                ['lastname' => 'Tester Test'],
-                ['lastname' => 'Ttee Tst'],
+                    ['lastname' => 'Tester Test'],
+                    ['lastname' => 'Ttee Tst'],
                 ],
-                    'messagingServices' => [
-
-                ],
-                    'loan_history' => null,
+                'messagingServices' => [],
+                'loan_history' => null,
             ],
         ];
         yield 'profile some values missing' => [
@@ -335,7 +333,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     {
         $profileFixture = $this->getFixture($fixtureKey, 'Finna');
         $makeRequestMap = [
-          ['/users/1111', 'GET', new SimpleXMLElement($profileFixture)],
+            ['/users/1111', 'GET', new SimpleXMLElement($profileFixture)],
         ];
         $driver = $this->getDriver($makeRequestMap);
         $result = $driver->getMyProfile(['id' => '1111']);

@@ -73,10 +73,10 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
         $this->cache = [];
         $connector = $this->getMockBuilder(KohaRestSuomi::class)->setConstructorArgs(
             [
-                    new \VuFind\Date\Converter(),
-                    fn ($namespace) => null,
-                    $this->getMockBuilder(CurrencyFormatter::class)->disableOriginalConstructor()->getMock(),
-                ]
+                new \VuFind\Date\Converter(),
+                fn ($namespace) => null,
+                $this->getMockBuilder(CurrencyFormatter::class)->disableOriginalConstructor()->getMock(),
+            ]
         )->onlyMethods(['makeRequest', 'debug'])
             ->getMock();
         $connector->expects($this->any())->method('makeRequest')->willReturnMap($requestMap);
@@ -92,234 +92,234 @@ class KohaRestSuomiTest extends \PHPUnit\Framework\TestCase
     public static function getTestGetMyProfileData(): Generator
     {
         $defaultExpected = [
-                'email' => 'test@email.fi',
-                'messagingServices' => [
-                    'Item_Due' => [
-                        'type' => 'dueDateNotice',
-                        'settings' => [
-                            'transport_types' => [
-                                'type' => 'multiselect',
-                                'options' => [
-                                    'sms' => [
-                                        'active' => false,
-                                    ],
-                                    'letter' => [
-                                        'active' => true,
-                                    ],
+            'email' => 'test@email.fi',
+            'messagingServices' => [
+                'Item_Due' => [
+                    'type' => 'dueDateNotice',
+                    'settings' => [
+                        'transport_types' => [
+                            'type' => 'multiselect',
+                            'options' => [
+                                'sms' => [
+                                    'active' => false,
                                 ],
-                            ],
-                            'digest' => [
-                                'type' => 'boolean',
-                                'active' => true,
-                                'readonly' => true,
+                                'letter' => [
+                                    'active' => true,
+                                ],
                             ],
                         ],
-                    ],
-                    'Advance_Notice' => [
-                        'type' => 'dueDateAlert',
-                        'settings' => [
-                            'transport_types' => [
-                                'type' => 'multiselect',
-                                'options' => [
-                                    'sms' => [
-                                        'active' => false,
-                                    ],
-                                    'letter' => [
-                                        'active' => true,
-                                    ],
-                                ],
-                            ],
-                            'days_in_advance' => [
-                                'type' => 'select',
-                                'value' => 5,
-                                'options' => [
-                                    0 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    1 => [
-                                        'name' => 'messaging_settings_num_of_days',
-                                        'active' => false,
-                                    ],
-                                    2 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    3 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    4 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    5 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => true,
-                                    ],
-                                    6 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    7 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    8 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    9 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    10 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    11 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    12 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    13 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    14 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    15 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    16 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    17 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    18 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    19 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    20 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    21 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    22 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    23 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    24 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    25 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    26 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    27 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    28 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    29 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    30 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                ],
-                                'readonly' => false,
-                            ],
-                            'digest' => [
-                                'type' => 'boolean',
-                                'active' => true,
-                                'readonly' => true,
-                            ],
-                        ],
-                    ],
-                    'Hold_Filled' => [
-                        'type' => 'pickUpNotice',
-                        'settings' => [
-                            'transport_types' => [
-                                'type' => 'multiselect',
-                                'options' => [
-                                    'sms' => [
-                                        'active' => false,
-                                    ],
-                                    'letter' => [
-                                        'active' => true,
-                                    ],
-                                ],
-                            ],
-                            'digest' => [
-                                'type' => 'boolean',
-                                'active' => true,
-                                'readonly' => true,
-                            ],
+                        'digest' => [
+                            'type' => 'boolean',
+                            'active' => true,
+                            'readonly' => true,
                         ],
                     ],
                 ],
-                'loan_history' => 'true',
-                'firstname' => 'Test',
-                'lastname' => 'Tester',
-                'address1' => 'Address 1',
-                'address2' => 'Address 2',
-                'city' => 'Test city',
-                'country' => 'Test country',
-                'zip' => '010101',
-                'phone' => '0101010101',
-                'mobile_phone' => null,
-                'expiration_date' => '',
-                'group' => null,
-                'home_library' => null,
-                'birthdate' => '',
-                'hold_identifier' => 'Other name',
-                'guarantees' => [
-                    [
-                        'firstname' => 'Guarantor 1',
-                        'lastname' => 'Surname 1',
-                    ],
-                    [
-                        'firstname' => 'Guarantor 2',
-                        'lastname' => 'Surname 2',
+                'Advance_Notice' => [
+                    'type' => 'dueDateAlert',
+                    'settings' => [
+                        'transport_types' => [
+                            'type' => 'multiselect',
+                            'options' => [
+                                'sms' => [
+                                    'active' => false,
+                                ],
+                                'letter' => [
+                                    'active' => true,
+                                ],
+                            ],
+                        ],
+                        'days_in_advance' => [
+                            'type' => 'select',
+                            'value' => 5,
+                            'options' => [
+                                0 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                1 => [
+                                    'name' => 'messaging_settings_num_of_days',
+                                    'active' => false,
+                                ],
+                                2 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                3 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                4 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                5 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => true,
+                                ],
+                                6 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                7 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                8 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                9 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                10 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                11 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                12 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                13 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                14 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                15 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                16 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                17 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                18 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                19 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                20 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                21 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                22 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                23 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                24 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                25 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                26 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                27 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                28 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                29 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                30 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                            ],
+                            'readonly' => false,
+                        ],
+                        'digest' => [
+                            'type' => 'boolean',
+                            'active' => true,
+                            'readonly' => true,
+                        ],
                     ],
                 ],
-                'guarantor' => [],
-                'notes' => 'Test opac notes',
-                'full_data' => [],
-                'smsnumber' => '0123456789',
-                'category' => '',
-            ];
+                'Hold_Filled' => [
+                    'type' => 'pickUpNotice',
+                    'settings' => [
+                        'transport_types' => [
+                            'type' => 'multiselect',
+                            'options' => [
+                                'sms' => [
+                                    'active' => false,
+                                ],
+                                'letter' => [
+                                    'active' => true,
+                                ],
+                            ],
+                        ],
+                        'digest' => [
+                            'type' => 'boolean',
+                            'active' => true,
+                            'readonly' => true,
+                        ],
+                    ],
+                ],
+            ],
+            'loan_history' => 'true',
+            'firstname' => 'Test',
+            'lastname' => 'Tester',
+            'address1' => 'Address 1',
+            'address2' => 'Address 2',
+            'city' => 'Test city',
+            'country' => 'Test country',
+            'zip' => '010101',
+            'phone' => '0101010101',
+            'mobile_phone' => null,
+            'expiration_date' => '',
+            'group' => null,
+            'home_library' => null,
+            'birthdate' => '',
+            'hold_identifier' => 'Other name',
+            'guarantees' => [
+                [
+                    'firstname' => 'Guarantor 1',
+                    'lastname' => 'Surname 1',
+                ],
+                [
+                    'firstname' => 'Guarantor 2',
+                    'lastname' => 'Surname 2',
+                ],
+            ],
+            'guarantor' => [],
+            'notes' => 'Test opac notes',
+            'full_data' => [],
+            'smsnumber' => '0123456789',
+            'category' => '',
+        ];
         yield 'profile all values set' => [
             'koharestsuomi/profile.json',
             'koharestsuomi/guarantors.json',

@@ -73,9 +73,9 @@ class AxiellWebServicesTest extends \PHPUnit\Framework\TestCase
         $this->cache = [];
         $connector = $this->getMockBuilder(AxiellWebServices::class)->setConstructorArgs(
             [
-                    new \VuFind\Date\Converter(),
-                    $this->getMockBuilder(PathResolver::class)->disableOriginalConstructor()->getMock(),
-                ]
+                new \VuFind\Date\Converter(),
+                $this->getMockBuilder(PathResolver::class)->disableOriginalConstructor()->getMock(),
+            ]
         )->onlyMethods(['doSOAPRequest', 'authenticatePatron', 'debug', 'putCachedData', 'getCachedData'])
             ->getMock();
         $connector->expects($this->any())->method('doSOAPRequest')->willReturnMap($requestMap);
@@ -97,120 +97,120 @@ class AxiellWebServicesTest extends \PHPUnit\Framework\TestCase
     public static function getTestGetMyProfileData(): Generator
     {
         $defaultExpected = [
-                'emailId' => '124213',
-                'addressId' => '13123',
-                'phoneId' => '3',
-                'phoneLocalCode' => '1231231',
-                'phoneAreaCode' => '222',
-                'patronId' => '010101',
-                'id' => '121212',
-                'cat_username' => '1111',
-                'cat_password' => '2222',
-                'email' => 'active@email.fi',
-                'messagingServices' => [
-                    'overdueNotice' => [
-                        'type' => 'overdueNotice',
-                        'settings' => [
-                            'transport_types' => [
-                                'type' => 'select',
-                                'options' => [
-                                    'email' => [
-                                        'active' => false,
-                                    ],
-                                    'print' => [
-                                        'active' => true,
-                                    ],
-                                    'sms' => [
-                                        'active' => false,
-                                    ],
+            'emailId' => '124213',
+            'addressId' => '13123',
+            'phoneId' => '3',
+            'phoneLocalCode' => '1231231',
+            'phoneAreaCode' => '222',
+            'patronId' => '010101',
+            'id' => '121212',
+            'cat_username' => '1111',
+            'cat_password' => '2222',
+            'email' => 'active@email.fi',
+            'messagingServices' => [
+                'overdueNotice' => [
+                    'type' => 'overdueNotice',
+                    'settings' => [
+                        'transport_types' => [
+                            'type' => 'select',
+                            'options' => [
+                                'email' => [
+                                    'active' => false,
                                 ],
-                                'value' => 'print',
-                            ],
-                        ],
-                    ],
-                    'dueDateAlert' => [
-                        'type' => 'dueDateAlert',
-                        'settings' => [
-                            'transport_types' => [
-                                'type' => 'select',
-                                'options' => [
-                                    'email' => [
-                                        'active' => false,
-                                    ],
-                                    'inactive' => [
-                                        'active' => true,
-                                    ],
-                                    'sms' => [
-                                        'active' => false,
-                                    ],
+                                'print' => [
+                                    'active' => true,
                                 ],
-                                'value' => 'inactive',
-                            ],
-                            'days_in_advance' => [
-                                'type' => 'select',
-                                'value' => 2,
-                                'options' => [
-                                    1 => [
-                                        'name' => 'messaging_settings_num_of_days',
-                                        'active' => false,
-                                    ],
-                                    2 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => true,
-                                    ],
-                                    3 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    4 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
-                                    5 => [
-                                        'name' => 'messaging_settings_num_of_days_plural',
-                                        'active' => false,
-                                    ],
+                                'sms' => [
+                                    'active' => false,
                                 ],
-                                'readonly' => false,
                             ],
-                        ],
-                    ],
-                    'pickUpNotice' => [
-                        'type' => 'pickUpNotice',
-                        'settings' => [
-                            'transport_types' => [
-                                'type' => 'select',
-                                'options' => [
-                                    'email' => [
-                                        'active' => false,
-                                    ],
-                                    'print' => [
-                                        'active' => false,
-                                    ],
-                                    'sms' => [
-                                        'active' => true,
-                                    ],
-                                ],
-                                'value' => 'sms',
-                            ],
+                            'value' => 'print',
                         ],
                     ],
                 ],
-                'loan_history' => 'true',
-                'firstname' => 'Testi',
-                'lastname' => 'Tester',
-                'address1' => 'Active street 1',
-                'address2' => null,
-                'city' => 'Act',
-                'country' => 'Ive',
-                'zip' => '02010',
-                'phone' => '2221231231',
-                'mobile_phone' => null,
-                'expiration_date' => null,
-                'group' => null,
-                'home_library' => null,
-                'birthdate' => '',
-            ];
+                'dueDateAlert' => [
+                    'type' => 'dueDateAlert',
+                    'settings' => [
+                        'transport_types' => [
+                            'type' => 'select',
+                            'options' => [
+                                'email' => [
+                                    'active' => false,
+                                ],
+                                'inactive' => [
+                                    'active' => true,
+                                ],
+                                'sms' => [
+                                    'active' => false,
+                                ],
+                            ],
+                            'value' => 'inactive',
+                        ],
+                        'days_in_advance' => [
+                            'type' => 'select',
+                            'value' => 2,
+                            'options' => [
+                                1 => [
+                                    'name' => 'messaging_settings_num_of_days',
+                                    'active' => false,
+                                ],
+                                2 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => true,
+                                ],
+                                3 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                4 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                                5 => [
+                                    'name' => 'messaging_settings_num_of_days_plural',
+                                    'active' => false,
+                                ],
+                            ],
+                            'readonly' => false,
+                        ],
+                    ],
+                ],
+                'pickUpNotice' => [
+                    'type' => 'pickUpNotice',
+                    'settings' => [
+                        'transport_types' => [
+                            'type' => 'select',
+                            'options' => [
+                                'email' => [
+                                    'active' => false,
+                                ],
+                                'print' => [
+                                    'active' => false,
+                                ],
+                                'sms' => [
+                                    'active' => true,
+                                ],
+                            ],
+                            'value' => 'sms',
+                        ],
+                    ],
+                ],
+            ],
+            'loan_history' => 'true',
+            'firstname' => 'Testi',
+            'lastname' => 'Tester',
+            'address1' => 'Active street 1',
+            'address2' => null,
+            'city' => 'Act',
+            'country' => 'Ive',
+            'zip' => '02010',
+            'phone' => '2221231231',
+            'mobile_phone' => null,
+            'expiration_date' => null,
+            'group' => null,
+            'home_library' => null,
+            'birthdate' => '',
+        ];
         yield 'profile all values set' => [
             'axiellwebservices/profile.xml',
             $defaultExpected,
