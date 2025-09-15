@@ -328,9 +328,7 @@ trait SolrAuthFinnaTrait
      */
     public function isDataSourceHidden(): bool
     {
-        $config = $this->datasourceSettings;
-        $source = $this->getDataSource();
-        if ($hiddenFields = $config->$source->hidden_record_fields) {
+        if ($hiddenFields = $this->datasourceSettings[$this->getDataSource()]['hidden_record_fields'] ?? null) {
             return in_array('Sources', $hiddenFields->toArray());
         }
         return false;
