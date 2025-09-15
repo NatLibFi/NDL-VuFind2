@@ -7,6 +7,13 @@ finna.videoPlayer = (() => {
    */
   const requiredVideoScripts = {
     'videojs': 'vendor/video.min.js',
+  };
+
+  /**
+   * Scritps which are dependant of the videojs script
+   * @member {object} dependantVideoScripts
+   */
+  const dependantVideoScripts = {
     'video-popup': 'finna-video-popup.js',
     'videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
     'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
@@ -120,7 +127,7 @@ finna.videoPlayer = (() => {
       if (description) {
         const serviceBase = new URL(element.dataset.vcUrl);
         description.innerText = description.innerText
-          .replace('%%consentCategories%%', element.dataset.vcConsent)
+          .replace('%%consentCategories%%', element.dataset.vcConsentTitle)
           .replace('%%serviceBaseUrl%%', serviceBase.hostname);
       }
       VuFind.lightbox.render(wrapper.outerHTML);
@@ -165,27 +172,26 @@ finna.videoPlayer = (() => {
   /**
    * When video scripts have loaded callback
    * @param {HTMLElement|string} elementOrSelector Either the html element which acts as video player open or selector
-   * @returns 
    */
   function onVideoScriptsLoaded(elementOrSelector)
   {
-      const element = typeof elementOrSelector === 'string'
-        ? document.querySelector(elementOrSelector)
-        : elementOrSelector;
-      if (!element || element.classList.contains('done')) {
-        return;
-      }
+    const element = typeof elementOrSelector === 'string'
+      ? document.querySelector(elementOrSelector)
+      : elementOrSelector;
+    if (!element || element.classList.contains('done')) {
+      return;
+    }
 
-      element.classList.add('done');
-      const consentInitialized = VuFind.cookie.getConsentConfig();
-      // If consent configuration has not been initialized, wait for it
-      if (!consentInitialized) {
-        VuFind.listen('cookie-consent-initialized', () => {
-          setElementClickEvent(element);
-        });
-      } else {
+    element.classList.add('done');
+    const consentInitialized = VuFind.cookie.getConsentConfig();
+    // If consent configuration has not been initialized, wait for it
+    if (!consentInitialized) {
+      VuFind.listen('cookie-consent-initialized', () => {
         setElementClickEvent(element);
-      }
+      });
+    } else {
+      setElementClickEvent(element);
+    }
   }
 
   /**
@@ -195,7 +201,9 @@ finna.videoPlayer = (() => {
   function initVideoButton(elementOrSelector)
   {
     finna.scriptLoader.load(requiredVideoScripts, () => {
-      onVideoScriptsLoaded(elementOrSelector);
+      finna.scriptLoader.load(dependantVideoScripts, () => {
+        onVideoScriptsLoaded(elementOrSelector);
+      });
     });
   }
 

@@ -66,6 +66,7 @@ var finna = (function finnaModule() {
       if (!promises[name]) {
         promises[name] = new Promise((resolve) => resolves[name] = resolve);
       }
+      return promises[name];
     }
   };
 

@@ -8,37 +8,45 @@
  * @returns {object} Exposed functions
  */
 finna.scriptLoader = (() => {
-
   /**
    * Asynchronous function to load scripts in given order.
+   * If this is the first time calling this function with a certain key,
+   * assign all the script loading tasks to the first caller to avoid duplicates.
    * @param {object}   scripts        Object of scripts to load
    *                                  Key is an unique identifier used to check if
    *                                  script has already been loaded
    *                                  Value is the js file name to load
    * @param {?Function} scriptsLoaded Callback when the scripts are loaded
    */
-  async function load(scripts, scriptsLoaded = () => {}) {
+  function load(scripts, scriptsLoaded = () => {}) {
+    let promisesToWait = [];
+    const onLoadFunc = (e) => finna.resolvePromise(e.currentTarget.id);
     for (let [key, value] of Object.entries(scripts)) {
       key = `scriptloader-js-${key}`;
-      // Create a promise for the current script to see if it has been resolved/loaded
-      let promise = finna.getPromise(key);
-      if (!promise) {
-        finna.setPromise(key);
-        promise = finna.getPromise(key);
+      let foundPromise = finna.getPromise(key);
+      if (!foundPromise) {
+        foundPromise = finna.setPromise(key);
         const scriptElement = document.createElement('script');
-        scriptElement.async = 'async';
         scriptElement.src = `${VuFind.path}/themes/finna2/js/${value}?_=${Date.now()}`;
-        scriptElement.addEventListener('load', () => {
-          finna.resolvePromise(key);
-        });
+        scriptElement.async = 'async';
         scriptElement.id = key;
+        scriptElement.addEventListener('load', onLoadFunc);
         scriptElement.setAttribute('nonce', VuFind.getCspNonce());
         document.head.appendChild(scriptElement);
       }
+      promisesToWait.push(foundPromise);
       // Wait until the promise has resolved (Script has loaded) until loading the next one.
-      await promise;
     }
-    scriptsLoaded();
+    const handlePromise = (cb) => {
+      promisesToWait.shift().then(() => {
+        if (promisesToWait.length > 0) {
+          handlePromise(cb);
+        } else {
+          cb();
+        }
+      });
+    };
+    handlePromise(scriptsLoaded);
   }
 
   /**
@@ -55,7 +63,7 @@ finna.scriptLoader = (() => {
    * @param {?Function} scriptsLoaded Callback when the scripts are loaded
    */
   function loadInOrder(first, last, scriptsLoaded) {
-    let combined = {...first, ...last};
+    let combined = Object.assign({}, first, last);
     load(combined, scriptsLoaded);
   }
 

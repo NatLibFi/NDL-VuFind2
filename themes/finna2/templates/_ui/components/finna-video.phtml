@@ -6,6 +6,7 @@
   $description = $this->description ?? $this->translate('format_Video');
   $videoSources = $this->videoSources ?? [];
   $videoIndex = $this->index ?? 1;
+  $consent = $this->consent ?? 'recordvideo';
   $buttonAttributes = [
     'class' => $this->class ?? 'video-link-container',
     'aria-label' => $this->ariaLabel ?? $this->translate('Link to video') . ' ' . $description,
@@ -15,7 +16,8 @@
     'data-vc-invocation' => $this->_invocation,
     'data-vc-inline' => $this->inline ?? false,
     'data-vc-embed' => $embeddedVideo,
-    'data-vc-consent' => $this->consent ?? 'recordvideo',
+    'data-vc-consent' => $consent,
+    'data-vc-consent-title' => $this->translate($this->cookieConsent()->getCategoryTitleForService($consent)),
     'aria-haspopup' => true,
   ];
   $buttonAttributes['class'] .= ' ' . $this->_componentClass;

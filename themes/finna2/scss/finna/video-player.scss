@@ -32,7 +32,10 @@
 // Template for using proper styles, when appending video viewer inside an element.
 %iframe-centering-template {
   height: $inline-video-player-desktop-height;
-  @media (max-width: $screen-sm-max) {
+  @media (max-width: $screen-md-max) {
+    height: $inline-video-player-tablet-height;
+  }
+  @media (max-width: $screen-sm-min) {
     height: $inline-video-player-mobile-height;
   }
   display: flex;
