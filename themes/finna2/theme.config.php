@@ -113,7 +113,6 @@ return [
             'iframe' => 'Finna\View\Helper\Root\Iframe',
             'imageSrc' => 'Finna\View\Helper\Root\ImageSrc',
             'indexedTotal' => 'Finna\View\Helper\Root\TotalIndexed',
-            'legacy' => \Finna\View\Helper\Root\Legacy::class,
             'linkedEventsTabs' => 'Finna\View\Helper\Root\LinkedEventsTabs',
             'markdown' => 'Finna\View\Helper\Root\Markdown',
             'matomoTracking' => 'Finna\View\Helper\Root\MatomoTracking',
