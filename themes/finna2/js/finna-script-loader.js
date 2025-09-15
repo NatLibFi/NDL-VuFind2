@@ -9,9 +9,7 @@
  */
 finna.scriptLoader = (() => {
   /**
-   * Asynchronous function to load scripts in given order.
-   * If this is the first time calling this function with a certain key,
-   * assign all the script loading tasks to the first caller to avoid duplicates.
+   * Load given scripts asynchronously.
    * @param {object}   scripts        Object of scripts to load
    *                                  Key is an unique identifier used to check if
    *                                  script has already been loaded
