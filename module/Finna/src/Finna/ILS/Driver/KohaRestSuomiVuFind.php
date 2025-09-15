@@ -403,7 +403,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         return $this->createPatronArray(
             id: $result['borrowernumber'],
             firstname: $result['firstname'],
-            lastname: $result['lastname'],
+            lastname: $result['surname'],
             cat_username: $username,
             cat_password: $password,
             email: $result['email'],

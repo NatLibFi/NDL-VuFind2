@@ -375,7 +375,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         return $this->createProfileArray(
             firstname: $result['firstname'],
-            lastname: $result['lastname'],
+            lastname: $result['surname'],
             phone: $phone,
             address1: $result['address'],
             address2: $result['address2'],

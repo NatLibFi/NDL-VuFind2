@@ -3,7 +3,7 @@
     {
         "borrowernumber": "123123",
         "firstname": "Test",
-        "lastname": "Tester",
+        "surname": "Tester",
         "email": "test@email.fi",
         "branchcode": "12"
     }
