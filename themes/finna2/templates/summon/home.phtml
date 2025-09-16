@@ -1,6 +1,6 @@
 <!-- START of: finna - summon/home.phtml -->
 <?php
-  $this->layout()->finnaMainHeader = $this->component('finna-main-header-page-title', ['title' => $this->translate('Summon Search'), 'level' => 1]);
+  $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->translate('Summon Search'), 'level' => 1, 'class' => 'content-header']);
   // Disable top search box -- this page has a special layout.
 
   // Set default value if necessary:

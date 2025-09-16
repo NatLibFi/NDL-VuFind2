@@ -1,6 +1,6 @@
 <!-- START of: finna - myresearch/account.phtml -->
 <?php
-    $this->layout()->finnaMainHeader = $this->component('finna-main-header-page-title', ['title' => $this->translate($this->message)]);
+    $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->translate($this->message), 'class' => 'finna-main-header']);
 
     // Set up breadcrumbs:
     $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))

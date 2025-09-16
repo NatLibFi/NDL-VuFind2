@@ -1,6 +1,6 @@
 <!-- START of: finna - browse/home.phtml -->
 <?php
-  $this->layout()->finnaMainHeader = $this->component('finna-main-header-page-title', ['title' => $this->translate('Browse the Catalog'), 'level' => 1, 'class' => 'h3']);
+  $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->translate('Browse the Catalog'), 'level' => 1, 'class' => 'h3']);
   $this->breadcrumbs()->set($this->translate('Browse'), $this->url('browse-home'));
 
   $BROWSE_BASE = $this->url('browse-' . strtolower($this->currentAction));

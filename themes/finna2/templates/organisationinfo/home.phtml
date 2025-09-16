@@ -1,6 +1,6 @@
 <!-- START of: finna - organisationinfo/home.phtml -->
 <?php
-  $this->layout()->finnaMainHeader = $this->component('finna-main-header-page-title', ['title' => $this->title, 'class' => '', 'level' => 2]);
+  $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->title]);
 
   $initParams = json_encode(
       [
