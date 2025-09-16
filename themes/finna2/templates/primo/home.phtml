@@ -1,6 +1,6 @@
 <!-- START of: finna - primo/home.phtml -->
 <?php
-  $this->layout()->finnaMainHeader = $this->component('finna-content-header-page-title', ['title' => $this->translate('Primo Search')]);
+  $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->translate('Primo Search'), 'class' => 'content-header', 'level' => 1]);
   // Disable top search box -- this page has a special layout.
 
   // Set default value if necessary:

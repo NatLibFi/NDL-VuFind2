@@ -1,6 +1,6 @@
 <!-- START of: finna - eds/home.phtml -->
 <?php
-  $this->layout()->finnaMainHeader = $this->component('finna-content-header-page-title', ['title' => $this->translate('EDS Search')]);
+  $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->translate('EDS Search'),  'class' => 'content-header', 'level' => 1]);
   // Disable top search box -- this page has a special layout.
 
   // Set default value if necessary:
