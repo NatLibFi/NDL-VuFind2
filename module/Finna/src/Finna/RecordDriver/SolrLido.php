@@ -1151,7 +1151,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
-     * Render a list of record labels.
+     * Return all labels for the record
      *
      * @return array
      */
