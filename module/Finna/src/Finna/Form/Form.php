@@ -443,18 +443,14 @@ class Form extends \VuFind\Form\Form
         }
 
         // Help texts from configuration
-        if ($pre = $this->formConfig['help']['pre'] ?? null) {
-            foreach ((array)$pre as $translation) {
-                if (!$translationEmpty($translation)) {
-                    $preParagraphs[] = $this->translate($translation);
-                }
+        foreach ((array)($this->formConfig['help']['pre'] ?? []) as $translation) {
+            if (!$translationEmpty($translation)) {
+                $preParagraphs[] = $this->translate($translation);
             }
         }
-        if ($post = $this->formConfig['help']['post'] ?? null) {
-            foreach ((array)$post as $translation) {
-                if (!$translationEmpty($translation)) {
-                    $postParagraphs[] = $this->translate($translation);
-                }
+        foreach ((array)($this->formConfig['help']['post'] ?? []) as $translation) {
+            if (!$translationEmpty($translation)) {
+                $postParagraphs[] = $this->translate($translation);
             }
         }
 
