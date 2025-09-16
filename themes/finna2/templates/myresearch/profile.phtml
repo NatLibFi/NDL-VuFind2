@@ -46,7 +46,9 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'profile']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <?=$this->component('finna-useraccount-page-title', ['title' => $this->translate('My Profile')]);?>
+  <div id="useraccount-content-heading" class="useraccount-header">
+    <?=$this->component('page-title', ['title' => $this->translate('My Profile')]);?>
+  </div>
   <div class="my-research-content">
     <div>
       <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>

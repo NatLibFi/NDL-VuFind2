@@ -23,7 +23,9 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <?=$this->component('finna-useraccount-page-title', ['title' => $this->translate('Your Holds and Recalls') . " ($holdsRecallsCount)", 'headTitle' => $this->translate('My Holds')]);?>
+    <div id="useraccount-content-heading" class="useraccount-header">
+      <?=$this->component('page-title', ['title' => $this->translate('Your Holds and Recalls') . " ($holdsRecallsCount)", 'headTitle' => $this->translate('My Holds')]);?>
+    </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
         <div class="support-notice">

@@ -12,7 +12,9 @@
 
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
-  <?=$this->component('finna-useraccount-page-title', ['title' => $title]);?>
+  <div id="useraccount-content-heading" class="useraccount-header">
+    <?=$this->component('page-title', ['title' => $title]);?>
+  </div>
   <?= $this->flashmessages() ?>
   <ul class="reservations-list-home-ul">
     <?php foreach ($this->listEntities ?? [] as $listEntity): ?>

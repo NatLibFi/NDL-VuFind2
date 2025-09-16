@@ -24,7 +24,9 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <?=$this->component('finna-useraccount-page-title', ['title' => $this->translate('Loan History') . " ($recordCount)", 'headTitle' => $this->translate('Loan History')]);?>
+    <div id="useraccount-content-heading" class="useraccount-header">
+      <?=$this->component('page-title', ['title' => $this->translate('Loan History') . " ($recordCount)", 'headTitle' => $this->translate('Loan History')]);?>
+    </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
         <div class="support-notice">
