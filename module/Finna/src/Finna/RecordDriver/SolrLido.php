@@ -1151,26 +1151,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
-     * Add labels to record regarding its resources
+     * Render a list of record labels.
      *
-     * @return string
+     * @return array
      */
-    public function addResourceLabels(): void
+    public function getLabels(): array
     {
-        $labelValues = $labelsToAdd = [];
-        if ($labels = $this->getLabels()) {
-            foreach ($labels as $label) {
-                if ($label['class'] === 'resource-type') {
-                    $labelValues[] = $label['label'];
-                }
-            }
+        if ($this->has3DResources()) {
+            return array_merge($this->labels, [['label' => '3D', 'class' => 'resource-type']]);
         }
-        if ($this->has3DResources() && !in_array('3D', $labelValues)) {
-            $labelsToAdd[] = '3D';
-        }
-        foreach ($labelsToAdd as $addLabel) {
-            $this->addLabel($addLabel, 'resource-type');
-        }
+        return $this->labels;
     }
 
     /**

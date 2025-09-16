@@ -11,10 +11,9 @@
       <th scope="rowgroup"><?=$header?></th>
     </tr>
   <?php endif; ?>
-  <?php $showLabel = $current['context']['showLabel'] ?? null; ?>
     <tr>
       <td>
-        <?=$current['value']?><?php if ($showLabel):?> <?=$this->record($this->driver)->getLabelList();?><?php endif; ?>
+        <?=$current['value']?>
       </td>
     </tr>
   </tbody>
