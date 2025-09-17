@@ -288,19 +288,17 @@ a.authority {
 .record-core-metadata {
   @include date-and-year();
   margin-top: 6px;
-  .recordContainerReference {
-    padding-bottom: 1em;
-    padding-top: 1em;
-    a {
-      font-size: 1.2em;
-      text-decoration: underline;
-      font-weight: 700;
-    }
+  .recordContainerReference a {
+    font-size: 1.2em;
+    text-decoration: underline;
+    font-weight: 700;
   }
   .recordPublished {
     font-weight: 700;
   }
   .published-in {
+    padding-bottom: 1em;
+    padding-top: 1em;
     display: flex;
   }
   .container-reference-links {
