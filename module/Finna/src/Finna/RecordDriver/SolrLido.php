@@ -1173,14 +1173,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         if ($this->getModels()) {
             return true;
         }
-        if ($documents = $this->getDocuments()) {
-            foreach ($documents as $document) {
-                if ($document['label'] === '3D') {
-                    return true;
-                }
-            }
-        }
-        return false;
+        return in_array('3D', array_column($this->getDocuments(), 'label'));
     }
 
     /**
