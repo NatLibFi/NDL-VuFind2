@@ -29,8 +29,6 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use function in_array;
-
 /**
  * Additional functionality for Finna SolrAuth records.
  *
@@ -319,19 +317,6 @@ trait SolrAuthFinnaTrait
         return isset($this->fields['datasource_str_mv'])
             ? ((array)$this->fields['datasource_str_mv'])[0]
             : '';
-    }
-
-    /**
-     * Check if datasource is a hidden field
-     *
-     * @return boolean
-     */
-    public function isDataSourceHidden(): bool
-    {
-        if ($hiddenFields = $this->datasourceSettings[$this->getDataSource()]['hidden_record_fields'] ?? null) {
-            return in_array('Sources', $hiddenFields->toArray());
-        }
-        return false;
     }
 
     /**
