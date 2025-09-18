@@ -218,20 +218,21 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
                 // Get data for field
                 $tmp = $this->getFieldData($field);
+                if (!$tmp) {
+                    continue;
+                }
 
                 $tmp['isCollection'] = false;
                 if ($value == '730') {
                     // getfieldData doesn't handle subfield a (it's not the same for
                     // other fields), so do it now if we didn't get a title:
-                    if ($tmp) {
-                        if ('' === $tmp['value']) {
-                            $tmp['value'] = $this->getSubfield($field, 'a');
-                            if ('title' === $tmp['link']['type']) {
-                                $tmp['link']['value'] = $tmp['value'];
-                            }
-                            // get also subfield g for related misc info
-                            $tmp['misc'] = $this->getSubfield($field, 'g');
+                    if ('' === $tmp['value']) {
+                        $tmp['value'] = $this->getSubfield($field, 'a');
+                        if ('title' === $tmp['link']['type']) {
+                            $tmp['link']['value'] = $tmp['value'];
                         }
+                        // get also subfield g for related misc info
+                        $tmp['misc'] = $this->getSubfield($field, 'g');
                     }
                 } elseif ($value == '775' || $value == '776') {
                     // We need to display most of the subfields in this case
