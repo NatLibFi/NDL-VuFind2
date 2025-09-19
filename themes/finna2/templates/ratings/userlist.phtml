@@ -8,11 +8,11 @@
   $user = $this->auth()->getUserObject();
 ?>
 
-<?php $this->headTitle($this->translate('Ratings'));?>
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'usercontent']); ?>
 
 <div class="<?=$this->layoutClass('mainbody')?>">
+  <?=$this->component('page-title', ['title' => $this->translate('Ratings')]);?>
   <ul class="nav nav-tabs" role="tablist">
     <?php foreach ($tabs as $tab => $title): ?>
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='ratings' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
@@ -89,7 +89,7 @@
                   <a href="<?=$this->url('record', ['id' => $rating['record_id']])?>"><?=$this->escapeHtml($rating['recordTitle'])?></a>
                 <?php else: ?>
                   <div>
-                    <p><?=$rating['recordTitle']?></p>
+                    <p><?=$this->escapeHtml($rating['recordTitle'])?></p>
                     <div class="truncate-field other-organisation-links" data-rows="-1" data-label="<?=$this->transEscAttr('show_instances')?>">
                         <?php foreach ($rating['mergedData']['records'] ?? [] as $current): ?>
                         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">

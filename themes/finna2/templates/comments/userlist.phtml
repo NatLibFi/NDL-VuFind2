@@ -7,12 +7,12 @@
   $tabs = $this->accountCapabilities()->getUserContentTabs();
   $user = $this->auth()->getUserObject();
 ?>
-<?php $this->headTitle($this->translate('Comments'));?>
 
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'usercontent']); ?>
 
 <div class="<?=$this->layoutClass('mainbody')?>">
+  <?=$this->component('page-title', ['title' => $this->translate('Comments')]);?>
   <ul class="nav nav-tabs" role="tablist">
     <?php foreach ($tabs as $tab => $title): ?>
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='comments' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
@@ -98,7 +98,7 @@
                   <a href="<?=$this->url('record', ['id' => $comment['record_id']])?>"><?=$this->escapeHtml($comment['recordTitle'])?></a>
                 <?php else: ?>
                   <div>
-                    <p><?=$comment['recordTitle']?></p>
+                    <p><?=$this->escapeHtml($comment['recordTitle'])?></p>
                     <div class="truncate-field other-organisation-links" data-rows="-1" data-label="<?=$this->transEscAttr('show_instances')?>">
                       <?php foreach ($comment['mergedData']['records'] ?? [] as $current): ?>
                         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">

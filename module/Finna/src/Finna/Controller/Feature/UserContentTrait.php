@@ -84,6 +84,7 @@ trait UserContentTrait
             $c['recordTitle'] = $records[$i]->getTitle() ?? '';
             $c['mergedData'] = $records[$i]->tryMethod('getMergedRecordData');
         }
+        unset($c);
         return $contents;
     }
 
