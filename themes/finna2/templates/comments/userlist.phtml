@@ -89,7 +89,7 @@
                         'content' => '<h4>' . $this->transEsc('comment_hidden') . '</h4>' . $this->translate('comment_hidden_by_admin_html'),
                       ];
                     ?>
-                  <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
+                    <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
                   <?php endif; ?>
               </td>
               <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment['created'])?></td>
