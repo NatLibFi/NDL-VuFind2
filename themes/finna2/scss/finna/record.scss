@@ -72,18 +72,6 @@
       }
     }
   }
-  finna-video.videourl, button.videourl {
-    display: flex;
-    align-items: center;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: $btn-default-color;
-    margin-bottom: 6px;
-    i {
-      margin-right: 4px;
-      font-size: 24px;
-    }
-  }
 
   @media print {
     .organisation-menu {
