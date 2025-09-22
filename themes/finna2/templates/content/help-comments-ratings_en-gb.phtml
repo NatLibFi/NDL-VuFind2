@@ -2,7 +2,7 @@
 <?php $this->headTitle($this->translate('tabs_help-comments-ratings'))?>
 
 <?php if ($this->resolver('content/help-tabs.phtml')): ?>
-    <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-comments-ratings'])?>
+  <?=$this->render('content/help-tabs.phtml', ['activeTab' => 'help-comments-ratings'])?>
 <?php endif; ?>
 <div class="sidebar left">
   <div class="content-navigation-menu">
@@ -36,7 +36,7 @@
     </p>
     <p>Comments violating the following principles are hidden:</p>
     <ul class="list-bullets">
-      <li>Comments containing <a href="https://commission.europa.eu/law/law-topic/data-protection/rules-business-and-organisations/legal-grounds-processing-data/sensitive-data/what-personal-data-considered-sensitive_en">sensitive personal information</a> or information pertaining to anyone’s personal life. The privacy of others is protected.</li>
+      <li>Comments containing <a href="https://commission.europa.eu/law/law-topic/data-protection/rules-business-and-organisations/legal-grounds-processing-data/sensitive-data/what-personal-data-considered-sensitive_en" target="_blank">sensitive personal information</a> or information pertaining to anyone’s personal life. The privacy of others is protected.</li>
       <li>Comments naming a potentially living person, unless said person is already named in the material itself or is a well-known public figure.</li>
       <li>Offensive comments pertaining to the gender, age, origin, language, religion or other personal characteristics of the author or persons otherwise present in the material. Comments should be relevant to the material.</li>
     </ul>
@@ -47,7 +47,7 @@
       <li>Questions to the material provider and usability issues should be primarily submitted through the relevant forms.</li>
     </ul>
     <p>If necessary, you can also edit or delete a comment you have made.</p>
-    <p>Your comment will be published under your name or alias in all Finna search services and online libraries where the material is displayed. All comments are public. You can deploy an alias and change it <a href="<?=$this->url('myresearch-profile')?>">here.</p>
+    <p>Your comment will be published under your name or alias in all Finna search services and online libraries where the material is displayed. All comments are public. You can deploy an alias and change it <a href="<?=$this->url('myresearch-profile')?>">here.</a></p>
   </div>
 </div>
 <!-- END of: finna - content/help-comments-ratings_en-gb.phtml -->
