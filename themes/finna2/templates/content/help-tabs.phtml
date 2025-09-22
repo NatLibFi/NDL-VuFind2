@@ -1,5 +1,5 @@
 <!-- START of: finna - Content/help-tabs.phtml -->
-<?php 
+<?php
   $items = [
     [
       'active' => 'help' === $this->activeTab,
@@ -23,7 +23,7 @@
     ],
   ];
   if ('enabled' === $this->accountCapabilities()->getCommentSetting()) {
-    $items[] = 
+    $items[] =
       [
         'active' => 'help-comments-ratings' === $this->activeTab,
         'label' => $this->translate('tabs_help-comments-ratings'),
@@ -32,17 +32,17 @@
   }
 ?>
 <?= $this->component(
-  'finna-multi-level-nav',
-  [
-    'ariaLabel' => $this->translate('Help'),
-    'attributes' => [
-      'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg'],
-    ],
-    'brandContent' => $this->transEsc('tabs_' . $this->activeTab),
-    'collapseId' => 'nav-help-collapse',
-    'items' => $items,
-    'toggleBtnLabel' => $this->transEsc('More'),
-  ]
+    'finna-multi-level-nav',
+    [
+      'ariaLabel' => $this->translate('Help'),
+      'attributes' => [
+        'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg'],
+      ],
+      'brandContent' => $this->transEsc('tabs_' . $this->activeTab),
+      'collapseId' => 'nav-help-collapse',
+      'items' => $items,
+      'toggleBtnLabel' => $this->transEsc('More'),
+    ]
 );
 ?>
 <!-- END of: finna - Content/help-tabs.phtml -->
