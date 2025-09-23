@@ -91,7 +91,7 @@
           <?=$this->component('finna-toggletip', [
             'icon' => 'help',
             'contentHtml' => $this->translate("tooltip_{$tooltipSource}_advanced_html"),
-            'labelHtml' => $this->transEsc('Help with Advanced Search'),
+            'labelHtml' => '<span class="toggletip-label">' . $this->transEsc('Help with Advanced Search') . '</span>',
             'class' => 'tooltip-pci-advanced float-end',
           ])?>
         <?php endif; ?>
