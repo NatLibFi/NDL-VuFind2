@@ -199,8 +199,9 @@
 .list-title {
   margin-bottom: 0;
   margin-top: 0px;
-  i.list-title-edit {
+  .icon.list-title-edit {
     margin-bottom: -22px;
+    cursor: pointer;
   }
   &.no-edit {
     border: 0;
@@ -221,7 +222,7 @@
 
 .list-title, .add-new-list {
   border: 1px solid transparent;
-  display: inline-block;
+  display: flex;
   padding: 5px;
   width: -webkit-calc(100% - 30px);
   width: -moz-calc(100% - 30px);
@@ -229,16 +230,16 @@
   width: 100%;
   &:hover, &:active, &:focus {
     border: 1px solid $gray-lighter;
-    i {
+    .icon {
       transition: all 0.2s linear;
       color: $gray;
     }
   }
-  i {
+  .icon {
     color: $gray-light;
-    float: right;
+    cursor: pointer;
   }
-  span {
+  .list-title-container {
     width: 100%;
     display: inline-block;
     word-wrap: break-word;

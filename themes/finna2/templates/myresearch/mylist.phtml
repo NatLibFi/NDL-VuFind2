@@ -55,7 +55,7 @@
           <h2><?=$this->transEsc('saved_items')?></h2>
         </div>
         <div class="useraccount-header">
-          <h3 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->getTitle())?></span></h3>
+          <h3 class="list-title"><span class="list-title-container"><?=$this->escapeHtml($list->getTitle())?></span><?=$this->icon('list-edit', ['class' => 'list-title-edit', 'aria-hidden' => 'false', 'aria-label' => $this->transEscAttr('edit')])?></h3>
         </div>
         <?php if ($list && $user && $list->getUser()->getId() === $user->getId() && $list->isPublic()): ?>
           <div class="list-public-indicator">
