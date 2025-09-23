@@ -51,7 +51,7 @@
         display: block;
         margin-bottom: 0px;
         color: $gray;
-        i {
+        .icon {
             padding-right: 5px;
         }
     }
@@ -692,9 +692,6 @@ finna-feed {
             background: none;
             font-size: 20px;
             padding: 0 5px;
-            i {
-                cursor: pointer;
-            }
             &:not(.is-active) {
                 .pause-icon {
                     display: none;
