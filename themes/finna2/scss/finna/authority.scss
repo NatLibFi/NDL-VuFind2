@@ -36,7 +36,7 @@ a.authority-link {
   &::after {
     margin-left: 5px;
   }
-  i {
+  .icon {
     margin-right: 0.1em;
     font-size: $iconFontSize;
   }
@@ -108,7 +108,7 @@ a.authority-link {
     .link-text {
       font-size: 0.9em;
     }
-    i {
+    .icon {
       margin-right: 0.1em;
       font-size: $iconFontSize;
     }
