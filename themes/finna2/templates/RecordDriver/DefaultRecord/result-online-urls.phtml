@@ -73,7 +73,8 @@
               ]);
             ?>
           <?php else: ?>
-            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><?=$this->icon('external-link') ?>
+            <?php $icon = isset($url['linkType']) && $url['linkType'] === 'proxy-link' ? 'download' : 'external-link'; ?>
+            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><?=$this->icon($icon) ?>
               <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
             </a>
           <?php endif; ?>

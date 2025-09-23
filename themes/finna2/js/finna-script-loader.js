@@ -47,26 +47,7 @@ finna.scriptLoader = (() => {
     handlePromise(scriptsLoaded);
   }
 
-  /**
-   * Load given scripts asynchronously. First are the scripts to be loaded before
-   * the last scripts can be loaded.
-   * @param {object}   first          First scripts to load.
-   *                                  Key is an unique identifier used to check if
-   *                                  script has already been loaded
-   *                                  Value is the js file name to load
-   * @param {object}   last           Last scripts to load.
-   *                                  Key is an unique identifier used to check if
-   *                                  script has already been loaded
-   *                                  Value is the js file name to load
-   * @param {?Function} scriptsLoaded Callback when the scripts are loaded
-   */
-  function loadInOrder(first, last, scriptsLoaded) {
-    let combined = Object.assign({}, first, last);
-    load(combined, scriptsLoaded);
-  }
-
   return {
-    load,
-    loadInOrder
+    load
   };
 })();

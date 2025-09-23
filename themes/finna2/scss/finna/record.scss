@@ -110,7 +110,7 @@
       border: 0;
     }
   }
-  .record-versions {
+  .record-versions, .record-to-componentparts-link {
     font-size: 0.9em;
     margin-top: 6px;
     &:not(.loading) {
@@ -288,17 +288,21 @@ a.authority {
 .record-core-metadata {
   @include date-and-year();
   margin-top: 6px;
-  .recordContainerReference {
-    padding-bottom: 1em;
-    padding-top: 1em;
-    a {
-      font-size: 1.2em;
-      text-decoration: underline;
-      font-weight: 700;
-    }
+  .recordContainerReference a {
+    font-size: 1.2em;
+    text-decoration: underline;
+    font-weight: 700;
   }
   .recordPublished {
     font-weight: 700;
+  }
+  .published-in {
+    padding-bottom: 1em;
+    padding-top: 1em;
+    display: flex;
+  }
+  .container-reference-links {
+    padding-left: 1em;
   }
 }
 
@@ -319,7 +323,7 @@ a.authority {
       }
     }
   }
-  .record-child-collections {
+  .recordLinks, .record-child-collections {
     .contained-in:not(:last-child) {
       padding-bottom: 0.5rem;
     }
@@ -351,6 +355,15 @@ a.authority {
   }
   ul.truncate-field {
     margin-bottom: 0;
+  }
+  > .label-resource-type {
+    display: none;
+  }
+  .recordFormat .label {
+    display: none;
+    &.label-info, &.label-resource-type {
+      display: inline-block;
+    }
   }
 }
 
@@ -942,14 +955,14 @@ finna-model-viewer .object-editor {
   display: inline-block;
 
   .show-info {
-    i {
+    .icon {
       font-size: 1.0rem;
       vertical-align: middle;
     }
-    i.expand {
+    .icon.expand {
       display: inline-block;
     }
-    i.collapse {
+    .icon.collapse {
       display: none;
     }
   }
@@ -987,16 +1000,20 @@ finna-model-viewer .object-editor {
     .popover-external-links {
       margin-top: 1rem;
     }
+    .content, .popover-external-links {
+      display: flex;
+      flex-direction: column;
+    }
   }
   // Note: there can be nested popovers, so make sure to match the immediate child:
   &.open > .field-popover {
     display: block;
   }
   &.open > .show-info {
-    i.expand {
+    .icon.expand {
       display: none;
     }
-    i.collapse {
+    .icon.collapse {
       display: inline-block;
     }
   }
