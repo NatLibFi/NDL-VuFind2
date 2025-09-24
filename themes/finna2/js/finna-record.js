@@ -499,35 +499,6 @@ finna.record = (function finnaRecord() {
   }
 
   /**
-   * Initialize js container components and try to fetch their contents
-   */
-  function loadJsContainers()
-  {
-    document.querySelectorAll('.vc-finna-js-container.init').forEach(element => {
-      const method = element.dataset.method;
-      if (method) {
-        const urlParams = {
-          id: element.dataset.id,
-          method: method,
-        };
-        const dataSource = element.dataset.source;
-        if (dataSource) {
-          urlParams.source = dataSource;
-        }
-        fetch(VuFind.path + '/AJAX/JSON?' + new URLSearchParams(urlParams))
-          .then(response => response.json())
-          .then(result => {
-            if (result.data && result.data.html) {
-              VuFind.setInnerHtml(element, VuFind.updateCspNonce(result.data.html));
-              element.classList.remove('init');
-              element.classList.add('done');
-            }
-          });
-      }
-    });
-  }
-
-  /**
    * Initialize record versions support function
    * @param {jQuery} _holder Container to init
    */
@@ -706,7 +677,6 @@ finna.record = (function finnaRecord() {
     initAudioAccordion();
     applyRecordAccordionHash(initialToggle);
     $(window).on('hashchange', applyRecordAccordionHash);
-    loadJsContainers();
     finna.authority.initAuthorityResultInfo();
     initPopovers();
   }
