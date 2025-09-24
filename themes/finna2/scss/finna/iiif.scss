@@ -1,0 +1,36 @@
+@use 'sass:color';
+
+.record-viewer-container {
+    padding: 0;
+
+}
+
+.iiif-manifest-url-container {
+    display: none;
+}
+
+#tify {
+    height: 65vh;
+}
+
+.record-iiif-toolbar {
+    border-top: thin solid $gray-lighter;
+    background-color: $gray-ultralight;
+    padding-bottom: 1ex;
+    padding-top: 1ex;
+    margin-bottom: $field-margin-vertical;
+}
+
+.iiif-menu-button-badge {
+    min-width: 28pt;
+    min-height: 28pt;
+    max-height: 33%;
+    max-width: 33%;
+    margin-block-end: 3pt;
+    margin-inline-end: 3pt;
+
+    img.bi {
+        width: 98%;
+        height: 98%;
+    }
+}

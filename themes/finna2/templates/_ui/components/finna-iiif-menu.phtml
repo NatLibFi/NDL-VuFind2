@@ -1,0 +1,60 @@
+<?php
+/**
+ * Dropdown menu for IIIF functions
+ *
+ * @param string    manifestURL    URL of IIIF manifest to work with
+ * @param ?string   uniqueID       Any unique string to be appended to the id
+ *                                 attribute of a span containing the manifest
+ *                                 URL for copying to the clipboard
+ * @param ?bool     alignRight     Align the menu to the trigger button on the
+ *                                 right-hand edge
+ */
+$encodedManifest = urlencode($this->manifestURL);
+$r = $this->alignRight ? "dropdown-menu-end" : "";
+$urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? "");
+?>
+<span class="iiif-manifest-url-container"
+      id="<?=$urlContainerId?>"
+      aria-hidden="true">
+  <?=$this->manifestURL?>
+</span>
+<ul class="dropdown-menu <?=$r?>">
+  <li>
+    <span class="dropdown-header fs-5">
+      <?=$this->transEsc('iiif_manifest')?>
+    </span>
+  </li>
+  <li>
+    <a class="dropdown-item btn toolbar-btn" href="<?=$this->manifestURL?>"
+      target="_blank" rel="nofollow" class="iiif-manifest-url-link">
+      <?=$this->icon('external-link')?>
+      <?=$this->transEsc('Open in a new window')?>
+    </a>
+  </li>
+  <li class="iiif-manifest-url-list-item">
+    <span class="dropdown-item">
+      <?=$this->copyToClipboardButton("#$urlContainerId", false);?>
+    </span>
+  </li>
+  <li>
+    <span class="dropdown-header fs-5">
+      <?=$this->transEsc('open_in_external_viewer')?>
+    </span>
+  </li>
+  <li>
+    <a class="dropdown-item btn toolbar-btn"
+      href="https://uv-v4.netlify.app/#?manifest=<?=$encodedManifest?>"
+      target="_blank" rel="nofollow">
+      <?=$this->icon('external-link')?>
+      Universal Viewer
+    </a>
+  </li>
+  <li>
+    <a class="dropdown-item btn toolbar-btn"
+      href="https://projectmirador.org/embed/?iiif-content=<?=$encodedManifest?>"
+      target="_blank" rel="nofollow">
+      <?=$this->icon('external-link')?>
+      Mirador
+    </a>
+  </li>
+</ul>

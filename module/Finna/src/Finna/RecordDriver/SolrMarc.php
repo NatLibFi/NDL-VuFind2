@@ -55,6 +55,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     use Feature\SolrFinnaTrait;
     use Feature\FinnaMarcReaderTrait;
     use Feature\FinnaUrlCheckTrait;
+    use Feature\FinnaIiifTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -163,6 +164,31 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         }
 
         return false;
+    }
+
+    /**
+     * Get all IIIF manifests.
+     *
+     * Finds all 'u' subfields in field 856 with 'q' matching a IIIF
+     * Presentation API content type.
+     *
+     * @return array
+     */
+    public function getAllIiifManifests()
+    {
+        $reader = $this->getMarcReader();
+        $field856 = $reader->getFields('856', ['q', 'u']);
+        $manifests = [];
+        foreach ($field856 as $field) {
+            $u = $reader->getSubfield($field, 'u');
+            if (
+                $u
+                && $this->isIiifPresentationManifest($reader->getSubfield($field, 'q'))
+            ) {
+                $manifests[] = $u;
+            }
+        }
+        return $manifests;
     }
 
     /**

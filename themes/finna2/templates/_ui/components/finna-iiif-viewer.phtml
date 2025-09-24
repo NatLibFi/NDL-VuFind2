@@ -1,0 +1,57 @@
+<?php
+/**
+ * Viewer for IIIF manifests and collections.
+ *
+ * @param string    manifestURL    URL of IIIF manifest to load
+ * @param ?string   language       UI language for the viewer
+ */
+$manifestEsc = addslashes($this->manifestURL);
+$cssPath = $this->scriptSrc('vendor/tify/tify.css');
+?>
+
+<link rel="stylesheet" href="<?= $cssPath; ?>">
+
+<div class="record-viewer-container container">
+    <div class="tify" id="tify"></div>
+</div>
+
+<div class="record-iiif-toolbar container">
+    <span class="record-iiif-functions dropdown hstack gap-3">
+        <button type="button" class="btn btn-outline-primary p-2 ms-auto icon-link" href="#">
+            <?= $this->icon('download') ?>
+            <?= $this->transEsc('download_image') ?>
+        </button>
+        <button type="button" class="btn btn-outline-primary p-2 icon-link" data-bs-toggle="dropdown"
+            aria-expanded="false">
+            <img src="<?= $this->imageSrc()->getSourceAddress('iiif_logo.min') ?>" alt="IIIF" class="bi">
+            <?= $this->transEsc('iiif_tools') ?>
+            <?= $this->icon('angle-down') ?>
+        </button>
+        <?= $this->component(
+            'finna-iiif-menu',
+            [
+                'manifestURL' => $this->manifestURL,
+                'alignRight' => true
+            ]
+        ); ?>
+    </span>
+</div>
+
+<?php
+$tifyJsPath = $this->scriptSrc('vendor/tify/tify.js');
+$tifyJsPathEsc = addslashes($tifyJsPath);
+$languageEsc = addslashes($this->language ?? 'fi');
+
+$js = <<<JS
+    import Tify from '$tifyJsPathEsc';
+    const config = {
+      container: "#tify",
+      manifestUrl: "$manifestEsc",
+      language: "$languageEsc",
+    };
+    new Tify(config);
+    JS;
+
+echo $this->assetManager()->outputInlineScriptString($js, ["type" => "module"]);
+?>
+
