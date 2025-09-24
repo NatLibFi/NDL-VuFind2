@@ -151,15 +151,9 @@
         &.inactive {
             color: $gray-lighter;
             cursor: not-allowed;
-            i {
-                cursor: not-allowed;
-            }
         }
         &:focus-visible {
             box-shadow: $focus-ring-light-box-shadow;
-        }
-        i {
-            cursor: pointer;
         }
     }
 }
@@ -425,7 +419,7 @@
         }
         .popup-link-buttons {
             margin-bottom: 20px;
-            i {
+            .icon {
                 margin-right: 2px;
             }
         }
@@ -690,8 +684,7 @@
                 background-color: transparent;
                 padding: 0 2px;
                 flex: 0 0 0;
-            i {
-                cursor: pointer;
+            .icon {
                 font-size: 24px;
             }
             .finna-popup &:not(:disabled){
@@ -705,7 +698,7 @@
             &:disabled {
                 background-color: #d6d6d600;
                 color: transparent;
-                i {
+                .icon {
                     cursor: not-allowed;
                 }
             }
@@ -792,11 +785,8 @@
         flex: 1;
         appearance: none;
         border: none;
-        i {
-            cursor: pointer;
-        }
     }
-    button:disabled i {
-        cursor: initial;
+    button:disabled {
+        cursor: not-allowed;
     }
 }
