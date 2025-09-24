@@ -29,12 +29,12 @@
             $settingNameEsc = $this->transEscWithPrefix('messaging_settings_setting_', $settingName);
           ?>
           <div class="form-group">
-            <label<?='select' == $setting['type'] ? ' class="form-label"' : ''?>><?=$settingName?>:</label>
+            <label<?='select' == $setting['type'] ? ' class="form-label"' : ''?>><?=$settingNameEsc?>:</label>
             <?php if ('boolean' == $setting['type']): ?>
               <div class="checkbox">
                 <label>
                   <input type="checkbox" name="<?=$this->escapeHtmlAttr($serviceId . '_' . $settingId)?>" value="1"<?php if ($setting['active']): ?> checked<?php endif; ?><?php if (!empty($setting['readonly'])): ?> disabled<?php endif; ?>>
-                  <?=$settingName?>
+                  <?=$settingNameEsc?>
                 </label>
               </div>
             <?php elseif ('multiselect' == $setting['type']): ?>
