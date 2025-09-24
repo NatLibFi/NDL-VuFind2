@@ -45,3 +45,9 @@ defined('VUFIND_DEFAULT_LATEST_YEAR_OFFSET') || define('VUFIND_DEFAULT_LATEST_YE
 
 // Define default API key header field name
 defined('VUFIND_API_KEY_DEFAULT_HEADER_FIELD') || define('VUFIND_API_KEY_DEFAULT_HEADER_FIELD', 'X-API-KEY');
+
+// Define IIIF Presentation API manifest content type regex pattern
+defined('IIIF_MANIFEST_CONTENT_TYPE_V3_REGEX') || define(
+    'IIIF_MANIFEST_CONTENT_TYPE_V3_REGEX',
+    '/application\/ld(\+json)?;profile="http:\/\/iiif.io\/api\/presentation\/3\/context.json"/'
+);

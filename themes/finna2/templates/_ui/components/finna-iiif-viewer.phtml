@@ -1,0 +1,84 @@
+<?php
+/**
+ * Viewer for IIIF manifests and collections.
+ *
+ * @param string    manifestURL    URL of IIIF manifest to load
+ */
+$manifestEsc = addslashes($this->manifestURL);
+$encodedManifest = urlencode($this->manifestURL);
+?>
+
+<div class="record-viewer-container container">
+  <div class="uv" id="uv" id="<?=$this->manifestURL?>"></div>
+  <span id="iiif-manifest-url-container" aria-hidden="true">
+    <?=$this->manifestURL?>
+  </span>
+</div>
+
+<div class="record-iiif-toolbar container">
+  <span class="record-iiif-functions dropdown hstack gap-3">
+    <button type="button" class="btn btn-outline-primary p-2 ms-auto icon-link" href="#">
+      <?=$this->icon('download')?>
+      <?=$this->transEsc('download_image')?>
+    </button>
+    <button type="button" class="btn btn-outline-primary p-2 icon-link" data-bs-toggle="dropdown" aria-expanded="false">
+      <img src="<?=$this->imageSrc()->getSourceAddress('iiif_logo.min')?>" alt="IIIF" class="bi">
+      <?=$this->transEsc('iiif_tools')?>
+      <?=$this->icon('angle-down')?>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li>
+        <span class="dropdown-header fs-5">
+          <?=$this->transEsc('iiif_manifest')?>
+        </span>
+      </li>
+      <li>
+        <a class="dropdown-item btn toolbar-btn" href="<?=$this->manifestURL?>"
+          target="_blank" rel="nofollow" id="iiif-manifest-url-link">
+          <?=$this->icon('external-link')?>
+          <?=$this->transEsc('Open in a new window')?>
+        </a>
+      </li>
+      <li id="iiif-manifest-url-list-item">
+        <span class="dropdown-item">
+          <?=$this->copyToClipboardButton('#iiif-manifest-url-container', false);?>
+        </span>
+      </li>
+      <li>
+        <span class="dropdown-header fs-5">
+          <?=$this->transEsc('open_in_external_viewer')?>
+        </span>
+      </li>
+      <li>
+        <a class="dropdown-item btn toolbar-btn"
+          href="https://uv-v4.netlify.app/#?manifest=<?=$encodedManifest?>"
+          target="_blank" rel="nofollow">
+          <?=$this->icon('external-link')?>
+          Universal Viewer
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item btn toolbar-btn"
+          href="https://projectmirador.org/embed/?iiif-content=<?=$encodedManifest?>"
+          target="_blank" rel="nofollow">
+          <?=$this->icon('external-link')?>
+          Mirador
+        </a>
+      </li>
+    </ul>
+  </span>
+</div>
+
+<?php
+$js = <<<JS
+    const data = {
+      manifest: "$manifestEsc",
+      embedded: true
+    };
+
+    uv = UV.init("uv", data);
+    JS;
+
+echo $this->assetManager()->outputInlineScriptLink($this->scriptSrc('vendor/UV/UV.js'));
+echo $this->assetManager()->outputInlineScriptString($js);
+?>

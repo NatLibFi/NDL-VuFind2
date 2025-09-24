@@ -120,6 +120,13 @@
       </div>
     <?php endif; ?>
   <?php endif; ?>
+  <?php $iiifManifests = $this->driver->tryMethod('getAllIiifManifests');
+    if ($iiifManifests):
+      echo $this->record($this->driver)->renderTemplate(
+          'record-iiif-viewer.phtml',
+          ['manifests' => $iiifManifests]
+      );
+    endif; ?>
   <div class="record-main <?= (!$fullWidthLayout && !$largeImageLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">

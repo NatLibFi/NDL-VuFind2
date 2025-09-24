@@ -1,0 +1,13 @@
+{
+  "name": "finna2",
+  "description": "Dependencies for finna2 theme",
+  "scripts": {
+    "installBuildDeps": "npm install --no-audit && node tools/copyDependencies.mjs --only-build-deps",
+    "updateDeps": "npm update && node tools/copyDependencies.mjs"
+  },
+  "author": "",
+  "license": "GPL-2.0-only",
+  "dependencies": {
+    "universalviewer": "^4"
+  }
+}
