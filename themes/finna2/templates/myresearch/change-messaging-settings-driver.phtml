@@ -26,7 +26,7 @@
           } ?>
           <?php
             $settingName = !empty($setting['name']) ? $setting['name'] : $settingId;
-            $settingName = $this->transEscWithPrefix('messaging_settings_setting_', $settingName);
+            $settingNameEsc = $this->transEscWithPrefix('messaging_settings_setting_', $settingName);
           ?>
           <div class="form-group">
             <label<?='select' == $setting['type'] ? ' class="form-label"' : ''?>><?=$settingName?>:</label>
