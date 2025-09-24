@@ -69,7 +69,12 @@
           'inline' => $inlineVideo,
         ]);
       ?>
-      <?php if ($showDetails && !$inlineVideo): ?>
+      <?php
+        if ($showDetails && !$inlineVideo):
+          if ($fileSize = $url['data']['size'] ?? '') {
+            $fileSize = !empty($fileSize['value']) && $fileSize['unit'] === 'byte' ? '(' . $this->fileSize($fileSize['value']) . ')' : '';
+          }
+      ?>
         <div class="resource-details">
           <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a> <span class="file-size"><?=$fileSize?></span></div>
           <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
