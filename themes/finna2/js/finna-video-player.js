@@ -130,9 +130,16 @@ finna.videoPlayer = (() => {
           .replace('%%consentCategories%%', element.dataset.consentTitle)
           .replace('%%serviceBaseUrl%%', serviceBase.hostname);
       }
-      VuFind.lightbox.render(wrapper.outerHTML);
-      overrideModalClass('finna-consent-modal');
-      const ccPreferences = document.getElementById('modal').querySelector('.embedded-content-actions button');
+      let consentHolder;
+      if (element.dataset.inline) {
+        consentHolder = document.getElementById('inline-video');
+        consentHolder.replaceChildren(wrapper);
+      } else {
+        VuFind.lightbox.render(wrapper.outerHTML);
+        overrideModalClass('finna-consent-modal');
+        consentHolder = document.getElementById('modal');
+      }
+      const ccPreferences = consentHolder.querySelector('.embedded-content-actions button');
       if (ccPreferences) {
         // Set cookie consent preferences event after the modal has been initialized as the lightbox handles elements
         // as a string, so it loses all the events applied before rendering
@@ -147,40 +154,25 @@ finna.videoPlayer = (() => {
   /**
    * Sets the video elements click event.
    * @param {HTMLElement} element Element which displays the video popup
-   * @param {Function} onClick Function to run when clicking the button.
    */
-  function setElementClickEvent(element, onClick)
+  function setIFrameStateFromConsent(element)
   {
     if (VuFind.cookie.isServiceAllowed(element.dataset.consent)) {
       element.addEventListener('click', () => {
         document.querySelectorAll('.vc-finna-video-button').forEach(b => b.classList.remove('active-video'));
-        onClick(element);
+        element.classList.add('active-video');
+        onIFrameOpen(element);
       });
       if (element.classList.contains('active-video')) {
-        element.click();
+        onIFrameOpen(element);
       }
+      return;
     } else {
       // We should display a consent approval here
       element.addEventListener('click', () => { displayConsentWindow(element); });
-    }
-  }
-
-  /**
-   * Function to check for consent config initialization.
-   * @param {HTMLElement} element Element to check consent for
-   * @param {Function} onClick Function to run when clicking the button.
-   */
-  function waitConsentInitialized(element, onClick)
-  {
-    const consentInitialized = VuFind.cookie.getConsentConfig();
-
-    // If consent configuration has not been initialized, wait for it
-    if (!consentInitialized) {
-      VuFind.listen('cookie-consent-initialized', () => {
-        setElementClickEvent(element, onClick);
-      });
-    } else {
-      setElementClickEvent(element, onClick);
+      if (element.dataset.inline && element.classList.contains('active-video')) {
+        displayConsentWindow(element);
+      }
     }
   }
 
@@ -196,7 +188,16 @@ finna.videoPlayer = (() => {
     if (!element || element.classList.contains('initialized')) {
       return;
     }
-    waitConsentInitialized(element, onIFrameOpen);
+
+    const consentInitialized = VuFind.cookie.getConsentConfig();
+    // If consent configuration has not been initialized, wait for it
+    if (!consentInitialized) {
+      VuFind.listen('cookie-consent-initialized', () => {
+        setIFrameStateFromConsent(element);
+      });
+    } else {
+      setIFrameStateFromConsent(element);
+    }
   }
 
   /**
@@ -214,7 +215,13 @@ finna.videoPlayer = (() => {
     }
     finna.scriptLoader.load(requiredVideoScripts, () => {
       finna.scriptLoader.load(dependantVideoScripts, () => {
-        waitConsentInitialized(element, onVideoOpen);
+        element.addEventListener('click', () => {
+          document.querySelectorAll('.vc-finna-video-button').forEach(b => b.classList.remove('active-video'));
+          onVideoOpen(element);
+        });
+        if (element.classList.contains('active-video')) {
+          element.click();
+        }
       });
     });
   }

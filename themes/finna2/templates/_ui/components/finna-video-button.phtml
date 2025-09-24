@@ -28,7 +28,7 @@
     'data-consent-title' => $this->translate($this->cookieConsent()->getCategoryTitleForService($consent)),
     'aria-haspopup' => true,
   ];
-  $buttonAttributes['class'] .= ' ' . $this->_componentClass;
+
   if ($index === 0 && $inlineVideoPlayer) {
     $buttonAttributes['class'] .= ' active-video';
   }
