@@ -1024,7 +1024,7 @@ class SolrEad3 extends SolrEad
                     }
                     // Try to avoid displaying anything else than mimetypes with image/ in the frontend
                     $role = (string)($attr->linkrole ?? '');
-                    if ($role && !str_starts_with($role, 'image/')) {
+                    if ($role && !str_starts_with(strtolower($role), 'image/')) {
                         continue;
                     }
                     $type = (string)($attr->localtype ?? $parentType ?: 'none');
