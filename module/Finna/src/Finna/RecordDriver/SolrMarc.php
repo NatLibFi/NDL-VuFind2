@@ -166,6 +166,36 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
+     * Get all IIIF manifests.
+     *
+     * @yield string
+     */
+    public function getAllIiifManifests()
+    {
+        $marcReader = $this->getMarcReader();
+        $field856 = $marcReader->getFields('856', ['q', 'u']);
+        foreach ($field856 as $field) {
+            $url = null;
+            foreach ($field['subfields'] as $subf) {
+                switch ($subf['code']) {
+                    case 'u':
+                        $url = $subf['data'];
+                        break;
+                    case 'q':
+                        if (
+                            preg_match(IIIF_MANIFEST_CONTENT_TYPE_V3_REGEX, $subf['data'])
+                            === 1
+                        ) {
+                            yield $url;
+                        }
+                        break;
+                    default:
+                }
+            }
+        }
+    }
+
+    /**
      * Get all record links related to the current record. Each link is returned as
      * array.
      * Format:
