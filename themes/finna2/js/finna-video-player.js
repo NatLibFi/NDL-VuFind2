@@ -167,8 +167,8 @@ finna.videoPlayer = (() => {
 
   /**
    * Function to check for consent config initialization.
-   *
    * @param {HTMLElement} element Element to check consent for
+   * @param {Function} onClick Function to run when clicking the button.
    */
   function waitConsentInitialized(element, onClick)
   {
