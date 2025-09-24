@@ -86,7 +86,7 @@
                       $tooltipBtn = [
                         'label' => $this->transEsc('comment_hidden'),
                         'aria-label' => $this->transEscAttr('comment_hidden'),
-                        'content' => '<h4>' . $this->transEsc('comment_hidden') . '</h4>' . $this->translate('comment_hidden_by_admin_html'),
+                        'content' => '<h4>' . $this->transEsc('comment_hidden') . '</h4>' . $this->translate('comment_hidden_by_admin_html', ['%%url%%' => $this->url('content-page', ['page' => 'help-comments-ratings'])]),
                       ];
                     ?>
                     <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
