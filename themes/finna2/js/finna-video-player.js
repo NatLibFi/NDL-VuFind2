@@ -50,7 +50,7 @@ finna.videoPlayer = (() => {
           warning.querySelectorAll('img[data-src]')
         );
       });
-      warning.classList.toggle('hidden', element.dataset.vcIndex !== warning.dataset.index);
+      warning.classList.toggle('hidden', element.dataset.index !== warning.dataset.index);
     });
   }
 
@@ -66,7 +66,7 @@ finna.videoPlayer = (() => {
 
     // Is the video inline video or popup video
     let container;
-    if (element.dataset.vcInline) {
+    if (element.dataset.inline) {
       container = document.getElementById('inline-video');
       container.replaceChildren(videoPlayer);
       showWarningIcons(element);
@@ -91,8 +91,8 @@ finna.videoPlayer = (() => {
     iFrame.className = 'player';
     iFrame.frameborder = 0;
     iFrame.allowFullscreen = 'true';
-    iFrame.src = element.dataset.vcUrl;
-    if (element.dataset.vcInline) {
+    iFrame.src = element.dataset.url;
+    if (element.dataset.inline) {
       const container = document.getElementById('inline-video');
       container.replaceChildren(iFrame);
       showWarningIcons(element);
@@ -121,13 +121,13 @@ finna.videoPlayer = (() => {
       // Replace %%consentCategories%% and %%serviceBaseUrl%% with proper values
       const externalLink = wrapper.querySelector('.embedded-content-actions a[href="%%HREF%%"]');
       if (externalLink) {
-        externalLink.setAttribute('href', element.dataset.vcUrl);
+        externalLink.setAttribute('href', element.dataset.url);
       }
       const description = wrapper.querySelector('.embedded-content-description');
       if (description) {
-        const serviceBase = new URL(element.dataset.vcUrl);
+        const serviceBase = new URL(element.dataset.url);
         description.innerText = description.innerText
-          .replace('%%consentCategories%%', element.dataset.vcConsentTitle)
+          .replace('%%consentCategories%%', element.dataset.consentTitle)
           .replace('%%serviceBaseUrl%%', serviceBase.hostname);
       }
       VuFind.lightbox.render(wrapper.outerHTML);
@@ -147,18 +147,14 @@ finna.videoPlayer = (() => {
   /**
    * Sets the video elements click event.
    * @param {HTMLElement} element Element which displays the video popup
+   * @param {Function} onClick Function to run when clicking the button.
    */
-  function setElementClickEvent(element)
+  function setElementClickEvent(element, onClick)
   {
-    if (VuFind.cookie.isServiceAllowed(element.dataset.vcConsent)) {
+    if (VuFind.cookie.isServiceAllowed(element.dataset.consent)) {
       element.addEventListener('click', () => {
-        document.querySelectorAll('.vc-finna-video').forEach(b => b.classList.remove('active-video'));
-        if (element.dataset.vcEmbed) {
-          onIFrameOpen(element);
-        } else {
-          onVideoOpen(element);
-        }
-        element.classList.add('active-video');
+        document.querySelectorAll('.vc-finna-video-button').forEach(b => b.classList.remove('active-video'));
+        onClick(element);
       });
       if (element.classList.contains('active-video')) {
         element.click();
@@ -170,44 +166,61 @@ finna.videoPlayer = (() => {
   }
 
   /**
-   * When video scripts have loaded callback
-   * @param {HTMLElement|string} elementOrSelector Either the html element which acts as video player open or selector
+   * Function to check for consent config initialization.
+   *
+   * @param {HTMLElement} element Element to check consent for
    */
-  function onVideoScriptsLoaded(elementOrSelector)
+  function waitConsentInitialized(element, onClick)
   {
-    const element = typeof elementOrSelector === 'string'
-      ? document.querySelector(elementOrSelector)
-      : elementOrSelector;
-    if (!element || element.classList.contains('done')) {
-      return;
-    }
-
-    element.classList.add('done');
     const consentInitialized = VuFind.cookie.getConsentConfig();
+
     // If consent configuration has not been initialized, wait for it
     if (!consentInitialized) {
       VuFind.listen('cookie-consent-initialized', () => {
-        setElementClickEvent(element);
+        setElementClickEvent(element, onClick);
       });
     } else {
-      setElementClickEvent(element);
+      setElementClickEvent(element, onClick);
     }
   }
 
   /**
+   * Provide a selector or HTMLButtonElement to initialize a button for embedded videos.
+   * @param {HTMLButtonElement|string} elementOrSelector Element or selector
+   */
+  function initIFrameButton(elementOrSelector)
+  {
+    const element = typeof elementOrSelector === 'string'
+      ? document.querySelector(elementOrSelector)
+      : elementOrSelector;
+    if (!element || element.classList.contains('initialized')) {
+      return;
+    }
+    waitConsentInitialized(element, onIFrameOpen);
+  }
+
+  /**
    * Provide a selector or HTMLButtonElement to initialize a button for videos.
+   * Handles loading the proper scripts.
    * @param {HTMLButtonElement|string} elementOrSelector Element or selector
    */
   function initVideoButton(elementOrSelector)
   {
+    const element = typeof elementOrSelector === 'string'
+      ? document.querySelector(elementOrSelector)
+      : elementOrSelector;
+    if (!element || element.classList.contains('initialized')) {
+      return;
+    }
     finna.scriptLoader.load(requiredVideoScripts, () => {
       finna.scriptLoader.load(dependantVideoScripts, () => {
-        onVideoScriptsLoaded(elementOrSelector);
+        waitConsentInitialized(element, onVideoOpen);
       });
     });
   }
 
   return {
     initVideoButton,
+    initIFrameButton
   };
 })();

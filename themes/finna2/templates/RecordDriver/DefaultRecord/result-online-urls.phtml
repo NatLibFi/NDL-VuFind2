@@ -63,9 +63,9 @@
           ?>
           <?php if (!empty($url['embed'])): ?>
             <?=
-              $this->component('finna-video', [
-                'url' => $url,
-                'embed' => $this->recordLinker()->getEmbeddedVideo($url['url']),
+              $this->component('finna-video-button', [
+                'url' => $url['url'],
+                'embed' => $this->recordLinker()->getEmbeddedVideo($url['url']) === 'data-embed-iframe',
                 'index' => $i,
                 'videoSources' => $url['videoSources'] ?? [],
                 'description' => $desc,

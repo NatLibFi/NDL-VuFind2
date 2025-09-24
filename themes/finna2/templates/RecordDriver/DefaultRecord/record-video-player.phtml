@@ -60,14 +60,13 @@
       }
       ?>
       <?=
-        $this->component('finna-video', [
-          'url' => $url,
-          'embed' => $this->recordLinker()->getEmbeddedVideo($url['url']),
+        $this->component('finna-video-button', [
+          'url' => $url['url'],
+          'embed' => $embeddedVideo === 'data-embed-iframe',
           'index' => $i,
           'videoSources' => $url['videoSources'] ?? [],
           'description' => $desc,
           'inline' => $inlineVideo,
-          'active' => $inlineVideo && $i === 0,
         ]);
       ?>
       <?php if ($showDetails && !$inlineVideo): ?>
