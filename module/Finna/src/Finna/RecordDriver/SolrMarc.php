@@ -168,7 +168,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get all IIIF manifests.
      *
-     * @yield string
+     * @return \Generator<string>
      */
     public function getAllIiifManifests()
     {
