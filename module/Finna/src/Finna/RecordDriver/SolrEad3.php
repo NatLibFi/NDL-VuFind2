@@ -1022,9 +1022,14 @@ class SolrEad3 extends SolrEad
                     if ($show === 'none') {
                         continue;
                     }
-                    // Try to avoid displaying anything else than mimetypes with image/ in the frontend
+                    // If linkrole is set and has no implication of being an image or pdf file, skip it.
                     $role = (string)($attr->linkrole ?? '');
-                    if ($role && !str_starts_with(strtolower($role), 'image/')) {
+                    $roleCheck = strtolower($role);
+                    if (
+                        $roleCheck
+                        && (!str_starts_with($roleCheck, 'image/')
+                        && !str_starts_with($roleCheck, 'application/'))
+                    ) {
                         continue;
                     }
                     $type = (string)($attr->localtype ?? $parentType ?: 'none');
