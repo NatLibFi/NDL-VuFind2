@@ -29,7 +29,6 @@
 
 namespace Finna\RecordDriver\Feature;
 
-
 /**
  * Additional functionality for IIIF in Finna
  *
@@ -54,7 +53,7 @@ trait FinnaIiifTrait
     /**
      * Checks that the content type corresponds to a IIIF Presentation manifest
      *
-     * @param  string $contentType Content type to check
+     * @param string $contentType Content type to check
      *
      * @return bool
      */
