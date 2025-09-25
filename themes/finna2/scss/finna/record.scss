@@ -168,19 +168,7 @@ a.authority {
     }
     .record-image-container {
       .open-link {
-        margin-top: 10px;
-      }
-      .record-image-container {
-        .open-link {
-          margin-top: 10px;
-        }
-        .open-link, .model-link {
-          i, b {
-            color: mix(#ffffff, $action-link-color, 22%);
-            margin-right: 0;
-            font-style: normal;
-          }
-        }
+        margin-top: 5px;
       }
     }
   }
@@ -197,21 +185,12 @@ a.authority {
   }
 }
 
-.model-link {
-  .download-link {
-    text-align: left;
-    color: #007c90;
-    font-size: 1em;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-}
-
 .image-link, .model-link {
   display: flex;
   align-items: center;
   font-size: 1em;
   position: relative;
+  margin-top: 5px;
   .fa.fa-download {
     margin-right: 4px;
     color: $action-link-color;
