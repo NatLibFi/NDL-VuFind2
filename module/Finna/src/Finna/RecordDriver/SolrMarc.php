@@ -55,6 +55,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     use Feature\SolrFinnaTrait;
     use Feature\FinnaMarcReaderTrait;
     use Feature\FinnaUrlCheckTrait;
+    use Feature\FinnaIiifTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -168,29 +169,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get all IIIF manifests.
      *
+     * Finds all 'u' subfields in field 856 with 'q' matching a IIIF
+     * Presentation API content type.
+     *
      * @return \Generator<string>
      */
     public function getAllIiifManifests()
     {
-        $marcReader = $this->getMarcReader();
-        $field856 = $marcReader->getFields('856', ['q', 'u']);
+        $reader = $this->getMarcReader();
+        $field856 = $reader->getFields('856', ['q', 'u']) ?? [];
         foreach ($field856 as $field) {
-            $url = null;
-            foreach ($field['subfields'] as $subf) {
-                switch ($subf['code']) {
-                    case 'u':
-                        $url = $subf['data'];
-                        break;
-                    case 'q':
-                        if (
-                            preg_match(IIIF_MANIFEST_CONTENT_TYPE_V3_REGEX, $subf['data'])
-                            === 1
-                        ) {
-                            yield $url;
-                        }
-                        break;
-                    default:
-                }
+            $u = $reader->getSubfield($field, 'u');
+            $q = $reader->getSubfield($field, 'q');
+            if (
+                !empty($u) &&
+                !empty($q) &&
+                $this->isIiifPresentationManifest($q)
+            ) {
+                yield $u;
             }
         }
     }
