@@ -1025,11 +1025,8 @@ class SolrEad3 extends SolrEad
                     // If linkrole is set and has no implication of being an image or pdf file, skip it.
                     $role = (string)($attr->linkrole ?? '');
                     $roleCheck = strtolower($role);
-                    if (
-                        $roleCheck
-                        && (!str_starts_with($roleCheck, 'image/')
-                        && !str_starts_with($roleCheck, 'application/'))
-                    ) {
+                    $isPDF = $roleCheck === 'application/pdf';
+                    if ($roleCheck && !$isPDF && !str_starts_with($roleCheck, 'image/')) {
                         continue;
                     }
                     $type = (string)($attr->localtype ?? $parentType ?: 'none');
@@ -1091,7 +1088,7 @@ class SolrEad3 extends SolrEad
                             ];
                         }
                         $displayImage['urls'][$size] = $url;
-                        $displayImage['pdf'][$size] = $role === 'application/pdf';
+                        $displayImage['pdf'][$size] = $isPDF;
                     }
                 }
                 if (!empty($displayImage)) {
