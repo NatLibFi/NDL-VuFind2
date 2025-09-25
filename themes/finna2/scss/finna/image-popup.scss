@@ -678,15 +678,12 @@
     &.paginated {
         display: flex;
         > button {
-                appearance: none;
-                height: 44px;
-                border: none;
-                background-color: transparent;
-                padding: 0 2px;
-                flex: 0 0 0;
-            .icon {
-                font-size: 24px;
-            }
+            appearance: none;
+            height: 44px;
+            border: none;
+            background-color: transparent;
+            padding: 0 2px;
+            flex: 0 0 0;
             .finna-popup &:not(:disabled){
                 color: white;
 
@@ -698,9 +695,6 @@
             &:disabled {
                 background-color: #d6d6d600;
                 color: transparent;
-                .icon {
-                    cursor: not-allowed;
-                }
             }
         }
         .track-holder {
@@ -785,8 +779,5 @@
         flex: 1;
         appearance: none;
         border: none;
-    }
-    button:disabled {
-        cursor: not-allowed;
     }
 }
