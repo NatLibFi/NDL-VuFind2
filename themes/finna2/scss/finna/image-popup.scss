@@ -23,17 +23,6 @@
             padding: 40px;
         }
     }
-    >.large-spinner {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        .fa-spinner::before {
-            font-size: 80px;
-            color: white;
-            text-shadow: 2px 2px #565656;
-        }
-    }
     &.content {
         width: 100%;
         @include media-breakpoint-up(sm) {
@@ -361,7 +350,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                i::before {
+                .icon {
                     font-size: 64px;
                 }
             }
