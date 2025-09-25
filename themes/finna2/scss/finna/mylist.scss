@@ -216,10 +216,6 @@
   padding-left: 5px;
 }
 
-.resource-note i.fa-pen {
-  margin-bottom: -18px;
-}
-
 .list-title, .add-new-list {
   border: 1px solid transparent;
   display: flex;
@@ -524,12 +520,6 @@ span.caret {
       @include media-breakpoint-down(md) {
         a.dropdown-toggle {
           white-space: initial;
-          i.fa-arrow-down {
-            position: absolute;
-            top: 30%;
-            right: 0.7em;
-            margin-left: 0;
-          }
         }
       }
     }

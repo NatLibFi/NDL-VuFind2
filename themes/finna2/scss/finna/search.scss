@@ -134,9 +134,6 @@ mark, .highlight {
     text-transform: uppercase;
     font-weight: 600;
     color: $action-link-color;
-    .icon {
-      color: mix(#ffffff, $action-link-color, 22%);
-    }
   }
 }
 .available-online-links {
