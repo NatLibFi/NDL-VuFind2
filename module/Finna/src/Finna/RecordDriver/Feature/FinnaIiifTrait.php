@@ -54,7 +54,8 @@ trait FinnaIiifTrait
     /**
      * Checks that the content type corresponds to a IIIF Presentation manifest
      *
-     * @param string $contentType
+     * @param  string $contentType Content type to check
+     *
      * @return bool
      */
     public function isIiifPresentationManifest(string $contentType): bool
