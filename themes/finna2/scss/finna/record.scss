@@ -33,11 +33,11 @@
     font-size: 1em;
     font-weight: 600;
 
-    & :hover {
+    &:hover {
       color: darken($action-link-color,10%);
     }
 
-    & i {
+    & .icon {
       color: mix(#ffffff, $action-link-color, 22%);
       padding-left: 3px;
       padding-right: 3px;
@@ -120,7 +120,7 @@ a.authority {
   margin-bottom: 20px;
 }
 
-.image-details, .model-details {
+.image-details {
   table {
     margin-left: 20px;
   }
@@ -333,7 +333,7 @@ a.authority {
         top: $navbar-height;
       }
     }
-    i {
+    .icon {
       padding-left: 2px;
     }
   }
@@ -785,14 +785,6 @@ a.authority {
 // Record feedback
 .feedback-record {
   margin-top: 0.3em;
-}
-
-.model-details {
-  .model-download {
-    i {
-      padding-right: 2px;
-    }
-  }
 }
 
 finna-model-viewer {

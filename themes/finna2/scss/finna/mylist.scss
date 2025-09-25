@@ -320,14 +320,14 @@
     .info {
       font-weight: bold;
       color: $danger;
-      i {
+      .icon {
        border-radius: 50%;
        border: 2px solid $danger;
        font-size: 1em;
        padding: 1px;
       }
     }
-    .fa {
+    .icon {
       cursor: inherit;
     }
     .toggle {
@@ -345,7 +345,7 @@
         white-space: inherit;
 
       }
-      i {
+      .icon {
         margin-left: 5px;
         transform: rotate(90deg);
       }
@@ -483,9 +483,6 @@ span.caret {
     z-index: 2;
     width: 100%;
     background: $sidebar-background;
-    i {
-      font-size: 15px;
-    }
     li.sidebar-navigation {
       padding: 11px;
       color: $sidebar-header-text-color;
