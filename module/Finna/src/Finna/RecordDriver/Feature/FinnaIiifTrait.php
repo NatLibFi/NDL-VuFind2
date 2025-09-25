@@ -31,7 +31,7 @@ namespace Finna\RecordDriver\Feature;
 
 
 /**
- * Additional functionality for Finna and Primo records.
+ * Additional functionality for IIIF in Finna
  *
  * @category VuFind
  * @package  RecordDrivers
