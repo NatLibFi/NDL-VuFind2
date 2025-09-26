@@ -3,7 +3,7 @@
 /**
  * RecordDataFormatter Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2025.
  *
@@ -53,7 +53,6 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
      * @var array
      */
     protected array $finnaDefaultRecordFields = [
-          'Contains collections',
           'Genre',
           'Age Limit',
           'Original Work',
@@ -74,6 +73,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
           'Presenters Marc',
           'Other Titles',
           'Format',
+          'Format and Labels',
           'Parent Archive',
           'Parent Collection',
           'Parent Subcollection',

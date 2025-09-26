@@ -3,7 +3,7 @@
 /**
  * SolrLido Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -253,6 +253,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                         'linkType' => 'external-link',
+                        'label' => '3D',
                     ],
                     1 => [
                         'description' => 'PDFTesti.pdf',
@@ -260,6 +261,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'format' => 'pdf',
                         'rights' => [],
                         'linkType' => 'proxy-link',
+                        'label' => '',
                     ],
                     2 => [
                         'description' => 'DocxTesti.docx',
@@ -272,6 +274,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                         'linkType' => 'proxy-link',
+                        'label' => '',
                     ],
                 ],
             ],
