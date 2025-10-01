@@ -89,7 +89,6 @@ finna.layout = (function finnaLayout() {
 
     var truncation = [];
     var rowHeight = [];
-    $(holder).find('.truncate-field').parent().attr('tabindex', '-1');
     $(holder).find('.truncate-field').not('.truncate-done').each(function handleTruncate(index) {
       var self = $(this);
       self.addClass('truncate-done');
@@ -649,17 +648,10 @@ finna.layout = (function finnaLayout() {
    * Initialize ILS password recovery link
    * @param {object} links Object containing identifier and url for link href
    * @param {string} idPrefix Prepend selector with idPrefix
+   * @deprecated Exists for back-compatibility with old implementation only
    */
   function initILSPasswordRecoveryLink(links, idPrefix) {
-    var searchPrefix = idPrefix ? '#' + idPrefix : '#';
-    $(searchPrefix + 'target').on('change', function onChangeLoginTargetLink() {
-      var target = $(searchPrefix + 'target').val();
-      if (links[target]) {
-        $('#login_library_card_recovery').attr('href', links[target]).show();
-      } else {
-        $('#login_library_card_recovery').hide();
-      }
-    }).trigger("change");
+    VuFind.displayILSPasswordRecoveryLink(links, idPrefix);
   }
 
   /**
@@ -880,21 +872,25 @@ finna.layout = (function finnaLayout() {
       var play = self.find('.play');
       var source = self.find('source');
       play.one('click', function onPlay() {
-        finna.scriptLoader.loadInOrder(
+        finna.scriptLoader.load(
           scripts,
-          subScripts,
-          function onVideoJsLoaded() {
-            self.find('.audio-player-wrapper').removeClass('hide');
-            var audio = self.find('audio');
-            audio.removeClass('hide').addClass('video-js');
-            source.attr('src', source.data('src'));
-            videojs(
-              audio.attr('id'),
-              { controlBar: { volumePanel: false, muteToggle: false } },
-              function onVideoJsInited() {}
+          () => {
+            finna.scriptLoader.load(
+              subScripts,
+              function onVideoJsLoaded() {
+                self.find('.audio-player-wrapper').removeClass('hide');
+                var audio = self.find('audio');
+                audio.removeClass('hide').addClass('video-js');
+                source.attr('src', source.data('src'));
+                videojs(
+                  audio.attr('id'),
+                  { controlBar: { volumePanel: false, muteToggle: false } },
+                  function onVideoJsInited() {}
+                );
+                play.remove();
+                self.find('.vjs-play-control').focus();
+              }
             );
-            play.remove();
-            self.find('.vjs-play-control').focus();
           }
         );
       });
