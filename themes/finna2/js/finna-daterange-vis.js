@@ -346,6 +346,26 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
       params.from.removeAttr('required');
       params.to.removeAttr('required');
     }
+    updateRadioButtonStatus(within);
+  }
+
+  /**
+   * Update radio button's statuses when changing options.
+   *
+   * @param {bool} within Whether the within option is selected
+   */
+  function updateRadioButtonStatus(within) {
+    if (within) {
+      $('#radio_within').attr('checked', 'checked');
+      $('#radio_overlap').removeAttr('checked');
+      $('#radio_within_selected').text(VuFind.translate('selected'));
+      $('#radio_overlap_selected').text('');
+    } else {
+      $('#radio_overlap').attr('checked', 'checked');
+      $('#radio_within').removeAttr('checked');
+      $('#radio_overlap_selected').text(VuFind.translate('selected'));
+      $('#radio_within_selected').text('');
+    }
   }
 
   /**
