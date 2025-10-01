@@ -331,8 +331,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
 
   /**
    * Update radio button's statuses when changing options.
-   *
-   * @param {bool} within Whether the within option is selected
+   * @param {boolean} within Whether the within option is selected
    */
   function updateRadioButtonStatus(within) {
     if (within) {
