@@ -94,8 +94,11 @@
               </td>
               <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment['created'])?></td>
               <td data-label="<?=$this->transEscAttr('Title')?>">
+                <?php $missing = $comment['missing']; ?>
                 <?php if (empty($comment['mergedData'])): ?>
-                  <a href="<?=$this->url('record', ['id' => $comment['record_id']])?>"><?=$this->escapeHtml($comment['recordTitle'])?></a>
+                  <?php if (!$missing): ?><a href="<?=$this->url('record', ['id' => $comment['record_id']])?>"><?php endif; ?>
+                  <?=$this->escapeHtml($comment['recordTitle'])?>
+                  <?php if (!$missing): ?></a><?php endif; ?>
                 <?php else: ?>
                   <div>
                     <p><?=$this->escapeHtml($comment['recordTitle'])?></p>
