@@ -86,13 +86,16 @@
               <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $rating['created'])?></td>
               <td data-label="<?=$this->transEscAttr('Title')?>">
                 <?php $missing = $rating['missing']; ?>
+                <?php $titleEsc = $this->escapeHtml($rating['recordTitle']); ?>
                 <?php if (empty($rating['mergedData'])): ?>
-                  <?php if (!$missing): ?><a href="<?=$this->url('record', ['id' => $rating['record_id']])?>"><?php endif; ?>
-                  <?=$this->escapeHtml($rating['recordTitle'])?>
-                  <?php if (!$missing): ?></a><?php endif; ?>
+                  <?php if ($missing): ?>
+                    <?=$titleEsc?>
+                  <?php else: ?>
+                    <a href="<?=$this->url('record', ['id' => $rating['record_id']])?>"><?=$titleEsc?></a>
+                  <?php endif; ?>
                 <?php else: ?>
                   <div>
-                    <p><?=$this->escapeHtml($rating['recordTitle'])?></p>
+                    <p><?=$titleEsc?></p>
                     <div class="truncate-field other-organisation-links" data-rows="-1" data-label="<?=$this->transEscAttr('show_instances')?>">
                       <?php foreach ($rating['mergedData']['records'] ?? [] as $current): ?>
                         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
@@ -105,9 +108,14 @@
                 <?php endif; ?>
               </td>
               <td class="user-rating" data-label="<?=$this->transEscAttr('Rating')?>">
-                <?php if (!$missing): ?><a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($rating['source'] . '|' . $rating['record_id'], 'Rating'))?>" data-lightbox><?php endif; ?>
-                <?=$this->component('star-rating', ['readonly' => true, 'ratingData' => ['rating' => $rating['rating'], 'count' => 1]])?>
-                <?php if (!$missing): ?></a><?php endif; ?>
+                <?php $starComponent = $this->component('star-rating', ['readonly' => true, 'ratingData' => ['rating' => $rating['rating'], 'count' => 1]])?>
+                <?php if ($missing): ?>
+                  <?=$starComponent?>
+                <?php else: ?>
+                  <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($rating['source'] . '|' . $rating['record_id'], 'Rating'))?>" data-lightbox>
+                    <?=$starComponent?>
+                  </a>
+                <?php endif; ?>
               </td>
             </tr>
           <?php endforeach; ?>
