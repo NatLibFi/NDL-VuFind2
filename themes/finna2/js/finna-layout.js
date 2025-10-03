@@ -197,7 +197,7 @@ finna.layout = (function finnaLayout() {
    */
   function toggleMobileSidebar(e) {
     e.stopImmediatePropagation();
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
     if (sidebar) {
       sidebar.classList.toggle('open');
       const container = document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
