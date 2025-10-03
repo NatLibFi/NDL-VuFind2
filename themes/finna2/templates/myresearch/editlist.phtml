@@ -28,15 +28,15 @@
   <?php elseif ($this->userlist()->getMode() === 'private_only'): ?>
     <input type="hidden" name="public" value="0">
   <?php else: ?>
-    <div class="form-group" role="radiogroup" aria-labelledby="range_type_label">
-      <label id="range_type_label" class="form-label"><?=$this->transEsc('Access') ?>:</label>
+    <div class="form-group" role="radiogroup" aria-label="<?=$this->transEsc('Access') ?>">
+      <label class="form-label" aria-hidden="true"><?=$this->transEsc('Access') ?>:</label>
       <div class="radiobutton">
-        <input id="list_public_1" type="radio" name="public" value="1"<?php if ($this->list->isPublic()): ?> checked="checked"<?php endif; ?>>
-        <label for="list_public_1"><?=$this->transEsc('Public') ?></label>
+        <input id="list_public_1" type="radio" name="public" aria-label="<?=$this->transEsc('Public') ?>" value="1"<?php if ($this->list->isPublic()): ?> checked="checked"<?php endif; ?>>
+        <label for="list_public_1" aria-hidden="true"><?=$this->transEsc('Public') ?></label>
       </div>
       <div class="radiobutton">
-        <input id="list_public_0" type="radio" name="public" value="0"<?php if (!$this->list->isPublic()): ?> checked="checked"<?php endif; ?>>
-        <label for="list_public_0"><?=$this->transEsc('Private') ?></label>
+        <input id="list_public_0" type="radio" name="public" aria-label="<?=$this->transEsc('Private') ?>" value="0"<?php if (!$this->list->isPublic()): ?> checked="checked"<?php endif; ?>>
+        <label for="list_public_0" aria-hidden="true"><?=$this->transEsc('Private') ?></label>
       </div>
     </div>
   <?php endif; ?>

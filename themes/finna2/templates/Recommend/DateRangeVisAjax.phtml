@@ -29,15 +29,14 @@
       <div class="expand-modal"><?=$this->icon('daterange-expand') ?></div>
     </div>
     <?php if ($backend != 'primo' && (!isset($hideType) || !$hideType)): ?>
-    <div class="range-type" role="radiogroup" aria-labelledby="access_type_label">
-      <label id="access_type_label" class="visually-hidden"><?=$this->transEsc('Search Type')?>:</label>
+    <div class="range-type" role="radiogroup" aria-label="<?=$this->transEsc('Search Type')?>">
       <div class="radiobutton">
-        <input class="timeline_overlap" type="radio" name="type" id="radio_overlap" value="overlap"<?= !$this->type || $this->type == 'overlap' ? ' checked="checked"' : ''; ?>>
-        <label for="radio_overlap"><?= $this->translate('Timeline overlap'); ?> <span id="radio_overlap_selected" class="visually-hidden"><?= !$this->type || $this->type == 'overlap' ? ' ' . $this->transEsc('selected') : ''; ?></span></label>
+          <input id="radio_overlap" class="timeline_overlap" type="radio" name="type" aria-label="<?= $this->translate('Timeline overlap'); ?>" value="overlap"<?= !$this->type || $this->type == 'overlap' ? ' checked="checked"' : ''; ?>>
+          <label aria-hidden="true"><?= $this->translate('Timeline overlap'); ?></label>
       </div>
       <div class="radiobutton">
-        <input class="timeline_within" type="radio" name="type" id="radio_within" value="within"<?= $this->type == 'within' ? ' checked="checked"' : ''; ?>>
-        <label for="radio_within"><?= $this->translate('Timeline within'); ?> <span id="radio_within_selected" class="visually-hidden"><?= $this->type == 'within' ? ' ' . $this->transEsc('selected') : ''; ?></span></label>
+        <input id="radio_within" class="timeline_within" type="radio" name="type" aria-label="<?= $this->translate('Timeline within'); ?>" value="within"<?= $this->type == 'within' ? ' checked="checked"' : ''; ?>>
+        <label aria-hidden="true"><?= $this->translate('Timeline within'); ?></label>
       </div>
     </div>
     <?php endif; ?>
