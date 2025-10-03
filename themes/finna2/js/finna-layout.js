@@ -182,7 +182,7 @@ finna.layout = (function finnaLayout() {
    * @param {object} e Event object
    */
   function onFocusOutOfFacetContainer(e) {
-    const container = document.querySelector('.side-facets-container-ajax');
+    const container = document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
     if (!container.contains(e.relatedTarget)) {
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -200,7 +200,7 @@ finna.layout = (function finnaLayout() {
     const sidebar = document.querySelector('.sidebar');
     if (sidebar) {
       sidebar.classList.toggle('open');
-      const container = document.querySelector('.side-facets-container-ajax');
+      const container = document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
       document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
         el.classList.toggle('hidden');
       });
@@ -243,7 +243,7 @@ finna.layout = (function finnaLayout() {
     document.querySelectorAll('.mobile-navigation .sidebar-navigation, .js-mobile-list-navigation').forEach(el => {
       el.addEventListener('click', toggleMobileSidebar);
     });
-    const container = document.querySelector(".side-facets-container-ajax");
+    const container = document.querySelector(".side-facets-container-ajax") || document.querySelector(".side-facets-container");
     if (container) {
       document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
