@@ -1783,15 +1783,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         || preg_match('/^(http|ftp)s?:\/\//', $address))
                     ) {
                         // Is there a description?  If not, just use the URL itself.
-                        $note = '';
                         foreach ($subfields as $subfield) {
                             $desc = $this->getSubfield($url, $subfield);
                             if ($desc) {
-                                if ($field == '856' && $subfield == 'y') {
-                                    $note = $this->getSubfield($url, 'z');
-                                }
                                 break;
                             }
+                        }
+                        if (($note = $this->getSubfield($url, 'z')) === $desc) {
+                            $note = '';
                         }
                         $part = '';
                         if ($desc) {
