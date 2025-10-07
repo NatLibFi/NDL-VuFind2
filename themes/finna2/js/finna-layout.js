@@ -176,13 +176,20 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Return the container for side facets
+   * @returns {Element} The side facet container
+   */
+  function getSideFacetsContainer() {
+    return document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
+  }
 
   /**
    * Check and keep focus within the search facet list
    * @param {object} e Event object
    */
   function onFocusOutOfFacetContainer(e) {
-    const container = document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
+    const container = getSideFacetsContainer();
     if (!container.contains(e.relatedTarget)) {
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -200,7 +207,7 @@ finna.layout = (function finnaLayout() {
     const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
     if (sidebar) {
       sidebar.classList.toggle('open');
-      const container = document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
+      const container = getSideFacetsContainer();
       document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
         el.classList.toggle('hidden');
       });
@@ -243,7 +250,7 @@ finna.layout = (function finnaLayout() {
     document.querySelectorAll('.mobile-navigation .sidebar-navigation, .js-mobile-list-navigation').forEach(el => {
       el.addEventListener('click', toggleMobileSidebar);
     });
-    const container = document.querySelector(".side-facets-container-ajax") || document.querySelector(".side-facets-container");
+    const container = getSideFacetsContainer();
     if (container) {
       document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
