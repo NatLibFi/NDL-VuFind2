@@ -305,7 +305,7 @@ trait FinnaUserTrait
         } else {
             $username = $this->username;
         }
-        if ($this->auth_method !== 'shibboleth') {
+        if ($this->auth_method === 'multiils') {
             $parts = explode('.', $username, 2);
             $displayedName = $parts[1] ?? $parts[0];
         } else {
