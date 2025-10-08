@@ -142,6 +142,16 @@ class Options extends \VuFind\Search\Solr\Options
     }
 
     /**
+     * Whether to display edition in search results
+     *
+     * @return bool
+     */
+    public function getDisplayEdition(): bool
+    {
+        return $this->searchSettings['General']['display_edition'] ?? false;
+    }
+
+    /**
      * Convert a legacy sort option to current one that excludes a tie breaker
      *
      * @param string $sort Sort string
