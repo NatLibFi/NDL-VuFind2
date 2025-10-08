@@ -102,13 +102,13 @@ result_limit = 100000
 ; Whether the "versions" (FRBR) link and record tab are enabled. Default is true.
 ;display_versions = true
 
-; Whether to display edition in search results. Default is false.
-;display_edition = true
-
 ; Whether to filter the "versions" (FRBR). Only valid option at the moment is
 ; 'same_source', which means that other versions are only displayed from the same
 ; data source. By default all versions are displayed.
 ;versions_filter = 'same_source'
+
+; Whether to display edition in search results. Default is false.
+;display_edition = true
 
 ; Whether to always (when there are active filters) display the "Reset Filters"
 ; button regardless of the retain_filters_by_default setting. Default is false.

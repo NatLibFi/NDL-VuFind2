@@ -107,7 +107,7 @@ class Options extends \VuFind\Search\Solr\Options
         }
         $this->sortOptions = $cleanSortOptions;
         $this->defaultSort = $this->convertLegacySort($this->defaultSort);
-        $this->displayRecordEdition = $this->searchSettings['General']['display_edition'] ?? false;
+        $this->displayRecordEdition = !empty($this->searchSettings['General']['display_edition']);
     }
 
     /**
@@ -156,7 +156,7 @@ class Options extends \VuFind\Search\Solr\Options
      */
     public function getDisplayEdition(): bool
     {
-        return (bool)$this->displayRecordEdition;
+        return $this->displayRecordEdition;
     }
 
     /**
