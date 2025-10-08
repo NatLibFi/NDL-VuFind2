@@ -172,12 +172,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      * Finds all 'u' subfields in field 856 with 'q' matching a IIIF
      * Presentation API content type.
      *
-     * @return \Generator<string>
+     * @return array
      */
     public function getAllIiifManifests()
     {
         $reader = $this->getMarcReader();
         $field856 = $reader->getFields('856', ['q', 'u']) ?? [];
+        $manifests = [];
         foreach ($field856 as $field) {
             $u = $reader->getSubfield($field, 'u');
             $q = $reader->getSubfield($field, 'q');
@@ -186,9 +187,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                 !empty($q) &&
                 $this->isIiifPresentationManifest($q)
             ) {
-                yield $u;
+                $manifests[] = $u;
             }
         }
+        return $manifests;
     }
 
     /**
