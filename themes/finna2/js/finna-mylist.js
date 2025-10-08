@@ -61,7 +61,7 @@ finna.myList = (function finnaMyList() {
 
     var listParams = {
       'id': getActiveListId(),
-      'title': $('.list-title-container').text(),
+      'title': $('.js-list-title').text(),
       'public': $(".list-visibility input[type='radio']:checked").val()
     };
 
@@ -186,7 +186,7 @@ finna.myList = (function finnaMyList() {
    * @param {boolean} mode Should the title be editable
    */
   function toggleTitleEditable(mode) {
-    var target = $('.list-title-container');
+    var target = $('.js-list-title');
     var currentTitle;
     if (mode) {
       // list title
