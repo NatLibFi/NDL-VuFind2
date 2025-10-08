@@ -168,7 +168,7 @@ finna.videoPlayer = (() => {
       }
       return;
     } else {
-      // We should display a consent approval here
+      // We should display a consent information instead of the video
       element.addEventListener('click', () => { displayConsentWindow(element); });
       if (element.dataset.inline && element.classList.contains('active-video')) {
         displayConsentWindow(element);
