@@ -10,7 +10,7 @@ finna.videoPlayer = (() => {
   };
 
   /**
-   * Scritps which are dependant of the videojs script
+   * Scripts that depend on the videojs script
    * @member {object} dependantVideoScripts
    */
   const dependantVideoScripts = {
