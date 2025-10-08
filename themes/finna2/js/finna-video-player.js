@@ -11,7 +11,7 @@ finna.videoPlayer = (() => {
 
   /**
    * Scripts that depend on the videojs script
-   * @member {object} dependantVideoScripts
+   * @member {object} dependentVideoScripts
    */
   const dependantVideoScripts = {
     'video-popup': 'finna-video-popup.js',
