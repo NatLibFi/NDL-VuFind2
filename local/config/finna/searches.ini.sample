@@ -102,7 +102,7 @@ result_limit = 100000
 ; Whether the "versions" (FRBR) link and record tab are enabled. Default is true.
 ;display_versions = true
 
-; Whether to display edition in search results.
+; Whether to display edition in search results. Default is false.
 ;display_edition = true
 
 ; Whether to filter the "versions" (FRBR). Only valid option at the moment is
