@@ -325,16 +325,15 @@
             border-left: 1px solid #ccc;
         }
         .popup-link-buttons {
-            margin: 2px 0px;
+            margin: 2px 0px 20px 0px;
             .videourl {
                 display: inline-flex;
                 text-transform: uppercase;
                 font-weight: bold;
-                margin-bottom: 6px;
-                line-height: 24px;
+                margin-bottom: 0.5rem;
                 .icon {
-                    margin-right: 4px;
-                    font-size: 24px;
+                    margin-right: 0.3rem;
+                    font-size: $font-size-icon-large;
                 }
             }
         }
@@ -404,12 +403,6 @@
             &.loading {
                 max-height: 100px;
                 overflow: hidden;
-            }
-        }
-        .popup-link-buttons {
-            margin-bottom: 20px;
-            .icon {
-                margin-right: 2px;
             }
         }
         .record-link {
