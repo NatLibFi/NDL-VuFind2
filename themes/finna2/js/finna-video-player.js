@@ -105,7 +105,7 @@ finna.videoPlayer = (() => {
   }
 
   /**
-   * Display a consent window warning for the user.
+   * Display a cookie consent window warning for the user.
    * @param {HTMLElement} element The element which was clicked
    */
   function displayConsentWindow(element)
