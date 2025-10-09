@@ -73,7 +73,7 @@
                       </span>
                     <?php elseif ($time['selfservice']): ?>
                       <span class="selfservice-times">
-                        <?=$this->transEsc('organisation_info_only_selfservice')?>
+                        <?=$this->transEsc('organisation_info_schedule_selfservice')?>
                         <?=$renderInterval($time['opens'], $time['closes'], $schedule['minutePrecision'])?>
                       </span>
                     <?php else: ?>
