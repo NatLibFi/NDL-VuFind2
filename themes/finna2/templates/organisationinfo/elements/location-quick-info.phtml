@@ -44,9 +44,9 @@
   <?php if (!$orgInfo['isAlwaysClosed']): ?>
     <h4 class="open-or-closed">
       <?php if ($orgInfo['openNow']): ?>
-        <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open')?></span>
+        <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open_now')?></span>
       <?php else: ?>
-        <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
+        <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed_now')?></span>
       <?php endif; ?>
     </h4>
     <?php foreach ($orgInfo['openTimes']['schedules'] as $schedule): ?>

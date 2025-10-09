@@ -1,6 +1,10 @@
 <?php $openNow = $orgInfo['openNow'] ?? null; ?>
+<?php $openNowStatus = $orgInfo['currentTime']['selfservice'] ?? null; ?>
 <?php if ($openNow): ?>
-  <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open')?></span>
+  <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open_now')?></span>
+  <?php if (null !== $openNowStatus): ?>
+    <div class="location-current-status"><?=$this->transEsc($openNowStatus ? 'organisation_info_only_selfservice' : 'organisation_info_schedule_staff')?></div>
+  <?php endif; ?>
 <?php elseif (false === $openNow): ?>
-  <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
+  <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed_now')?></span>
 <?php endif; ?>
