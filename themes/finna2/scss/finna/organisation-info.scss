@@ -117,12 +117,6 @@ $organisation-info-max-w: 400px !default;
             }
         }
 
-        .location-is-open, .location-is-closed {
-            float: right;
-            margin-top: 8px;
-            margin-right: 3px;
-        }
-
         .schedules-info {
             margin-top: 20px;
             margin-bottom: 10px;
@@ -496,7 +490,7 @@ $organisation-info-max-w: 400px !default;
                             }
                         }
 
-                        .open-or-closed {
+                        .open-times-info {
                             text-align: right;
                         }
                     }
