@@ -62,13 +62,6 @@ class Options extends \VuFind\Search\Solr\Options
     protected $displayRecordVersions = false;
 
     /**
-     * Whether to display record edition
-     *
-     * @var bool
-     */
-    protected $displayRecordEdition;
-
-    /**
      * Constructor
      *
      * @param \VuFind\Config\PluginManager $configLoader Config loader
@@ -107,7 +100,6 @@ class Options extends \VuFind\Search\Solr\Options
         }
         $this->sortOptions = $cleanSortOptions;
         $this->defaultSort = $this->convertLegacySort($this->defaultSort);
-        $this->displayRecordEdition = !empty($this->searchSettings['General']['display_edition']);
     }
 
     /**
@@ -147,16 +139,6 @@ class Options extends \VuFind\Search\Solr\Options
             return $result;
         }
         return $this->translate("search_field_$field", null, $field);
-    }
-
-    /**
-     * Whether to display edition in search results
-     *
-     * @return bool
-     */
-    public function getDisplayEdition(): bool
-    {
-        return $this->displayRecordEdition;
     }
 
     /**
