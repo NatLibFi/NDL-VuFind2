@@ -1,6 +1,26 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/iiif-viewer.phtml -->
-<script src="https://www.unpkg.com/@samvera/clover-iiif@latest/dist/web-components/index.umd.js"></script>
-<div class="record-image-container record-iiif-viewer">
+<?php
+$encodedManifest = urlencode($manifests[0]);
+$js = <<<JS
+    finna.scriptLoader.load(
+      {'iiif-viewer': 'vendor/clover/web-components/index.umd.js'},
+      () => {}
+    );
+    JS;
+
+echo $this->assetManager()->outputInlineScriptString($js);
+?>
+
+<div class="record-viewer-container">
   <clover-viewer id="<?= $manifests[0] ?>"></clover-viewer>
+</div>
+
+<div class="record-iiif-functions">
+  <a href="https://uv-v4.netlify.app/#?manifest=<?=$encodedManifest?>">
+    Open in Universal Viewer
+  </a>
+  <a href="https://projectmirador.org/embed/?iiif-content=<?=$encodedManifest?>">
+    Open in Mirador
+  </a>
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/iiif-viewer.phtml -->
