@@ -11,6 +11,7 @@
   $audioUrls = [];
   $otherUrls = [];
   $binding = $this->driver->tryMethod('getBinding');
+  $iiifManifests = $this->driver->tryMethod('getAllIiifManifests') ?? [];
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
     $renderedURLs[] = [
@@ -60,7 +61,9 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
+    <?php if (empty($iiifManifests)): ?>
+      <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
+    <?php endif; ?>
     <?php if (!empty($videoUrls)): ?>
       <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
     <?php endif; ?>
@@ -250,7 +253,7 @@
           <span><?=$this->escapeHtml($edition)?></span>
         </span>
       <?php endif; ?>
-      
+
       <?php if (
           isset($this->tabs['ComponentParts'])
           && $this->driver->tryMethod('getEmbeddedComponentParts')
