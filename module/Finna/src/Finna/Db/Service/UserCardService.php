@@ -109,7 +109,7 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
             $select->join(
                 ['u' => 'user'],
                 'u.id = user_card.user_id',
-                ['username', 'auth_method']
+                ['username', 'auth_method', 'last_login']
             );
         };
         return iterator_to_array($userCards->select($callback));

@@ -1,17 +1,23 @@
-<h2 class="lightbox-header"><?=$this->transEsc('library_card_connected_users'); ?></h2>
-<table class="table table-striped">
-  <tr>
-    <th><?=$this->transEsc('library_card_date_of_connection')?></th>
-    <th><?=$this->transEsc('account_username')?></th>
-    <th><?=$this->transEsc('account_login_method')?></th>
-  </tr>
-  <?php foreach ($this->users as $user): ?>
+<h2 class="lightbox-header"><?=$this->transEsc('library_card_connected_users')?></h2>
+<table class="table table-striped table-responsive">
+  <thead>
     <tr>
-      <td><?= $this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user['cardCreated']))?></td>
-      <td><?=$user['username']?></td>
-      <td><?= $this->transEscWithPrefix('login_method_', $user['authMethod']) ?></td>
+      <th scope="col"><?=$this->transEsc('library_card_date_of_connection')?></th>
+      <th scope="col"><?=$this->transEsc('Last Login')?></th>
+      <th scope="col"><?=$this->transEsc('account_username')?></th>
+      <th scope="col"><?=$this->transEsc('account_login_method')?></th>
     </tr>
-  <?php endforeach; ?>
+  </thead>
+  <tbody>
+    <?php foreach ($this->users as $user): ?>
+      <tr>
+        <td data-label="<?=$this->transEsc('library_card_date_of_connection')?>"><?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user['cardCreated']))?></td>
+        <td data-label="<?=$this->transEsc('Last Login')?>"><?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $user['lastLogin']))?></td>
+        <td data-label="<?=$this->transEsc('account_username')?>"><?=$this->escapeHtml($user['username'])?></td>
+        <td data-label="<?=$this->transEsc('account_login_method')?>"><?=$this->transEscWithPrefix('login_method_', $user['authMethod']) ?></td>
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
 </table>
 <div class="infobox"><?=$this->transEsc('library_card_connected_users_info')?></div>
 <button class="btn btn-primary" data-dismiss="modal"><?=$this->transEsc('Close') ?></button>
