@@ -432,7 +432,7 @@ abstract class AbstractProvider implements
         $result['isAlwaysClosed'] = $isAlwaysClosed;
         $result['hasSelfServiceTimes'] = $hasSelfServiceTimes;
         if ($result['openNow'] && $hasSelfServiceTimes) {
-            $result['currentTime'] = $currentTime;
+            $result['currentSchedule'] = $currentTime;
         }
         unset($now, $currentTime);
 
