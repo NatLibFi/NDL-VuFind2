@@ -1,0 +1,101 @@
+@use 'sass:color';
+
+$primary-darker: color.scale($primary, $lightness: -25%);
+
+clover-viewer {
+
+    /* Hide Clover's built-in iiif logo button. We display it elsewhere. */
+    .c-cGxcRS {
+        display: none;
+    }
+
+    button#information-toggle {
+        background-color: $body-bg !important;
+        box-shadow: rgba(0, 0, 0, 0.4) 1px 0px 4px inset !important;
+        width: 3.5rem;
+
+        .c-cASUBb {
+            width: 22px;
+            height: 22px;
+            background-color: $btn-primary-bg !important;
+            margin-left: -1px;
+
+            span {
+                color: $btn-primary-color !important;
+                //font-size: 11pt;
+            }
+        }
+
+        .c-cASUBb[data-state="checked"] {
+            transform: translateX(calc(7px + 1.236rem)) !important;
+        }
+
+        .c-cASUBb[data-state="unchecked"] {
+            span {
+                opacity: .75;
+                //font-size: 11pt;
+            }
+        }
+
+    }
+}
+
+.clover-viewer-media-navigation {
+    background-color: $primary-darker !important;
+
+    em {
+        opacity: 1 !important;
+    }
+
+    button[disabled] svg {
+        background-color: $btn-primary-bg !important;
+        color: $btn-primary-color !important;
+        opacity: 1 !important;
+
+        figure {
+            background-color: $primary-darker !important;
+        }
+
+        figcaption {
+            padding-bottom: .5em !important;
+            text-align: center !important;
+        }
+    }
+}
+
+// Always arrange viewer control buttons vertically. By default Clover only does
+// this when the viewport is narrow.
+.c-ihwAQz {
+    flex-direction: column;
+
+    $btn-border: 1px solid color.change($btn-primary-bg, $alpha: .2);
+
+    button {
+        margin: 0;
+        filter: none;
+        border-radius: 0;
+        background-color: $body-bg !important;
+        border: $btn-border;
+        border-bottom: none;
+        color: $btn-primary-bg;
+
+        svg {
+            stroke: $btn-primary-bg;
+            fill: $btn-primary-bg;
+        }
+
+    }
+
+    button:first-child {
+        border-top-left-radius: 4px;
+        border-top-right-radius: 4px;
+    }
+
+    button:last-child {
+        border: $btn-border;
+        border-bottom: $btn-border;
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 4px;
+    }
+
+}
