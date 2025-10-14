@@ -1,9 +1,7 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/toolbar.phtml -->
 <?php
-  if ($this->driver->tryMethod('socialMediaSharingAllowed') !== false) {
-      $shareUrl = $this->serverUrl($this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]));
-      $shareUrl .= (strpos($shareUrl, '?') ? '&' : '?') . 'lng=' . urlencode($this->layout()->userLang);
-  }
+  $shareUrl = $this->serverUrl($this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]));
+  $shareUrl .= (strpos($shareUrl, '?') ? '&' : '?') . 'lng=' . urlencode($this->layout()->userLang);
 
   // Set up some variables for convenience:
   $largeThumb = $this->record($this->driver)->getThumbnail('large');
