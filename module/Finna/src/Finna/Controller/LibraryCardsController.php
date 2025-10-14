@@ -57,8 +57,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     /**
      * Constructor
      *
-     * @param ServiceLocatorInterface $sm               Service locator
-     * @param SessionContainer        $session          Session container for library cards
+     * @param ServiceLocatorInterface $sm      Service locator
+     * @param SessionContainer        $session Session container for library cards
      */
     public function __construct(
         ServiceLocatorInterface $sm,
