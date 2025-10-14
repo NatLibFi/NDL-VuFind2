@@ -59,12 +59,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
      *
      * @param ServiceLocatorInterface $sm               Service locator
      * @param SessionContainer        $session          Session container for library cards
-     * @param array                   $datasourceConfig Datasource configuration
      */
     public function __construct(
         ServiceLocatorInterface $sm,
         protected SessionContainer $session,
-        array $datasourceConfig = [],
     ) {
         parent::__construct($sm);
         $this->session->LibraryCards ??= [];
