@@ -9,8 +9,8 @@
   $resultsTotal = $results->getResultTotal();
 ?>
 <?php if ($resultsTotal > 0): ?>
-  <div class="side-facets-container" aria-label="<?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?>">
-    <div class="side-facets-header-container">
+  <div class="js-mobile-sidebar-container" aria-label="<?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?>">
+    <div class="mobile-navigation-header-container">
       <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
         <?=$this->component(

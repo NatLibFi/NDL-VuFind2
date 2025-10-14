@@ -35,7 +35,8 @@ $thumbnail-width-large:  200px !default;
   .template-name-mylist .container.main-content > .mainbody,
   .template-name-history .container.main-content > .mainbody,
   .template-dir-comments.template-name-userlist .container.main-content > .mainbody,
-  .template-dir-ratings.template-name-userlist .container.main-content > .mainbody {
+  .template-dir-ratings.template-name-userlist .container.main-content > .mainbody,
+  .template-dir-reservationlist .container.main-content > .mainbody {
     width: 100%;
   }
 }

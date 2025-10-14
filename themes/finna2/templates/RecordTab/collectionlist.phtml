@@ -63,9 +63,9 @@
   <?php endif; ?>
 
   <?php if (($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-    <div class="finna-search-filter-toggle-trigger visible-xs hidden-print"></div>
-    <div class="finna-search-filter-toggle visible-xs hidden-print">
-      <div class="btn btn-primary btn-search-filter">
+    <div class="js-mobile-nav-toggle-trigger visible-xs hidden-print"></div>
+    <div class="js-mobile-nav-toggle visible-xs hidden-print">
+      <div class="btn btn-primary btn-mobile-nav">
         <?=$this->transEsc('Filter Collection')?>
         <?php if ($filterCount > 0): ?>
           <span class="active-filter-count">(<?=$filterCount?>)</span>

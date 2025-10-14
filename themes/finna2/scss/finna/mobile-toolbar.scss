@@ -168,8 +168,8 @@ section.template-dir-collection.template-name-view .sidebar {
     }
   }
 }
-.finna-search-filter-toggle {
-  @include media-breakpoint-down(sm) {
+.js-mobile-nav-toggle {
+  @include media-breakpoint-down(md) {
     position: sticky;
     top: $navbar-height;
     margin-left: calc((#{$grid-gutter-width} / 2) * -1);
@@ -182,10 +182,15 @@ section.template-dir-collection.template-name-view .sidebar {
     background: #fff;
 
     &.sticky {
-      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 3px 3px -3px rgba(0, 0, 0, 0.3);
     }
-    .btn-search-filter {
+    .btn-mobile-nav {
       width: 100%;
+    }
+  }
+  @include media-breakpoint-down(sm) {
+    &.sticky {
+      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
     }
   }
 }
