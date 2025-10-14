@@ -3,20 +3,20 @@
   // Grab list object from search results (if applicable):
   $list = $this->results->getListObject();
 
-  // Set up page title:
-  $this->headTitle($list ? $list->getTitle() : $this->translate('saved_items'));
+  $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
   // Set up breadcrumbs:
-  $currPage = $list ? 'List' : 'saved_items';
-  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc($currPage) . '</li>';
+  $currPage = isset($list) ? 'List' : 'saved_items';
+  $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
+    ->add($this->translate($currPage), active: true);
 
   // Load Javascript dependencies into header:
-  $this->headScript()->appendFile('check_item_statuses.js');
+  $this->assetManager()->appendScriptLink('check_item_statuses.js');
 
   // Load Javascript only if list view parameter is NOT full:
   if ($this->params->getOptions()->getListViewOption() != 'full') {
-    $this->headScript()->appendFile('record.js');
-    $this->headScript()->appendFile('embedded_record.js');
+    $this->assetManager()->appendScriptLink('record.js');
+    $this->assetManager()->appendScriptLink('embedded_record.js');
   }
 
   $recordTotal = $this->results->getResultTotal();
@@ -43,17 +43,17 @@
     <input type="hidden" name="listID" value="<?=$this->escapeHtmlAttr($list->getId())?>">
     <input type="hidden" name="listName" value="<?=$this->escapeHtmlAttr($list->getTitle())?>">
   <?php endif; ?>
-  <div class="clearfix mylist-header hidden-print">
+  <div class="clearfix mylist-header hidden-print" tabindex="0">
     <div>
       <?=$this->flashmessages()?>
     </div>
     <div>
       <?php if ($list): ?>
+        <div id="useraccount-content-heading" class="useraccount-header">
+          <?=$this->component('page-title', ['title' => $this->translate('saved_items'), 'headTitle' => $this->translate('saved_items')])?>
+        </div>  
         <div class="useraccount-header">
-          <h2><?=$this->transEsc('saved_items')?></h2>
-        </div>
-        <div class="useraccount-header">
-          <h3 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->getTitle())?></span></h3>
+          <h3 class="list-title"><span class="js-list-title"><?=$this->escapeHtml($list->getTitle())?></span><?=$this->icon('list-edit', ['class' => 'list-title-edit', 'aria-hidden' => 'false', 'aria-label' => $this->transEscAttr('edit')])?></h3>
         </div>
         <?php if ($list && $user && $list->getUser()->getId() === $user->getId() && $list->isPublic()): ?>
           <div class="list-public-indicator">
@@ -101,9 +101,7 @@
           </div>
         <?php endif ?>
       <?php else: ?>
-        <div class="useraccount-header">
-          <h2 class="list-title no-edit"><span><?=$this->transEsc('default_list_title')?></span></h2>
-        </div>
+        <?=$this->component('page-title', ['class' => 'list-title no-edit', 'title' => $this->translate('default_list_title'), 'headTitle' => $this->translate('saved_items')])?>
       <?php endif; ?>
     </div>
   </div>
@@ -163,7 +161,7 @@
     <?php endif;?>
   </div>
   <?php if ($user && $list): ?>
-    <form class="pull-left delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
+    <form class="float-start delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
       <ul class="dropdown-menu useraccount-confirm">
         <li class="disabled"><?=$this->transEsc('confirm_delete_list_text')?></li>
         <li>
@@ -175,7 +173,7 @@
   <?php endif; ?>
   <div class="mylist-mobile mobile-navigation visible-xs visible-sm hidden-print">
     <ul>
-      <li class="sidebar-navigation"><?=$this->icon('sidebar-expand') ?> <?=$this->transEsc('Your Lists')?></li>
+      <li class="sidebar-navigation"><?=$this->icon('sidebar-expand', 'expand-icon') ?><?=$this->icon('sidebar-collapse', 'collapse-icon hidden') ?> <?=$this->transEsc('Your Lists')?></li>
     </ul>
   </div>
 

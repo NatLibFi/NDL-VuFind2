@@ -311,7 +311,7 @@ class XCNCIP2 extends AbstractBase implements
      */
     public function __construct(
         \VuFind\Date\Converter $dateConverter,
-        PathResolver $pathResolver = null
+        PathResolver $pathResolver
     ) {
         $this->dateConverter = $dateConverter;
         $this->pathResolver = $pathResolver;
@@ -426,16 +426,14 @@ class XCNCIP2 extends AbstractBase implements
     protected function loadPickUpLocationsFromFile($filename)
     {
         // Load pickup locations file:
-        $pickupLocationsFile = $this->pathResolver
-            ? $this->pathResolver->getConfigPath($filename)
-            : \VuFind\Config\Locator::getConfigPath($filename);
+        $pickupLocationsFile = $this->pathResolver->getConfigPath($filename);
         if (!file_exists($pickupLocationsFile)) {
             throw new ILSException(
                 "Cannot load pickup locations file: {$pickupLocationsFile}."
             );
         }
         if (($handle = fopen($pickupLocationsFile, 'r')) !== false) {
-            while (($data = fgetcsv($handle)) !== false) {
+            while (($data = fgetcsv($handle, escape: '\\')) !== false) {
                 $agencyId = $data[0] . '|' . $data[1];
                 $this->pickupLocations[$agencyId] = [
                     'locationID' => $agencyId,
@@ -922,8 +920,8 @@ class XCNCIP2 extends AbstractBase implements
      * consortial record.
      *
      * @param string $id     The record id to retrieve the holdings for
-     * @param array  $patron Patron data
-     * @param array  $ids    The (consortial) source records for the record id
+     * @param ?array $patron Patron data
+     * @param ?array $ids    The (consortial) source records for the record id
      *
      * @throws DateException
      * @throws ILSException
@@ -935,8 +933,8 @@ class XCNCIP2 extends AbstractBase implements
      */
     public function getConsortialHoldings(
         $id,
-        array $patron = null,
-        array $ids = null
+        ?array $patron = null,
+        ?array $ids = null
     ) {
         $aggregateId = $id;
 
@@ -1020,7 +1018,7 @@ class XCNCIP2 extends AbstractBase implements
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options (not currently used)
      *
      * @throws DateException
@@ -1031,7 +1029,7 @@ class XCNCIP2 extends AbstractBase implements
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $ids = null;
         if (! $this->consortium) {
@@ -1108,20 +1106,18 @@ class XCNCIP2 extends AbstractBase implements
             'ns1:UserAddressInformation/ns1:ElectronicAddress/' .
                 'ns1:ElectronicAddressData'
         );
-
         // Fill in basic patron details:
-        return [
-            'id' => (string)$id[0],
-            'patronAgencyId' => !empty($patronAgencyId)
-                ? (string)$patronAgencyId[0] : null,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'email' => !empty($email) ? (string)$email[0] : null,
-            'major' => null,
-            'college' => null,
-            'firstname' => (string)($first[0] ?? ''),
-            'lastname' => (string)($last[0] ?? ''),
-        ];
+        return $this->createPatronArray(
+            id: (string)$id[0],
+            cat_username: $username,
+            cat_password: $password,
+            email: !empty($email[0]) ? (string)$email[0] : null,
+            firstname: (string)($first[0] ?? ''),
+            lastname: (string)($last[0] ?? ''),
+            nonDefaultFields: [
+                'patronAgencyId' => !empty($patronAgencyId) ? (string)$patronAgencyId[0] : null,
+            ]
+        );
     }
 
     /**
@@ -1472,17 +1468,15 @@ class XCNCIP2 extends AbstractBase implements
         );
         $expirationDate = !empty($expirationDate) ?
             $this->displayDate((string)$expirationDate[0]) : null;
-
-        return [
-            'firstname' => (string)($firstname[0] ?? null),
-            'lastname' => (string)($lastname[0] ?? null),
-            'address1' => $address1,
-            'address2' => $address2,
-            'zip' => $zip,
-            'phone' => null,  // TODO: phone number support
-            'group' => null,
-            'expiration_date' => $expirationDate,
-        ];
+        // TODO: add phone number support
+        return $this->createProfileArray(
+            firstname: (string)($firstname[0] ?? null),
+            lastname: (string)($lastname[0] ?? null),
+            address1: $address1,
+            address2: $address2,
+            zip: $zip,
+            expiration_date: $expirationDate
+        );
     }
 
     /**

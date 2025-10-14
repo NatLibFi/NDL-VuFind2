@@ -30,12 +30,11 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
+use Finna\ReservationList\Handler\HandlerInterface;
 use Finna\ReservationList\ReservationListService;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
-
-use function in_array;
 
 /**
  * Reservation list view helper
@@ -60,13 +59,13 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      *
      * @param ReservationListService $reservationListService Reservation list service
      * @param ILSAuthenticator       $ilsAuthenticator       Authenticator to ILS
-     * @param array                  $yamlConfig             ReservationList.yaml as an array
+     * @param array                  $reservationListConfig  Reservation list configuration
      * @param array                  $configSection          Reservation list section from config.ini
      */
     public function __construct(
         protected ReservationListService $reservationListService,
         protected ILSAuthenticator $ilsAuthenticator,
-        protected array $yamlConfig = [],
+        protected array $reservationListConfig = [],
         protected array $configSection = []
     ) {
     }
@@ -103,13 +102,13 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      * @param string $institution    Lists controlling institution
      * @param string $listIdentifier List identifier
      *
-     * @return array
+     * @return HandlerInterface
      */
-    public function getListProperties(
+    public function getListHandler(
         string $institution,
         string $listIdentifier
-    ): array {
-        return $this->reservationListService->getListProperties($institution, $listIdentifier);
+    ): HandlerInterface {
+        return $this->reservationListService->getListHandler($institution, $listIdentifier);
     }
 
     /**
@@ -126,11 +125,11 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
             return '';
         }
         // Collect lists where we could potentially save this:
-        $lists = $this->getAvailableListsForRecord($driver);
+        $listHandlers = $this->getAvailableListsForRecord($driver);
 
         // Set up the needed context in the view:
         $view = $this->getView();
-        return $view->render('Helpers/reservationlist-reserve.phtml', compact('lists', 'driver'));
+        return $view->render('Helpers/reservationlist-reserve.phtml', compact('listHandlers', 'driver'));
     }
 
     /**
@@ -142,51 +141,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
      */
     public function getAvailableListsForRecord(DefaultRecord $driver): array
     {
-        $datasource = $driver->tryMethod('getDatasource');
-        if (!$datasource) {
-            return [];
-        }
-        $result = [];
-        foreach ($this->yamlConfig['Institutions'] ?? [] as $institution => $settings) {
-            $current = [$institution => []];
-            foreach ($settings['Lists'] ?? [] as $list) {
-                $list = $this->reservationListService->ensureListKeys($list);
-                if (
-                    $list['Enabled']
-                    && in_array($datasource, $list['Datasources'])
-                    && $this->checkUserRightsForList($list)
-                ) {
-                    $current[$institution][] = $list;
-                    continue;
-                }
-            }
-            if ($current[$institution]) {
-                $result = array_merge($result, $current);
-            }
-        }
-        return $result;
-    }
-
-    /**
-     * Check if the user has proper requirements to order records.
-     * Function checks if there is required LibraryCardSources
-     * which are used to check if user has an active connection to ils
-     * defined in the list.
-     *
-     * @param array $list List as configuration
-     *
-     * @return bool
-     */
-    public function checkUserRightsForList(array $list): bool
-    {
-        if (!$list['LibraryCardSources']) {
-            return true;
-        }
-        $patron = $this->ilsAuthenticator->storedCatalogLogin();
-        if (!$patron) {
-            return false;
-        }
-        return in_array($patron['source'], $list['LibraryCardSources']);
+        return $this->reservationListService->getAvailableListsForRecord($driver);
     }
 
     /**
@@ -225,5 +180,15 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     public function isFunctionalityEnabled(): bool
     {
         return !empty($this->configSection['enabled']);
+    }
+
+    /**
+     * Check if single order is possible
+     *
+     * @return bool
+     */
+    public function singleOrderEnabled(): bool
+    {
+        return $this->reservationListService->singleOrderEnabled();
     }
 }

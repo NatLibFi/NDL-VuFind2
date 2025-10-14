@@ -25,7 +25,7 @@
   }
   .badge {
     margin-top: 4px;
-    @media(min-width: $screen-sm-min) and (max-width: $screen-md-max) {
+    @include media-breakpoint-between(sm, md) {
       max-width: 56px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -36,7 +36,7 @@
 
 .sidebar {
   margin-bottom: 30px;
-  @media (max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     clear: both;
   }
 }
@@ -59,11 +59,11 @@
   }
 }
 
-.sidebar :not(.recordProvidedBy) h1,
+.sidebar :not(.recordProvidedBy) .side-facets-header-container,
 .sidebar > h1,
 .sidebar > h2 {
   margin-bottom: 5px;
-  @media (max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     position: sticky;
     top:0;
     z-index: 1000;
@@ -71,10 +71,28 @@
     display: flex;
     justify-content: space-between;
     margin-bottom: 0;
-    .tooltip-facet {
+    .finna-toggletip {
       margin-right: auto;
       padding-left: 10px;
     }
+  }
+}
+.sidebar .side-facets-header-container {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  background-color: $sidebar-background;
+  color: $sidebar-header-text-color;
+  padding: 10px 15px;
+  align-items: baseline;
+  h1 {
+    padding: 0;
+  }
+  button {
+    background-color: $sidebar-background;
+    color: $sidebar-header-text-color;
+    border: none;
+    font-size: 1.2rem;
   }
 }
 
@@ -144,15 +162,6 @@ button.list-group-item {
     a {
       line-height: 1em;
     }
-    .open-link a {
-      line-height: normal;
-      i {
-        color: mix(#ffffff, $action-link-color, 22%);
-        :before {
-          vertical-align: middle;
-        }
-      }
-    }
     .more-link, .less-link, .less-link-top {
       padding-left: 10px;
     }
@@ -164,7 +173,7 @@ button.list-group-item {
 
 .similar-records,
 .related-records,
-.similar-records, .work-expressions {
+.work-expressions {
   .list-group-item {
     border: $sidebar-border;
   }

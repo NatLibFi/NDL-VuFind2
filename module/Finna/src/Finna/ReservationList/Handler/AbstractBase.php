@@ -30,11 +30,15 @@
 namespace Finna\ReservationList\Handler;
 
 use Exception;
+use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
 use Psr\Container\ContainerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Service\GetServiceTrait;
+
+use function in_array;
 
 /**
  * Abstract handler
@@ -51,13 +55,6 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     use GetServiceTrait;
 
     /**
-     * Place order action form key
-     *
-     * @var string
-     */
-    public const PLACE_ORDER_FORM = 'PlaceOrder';
-
-    /**
      * Unique identifier to identify forms used for reservation lists.
      *
      * @var string
@@ -65,25 +62,300 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public const FORM_ID = 'ReservationListRequest';
 
     /**
-     * Keys to look for in an array to be returned when searching for requested params.
-     *
-     * @var array
-     */
-    public const PLACE_ORDER_REQUEST_KEYS = [
-        'firstName' => '',
-        'lastName' => '',
-        'phone' => '',
-        'email' => '',
-        'pickup_date' => '',
-        'message' => '',
-    ];
-
-    /**
      * Order form configuration defined.
      *
      * @var array
      */
     protected array $orderFormConfig = [];
+
+    /**
+     * Singular item order form configuration
+     *
+     * @var array
+     */
+    protected array $singleOrderFormConfig = [];
+
+    /**
+     * Title translations as lang code => translation
+     *
+     * @var array
+     */
+    protected array $titleTranslations = [];
+
+    /**
+     * Description translations as lang code => translation
+     *
+     * @var array
+     */
+    protected array $descriptionTranslations = [];
+
+    /**
+     * Address information
+     *
+     * @var array
+     */
+    protected array $addressInfo = [];
+
+    /**
+     * Identifier
+     *
+     * @var string
+     */
+    protected string $identifier;
+
+    /**
+     * Library card sources
+     *
+     * @var array
+     */
+    protected array $libraryCardSources = [];
+
+    /**
+     * Datasources
+     *
+     * @var array
+     */
+    protected array $datasources = [];
+
+    /**
+     * Recipient
+     *
+     * @var array
+     */
+    protected array $recipient = [];
+
+    /**
+     * Connection type
+     *
+     * @var string
+     */
+    protected string $connectionType;
+
+    /**
+     * Connection settings
+     *
+     * @var array
+     */
+    protected array $connectionSettings = [];
+
+    /**
+     * Institution
+     *
+     * @var string
+     */
+    protected string $institution;
+
+    /**
+     * Is the list enabled
+     *
+     * @var bool
+     */
+    protected bool $enabled;
+
+    /**
+     * Specific type of the list
+     *
+     * @var string
+     */
+    protected string $listType;
+
+    /**
+     * List configuration as an array
+     *
+     * @var array
+     */
+    protected array $listConfiguration;
+
+    /**
+     * Is enabled
+     *
+     * @return bool
+     */
+    public function isEnabled(): bool
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * Get translation for title
+     *
+     * @param string $language Language to get title for
+     *
+     * @return string
+     */
+    public function getTitle(string $language): string
+    {
+        return $this->titleTranslations[$language] ?? '';
+    }
+
+    /**
+     * Get translation for description
+     *
+     * @param string $language Language to get description for
+     *
+     * @return string
+     */
+    public function getDescription(string $language): string
+    {
+        return $this->descriptionTranslations[$language] ?? '';
+    }
+
+    /**
+     * Get address information
+     *
+     * @return array
+     */
+    public function getAddress(): array
+    {
+        return $this->addressInfo;
+    }
+
+    /**
+     * Get recipient
+     *
+     * @return array
+     */
+    public function getRecipient(): array
+    {
+        return $this->recipient;
+    }
+
+    /**
+     * Check if library card matches to allowed sources
+     *
+     * @param string $libraryCardSource Library card source
+     *
+     * @return bool
+     */
+    public function cardIsValid(string $libraryCardSource): bool
+    {
+        return in_array($libraryCardSource, $this->libraryCardSources);
+    }
+
+    /**
+     * Check if datasource matches to allowed sources
+     *
+     * @param string $datasource Datasource
+     *
+     * @return bool
+     */
+    public function datasourceIsValid(string $datasource): bool
+    {
+        return in_array($datasource, $this->datasources);
+    }
+
+    /**
+     * Get connection type
+     *
+     * @return string
+     */
+    public function getConnectionType(): string
+    {
+        return $this->connectionType;
+    }
+
+    /**
+     * Get connection settings
+     *
+     * @return array
+     */
+    public function getConnectionSettings(): array
+    {
+        return $this->connectionSettings;
+    }
+
+    /**
+     * Get institution
+     *
+     * @return string
+     */
+    public function getInstitution(): string
+    {
+        return $this->institution;
+    }
+
+    /**
+     * Get identifier
+     *
+     * @return string
+     */
+    public function getIdentifier(): string
+    {
+        return $this->identifier;
+    }
+
+    /**
+     * Get all list properties
+     *
+     * @return array
+     */
+    public function getAsArray(): array
+    {
+        return $this->listConfiguration;
+    }
+
+    /**
+     * Get api url
+     *
+     * @return string
+     */
+    public function getApiUrl(): string
+    {
+        if ($url = $this->getConnectionSettings()['base_url'] ?? '') {
+            return str_ends_with($url, '/') ? $url : "$url/";
+        }
+        return '';
+    }
+
+    /**
+     * Get api secret
+     *
+     * @return string
+     */
+    public function getApiSecret(): string
+    {
+        return $this->getConnectionSettings()['secret'] ?? '';
+    }
+
+    /**
+     * Get email sender name
+     *
+     * @return string
+     */
+    public function getSenderName(): string
+    {
+        return $this->getConnectionSettings()['Sender']['name'] ?? '';
+    }
+
+    /**
+     * Get email sender
+     *
+     * @return string
+     */
+    public function getSenderEmail(): string
+    {
+        return $this->getConnectionSettings()['Sender']['email'] ?? '';
+    }
+
+    /**
+     * Get email sender
+     *
+     * @return string
+     */
+    public function getEmailSubject(): string
+    {
+        return $this->getConnectionSettings()['Subject'] ?? '';
+    }
+
+    /**
+     * Use patron id to send information
+     *
+     * @return bool
+     */
+    public function getUsePatronId(): bool
+    {
+        return $this->getConnectionSettings()['useKohaId'] ?? true;
+    }
 
     /**
      * Constructor
@@ -104,27 +376,106 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      *
      * @return array
      */
-    public function getValuesForPlaceOrderForm(
+    public function getValuesForListOrder(
         FinnaResourceListEntityInterface $list,
         UserEntityInterface $user,
         array $requestValues
     ): array {
-        $result = [
-            'rl_list_id' => $list->getId(),
-            'rl_institution' => $list->getInstitution(),
-            'rl_list_identifier' => $list->getListConfigIdentifier(),
-            'record_ids_text' => '',
-            'record_source_and_ids' => [],
-        ];
+        $result = $this->getValuesForSingleOrder($list, $user, $requestValues);
         $reservationListService = $this->getService(\Finna\ReservationList\ReservationListService::class);
+        $result['record_ids_text'] = '';
+        $result['record_source_and_ids'] = [];
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
-            $result['record_ids_text'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
+            $result['record_ids_text'] .= $resource->getTitle() . ' (' . $resource->getRecordId() . ')' . PHP_EOL;
             $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
         }
-        foreach (array_intersect_key($requestValues, self::PLACE_ORDER_REQUEST_KEYS) as $foundKey => $value) {
-            $result[$foundKey] = $requestValues[$foundKey];
-        }
         return $result;
+    }
+
+    /**
+     * Get values for placing single order form
+     *
+     * @param FinnaResourceListEntityInterface $list          List being ordered
+     * @param UserEntityInterface              $user          User who owns the list
+     * @param array                            $requestValues Values obtained i.e from post request as array
+     *
+     * @return array
+     */
+    public function getValuesForSingleOrder(
+        FinnaResourceListEntityInterface $list,
+        UserEntityInterface $user,
+        array $requestValues
+    ): array {
+        $cardInfo = $this->getPreferredCardInfo($user);
+        $result = [
+            'listId' => $list->getId(),
+            'institution' => $list->getInstitution(),
+            'listIdentifier' => $list->getListConfigIdentifier(),
+            'full_name' => $requestValues['full_name'] ?? $cardInfo['full_name'],
+            'email' => $requestValues['email'] ?? $user->getEmail(),
+            'phone' => $requestValues['phone'] ?? null,
+            'pickup_date' => $requestValues['pickup_date'] ?? null,
+            'message' => $requestValues['message'] ?? null,
+            'card_info' => $cardInfo['card_name'],
+        ];
+
+        if (empty($requestValues['recordId'])) {
+            return $result;
+        }
+
+        $recordLoader = $this->getService(\VuFind\Record\Loader::class);
+        $recordID = $requestValues['recordId'];
+        $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
+        $record = $recordLoader->load($recordID, $source);
+        $result['list_title'] = $requestValues['list_title'];
+        $result['recordId'] = $record->getUniqueID();
+        $result['source'] = $record->getSourceIdentifier();
+        $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
+        $result['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
+        return $result;
+    }
+
+    /**
+     * Get preferred card info as associative array. Shibboleth login saves the whole name into last name so
+     * try to get users name from patron primarily. Prefer card name from database and use local name (without prefix)
+     * as fallback. Get local patron id (without prefix).
+     *
+     * @param UserEntityInterface $user User to get information for
+     *
+     * @return array [firstname, lastname, patron_id, card_name]
+     */
+    protected function getPreferredCardInfo(UserEntityInterface $user): array
+    {
+        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
+        $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
+        $catUsername = $patron['cat_username'] ?? '';
+        $cardName = $patron['__local_cat_username'] ?? $catUsername;
+        if ($cardEntity = $cardService->getLibraryCards($user, null, $user->getCatUsername())) {
+            $cardEntity = reset($cardEntity);
+            if ($dbCardName = $cardEntity->getCardName()) {
+                $cardName = $dbCardName === $catUsername ? $cardName : $dbCardName;
+            }
+        }
+        // Prioritize name from patron
+        $firstName = $patron['firstname'] ?? null;
+        $lastName = $patron['lastname'] ?? null;
+
+        // If either field from patron is empty, then use name from db
+        if (!$firstName || !$lastName) {
+            $firstName = $user->getFirstname();
+            $lastName = $user->getLastname();
+        }
+
+        // Form full name from the obtained data
+        $fullName = trim("$firstName $lastName");
+
+        return [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'full_name' => $fullName,
+            'patron_id' => $patron['__local_id'] ?? $patron['id'] ?? '',
+            'card_name' => $cardName,
+        ];
     }
 
     /**
@@ -136,8 +487,24 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      */
     public function getPlaceOrderForm(array $prefill = []): Form
     {
-        $form = $this->getService(\Finna\ReservationList\Form\Form::class);
+        $form = $this->getService(Form::class);
         $form->buildFromConfig($this->orderFormConfig, self::FORM_ID, $prefill);
+        $form->setData($prefill);
+        $form->setName(self::FORM_ID);
+        return $form;
+    }
+
+    /**
+     * Build form with configuration obtained from ReservationList.yaml <Action>Forms section.
+     *
+     * @param array $prefill Prefill form with these values.
+     *
+     * @return Form
+     */
+    public function getSingleOrderForm(array $prefill = []): Form
+    {
+        $form = $this->getService(Form::class);
+        $form->buildFromConfig($this->singleOrderFormConfig, self::FORM_ID, $prefill);
         $form->setData($prefill);
         $form->setName(self::FORM_ID);
         return $form;
@@ -170,19 +537,54 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     /**
      * Initialize connection handler
      *
-     * @param array $config List specific configuration from ReservationList.yaml
+     * @param string $institution List owner institution code
+     * @param array  $config      List specific configuration as an array
      *
      * @return static
      */
-    public function init(array $config): static
+    public function init(string $institution, array $config = []): static
     {
-        $orderFormKey = $config['Forms']['PlaceOrder'] ?? 'default';
+        $this->titleTranslations = $config['Translations']['Title'] ?? [];
+        $this->descriptionTranslations = $config['Translations']['Description'] ?? [];
+        $this->addressInfo = $config['Information'] ?? [];
+        $this->identifier = $config['Identifier'] ?? '';
+        $this->libraryCardSources = $config['LibraryCardSources'] ?? [];
+        $this->datasources = $config['Datasources'] ?? [];
+        $this->recipient = $config['Recipient'] ?? [];
+        $this->connectionType = $config['Connection']['type'] ?? '';
+        $this->connectionSettings = $config['Connection'] ?? [];
+        $this->enabled = $config['Enabled'] ?? false;
+        $this->listType = $config['Type'] ?? 'default';
+        $this->institution = $institution;
+        $this->listConfiguration = $config;
+
         $definedForms = $this->getService(\Finna\Config\YamlReader::class)
             ->getFinna('ReservationList.yaml', 'config/finna', true)['Forms'] ?? [];
-        if (!$definedForms) {
+        // Check that single order and multi order forms exist
+        $orderFormConfig = $definedForms['PlaceOrder']['default'] ?? [];
+        if (!$orderFormConfig) {
             throw new Exception('ReservationList: No forms defined.');
         }
-        $this->orderFormConfig = $definedForms[self::PLACE_ORDER_FORM][$orderFormKey];
+        // Allow selecting preferred forms in future.
+        $selectedOrderForm = $config['Forms']['PlaceOrder'] ?? 'default';
+        $this->orderFormConfig = $definedForms['PlaceOrder'][$selectedOrderForm]
+            ?? $orderFormConfig;
+
+        $singleOrderFormConfig = $definedForms['PlaceOrder']['single'] ?? [];
+        $selectedSingleOrderForm = $config['Forms']['PlaceSingleOrder'] ?? 'single';
+        $this->singleOrderFormConfig = $definedForms['PlaceOrder'][$selectedSingleOrderForm]
+            ?? $singleOrderFormConfig;
+
+        // Extend form as required
+        if ($extend = $this->singleOrderFormConfig['extends'] ?? false) {
+            $extendFrom = $definedForms['PlaceOrder'][$extend];
+            $mergedFields = [...$extendFrom['fields'], ...$this->singleOrderFormConfig['fields'] ?? []];
+            $this->singleOrderFormConfig = array_merge(
+                $extendFrom,
+                $this->singleOrderFormConfig
+            );
+            $this->singleOrderFormConfig['fields'] = $mergedFields;
+        }
         return $this;
     }
 }

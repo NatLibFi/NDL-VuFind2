@@ -59,7 +59,7 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
     /**
      * Menu configuration
      *
-     * @var \Laminas\Config\Config
+     * @var \VuFind\Config\Config
      */
     protected $config;
 
@@ -94,12 +94,12 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $config           Menu configuration
-     * @param OrganisationInfo       $organisationInfo Organisation info
-     * @param TreeRouteStack         $router           Route helper
+     * @param \VuFind\Config\Config $config           Menu configuration
+     * @param OrganisationInfo      $organisationInfo Organisation info
+     * @param TreeRouteStack        $router           Route helper
      */
     public function __construct(
-        \Laminas\Config\Config $config,
+        \VuFind\Config\Config $config,
         \Finna\OrganisationInfo\OrganisationInfo $organisationInfo,
         TreeRouteStack $router
     ) {
@@ -196,11 +196,12 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
      */
     public function getLanguageUrl($lng)
     {
-        $url = $this->router->getRequestUri();
+        // Clone the URI so that we don't manipulate current request:
+        $url = clone $this->router->getRequestUri();
         $params = $url->getQueryAsArray();
         $params['lng'] = $lng;
         $url->setQuery(http_build_query($params));
-        return $url->toString();
+        return $url->isValid() ? $url->toString() : '';
     }
 
     /**
@@ -413,7 +414,6 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
             if (preg_match('/^__(.*)_sort__$/', $menuKey, $matches)) {
                 // Sort section
                 $menuKey = $matches[1];
-                $items = $items->toArray();
                 // Re-order menu-level sort entries in descending order
                 asort($items);
                 $sortData[$menuKey] = $items;

@@ -29,10 +29,10 @@
 
 namespace VuFindTest\Auth;
 
-use Laminas\Config\Config;
 use Laminas\ServiceManager\Exception\InvalidServiceException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use VuFind\Auth\MultiAuth;
+use VuFind\Config\Config;
 
 /**
  * LDAP authentication test class.
@@ -143,7 +143,7 @@ class MultiAuthTest extends \PHPUnit\Framework\TestCase
         $this->expectException(InvalidServiceException::class);
         $badClass = \VuFind\Auth\MultiAuthFactory::class;
         $this->expectExceptionMessage(
-            'Plugin ' . ltrim($badClass, '\\') . ' does not belong to VuFind\Auth\AbstractBase'
+            'Plugin ' . ltrim($badClass, '\\') . ' does not belong to VuFind\Auth\AuthInterface'
         );
 
         $config = $this->getAuthConfig();

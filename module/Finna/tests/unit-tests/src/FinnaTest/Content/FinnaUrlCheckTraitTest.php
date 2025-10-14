@@ -3,7 +3,7 @@
 /**
  * FinnaUrlCheckTrait Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2020.
  *
@@ -309,11 +309,11 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             /**
              * Get configuration
              *
-             * @return \Laminas\Config\Config
+             * @return \VuFind\Config\Config
              */
-            protected function getConfig(): \Laminas\Config\Config
+            protected function getConfig(): \VuFind\Config\Config
             {
-                return new \Laminas\Config\Config($this->config);
+                return new \VuFind\Config\Config($this->config);
             }
 
             /**

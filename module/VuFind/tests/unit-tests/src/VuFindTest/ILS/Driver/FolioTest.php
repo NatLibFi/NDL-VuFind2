@@ -155,11 +155,11 @@ class FolioTest extends \PHPUnit\Framework\TestCase
      * Uses session cache
      *
      * @param string $test   Name of test fixture to load
-     * @param array  $config Driver configuration (null to use default)
+     * @param ?array $config Driver configuration (null to use default)
      *
      * @return void
      */
-    protected function createConnector(string $test, array $config = null): void
+    protected function createConnector(string $test, ?array $config = null): void
     {
         // Setup test responses
         $this->fixtureSteps = $this->getJsonFixture("folio/responses/$test.json");
@@ -236,6 +236,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
     public function testCheckInvalidToken(): void
     {
         $this->createConnector('check-invalid-token');
+        // Update the token expiration date to make it invalid
+        $this->setProperty($this->driver, 'tokenExpiration', null);
         $this->driver->getPickupLocations(['username' => 'whatever']);
     }
 
@@ -333,6 +335,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
             'lastname' => 'last',
             'email' => 'fake@fake.com',
             'addressTypeIds' => [],
+            'major' => null,
+            'college' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -363,6 +367,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
             'lastname' => 'last',
             'email' => 'fake@fake.com',
             'addressTypeIds' => [],
+            'major' => null,
+            'college' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -851,13 +857,17 @@ class FolioTest extends \PHPUnit\Framework\TestCase
             'id' => 'foo',
             'firstname' => 'Test',
             'lastname' => 'User',
+            'birthdate' => null,
             'address1' => 'street',
+            'address2' => null,
             'city' => 'city',
             'country' => 'country',
             'zip' => '12345',
             'phone' => '0123456789',
             'mobile_phone' => '1234567890',
             'expiration_date' => '05-29-2030',
+            'group' => null,
+            'home_library' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -932,6 +942,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
                     'addLink' => true,
                     'bound_with_records' => [],
                     'folio_location_is_active' => true,
+                    'loan_type_id' => '',
+                    'loan_type_name' => '',
                 ],
             ],
             'electronic_holdings' => [],
@@ -1012,6 +1024,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
                     'addLink' => true,
                     'bound_with_records' => [],
                     'folio_location_is_active' => true,
+                    'loan_type_id' => '',
+                    'loan_type_name' => '',
                 ],
             ],
             'electronic_holdings' => [],
@@ -1058,6 +1072,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
                     'addLink' => true,
                     'bound_with_records' => [],
                     'folio_location_is_active' => true,
+                    'loan_type_id' => '',
+                    'loan_type_name' => '',
                 ],
             ],
             'electronic_holdings' => [],
@@ -1102,6 +1118,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
                     'addLink' => true,
                     'bound_with_records' => [],
                     'folio_location_is_active' => true,
+                    'loan_type_id' => '',
+                    'loan_type_name' => '',
                 ],
             ],
             'electronic_holdings' => [],
@@ -1148,6 +1166,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
                     'addLink' => true,
                     'bound_with_records' => [],
                     'folio_location_is_active' => true,
+                    'loan_type_id' => '',
+                    'loan_type_name' => '',
                 ],
                 1 => [
                     'callnumber_prefix' => '',
@@ -1173,6 +1193,8 @@ class FolioTest extends \PHPUnit\Framework\TestCase
                     'addLink' => true,
                     'bound_with_records' => [],
                     'folio_location_is_active' => true,
+                    'loan_type_id' => '',
+                    'loan_type_name' => '',
                 ],
             ],
             'electronic_holdings' => [],

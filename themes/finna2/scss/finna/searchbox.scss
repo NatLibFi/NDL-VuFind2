@@ -1,4 +1,4 @@
-.searcbox, .searchbox-columns {
+.searchbox, .searchbox-columns {
   @extend .clearfix;
 }
 .searchbox, .searchbox-flex {
@@ -25,9 +25,13 @@
       font-weight: normal;
       line-height: 25px;
       margin-top: 1em;
-      padding: 0px 5px;
+      padding: 0px 8px 0 5px;
       overflow: hidden;
       text-transform: none;
+      display: inline-flex;
+      &.btn-advanced {
+        gap: 5px;
+      }
       .icon {
         font-size: 1.5em;
       }
@@ -42,7 +46,7 @@
     margin-left: 12px;
   }
   .pager {
-    @media (max-width: $screen-lg) {
+    @include media-breakpoint-down(lg) {
       margin-left: 6px;
     }
     li.pager-text {
@@ -63,7 +67,7 @@
       }
     }
   }
-  @media (max-width: $screen-sm) {
+  @include media-breakpoint-down(md) {
     .dropdown.form-control.type-dropdown {
       display: none;
     }
@@ -102,7 +106,7 @@
   }
 }
 
-.searchbox-home {
+.searchbox-home, .searchbox-authority-search {
   flex-wrap: wrap;
   .search-links {
     flex-basis: 100%;
@@ -120,14 +124,14 @@
   }
   .search {
     flex: 1;
-    @media (min-width: $screen-md) {
+    @include media-breakpoint-up(md) {
       max-width: 70%;
     }
   }
   .pager {
     display: flex;
     align-items: center;
-    @media (max-width: $screen-lg) {
+    @include media-breakpoint-down(lg) {
       margin-left: 6px;
     }
     .disabled {
@@ -174,14 +178,14 @@
       }
     }
   }
-  @media(max-width: $screen-md) {
+  @include media-breakpoint-down(md) {
     .pager {
       li.pager-text {
         margin: 0 5px;
       }
     }
   }
-  @media(max-width: $screen-sm-max) {
+  @include media-breakpoint-down(md) {
     .pager {
       min-width: 70px;
       margin-left: 10px;
@@ -194,6 +198,12 @@
     }
     .record-back {
       margin-right: 10px;
+    }
+  }
+  @include media-breakpoint-down(sm) {
+    .record-back {
+      margin-right: 0px;
+      margin-left: 15px;
     }
   }
 }

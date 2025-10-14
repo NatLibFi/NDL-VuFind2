@@ -19,7 +19,7 @@ return [
          * - media: e.g. 'print'
          * - extras: array of additional attributes
          *
-         * Strings are supported for backwards compatibility reasons. examples:
+         * Strings are supported for legacy backwards compatibility reasons. examples:
          * - 'example.css' => same as ['file' => 'example.css']
          * - 'example.css:print' => same as
          *   ['file' => 'example.css', 'media' => 'print']
@@ -48,9 +48,10 @@ return [
          * Entries with neither priority nor load_after will be loaded after all
          * other entries.
          *
-         * Strings are supported for backwards compatibility reasons. example:
+         * Strings are supported for legacy backwards compatibility reasons. example:
          * - 'example.js' => same as ['file' => 'example.js']
          */
+        ['file' => 'polyfills.js', 'priority' => 100],
         ['file' => 'vendor/jquery.min.js', 'priority' => 110],
         ['file' => 'vendor/popper.min.js', 'priority' => 120],
         ['file' => 'vendor/bootstrap.min.js', 'priority' => 130],
@@ -68,6 +69,7 @@ return [
         ['file' => 'list_item_selection.js', 'priority' => 390],
         ['file' => 'covers.js', 'priority' => 410],
         ['file' => 'validation.js', 'priority' => 420],
+        ['file' => 'copy_to_clipboard.js', 'priority' => 430],
     ],
     /**
      * Configuration for a single or multiple favicons.
@@ -154,11 +156,15 @@ return [
              * All of the items below have been specified with FontAwesome to allow
              * for a strong inheritance safety net but this is not required.
              */
-            'addthis-bookmark' => 'FontAwesome:bookmark-o',
             'barcode' => 'FontAwesome:barcode',
+            'browzine-best' => 'FontAwesome:file-lines',
+            'browzine-concern' => 'FontAwesome:exclamation',
+            'browzine-delivery' => 'FontAwesome:paper-plane',
             'browzine-issue' => 'Alias:format-serial',
+            'browzine-link-resolver' => 'FontAwesome:file',
             'browzine-pdf' => 'FontAwesome:file-pdf-o',
             'browzine-retraction' => 'FontAwesome:exclamation',
+            'browzine-view' => 'FontAwesome:file',
             'cart' => 'FontAwesome:suitcase',
             'cart-add' => 'FontAwesome:plus',
             'cart-empty' => 'FontAwesome:times',
@@ -169,6 +175,7 @@ return [
             'collapse' => 'Collapse:_', // uses the icons below
             'collapse-close' => 'FontAwesome:chevron-up',
             'collapse-open' => 'FontAwesome:chevron-down',
+            'user-content' => 'FontAwesome:comment',
             'cover-replacement' => 'FontAwesome:question',
             'currency-eur' => 'FontAwesome:eur',
             'currency-gbp' => 'FontAwesome:gbp',

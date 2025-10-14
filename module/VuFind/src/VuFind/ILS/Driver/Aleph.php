@@ -39,7 +39,7 @@
 
 namespace VuFind\ILS\Driver;
 
-use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\I18n\Translator;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 
@@ -77,27 +77,6 @@ class Aleph extends AbstractBase implements
      * @var Aleph\Translator
      */
     protected $alephTranslator = false;
-
-    /**
-     * Cache manager
-     *
-     * @var \VuFind\Cache\Manager
-     */
-    protected $cacheManager;
-
-    /**
-     * Translator
-     *
-     * @var TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * Date converter object
-     *
-     * @var \VuFind\Date\Converter
-     */
-    protected $dateConverter = null;
 
     /**
      * The base URL, where the REST DLF API is running
@@ -239,17 +218,14 @@ class Aleph extends AbstractBase implements
      * Constructor
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter
-     * @param \VuFind\Cache\Manager  $cacheManager  Cache manager (optional)
-     * @param TranslatorInterface    $translator    Translator (optional)
+     * @param ?\VuFind\Cache\Manager $cacheManager  Cache manager (optional)
+     * @param ?Translator            $translator    Translator (optional)
      */
     public function __construct(
-        \VuFind\Date\Converter $dateConverter,
-        \VuFind\Cache\Manager $cacheManager = null,
-        TranslatorInterface $translator = null
+        protected \VuFind\Date\Converter $dateConverter,
+        protected ?\VuFind\Cache\Manager $cacheManager = null,
+        protected ?Translator $translator = null
     ) {
-        $this->dateConverter = $dateConverter;
-        $this->cacheManager = $cacheManager;
-        $this->translator = $translator;
     }
 
     /**
@@ -690,7 +666,7 @@ class Aleph extends AbstractBase implements
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options (not currently used)
      *
      * @throws DateException
@@ -701,7 +677,7 @@ class Aleph extends AbstractBase implements
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $holding = [];
         [$bib, $sys_no] = $this->parseId($id);
@@ -1213,42 +1189,27 @@ class Aleph extends AbstractBase implements
             ],
             true
         );
-        $id = (string)$xml->z303->{'z303-id'};
-        $address1 = (string)$xml->z304->{'z304-address-2'};
-        $address2 = (string)$xml->z304->{'z304-address-3'};
-        $zip = (string)$xml->z304->{'z304-zip'};
-        $phone = (string)$xml->z304->{'z304-telephone'};
-        $barcode = (string)$xml->z304->{'z304-address-0'};
-        $group = (string)$xml->z305->{'z305-bor-status'};
+        [$lastname, $firstname] = $this->getLastAndFirstName((string)$xml->z303->{'z303-name'});
+
         $expiry = (string)$xml->z305->{'z305-expiry-date'};
-        $credit_sum = (string)$xml->z305->{'z305-sum'};
-        $credit_sign = (string)$xml->z305->{'z305-credit-debit'};
-        $name = (string)$xml->z303->{'z303-name'};
-        if (strstr($name, ',')) {
-            [$lastname, $firstname] = explode(',', $name);
-        } else {
-            $lastname = $name;
-            $firstname = '';
-        }
-        if ($credit_sign == null) {
-            $credit_sign = 'C';
-        }
-        $recordList = compact('firstname', 'lastname');
-        if (isset($user['email'])) {
-            $recordList['email'] = $user['email'];
-        }
-        $recordList['address1'] = $address1;
-        $recordList['address2'] = $address2;
-        $recordList['zip'] = $zip;
-        $recordList['phone'] = $phone;
-        $recordList['group'] = $group;
-        $recordList['barcode'] = $barcode;
-        $recordList['expire'] = $this->parseDate($expiry);
-        $recordList['credit'] = $expiry;
-        $recordList['credit_sum'] = $credit_sum;
-        $recordList['credit_sign'] = $credit_sign;
-        $recordList['id'] = $id;
-        return $recordList;
+        return $this->createProfileArray(
+            firstname: $firstname,
+            lastname: $lastname,
+            address1: (string)$xml->z304->{'z304-address-2'},
+            address2: (string)$xml->z304->{'z304-address-3'},
+            zip: (string)$xml->z304->{'z304-zip'},
+            phone: (string)$xml->z304->{'z304-telephone'},
+            group: (string)$xml->z304->{'z304-bor-status'},
+            nonDefaultFields: [
+                'id' => (string)$xml->z303->{'z303-id'},
+                'barcode' => (string)$xml->z304->{'z304-address-0'},
+                'expire' => $this->parseDate($expiry),
+                'credit' => $expiry,
+                'credit_sum' => (string)$xml->z305->{'z305-sum'},
+                'credit_sign' => (string)$xml->z305->{'z305-credit-debit'} ?? 'C',
+                'email' => $user['email'] ?? null,
+            ]
+        );
     }
 
     /**
@@ -1261,35 +1222,46 @@ class Aleph extends AbstractBase implements
      */
     public function getMyProfileDLF($user)
     {
-        $recordList = [];
         $xml = $this->doRestDLFRequest(
             ['patron', $user['id'], 'patronInformation', 'address']
         );
-        $profile = [];
-        $profile['id'] = $user['id'];
-        $profile['cat_username'] = $user['id'];
         $address = $xml->xpath('//address-information')[0];
+        $mappedValues = [];
         foreach ($this->addressMappings as $key => $value) {
             if (!empty($value)) {
-                $profile[$key] = (string)$address->{$value};
+                $mappedValues[$key] = (string)$address->{$value};
             }
         }
-        $fullName = $profile['fullname'];
-        if (!str_contains($fullName, ',')) {
-            $profile['lastname'] = $fullName;
-            $profile['firstname'] = '';
-        } else {
-            [$profile['lastname'], $profile['firstname']]
-                = explode(',', $fullName);
-        }
+        [$lastname, $firstname] = $this->getLastAndFirstName($mappedValues['fullname'] ?? '');
+
         $xml = $this->doRestDLFRequest(
             ['patron', $user['id'], 'patronStatus', 'registration']
         );
-        $status = $xml->xpath('//institution/z305-bor-status');
         $expiry = $xml->xpath('//institution/z305-expiry-date');
-        $profile['expiration_date'] = $this->parseDate($expiry[0]);
-        $profile['group'] = $status[0];
-        return $profile;
+        return $this->createProfileArray(
+            firstname: $firstname,
+            lastname: $lastname,
+            group: $xml->xpath('//institution/z305-bor-status')[0],
+            city: $mappedValues['city'] ?? null,
+            country: $mappedValues['country'] ?? null,
+            phone: $mappedValues['phone'] ?? null,
+            mobile_phone: $mappedValues['mobile_phone'] ?? null,
+            address1: $mappedValues['address1'] ?? null,
+            address2: $mappedValues['address2'] ?? null,
+            zip: $mappedValues['zip'] ?? null,
+            birthdate: $mappedValues['birthdate'] ?? '',
+            expiration_date: $this->parseDate($expiry[0]),
+            // Merge all mapped values here even if all the default values are checked
+            // independently. This ensures that all the possible values are being set correctly
+            // and clarification what is being output remains.
+            nonDefaultFields: array_merge(
+                $mappedValues,
+                [
+                    'cat_username' => $user['id'],
+                    'id' => $user['id'],
+                ]
+            )
+        );
     }
 
     /**
@@ -1345,15 +1317,14 @@ class Aleph extends AbstractBase implements
                 $patron['college'] = $this->sublibadm["$home_lib"];
             }
         }
-        $patron['id'] = (string)$id;
-        $patron['barcode'] = (string)$user;
-        $patron['firstname'] = (string)$firstName;
-        $patron['lastname'] = (string)$lastName;
-        $patron['cat_username'] = (string)$user;
-        $patron['cat_password'] = $password;
-        $patron['email'] = (string)$email_addr;
-        $patron['major'] = null;
-        return $patron;
+        return $this->createPatronArray(
+            id: (string)$id,
+            cat_username: (string)$user,
+            cat_password: $password,
+            firstname: (string)$firstName,
+            lastname: (string)$lastName,
+            email: (string)$email_addr,
+        );
     }
 
     /**

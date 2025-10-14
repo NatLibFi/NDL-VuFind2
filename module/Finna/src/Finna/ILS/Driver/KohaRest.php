@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2017-2023.
+ * Copyright (C) The National Library of Finland 2017-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
 use VuFind\ILS\Logic\AvailabilityStatus;
@@ -52,6 +53,8 @@ use function is_array;
  */
 class KohaRest extends \VuFind\ILS\Driver\KohaRest
 {
+    use FinnaCommonILSTrait;
+
     /**
      * Mappings from Koha messaging preferences
      *
@@ -68,6 +71,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         'Ill_ready' => 'illRequestReadyForPickUp',
         'Ill_unavailable' => 'illRequestUnavailable',
         'Ill_update' => 'illRequestUpdate',
+        'Patron_Expiry' => 'cardExpiry',
     ];
 
     /**
@@ -168,6 +172,10 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $this->minimumPayableAmount = $paymentConfig['minimumFee'] ?? 0;
         $this->nonPayableTypes = (array)($paymentConfig['nonPayableTypes'] ?? []);
         $this->nonPayableStatuses = (array)($paymentConfig['nonPayableStatuses'] ?? []);
+
+        if ($typeMappings = (array)($this->config['MessagingPrefTypeMappings'] ?? [])) {
+            $this->messagingPrefTypeMap = array_merge($this->messagingPrefTypeMap, $typeMappings);
+        }
     }
 
     /**
@@ -177,7 +185,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options
      *
      * @throws \VuFind\Exception\ILS
@@ -187,7 +195,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $data = parent::getHolding($id, $patron);
         // Remove request counts if necessary
@@ -344,60 +352,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ];
         }
 
-        $messagingSettings = [];
-        if ($this->config['Profile']['messagingSettings'] ?? true) {
-            foreach ($result['messaging_preferences'] as $type => $prefs) {
-                $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
-                if (!$typeName) {
-                    continue;
-                }
-                $settings = [
-                    'type' => $typeName,
-                ];
-                if (isset($prefs['transport_types'])) {
-                    $settings['settings']['transport_types'] = [
-                        'type' => 'multiselect',
-                    ];
-                    foreach ($prefs['transport_types'] as $key => $active) {
-                        $settings['settings']['transport_types']['options'][$key] = [
-                            'active' => $active,
-                        ];
-                    }
-                }
-                if (isset($prefs['digest'])) {
-                    $settings['settings']['digest'] = [
-                        'type' => 'boolean',
-                        'name' => '',
-                        'active' => $prefs['digest']['value'],
-                        'readonly' => !$prefs['digest']['configurable'],
-                    ];
-                }
-                if (
-                    isset($prefs['days_in_advance'])
-                    && ($prefs['days_in_advance']['configurable']
-                    || null !== $prefs['days_in_advance']['value'])
-                ) {
-                    $options = [];
-                    for ($i = 0; $i <= 30; $i++) {
-                        $options[$i] = [
-                            'name' => $this->translate(
-                                1 === $i ? 'messaging_settings_num_of_days'
-                                : 'messaging_settings_num_of_days_plural',
-                                ['%%days%%' => $i]
-                            ),
-                            'active' => $i == $prefs['days_in_advance']['value'],
-                        ];
-                    }
-                    $settings['settings']['days_in_advance'] = [
-                        'type' => 'select',
-                        'value' => $prefs['days_in_advance']['value'],
-                        'options' => $options,
-                        'readonly' => !$prefs['days_in_advance']['configurable'],
-                    ];
-                }
-                $messagingSettings[$type] = $settings;
-            }
-        }
+        $messagingSettings = $this->config['Profile']['messagingSettings'] ?? true
+            ? $this->createMessagingSettingsArray($result['messaging_preferences'])
+            : [];
 
         $messages = [];
         foreach ($result['messages'] ?? [] as $message) {
@@ -413,37 +370,36 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $holdIdentifierField = $this->config['Profile']['holdIdentifierField'] ?? 'other_name';
         $callingNameField = $this->config['Profile']['callingNameField'] ?? '';
 
-        $profile = [
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'calling_name' => $result[$callingNameField] ?? '',
-            'email' => $result['email'],
-            'address1' => $result['address'],
-            'address2' => $result['address2'],
-            'zip' => $result['postal_code'],
-            'city' => $result['city'],
-            'country' => $result['country'],
-            'category' => $result['category_id'] ?? '',
-            'expiration_date' => $expirationDate,
-            'expiration_soon' => !empty($result['expiry_date_near']),
-            'expired' => !empty($result['blocks']['Patron::CardExpired']),
-            'hold_identifier' => $result[$holdIdentifierField] ?? '',
-            'guarantors' => $guarantors,
-            'guarantees' => $guarantees,
-            'loan_history' => $result['privacy'],
-            'messagingServices' => $messagingSettings,
-            'notes' => $result['opac_notes'],
-            'messages' => $messages,
-            'full_data' => $result,
-        ];
-        if ($phoneField && !empty($result[$phoneField])) {
-            $profile['phone'] = $result[$phoneField];
-        }
-        if ($smsField && !empty($result[$smsField])) {
-            $profile['smsnumber'] = $result[$smsField];
-        }
+        $phone = $phoneField && !empty($result[$phoneField]) ? $result[$phoneField] : null;
+        $smsnumber = $smsField && !empty($result[$smsField]) ? $result[$smsField] : null;
 
-        return $profile;
+        return $this->createProfileArray(
+            firstname: $result['firstname'],
+            lastname: $result['surname'],
+            phone: $phone,
+            address1: $result['address'],
+            address2: $result['address2'],
+            zip: $result['postal_code'],
+            city: $result['city'],
+            country: $result['country'],
+            expiration_date: $expirationDate,
+            messagingServices: $messagingSettings,
+            loan_history: $result['privacy'],
+            email: $result['email'],
+            nonDefaultFields: [
+                'calling_name' => $result[$callingNameField] ?? '',
+                'category' => $result['category_id'] ?? '',
+                'expiration_soon' => !empty($result['expiry_date_near']),
+                'expired' => !empty($result['blocks']['Patron::CardExpired']),
+                'hold_identifier' => $result[$holdIdentifierField] ?? '',
+                'guarantors' => $guarantors,
+                'guarantees' => $guarantees,
+                'notes' => $result['opac_notes'],
+                'messages' => $messages,
+                'full_data' => $result,
+                'smsnumber' => $smsnumber,
+            ]
+        );
     }
 
     /**
@@ -738,84 +694,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get a password recovery token for a user
-     *
-     * @param array $params Required params such as cat_username and email
-     *
-     * @return array Associative array of the results
-     */
-    public function getPasswordRecoveryToken($params)
-    {
-        $result = $this->makeRequest(
-            [
-                'path' => 'v1/patrons',
-                'query' => [
-                    '_match' => 'exact',
-                    'cardnumber' => $params['cat_username'],
-                    'email' => $params['email'],
-                ],
-                'errors' => true,
-            ]
-        );
-
-        if (200 === $result['code']) {
-            if (!empty($result['data'][0])) {
-                return [
-                    'success' => true,
-                    'token' => $result['data'][0]['patron_id'],
-                ];
-            } else {
-                return [
-                    'success' => false,
-                    'error' => 'recovery_user_not_found',
-                ];
-            }
-        }
-
-        if (404 !== $result['code']) {
-            throw new ILSException('Problem with Koha REST API.');
-        }
-        return [
-            'success' => false,
-            'error' => 'recovery_user_not_found',
-        ];
-    }
-
-    /**
-     * Recover user's password with a token from getPasswordRecoveryToken
-     *
-     * @param array $params Required params such as cat_username, token and new
-     * password
-     *
-     * @return array Associative array of the results
-     */
-    public function recoverPassword($params)
-    {
-        $request = [
-            'password' => $params['password'],
-            'password_2' => $params['password'],
-        ];
-
-        $result = $this->makeRequest(
-            [
-                'path' => ['v1', 'patrons', $params['token'], 'password'],
-                'json' => $request,
-                'method' => 'POST',
-                'errors' => true,
-            ]
-        );
-        if ($result['code'] >= 300) {
-            return [
-                'success' => false,
-                'error' => $result['data']['error'] ?? $result['code'],
-            ];
-        }
-        return [
-            'success' => true,
-        ];
-    }
-
-    /**
      * Check if patron belongs to staff.
      *
      * @param array $patron The patron array from patronLogin
@@ -972,13 +850,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getConfig($function, $params = null)
     {
-        if (
-            'getPasswordRecoveryToken' === $function
-            || 'recoverPassword' === $function
-        ) {
-            return !empty($this->config['PasswordRecovery']['enabled'])
-                ? $this->config['PasswordRecovery'] : false;
-        } elseif ('getPatronStaffAuthorizationStatus' === $function) {
+        if ('getPatronStaffAuthorizationStatus' === $function) {
             return ['enabled' => true];
         }
         $functionConfig = parent::getConfig($function, $params);
@@ -1429,6 +1301,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         // Unset read-only fields
         unset($request['anonymized']);
         unset($request['restricted']);
+        unset($request['expired']);
 
         $request = array_merge($request, $fields);
 

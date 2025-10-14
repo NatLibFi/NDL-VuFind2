@@ -82,8 +82,7 @@ use function count;
 class User extends RowGateway implements
     UserEntityInterface,
     \VuFind\Db\Service\DbServiceAwareInterface,
-    \VuFind\Db\Table\DbTableAwareInterface,
-    \LmcRbacMvc\Identity\IdentityInterface
+    \VuFind\Db\Table\DbTableAwareInterface
 {
     use \VuFind\Db\Service\DbServiceAwareTrait;
     use \VuFind\Db\Table\DbTableAwareTrait;
@@ -91,7 +90,7 @@ class User extends RowGateway implements
     /**
      * VuFind configuration
      *
-     * @var \Laminas\Config\Config
+     * @var \VuFind\Config\Config
      */
     protected $config = null;
 
@@ -115,13 +114,13 @@ class User extends RowGateway implements
     /**
      * Configuration setter
      *
-     * @param \Laminas\Config\Config $config VuFind configuration
+     * @param \VuFind\Config\Config $config VuFind configuration
      *
      * @return void
      *
      * @deprecated
      */
-    public function setConfig(\Laminas\Config\Config $config)
+    public function setConfig(\VuFind\Config\Config $config)
     {
         $this->config = $config;
     }

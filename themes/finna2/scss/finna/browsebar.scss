@@ -32,7 +32,6 @@
 
   .navbar-nav {
     margin: 0;
-
     & > li > a {
       color: $finna-browsebar-link-color;
       padding-left: 5px;
@@ -44,9 +43,6 @@
       margin-bottom: 0;
       padding-top: 0;
       padding-bottom: 0;
-      i.fa {
-        margin-right: 0.5em;
-      }
       display: inline-flex;
       align-items: baseline;
       gap: 0.2rem;
@@ -60,7 +56,7 @@
   background-color: darken($finna-browsebar-background, 5%);
 }
 .browsebar-title {
-  color: mix(#ffffff, $finna-browsebar-background, 78%);
+  color: #fff;
   text-transform: uppercase;
   font-size: 0.9em;
   font-weight: 600;
@@ -68,7 +64,7 @@
   line-height: 60px;
   float: left;
 }
-@media (max-width: $screen-xs-max) {
+@include media-breakpoint-down(sm) {
   .browsebar {
     .dropdown-menu {
       position: absolute;
@@ -154,14 +150,14 @@
     }
   }
   & ~ nav.navbar {
-    @media(min-width: $screen-sm) and (max-width: $screen-sm-max){
+    @include media-breakpoint-only(sm) {
       width: 65%;
     }
-    @media(min-width: $screen-md){
+    @include media-breakpoint-up(md) {
       width: 70%;
     }
   }
-  @media(max-width: $screen-sm-max){
+  @include media-breakpoint-down(md) {
     width: 35%;
   }
 }

@@ -1,12 +1,15 @@
 <!-- START of: finna - holds/list.phtml -->
 <?php
-    // Set up page title:
-    $this->headTitle($this->translate('My Holds'));
-    // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('My Holds') . '</li>';
-    $user = $this->auth()->getUserObject();
-    $patron = $user ? $this->auth()->getILSPatron() : false;
-    $sortList = $this->sortList;
+  $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
+
+  // Set up breadcrumbs:
+  $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
+    ->add($this->translate('My Holds'), active: true);
+
+  $user = $this->auth()->getUserObject();
+  $patron = $user ? $this->auth()->getILSPatron() : false;
+  $sortList = $this->sortList;
+  $holdsRecallsCount = count($this->recordList ?? []);
 ?>
 
 <!-- Leftside navigationbar -->
@@ -20,8 +23,8 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <div class="useraccount-header">
-      <h2><?=$this->transEsc('Your Holds and Recalls') ?> (<?=count($this->recordList ?? []);?>)</h2>
+    <div id="useraccount-content-heading" class="useraccount-header">
+      <?=$this->component('page-title', ['title' => $this->translate('Your Holds and Recalls') . " ($holdsRecallsCount)", 'headTitle' => $this->translate('My Holds')]);?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -96,7 +99,7 @@
           </div>
         <?php endif; ?>
         <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Your Holds and Recalls');?>" tabindex="0">
-          <tr class="sr-only myresearch-row" aria-hidden="true">
+          <tr class="visually-hidden myresearch-row" aria-hidden="true">
             <th id="label-select-column"><?=$this->transEsc('Select');?></th>
             <th class="hidden-xs"></th>
             <th id="label-title-column"><?=$this->transEsc('Hold Details');?></th>
@@ -112,7 +115,7 @@
                 <div class="checkbox-container">
                   <div class="checkbox">
                     <label>
-                      <span class="sr-only"><?=$this->transEsc('Select');?></span>
+                      <span class="visually-hidden"><?=$this->transEsc('Select');?></span>
                       <input type="checkbox" name="selectedIDS[]" class="checkbox-select-item" value="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>">
                     </label>
                   </div>
@@ -242,6 +245,7 @@
             </tr>
           <?php endforeach; ?>
         </table>
+        <h3 class="visually-hidden"><?=$this->transEsc('End of List')?></h3>
         <?php if ($this->cancelForm): ?>
               <div class="dropdown button-bottom">
                 <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('hold_cancel_all') ?>" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">

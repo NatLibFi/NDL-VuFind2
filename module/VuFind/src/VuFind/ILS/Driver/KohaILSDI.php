@@ -814,7 +814,7 @@ class KohaILSDI extends AbstractBase implements HttpServiceAwareInterface, Logge
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options (not currently used)
      *
      * @throws DateException
@@ -825,7 +825,7 @@ class KohaILSDI extends AbstractBase implements HttpServiceAwareInterface, Logge
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $this->debug(
             "Function getHolding($id, "
@@ -1386,7 +1386,6 @@ class KohaILSDI extends AbstractBase implements HttpServiceAwareInterface, Logge
     public function getMyProfile($patron)
     {
         $id = $patron['id'];
-        $profile = [];
 
         $rsp = $this->makeRequest(
             "GetPatronInfo&patron_id=$id" . '&show_contact=1'
@@ -1396,16 +1395,15 @@ class KohaILSDI extends AbstractBase implements HttpServiceAwareInterface, Logge
         $this->debug('Cardnumber: ' . $rsp->{'cardnumber'});
 
         if ($rsp->{'code'} != 'PatronNotFound') {
-            $profile = [
-                'firstname' => $this->getField($rsp->{'firstname'}),
-                'lastname'  => $this->getField($rsp->{'surname'}),
-                'address1'  => $this->getField($rsp->{'address'}),
-                'address2'  => $this->getField($rsp->{'address2'}),
-                'zip'       => $this->getField($rsp->{'zipcode'}),
-                'phone'     => $this->getField($rsp->{'phone'}),
-                'group'     => $this->getField($rsp->{'categorycode'}),
-            ];
-            return $profile;
+            return $this->createProfileArray(
+                firstname: $this->getField($rsp->{'firstname'}),
+                lastname: $this->getField($rsp->{'surname'}),
+                address1: $this->getField($rsp->{'address'}),
+                address2: $this->getField($rsp->{'address2'}),
+                zip: $this->getField($rsp->{'zipcode'}),
+                phone: $this->getField($rsp->{'phone'}),
+                group: $this->getField($rsp->{'categorycode'}),
+            );
         } else {
             $this->debug('Error Message: ' . $rsp->{'message'});
             return null;
@@ -1937,25 +1935,20 @@ class KohaILSDI extends AbstractBase implements HttpServiceAwareInterface, Logge
         $this->debug('Code: ' . $idObj->{'code'});
         $this->debug('ID: ' . $idObj->{'id'});
 
-        $id = $this->getField($idObj->{'id'}, 0);
-        if ($id) {
+        if ($id = $this->getField($idObj->{'id'}, 0)) {
             $rsp = $this->makeRequest(
                 "GetPatronInfo&patron_id=$id&show_contact=1"
             );
-            $profile = [
-                'id'           => $this->getField($idObj->{'id'}),
-                'firstname'    => $this->getField($rsp->{'firstname'}),
-                'lastname'     => $this->getField($rsp->{'surname'}),
-                'cat_username' => $username,
-                'cat_password' => $password,
-                'email'        => $this->getField($rsp->{'email'}),
-                'major'        => null,
-                'college'      => null,
-            ];
-            return $profile;
-        } else {
-            return null;
+            return $this->createPatronArray(
+                id: $this->getField($idObj->{'id'}),
+                firstname: $this->getField($rsp->{'firstname'}),
+                lastname: $this->getField($rsp->{'surname'}),
+                cat_username: $username,
+                cat_password: $password,
+                email: $this->getField($rsp->{'email'}),
+            );
         }
+        return null;
     }
 
     /**

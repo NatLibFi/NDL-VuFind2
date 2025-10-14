@@ -31,8 +31,6 @@
 namespace Finna\Feed;
 
 use Finna\OrganisationInfo\OrganisationInfo;
-use Finna\View\Helper\Root\CleanHtml;
-use Laminas\Config\Config;
 use Laminas\Feed\Reader\Entry\AbstractEntry;
 use Laminas\Feed\Reader\Feed\AbstractFeed;
 use Laminas\Feed\Reader\Reader;
@@ -40,6 +38,8 @@ use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Helper\ServerUrl;
 use Psr\Container\ContainerInterface;
 use VuFind\Cache\Manager as CacheManager;
+use VuFind\Config\Config;
+use VuFind\View\Helper\Root\CleanHtml;
 use VuFindTheme\View\Helper\ImageLink;
 
 use function in_array;
@@ -665,8 +665,7 @@ class Feed implements
                 $cnt = 0;
                 foreach ($items as &$item) {
                     foreach ($xpathContent as $setting => $xpathElement) {
-                        $content = $xpath->query($xpathElement, $xpathItem)
-                            ->item($cnt++)->nodeValue;
+                        $content = $xpath->query($xpathElement, $xpathItem)->item($cnt++)?->nodeValue;
 
                         $content = $this->processItemContent(
                             $content ?: '',
@@ -833,14 +832,14 @@ class Feed implements
     /**
      * Populate icon data for feed slide.
      *
-     * @param array                  $data   Data for slide
-     * @param \Laminas\Config\Config $config Config for feed
+     * @param array                 $data   Data for slide
+     * @param \VuFind\Config\Config $config Config for feed
      *
      * @return void
      */
     protected function populateIcon(
         array &$data,
-        \Laminas\Config\Config $config
+        \VuFind\Config\Config $config
     ): void {
         if (
             empty($config->showIcons)

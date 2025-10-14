@@ -7,8 +7,12 @@
   color: $gray-light;
   @include label-variant($body-bg);
 }
+.label-info + .label-binding {
+  line-height: inherit;
+  margin-left: -14px;
+}
 // Compensate for the smaller font size in the bordered label for source:
-.result .iconlabel {
+.result .iconlabel, .result .label-binding {
   font-size: 0.9em;
 }
 .record-labels {

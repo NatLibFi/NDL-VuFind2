@@ -1,10 +1,9 @@
-/* #SCSS> */
 @use 'sass:color';
-/* <#SCSS */
+@use "sass:map";
 
 .page-content {
   width: 100%;
-  @media (min-width: $screen-lg) {
+  @include media-breakpoint-up(lg) {
     width: 75%;
   }
 }
@@ -107,16 +106,11 @@
   .qrcode {
     min-width: 120px;
   }
-  @media (min-width: $screen-sm) {
+  @include media-breakpoint-up(sm) {
     position: absolute;
     top: 0px;
     right: 0px;
     text-align: right;
-    i {
-      font-size: 16px;
-      text-align: right;
-      margin-bottom: 5px;
-    }
   }
 }
 .add-to-favorite-col, .location-link-text {
@@ -252,7 +246,7 @@ table.content-table {
   ul {
     margin-bottom: 0;
   }
-  @media (min-width: $screen-sm-min) {
+  @include media-breakpoint-up(sm) {
     table-layout: fixed;
   }
 }
@@ -260,12 +254,12 @@ table.content-table {
 .table.record-field-groups {
   > tbody > tr > th {
     text-transform: uppercase;
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
       text-transform: none;
     }
   }
   > tbody > tr > td {
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
       padding-left: 80px;
     }
     > table {
@@ -290,7 +284,7 @@ table.content-table {
   }
 }
 
-table#componentparts {
+table#componentparts_table {
   th {
     background-color: $list-group-bg;
     border-right: 2px solid $body-bg;
@@ -416,7 +410,7 @@ ol {
 
 // Utility classes for setting switcher layouts.
 .switcher-line-xxs {
-  @include switcher-line-layout($screen-xxs);
+  @include switcher-line-layout(map.get($grid-breakpoints, "xxs"));
 }
 .switcher-line-xxxs {
   @include switcher-line-layout(280px);
@@ -466,7 +460,7 @@ ol {
   .cm--bar .cm__btn {
     flex: none;
   }
-  @media screen and (max-width: 640px){
+  @media screen and (max-width: 640px) {
     .pm--box {
       top: $navbar-height + 1px;
     }

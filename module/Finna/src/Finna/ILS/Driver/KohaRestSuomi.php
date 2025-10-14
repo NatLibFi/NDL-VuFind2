@@ -139,7 +139,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options
      *
      * @throws \VuFind\Exception\ILS
@@ -149,7 +149,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $data = parent::getHolding($id, $patron);
         if (!empty($data['holdings'])) {
@@ -300,86 +300,39 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
             true
         );
 
-        $messagingSettings = [];
-        if (200 === $resultCode) {
-            foreach ($messagingPrefs as $type => $prefs) {
-                $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
-                $settings = [
-                    'type' => $typeName,
-                ];
-                if (isset($prefs['transport_types'])) {
-                    $settings['settings']['transport_types'] = [
-                        'type' => 'multiselect',
-                    ];
-                    foreach ($prefs['transport_types'] as $key => $active) {
-                        $settings['settings']['transport_types']['options'][$key] = [
-                            'active' => $active,
-                        ];
-                    }
-                }
-                if (isset($prefs['digest'])) {
-                    $settings['settings']['digest'] = [
-                        'type' => 'boolean',
-                        'name' => '',
-                        'active' => $prefs['digest']['value'],
-                        'readonly' => !$prefs['digest']['configurable'],
-                    ];
-                }
-                if (
-                    isset($prefs['days_in_advance'])
-                    && ($prefs['days_in_advance']['configurable']
-                    || null !== $prefs['days_in_advance']['value'])
-                ) {
-                    $options = [];
-                    for ($i = 0; $i <= 30; $i++) {
-                        $options[$i] = [
-                            'name' => $this->translate(
-                                1 === $i ? 'messaging_settings_num_of_days'
-                                : 'messaging_settings_num_of_days_plural',
-                                ['%%days%%' => $i]
-                            ),
-                            'active' => $i == $prefs['days_in_advance']['value'],
-                        ];
-                    }
-                    $settings['settings']['days_in_advance'] = [
-                        'type' => 'select',
-                        'value' => $prefs['days_in_advance']['value'],
-                        'options' => $options,
-                        'readonly' => !$prefs['days_in_advance']['configurable'],
-                    ];
-                }
-                $messagingSettings[$type] = $settings;
-            }
-        }
+        $messagingSettings = 200 === $resultCode
+            ? $this->createMessagingSettingsArray($messagingPrefs)
+            : [];
 
         $phoneField = $this->config['Profile']['phoneNumberField']
             ?? 'mobile';
 
         $smsField = $this->config['Profile']['smsNumberField']
             ?? 'smsalertnumber';
-
-        return [
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'phone' => $phoneField && !empty($result[$phoneField])
+        return $this->createProfileArray(
+            firstname: $result['firstname'],
+            lastname: $result['surname'],
+            phone: $phoneField && !empty($result[$phoneField])
                 ? $result[$phoneField] : '',
-            'smsnumber' => $smsField ? $result[$smsField] : '',
-            'email' => $result['email'],
-            'address1' => $result['address'],
-            'address2' => $result['address2'],
-            'zip' => $result['zipcode'],
-            'city' => $result['city'],
-            'country' => $result['country'],
-            'category' => $result['categorycode'] ?? '',
-            'expiration_date' => $expirationDate,
-            'hold_identifier' => $result['othernames'],
-            'guarantor' => $guarantor,
-            'guarantees' => $guarantees,
-            'loan_history' => $result['privacy'],
-            'messagingServices' => $messagingSettings,
-            'notes' => $result['opacnote'],
-            'full_data' => $result,
-        ];
+            address1: $result['address'],
+            address2: $result['address2'],
+            zip: $result['zipcode'],
+            city: $result['city'],
+            country: $result['country'],
+            expiration_date: $expirationDate,
+            messagingServices: $messagingSettings,
+            loan_history: $result['privacy'],
+            email: $result['email'],
+            nonDefaultFields: [
+                'category' => $result['categorycode'] ?? '',
+                'hold_identifier' => $result['othernames'],
+                'guarantor' => $guarantor,
+                'guarantees' => $guarantees,
+                'smsnumber' => $smsField ? $result[$smsField] : '',
+                'notes' => $result['opacnote'],
+                'full_data' => $result,
+            ]
+        );
     }
 
     /**
@@ -805,14 +758,28 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get a password recovery token for a user
+     * Get a password recovery data for a user
      *
      * @param array $params Required params such as cat_username and email
      *
      * @return array Associative array of the results
      */
-    public function getPasswordRecoveryToken($params)
+    public function getPasswordRecoveryData($params)
     {
+        // We need a username and an email address to find the account:
+        if (empty($params['cat_username'])) {
+            return [
+                'success' => false,
+                'error' => 'Username cannot be blank',
+            ];
+        }
+        if (empty($params['email'])) {
+            return [
+                'success' => false,
+                'error' => 'no_email_address',
+            ];
+        }
+
         $request = [
             'cardnumber' => $params['cat_username'],
             'email' => $params['email'],
@@ -852,14 +819,15 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Recover user's password with a token from getPasswordRecoveryToken
+     * Reset a user's password using password recovery data.
      *
-     * @param array $params Required params such as cat_username, token and new
-     * password
+     * @param array $details Driver-specific account recovery details.
+     * @param array $params  User-entered form parameters.
      *
-     * @return array Associative array of the results
+     * @throws AuthException
+     * @return array Status
      */
-    public function recoverPassword($params)
+    public function resetPassword(array $details, array $params)
     {
         $request = [
             'uuid' => $params['token'],
@@ -909,8 +877,8 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     public function getConfig($function, $params = null)
     {
         if (
-            'getPasswordRecoveryToken' === $function
-            || 'recoverPassword' === $function
+            'getPasswordRecoveryData' === $function
+            || 'resetPassword' === $function
         ) {
             return !empty($this->config['PasswordRecovery']['enabled'])
                 ? $this->config['PasswordRecovery'] : false;

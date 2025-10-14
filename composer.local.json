@@ -2,8 +2,22 @@
     "__comment__": [
         "See https://github.com/wikimedia/composer-merge-plugin for more details."
     ],
+    "autoload": {
+        "psr-4": {
+            "Finna\\": "module/Finna/src/Finna",
+            "FinnaApi\\": "module/FinnaApi/src/FinnaApi",
+            "FinnaConsole\\": "module/FinnaConsole/src/FinnaConsole",
+            "FinnaCustom\\": "module/FinnaCustom/src/FinnaCustom",
+            "FinnaSearch\\": "module/FinnaSearch/src/FinnaSearch",
+            "FinnaTheme\\": "module/FinnaTheme/src/FinnaTheme"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FinnaTest\\": ["module/Finna/src/FinnaTest", "module/Finna/tests/unit-tests/src/FinnaTest"]
+        }
+    },
     "require": {
-        "ezyang/htmlpurifier": "4.17.0",
         "league/mime-type-detection": "1.9.0",
         "natlibfi/besimple-soap": "3.0.1",
         "natlibfi/finna-code-sets": "0.5.2",
@@ -12,7 +26,7 @@
         "phpoffice/phpspreadsheet": "^2.0",
         "picqer/php-barcode-generator": "2.0.1",
         "swen100/geophp": "^1.0.8",
-        "tecnickcom/tcpdf": "6.7.7"
+        "tecnickcom/tcpdf": "6.8.2"
     },
     "scripts": {
         "create-translation-files": "touch local/languages/finna/fi-datasources.ini; touch local/languages/finna/sv-datasources.ini; touch local/languages/finna/en-gb-datasources.ini; touch local/languages/finna/se-datasources.ini;",

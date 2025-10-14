@@ -3,8 +3,7 @@
     $renderedURLs = [];
     $openUrl = $this->openUrl($this->driver, 'results');
     $openUrlActive = $openUrl->isActive();
-    $doi = $this->doi($this->driver, 'results');
-    $doiActive = $doi->isActive();
+    $identifierLinks = $this->identifierLinker($this->driver, 'results');
     $context = $this->context ?? 'results';
     $maxLinkCount = 4;
 
@@ -40,7 +39,7 @@
 
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
   <div class="available-online-links">
-    <?php if (!empty($combined) || $openUrlActive || $doiActive): ?>
+    <?php if (!empty($combined) || $openUrlActive || $identifierLinks): ?>
       <?php if ('popup' !== $context): ?>
         <strong class="available-online-header <?=!empty($combined) ? '' : 'hidden'; ?>"><?=$this->transEsc('Available Online') ?>:</strong>
       <?php endif; ?>
@@ -78,7 +77,7 @@
               }
               break;
             }
-            $desc = $url['desc'] ?? $url['url'];
+            $desc = $url['desc'] ?? $url['description'] ?? $url['url'];
             if ($desc === $url['url']) {
               $desc = $this->truncateUrl($desc);
             }
@@ -113,9 +112,11 @@
               <span class="video-desc"><?=$this->escapeHtml($this->truncate(ucfirst($desc), 30))?></span>
             </finna-video>
           <?php else: ?>
-            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><?=$this->icon('external-link') ?>
+            <?php $icon = isset($url['linkType']) && $url['linkType'] === 'proxy-link' ? 'download' : 'external-link'; ?>
+            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><?=$this->icon($icon) ?>
               <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
             </a>
+            <?php if (!empty($url['note'])): ?> <span class="url-public-note"><?=$this->escapeHtml($url['note'])?></span><?php endif; ?>
           <?php endif; ?>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
           <?php if (!empty($url['source'])): ?>
@@ -127,9 +128,7 @@
           <div><?=$this->transEsc('eol_ellipsis')?></div>
         <?php endif; ?>
       </div>
-      <?php if ($doiActive): ?>
-        <?=$doi->renderTemplate()?>
-      <?php endif; ?>
+      <?=$identifierLinks?>
       <?php if ($openUrlActive): ?>
         <?=$openUrl->renderTemplate()?>
       <?php endif; ?>

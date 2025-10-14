@@ -1,7 +1,7 @@
 .authoritybox,
 .record {
   .media-body {
-    @media(max-width: $screen-xs-max) {
+    @include media-breakpoint-down(sm) {
       width: 100%;
     }
   }
@@ -9,7 +9,7 @@
   .media-left,
   .media-right {
     width: 25%;
-    @media(max-width: $screen-xs-max) {
+    @include media-breakpoint-down(sm) {
       display: block;
       width: 100%;
       float: none;
@@ -23,7 +23,7 @@
       justify-content: center;
     }
   }
-  @media(min-width: $screen-xs){
+  @include media-breakpoint-up(xs) {
     .media-left { padding-right: 20px; }
     .media-right { padding-left: 20px; }
   }
@@ -33,12 +33,11 @@
     font-size: 1em;
     font-weight: 600;
 
-    & :hover {
+    &:hover {
       color: darken($action-link-color,10%);
     }
 
-    & i {
-      color: mix(#ffffff, $action-link-color, 22%);
+    & .icon {
       padding-left: 3px;
       padding-right: 3px;
     }
@@ -72,18 +71,6 @@
       }
     }
   }
-  finna-video.videourl, button.videourl {
-    display: flex;
-    align-items: center;
-    text-transform: uppercase;
-    font-weight: bold;
-    color: $btn-default-color;
-    margin-bottom: 6px;
-    i {
-      margin-right: 4px;
-      font-size: 24px;
-    }
-  }
 
   @media print {
     .organisation-menu {
@@ -100,7 +87,7 @@
     margin-bottom: 3px;
     font-size: $record-title-font-size;
     line-height: 1.2;
-    @media (max-width: $screen-sm) {
+    @include media-breakpoint-down(md) {
       margin-bottom: 20px;
     }
   }
@@ -110,7 +97,7 @@
       border: 0;
     }
   }
-  .record-versions {
+  .record-versions, .record-to-componentparts-link {
     font-size: 0.9em;
     margin-top: 6px;
     &:not(.loading) {
@@ -132,7 +119,7 @@ a.authority {
   margin-bottom: 20px;
 }
 
-.image-details, .model-details {
+.image-details {
   table {
     margin-left: 20px;
   }
@@ -175,24 +162,12 @@ a.authority {
 .large-image-layout.record .record-main > .media {
   .media-left,
   .media-right {
-    @media (min-width: $screen-sm) {
+    @include media-breakpoint-up(sm) {
       width: 50%;
     }
     .record-image-container {
       .open-link {
         margin-top: 10px;
-      }
-      .record-image-container {
-        .open-link {
-          margin-top: 10px;
-        }
-        .open-link, .model-link {
-          i, b {
-            color: mix(#ffffff, $action-link-color, 22%);
-            margin-right: 0;
-            font-style: normal;
-          }
-        }
       }
     }
   }
@@ -202,30 +177,21 @@ a.authority {
   .sidebar .organisation-menu {
     display: none
   }
-  @media(max-width: $screen-md-max){
+  @include media-breakpoint-down(lg) {
     .mainbody.record-tabs {
       width: 100%;
     }
   }
 }
 
-.model-link {
-  .download-link {
-    text-align: left;
-    color: #007c90;
-    font-size: 1em;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-}
-
-.image-link {
+.image-link, .model-link {
   display: flex;
   align-items: center;
   font-size: 1em;
   position: relative;
-  .fa.fa-download {
-    margin-right: 4px;
+  margin-top: 0.3rem;
+  .icon {
+    margin-right: 0.3rem;
     color: $action-link-color;
     &:hover, &:focus {
       color: $action-link-color;
@@ -234,7 +200,7 @@ a.authority {
   .dropdown {
     position: initial;
   }
-  .image-dimensions, .image-size {
+  .image-dimensions, .dropdown-menu .file-size {
     font-size: 0.8em;
     text-transform: initial;
   }
@@ -248,7 +214,7 @@ a.authority {
     border-radius: 5px;
     padding: 2px 6px;
 
-    @media(max-width:$screen-xs) {
+    @include media-breakpoint-down(sm) {
       left: -4%;
     }
     > li {
@@ -288,17 +254,21 @@ a.authority {
 .record-core-metadata {
   @include date-and-year();
   margin-top: 6px;
-  .recordContainerReference {
-    padding-bottom: 1em;
-    padding-top: 1em;
-    a {
-      font-size: 1.2em;
-      text-decoration: underline;
-      font-weight: 700;
-    }
+  .recordContainerReference a {
+    font-size: 1.2em;
+    text-decoration: underline;
+    font-weight: 700;
   }
   .recordPublished {
     font-weight: 700;
+  }
+  .published-in {
+    padding-bottom: 1em;
+    padding-top: 1em;
+    display: flex;
+  }
+  .container-reference-links {
+    padding-left: 1em;
   }
 }
 
@@ -319,6 +289,11 @@ a.authority {
       }
     }
   }
+  .recordLinks, .record-child-collections {
+    .contained-in:not(:last-child) {
+      padding-bottom: 0.5rem;
+    }
+  }
 }
 .record-alt-titles {
   color: $gray-slightly-lighter;
@@ -336,16 +311,25 @@ a.authority {
       width: 100%;
       padding: 10px 0;
       text-align: left;
-      @media(max-width: $screen-md) {
+      @include media-breakpoint-down(md) {
         top: $navbar-height;
       }
     }
-    i {
+    .icon {
       padding-left: 2px;
     }
   }
   ul.truncate-field {
     margin-bottom: 0;
+  }
+  > .label-resource-type {
+    display: none;
+  }
+  .recordFormat .label {
+    display: none;
+    &.label-info, &.label-resource-type {
+      display: inline-block;
+    }
   }
 }
 
@@ -487,7 +471,7 @@ a.authority {
   }
 }
 
-@media(max-width:$screen-xs-max) {
+@include media-breakpoint-down(sm) {
   .cover-wrapper {
     text-align: center;
   }
@@ -502,7 +486,7 @@ a.authority {
   }
 }
 
-.open-link, .save-record-link, .record-link {
+.open-link, .save-record-link, .record-link, .model-link .download-link {
   text-align: left;
   margin-top: 5px;
   color: $action-link-color;
@@ -520,8 +504,8 @@ a.authority {
     color: $gray-mid-light;
     font-size: .8em;
   }
-  > span.file-size {
-    color: $gray-slightly-lighter;
+  .file-size {
+    color: $gray-mid-light;
   }
 }
 
@@ -538,7 +522,7 @@ a.authority {
   }
 }
 
-@media(max-width: $screen-sm-max) {
+@include media-breakpoint-down(md) {
   .large-image-sidebar {
     width: 100%;
   }
@@ -591,7 +575,6 @@ a.authority {
       text-decoration: none;
     }
     > li:not(.share-buttons):not(.whatsapp) {
-      float: left;
       // Links rendered as pills
       > a, > .btn-bookbag-toggle > a {
         border-radius: $nav-pills-border-radius;
@@ -622,7 +605,7 @@ a.authority {
     }
   }
 }
-.record-toolbar .nav-pills li {
+.record-toolbar .nav-pills > li {
   > a,
   > .btn-bookbag-toggle > a {
     padding: 0px;
@@ -664,7 +647,7 @@ a.authority {
       margin-top: 1em;
       margin-left: 2em;
     }
-    @media (min-width: $screen-md) {
+    @include media-breakpoint-up(md) {
       .comment-info-icon {
         margin-top: 2.7em;
         margin-left: 1em;
@@ -785,7 +768,7 @@ a.authority {
   h2 {
     font-size: 20px;
   }
-  @media (min-width: $screen-sm-min) {
+  @include media-breakpoint-up(sm) {
     max-width: 300px;
   }
 }
@@ -793,14 +776,6 @@ a.authority {
 // Record feedback
 .feedback-record {
   margin-top: 0.3em;
-}
-
-.model-details {
-  .model-download {
-    i {
-      padding-right: 2px;
-    }
-  }
 }
 
 finna-model-viewer {
@@ -938,14 +913,14 @@ finna-model-viewer .object-editor {
   display: inline-block;
 
   .show-info {
-    i {
+    .icon {
       font-size: 1.0rem;
       vertical-align: middle;
     }
-    i.expand {
+    .icon.expand {
       display: inline-block;
     }
-    i.collapse {
+    .icon.collapse {
       display: none;
     }
   }
@@ -983,16 +958,20 @@ finna-model-viewer .object-editor {
     .popover-external-links {
       margin-top: 1rem;
     }
+    .content, .popover-external-links {
+      display: flex;
+      flex-direction: column;
+    }
   }
   // Note: there can be nested popovers, so make sure to match the immediate child:
   &.open > .field-popover {
     display: block;
   }
   &.open > .show-info {
-    i.expand {
+    .icon.expand {
       display: none;
     }
-    i.collapse {
+    .icon.collapse {
       display: inline-block;
     }
   }
@@ -1200,6 +1179,7 @@ finna-model-viewer .object-editor {
     margin-bottom: 21px;
   }
   .record-core-metadata,
+  .aipa-field,
   .finna-tag-list,
   .summary,
   .record-toc,
@@ -1207,6 +1187,9 @@ finna-model-viewer .object-editor {
     font-size: 16px;
     line-height: 1.5;
     margin-bottom: 15px;
+  }
+  .aipa-field-label {
+    font-weight: bold;
   }
   h1,
   .record-title {
@@ -1265,12 +1248,29 @@ finna-model-viewer .object-editor {
   }
 }
 
-
 /* Labels */
 .record .label {
   margin-bottom: 0.5rem;
 
   &.label-retraction {
     @extend .label-warning;
+  }
+}
+
+/* Validation report */
+.validation-report-xml {
+  white-space: pre-line;
+
+  .line {
+    display: inline-flex;
+    gap: 0.75rem;
+
+    .line__num {
+      min-width: 2rem;
+    }
+
+    .line__content {
+      white-space: pre-wrap;
+    }
   }
 }

@@ -47,11 +47,11 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * @param \VuFind\Config\Config $recordConfig   Record-specific configuration
      * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * @param \VuFind\Config\Config $searchSettings Search-specific configuration
      * file
      */
     public function __construct(
@@ -61,18 +61,5 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
         $this->searchSettings = $searchSettings;
-    }
-
-    /**
-     * Return the collection search ID for this record.
-     *
-     * @return string
-     */
-    public function getCollectionSearchId(): string
-    {
-        if ($this->mainConfig->Hierarchy->showFullHierarchyTree ?? false) {
-            return $this->getHierarchyTopID()[0] ?? $this->getUniqueID();
-        }
-        return $this->getUniqueID();
     }
 }

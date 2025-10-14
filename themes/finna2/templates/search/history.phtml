@@ -2,20 +2,20 @@
 <?php
   // Set page title.
   $this->headTitle($this->translate('Search History'));
+  $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
   $saveSupported = $this->accountCapabilities()->getSavedSearchSetting() === 'enabled';
   $loggedInUser = $this->auth()->getUserObject();
 
   $layoutLoggedIn = $saveSupported && $loggedInUser;
 
-  // Hide the account breadcrumb when login is disabled:
+  // Set up breadcrumbs; hide the account breadcrumb when login is disabled:
   $account = $this->auth()->getManager();
-  $parentBreadcrumb = is_object($account) && $account->loginEnabled()
-    ? '<li><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li>'
-    : '';
-
-  // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = $parentBreadcrumb . '<li class="breadcrumb-item active">' . $this->transEsc('Search History') . '</li>';
+  $this->breadcrumbs()->reset();
+  if (is_object($account) && $account->loginEnabled()) {
+    $this->breadcrumbs()->add($this->translate('Your Account'), $this->url('myresearch-home'));
+  }
+  $this->breadcrumbs()->add($this->translate('Search History'), active: true);
 
   // Check for scheduled searches
   $scheduledSearches = false;
@@ -47,7 +47,7 @@
     <?php endif; ?>
     <?=$this->flashmessages();?>
     <?php if ($saveSupported): ?>
-      <div class="useraccount-header">
+      <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
         <h2><?=$this->transEsc('history_saved_searches')?></h2>
       </div>
       <?php if (!empty($this->saved)): ?>
@@ -61,7 +61,7 @@
       <?php endif; ?>
     <?php endif; ?>
 
-    <div class="useraccount-header">
+    <div class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('history_recent_searches')?></h2>
     </div>
     <?php if (!empty($this->unsaved)): ?>

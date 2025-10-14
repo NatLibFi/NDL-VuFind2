@@ -155,14 +155,13 @@ FinnaPopup.prototype.show = function show() {
   const next = '<button class="popup-arrow popup-right-arrow next-record" type="button">' + VuFind.icon('record-next', 'record-next-icon') + '</button>';
   const previous = '<button class="popup-arrow popup-left-arrow previous-record" type="button">' + VuFind.icon('record-prev', 'record-prev-icon') + '</button>';
   const closeTemplate = '<button class="finna-popup close-button" title="close_translation" aria-label="close_translation">' + VuFind.icon('popup-close', 'popup-close-icon') + '</button>';
-  const srElement = '<span class="sr-only"></span>';
+  const srElement = '<span class="visually-hidden"></span>';
   var _ = this;
   var hasParent = typeof _.parent !== 'undefined';
   if (!hasParent) {
     $(document).on('focusin.finna', function setFocusTrap(e) {
       _.focusTrap(e);
     });
-    _.toggleScroll(false);
   }
   _.setKeyBinds();
 
@@ -174,6 +173,7 @@ FinnaPopup.prototype.show = function show() {
         _.onPopupClose();
       }
     });
+    $(document.body).addClass('overflow-hidden');
   }
   if (typeof _.modalHolder !== 'undefined') {
     _.modalHolder.remove();
@@ -297,20 +297,12 @@ FinnaPopup.prototype.onPopupOpen = function onPopupOpen(open, close) {
 };
 
 /**
- * Toggles the document body scroll state
- * @param {boolean} value Should the scrolling be enabled
- */
-FinnaPopup.prototype.toggleScroll = function toggleScroll(value) {
-  $(document.body).css('overflow', value ? 'auto' : 'hidden');
-};
-
-/**
  * Function that handles the flow when a popup closes
  */
 FinnaPopup.prototype.onPopupClose = function onPopupClose() {
   var _ = this;
   if (typeof _.parent === 'undefined') {
-    _.toggleScroll(true);
+    $(document.body).removeClass('overflow-hidden');
     $(document).off('focusin.finna');
   }
   if (typeof _.backDrop !== 'undefined') {
@@ -349,7 +341,7 @@ FinnaPopup.prototype.focusTrap = function focusTrap(e) {
   if (!$.contains(element, e.target)) {
     const nodes = getFocusableNodes(element);
     if (nodes.length) {
-      nodes[0].focus();    
+      nodes[0].focus();
     }
   }
 };

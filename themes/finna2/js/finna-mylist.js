@@ -61,7 +61,7 @@ finna.myList = (function finnaMyList() {
 
     var listParams = {
       'id': getActiveListId(),
-      'title': $('.list-title span').text(),
+      'title': $('.js-list-title').text(),
       'public': $(".list-visibility input[type='radio']:checked").val()
     };
 
@@ -186,7 +186,7 @@ finna.myList = (function finnaMyList() {
    * @param {boolean} mode Should the title be editable
    */
   function toggleTitleEditable(mode) {
-    var target = $('.list-title span');
+    var target = $('.js-list-title');
     var currentTitle;
     if (mode) {
       // list title
@@ -210,7 +210,7 @@ finna.myList = (function finnaMyList() {
           }
         }
       };
-      target.editable({action: 'click', triggers: [target, $('.list-title i')]}, titleCallback, editableSettings);
+      target.editable({action: 'click', triggers: [target, $('.list-title .icon')]}, titleCallback, editableSettings);
     } else {
       target.replaceWith(target.clone());
     }
@@ -347,7 +347,7 @@ finna.myList = (function finnaMyList() {
       });
     }
 
-    $('.add-new-list .icon').on('click', function createNewList() {
+    $('#add-new-list-item-btn').on('click', function createNewList() {
       var newListInput = $('.new-list-input');
       var newListName = newListInput.val().trim();
 
@@ -357,11 +357,16 @@ finna.myList = (function finnaMyList() {
         updateList({'id': 'NEW', 'title': newListName, 'desc': null, 'public': 0}, newListAdded, 'add-list');
       }
     });
+    $('#add-new-list-item-btn').on('keyup', function invokeCreateNewList(e) {
+      if (e.keyCode === 32) {
+        $('#add-new-list-item-btn').trigger("click");
+      }
+    });
 
     //Add new list, listen for keyup enter
     $('.new-list-input').on('keyup', function invokeCreateNewList(e) {
       if (e.keyCode === 13) {
-        $('.add-new-list .icon').trigger("click");
+        $('#add-new-list-item-btn').trigger("click");
       }
     });
 
@@ -493,7 +498,7 @@ finna.myList = (function finnaMyList() {
     }
     const updateFunctionButtons = function updateButtonStatesFunc() {
       var actions = $('.mylist-functions button, .mylist-functions select');
-      var aria = $('.mylist-functions .sr-only');
+      var aria = $('.mylist-functions .visually-hidden');
       var noneChecked = VuFind.listItemSelection.getAllSelected(favoriteForm).length === 0;
       if (noneChecked) {
         actions.attr('disabled', true);

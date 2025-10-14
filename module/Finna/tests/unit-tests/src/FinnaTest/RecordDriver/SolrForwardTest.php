@@ -3,7 +3,7 @@
 /**
  * SolrForward Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -710,6 +710,10 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                         'name' => 'Pat',
                         'region' => 'Norja',
                     ],
+                    [
+                        'name' => 'Tanska',
+                        'region' => '',
+                    ],
                 ],
             ],
             [
@@ -886,7 +890,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
         $record = new SolrForward(
             null,
             null,
-            new \Laminas\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig)
         );
         $record->setRawData(['fullrecord' => $fixture]);
         return $record;

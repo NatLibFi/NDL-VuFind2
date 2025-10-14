@@ -106,11 +106,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * @param \VuFind\Config\Config $recordConfig   Record-specific configuration
      * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * @param \VuFind\Config\Config $searchSettings Search-specific configuration
      * file
      */
     public function __construct(
@@ -242,12 +242,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                     ?? $imageData['urls']['large']
                     ?? $imageData['urls']['original'];
             }
-            if (!isset($imageData['urls']['medium'])) {
-                $imageData['urls']['medium'] = $imageData['urls']['small'];
-            }
-            if (!isset($imageData['urls']['large'])) {
-                $imageData['urls']['large'] = $imageData['urls']['medium'];
-            }
+            $imageData = $this->ensureImageSizes($imageData);
             $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
             $results[] = $imageData;
         };

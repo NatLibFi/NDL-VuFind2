@@ -98,14 +98,14 @@ finna.common = (function finnaCommon() {
         type: 'sort',
         hiddenSelectSelector: '.search-controls form.search-sort select',
         ariaLabelTemplate: `${VuFind.translate('Sort')}: %%linkText%% ${VuFind.translate('selected')}`,
-        sessionSaveSelector: 'sort-dropdown a.dropdown-toggle',
+        sessionSaveSelector: '.sort-option-container a.dropdown-toggle',
       },
       {
         dropdownWrapperSelector: '.search-controls .limit-option-container .dropdown',
         type: 'limit',
         hiddenSelectSelector: '.search-controls form.search-result-limit select',
         ariaLabelTemplate: `${VuFind.translate('Results per page')}: %%linkText%% ${VuFind.translate('selected')}`,
-        sessionSaveSelector: 'limit-dropdown a.dropdown-toggle',
+        sessionSaveSelector: '.limit-option-container a.dropdown-toggle',
       }
     ];
     dropdownMappings.forEach(mapping => {
@@ -197,6 +197,22 @@ finna.common = (function finnaCommon() {
     }
   }
 
+  /**
+   * Add an event handler that allows selecting of all content with double-click when the element has the
+   * data-double-click-select-all attribute
+   */
+  function initDoubleClickSelectHandler() {
+    document.addEventListener('dblclick', (ev) => {
+      if (!ev.target) {
+        return;
+      }
+      const dblClickEl = ev.target.closest('[data-double-click-select-all]');
+      if (dblClickEl) {
+        window.getSelection().selectAllChildren(dblClickEl);
+      }
+    });
+  }
+
   var my = {
     decodeHtml: decodeHtml,
     getField: getField,
@@ -212,6 +228,7 @@ finna.common = (function finnaCommon() {
         }
       );
       finna.resolvePromise('lazyImages');
+      initDoubleClickSelectHandler();
     },
     initResultScripts: initResultScripts,
     getCookie: getCookie,

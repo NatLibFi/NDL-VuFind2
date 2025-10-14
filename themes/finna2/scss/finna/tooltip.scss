@@ -56,35 +56,10 @@
 }
 .tooltip-local-advanced, .tooltip-pci-advanced, .tooltip-eds-advanced, .tooltip-summon-advanced {
   color: $link-color;
-  font-size: .8em;
-  @media(max-width: $screen-xs-max) {
+  font-size: 1rem;
+  @include media-breakpoint-down(sm) {
     font-weight: 500;
   }
-}
-.tooltip-image {
-  .tooltip {
-    overflow: hidden;
-  }
-  .tooltip-arrow {
-    display: none;
-  }
-  i {
-    margin-left: 0;
-    position: relative;
-    text-align: center;
-    cursor: pointer;
-    font-style: normal;
-    padding: 3px;
-    color: $action-link-color;
-    font-size: 24px;
-    &:before {
-      color: mix($background-color, contrast($background-color), 5%);
-      opacity: 0.8;
-    }
-  }
-  @media (max-width: $screen-sm) {
-    display: none;
-   }
 }
 
 .tooltip-myaccount {

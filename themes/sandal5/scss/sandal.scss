@@ -1,11 +1,4 @@
-/* #LESS>
-@import "../../bootstrap3/less/bootstrap";
-@import "colors";
-@import "variables";
-<#LESS */
-/* #SCSS> */
 @import "colors", "variables", "../../bootstrap5/scss/bootstrap";
-/* <#SCSS */
 
 @import "common";
 @import "search";
@@ -52,7 +45,7 @@ body {
   height: $banner-height-sm;
   display: inline-block;
 }
-@media (min-width: 768px) {
+@include media-breakpoint-up(sm) {
   .banner .navbar-right { margin-top: calc((#{$banner-height} - 50px) / 2); }
   .banner .navbar-brand {
     width: calc((170 / 65) * #{$banner-height});
@@ -173,14 +166,18 @@ a:hover .login-dropdown-caret {
 .myresearch-menu a:hover { background-color: $white; }
 .myresearch-menu a.active:hover {
   color: $white;
-  background-color: $brand-primary;
+  background-color: $primary;
+}
+
+/* --- PubDateVis --- */
+#dateVisColorSettings {
+  outline-color: #afafaf54; // selection color
 }
 
 /* --- Record --- */
 .record-nav {
   display: table;
   margin-left: auto;
-  margin-top: 1rem;
   margin-right: auto;
 }
 .info-col h3 {
@@ -191,20 +188,18 @@ a:hover .login-dropdown-caret {
 .comment-list { margin-top: .5rem; }
 .comment { margin-bottom: .5rem; }
 .comment .delete { font-size: $reduced-font-size; }
-.comment-form .btn-primary { margin-top: .25rem; }
 .tagList .tag .fa-close { margin: 0; }
 
 /* --- Sidebar --- */
 .sidebar {
-  padding-top: 1rem;
-  padding-left: 1rem;
-  padding-right: 1rem;
+  padding: 1rem;
   font-size: $reduced-font-size;
   background-color: $light-gray;
 
-  h1,h2,h3,h4 { margin-top: 0; }
+  h1,h2,h3:not(#acc-menu-lists-header):not(#acc-menu-favs-header),h4 { margin-top: 0; }
 
-  .facet-group {
+  .facet-group,
+  .datevis-form {
     background-color: $sidebar-item-bg;
     color: $sidebar-item-color;
   }
@@ -235,7 +230,7 @@ a:hover .login-dropdown-caret {
 
   .more-btn, .less-btn {
     border: 0;
-    border-bottom: 1px solid $list-group-border;
+    border-bottom: 1px solid $list-group-border-color;
     border-radius: 0;
   }
 
@@ -251,7 +246,7 @@ a:hover .login-dropdown-caret {
   background-color: $sidebar-item-badge;
 }
 
-@media (min-width: 768px) and (max-width: 991px) {
+@include media-breakpoint-between(sm, md) {
   .sidebar .facet {
     flex-flow: wrap;
 
@@ -261,5 +256,11 @@ a:hover .login-dropdown-caret {
       order: 1;
     }
     .exclude { order: 2; }
+  }
+}
+
+@include media-breakpoint-down(xl) {
+  .sidebar {
+    padding: 1rem 0.5rem 0.5rem 0.5rem;
   }
 }
