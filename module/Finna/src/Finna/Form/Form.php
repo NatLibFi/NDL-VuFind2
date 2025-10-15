@@ -211,11 +211,11 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Sets name and email field values from patron
+     * Sets name and email field values from preferred source
      *
-     * @return void
+     * @return static
      */
-    public function setContactInformation(): void
+    public function setContactInformation(): static
     {
         if ($this->preferPatronInformation()) {
             $this->setData(
@@ -224,14 +224,15 @@ class Form extends \VuFind\Form\Form
                     'email' => $this->ilsPatron['email'],
                 ]
             );
-        } else {
+        } elseif ($this->user) {
             $this->setData(
                 [
-                    'name' => $this->user?->getFirstname() . ' ' . $this->user?->getLastname(),
-                    'email' => $this->user?->getEmail(),
+                    'name' => $this->user->getFirstname() . ' ' . $this->user->getLastname(),
+                    'email' => $this->user->getEmail(),
                 ]
             );
         }
+        return $this;
     }
 
     /**
