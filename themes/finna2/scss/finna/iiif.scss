@@ -4,7 +4,7 @@ $primary-darker: color.scale($primary, $lightness: -25%);
 
 clover-viewer {
 
-    /* Hide Clover's built-in iiif logo button. We display it elsewhere. */
+    // Hide Clover's built-in iiif logo button. We display it elsewhere.
     .c-cGxcRS {
         display: none;
     }
@@ -46,21 +46,23 @@ clover-viewer {
     em {
         opacity: 1 !important;
     }
+}
 
-    button[disabled] svg {
-        background-color: $btn-primary-bg !important;
-        color: $btn-primary-color !important;
-        opacity: 1 !important;
+// Media navigation and search buttons
+.c-bwRbCV {
+    background-color: $btn-primary-bg !important;
+}
 
-        figure {
-            background-color: $primary-darker !important;
-        }
+.c-bwRbCV:disabled svg {
+    color: $btn-primary-color !important;
+    opacity: 1 !important;
 
-        figcaption {
-            padding-bottom: .5em !important;
-            text-align: center !important;
-        }
-    }
+
+}
+
+.clover-viewer-media-wrapper figcaption {
+    padding-bottom: .5em !important;
+    text-align: center !important;
 }
 
 // Always arrange viewer control buttons vertically. By default Clover only does
@@ -70,7 +72,8 @@ clover-viewer {
 
     $btn-border: 1px solid color.change($btn-primary-bg, $alpha: .2);
 
-    button {
+    // OpenSeaDragon image view control buttons
+    button.c-fuvPUR {
         margin: 0;
         filter: none;
         border-radius: 0;
@@ -86,12 +89,12 @@ clover-viewer {
 
     }
 
-    button:first-child {
+    button.c-fuvPUR:first-child {
         border-top-left-radius: 4px;
         border-top-right-radius: 4px;
     }
 
-    button:last-child {
+    button.c-fuvPUR:last-child {
         border: $btn-border;
         border-bottom: $btn-border;
         border-bottom-left-radius: 4px;
