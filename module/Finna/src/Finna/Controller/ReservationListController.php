@@ -358,20 +358,15 @@ class ReservationListController extends AbstractBase
             }
             return $this->redirect()->toRoute('reservationlist-displaylist', ['listId' => $listId]);
         }
-        $request = $this->getRequest()->isGet()
-            ? $this->getRequest()->getQuery()->toArray()
-            : $this->getRequest()->getPost()->toArray();
+        $request = $this->getRequest();
+        $orderSpecificValues = $listHandler->getValuesForListOrder(
+            $list,
+            $user,
+            $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()
+        );
 
-        $form = $listHandler->getPlaceOrderForm([]);
-        $form->setContactInformationFromPatron();
-        $form->setResources($this->reservationListService->getResourcesForList($list, $user));
-        $form->setData([
-            'card_info' => $listHandler->getUserCardName($user),
-            'pickup_date' => $this->getParam('pickup_date', ''),
-            'message' => $this->getParam('message', ''),
-            'listId' => $list->getId(),
-        ]);
-
+        $form = $listHandler->getPlaceOrderForm($orderSpecificValues);
+        $form->setData($orderSpecificValues);
         $formId = ConnectionAbstractBase::FORM_ID;
         $view = $this->createViewModel(compact('form', 'formId', 'user'));
         $view->setTemplate('feedback/form');
@@ -383,7 +378,7 @@ class ReservationListController extends AbstractBase
         if (!$form->isValid()) {
             return $view;
         }
-        $result = $listHandler->placeOrder($form, $user);
+        $result = $listHandler->placeOrder($orderSpecificValues, $user);
         if ($result['success']) {
             $this->reservationListService->setListOrdered($user, $list, $result);
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
@@ -438,36 +433,37 @@ class ReservationListController extends AbstractBase
         // Create an empty list for the user, but do not save it.
         $listEntity = $this->reservationListService->createListForUser($user, $listValues);
         $formId = ConnectionAbstractBase::FORM_ID;
+        $queryValues = $listHandler->getValuesForSingleOrder(
+            $listEntity,
+            $user,
+            $requestValues
+        );
         if (!$this->reservationListService->checkUserRightsForList($listHandler)) {
             $this->flashMessenger()->addErrorMessage('no_ils_support_description');
             if ($this->inLightbox()) {
                 return $this->getRefreshResponse();
             }
-            return $this->redirect()->toRoute('record', ['id' => $requestValues['recordId']]);
+            return $this->redirect()->toRoute('record', ['id' => $queryValues['recordId']]);
         }
-        $form = $listHandler->getSingleOrderForm($requestValues);
-        $form->setContactInformationFromPatron();
-        $form->setSingleRecord($this->getParam('recordId', ''));
-        $form->setData([
-            'card_info' => $listHandler->getUserCardName($user),
-            'pickup_date' => $this->getParam('pickup_date', ''),
-            'message' => $this->getParam('message', ''),
-            'listId' => $listEntity->getId(),
-        ]);
-
+        $form = $listHandler->getSingleOrderForm($queryValues);
         $view = $this->createViewModel(compact('formId', 'user', 'form'));
         $view->setTemplate('feedback/form');
         $view->useCaptcha = false;
         if (!$this->formWasSubmitted(useCaptcha: false)) {
+            $form->setData($queryValues);
             return $view;
         }
         if (!$form->isValid()) {
             return $view;
         }
 
-        $result = $listHandler->placeOrder($form, $user);
+        $result = $listHandler->placeOrder($queryValues, $user);
         if ($result['success']) {
-            $driver = $form->getRecord();
+            $driver = $this->getRecordLoader()->load(
+                $queryValues['recordId'],
+                $queryValues['source'],
+                false
+            );
             // Save single order into a list
             $this->reservationListService->populateListValues($listEntity, $user, $listValues);
             $this->reservationListService->setListOrdered($user, $listEntity, $result);

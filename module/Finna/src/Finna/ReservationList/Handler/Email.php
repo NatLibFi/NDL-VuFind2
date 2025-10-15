@@ -30,7 +30,6 @@
 namespace Finna\ReservationList\Handler;
 
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
-use Finna\ReservationList\Form\Form;
 use Symfony\Component\Mime\Address;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Mail as MailException;
@@ -49,8 +48,8 @@ class Email extends AbstractBase
     /**
      * Places an order
      *
-     * @param Form                $form Reservation list form
-     * @param UserEntityInterface $user User entity
+     * @param array               $formValues Values gathered from submitted form
+     * @param UserEntityInterface $user       User entity
      *
      * @return array [
      *  external_id: Id in external service or null,
@@ -59,16 +58,19 @@ class Email extends AbstractBase
      *  connection Type of the connection
      * ]
      */
-    public function placeOrder(Form $form, UserEntityInterface $user): array
+    public function placeOrder(array $formValues, UserEntityInterface $user): array
     {
+        $form = $this->getPlaceOrderForm($formValues);
+        $fields = $form->mapRequestParamsToFieldValues($formValues);
         $viewRenderer = $this->getService('ViewRenderer');
         $emailMessage = $viewRenderer->render(
             'Email/form.phtml',
-            [
-                'fields' => $form->getEmailValues(),
-            ]
+            compact('fields')
         );
-        $userInformation = $form->getUserInformation();
+        $cardInfo = $this->getPreferredCardInfo($user);
+
+        $replyToName = $formValues['full_name'] ?: $cardInfo['full_name'];
+        $replyToEmail = $formValues['email'] ?: $cardInfo['email'];
 
         $result = true;
         foreach ($this->getRecipient() as $recipient) {
@@ -78,8 +80,8 @@ class Email extends AbstractBase
                     $recipient['email'],
                     $this->getSenderName(),
                     $this->getSenderEmail(),
-                    $userInformation['firstname'] . ' ' . $userInformation['lastname'],
-                    $userInformation['email'],
+                    $replyToName,
+                    $replyToEmail,
                     $this->getEmailSubject(),
                     $emailMessage
                 );
@@ -93,7 +95,7 @@ class Email extends AbstractBase
         return [
             'success' => $result,
             'external_id' => null,
-            'pickup_date' => $form->get('pickup_date')->getValue(),
+            'pickup_date' => $formValues['pickup_date'],
             'connection' => 'email',
         ];
     }

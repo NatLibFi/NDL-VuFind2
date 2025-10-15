@@ -91,22 +91,4 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
         }
         return $cards;
     }
-
-    /**
-     * Get first library card associated with user.
-     *
-     * @param UserEntityInterface|int $userOrId    User object or identifier
-     * @param ?int                    $id          Optional card ID filter
-     * @param ?string                 $catUsername Optional catalog username filter
-     *
-     * @return ?UserCardEntityInterface
-     */
-    public function getLibraryCard(
-        UserEntityInterface|int $userOrId,
-        ?int $id = null,
-        ?string $catUsername = null
-    ): ?UserCardEntityInterface {
-        $cards = $this->getLibraryCards($userOrId, $id, $catUsername);
-        return $cards ? reset($cards) : null;
-    }
 }
