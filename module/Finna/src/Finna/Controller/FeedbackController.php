@@ -86,6 +86,8 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
 
     /**
      * Prefill form sender fields for logged in users.
+     * Overrides parent::prefillUserInfo to set user data from patron if form
+     * prefers patron information.
      *
      * @param Form                 $form Form
      * @param ?UserEntityInterface $user User
@@ -94,11 +96,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
      */
     protected function prefillUserInfo(Form $form, ?UserEntityInterface $user)
     {
-        if ($form->preferPatronInformation()) {
-            $form->setContactInformationFromPatron();
-            return $form;
-        } else {
-            return parent::prefillUserInfo($form, $user);
-        }
+        return $form->setContactInformation($user);
     }
 }
