@@ -221,7 +221,6 @@ finna.layout = (function finnaLayout() {
       document.querySelector('body').classList.toggle('prevent-scroll');
       if (container) {
         if (sidebar.classList.contains('open')) {
-          sidebar.ariaHidden = 'false';
           container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
           container.role = 'dialog';
           container.ariaModal = true;
@@ -230,7 +229,6 @@ finna.layout = (function finnaLayout() {
           document.activeElement.blur();
           container.querySelector('h1').focus();
         } else {
-          sidebar.ariaHidden = 'true';
           container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
           container.removeAttribute('role');
           container.removeAttribute('aria-modal');
@@ -260,8 +258,6 @@ finna.layout = (function finnaLayout() {
   function initMobileNarrowSearch() {
     const container = getSideFacetsContainer();
     if (container) {
-      const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
-      sidebar.ariaHidden = "true";
       document.querySelectorAll('.js-mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
       });
