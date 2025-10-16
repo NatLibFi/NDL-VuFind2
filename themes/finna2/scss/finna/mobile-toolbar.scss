@@ -141,33 +141,7 @@ section.template-dir-collection.template-name-view .sidebar {
     }
   }
 }
-.mobile-navigation {
-  @extend .mobile-toolbar;
-  @include media-breakpoint-down(sm) {
-    left: 0;
-    z-index: 60;
-    i {
-      font-size: 15px;
-    }
-    li.sidebar-navigation {
-      padding: 11px;
-      color: $sidebar-header-text-color;
-      font-size: 1em;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    span.narrow-search-link {
-      font-size: 1.2em;
-      font-weight: 500;
-      text-transform: uppercase;
-    }
-    span.active-filters {
-      float: right;
-      max-width: 55%;
-    }
-  }
-}
+
 .js-mobile-nav-toggle {
   @include media-breakpoint-down(md) {
     position: sticky;

@@ -181,7 +181,13 @@ finna.layout = (function finnaLayout() {
    * @returns {Element} The side facet container
    */
   function getSideFacetsContainer() {
-    return document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
+    const body = document.querySelector('body');
+    if (body.classList.contains('template-name-mylist')) {
+      return document.querySelector('.mylist-bar.js-mobile-sidebar-container');
+    } else if (body.classList.contains('template-name-displaylist')) {
+      return document.querySelector('.reservationlist-bar.js-mobile-sidebar-container');
+    }
+    return document.querySelector('.side-facets-container-ajax') || document.querySelector('.js-mobile-sidebar-container');
   }
 
   /**
@@ -190,11 +196,15 @@ finna.layout = (function finnaLayout() {
    */
   function onFocusOutOfFacetContainer(e) {
     const container = getSideFacetsContainer();
-    if (!container.contains(e.relatedTarget)) {
+    if (e.relatedTarget !== null && !container.contains(e.relatedTarget)) {
       e.stopImmediatePropagation();
       e.preventDefault();
-      document.activeElement.blur();
-      container.focus();
+      setTimeout(() => {
+        document.activeElement.blur();
+        container.focus();
+      },
+      200
+      );
     }
   }
 
@@ -208,25 +218,26 @@ finna.layout = (function finnaLayout() {
     if (sidebar) {
       sidebar.classList.toggle('open');
       const container = getSideFacetsContainer();
-      document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
-        el.classList.toggle('hidden');
-      });
       document.querySelector('body').classList.toggle('prevent-scroll');
       if (container) {
         if (sidebar.classList.contains('open')) {
+          sidebar.ariaHidden = 'false';
           container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
+          container.role = 'dialog';
           container.ariaModal = true;
-          container.tabIndex = '0';
+          container.tabIndex = '-1';
           container.querySelector('h1').tabIndex = '0';
           document.activeElement.blur();
           container.querySelector('h1').focus();
         } else {
+          sidebar.ariaHidden = 'true';
           container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
-          document.activeElement.blur();
-          document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
+          container.removeAttribute('role');
           container.removeAttribute('aria-modal');
           container.removeAttribute('tabindex');
           container.querySelector('h1').removeAttribute('tabindex');
+          document.activeElement.blur();
+          document.querySelector('.js-mobile-nav-toggle .btn-mobile-nav').focus();
         }
       }
     }
@@ -247,28 +258,21 @@ finna.layout = (function finnaLayout() {
    * Initialize mobile narrow search
    */
   function initMobileNarrowSearch() {
-    document.querySelectorAll('.mobile-navigation .sidebar-navigation, .js-mobile-list-navigation').forEach(el => {
-      el.addEventListener('click', toggleMobileSidebar);
-    });
     const container = getSideFacetsContainer();
     if (container) {
-      document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
+      const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
+      sidebar.ariaHidden = "true";
+      document.querySelectorAll('.js-mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
       });
-      document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
+      document.querySelectorAll('.js-mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
           onKeyPressMobileSidebar(e);
         });
       });
     }
-    const filters = document.querySelector('.mobile-navigation .sidebar-navigation .active-filters');
-    if (filters) {
-      filters.addEventListener('click', function onClickMobileActiveFilters() {
-        document.querySelector('.sidebar').scrollTop(0);
-      });
-    }
-    const narrowSearchMobileTrigger = document.querySelector('.finna-search-filter-toggle-trigger');
-    const narrowSearchMobile = document.querySelector('.finna-search-filter-toggle');
+    const narrowSearchMobileTrigger = document.querySelector('.js-mobile-nav-toggle-trigger');
+    const narrowSearchMobile = document.querySelector('.js-mobile-nav-toggle');
     if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
       const narrowSearchMobileObserver = new IntersectionObserver(
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),

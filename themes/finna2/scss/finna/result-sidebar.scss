@@ -87,13 +87,17 @@
   align-items: baseline;
   h1 {
     padding: 0;
-    text-transform: none;
   }
   button {
     background-color: $sidebar-background;
     color: $sidebar-header-text-color;
     border: none;
     font-size: 1.2rem;
+  }
+}
+.mylist-bar, .reservationlist-bar {
+  h1.mobile-navigation-header {
+    text-transform: none;
   }
 }
 

@@ -13,7 +13,10 @@
   }
 ?>
 <ul class="dropdown-menu subtabs collapse show" role="presentation">
-  <li class="mobile-navigation-header-container visible-xs visible-sm"><h1 class="mobile-navigation-header"><?=$this->transEsc('ReservationList::All hold requests')?></h1><button class="sidebar-close-btn"><?=$this->icon('close', 'sidefacets-close-icon') ?></button></li>
+  <li class="mobile-navigation-header-container visible-xs visible-sm">
+    <h1 class="mobile-navigation-header"><?=$this->transEsc('ReservationList::All hold requests')?></h1>
+    <button class="sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+  </li>
   <?php $active = empty($activeId); ?>
   <li>
     <a class="dropdown-item<?=$active ? ' active' : ''?>" role="menuitem" href="<?= $active ? '#' : $this->url('reservationlist-displaylists') ?>" aria-current="<?=$active ? 'page' : 'false'?>"><?= $this->transEsc('ReservationList::All Lists') ?></a>

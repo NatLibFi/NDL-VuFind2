@@ -9,7 +9,7 @@
   $resultsTotal = $results->getResultTotal();
 ?>
 <?php if ($resultsTotal > 0): ?>
-  <div class="js-mobile-sidebar-container" aria-label="<?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?>">
+  <div class="js-mobile-sidebar-container">
     <div class="mobile-navigation-header-container">
       <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
@@ -23,7 +23,7 @@
         );
         ?>
       <?php endif; ?>
-      <button role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+      <button class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
       <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
     </div>
 <?php endif; ?>
