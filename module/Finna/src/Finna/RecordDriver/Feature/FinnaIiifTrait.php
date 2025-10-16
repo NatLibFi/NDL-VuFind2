@@ -43,11 +43,11 @@ trait FinnaIiifTrait
     /**
      * Get all IIIF manifests.
      *
-     * @return \Generator<string>
+     * @return array
      */
     public function getAllIiifManifests()
     {
-        yield from [];
+        return [];
     }
 
     /**
