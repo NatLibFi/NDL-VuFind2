@@ -1,0 +1,76 @@
+<?php
+/**
+ * Viewer for IIIF manifests and collections.
+ *
+ * @param string    manifest    URL of IIIF manifest to load
+ */
+$js = <<<JS
+    finna.scriptLoader.load(
+      {'iiif-viewer': 'vendor/clover/web-components/index.umd.js'},
+      () => {}
+    );
+    JS;
+
+echo $this->assetManager()->outputInlineScriptString($js);
+
+$encodedManifest = urlencode($this->manifest);
+?>
+
+<div class="record-viewer-container container">
+  <clover-viewer id="<?= $this->manifest ?>"></clover-viewer>
+</div>
+
+<div class="record-iiif-footer container">
+  <span class="record-iiif-functions dropdown hstack gap-3">
+    <span class="p-2 me-auto">
+      <?=$this->transEsc('rights_unknown')?>
+    </span>
+    <button type="button" class="btn btn-outline-secondary p-2 icon-link" href="#">
+      <?=$this->transEsc('terms_of_use')?>
+      <?=$this->icon('angle-down')?>
+    </button>
+    <button type="button" class="btn btn-outline-secondary p-2 icon-link" href="#">
+      <?=$this->icon('download')?>
+      <?=$this->transEsc('download_image')?>
+    </button>
+    <button type="button" class="btn btn-outline-secondary p-2 icon-link" data-bs-toggle="dropdown" aria-expanded="false">
+      <img src="<?=$this->imageSrc()->getSourceAddress('iiif_logo.min')?>" alt="IIIF" class="bi">
+      <?=$this->transEsc('iiif_tools')?>
+      <?=$this->icon('angle-down')?>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li>
+        <h6 class="dropdown-header"><?=$this->transEsc('iiif_manifest')?></h6>
+      </li>
+      <li>
+        <a class="dropdown-item" href="<?= $this->manifest ?>" target="_blank" rel="nofollow">
+          <?=$this->icon('external-link')?>
+          <?=$this->transEsc('open_in_new_tab')?>
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item icon-link" href="#">
+          <?=$this->icon('clipboard')?>
+          <?=$this->transEsc('copy_manifest_address')?>
+        </a>
+      </li>
+      <li>
+        <h6 class="dropdown-header"><?=$this->transEsc('open_in_external_viewer')?></h6>
+      </li>
+      <li>
+        <a class="dropdown-item" href="https://uv-v4.netlify.app/#?manifest=<?= $encodedManifest ?>" target="_blank"
+          rel="nofollow">
+          <?=$this->icon('external-link')?>
+          Universal Viewer
+        </a>
+      </li>
+      <li>
+        <a class="dropdown-item" href="https://projectmirador.org/embed/?iiif-content=<?= $encodedManifest ?>"
+          target="_blank" rel="nofollow">
+          <?=$this->icon('external-link')?>
+          Mirador
+        </a>
+      </li>
+    </ul>
+  </span>
+</div>
