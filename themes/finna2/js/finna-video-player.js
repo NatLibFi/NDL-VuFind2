@@ -214,7 +214,7 @@ finna.videoPlayer = (() => {
       return;
     }
     finna.scriptLoader.load(requiredVideoScripts, () => {
-      finna.scriptLoader.load(dependantVideoScripts, () => {
+      finna.scriptLoader.load(dependentVideoScripts, () => {
         element.addEventListener('click', () => {
           document.querySelectorAll('.vc-finna-video-button').forEach(b => b.classList.remove('active-video'));
           onVideoOpen(element);
