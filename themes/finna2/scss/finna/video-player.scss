@@ -31,15 +31,16 @@
 
 // Template for using proper styles, when appending video viewer inside an element.
 %iframe-centering-template {
-  height: $inline-video-player-desktop-height;
+  max-height: $inline-video-player-desktop-height;
   @media screen {
     @include media-breakpoint-down(md) {
-      height: $inline-video-player-tablet-height;
+      max-height: $inline-video-player-tablet-height;
     }
     @include media-breakpoint-down(sm) {
-      height: $inline-video-player-mobile-height;
+      max-height: $inline-video-player-mobile-height;
     }
   }
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -145,11 +146,7 @@
 
 #modal.finna-video-modal,
 #modal.finna-iframe-modal {
-  display: flex;
-  align-items: center;
-  justify-content: center;
   .modal-dialog {
-    flex: 1 1 auto;
     max-width: 1200px;
     .modal-content {
       width: 100%;

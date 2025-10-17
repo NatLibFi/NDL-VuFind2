@@ -29,10 +29,15 @@ finna.videoPlayer = (() => {
   {
     const container = document.getElementById('modal');
     if (container) {
-      container.classList.add(className);
-      VuFind.listen('lightbox.closed', () => {
-        container.classList.remove(className);
-      }, {once: true});
+      const dialog = container.querySelector('.modal-dialog');
+      if (dialog) {
+        container.classList.add(className);
+        dialog.classList.add('modal-dialog-centered');
+        VuFind.listen('lightbox.closed', () => {
+          dialog.classList.remove('modal-dialog-centered');
+          container.classList.remove(className);
+        }, {once: true});
+      }
     }
   }
 
