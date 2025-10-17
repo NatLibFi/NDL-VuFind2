@@ -22,14 +22,7 @@ $encodedManifest = urlencode($this->manifest);
 
 <div class="record-iiif-footer container">
   <span class="record-iiif-functions dropdown hstack gap-3">
-    <span class="p-2 me-auto">
-      <?=$this->transEsc('rights_unknown')?>
-    </span>
-    <button type="button" class="btn btn-outline-secondary p-2 icon-link" href="#">
-      <?=$this->transEsc('terms_of_use')?>
-      <?=$this->icon('angle-down')?>
-    </button>
-    <button type="button" class="btn btn-outline-secondary p-2 icon-link" href="#">
+    <button type="button" class="btn btn-outline-secondary p-2 ms-auto icon-link" href="#">
       <?=$this->icon('download')?>
       <?=$this->transEsc('download_image')?>
     </button>
