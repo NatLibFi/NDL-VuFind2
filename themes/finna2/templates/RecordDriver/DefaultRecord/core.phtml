@@ -156,6 +156,7 @@
           <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
             <?=$this->icon($icon) ?> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
           </a>
+          <?php if (!empty($url['note'])): ?> <span class="url-public-note"><?=$this->escapeHtml($url['note'])?></span><?php endif; ?>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
         </div>
         <?php $addRenderedUrl($url); ?>
@@ -224,8 +225,7 @@
         </div>
       <?php endif; ?>
 
-      <?=$this->record($driver)->renderTemplate('container-links.phtml');?>
-
+      <?=$this->record($driver)->renderTemplate('container-links.phtml', ['inRecordInfo' => true]); ?>
       <?php $publications = $this->driver->getPublicationDetails();
       if (!empty($publications)): ?>
         <span class="recordPublications">
@@ -249,6 +249,18 @@
         <span class="recordEdition">
           <span><?=$this->escapeHtml($edition)?></span>
         </span>
+      <?php endif; ?>
+      
+      <?php if (
+          isset($this->tabs['ComponentParts'])
+          && $this->driver->tryMethod('getEmbeddedComponentParts')
+        ): ?>
+        <div class="record-to-componentparts-link">
+          <a class="icon-link" href="#componentparts">
+            <?=$this->icon('more', 'icon-link__icon') ?>
+            <span class="icon-link__label"><?=$this->transEsc('Show contents')?></span>
+          </a>
+        </div>
       <?php endif; ?>
 
       <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
