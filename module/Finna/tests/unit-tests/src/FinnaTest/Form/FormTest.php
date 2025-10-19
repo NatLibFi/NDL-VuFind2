@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ProxyUrl helper test class
+ * Form test class
  *
  * PHP version 8
  *
@@ -34,7 +34,6 @@ use Finna\Form\Form;
 use Generator;
 use Laminas\View\HelperPluginManager;
 use PHPUnit\Framework\MockObject\MockObject;
-use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Form\Handler\PluginManager;
 use VuFindTest\Feature\FixtureTrait;
 

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ProxyUrl helper test class
+ * YamlReader test class
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Config\PathResolver;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * Form test class
+ * YamlReader test class
  *
  * @category VuFind
  * @package  Tests
