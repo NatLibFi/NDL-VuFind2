@@ -169,17 +169,15 @@ class Form extends \VuFind\Form\Form
     {
         parent::setFormId($formId, $params, $prefill);
 
-        // Try to obtain patron barcode from database entity first and patron after
-        if ($this->reportPatronBarcode()) {
-            if ($this->ilsPatron && $catUsername = $this->ilsPatron['__local_cat_username']) {
-                $this->userCatUsername = $catUsername;
+        if ($this->ilsPatron) {
+            if ($this->reportPatronBarcode()) {
+                $this->userCatUsername = $this->ilsPatron['__local_cat_username'];
+            }
+            if ($this->reportPatronId()) {
+                $this->userCatId = $this->ilsPatron['__local_id'];
             }
         }
-        if ($this->reportPatronId()) {
-            if ($this->ilsPatron && $catId = $this->ilsPatron['__local_id']) {
-                $this->userCatId = $catId;
-            }
-        }
+
         $this->setName($formId);
     }
 
