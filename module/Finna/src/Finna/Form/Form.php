@@ -353,7 +353,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * From which source should preferred contact information be obtained?
+     * Should the form fill user data from patron?
      *
      * @return bool
      */
