@@ -68,7 +68,9 @@
       </div>
     <?php endif; ?>
     <?php if ($this->listEntity->getOrdered()): ?>
-      <?=$this->component('finna-information-box', ['type' => 'info', 'content' => $this->translate('ReservationList::list_editing_info'), 'bold' => true])?>
+      <div class="my-2 alert alert-info">
+        <?=$this->translate('ReservationList::list_editing_info');?>
+      </div>
     <?php endif; ?>
     <div class="list-controls">
       <?php if ($this->listHandler->isEnabled() && !$this->listEntity->getOrdered() && $this->results->getResults()): ?>
