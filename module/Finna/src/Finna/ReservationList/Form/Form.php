@@ -57,13 +57,6 @@ class Form extends \Finna\Form\Form
     protected array $recipients = [];
 
     /**
-     * Array of resources related to reservation
-     *
-     * @var array
-     */
-    protected array $resources = [];
-
-    /**
      * Set recipients
      *
      * @param array $recipients Array containing recipients [name, email]
