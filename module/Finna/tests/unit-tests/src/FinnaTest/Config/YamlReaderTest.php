@@ -107,7 +107,7 @@ class YamlReaderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test setting user information to form
+     * Test getFinna method
      *
      * @param string $fixture  Fixture name
      * @param array  $expected Expected results
