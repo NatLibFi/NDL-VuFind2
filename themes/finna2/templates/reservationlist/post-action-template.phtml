@@ -1,13 +1,12 @@
 <?php
-  $pageTitle = $this->translate('ReservationList::Add to reservation list');
-  $toList = $this->translate('ReservationList::Continue to sending the hold request');
-  if ($this->listEntity->getOrdered()) {
-    $pageTitle = $this->translate('ReservationList::list_ordered', ['%%date%%' => $this->listEntity->getOrdered()->format('d.m.Y')]);
-    $toList = $this->translate('go_to_list');
-  }
+  $listOrdered = $this->listEntity->getOrdered();
+  $pageTitle = $listOrdered
+    ? $this->translate('ReservationList::form_response')
+    : $this->translate('ReservationList::Add to reservation list');
+  $toList = $listOrdered
+    ? $this->translate('ReservationList::View hold request')
+    : $this->translate('ReservationList::Continue to sending the hold request');
 
-  // Set up page title:
-  $this->headTitle($pageTitle);
   $user = $this->auth()->getUserObject();
   $contextDriver = $this->driver ?? null;
   // Set up breadcrumbs:
@@ -17,14 +16,13 @@
   }
 ?>
 
-<h2><?= $this->escapeHtml($pageTitle) ?></h2>
+<?=$this->component('page-title', ['title' => $pageTitle]);?>
 
 <?php if (!$this->listEntity->getOrdered() && $contextDriver): ?>
   <p><?=$this->transEsc('ReservationList::resource_added_to_list', ['%%resource%%' => $this->driver->getTitle(), '%%list%%' => $this->listEntity->getTitle($this->layout()->userLang)]);?></p>
 <?php endif; ?>
-
 <?php if ($this->listEntity->getOrdered()): ?>
-  <?=$this->component('finna-information-box', ['content' => $this->translate('ReservationList::after_order_instructions')]);?>
+  <p><?=$this->transEsc('ReservationList::after_order_instructions');?></p>
 <?php endif; ?>
 
 <div class="btn-group">
