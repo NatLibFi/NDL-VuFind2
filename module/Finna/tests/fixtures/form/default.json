@@ -17,16 +17,16 @@
                     "type": "select",
                     "label": "test select label",
                     "required": true,
-                    "options": [
-                        {
+                    "options": {
+                        "o1": {
                             "value": "value1",
                             "label": "label1"
                         },
-                        {
+                        "o2": {
                             "value": "value2",
                             "label": "label2"
                         }
-                    ]
+                    }
                 },
                 {
                     "name": "f2",

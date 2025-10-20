@@ -448,7 +448,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     {
         $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
         $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
-        $cardName = $patron['__local_cat_username'];
+        $cardName = $patron['__local_cat_username'] ?? $patron['cat_username'];
         if ($cards = $cardService->getLibraryCards($user, null, $patron['cat_username'])) {
             $dbCardName = reset($cards)->getCardName();
             if ($dbCardName !== $patron['cat_username']) {
@@ -464,7 +464,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             'first_name' => $firstName,
             'last_name' => $lastName,
             'full_name' => $fullName,
-            'patron_id' => $patron['__local_id'],
+            'patron_id' => $patron['__local_id'] ?? $patron['id'],
             'email' => $patron['email'],
             'card_name' => $cardName,
         ];

@@ -51,51 +51,181 @@ class FormTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
 
     /**
-     * Get testSetUserInformation data
+     * Get testFormFieldValues data
      *
      * @return Generator
      */
-    public static function getTestSetUserInformationData(): Generator
+    public static function getTestFormFieldValuesData(): Generator
     {
+        $patron = [
+            'id' => 'test.11122',
+            'cat_username' => 'test.111233',
+            '__local_id' => '11122',
+            '__local_cat_username' => '111233',
+            'firstname' => 'Tane',
+            'lastname' => 'Tene',
+            'email' => 'patronemail@email.fi',
+            '__source' => 'test',
+        ];
         yield 'Form has preferPatronInformation true' => [
             'prefer_patron_information.json',
             [
-                'f1' => null,
-                'f2' => null,
-                'name' => 'Tane Tene',
-                'email' => 'patronemail@email.fi',
-                'submitButton' => null,
+                'setContactInformation' => [
+                    'f1' => null,
+                    'f2' => null,
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'submitButton' => null,
+                ],
+                'mapRequestParamsToFieldValues' => [
+                    'f1' => 'value1',
+                    'f2' => 'Test',
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'userLoginMethod' => 'login_method_',
+                    'userRoles' => '',
+                ],
             ],
+            $patron,
         ];
         yield 'Form has preferPatronInformation false' => [
             'default.json',
             [
-                'f1' => null,
-                'f2' => null,
-                'name' => 'Test Tester',
-                'email' => 'dbemail@email.fi',
-                'submitButton' => null,
+                'setContactInformation' => [
+                    'f1' => null,
+                    'f2' => null,
+                    'name' => 'Test Tester',
+                    'email' => 'dbemail@email.fi',
+                    'submitButton' => null,
+                ],
+                'mapRequestParamsToFieldValues' => [
+                    'f1' => 'value1',
+                    'f2' => 'Test',
+                    'name' => 'Test Tester',
+                    'email' => 'dbemail@email.fi',
+                    'userLoginMethod' => 'login_method_',
+                    'userRoles' => '',
+                ],
             ],
+            $patron,
         ];
         yield 'Form has includeBarcode true' => [
             'include_barcode.json',
             [
-                'f1' => null,
-                'f2' => null,
-                'name' => 'Tane Tene',
-                'email' => 'patronemail@email.fi',
-                'submitButton' => null,
+                'setContactInformation' =>
+                    [
+                        'f1' => null,
+                        'f2' => null,
+                        'name' => 'Tane Tene',
+                        'email' => 'patronemail@email.fi',
+                        'submitButton' => null,
+                    ],
+                'mapRequestParamsToFieldValues' => [
+                    'f1' => 'value1',
+                    'f2' => 'Test',
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'userLoginMethod' => 'login_method_',
+                    'userRoles' => '',
+                    'userCatUsername' => '111233',
+                ],
             ],
+            $patron,
         ];
         yield 'Form has includePatronId true' => [
             'include_patron_id.json',
             [
-                'f1' => null,
-                'f2' => null,
-                'name' => 'Tane Tene',
-                'email' => 'patronemail@email.fi',
-                'submitButton' => null,
+                'setContactInformation' =>
+                    [
+                        'f1' => null,
+                        'f2' => null,
+                        'name' => 'Tane Tene',
+                        'email' => 'patronemail@email.fi',
+                        'submitButton' => null,
+                    ],
+                'mapRequestParamsToFieldValues' => [
+                    'f1' => 'value1',
+                    'f2' => 'Test',
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'userLoginMethod' => 'login_method_',
+                    'userRoles' => '',
+                    'userCatId' => '11122',
+                ],
             ],
+            $patron,
+        ];
+        $patron['cat_username'] = $patron['__local_cat_username'];
+        unset($patron['__local_cat_username']);
+        $patron['id'] = $patron['__local_id'];
+        unset($patron['__local_id']);
+        unset($patron['__source']);
+        yield 'Patron has no __local_ or __source keys' => [
+            'prefer_patron_information.json',
+            [
+                'setContactInformation' => [
+                    'f1' => null,
+                    'f2' => null,
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'submitButton' => null,
+                ],
+                'mapRequestParamsToFieldValues' => [
+                    'f1' => 'value1',
+                    'f2' => 'Test',
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'userLoginMethod' => 'login_method_',
+                    'userRoles' => '',
+                ],
+            ],
+            $patron,
+        ];
+        yield 'Patron has no __local_ or __source keys and form has includeBarcode true' => [
+            'include_barcode.json',
+            [
+                'setContactInformation' =>
+                    [
+                        'f1' => null,
+                        'f2' => null,
+                        'name' => 'Tane Tene',
+                        'email' => 'patronemail@email.fi',
+                        'submitButton' => null,
+                    ],
+                'mapRequestParamsToFieldValues' => [
+                    'f1' => 'value1',
+                    'f2' => 'Test',
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'userLoginMethod' => 'login_method_',
+                    'userRoles' => '',
+                    'userCatUsername' => '111233',
+                ],
+            ],
+            $patron,
+        ];
+        yield 'Patron has no __local_ or __source keys and form has includePatronId true' => [
+            'include_patron_id.json',
+            [
+                'setContactInformation' =>
+                    [
+                        'f1' => null,
+                        'f2' => null,
+                        'name' => 'Tane Tene',
+                        'email' => 'patronemail@email.fi',
+                        'submitButton' => null,
+                    ],
+                'mapRequestParamsToFieldValues' => [
+                    'f1' => 'value1',
+                    'f2' => 'Test',
+                    'name' => 'Tane Tene',
+                    'email' => 'patronemail@email.fi',
+                    'userLoginMethod' => 'login_method_',
+                    'userRoles' => '',
+                    'userCatId' => '11122',
+                ],
+            ],
+            $patron,
         ];
     }
 
@@ -157,27 +287,35 @@ class FormTest extends \PHPUnit\Framework\TestCase
      *
      * @param string $fixture  Fixture name
      * @param array  $expected Expected results
+     * @param array  $patron   User patron.
      *
-     * @dataProvider getTestSetUserInformationData
+     * @dataProvider getTestFormFieldValuesData
      * @return       void
      */
-    public function testSetUserInformation(string $fixture, array $expected): void
+    public function testFormFieldValues(string $fixture, array $expected, array $patron): void
     {
         $formConfig = $this->getJsonFixture("form/$fixture", 'Finna');
         $user = $this->getUserEntityInterfaceMock(1, 'Test', 'Tester', 'dbemail@email.fi');
-        $patron = [
-            'id' => 'test.11122',
-            '__local_id' => '11122',
-            '__local_cat_username' => '111233',
-            'firstname' => 'Tane',
-            'lastname' => 'Tene',
-            'email' => 'patronemail@email.fi',
-        ];
+
         $form = $this->getForm($formConfig);
         $form->setUser($user, [], $patron);
         $form->setFormId('test');
         $form->setContactInformation();
         $form->isValid();
-        $this->assertEquals($expected, $form->getData());
+        $this->assertEquals($expected['setContactInformation'], $form->getData());
+
+        // Test setting data
+        $values = [
+            'name' => $form->getData()['name'],
+            'email' => $form->getData()['email'],
+            'f1' => 'o1',
+            'f2' => 'Test',
+        ];
+        $mapped = $form->mapRequestParamsToFieldValues($values);
+        $result = [];
+        foreach ($mapped as $field) {
+            $result[$field['name']] = $field['value'];
+        }
+        $this->assertEquals($expected['mapRequestParamsToFieldValues'], $result);
     }
 }

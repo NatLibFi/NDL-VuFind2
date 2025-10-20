@@ -171,10 +171,10 @@ class Form extends \VuFind\Form\Form
 
         if ($this->ilsPatron) {
             if ($this->reportPatronBarcode()) {
-                $this->userCatUsername = $this->ilsPatron['__local_cat_username'];
+                $this->userCatUsername = $this->ilsPatron['__local_cat_username'] ?? $this->ilsPatron['cat_username'];
             }
             if ($this->reportPatronId()) {
-                $this->userCatId = $this->ilsPatron['__local_id'];
+                $this->userCatId = $this->ilsPatron['__local_id'] ?? $this->ilsPatron['id'];
             }
         }
 
