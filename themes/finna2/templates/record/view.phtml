@@ -120,8 +120,8 @@
       </div>
     <?php endif; ?>
   <?php endif; ?>
-  <?php $iiifManifests = $this->driver->tryMethod('getAllIiifManifests') ?? [];
-    if (!empty($iiifManifests)):
+  <?php $iiifManifests = $this->driver->tryMethod('getAllIiifManifests');
+    if ($iiifManifests):
       echo $this->record($this->driver)->renderTemplate(
           'record-iiif-viewer.phtml',
           ['manifests' => $iiifManifests]

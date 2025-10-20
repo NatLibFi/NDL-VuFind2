@@ -181,11 +181,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         $manifests = [];
         foreach ($field856 as $field) {
             $u = $reader->getSubfield($field, 'u');
-            $q = $reader->getSubfield($field, 'q');
             if (
-                !empty($u) &&
-                !empty($q) &&
-                $this->isIiifPresentationManifest($q)
+                $u
+                && $this->isIiifPresentationManifest($reader->getSubfield($field, 'q'))
             ) {
                 $manifests[] = $u;
             }

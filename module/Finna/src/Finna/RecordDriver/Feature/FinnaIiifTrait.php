@@ -61,7 +61,6 @@ trait FinnaIiifTrait
     {
         $iiifManifestContentTypeRegex =
             '/application\/ld(\+json)?;profile="http:\/\/iiif\.io\/api\/presentation\/.+\.json"/';
-        return preg_match($iiifManifestContentTypeRegex, $contentType)
-            === 1;
+        return preg_match($iiifManifestContentTypeRegex, $contentType) === 1;
     }
 }
