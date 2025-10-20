@@ -177,7 +177,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     public function getAllIiifManifests()
     {
         $reader = $this->getMarcReader();
-        $field856 = $reader->getFields('856', ['q', 'u']) ?? [];
+        $field856 = $reader->getFields('856', ['q', 'u']);
         $manifests = [];
         foreach ($field856 as $field) {
             $u = $reader->getSubfield($field, 'u');

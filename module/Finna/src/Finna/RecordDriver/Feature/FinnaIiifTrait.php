@@ -45,7 +45,7 @@ trait FinnaIiifTrait
      *
      * @return array
      */
-    public function getAllIiifManifests()
+    public function getAllIiifManifests(): array
     {
         return [];
     }

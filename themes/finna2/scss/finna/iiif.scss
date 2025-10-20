@@ -111,14 +111,10 @@ clover-viewer {
     }
 }
 
-.record-iiif-footer {
+.record-iiif-toolbar {
     border-top: thin solid $gray-lighter;
     background-color: $gray-ultralight;
     padding-bottom: 1ex;
     padding-top: 1ex;
     margin-bottom: $field-margin-vertical;
-
-    .btn-outline-secondary {
-        border: thin solid $btn-primary-bg;
-    }
 }
