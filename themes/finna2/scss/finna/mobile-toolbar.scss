@@ -142,7 +142,7 @@ section.template-dir-collection.template-name-view .sidebar {
   }
 }
 
-.js-mobile-nav-toggle {
+.mobile-nav-toggle {
   @include media-breakpoint-down(md) {
     position: sticky;
     top: $navbar-height;

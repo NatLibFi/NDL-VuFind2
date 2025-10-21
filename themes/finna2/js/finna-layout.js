@@ -235,7 +235,7 @@ finna.layout = (function finnaLayout() {
           container.removeAttribute('tabindex');
           container.querySelector('h1').removeAttribute('tabindex');
           document.activeElement.blur();
-          document.querySelector('.js-mobile-nav-toggle .btn-mobile-nav').focus();
+          document.querySelector('.mobile-nav-toggle .btn-mobile-nav').focus();
         }
       }
     }
@@ -258,17 +258,17 @@ finna.layout = (function finnaLayout() {
   function initMobileNarrowSearch() {
     const container = getSideFacetsContainer();
     if (container) {
-      document.querySelectorAll('.js-mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
+      document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
       });
-      document.querySelectorAll('.js-mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
+      document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
           onKeyPressMobileSidebar(e);
         });
       });
     }
-    const narrowSearchMobileTrigger = document.querySelector('.js-mobile-nav-toggle-trigger');
-    const narrowSearchMobile = document.querySelector('.js-mobile-nav-toggle');
+    const narrowSearchMobileTrigger = document.querySelector('.mobile-nav-toggle-trigger');
+    const narrowSearchMobile = document.querySelector('.mobile-nav-toggle');
     if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
       const narrowSearchMobileObserver = new IntersectionObserver(
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
