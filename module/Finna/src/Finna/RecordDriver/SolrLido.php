@@ -536,7 +536,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 'documents'
             );
         };
-        $imageCount = 0;
+
         $xpath = '/lidoWrap/lido/administrativeMetadata/resourceWrap/resourceSet';
         foreach ($this->getXmlRecord()->xpath($xpath) as $resourceSet) {
             // Process rights first since we may need to duplicate them if there
