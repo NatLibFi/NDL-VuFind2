@@ -380,7 +380,7 @@ abstract class AbstractProvider implements
         $isAlwaysClosed = true;
         $hasSelfServiceTimes = false;
         $now = time();
-        $currentTime = null;
+        $currentScheduleTime = null;
         // empty() needed because we can't use null coalescing without breaking the reference:
         if (!empty($result['openTimes']['schedules'])) {
             foreach ($result['openTimes']['schedules'] as &$schedule) {
@@ -407,7 +407,7 @@ abstract class AbstractProvider implements
                         }
                         $time['current'] = $now >= $time['opens'] && $now < $time['closes'];
                         if ($time['current']) {
-                            $currentTime = $time;
+                            $currentScheduleTime = $time;
                         }
                         if ($time['selfservice']) {
                             $selfServiceTimes[] = $time;
@@ -432,9 +432,9 @@ abstract class AbstractProvider implements
         $result['isAlwaysClosed'] = $isAlwaysClosed;
         $result['hasSelfServiceTimes'] = $hasSelfServiceTimes;
         if ($result['openNow'] && $hasSelfServiceTimes) {
-            $result['currentSchedule'] = $currentTime;
+            $result['currentScheduleTime'] = $currentScheduleTime;
         }
-        unset($now, $currentTime);
+        unset($now, $currentScheduleTime);
 
         if (!empty($result['address'])) {
             $address = $result['address'];
