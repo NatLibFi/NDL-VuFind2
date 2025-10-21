@@ -29,6 +29,8 @@
 
 namespace FinnaApi\Controller;
 
+use Finna\RecordDriver\RenderContext;
+
 /**
  * Search API Controller
  *
@@ -70,5 +72,16 @@ class SearchApiController extends \VuFindApi\Controller\SearchApiController
         ksort($spec['components']['schemas']);
 
         return json_encode($spec);
+    }
+
+    /**
+     * Search action
+     *
+     * @return \Laminas\Http\Response
+     */
+    public function searchAction()
+    {
+        $this->recordFormatter->setRecordRenderContext(RenderContext::SEARCH->value);
+        return parent::searchAction();
     }
 }

@@ -354,6 +354,9 @@ class SolrLrmi extends SolrQdc
         $result = [];
         $images = ['image/png', 'image/jpeg'];
         foreach ($xml->description as $desc) {
+            if ($this->maxAmountOfImages()) {
+                break;
+            }
             $attr = $desc->attributes();
             $format = trim((string)($attr['format'] ?? ''));
             if ($format && in_array($format, $images)) {
@@ -369,6 +372,7 @@ class SolrLrmi extends SolrQdc
                         'rights' => [],
                         'downloadable' => false,
                     ];
+                    $this->imagesCount++;
                 }
             }
         }

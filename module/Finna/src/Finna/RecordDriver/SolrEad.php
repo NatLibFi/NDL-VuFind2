@@ -151,6 +151,9 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
         // All images have same rights..
         $rights = $this->getImageRights($language, true);
         foreach ($this->getXmlRecord()->xpath('did/daogrp') as $daogrp) {
+            if ($this->maxAmountOfImages()) {
+                break;
+            }
             $urls = [];
             foreach ($daogrp->daoloc as $daoloc) {
                 $attributes = $daoloc->attributes();
@@ -199,6 +202,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             ];
             $image['downloadable'] = $this->allowRecordImageDownload($image);
             $result[] = $image;
+            $this->imagesCount++;
         }
 
         $this->cache[$cacheKey] = $result;

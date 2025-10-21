@@ -526,6 +526,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             if ($images) {
                 $images = $this->ensureImageSizes($images);
                 $images['downloadable'] = $this->allowRecordImageDownload($images);
+                $this->imagesCount++;
             }
             $results[] = compact(
                 'images',
@@ -535,7 +536,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 'documents'
             );
         };
-
+        $imageCount = 0;
         $xpath = '/lidoWrap/lido/administrativeMetadata/resourceWrap/resourceSet';
         foreach ($this->getXmlRecord()->xpath($xpath) as $resourceSet) {
             // Process rights first since we may need to duplicate them if there
@@ -566,7 +567,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     // final results first. This shouldn't
                     // happen unless there are multiple
                     // images without type in the same set.
-                    if ($imageUrls) {
+                    if ($imageUrls && !$this->maxAmountOfImages()) {
                         $addToResults(
                             [
                                 'urls' => $imageUrls,
@@ -628,7 +629,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     }
                 }
                 // Representation is an image
-                if (in_array($type, $imageTypeKeys)) {
+                if (in_array($type, $imageTypeKeys) && !$this->maxAmountOfImages()) {
                     $image = $this->getImage(
                         $url,
                         $type,

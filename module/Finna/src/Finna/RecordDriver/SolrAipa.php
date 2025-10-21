@@ -125,7 +125,11 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
                         'rights' => [],
                         'downloadable' => false,
                     ];
+                    $this->imagesCount++;
                 }
+            }
+            if ($this->maxAmountOfImages()) {
+                break;
             }
         }
 

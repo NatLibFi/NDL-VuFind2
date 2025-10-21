@@ -30,6 +30,7 @@
 
 namespace FinnaApi\Formatter;
 
+use Finna\RecordDriver\RenderContext;
 use Laminas\View\HelperPluginManager;
 
 use function count;
@@ -55,6 +56,13 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     protected $locale;
 
     /**
+     * Current record render context
+     *
+     * @var RenderContext
+     */
+    protected RenderContext $renderContext = RenderContext::RECORD;
+
+    /**
      * Constructor
      *
      * @param array               $recordFields  Record field definitions
@@ -68,6 +76,18 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     ) {
         parent::__construct($recordFields, $helperManager);
         $this->locale = $locale;
+    }
+
+    /**
+     * Set current record render context
+     *
+     * @param string $context Render context
+     *
+     * @return void
+     */
+    public function setRecordRenderContext(string $context): void
+    {
+        $this->renderContext = RenderContext::tryFrom($context);
     }
 
     /**
@@ -403,5 +423,25 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
             $backend = '__primary__';
         }
         return $backend;
+    }
+
+    /**
+     * Format the results.
+     *
+     * @param array $results         Results to process (array of record drivers)
+     * @param array $requestedFields Fields to include in response
+     *
+     * @return array
+     */
+    public function format($results, $requestedFields)
+    {
+        $results = array_map(
+            function ($record) {
+                $record->tryMethod('setRenderContext', [$this->renderContext->value]);
+                return $record;
+            },
+            $results
+        );
+        return parent::format($results, $requestedFields);
     }
 }

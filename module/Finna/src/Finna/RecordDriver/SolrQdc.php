@@ -248,6 +248,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         };
 
         foreach ($xml->file as $node) {
+            if ($this->maxAmountOfImages()) {
+                break;
+            }
             $attributes = $node->attributes();
             $type = (string)($attributes->type ?? '');
             $url = (string)($attributes->href ?? $node);
@@ -281,6 +284,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                     $otherSizes[$size] = $url;
                 }
             }
+            $this->imagesCount++;
         }
 
         if ($thumbnails && !$otherSizes) {

@@ -974,6 +974,7 @@ class SolrEad3 extends SolrEad
             }
             $formatted['downloadable'] = $this->allowRecordImageDownload($formatted);
             $result['displayImages'][] = $formatted;
+            $this->imagesCount++;
         };
         $isExcludedFromOCR = function ($title) {
             foreach (self::EXCLUDE_OCR_TITLE_PARTS as $part) {
@@ -990,6 +991,9 @@ class SolrEad3 extends SolrEad
         $fullResImages = [];
         foreach ([$xml->did ?? [], $xml->did->daoset ?? []] as $root) {
             foreach ($root as $set) {
+                if ($this->maxAmountOfImages()) {
+                    break 2;
+                }
                 if (!isset($set->dao)) {
                     continue;
                 }
@@ -1011,6 +1015,9 @@ class SolrEad3 extends SolrEad
                 $displayImage = [];
                 $highResolution = [];
                 foreach ($set->dao as $dao) {
+                    if ($this->maxAmountOfImages()) {
+                        break 3;
+                    }
                     $attr = $dao->attributes();
                     if (
                         !($title = (string)($attr->linktitle ?? ''))
