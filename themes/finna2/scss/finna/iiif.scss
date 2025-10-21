@@ -13,59 +13,62 @@ clover-viewer {
         display: none;
     }
 
+    $infoToggleWidth: 4.5rem;
+    $iCircleDiameter: $infoToggleWidth * 0.45;
+
     button#information-toggle {
-        background-color: $body-bg !important;
-        box-shadow: rgba(0, 0, 0, 0.4) 1px 0px 4px inset !important;
-        width: 3.5rem;
+        background-color: $body-bg;
+        box-shadow: rgba(0, 0, 0, 0.4) 1px 0px 4px inset;
+        width: $infoToggleWidth;
+        height: $infoToggleWidth * 0.6;
 
         .c-cASUBb {
-            width: 22px;
-            height: 22px;
-            background-color: $btn-primary-bg !important;
-            margin-left: -1px;
+            width: $iCircleDiameter;
+            height: $iCircleDiameter;
+            background-color: $btn-primary-bg;
 
             span {
-                color: $btn-primary-color !important;
-                //font-size: 11pt;
+                color: $btn-primary-color;
+                font-size: 1.2rem;
             }
         }
 
         .c-cASUBb[data-state="checked"] {
-            transform: translateX(calc(7px + 1.236rem)) !important;
+            transform: translateX(
+                calc($infoToggleWidth * 0.9 - $iCircleDiameter)
+            );
         }
 
         .c-cASUBb[data-state="unchecked"] {
             span {
                 opacity: .75;
-                //font-size: 11pt;
             }
-        }
-
-    }
-
-    .clover-viewer-media-navigation {
-        background-color: $primary-darker !important;
-
-        em {
-            opacity: 1 !important;
         }
     }
 
     // Media navigation and search buttons
-    .c-bwRbCV {
-        background-color: $btn-primary-bg !important;
+    .c-grPSqG {
+        .clover-viewer-media-navigation {
+            background-color: $primary-darker;
+            span em {
+                opacity: 1;
+            }
+        }
+
+        .c-bwRbCV {
+            background-color: $btn-primary-bg;
+        }
+
+        .c-bwRbCV:disabled svg {
+            color: $btn-primary-color;
+            opacity: 1;
+        }
     }
 
-    .c-bwRbCV:disabled svg {
-        color: $btn-primary-color !important;
-        opacity: 1 !important;
 
-
-    }
-
-    .clover-viewer-media-wrapper figcaption {
-        padding-bottom: .5em !important;
-        text-align: center !important;
+    .clover-viewer-media-wrapper figure figcaption {
+        padding-bottom: .5em;
+        text-align: center;
     }
 
     // Always arrange viewer control buttons vertically. By default Clover only does
@@ -80,7 +83,7 @@ clover-viewer {
             margin: 0;
             filter: none;
             border-radius: 0;
-            background-color: $body-bg !important;
+            background-color: $body-bg;
             border: $btn-border;
             border-bottom: none;
             color: $btn-primary-bg;
