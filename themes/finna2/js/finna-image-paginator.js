@@ -64,6 +64,11 @@ function FinnaPaginator(element, images, settings) {
   _.onDocumentLoadCallbacks = [];
   _.openImageIndex = 0;
   _.imagePopup = $(imageElement).clone();
+  // Prevent toggletip click event from propagating to other elements.
+  _.root.find('.finna-toggletip .partial-images').on('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  });
   _.init();
 }
 

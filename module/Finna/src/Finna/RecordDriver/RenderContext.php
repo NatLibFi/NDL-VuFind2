@@ -53,7 +53,7 @@ enum RenderContext: string
     public static function fromView(string $view): static
     {
         return match ($view) {
-            'list', 'list-grid' => self::SEARCH,
+            'list', 'list grid' => self::SEARCH,
             default => self::RECORD
         };
     }
