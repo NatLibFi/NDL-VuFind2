@@ -183,11 +183,11 @@ finna.layout = (function finnaLayout() {
   function getSideFacetsContainer() {
     const body = document.querySelector('body');
     if (body.classList.contains('template-name-mylist')) {
-      return document.querySelector('.mylist-bar.js-mobile-sidebar-container');
+      return document.querySelector('.mylist-bar.mobile-sidebar-container');
     } else if (body.classList.contains('template-name-displaylist')) {
-      return document.querySelector('.reservationlist-bar.js-mobile-sidebar-container');
+      return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
     }
-    return document.querySelector('.side-facets-container-ajax') || document.querySelector('.js-mobile-sidebar-container');
+    return document.querySelector('.side-facets-container-ajax') || document.querySelector('.mobile-sidebar-container');
   }
 
   /**

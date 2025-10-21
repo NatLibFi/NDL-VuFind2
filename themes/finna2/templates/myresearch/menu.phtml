@@ -118,7 +118,7 @@
         'show' => $this->reservationList()->isFunctionalityEnabled(),
         'partial' => [
           'url' => 'reservationlist/reservationlist-navi.phtml',
-          'wrapperClass' => 'reservationlist-bar js-mobile-sidebar-container',
+          'wrapperClass' => 'reservationlist-bar mobile-sidebar-container',
           'params' => $listParams ?? [],
         ],
       ],
@@ -134,7 +134,7 @@
         'show' => $this->userlist()->getMode() !== 'disabled',
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',
-          'wrapperClass' => 'mylist-bar js-mobile-sidebar-container',
+          'wrapperClass' => 'mylist-bar mobile-sidebar-container',
           'params' => $listParams ?? [],
         ],
       ],

@@ -9,7 +9,7 @@
   $resultsTotal = $results->getResultTotal();
 ?>
 <?php if ($resultsTotal > 0): ?>
-  <div class="js-mobile-sidebar-container">
+  <div class="mobile-sidebar-container">
     <div class="mobile-navigation-header-container">
       <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
