@@ -27,6 +27,8 @@
 <?php endif; ?>
 
 <?php
+  $renderedImagesCount = count($images);
+  $totalImagesCount = $this->driver->tryMethod('getTotalAmountOfImages') ?? $renderedImagesCount;
   $settings = [
     'recordId' => $this->driver->getUniqueId(),
     'recordType' => $this->driver->tryMethod('getRecordFormat'),
@@ -38,6 +40,7 @@
     'recordCovers' => 'recordcovers',
     'displayIcon' => $displayIcon,
     'triggerClick' => $this->imageClick ?? 'modal',
+    'totalImagesCount' => $totalImagesCount,
   ];
   if ($this->driver->tryMethod('getModels')) {
     $modelSettings = $this->driver->tryMethod('getModelSettings', [], []);
@@ -52,10 +55,10 @@
     <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
     <div class="paginator-info">
       <span class="image-index"></span>
-      <?php if ($this->driver->tryMethod('maxAmountOfImages')): ?>
+      <?php if ($renderedImagesCount < $totalImagesCount): ?>
         <?=$this->component('finna-toggletip', [
           'icon' => 'help',
-          'contentHtml' => $this->translate('Displaying the top') . ' ' . count($images),
+          'contentHtml' => $this->translate('showing_results_of_html', ['%%start%%' => 1, '%%end%%' => $renderedImagesCount, '%%total%%' => $totalImagesCount]),
           'class' => 'partial-images',
         ]);?>
       <?php endif; ?>

@@ -118,6 +118,29 @@ trait FinnaRecordTrait
     }
 
     /**
+     * Get amount of images allowed to be rendered in current context.
+     *
+     * @return int Current images render limit or -1 for all.
+     */
+    public function getImagesRenderLimit(): int
+    {
+        if ($this->renderContext === RenderContext::SEARCH) {
+            return $this->maxImagesInSearch;
+        }
+        return -1;
+    }
+
+    /**
+     * Get the total image count for the record. Value is populated after calling the getAllImages function.
+     *
+     * @return int
+     */
+    public function getTotalAmountOfImages(): int
+    {
+        return $this->imagesCount;
+    }
+
+    /**
      * Get inappropriate comments for this record reported by the given user.
      *
      * @param ?int $userId Reporter ID or null to use current session

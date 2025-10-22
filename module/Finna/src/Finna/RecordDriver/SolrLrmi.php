@@ -354,24 +354,23 @@ class SolrLrmi extends SolrQdc
         $result = [];
         $images = ['image/png', 'image/jpeg'];
         foreach ($xml->description as $desc) {
-            if ($this->maxAmountOfImages()) {
-                break;
-            }
             $attr = $desc->attributes();
             $format = trim((string)($attr['format'] ?? ''));
             if ($format && in_array($format, $images)) {
                 $url = (string)$desc;
                 if ($this->isUrlLoadable($url, $uniqueId)) {
-                    $result[] = [
-                        'urls' => [
-                            'small' => $url,
-                            'medium' => $url,
-                            'large' => $url,
-                        ],
-                        'description' => '',
-                        'rights' => [],
-                        'downloadable' => false,
-                    ];
+                    if (!$this->maxAmountOfImages()) {
+                        $result[] = [
+                            'urls' => [
+                                'small' => $url,
+                                'medium' => $url,
+                                'large' => $url,
+                            ],
+                            'description' => '',
+                            'rights' => [],
+                            'downloadable' => false,
+                        ];
+                    }
                     $this->imagesCount++;
                 }
             }

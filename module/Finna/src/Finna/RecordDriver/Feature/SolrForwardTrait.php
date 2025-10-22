@@ -65,9 +65,6 @@ trait SolrForwardTrait
 
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
-                if ($this->maxAmountOfImages()) {
-                    break;
-                }
                 $attributes = $event->ProductionEventType->attributes();
                 if (empty($attributes->{'elokuva-elonet-materiaali-kuva-url'})) {
                     continue;
@@ -92,17 +89,19 @@ trait SolrForwardTrait
                         $rights['link'] = $link;
                     }
                 }
-                $image = [
-                    'urls' => [
-                        'small' => $url,
-                        'medium' => $url,
-                        'large' => $url,
-                    ],
-                    'description' => $desc,
-                    'rights' => $rights,
-                ];
-                $image['downloadable'] = $this->allowRecordImageDownload($image);
-                $images[] = $image;
+                if (!$this->maxAmountOfImages()) {
+                    $image = [
+                        'urls' => [
+                            'small' => $url,
+                            'medium' => $url,
+                            'large' => $url,
+                        ],
+                        'description' => $desc,
+                        'rights' => $rights,
+                    ];
+                    $image['downloadable'] = $this->allowRecordImageDownload($image);
+                    $images[] = $image;
+                }
                 $this->imagesCount++;
             }
         }

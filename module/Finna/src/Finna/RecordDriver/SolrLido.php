@@ -524,8 +524,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             array $documents = []
         ) use (&$results) {
             if ($images) {
-                $images = $this->ensureImageSizes($images);
-                $images['downloadable'] = $this->allowRecordImageDownload($images);
+                if (!$this->maxAmountOfImages()) {
+                    $images = $this->ensureImageSizes($images);
+                    $images['downloadable'] = $this->allowRecordImageDownload($images);
+                }
                 $this->imagesCount++;
             }
             $results[] = compact(
@@ -567,7 +569,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     // final results first. This shouldn't
                     // happen unless there are multiple
                     // images without type in the same set.
-                    if ($imageUrls && !$this->maxAmountOfImages()) {
+                    if ($imageUrls) {
                         $addToResults(
                             [
                                 'urls' => $imageUrls,
@@ -629,7 +631,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     }
                 }
                 // Representation is an image
-                if (in_array($type, $imageTypeKeys) && !$this->maxAmountOfImages()) {
+                if (in_array($type, $imageTypeKeys)) {
                     $image = $this->getImage(
                         $url,
                         $type,
