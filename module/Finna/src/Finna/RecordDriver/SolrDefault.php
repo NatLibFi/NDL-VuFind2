@@ -65,5 +65,9 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
         if ($maxImagesInSearch > 0) {
             $this->maxImagesInSearch = min($maxImagesInSearch, $this->maxImagesInSearch);
         }
+        $maxImagesInRecord = $mainConfig->Content->maxImagesInRecordContext ?? 0;
+        if ($maxImagesInRecord > 0) {
+            $this->maxImagesInRecord = min($maxImagesInRecord, $this->maxImagesInRecord);
+        }
     }
 }
