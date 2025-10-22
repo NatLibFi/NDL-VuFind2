@@ -4,9 +4,19 @@ $primary-darker: color.scale($primary, $lightness: -25%);
 
 .record-viewer-container {
     padding: 0;
+
+    #iiif-manifest-url-container {
+        display: none;
+    }
 }
 
 clover-viewer {
+
+    // Prevent Clover's information toggle button from appearing on top of
+    // Finna's navbar
+    header.clover-viewer-header {
+        z-index: auto;
+    }
 
     // Hide Clover's built-in iiif logo button. We display it elsewhere.
     .c-cGxcRS {
