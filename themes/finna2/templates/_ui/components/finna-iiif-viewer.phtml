@@ -17,7 +17,10 @@ $encodedManifest = urlencode($this->manifestURL);
 ?>
 
 <div class="record-viewer-container container">
-  <clover-viewer id="<?= $this->manifestURL ?>"></clover-viewer>
+  <clover-viewer id="<?=$this->manifestURL?>"></clover-viewer>
+  <span id="iiif-manifest-url-container" aria-hidden="true">
+    <?=$this->manifestURL?>
+  </span>
 </div>
 
 <div class="record-iiif-toolbar container">
@@ -33,32 +36,38 @@ $encodedManifest = urlencode($this->manifestURL);
     </button>
     <ul class="dropdown-menu dropdown-menu-end">
       <li>
-        <span class="dropdown-header"><?=$this->transEsc('iiif_manifest')?></span>
+        <span class="dropdown-header fs-5">
+          <?=$this->transEsc('iiif_manifest')?>
+        </span>
       </li>
       <li>
-        <a class="dropdown-item" href="<?= $this->manifestURL ?>" target="_blank" rel="nofollow">
+        <a class="dropdown-item btn toolbar-btn" href="<?=$this->manifestURL?>"
+          target="_blank" rel="nofollow" id="iiif-manifest-url-link">
           <?=$this->icon('external-link')?>
           <?=$this->transEsc('Open in a new window')?>
         </a>
       </li>
-      <li>
-        <a class="dropdown-item icon-link" href="#">
-          <?=$this->icon('clipboard')?>
-          <?=$this->transEsc('copy_manifest_address')?>
-        </a>
+      <li id="iiif-manifest-url-list-item">
+        <span class="dropdown-item">
+          <?=$this->copyToClipboardButton("#iiif-manifest-url-container", false);?>
+        </span>
       </li>
       <li>
-        <span class="dropdown-header"><?=$this->transEsc('open_in_external_viewer')?></span>
+        <span class="dropdown-header fs-5">
+          <?=$this->transEsc('open_in_external_viewer')?>
+        </span>
       </li>
       <li>
-        <a class="dropdown-item" href="https://uv-v4.netlify.app/#?manifest=<?=$encodedManifest?>" target="_blank"
-          rel="nofollow">
+        <a class="dropdown-item btn toolbar-btn"
+          href="https://uv-v4.netlify.app/#?manifest=<?=$encodedManifest?>"
+          target="_blank" rel="nofollow">
           <?=$this->icon('external-link')?>
           Universal Viewer
         </a>
       </li>
       <li>
-        <a class="dropdown-item" href="https://projectmirador.org/embed/?iiif-content=<?=$encodedManifest?>"
+        <a class="dropdown-item btn toolbar-btn"
+          href="https://projectmirador.org/embed/?iiif-content=<?=$encodedManifest?>"
           target="_blank" rel="nofollow">
           <?=$this->icon('external-link')?>
           Mirador
