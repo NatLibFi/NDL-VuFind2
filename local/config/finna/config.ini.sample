@@ -836,11 +836,11 @@ zoomFormats = qdc:forward:ead3:ead:lido
 ;maxImagesInRecordContext = 500
 
 ; Sets the amount of URLs allowed to be returned in search context.
-; Default and hard limit is 100.
+; Default and hard limit is 200.
 ;maxUrlsInSearchContext = 20
 
 ; Sets the amount of URLs allowed to be returned in record context.
-; Default and hard limit is 100.
+; Default and hard limit is 200.
 ;maxUrlsInRecordContext = 200
 
 [QRCode]

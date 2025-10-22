@@ -85,14 +85,14 @@ trait FinnaRecordTrait
      *
      * @var int
      */
-    protected int $maxURLsInSearch = 20;
+    protected int $maxURLsInSearch = 200;
 
     /**
      * Maximum limit of URLs to get in record context
      *
      * @var int
      */
-    protected int $maxURLsInRecord = 100;
+    protected int $maxURLsInRecord = 200;
 
     /**
      * Maximum limit of images to get in record context
