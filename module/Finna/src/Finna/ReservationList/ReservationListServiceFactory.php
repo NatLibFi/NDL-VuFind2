@@ -62,6 +62,7 @@ class ReservationListServiceFactory implements FactoryInterface
             ->getFinna('ReservationList.yaml', 'config/finna');
         return new ReservationListService(
             $serviceManager->get(\Finna\Db\Service\FinnaResourceListServiceInterface::class),
+            $serviceManager->get(\Finna\Db\Service\FinnaResourceListHandlerServiceInterface::class),
             $serviceManager->get(\Finna\Db\Service\FinnaResourceListResourceServiceInterface::class),
             $serviceManager->get(\VuFind\Db\Service\ResourceServiceInterface::class),
             $serviceManager->get(\VuFind\Db\Service\UserServiceInterface::class),
@@ -69,7 +70,6 @@ class ReservationListServiceFactory implements FactoryInterface
             $container->get(\Finna\Record\Loader::class),
             $container->get(\VuFind\Record\Cache::class),
             $session,
-            $container->get(\VuFindHttp\HttpService::class),
             $container->get(\VuFind\Auth\ILSAuthenticator::class),
             $container->get(\VuFind\Cache\Manager::class),
             $container->get(PluginManager::class),
