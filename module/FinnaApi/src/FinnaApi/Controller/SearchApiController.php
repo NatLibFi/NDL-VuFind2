@@ -56,8 +56,12 @@ class SearchApiController extends \VuFindApi\Controller\SearchApiController
 
         $spec['paths']['/record']['get']['description']
             = $this->getViewRenderer()->render('searchapi/record-description.phtml');
+        $maxImagesInSearch = $this->getConfig()->Content->max_amount_of_images_in_search_context ?? 20;
+        if ($maxImagesInSearch > 0) {
+            $maxImagesInSearch = min($maxImagesInSearch, 20);
+        }
         $spec['paths']['/search']['get']['description']
-            = $this->getViewRenderer()->render('searchapi/search-description.phtml');
+            = $this->getViewRenderer()->render('searchapi/search-description.phtml', compact('maxImagesInSearch'));
         foreach ($spec['paths']['/search']['get']['parameters'] as &$param) {
             if ('facet[]' === $param['name']) {
                 $param['description'] = '';
