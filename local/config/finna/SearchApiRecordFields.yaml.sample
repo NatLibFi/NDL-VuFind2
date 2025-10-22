@@ -521,7 +521,7 @@ relationshipNotes:
     type: string
 searchImagesCountNotice:
   vufind.method: "Formatter::getSearchImagesCountNotice"
-  description: Displays current amount of images rendered out of total images,
+  description: Displays current amount of images returned out of total images,
   type: string
 secondaryAuthors:
   vufind.method: getSecondaryAuthors
