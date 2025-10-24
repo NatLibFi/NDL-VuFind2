@@ -180,6 +180,79 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected author data
+     *
+     * @return array
+     */
+    public static function getNonPresenterAuthorsData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    0 => [
+                        'name' => 'Kiira Kirjoittaja',
+                        'role' => 'aut',
+                    ],
+                    1 => [
+                        'name' => 'Piia Piirtäjä',
+                        'role' => 'ill',
+                    ],
+                    2 => [
+                        'name' => 'Helsingin yliopisto',
+                        'role' => '',
+                    ],
+                ],
+            ],
+            [
+                'sv',
+                [
+                    0 => [
+                        'name' => 'Kiira Kirjoittaja',
+                        'role' => 'aut',
+                    ],
+                    1 => [
+                        'name' => 'Piia Piirtäjä',
+                        'role' => 'ill',
+                    ],
+                    2 => [
+                        'name' => 'Helsingfors universitet',
+                        'role' => '',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getNonPresenterAuthors
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @dataProvider getNonPresenterAuthorsData
+     *
+     * @return void
+     */
+    public function testNonPresenterAuthors(
+        string $language,
+        array $expected
+    ): void {
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $driver = $this->getDriver();
+        $driver->setTranslator($translator);
+        $this->assertEquals(
+            $expected,
+            $driver->getNonPresenterAuthors()
+        );
+    }
+
+    /**
      * Get a record driver with fake data
      *
      * @param array $overrides    Fixture fields to override
@@ -243,6 +316,7 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                     'usage_A',
                 ],
                 'format' => '0/Painting',
+                'author' => 'Kiira Kirjoittaja',
             ]
         );
         return $record;
