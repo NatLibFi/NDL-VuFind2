@@ -273,7 +273,7 @@ trait SolrCommonFinnaTrait
 
 
     /**
-     * Get record creation date range from index as human readable form.
+     * Get record creation date range from index in human readable format.
      *
      * @return string
      */
