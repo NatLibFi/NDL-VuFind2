@@ -827,6 +827,22 @@ recordMap = openlayers
 ; A colon-separated list of formats that are enabled for image zoom function
 zoomFormats = qdc:forward:ead3:ead:lido
 
+; Sets the amount of images allowed to be returned in search context.
+; Default and hard limit is 20.
+;maxImagesInSearchContext = 10
+
+; Sets the amount of images allowed to be returned in record context.
+; Default and hard limit is 1000.
+;maxImagesInRecordContext = 500
+
+; Sets the amount of URLs allowed to be returned in search context.
+; Default and hard limit is 200.
+;maxUrlsInSearchContext = 20
+
+; Sets the amount of URLs allowed to be returned in record context.
+; Default and hard limit is 200.
+;maxUrlsInRecordContext = 200
+
 [QRCode]
 ; This setting controls the image to display when no qrcode is available.
 ; The path is relative to the base of your theme directory.

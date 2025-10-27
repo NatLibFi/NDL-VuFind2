@@ -296,14 +296,17 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         $highResolution = [];
         $rights = $this->getRights($language);
         $addToResults = function ($imageData) use (&$results) {
-            if (!isset($imageData['urls']['small'])) {
-                $imageData['urls']['small'] = $imageData['urls']['medium']
-                    ?? $imageData['urls']['large']
-                    ?? $imageData['urls']['original'];
+            if (!$this->maxAmountOfImages()) {
+                if (!isset($imageData['urls']['small'])) {
+                    $imageData['urls']['small'] = $imageData['urls']['medium']
+                        ?? $imageData['urls']['large']
+                        ?? $imageData['urls']['original'];
+                }
+                $imageData = $this->ensureImageSizes($imageData);
+                $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
+                $results[] = $imageData;
             }
-            $imageData = $this->ensureImageSizes($imageData);
-            $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
-            $results[] = $imageData;
+            $this->imagesCount++;
         };
 
         foreach ($xml->file as $node) {
@@ -362,6 +365,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                 ]
             );
         }
+        $thumbnails = [];
+        $otherSizes = [];
         // Attempt to find a PDF file to be converted to a coverimage
         if ($includePdf && empty($results)) {
             $urls = [];
@@ -713,7 +718,10 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         $urls = [];
         foreach (parent::getURLs() as $url) {
             if (!$this->urlBlocked($url['url'] ?? '')) {
-                $urls[] = $url;
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = $url;
+                }
+                $this->urlsCount++;
             }
         }
         $urls = $this->resolveUrlTypes($urls);
@@ -835,6 +843,18 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
             return $descriptions[$first];
         }
         return [];
+    }
+
+    /**
+     * Given a Solr field name, return an appropriate caption.
+     *
+     * @param string $field Solr field name
+     *
+     * @return mixed        Caption if found, false if none available.
+     */
+    public function getSnippetCaption($field)
+    {
+        return $field !== 'contents' ? parent::getSnippetCaption($field) : false;
     }
 
     /**

@@ -192,13 +192,16 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             } else {
                 $description = '';
             }
-            $image = [
-                'urls' => $urls,
-                'description' => (string)$description,
-                'rights' => $rights,
-            ];
-            $image['downloadable'] = $this->allowRecordImageDownload($image);
-            $result[] = $image;
+            if (!$this->maxAmountOfImages()) {
+                $image = [
+                    'urls' => $urls,
+                    'description' => (string)$description,
+                    'rights' => $rights,
+                ];
+                $image['downloadable'] = $this->allowRecordImageDownload($image);
+                $result[] = $image;
+            }
+            $this->imagesCount++;
         }
 
         $this->cache[$cacheKey] = $result;
@@ -514,6 +517,9 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
      */
     public function getURLs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $urls = [];
         $url = '';
         $record = $this->getXmlRecord();
@@ -541,10 +547,13 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             }
             $desc = empty($desc) ? $url : $desc;
             if (!$this->urlBlocked($url, $desc)) {
-                $urls[] = [
-                    'url' => $url,
-                    'desc' => $desc,
-                ];
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = [
+                        'url' => $url,
+                        'desc' => $desc,
+                    ];
+                }
+                $this->urlsCount++;
             }
         }
 
@@ -556,14 +565,17 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
                 $matches
             );
             if ($match && !$this->urlBlocked($matches[2], $matches[1])) {
-                $urls[] = [
-                    'url' => $matches[2],
-                    'desc' => $matches[1],
-                ];
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = [
+                        'url' => $matches[2],
+                        'desc' => $matches[1],
+                    ];
+                }
+                $this->urlsCount++;
             }
         }
-        $urls = $this->resolveUrlTypes($urls);
-        return $urls;
+        $this->cache[__FUNCTION__] = $this->resolveUrlTypes($urls);
+        return $this->cache[__FUNCTION__];
     }
 
     /**
