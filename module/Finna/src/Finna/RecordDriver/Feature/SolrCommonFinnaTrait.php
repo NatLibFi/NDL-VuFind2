@@ -271,7 +271,6 @@ trait SolrCommonFinnaTrait
         return parent::getUniqueID();
     }
 
-
     /**
      * Get record creation date range from index in human readable format.
      *
