@@ -223,7 +223,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      *
      * @var array
      */
-    protected $alternativeTitleLabels = ['alternate', 'alternative','http://terminology.lido-schema.org/lido00170'];
+    protected $alternativeTitleLabels = ['alternate', 'alternative', 'http://terminology.lido-schema.org/lido00170'];
 
     /**
      * Array of web friendly model formats
@@ -2984,7 +2984,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     {
         $type = trim((string)($placeID->attributes()->type ?? ''));
         if (
-            !in_array(strtolower($type), $this->uniquePlaceIDTypes)
+            !in_array(mb_strtolower($type, 'UTF-8'), $this->uniquePlaceIDTypes)
             && $source = trim((string)$placeID->attributes()->source ?? '')
         ) {
             $type = $this->placeIDSourceMappings[mb_strtolower($source, 'UTF-8')] ?? $source;
