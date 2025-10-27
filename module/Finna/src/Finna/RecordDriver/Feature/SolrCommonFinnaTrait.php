@@ -271,6 +271,18 @@ trait SolrCommonFinnaTrait
         return parent::getUniqueID();
     }
 
+
+    /**
+     * Get record creation date range from index as human readable form.
+     *
+     * @return string
+     */
+    public function getHumanReadableCreationDateRange(): string
+    {
+        $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
+        return str_replace(['[', ']', 'TO'], ['', '', $ndash], $this->fields['creation_daterange'] ?? '');
+    }
+
     /**
      * Get the VuFind configuration.
      *

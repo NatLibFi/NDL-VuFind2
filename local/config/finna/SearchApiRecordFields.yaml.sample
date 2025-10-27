@@ -136,6 +136,10 @@ controlNumbers:
   type: array
   items:
     type: string
+humanReadableCreationDateRange:
+  vufind.method: getHumanReadableCreationDateRange
+  description: Creation date range in human readable format
+  type: string
 dedupIds:
   vufind.method: "Formatter::getDedupIds"
   description: IDs of all records deduplicated with the current record
