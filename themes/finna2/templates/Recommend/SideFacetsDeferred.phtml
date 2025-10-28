@@ -106,7 +106,8 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
         <span class="facet-title"><?=$this->transEsc($facetName)?></span>
         <?=$this->icon('collapse', 'facet-title-icon') ?>
       </button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' show' : '';?>" data-facet="<?=$escAttrField ?>">
+      <div id="facet-title-<?=$escAttrField?>" class="visually-hidden" aria-hidden="true"><?=$this->transEsc($facetName)?></div>
+      <div id="<?=$dataTarget?>" aria-labelledby="facet-title-<?=$escAttrField?>" role="group" class="collapse<?= !$isCollapsed ? ' show' : '';?>" data-facet="<?=$escAttrField ?>">
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
         <div class="facet-load-indicator hidden">
           <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
