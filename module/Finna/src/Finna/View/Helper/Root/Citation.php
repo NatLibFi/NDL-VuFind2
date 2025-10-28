@@ -83,7 +83,7 @@ class Citation extends \VuFind\View\Helper\Root\Citation
         $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended')
             ?? $this->driver->tryMethod('getNonPresenterAuthors');
         if (null !== $authors) {
-            $this->details['authors'] = $this->prepareAuthors(array_column($authors, 'name'));
+            $this->details['authors'] = $this->prepareAuthors(array_unique(array_column($authors, 'name')));
         }
 
         return $result;
