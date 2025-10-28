@@ -53,12 +53,12 @@
     }
   ?>
   <?php if ($checkboxesShown): ?>
-    <fieldset>
-      <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
-      <div class="checkbox-filters">
+    <div class="checkbox-filters">
+      <fieldset>
+        <legend class="visually-hidden" aria-hidden="true"><?=$this->transEsc('checkbox_filter')?></legend>
         <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results, 'counts' => false]); ?>
-      </div>
-    </fieldset>
+      </fieldset>
+    </div>
   <?php endif; ?>
 <?php endif; ?>
 <?php $extraFilters = $this->extraSideFacetFilters ?? []; ?>
