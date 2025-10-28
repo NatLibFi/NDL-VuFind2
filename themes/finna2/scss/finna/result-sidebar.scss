@@ -1,7 +1,7 @@
 //== Styling Finna sidebar checkbox filters
 #sidebar .checkbox-filters {
   padding: 0px;
-  margin: 10px 0 15px;
+  margin: 5px 0 10px;
 
   @extend .checkbox-container;
 
@@ -14,10 +14,14 @@
     &.blender-backend-secondary {
       margin-bottom: 1.5em;
     }
+    display: flex;
+    gap: 10px;
   }
   label {
     margin-left: 0px;
-    line-height: 1em;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
   }
   label:before {
     margin-right: 5px;
@@ -25,11 +29,19 @@
   }
   .badge {
     margin-top: 4px;
-    @include media-breakpoint-between(sm, md) {
-      max-width: 56px;
+  }
+  input[type="checkbox"] {
+    min-width: 16px;
+  }
+  @include media-breakpoint-between(sm, md) {
+    .badge {
+      max-width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       margin-right: 6px;
+    }
+    label {
+      flex-wrap: wrap;
     }
   }
 }
