@@ -52,6 +52,13 @@ class SolrAuthForward extends SolrAuthDefault implements \Laminas\Log\LoggerAwar
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
+     * Runtime cache for method results to avoid duplicate processing
+     *
+     * @var array
+     */
+    protected $cache = [];
+
+    /**
      * Get an array of alternative titles for the record.
      *
      * @return array

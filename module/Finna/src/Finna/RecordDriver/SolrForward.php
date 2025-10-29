@@ -668,10 +668,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
      */
     public function getImageRights($language, $skipImageCheck = false)
     {
-        if (!$skipImageCheck && !$this->getAllImages()) {
+        if (!$skipImageCheck && !$this->getAllImages($language)) {
             return false;
         }
-
+        $this->cache;
         $rights = [];
         if ($type = $this->getAccessRestrictionsType($language)) {
             $rights['copyright'] = $type['copyright'];
