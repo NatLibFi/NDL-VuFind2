@@ -47,7 +47,7 @@
     $settings['modelTranslations'] = $this->partial('Helpers/modeljs-translations.phtml');
     $settings['viewerDebug'] = $modelSettings['debug'] ?? false;
   }
-  $inSearchContext = $this->driver->tryMethod('getRenderContext') === \Finna\RecordDriver\RenderContext::SEARCH;
+  $inSearchContext = ($this->renderContext ?? false) === \Finna\RecordDriver\RenderContext::SEARCH;
 
   $imageIndexAttrs = [
     'class' => 'image-index',

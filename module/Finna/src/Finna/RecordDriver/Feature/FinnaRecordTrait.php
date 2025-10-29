@@ -183,16 +183,6 @@ trait FinnaRecordTrait
     }
 
     /**
-     * Get record current render context
-     *
-     * @return RenderContext
-     */
-    public function getRenderContext(): RenderContext
-    {
-        return $this->renderContext;
-    }
-
-    /**
      * Get the total image count for the record. Value is populated after calling the getAllImages function.
      *
      * @return int
