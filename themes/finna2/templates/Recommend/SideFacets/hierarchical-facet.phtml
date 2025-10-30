@@ -35,8 +35,7 @@
 <?php endif; ?>
 <?php if ('building' === $this->title && count($this->cluster['list']) > 15): ?>
   <div class="building-filter">
-    <label for="building_filter" class="visually-hidden" aria-hidden="true"><?=$this->transEsc('Organisation')?></label>
-    <input type="search" class="form-control" id="building_filter" placeholder="<?=$this->transEscAttr('search_placeholder')?>">
+    <input type="search" class="form-control" id="building_filter" aria-label="<?=$this->transEsc('Search For')?>:" placeholder="<?=$this->transEsc('Organisation')?>...">
   </div>
   <?php $script = <<<JS
       $(function () { finna.layout.initBuildingFilter('#side-collapse-{$this->escapeHtml($this->title)}'); });
