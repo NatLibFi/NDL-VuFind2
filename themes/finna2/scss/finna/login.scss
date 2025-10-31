@@ -5,58 +5,45 @@
         font-weight: 400;
     }
     .login-info-icon {
-        font-size: 1.5em;
+        font-size: $font-size-icon-large;
         float: left;
         margin-top: 0.4em;
         margin-left: 0.5em;
         color: $primary;
-        @include media-breakpoint-down(sm) {
-            margin-top: 0;
+    }
+    .login-description {
+        margin: 1em 0 1em 2.5em;
+        &.shibboleth {
+            font-weight: bold;
+        }
+    }
+    .remember-me-info {
+        margin-left: 17px;
+    }
+    .login-description-terms, .register-description {
+        background-color: $info-bg-subtle;
+        padding: 2em;
+        padding-left: 2.5em;
+        margin-bottom: 1em;
+        margin-left: 0.5em;
+    }
+    @include media-breakpoint-up(sm) {
+        .login-col {
+            width: 50%;
+            float: left;
         }
     }
     @include media-breakpoint-down(sm) {
+        .login-info-icon {
+            margin-top: 0;
+        }
         .form-control {
             font-size: 16px;
         }
     }
 }
-
-.login-description {
-    margin: 1em 0 1em 2.5em;
-}
-.login-description.shibboleth {
-    font-weight: bold;
-}
-.login-description-terms, .register-description {
-    background-color: $info-bg-subtle;
-    padding: 2em;
-    padding-left: 2.5em;
-    margin-bottom: 1em;
-    margin-left: 0.5em;
-}
-.authmethod1, .authmethod2, .authmethod3 {
-    margin-top: 1em;
-}
-.shibboleth-login {
-	  margin-bottom: 1em;
-}
-
-.template-name-login > .container {
-    padding-top: 30px;
-    padding-bottom: 30px;
-}
-
-.login-col {
-    @include media-breakpoint-up(sm) {
-        width: 50%;
-        float: left;
-    }
-}
 #accountForm {
     @include media-breakpoint-up(sm) {
-        .form-control {
-            width: 80%;
-        }
         .login-col:first-of-type {
             width: 40%;
         }
@@ -65,8 +52,8 @@
         }
     }
 }
-.remember-me-info {
-    font-size: $font-size-small;
-    color: $gray-light;
-    margin-left: 17px;
+
+.template-name-login > .container {
+    padding-top: 30px;
+    padding-bottom: 30px;
 }

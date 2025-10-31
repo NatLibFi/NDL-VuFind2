@@ -1,5 +1,5 @@
 form {
-  .required-notice {
+  .required-notice, .remember-me-info {
     font-size: $small-font-size;
     color: $text-muted;
   }
@@ -11,7 +11,7 @@ input, input.form-control {
 .form-control, .form-select {
   width: initial;
   padding: 0px 5px;
-  max-width: 100%; // make sure dropdowns don't overflow elementss
+  max-width: 100%; // make sure dropdowns don't overflow elements
   vertical-align: middle !important;
 
   &::placeholder {
@@ -245,6 +245,5 @@ button.multiselect {
   button.btn.show-records {
     color: $link-color;
     padding-top: 8px;
-    background-color: white;
   }
 }

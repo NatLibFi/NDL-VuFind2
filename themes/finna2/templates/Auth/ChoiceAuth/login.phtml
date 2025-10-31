@@ -41,7 +41,7 @@
   </div>
 <?php else: ?>
   <?php foreach ($methods as $loop => $method):?>
-    <div class="authmethod<?=$loop?>?>">
+    <div class="authmethod<?=$loop?>">
       <?php $this->auth()->getManager()->setAuthMethod($method) ?>
       <?=$this->auth()->getLoginDesc() ?>
       <?=$this->auth()->getLogin() ?>
