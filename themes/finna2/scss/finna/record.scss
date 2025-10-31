@@ -319,6 +319,8 @@ a.authority {
       }
     }
   }
+}
+.record-details, .sidebar .recordProvidedBy {
   .more-link, .less-link {
     .icon {
       margin-left: 3px;
@@ -951,6 +953,9 @@ finna-model-viewer .object-editor {
     }
     i.collapse {
       display: none;
+    }
+    span.fi-chevron-smaller-down, span.fi-chevron-smaller-up {
+      font-size: 0.7em;
     }
   }
 
