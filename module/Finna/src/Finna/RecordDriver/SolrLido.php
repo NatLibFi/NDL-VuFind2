@@ -1616,11 +1616,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                             ->vitalDatesActor->earliestDate ?? '');
                         $latestDate = (string)($actor->actorInRole->actor
                             ->vitalDatesActor->latestDate ?? '');
+                        $id = trim((string)($actor->actorInRole->actor->actorID ?? ''));
                         $actors[] = [
                             'name' => $appellationValue,
                             'role' => $role,
                             'birth' => $earliestDate,
                             'death' => $latestDate,
+                            'id' => $id,
                         ];
                     }
                 }
@@ -1954,10 +1956,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         $roles = $this->getAllLanguageSpecificItems($langRoles, $language);
                         $role = implode(', ', $roles);
                     }
+                    $id = trim((string)($actor->actorInRole->actor->actorID ?? ''));
                     $key = $priority * 1000 + $index++;
                     $authors[$key] = compact(
                         'name',
-                        'role'
+                        'role',
+                        'id'
                     );
                 }
             }

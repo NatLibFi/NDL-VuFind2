@@ -228,6 +228,10 @@
                   <nameActorSet>
                     <appellationValue>  Mattilainen, Meikä   </appellationValue>
                   </nameActorSet>
+                  <vitalDatesActor>
+                    <earliestDate>1951</earliestDate>
+                    <latestDate>2019</latestDate>
+                  </vitalDatesActor>
                 </actor>
                 <roleActor>
                   <term>haaveilija</term>
@@ -315,6 +319,7 @@
             <eventActor>
               <actorInRole>
                 <actor>
+                  <actorID type="URI" source="finaf">http://urn.fi/URN:NBN:fi:au:finaf:000228701</actorID>
                   <nameActorSet>
                     <appellationValue>Puu, Teisto</appellationValue>
                   </nameActorSet>
