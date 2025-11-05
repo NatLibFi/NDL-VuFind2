@@ -129,9 +129,9 @@ class Loader extends \VuFind\Record\Loader
             // Attempt to load parent record using the first part of the ID.
             $parentRecord = $this->load($parts[0]);
             // If the parent record implements ContainerRecordInterface
-            // get encapsulated record using the second part of the ID
+            // get encapsulated record.
             if ($parentRecord instanceof ContainerFormatInterface) {
-                $result = $parentRecord->getEncapsulatedRecord($parts[1]);
+                $result = $parentRecord->getEncapsulatedRecord($id);
             }
             if (null === $result) {
                 throw new RecordMissingException(
@@ -151,9 +151,9 @@ class Loader extends \VuFind\Record\Loader
             && $result?->getExtraDetail('cached_record')
         ) {
             // Check for a redirected record without overwriting $result
-            if ($redirectedRecord = $this->fallbackLoader->get($source)->load($id)) {
+            if ($redirectedRecord = $this->fallbackLoader->get($source)->load((array)$id)) {
                 $missingException = null;
-                $result = $redirectedRecord;
+                $result = reset($redirectedRecord);
             }
         }
         if ($missingException) {

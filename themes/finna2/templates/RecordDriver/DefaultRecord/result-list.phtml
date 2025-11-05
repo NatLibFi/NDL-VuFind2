@@ -46,7 +46,7 @@
           <div class="resultItemFormat">
             <?=$this->record($this->driver)->getFormatList() ?>
             <?php if (!empty($binding)): ?>
-              <span class="iconlabel label-binding"><?=$this->transEsc($binding)?></span>
+              <span class="iconlabel label-binding"><span class="label-punctuation">, </span><?=$this->transEsc($binding)?></span>
             <?php endif; ?>
             <?=$this->record($this->driver)->getLabelList() ?>
           </div>
@@ -79,8 +79,8 @@
             <?php $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended');
             if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1" tabindex="-1">
-                <?php foreach($authors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+                <?php foreach ($authors as $index => $author): ?>
+                  <?=($index > 0 ? '<span aria-hidden="true"> ; </span>' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -141,7 +141,7 @@
           <?php endif; ?>
         </div>
 
-        <?php if(!$this->driver->isCollection()): ?>
+        <?php if (!$this->driver->isCollection()): ?>
           <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
             <?php if (!empty($snippet['caption'])): ?>
               <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
@@ -150,6 +150,10 @@
               <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
             <?php endif; ?>
           <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (($edition = $this->driver->tryMethod('getEdition'))): ?>
+          <div class="result-edition"><?=$this->escapeHtml($edition)?></div>
         <?php endif; ?>
 
         <?php if ($this->driver->tryMethod('getWorkKeys') && $this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
@@ -177,7 +181,7 @@
             <div class="hierarchyTreeLink">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
               <?=$this->icon('hierarchy-tree') ?>
-              <a class="hierarchyTreeLinkText" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>">
+              <a class="hierarchyTreeLinkText" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>">
                   <?=$this->transEsc('hierarchy_view_context')?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
               </a>
             </div>
@@ -195,7 +199,7 @@
             <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
                 <?php /* Add to favorites */ ?>
               <div>
-                <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?><span class="hidden-sm hidden-md hidden-lg"> <?=$this->transEsc('Add to favorites')?></span><span class="visually-hidden hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a>
+                <a href="<?=$this->escapeHtmlAttr($recordLinker->getActionUrl($this->driver, 'Save'))?>" class="save-record" role="button" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?><span class="hidden-sm hidden-md hidden-lg"> <?=$this->transEsc('Add to favorites')?></span><span class="visually-hidden hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a>
               </div>
             <?php endif; ?>
 

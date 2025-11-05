@@ -743,7 +743,7 @@ trait SolrFinnaTrait
      */
     public function getSource()
     {
-        return $this->fields['source_str_mv'][0] ?? '';
+        return $this->getSources()[0] ?? '';
     }
 
     /**
@@ -753,7 +753,7 @@ trait SolrFinnaTrait
      */
     public function getSources()
     {
-        return $this->fields['source_str_mv'] ?? [];
+        return (array)($this->fields['source_str_mv'] ?? []);
     }
 
     /**
@@ -1364,6 +1364,9 @@ trait SolrFinnaTrait
      */
     public function getChildRecordCount()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         // Shortcut: if this record is not part of a hierarchy, let's not find out the count.
         if (
             !$this->containerLinking
@@ -1380,8 +1383,9 @@ trait SolrFinnaTrait
         // Disable highlighting for efficiency; not needed here:
         $params = new \VuFindSearch\ParamBag(['hl' => ['false']]);
         $command = new SearchCommand($this->sourceIdentifier, $query, 0, 0, $params);
-        return $this->searchService
-            ->invoke($command)->getResult()->getTotal();
+        $result = $this->searchService->invoke($command)->getResult()->getTotal();
+        $this->cache[__FUNCTION__] = $result;
+        return $result;
     }
 
     /**
@@ -1457,5 +1461,28 @@ trait SolrFinnaTrait
             $images['cacheSizes']['medium'] = $hasSmallImage ? 'small' : 'large';
         }
         return $images;
+    }
+
+    /**
+     * Compare the title of current object with items from given array as titles
+     *
+     * @param array $compare An array of items to compare
+     *
+     * @return array
+     */
+    protected function compareWithTitle(array $compare): array
+    {
+        $compareDone = [];
+        $title = str_replace([',', ';'], '', $this->getTitle());
+        $compareFull = str_replace([',', ';'], '', implode(' ', $compare));
+        if ($compareFull != $title) {
+            foreach ($compare as $item) {
+                $checkTitle = str_replace([',', ';'], ' ', (string)$item) != $title;
+                if ($checkTitle) {
+                    $compareDone[] = (string)$item;
+                }
+            }
+        }
+        return array_unique($compareDone);
     }
 }

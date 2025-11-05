@@ -1,8 +1,6 @@
 <!-- START of: finna - reservationlist/displaylists.phtml -->
 <?php
-  $title = $this->transEsc('ReservationList::All Lists');
-  // Set up page title:
-  $this->headTitle($title);
+  $title = $this->translate('ReservationList::All Lists');
 
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
@@ -14,7 +12,9 @@
 
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
-  <h2><?=$title ?></h2>
+  <div id="useraccount-content-heading" class="useraccount-header">
+    <?=$this->component('page-title', ['title' => $title]);?>
+  </div>
   <?= $this->flashmessages() ?>
   <ul class="reservations-list-home-ul">
     <?php foreach ($this->listEntities ?? [] as $listEntity): ?>
@@ -32,7 +32,7 @@
                   'confirm-button',
                   [
                     'buttonLink' => $this->url('reservationlist-deletelist', ['listId' => $listEntity->getId()]),
-                    'buttonLabel' => 'delete_list',
+                    'buttonLabel' => 'Delete',
                     'confirmLink' => $this->url('reservationlist-deletelist', ['listId' => $listEntity->getId()], ['query' => ['confirm' => 1]]),
                     'header' => 'confirm_delete_list_text',
                     'align' => 'right',
@@ -50,11 +50,13 @@
               <?= $this->transEscWithPrefix('source_', $listHandler->getInstitution()) . ': ' . $this->escapeHtml($listHandler->getIdentifier()); ?>
             <?php endif; ?>
           </div>
-          <?php if ($listEntity->getOrdered()): ?>
-            <div class="list-ordered list-info">
-              <?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $listEntity->getOrdered()->format('d.m.Y')])?>
-            </div>
-          <?php endif; ?>
+          <div class="list-ordered list-info">
+            <?php if (!$listHandler->isEnabled()): ?>
+                <?= $this->transEsc('ReservationList::Disabled'); ?>
+            <?php elseif ($listEntity->getOrdered()): ?>
+                <?= $this->transEsc('ReservationList::list_ordered', ['%%date%%' => $listEntity->getOrdered()->format('d.m.Y')])?>
+            <?php endif; ?>
+          </div>
         </div>
       </li>
       <?php endforeach; ?>

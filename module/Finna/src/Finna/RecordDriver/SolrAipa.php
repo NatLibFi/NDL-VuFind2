@@ -69,6 +69,21 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected $excludedDescriptions = [];
 
     /**
+     * Get an array of summary strings for the record.
+     *
+     * @return array
+     */
+    public function getSummary()
+    {
+        $summary = parent::getSummary();
+        if (isset($summary[0])) {
+            // Only return the first paragraph, as AIPA summaries can be very long.
+            $summary = [explode("\n\n", $summary[0])[0]];
+        }
+        return $summary;
+    }
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -100,16 +115,19 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
             if ($format && in_array($format, $images)) {
                 $url = (string)$desc;
                 if ($this->isUrlLoadable($url, $uniqueId)) {
-                    $result[] = [
-                        'urls' => [
-                            'small' => $url,
-                            'medium' => $url,
-                            'large' => $url,
-                        ],
-                        'description' => '',
-                        'rights' => [],
-                        'downloadable' => false,
-                    ];
+                    if (!$this->maxAmountOfImages()) {
+                        $result[] = [
+                            'urls' => [
+                                'small' => $url,
+                                'medium' => $url,
+                                'large' => $url,
+                            ],
+                            'description' => '',
+                            'rights' => [],
+                            'downloadable' => false,
+                        ];
+                    }
+                    $this->imagesCount++;
                 }
             }
         }
@@ -129,7 +147,10 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getAllSubjectHeadings($extended = false)
     {
-        return $this->getFieldData('subject', $extended);
+        return array_map(
+            fn ($value) => (array)$value,
+            $this->getFieldData('subject', $extended)
+        );
     }
 
     /**
@@ -360,7 +381,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      *
      * @return string
      */
-    public function getEncapsulatedRecordElementTagName(): string
+    protected function getEncapsulatedRecordElementTagName(): string
     {
         return match ($this->getType()) {
             'aipa:education' => 'item', // For BC, to be removed later.

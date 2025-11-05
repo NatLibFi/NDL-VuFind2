@@ -29,6 +29,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 
 use function array_key_exists;
@@ -49,6 +50,8 @@ use function strlen;
  */
 class SierraRest extends \VuFind\ILS\Driver\SierraRest
 {
+    use FinnaCommonILSTrait;
+
     /**
      * Fine types that allow online payment
      *
@@ -217,17 +220,17 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $lastname = $parts[0];
             $firstname = $parts[1] ?? '';
         }
-        return [
-            'id' => $patron['id'],
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'email' => !empty($patron['emails']) ? $patron['emails'][0] : '',
-            'major' => null,
-            'college' => null,
-            'home_library' => $patron['homeLibraryCode'] ?? '',
-        ];
+        return $this->createPatronArray(
+            id: $patron['id'],
+            firstname: $firstname,
+            lastname: $lastname,
+            cat_username: $username,
+            cat_password: $password,
+            email: $patron['emails'][0] ?? '',
+            nonDefaultFields: [
+                'home_library' => $patron['homeLibraryCode'] ?? '',
+            ]
+        );
     }
 
     /**
@@ -436,46 +439,35 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
 
-        $profile = [
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'phone' => $phone,
-            'smsnumber' => $sms,
-            'email' => !empty($result['emails']) ? $result['emails'][0] : '',
-            'address1' => $address,
-            'zip' => $zip,
-            'city' => $city,
-            'birthdate' => $result['birthDate'] ?? '',
-            'messages' => $messages,
-            'home_library' => $result['homeLibraryCode'],
-        ];
-
+        $expirationDate = null;
+        $expirationSoon = false;
+        $expired = false;
         if (!empty($result['expirationDate'])) {
-            $profile['expiration_date'] = $this->dateConverter->convertToDisplayDate(
+            $expirationDate = $this->dateConverter->convertToDisplayDate(
                 'Y-m-d',
                 $result['expirationDate']
             );
             $date = \DateTime::createFromFormat('Y-m-d', $result['expirationDate']);
             $diff = $date->diff(new \Datetime());
             if (!$diff->invert && $diff->days > 0) {
-                $profile['expired'] = true;
+                $expired = true;
             } elseif (
                 $this->daysBeforeAccountExpirationNotification
                 && $diff->days === 0
                 || ($diff->invert
                 && $diff->days <= $this->daysBeforeAccountExpirationNotification)
             ) {
-                $profile['expiration_soon'] = true;
+                $expirationSoon = true;
             }
         }
-
+        $selfServiceLibrary = null;
         // PCODE3: self-service library access
         if ($field = $result['fixedFields'][46] ?? null) {
-            $profile['self_service_library'] = (string)$field['value'] === '1';
+            $selfServiceLibrary = (string)$field['value'] === '1';
         }
 
         // Checkout history:
-        $result = $this->makeRequest(
+        $historyResult = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
                 'activationStatus',
@@ -484,11 +476,27 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             'GET',
             $patron
         );
-        if (array_key_exists('readingHistoryActivation', $result)) {
-            $profile['loan_history'] = $result['readingHistoryActivation'];
-        }
 
-        return $profile;
+        return $this->createProfileArray(
+            firstname: $firstname,
+            lastname: $lastname,
+            phone: $phone,
+            birthdate: $result['birthDate'] ?? '',
+            zip: $zip,
+            city: $city,
+            address1: $address,
+            home_library: $result['homeLibraryCode'],
+            expiration_date: $expirationDate,
+            loan_history: $historyResult['readingHistoryActivation'] ?? null,
+            email: $result['emails'][0] ?? '',
+            nonDefaultFields: [
+                'self_service_library' => $selfServiceLibrary,
+                'expired' => $expired,
+                'expiration_soon' => $expirationSoon,
+                'messages' => $messages,
+                'smsnumber' => $sms,
+            ]
+        );
     }
 
     /**
@@ -830,142 +838,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get a password recovery token for a user
-     *
-     * @param array $params Required params such as cat_username and email
-     *
-     * @return array Associative array of the results
-     */
-    public function getPasswordRecoveryToken($params)
-    {
-        $request = [
-            'queries' => [
-                [
-                    'target' => [
-                        'record' => [
-                            'type' => 'patron',
-                        ],
-                        'field' => [
-                            'tag' => 'b',
-                        ],
-                    ],
-                    'expr' => [
-                        'op' => 'equals',
-                        'operands' => [
-                            str_replace(' ', '', $params['cat_username']),
-                        ],
-                    ],
-                ],
-                'and',
-                [
-                    'target' => [
-                        'record' => [
-                            'type' => 'patron',
-                        ],
-                        'field' => [
-                            'tag' => 'z',
-                        ],
-                    ],
-                    'expr' => [
-                        'op' => 'equals',
-                        'operands' => [
-                            trim($params['email']),
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $result = $this->makeRequest(
-            [
-                [
-                    'type' => 'encoded',
-                    'value' => 'v6/patrons/query?offset=0&limit=1',
-                ],
-            ],
-            json_encode($request),
-            'POST'
-        );
-
-        if (
-            $result['total'] === 1
-            && $link = $result['entries'][0]['link'] ?? null
-        ) {
-            $patronId = $this->extractId($link);
-
-            // Check that there's an existing PIN in varFields:
-            $result = $this->makeRequest(
-                [$this->apiBase, 'patrons', $patronId],
-                [
-                    'fields' => 'varFields',
-                ],
-                'GET'
-            );
-            $pinExists = false;
-            foreach ($result['varFields'] ?? [] as $field) {
-                if ('=' === $field['fieldTag']) {
-                    $pinExists = true;
-                    break;
-                }
-            }
-            if (!$pinExists) {
-                return [
-                    'success' => false,
-                    'error' => 'authentication_error_account_locked',
-                ];
-            }
-            return [
-                'success' => true,
-                'token' => $patronId,
-            ];
-        }
-        return [
-            'success' => false,
-            'error' => 'recovery_user_not_found',
-        ];
-    }
-
-    /**
-     * Recover user's password with a token from getPasswordRecoveryToken
-     *
-     * @param array $params Required params such as cat_username, token and new
-     * password
-     *
-     * @return array Associative array of the results
-     */
-    public function recoverPassword($params)
-    {
-        $request = [
-            'pin' => $params['password'],
-        ];
-        $result = $this->makeRequest(
-            [
-                'v6', 'patrons', $params['token'],
-            ],
-            json_encode($request),
-            'PUT',
-            false,
-            true
-        );
-
-        if (!in_array($result['statusCode'], ['200', '204'])) {
-            $this->logError(
-                'Patron update request failed with status code'
-                . " {$result['statusCode']}: "
-                . (var_export($result['response'] ?? '', true))
-            );
-            return [
-                'success' => false,
-                'error' => 'profile_update_failed',
-            ];
-        }
-
-        return [
-            'success' => true,
-        ];
-    }
-
-    /**
      * Update holds
      *
      * This is responsible for changing the status of hold requests
@@ -1054,13 +926,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $result['exactBalanceRequired'] = false;
             $result['selectFines'] = true;
             return $result;
-        }
-        if (
-            'getPasswordRecoveryToken' === $function
-            || 'recoverPassword' === $function
-        ) {
-            return !empty($this->config['PasswordRecovery']['enabled'])
-                ? $this->config['PasswordRecovery'] : false;
         }
         if ('updateAddress' === $function) {
             $function = 'updateProfile';

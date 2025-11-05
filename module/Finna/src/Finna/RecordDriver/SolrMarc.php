@@ -94,6 +94,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     ];
 
     /**
+     * Mappings for component part relations
+     *
+     * @var array
+     */
+    protected $relationMappings = [
+        'Sisältyy kokoelmaan' => 'Included in collections',
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
@@ -209,19 +218,21 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
 
                 // Get data for field
                 $tmp = $this->getFieldData($field);
+                if (!$tmp) {
+                    continue;
+                }
 
+                $tmp['isCollection'] = false;
                 if ($value == '730') {
                     // getfieldData doesn't handle subfield a (it's not the same for
                     // other fields), so do it now if we didn't get a title:
-                    if ($tmp) {
-                        if ('' === $tmp['value']) {
-                            $tmp['value'] = $this->getSubfield($field, 'a');
-                            if ('title' === $tmp['link']['type']) {
-                                $tmp['link']['value'] = $tmp['value'];
-                            }
-                            // get also subfield g for related misc info
-                            $tmp['misc'] = $this->getSubfield($field, 'g');
+                    if ('' === $tmp['value']) {
+                        $tmp['value'] = $this->getSubfield($field, 'a');
+                        if ('title' === $tmp['link']['type']) {
+                            $tmp['link']['value'] = $tmp['value'];
                         }
+                        // get also subfield g for related misc info
+                        $tmp['misc'] = $this->getSubfield($field, 'g');
                     }
                 } elseif ($value == '775' || $value == '776') {
                     // We need to display most of the subfields in this case
@@ -232,6 +243,15 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         }
                     }
                     $tmp['value'] = implode(' ', $line);
+                } elseif ($value == '773') {
+                    $relation =
+                        $this->relationMappings[$this->stripTrailingPunctuation($this->getSubfield($field, 'i'), ':')]
+                        ?? null;
+                    if ($relation) {
+                        // Use relation as the field heading:
+                        $tmp['title'] = $relation;
+                        $tmp['isCollection'] = true;
+                    }
                 }
                 $result[] = $tmp;
             }
@@ -293,13 +313,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 $part = $this->getSubfield($url, '3');
                 // Only take large image. Thumbnail is too small.
                 $image = strcasecmp($part, 'Image') === 0;
+                if (!$image) {
+                    // Some Quria records do not have subfield q, check subfield z
+                    $image = 'Kansikuva' === $this->getSubfield($url, 'z');
+                }
             }
 
-            if (
-                ($image || $pdf)
-                && $this->urlAllowed($address)
-                && ($pdf || $this->isUrlLoadable($address, $this->getUniqueID()))
-            ) {
+            if ($pdf || ($image && $this->isUrlLoadable($address, $this->getUniqueID()))) {
                 $urls[$image ? 'images' : 'pdfs'][] = [
                     'urls' => [
                         'small' => $address,
@@ -599,13 +619,18 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
     /**
      * Get an array of embedded component parts
      *
+     * @param boolean $onlyCollections Only get component parts that are collections
+     *
      * @return array Component parts
      */
-    public function getEmbeddedComponentParts()
+    public function getEmbeddedComponentParts($onlyCollections = false)
     {
         $componentParts = [];
         $partOrderCounter = 0;
         foreach ($this->getMarcReader()->getFields('979') as $field) {
+            if ($onlyCollections && $field['i2'] !== '1') {
+                continue;
+            }
             $partOrderCounter++;
             $partAuthors = [];
             $uniformTitle = '';
@@ -679,6 +704,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'arrangers' => $partArrangers,
                 'otherAuthors' => $partOtherAuthors,
             ];
+        }
+        // Return here if only collections were requested as the indicator 2 differs from 979
+        if ($onlyCollections) {
+            return $componentParts;
         }
 
         // Try fields 700 and 730 if 979 is empty
@@ -969,12 +998,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
 
         $recordSource = $this->getDataSource();
+        $linkPrefixes = $this->getRecordLinkingPrefixes($recordSource);
 
-        if ($prefixIn003 = $this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
-            $field003 = $this->getMarcReader()->getField('003');
-            $prefixIn003 = $field003 ? trim($field003) : null;
-        }
-        // TODO: Remove old way of linking records in: [FINNA-3437]
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
         foreach ($fields as $field) {
             $id = '';
@@ -983,35 +1008,34 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             $reference = '';
             $publishingInfo = '';
             $author = '';
+            $relation = '';
             foreach ($this->getAllSubfields($field) as $subfield) {
                 $data = $subfield['data'];
                 switch ($subfield['code']) {
                     case 'w':
-                        // TODO: Remove old way of linking records in: [FINNA-3437]
                         // Datasource has been forced to use legacy linking method
                         if ($useLegacyLinkingId) {
                             $id = $this->getIdFromLinkingField($data);
                             break;
                         }
-                        // Datasource has been set to check for prefix from 003 and is most likely using new linking
-                        if ($prefixIn003 && $this->getIdFromLinkingField($data, $prefixIn003)) {
-                            $linkingId = $data;
-                            break;
+                        foreach ($linkPrefixes as $prefix) {
+                            if ($this->getIdFromLinkingField($data, $prefix)) {
+                                $linkingId = $data;
+                                break 2;
+                            }
                         }
                         $found = $this->getIdFromLinkingField($data);
                         if (!$found) {
                             break;
                         }
-                        // Determine if the id starts like (datasource.) and if it does, it is most likely a legacy id
-                        if (str_starts_with($found, "$recordSource.")) {
-                            $id = $found;
-                            break;
-                        }
-                        // If id does not match any of the previous, then assume it is a linking id without a prefix.
-                        $linkingId = $found;
+                        // If id does not match any of the previous, then assume its bib id.
+                        $id = $found;
                         break;
                     case 't':
                         $title = $this->stripTrailingPunctuation($data, '.-');
+                        break;
+                    case 'i':
+                        $relation = $this->relationMappings[$this->stripTrailingPunctuation($data, ':')] ?? '';
                         break;
                     case 'g':
                         $reference = $data;
@@ -1045,6 +1069,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'reference' => $reference,
                 'publishingInfo' => $publishingInfo,
                 'mainHeading' => $author,
+                'relation' => $relation,
             ];
         }
         return $result;
@@ -1740,6 +1765,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getURLs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $retVal = [];
 
         // Which fields/subfields should we check for URLs?
@@ -1768,6 +1796,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                                 break;
                             }
                         }
+                        if (($note = $this->getSubfield($url, 'z')) === $desc) {
+                            $note = '';
+                        }
                         $part = '';
                         if ($desc) {
                             // Check for subfield 3 and include it as the part
@@ -1782,20 +1813,23 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         }
 
                         $data = [
-                            'url' => $address, 'desc' => $desc, 'part' => $part,
+                            'url' => $address, 'desc' => $desc, 'part' => $part, 'note' => $note,
                         ];
                         if (
                             !$this->urlBlocked($address, $desc)
                             && !in_array($data, $retVal)
                         ) {
-                            $retVal[] = $data;
+                            if (!$this->maxAmountOfURLs()) {
+                                $retVal[] = $data;
+                            }
+                            $this->urlsCount++;
                         }
                     }
                 }
             }
         }
-        $retVal = $this->resolveUrlTypes($retVal);
-        return $retVal;
+        $this->cache[__FUNCTION__] = $this->resolveUrlTypes($retVal);
+        return $this->cache[__FUNCTION__];
     }
 
     /**
@@ -1921,12 +1955,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         $linkTypes = explode(',', $linkTypeSetting);
         $linkFields = $this->getSubfields($field, 'w');
         $recordSource = $this->getDataSource();
+        $linkPrefixes = $this->getRecordLinkingPrefixes($recordSource);
 
-        if ($prefixIn003 = $this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
-            $field003 = $this->getMarcReader()->getField('003');
-            $prefixIn003 = $field003 ? trim($field003) : null;
-        }
-        // TODO: Remove old way of linking records in: [FINNA-3437]
         $useLegacyLinkingId = $this->datasourceSettings[$recordSource]['legacy_settings']['linking_id'] ?? false;
         // Run through the link types specified in the config.
         // For each type, check field for reference
@@ -1980,13 +2010,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                     if ($useLegacyLinkingId) {
                         break;
                     }
-                    // TODO: Remove old way of linking records in: [FINNA-3437]
-                    foreach ($linkFields as $current) {
-                        if (
-                            !str_starts_with($current, "$recordSource.")
-                            && $this->getIdFromLinkingField($current, $prefixIn003)
-                        ) {
-                            $link = ['type' => 'linkingId', 'value' => $current];
+                    foreach ($linkPrefixes as $prefix) {
+                        foreach ($linkFields as $current) {
+                            if ($this->getIdFromLinkingField($current, $prefix)) {
+                                $link = ['type' => 'linkingId', 'value' => $current];
+                                break 2;
+                            }
                         }
                     }
                     break;
@@ -2046,6 +2075,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
         }
         return '';
+    }
+
+    /**
+     * Get component parts that are collections
+     *
+     * @return array
+     */
+    public function getChildCollections(): array
+    {
+        return $this->getEmbeddedComponentParts(true);
     }
 
     /**
@@ -2111,38 +2150,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
 
         return array_values(array_unique($matches, SORT_REGULAR));
-    }
-
-    /**
-     * Check whether it is allowed to use an image or description URL.
-     *
-     * @param string $url URL to check
-     *
-     * @return boolean True if the url can be used
-     */
-    protected function urlAllowed($url)
-    {
-        // BTJ
-        if (preg_match('/^(http|https):.*\.btj\.com\//', $url)) {
-            if (
-                !isset($this->mainConfig->Record->btj_links)
-                || !$this->mainConfig->Record->btj_links
-            ) {
-                return false;
-            }
-        }
-
-        // Kirjavälitys
-        if (strstr($url, 'http://data.kirjavalitys.fi/')) {
-            if (
-                !isset($this->mainConfig->Record->kirjavalitys_links)
-                || !$this->mainConfig->Record->kirjavalitys_links
-            ) {
-                return false;
-            }
-        }
-
-        return true;
     }
 
     /**
@@ -2776,5 +2783,24 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
             }
         }
         return '';
+    }
+
+    /**
+     * Get record linking settings
+     *
+     * @param string $recordSource Record source
+     *
+     * @return array
+     */
+    protected function getRecordLinkingPrefixes(string $recordSource): array
+    {
+        if ($linkPrefixes = $this->datasourceSettings[$recordSource]['link_prefixes'] ?? []) {
+            $linkPrefixes = explode(',', $linkPrefixes);
+        }
+        if ($this->datasourceSettings[$recordSource]['prefixIn003'] ?? null) {
+            $field003 = $this->getMarcReader()->getField('003');
+            $linkPrefixes[] = trim($field003);
+        }
+        return array_filter(array_unique($linkPrefixes));
     }
 }

@@ -30,10 +30,12 @@
 namespace Finna\ReservationList\Handler;
 
 use Exception;
+use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
 use Psr\Container\ContainerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Service\GetServiceTrait;
 
 use function in_array;
@@ -149,6 +151,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      * @var bool
      */
     protected bool $enabled;
+
+    /**
+     * Specific type of the list
+     *
+     * @var string
+     */
+    protected string $listType;
 
     /**
      * List configuration as an array
@@ -377,7 +386,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $result['record_ids_text'] = '';
         $result['record_source_and_ids'] = [];
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
-            $result['record_ids_text'] .= $resource->getRecordId() . '||' . $resource->getTitle() . PHP_EOL;
+            $result['record_ids_text'] .= $resource->getTitle() . ' (' . $resource->getRecordId() . ')' . PHP_EOL;
             $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
         }
         return $result;
@@ -397,16 +406,17 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         UserEntityInterface $user,
         array $requestValues
     ): array {
+        $cardInfo = $this->getPreferredCardInfo($user);
         $result = [
             'listId' => $list->getId(),
             'institution' => $list->getInstitution(),
             'listIdentifier' => $list->getListConfigIdentifier(),
-            'firstName' => $requestValues['firstName'] ?? $user->getFirstname(),
-            'lastName' => $requestValues['lastName'] ?? $user->getLastname(),
-            'email' => $requestValues['email'] ?? $user->getEmail(),
+            'full_name' => $requestValues['full_name'] ?? $cardInfo['full_name'],
+            'email' => $requestValues['email'] ?? $cardInfo['email'],
             'phone' => $requestValues['phone'] ?? null,
             'pickup_date' => $requestValues['pickup_date'] ?? null,
             'message' => $requestValues['message'] ?? null,
+            'card_info' => $cardInfo['card_name'],
         ];
 
         if (empty($requestValues['recordId'])) {
@@ -417,11 +427,47 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $recordID = $requestValues['recordId'];
         $source = $requestValues['source'] ?? DEFAULT_SEARCH_BACKEND;
         $record = $recordLoader->load($recordID, $source);
+        $result['list_title'] = $requestValues['list_title'];
         $result['recordId'] = $record->getUniqueID();
         $result['source'] = $record->getSourceIdentifier();
         $result['record_ids_text'] = $record->getUniqueID() . '||' . $record->getTitle();
         $result['record_source_and_ids'] = [$record->getSourceIdentifier() . '|' . $record->getUniqueID()];
         return $result;
+    }
+
+    /**
+     * Get preferred card info as associative array. Shibboleth login saves the whole name into last name so
+     * try to get users name from patron primarily. Prefer card name from database and use local name (without prefix)
+     * as fallback. Get local patron id (without prefix).
+     *
+     * @param UserEntityInterface $user User to get information for
+     *
+     * @return array [firstname, lastname, patron_id, card_name]
+     */
+    protected function getPreferredCardInfo(UserEntityInterface $user): array
+    {
+        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
+        $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
+        $cardName = $patron['__local_cat_username'] ?? $patron['cat_username'];
+        if ($cards = $cardService->getLibraryCards($user, null, $patron['cat_username'])) {
+            $dbCardName = reset($cards)->getCardName();
+            if ($dbCardName !== $patron['cat_username']) {
+                $cardName = $dbCardName;
+            }
+        }
+
+        $firstName = $patron['firstname'];
+        $lastName = $patron['lastname'];
+        $fullName = trim("$firstName $lastName");
+
+        return [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'full_name' => $fullName,
+            'patron_id' => $patron['__local_id'] ?? $patron['id'],
+            'email' => $patron['email'],
+            'card_name' => $cardName,
+        ];
     }
 
     /**
@@ -500,6 +546,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $this->connectionType = $config['Connection']['type'] ?? '';
         $this->connectionSettings = $config['Connection'] ?? [];
         $this->enabled = $config['Enabled'] ?? false;
+        $this->listType = $config['Type'] ?? 'default';
         $this->institution = $institution;
         $this->listConfiguration = $config;
 
@@ -522,10 +569,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
 
         // Extend form as required
         if ($extend = $this->singleOrderFormConfig['extends'] ?? false) {
+            $extendFrom = $definedForms['PlaceOrder'][$extend];
+            $mergedFields = [...$extendFrom['fields'], ...$this->singleOrderFormConfig['fields'] ?? []];
             $this->singleOrderFormConfig = array_merge(
-                $definedForms['PlaceOrder'][$extend],
+                $extendFrom,
                 $this->singleOrderFormConfig
             );
+            $this->singleOrderFormConfig['fields'] = $mergedFields;
         }
         return $this;
     }

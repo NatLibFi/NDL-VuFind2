@@ -238,7 +238,9 @@ class SolrEad3 extends SolrEad
         if (!isset($record->did)) {
             return [];
         }
-
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
 
         $isExternalUrl = function ($node) {
@@ -274,17 +276,20 @@ class SolrEad3 extends SolrEad
             $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
 
             if (!$this->urlBlocked($url, $desc)) {
-                $urlData = [
-                    'url' => $url,
-                    'desc' => (string)$desc,
-                    'linkType' => $linkType,
-                    'embed' => $embed,
-                ];
-                if ($preferredLang) {
-                    $urls['localeurls'][] = $urlData;
-                } else {
-                    $urls['urls'][] = $urlData;
+                if (!$this->maxAmountOfURLs()) {
+                    $urlData = [
+                        'url' => $url,
+                        'desc' => (string)$desc,
+                        'linkType' => $linkType,
+                        'embed' => $embed,
+                    ];
+                    if ($preferredLang) {
+                        $urls['localeurls'][] = $urlData;
+                    } else {
+                        $urls['urls'][] = $urlData;
+                    }
                 }
+                $this->urlsCount++;
             }
         };
 
@@ -300,11 +305,8 @@ class SolrEad3 extends SolrEad
             $processURL($dao);
         }
 
-        if (empty($urls)) {
-            return [];
-        }
-
-        return $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls']);
+        $this->cache[__FUNCTION__] = $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls'] ?? []);
+        return $this->cache[__FUNCTION__];
     }
 
     /**
@@ -961,19 +963,24 @@ class SolrEad3 extends SolrEad
         ];
         $xml = $this->getXmlRecord();
         $addToResults = function ($imageData) use (&$result) {
-            $imageData = $this->ensureImageSizes($imageData);
-            $sizes = ['small', 'medium', 'large'];
-            $formatted = $imageData;
-            if (!empty($imageData['urls'])) {
-                foreach ($sizes as $size) {
-                    $from = $imageData['cacheSizes'][$size] ?? null;
-                    if ($from) {
-                        $formatted['pdf'][$size] = $imageData['pdf'][$from];
+            if (!$this->maxAmountOfImages()) {
+                $imageData = $this->ensureImageSizes($imageData);
+                $sizes = ['small', 'medium', 'large'];
+                $formatted = $imageData;
+                if (!empty($imageData['urls'])) {
+                    foreach ($sizes as $size) {
+                        $from = $imageData['cacheSizes'][$size] ?? null;
+                        if ($from) {
+                            $formatted['pdf'][$size] = $imageData['pdf'][$from];
+                        }
                     }
                 }
+                $formatted['downloadable'] = $this->allowRecordImageDownload($formatted);
+                $result['displayImages'][] = $formatted;
             }
-            $formatted['downloadable'] = $this->allowRecordImageDownload($formatted);
-            $result['displayImages'][] = $formatted;
+            if (!empty($imageData['urls'])) {
+                $this->imagesCount++;
+            }
         };
         $isExcludedFromOCR = function ($title) {
             foreach (self::EXCLUDE_OCR_TITLE_PARTS as $part) {
@@ -1019,8 +1026,14 @@ class SolrEad3 extends SolrEad
                         continue;
                     }
                     $show = (string)($attr->show ?? '');
+                    if ($show === 'none') {
+                        continue;
+                    }
+                    // If linkrole is set and has no implication of being an image or pdf file, skip it.
                     $role = (string)($attr->linkrole ?? '');
-                    if ($show === 'none' || $role === 'text/html') {
+                    $roleCheck = strtolower($role);
+                    $isPDF = $roleCheck === 'application/pdf';
+                    if ($roleCheck && !$isPDF && !str_starts_with($roleCheck, 'image/')) {
                         continue;
                     }
                     $type = (string)($attr->localtype ?? $parentType ?: 'none');
@@ -1045,11 +1058,13 @@ class SolrEad3 extends SolrEad
                     [,$format] = explode('/', $role . '/jpg');
                     // Image might be original, can not be displayed in browser.
                     if ($this->isUndisplayableFormat($format)) {
-                        $highResolution['original'][] = [
-                            'data' => [],
-                            'url' => $url,
-                            'format' => $format,
-                        ];
+                        if ($this->allowRecordImageDownload(compact('rights'))) {
+                            $highResolution['original'][] = [
+                                'data' => [],
+                                'url' => $url,
+                                'format' => $format,
+                            ];
+                        }
                         continue;
                     }
                     if (empty($displayImage)) {
@@ -1082,7 +1097,7 @@ class SolrEad3 extends SolrEad
                             ];
                         }
                         $displayImage['urls'][$size] = $url;
-                        $displayImage['pdf'][$size] = $role === 'application/pdf';
+                        $displayImage['pdf'][$size] = $isPDF;
                     }
                 }
                 if (!empty($displayImage)) {
@@ -1112,7 +1127,9 @@ class SolrEad3 extends SolrEad
         if (!empty($fullResImages['items'])) {
             $result['fullres'] = $fullResImages;
         }
-
+        $images = [];
+        $fullResImages = [];
+        $ocrImages = [];
         return $this->cache[$cacheKey] = $result;
     }
 
@@ -1148,6 +1165,9 @@ class SolrEad3 extends SolrEad
             $quantity = trim((string)($desc->quantity ?? ''));
             $unittype = trim((string)($desc->unittype ?? ''));
             if ($result = trim($quantity . ' ' . mb_strtolower($unittype, 'UTF-8'))) {
+                if ($descriptions = implode(', ', $this->getDisplayLabel($desc->descriptivenote, 'p'))) {
+                    $result .= ' (' . $descriptions . ')';
+                }
                 $results[] = $result;
                 if ($lang['preferred'] ?? false) {
                     $localeResults[] = $result;

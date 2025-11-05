@@ -524,8 +524,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             array $documents = []
         ) use (&$results) {
             if ($images) {
-                $images = $this->ensureImageSizes($images);
-                $images['downloadable'] = $this->allowRecordImageDownload($images);
+                if (!$this->maxAmountOfImages()) {
+                    $images = $this->ensureImageSizes($images);
+                    $images['downloadable'] = $this->allowRecordImageDownload($images);
+                } else {
+                    $images = [];
+                }
+                $this->imagesCount++;
             }
             $results[] = compact(
                 'images',
@@ -621,6 +626,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                             $documentDesc,
                             $documentRights,
                             $linkType,
+                            $type,
                         )
                     ) {
                         $documentUrls = array_merge($documentUrls, $document);
@@ -941,7 +947,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
     /**
      * Function to return an audio in associative array
-     * - desc   Default is false
+     * - desc   Default is null
      * - url    Url to audio file
      * - codec  Codec type of the audio
      * - type   Type what type is the audio file
@@ -961,8 +967,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         ?\SimpleXmlElement $measurements
     ): array {
         if ($codec = $this->supportedAudioFormats[$format] ?? false) {
+            if ($this->maxAmountOfURLs()) {
+                $this->urlsCount++;
+                return [];
+            }
             $audio = [
-                'desc' => $description ?: false,
+                'desc' => $description ?: null,
                 'url' => $url,
                 'codec' => $format,
                 'type' => 'audio',
@@ -978,7 +988,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
     /**
      * Function to return a video in associative array
-     * - desc           Default is false
+     * - desc           Default is null
      * - url            Video url
      * - embed          Video embed is video
      * - videosources
@@ -999,16 +1009,20 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         ?\SimpleXmlElement $measurements
     ): array {
         $mediaType = $this->supportedVideoFormats[$format] ?? false;
+        if ($this->maxAmountOfURLs()) {
+            $this->urlsCount++;
+            return [];
+        }
         $video = match ($mediaType) {
             'text/html' => [
-                'desc' => $description ?: false,
+                'desc' => $description ?: null,
                 'url' => $url,
                 'embed' => 'iframe',
                 'format' => $format,
             ],
             false => [],
             default => [
-                'desc' => $description ?: false,
+                'desc' => $description ?: null,
                 'url' => $url,
                 'embed' => 'video',
                 'format' => $format,
@@ -1032,6 +1046,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @param string $description Description of the document
      * @param array  $rights      Array of document rights
      * @param bool   $linkType    Type of document link, default is 'proxy-link'.
+     * @param string $type        Type of resource.
      *
      * @return array
      */
@@ -1040,19 +1055,26 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $format,
         string $description,
         array $rights,
-        string $linkType = 'proxy-link'
+        string $linkType = 'proxy-link',
+        string $type = '',
     ): array {
+        if ($this->maxAmountOfURLs()) {
+            $this->urlsCount++;
+            return [];
+        }
         $format = strtolower($format);
         // Do not display text/html mediatype
         if ('text/html' === $format) {
             $format = '';
         }
+        $label = $type === 'provided_3D' ? '3D' : '';
         return [
             'description' => $description ?: false,
             'url' => $url,
             'format' => $format,
             'rights' => $rights,
             'linkType' => $linkType,
+            'label' => $label,
         ];
     }
 
@@ -1146,6 +1168,32 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
+     * Return all labels for the record
+     *
+     * @return array
+     */
+    public function getLabels(): array
+    {
+        if ($this->has3DResources()) {
+            return array_merge($this->labels, [['label' => '3D', 'class' => 'resource-type']]);
+        }
+        return $this->labels;
+    }
+
+    /**
+     * If record has 3D resources
+     *
+     * @return bool
+     */
+    public function has3DResources(): bool
+    {
+        if ($this->getModels()) {
+            return true;
+        }
+        return in_array('3D', array_column($this->getDocuments(), 'label'));
+    }
+
+    /**
      * Can model preview images be shown
      *
      * @return bool
@@ -1221,6 +1269,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             }
         }
         return $results;
+    }
+
+    /**
+     * Get online URLs
+     *
+     * @return array
+     */
+    public function getOnlineURLs(): array
+    {
+        return $this->getDocuments();
     }
 
     /**
@@ -1483,7 +1541,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
 
             $places = [];
             foreach ($node->eventPlace ?? [] as $placenode) {
-                $place = trim((string)$placenode->displayPlace ?? '');
+                $place = trim((string)($placenode->displayPlace ?? ''), ', \n\r\t\v\0');
                 $placeId = $placenode->place->placeID ?? [];
                 if (!$place) {
                     $eventPlace = [];
@@ -2272,7 +2330,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         $xpath = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
             . 'subjectSet/subject/subjectPlace';
         foreach ($this->getXmlRecord()->xpath($xpath) as $subjectPlace) {
-            if (!($displayPlace = (string)($subjectPlace->displayPlace ?? ''))) {
+            if (!($displayPlace = trim((string)($subjectPlace->displayPlace ?? ''), ', \n\r\t\v\0'))) {
                 $placeNames = [];
                 foreach ($subjectPlace->place->namePlaceSet ?? [] as $nameSet) {
                     if ($name = trim((string)$nameSet->appellationValue ?? '')) {
@@ -2353,6 +2411,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     public function getURLs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $urls = [];
         foreach (parent::getURLs() as $url) {
             if (!$this->urlBlocked($url['url'] ?? '', $url['desc'] ?? '')) {
@@ -2360,8 +2421,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             }
         }
         $urls = $this->resolveUrlTypes($urls);
-        $urls = array_merge($urls, $this->getAudios(), $this->getVideos());
-        return $urls;
+        $this->cache[__FUNCTION__] = array_merge($urls, $this->getAudios(), $this->getVideos());
+        return $this->cache[__FUNCTION__];
     }
 
     /**
@@ -2659,29 +2720,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         }
         // Return either language specific results or all given items.
         return $items ?: $allItems;
-    }
-
-    /**
-     * Compare the title of current object with items from given array as titles
-     *
-     * @param array $compare An array of items to compare
-     *
-     * @return array
-     */
-    protected function compareWithTitle(array $compare): array
-    {
-        $compareDone = [];
-        $title = str_replace([',', ';'], '', $this->getTitle());
-        $compareFull = str_replace([',', ';'], '', implode(' ', $compare));
-        if ($compareFull != $title) {
-            foreach ($compare as $item) {
-                $checkTitle = str_replace([',', ';'], ' ', (string)$item) != $title;
-                if ($checkTitle) {
-                    $compareDone[] = (string)$item;
-                }
-            }
-        }
-        return array_unique($compareDone);
     }
 
     /**

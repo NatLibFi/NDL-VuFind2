@@ -1,42 +1,40 @@
 <!-- START of: finna - reservationlist/displaylist.phtml -->
 <?php
   // Set up page title:
-  $pageTitle = $this->translate('ReservationList::Reservation List') . ': ' . $this->translate($this->listEntity->getTitle());
-  $this->headTitle($pageTitle);
+  $pageTitle = $this->translate($this->listEntity->getTitle());
 
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
     ->add($this->translate('ReservationList::All Lists'), $this->url('reservationlist-displaylists'))
     ->add($pageTitle, $this->url('reservationlist-displaylist', ['listId' => $this->listEntity->getId()]), active: true);
 
-  $user = $this->auth()->isLoggedIn();
+  $user = $this->auth()->getUserObject();
   $recordTotal = $this->results->getResultTotal();
-  $listHandler = $this->reservationList($user)->getListHandler($this->listEntity->getInstitution(), $this->listEntity->getListConfigIdentifier());
 ?>
 
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'reservationlist']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <div class="my-research-content">
-    <div class="title-wrapper">
-      <h2><?=$this->translate($pageTitle) ?></h2>
+    <div id="useraccount-content-heading" class="useraccount-header">
+      <?=$this->component('page-title', ['title' => $pageTitle]);?>
     </div>
     <?= $this->flashmessages() ?>
     <?php // TODO: create a component which handles the defaulting into prettier form ?>
     <div class="description-wrapper">
-      <?php if ($title = $listHandler->getTitle($this->layout()->userLang)): ?>
+      <?php if ($title = $this->listHandler->getTitle($this->layout()->userLang)): ?>
         </p><?= $this->escapeHtml($title); ?></p>
       <?php else: ?>
-        <p><?= $this->transEscWithPrefix('source_', $listHandler->getInstitution()) . ': ' . $this->escapeHtml($listHandler->getIdentifier()); ?></p>
+        <p><?= $this->transEscWithPrefix('source_', $this->listHandler->getInstitution()) . ': ' . $this->escapeHtml($this->listHandler->getIdentifier()); ?></p>
       <?php endif; ?>
     </div>
-    <?php if ($description = $listHandler->getDescription($this->layout()->userLang)): ?>
+    <?php if ($description = $this->listHandler->getDescription($this->layout()->userLang)): ?>
       <div class="description-wrapper">
         <p><?= $this->escapeHtml($description); ?></p>
       </div>
     <?php endif; ?>
     <div class="description-wrapper">
-      <?php foreach ($listHandler->getAddress() as $value): ?>
+      <?php foreach ($this->listHandler->getAddress() as $value): ?>
         <p><?=$this->escapeHtml($value);?></p>
       <?php endforeach; ?>
     </div>
@@ -48,6 +46,11 @@
     <?php if ($this->listEntity->getCreated() ?? false): ?>
       <div class="list-info">
         <p><?= $this->transEsc('ReservationList::list_created', ['%%date%%' => $this->listEntity->getCreated()->format('d.m.Y')]) ?></p>
+      </div>
+    <?php endif; ?>
+    <?php if (!$this->listHandler->isEnabled()): ?>
+      <div class="list-info">
+        <p><?= $this->transEsc('ReservationList::Disabled') ?></p>
       </div>
     <?php endif; ?>
     <?php if ($this->listEntity->getOrdered() ?? false): ?>
@@ -64,16 +67,21 @@
       <div class="list-info js-reservation-list-status pending" data-list-id="<?=$this->escapeHtmlAttr($this->listEntity->getId());?>">
       </div>
     <?php endif; ?>
+    <?php if ($this->listEntity->getOrdered()): ?>
+      <div class="my-2 alert alert-info">
+        <?=$this->transEsc('ReservationList::list_editing_info');?>
+      </div>
+    <?php endif; ?>
     <div class="list-controls">
-      <?php if ($listHandler->isEnabled() && !$this->listEntity->getOrdered() && $this->results->getResults()): ?>
-        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', [], ['query' => ['listId' => $this->listEntity->getId()]]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Order List')?></a>
+      <?php if ($this->listHandler->isEnabled() && !$this->listEntity->getOrdered() && $this->results->getResults()): ?>
+        <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorder', [], ['query' => ['listId' => $this->listEntity->getId()]]))?>" class="btn btn-primary" data-lightbox><?=$this->transEsc('ReservationList::Send the hold request')?></a>
       <?php endif; ?>
       <?=
         $this->component(
             'confirm-button',
             [
               'buttonLink' => $this->url('reservationlist-deletelist', ['listId' => $this->listEntity->getId()]),
-              'buttonLabel' => 'delete_list',
+              'buttonLabel' => 'Delete',
               'buttonClass' => 'btn btn-primary',
               'confirmLink' => $this->url('reservationlist-deletelist', ['listId' => $this->listEntity->getId()], ['query' => ['confirm' => 1]]),
               'header' => 'confirm_delete_list_text',

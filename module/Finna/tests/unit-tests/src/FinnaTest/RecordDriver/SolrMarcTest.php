@@ -3,7 +3,7 @@
 /**
  * SolrMarc Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022-2025.
  *
@@ -120,7 +120,13 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     {
         yield 'legacy host record links' => [
             'marc/legacy_linking_ids.xml',
-            [],
+            [
+                'test' => [
+                    'legacy_settings' => [
+                        'linking_id' => true,
+                    ],
+                ],
+            ],
             [
                 [
                     'id' => 'test.123456',
@@ -130,6 +136,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
                 ],
                 [
                     'id' => '',
@@ -139,6 +146,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
                 ],
             ],
         ];
@@ -158,6 +166,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
                 ],
                 [
                     'id' => '',
@@ -167,6 +176,17 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
+                ],
+                [
+                    'id' => '',
+                    'linkingId' => '(FI-MELINDA)019172566',
+                    'sourceId' => 'Solr',
+                    'title' => 'Art Research',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                    'relation' => 'Included in collections',
                 ],
             ],
         ];
@@ -186,6 +206,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
                 ],
                 [
                     'id' => '',
@@ -195,6 +216,17 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
+                ],
+                [
+                    'id' => '',
+                    'linkingId' => '',
+                    'sourceId' => 'Solr',
+                    'title' => 'Art Research',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                    'relation' => 'Included in collections',
                 ],
             ],
         ];
@@ -207,22 +239,24 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    'id' => '',
-                    'linkingId' => '(FI-MELINDA)link.withdot1',
+                    'id' => 'link.withdot1',
+                    'linkingId' => '',
                     'sourceId' => 'Solr',
                     'title' => 'United records parent',
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
                 ],
                 [
-                    'id' => '',
-                    'linkingId' => '(FI-MELINDA)link.withdot2',
+                    'id' => 'link.withdot2',
+                    'linkingId' => '',
                     'sourceId' => 'Solr',
                     'title' => 'United records parent',
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
                 ],
             ],
         ];
@@ -235,22 +269,34 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 [
-                    'id' => '',
-                    'linkingId' => '123456789',
+                    'id' => '123456789',
+                    'linkingId' => '',
                     'sourceId' => 'Solr',
                     'title' => 'United records parent',
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
                 ],
                 [
-                    'id' => '',
-                    'linkingId' => '555',
+                    'id' => '555',
+                    'linkingId' => '',
                     'sourceId' => 'Solr',
                     'title' => 'United records Top',
                     'reference' => '',
                     'publishingInfo' => '',
                     'mainHeading' => '',
+                    'relation' => '',
+                ],
+                [
+                    'id' => '019172566',
+                    'linkingId' => '',
+                    'sourceId' => 'Solr',
+                    'title' => 'Art Research',
+                    'reference' => '',
+                    'publishingInfo' => '',
+                    'mainHeading' => '',
+                    'relation' => 'Included in collections',
                 ],
             ],
         ];
@@ -298,7 +344,13 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     {
         yield 'legacy record links' => [
             'marc/legacy_linking_ids.xml',
-            [],
+            [
+                'test' => [
+                    'legacy_settings' => [
+                        'linking_id' => true,
+                    ],
+                ],
+            ],
             [
                 [
                     'value' => 'United records parent',
@@ -307,6 +359,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'bib',
                         'value' => 'test.123456',
                     ],
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records parent',
@@ -315,6 +368,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'title',
                         'value' => 'United records parent',
                     ],
+                    'isCollection' => false,
                 ],
             ],
         ];
@@ -333,6 +387,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'linkingId',
                         'value' => '(FI-MELINDA)123456789',
                     ],
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
@@ -341,6 +396,16 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'linkingId',
                         'value' => '(FI-MELINDA)555',
                     ],
+                    'isCollection' => false,
+                ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'linkingId',
+                        'value' => '(FI-MELINDA)019172566',
+                    ],
+                    'isCollection' => true,
                 ],
             ],
         ];
@@ -356,25 +421,36 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'value' => 'United records parent',
                     'title' => 'United',
                     'link' => [
-                        'type' => 'linkingId',
+                        'type' => 'bib',
                         'value' => '123456789',
                     ],
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
                     'title' => 'Another United',
                     'link' => [
-                        'type' => 'linkingId',
+                        'type' => 'bib',
                         'value' => '555',
                     ],
+                    'isCollection' => false,
+                ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'bib',
+                        'value' => '019172566',
+                    ],
+                    'isCollection' => true,
                 ],
             ],
         ];
-        yield 'record link check linking id with wrong prefix' => [
+        yield 'record link check linking id with multiple prefixes' => [
             'marc/linking_ids_prefix_mismatch.xml',
             [
                 'test' => [
-                    'prefixIn003' => true,
+                    'link_prefixes' => 'FI-MELINDA,FI-NL',
                 ],
             ],
             [
@@ -382,17 +458,28 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'value' => 'United records parent',
                     'title' => 'United',
                     'link' => [
-                        'type' => 'title',
-                        'value' => 'United records parent',
+                        'type' => 'linkingId',
+                        'value' => '(FI-MELINDA)123456789',
                     ],
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
                     'title' => 'Another United',
                     'link' => [
-                        'type' => 'title',
-                        'value' => 'United records Top',
+                        'type' => 'linkingId',
+                        'value' => '(FI-NL)555',
                     ],
+                    'isCollection' => false,
+                ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'Art Research',
+                    ],
+                    'isCollection' => true,
                 ],
             ],
         ];
@@ -408,17 +495,19 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                     'value' => 'United records parent',
                     'title' => 'United',
                     'link' => [
-                        'type' => 'linkingId',
-                        'value' => '(FI-MELINDA)link.withdot1',
+                        'type' => 'bib',
+                        'value' => 'link.withdot1',
                     ],
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records parent',
                     'title' => 'United',
                     'link' => [
-                        'type' => 'linkingId',
-                        'value' => '(FI-MELINDA)link.withdot2',
+                        'type' => 'bib',
+                        'value' => 'link.withdot2',
                     ],
+                    'isCollection' => false,
                 ],
             ],
         ];
@@ -440,6 +529,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'title',
                         'value' => 'United records parent',
                     ],
+                    'isCollection' => false,
                 ],
                 [
                     'value' => 'United records Top',
@@ -448,6 +538,16 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                         'type' => 'title',
                         'value' => 'United records Top',
                     ],
+                    'isCollection' => false,
+                ],
+                [
+                    'value' => 'Art Research',
+                    'title' => 'Included in collections',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'Art Research',
+                    ],
+                    'isCollection' => true,
                 ],
             ],
         ];

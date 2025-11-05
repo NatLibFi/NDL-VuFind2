@@ -54,14 +54,13 @@
                 [
                     'href' => $itemUrl['url'],
                     'class' => ['nav-link'],
-                    'role' => 'button',
                 ]
             );
             if ($this->navibar()->isCurrentPage($itemUrl['url'])) {
               $linkAttrs->add('class', 'active');
               $linkAttrs->add('aria-current', 'page');
             }
-            if($target = $itemUrl['target'] ?? null) {
+            if ($target = $itemUrl['target'] ?? null) {
               $linkAttrs->add('target', $target);
             }
           ?>
@@ -87,7 +86,6 @@
                 [
                     'href' => $url,
                     'class' => ['nav-link'],
-                    'role' => 'button',
                     'id' => 'feedback-link',
                 ]
             );
@@ -183,6 +181,13 @@
                   </a>
                 </li>
               <?php endif; ?>
+              <?php if ($this->reservationList()->isFunctionalityEnabled()): ?>
+                <li>
+                  <a <?=$this->url('reservationlist-displaylists') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('reservationlist-displaylists')?>">
+                    <?=$this->transEsc('ReservationList::reservation_lists_research_room')?>
+                  </a>
+                </li>
+              <?php endif; ?>
               <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
                 <li role="none">
                   <a <?=$this->url('checkouts-history') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-historicloans')?>">
@@ -216,10 +221,10 @@
                 </a>
               </li>
             <?php endif; ?>
-            <?php if ($this->reservationList()->isFunctionalityEnabled()): ?>
+            <?php if ($this->accountCapabilities()->getUserContentTabs()): ?>
               <li>
-                <a <?=$this->url('myresearch-favorites') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('reservationlist-displaylists')?>">
-                  <?=$this->transEsc('ReservationList::Reservation Lists')?>
+                <a <?=($this->url('comments-userlist') === $_SERVER['REQUEST_URI'] || $this->url('ratings-userlist') === $_SERVER['REQUEST_URI']) ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-usercontent')?>">
+                  <?=$this->transEsc('comments_and_ratings')?>
                 </a>
               </li>
             <?php endif; ?>

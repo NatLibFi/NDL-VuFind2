@@ -33,7 +33,9 @@ $thumbnail-width-large:  200px !default;
   .template-dir-holds .container.main-content > .mainbody,
   .template-dir-librarycards .container.main-content > .mainbody,
   .template-name-mylist .container.main-content > .mainbody,
-  .template-name-history .container.main-content > .mainbody {
+  .template-name-history .container.main-content > .mainbody,
+  .template-dir-comments.template-name-userlist .container.main-content > .mainbody,
+  .template-dir-ratings.template-name-userlist .container.main-content > .mainbody {
     width: 100%;
   }
 }
@@ -78,25 +80,8 @@ mark, .highlight {
 
   // Loading spinner
   .loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 2rem;
-    display: flex;
-    font-size: 150%;
+    @include loading-overlay();
     align-items: flex-start;
-    justify-content: center;
-    background-color: rgba(0,0,0,0.2);
-    z-index: 1;
-
-    .loading-spinner {
-      padding: 2rem;
-      background-color: rgba(0,0,0,0.6);
-      border-radius: $border-radius-large;
-      color: $gray-lighter;
-    }
   }
 }
 
@@ -151,9 +136,6 @@ mark, .highlight {
     text-transform: uppercase;
     font-weight: 600;
     color: $action-link-color;
-    i {
-      color: mix(#ffffff, $action-link-color, 22%);
-    }
   }
 }
 .available-online-links {
@@ -511,7 +493,9 @@ h2 {
   .record-type-lrmi,
   .record-type-aipa {
     .material-rights,
-    .targeted-information {
+    .targeted-information,
+    .targeted-information + .more-link,
+    .targeted-information + .less-link {
       display: none;
     }
   }
@@ -560,4 +544,7 @@ table.search-history-table {
       }
     }
   }
+}
+.result-edition {
+  display: none;
 }

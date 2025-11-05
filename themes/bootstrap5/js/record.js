@@ -61,6 +61,7 @@ function deleteRecordComment(element, recordId, recordSource, commentId) {
 function refreshCommentList(target, recordId, recordSource) {
   const commentList = target.querySelector('.comment-list');
   if (!commentList) return;
+  commentList.prepend(VuFind.loadingOverlay());
   const url = VuFind.path + '/AJAX/JSON?' + new URLSearchParams({
     method: 'getRecordCommentsAsHTML',
     id: recordId,
@@ -107,6 +108,13 @@ function postComment(event) {
   const recordSource = form.source.value;
   const url = VuFind.path + '/AJAX/JSON?' + new URLSearchParams({ method: 'commentRecord' });
   const data = {};
+  const loadingSpinner = form.querySelector('.js-loading-spinner');
+  if (loadingSpinner) {
+    loadingSpinner.classList.remove('hidden');
+  }
+  const submitButtons = form.querySelectorAll('[type=submit]');
+  // Disable submit buttons (we don't use the data-disable-on-submit attribute because we need to also enable them):
+  submitButtons.forEach(btn => btn.disabled = true);
   form.querySelectorAll('input,textarea').forEach((input) => {
     if (input.type !== 'radio' || input.checked) {
       data[input.name] = input.value;
@@ -125,6 +133,8 @@ function postComment(event) {
     .then((optionalError) => {
       if (optionalError) {
         VuFind.lightbox.alert(optionalError.data, 'danger');
+        submitButtons.forEach(btn => btn.disabled = false);
+        loadingSpinner.classList.add('hidden');
         return;
       }
       let tab = form.closest('.list-tab-content');
@@ -146,6 +156,8 @@ function postComment(event) {
         }
       }
       resetCaptcha(form);
+      submitButtons.forEach(btn => btn.disabled = false);
+      loadingSpinner.classList.add('hidden');
     });
 }
 
@@ -187,7 +199,6 @@ function handleAjaxTabLinkClick(event){
 }
 
 function handleAjaxTabLinks() {
-  // Form submission
   document.querySelectorAll('a').forEach((a) => {
     const href = a.href;
     if (typeof href !== 'undefined' && href.match(/\/AjaxTab[/?]/)) {
@@ -205,8 +216,6 @@ function registerTabEvents(params) {
   recaptchaOnLoad(container);
 
   setUpCheckRequest(container);
-
-  handleAjaxTabLinks();
 }
 VuFind.listen('record-tab-init', registerTabEvents);
 
@@ -272,6 +281,7 @@ ajaxLoadTab = function ajaxLoadTabReal(newTab, tabId, _setHash, tabUrl) {
         removeHashFromLocation();
       }
       setupJumpMenus(newTab);
+      VuFind.emit('record-tab-loaded', {container: newTab});
     });
 };
 
@@ -359,16 +369,16 @@ function applyRecordTabHash(scrollToTabs) {
 
   // Open tab in url hash
   if (initiallyActiveTab && (newTab.length <= 1 || newTab === '#tabnav')) {
-    initiallyActiveTab.dispatchEvent(new Event('click'));
+    initiallyActiveTab.click();
   } else if (newTab.length > 1 && '#' + activeTab !== newTab) {
     const tabLink = document.querySelector('.record-tabs .' + newTab.substring(1) + ' a');
     if (tabLink) {
-      tabLink.dispatchEvent(new Event('click'));
+      tabLink.click();
       if (typeof scrollToTabs === 'undefined' || false !== scrollToTabs) {
         $('html, body').animate({
           scrollTop: $('.record-tabs').offset().top
         }, 500);
-        tabLink.dispatchEvent(new Event('focus'));
+        tabLink.focus();
       }
     }
   }
@@ -387,11 +397,14 @@ function removeCheckRouteParam() {
 
 function recordDocReady() {
   removeCheckRouteParam();
+
+  handleAjaxTabLinks();
   document.querySelectorAll('.record-tabs .nav-tabs a')
     .forEach((tab) => tab.addEventListener('click', (event) => {
       const li = tab.parentNode;
-      // Don't change behavior of active tab.
+      // Do nothing if the tab is already active:
       if (tab.classList.contains('active')) {
+        event.preventDefault();
         return;
       }
       const tabId = li.dataset.tab;

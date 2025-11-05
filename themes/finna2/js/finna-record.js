@@ -1,4 +1,4 @@
-/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab */
+/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab*/
 finna.record = (function finnaRecord() {
   var accordionTitleHeight = 64;
 
@@ -499,53 +499,6 @@ finna.record = (function finnaRecord() {
   }
 
   /**
-   * Load recommended records
-   * @param {jQuery} container Container to load records to
-   * @param {string} method Method for ajax call
-   */
-  function loadRecommendedRecords(container, method)
-  {
-    if (container.length === 0) {
-      return;
-    }
-    var spinner = container.find('.fa-spinner').removeClass('hide');
-    var data = {
-      method: method,
-      id: container.data('id')
-    };
-    if ('undefined' !== typeof container.data('source')) {
-      data.source = container.data('source');
-    }
-    $.getJSON(VuFind.path + '/AJAX/JSON', data)
-      .done(function onGetRecordsDone(response) {
-        if (response.data.html.length > 0) {
-          container.html(VuFind.updateCspNonce(response.data.html));
-        }
-        spinner.addClass('hidden');
-      })
-      .fail(function onGetRecordsFail() {
-        spinner.addClass('hidden');
-        container.text(VuFind.translate('error_occurred'));
-      });
-  }
-
-  /**
-   * Load similar records support function
-   */
-  function loadSimilarRecords()
-  {
-    loadRecommendedRecords($('.sidebar .similar-records'), 'getSimilarRecords');
-  }
-
-  /**
-   * Load record related records support function
-   */
-  function loadRecordDriverRelatedRecords()
-  {
-    loadRecommendedRecords($('.sidebar .record-driver-related-records'), 'getRecordDriverRelatedRecords');
-  }
-
-  /**
    * Initialize record versions support function
    * @param {jQuery} _holder Container to init
    */
@@ -638,9 +591,9 @@ finna.record = (function finnaRecord() {
       field.classList.add('open');
       parentLink.setAttribute('aria-expanded', 'true');
       fixPosition(field.querySelector('.field-info'));
-      let firstLink = field.querySelector('.field-info a');
-      if (firstLink) {
-        firstLink.focus();
+      let header = field.querySelector('.field-info h2');
+      if (header) {
+        header.focus();
       }
 
       let fieldInfo = field.querySelector('.field-info .dynamic-content');
@@ -724,8 +677,6 @@ finna.record = (function finnaRecord() {
     initAudioAccordion();
     applyRecordAccordionHash(initialToggle);
     $(window).on('hashchange', applyRecordAccordionHash);
-    loadSimilarRecords();
-    loadRecordDriverRelatedRecords();
     finna.authority.initAuthorityResultInfo();
     initPopovers();
   }

@@ -89,7 +89,6 @@ finna.layout = (function finnaLayout() {
 
     var truncation = [];
     var rowHeight = [];
-    $(holder).find('.truncate-field').parent().attr('tabindex', '-1');
     $(holder).find('.truncate-field').not('.truncate-done').each(function handleTruncate(index) {
       var self = $(this);
       self.addClass('truncate-done');
@@ -177,13 +176,20 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Return the container for side facets
+   * @returns {Element} The side facet container
+   */
+  function getSideFacetsContainer() {
+    return document.querySelector('.side-facets-container-ajax') || document.querySelector('.side-facets-container');
+  }
 
   /**
    * Check and keep focus within the search facet list
    * @param {object} e Event object
    */
   function onFocusOutOfFacetContainer(e) {
-    const container = document.querySelector('.side-facets-container-ajax');
+    const container = getSideFacetsContainer();
     if (!container.contains(e.relatedTarget)) {
       e.stopImmediatePropagation();
       e.preventDefault();
@@ -198,10 +204,10 @@ finna.layout = (function finnaLayout() {
    */
   function toggleMobileSidebar(e) {
     e.stopImmediatePropagation();
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
     if (sidebar) {
       sidebar.classList.toggle('open');
-      const container = document.querySelector('.side-facets-container-ajax');
+      const container = getSideFacetsContainer();
       document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
         el.classList.toggle('hidden');
       });
@@ -241,10 +247,10 @@ finna.layout = (function finnaLayout() {
    * Initialize mobile narrow search
    */
   function initMobileNarrowSearch() {
-    document.querySelectorAll('.mobile-navigation .sidebar-navigation, .sidebar .mylist-bar h1').forEach(el => {
+    document.querySelectorAll('.mobile-navigation .sidebar-navigation, .js-mobile-list-navigation').forEach(el => {
       el.addEventListener('click', toggleMobileSidebar);
     });
-    const container = document.querySelector(".side-facets-container-ajax");
+    const container = getSideFacetsContainer();
     if (container) {
       document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
@@ -649,17 +655,10 @@ finna.layout = (function finnaLayout() {
    * Initialize ILS password recovery link
    * @param {object} links Object containing identifier and url for link href
    * @param {string} idPrefix Prepend selector with idPrefix
+   * @deprecated Exists for back-compatibility with old implementation only
    */
   function initILSPasswordRecoveryLink(links, idPrefix) {
-    var searchPrefix = idPrefix ? '#' + idPrefix : '#';
-    $(searchPrefix + 'target').on('change', function onChangeLoginTargetLink() {
-      var target = $(searchPrefix + 'target').val();
-      if (links[target]) {
-        $('#login_library_card_recovery').attr('href', links[target]).show();
-      } else {
-        $('#login_library_card_recovery').hide();
-      }
-    }).trigger("change");
+    VuFind.displayILSPasswordRecoveryLink(links, idPrefix);
   }
 
   /**
@@ -880,21 +879,25 @@ finna.layout = (function finnaLayout() {
       var play = self.find('.play');
       var source = self.find('source');
       play.one('click', function onPlay() {
-        finna.scriptLoader.loadInOrder(
+        finna.scriptLoader.load(
           scripts,
-          subScripts,
-          function onVideoJsLoaded() {
-            self.find('.audio-player-wrapper').removeClass('hide');
-            var audio = self.find('audio');
-            audio.removeClass('hide').addClass('video-js');
-            source.attr('src', source.data('src'));
-            videojs(
-              audio.attr('id'),
-              { controlBar: { volumePanel: false, muteToggle: false } },
-              function onVideoJsInited() {}
+          () => {
+            finna.scriptLoader.load(
+              subScripts,
+              function onVideoJsLoaded() {
+                self.find('.audio-player-wrapper').removeClass('hide');
+                var audio = self.find('audio');
+                audio.removeClass('hide').addClass('video-js');
+                source.attr('src', source.data('src'));
+                videojs(
+                  audio.attr('id'),
+                  { controlBar: { volumePanel: false, muteToggle: false } },
+                  function onVideoJsInited() {}
+                );
+                play.remove();
+                self.find('.vjs-play-control').focus();
+              }
             );
-            play.remove();
-            self.find('.vjs-play-control').focus();
           }
         );
       });

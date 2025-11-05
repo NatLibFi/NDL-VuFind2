@@ -299,6 +299,16 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        return $this->compareWithTitle($this->fields['title_alt'] ?? []);
+    }
+
+    /**
      * Is the provided filetype allowed for download?
      *
      * @param string $format file format
@@ -349,16 +359,19 @@ class SolrLrmi extends SolrQdc
             if ($format && in_array($format, $images)) {
                 $url = (string)$desc;
                 if ($this->isUrlLoadable($url, $uniqueId)) {
-                    $result[] = [
-                        'urls' => [
-                            'small' => $url,
-                            'medium' => $url,
-                            'large' => $url,
-                        ],
-                        'description' => '',
-                        'rights' => [],
-                        'downloadable' => false,
-                    ];
+                    if (!$this->maxAmountOfImages()) {
+                        $result[] = [
+                            'urls' => [
+                                'small' => $url,
+                                'medium' => $url,
+                                'large' => $url,
+                            ],
+                            'description' => '',
+                            'rights' => [],
+                            'downloadable' => false,
+                        ];
+                    }
+                    $this->imagesCount++;
                 }
             }
         }
