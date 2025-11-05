@@ -220,6 +220,18 @@ geoLocations:
   type: array
   items:
     type: string
+era:
+  vufind.method: getEraField
+  description: Chronological subject headings
+  type: array
+  items:
+    type: string
+geographic:
+  vufind.method: getGeographicField
+  description: Geographic subject headings
+  type: array
+  items:
+    type: string
 hierarchicalPlaceNames:
   vufind.method: getHierarchicalPlaceNames
   description: Hierarchical place names concatenated for display

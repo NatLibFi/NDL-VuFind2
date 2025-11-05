@@ -283,6 +283,26 @@ trait SolrCommonFinnaTrait
     }
 
     /**
+     * Get geographic field value
+     *
+     * @return array
+     */
+    public function getGeographicField(): array
+    {
+        return (array)($this->fields['geographic'] ?? []);
+    }
+
+    /**
+     * Get era field value
+     *
+     * @return array
+     */
+    public function getEraField(): array
+    {
+        return (array)($this->fields['era'] ?? []);
+    }
+
+    /**
      * Get the VuFind configuration.
      *
      * @return \VuFind\Config\Config
