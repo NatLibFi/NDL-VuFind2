@@ -259,7 +259,3 @@
 .fi-learning-material:before { content: '\e971'; } /* '' */
 .fi-threads-solid:before { content: '\e8cd'; } /* '[]' */
 .fi-library-card-barcode:before { content: '\e8ce'; } /* '[]' */
-.fi-chevron-smaller-left:before { content: '\e8cf'; } /* '' */
-.fi-chevron-smaller-right:before { content: '\e8d0'; } /* '' */
-.fi-chevron-smaller-up:before { content: '\e8d1'; } /* '' */
-.fi-chevron-smaller-down:before { content: '\e808'; } /* '' */
