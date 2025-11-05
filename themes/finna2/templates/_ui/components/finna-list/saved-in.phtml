@@ -1,0 +1,25 @@
+<?php
+  /**
+   * Component to render a list saved in result.
+   * @param ?string class  HTMLElement class. Default is 'savedLists vc-finna-list-saved-in'.
+   * @param ?string header Header. Default is 'Saved in'.
+   * @param ?array lists   Array containing lists with href and title keys.
+   */
+  $divAttrs = [
+    'class' => trim(($this->class ?? '') . " savedLists $this->_componentClass"),
+  ];
+  $header = $this->header ?? $this->translate('Saved in') . ':';
+  $lists = $this->lists ?? [];
+?>
+<div<?=$this->htmlAttributes($divAttrs)?>>
+  <strong><?=$this->escapeHtml($header)?></strong><br>
+  <?php if ($lists): ?>
+    <ul>
+      <?php foreach ($lists as $list): ?>
+        <li>
+          <a href="<?=$this->escapeHtmlAttr($list['href'] ?? '#')?>"><?=$this->escapeHtml($list['title'] ?? '')?></a><br>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  <?php endif; ?>
+</div>

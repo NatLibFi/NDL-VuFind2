@@ -167,10 +167,7 @@
             <?=$openUrl ? '<span class="Z3988" title="' . $this->escapeHtmlAttr($openUrl) . '"></span>' : ''?>
         </div>
         <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-          <?php /* Saved lists */ ?>
-          <div class="savedLists">
-            <strong><?=$this->transEsc('Saved in')?>:</strong>
-          </div>
+          <?=$this->component('finna-list/saved-in')?>
         <?php endif; ?>
       </div>
     </div>

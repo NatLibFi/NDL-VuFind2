@@ -214,6 +214,7 @@
         display: flex;
         min-height: 36px;
         flex-flow: row;
+        align-items: center;
         .icon.collapse {
             display: none;
         }

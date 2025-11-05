@@ -210,10 +210,9 @@
             <?=$this->driver->supportsCoinsOpenUrl() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>' : ''?>
         </div>
 
-        <?php /* Saved lists */ ?>
-        <div class="savedLists">
-          <strong><?=$this->transEsc('Saved in')?>:</strong>
-        </div>
+          <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+            <?=$this->component('finna-list/saved-in')?>
+          <?php endif; ?>
         <?php endif; ?>
       </div>
     </div>

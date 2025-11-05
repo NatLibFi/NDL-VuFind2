@@ -49,34 +49,6 @@
     text-wrap: nowrap;
   }
 }
-.reservation-request-table {
-  .reservation-request-buttons {
-    padding: 10px 15px;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    a {
-      margin: 2px;
-    }
-  }
-  .alert.alert-info.no-ils-support {
-    margin: 0;
-  }
-  .reservation-list-wrapper {
-    display: flex;
-    align-items: center;
-    >div {
-      display: flex;
-      align-items: center;
-      justify-content: start;
-      padding-left: 10px;
-      flex: 1 1 50%;
-    }
-  }
-  .saved-reservation-lists {
-    padding: 10px 15px;
-  }
-}
 
 #reservation_message {
   width: 100%;

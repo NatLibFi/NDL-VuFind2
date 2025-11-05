@@ -99,11 +99,9 @@ if ($img):
             </div>
           <?php endforeach; ?>
         <?php endif; ?>
-
-        <?php /* Saved lists */ ?>
-        <div class="savedLists">
-          <strong><?=$this->transEsc('Saved in')?>:</strong>
-        </div>
+        <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+          <?=$this->component('finna-list/saved-in')?>
+        <?php endif; ?>
         <div class="hidden-print add-to-favorite-col">
           <?php
             // Display qrcode if appropriate:

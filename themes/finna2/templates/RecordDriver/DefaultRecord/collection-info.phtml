@@ -20,10 +20,7 @@
       <?php if ($QRCode): ?>
         <div class="record-qrcode visible-print inline-block"><img alt="<?=$this->transEsc('QR Code')?>" class="qrcode" src="<?=$this->escapeHtmlAttr($QRCode);?>"></div>
       <?php endif; ?>
-    <?php /* Display the lists that this record is saved to */ ?>
-    <div class="savedLists" id="savedLists">
-      <strong><?=$this->transEsc('Saved in')?>:</strong>
-    </div>
+      <?=$this->component('finna-list/saved-in')?>
   </div>
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/collection-info.phtml -->

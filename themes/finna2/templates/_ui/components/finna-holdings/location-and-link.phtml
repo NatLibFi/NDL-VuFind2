@@ -1,0 +1,33 @@
+<?php
+  /**
+   * Component for rendering data for location and link.
+   * @param ?string class HTMLElement class. Default is "holdings-group vc-finna-holdings-location-and-link"
+   * @param ?string location Location to display. Default is ''.
+   * @param ?string href Row link href. Default is '#'.
+   * @param ?bool   inLightBox Does the link open in a lightbox. Default is true.
+   * @param ?string linkLabel Label for the link element. Default is ''.
+   */
+  $divAttrs = [
+    'class' => trim(($this->class ?? 'holdings-group') . " $this->_componentClass"),
+  ];
+  $buttonAttrs = [
+    'class' => 'btn btn-primary',
+    'href' => $this->href ?? '#',
+  ];
+  if ($lightBox = $this->lightBox ?? true) {
+    $buttonAttrs['data-lightbox'] = '';
+    $buttonAttrs['role'] = 'button';
+    $buttonAttrs['aria-haspopup'] = true;
+  }
+  $linkLabel = $this->linkLabel ?? '';
+?>
+<div<?=$this->htmlAttributes($divAttrs)?>>
+  <div class="holdings-container-heading">
+    <div class="location">
+      <?=$this->escapeHtml($this->location ?? '')?>
+    </div>
+    <div class="location-link text-right">
+      <a<?=$this->htmlAttributes($buttonAttrs)?>><?=$this->escapeHtml($linkLabel)?></a>
+    </div>
+  </div>
+</div>
