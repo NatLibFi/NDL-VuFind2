@@ -15,7 +15,7 @@ input, input.form-control {
   vertical-align: middle !important;
 
   &::placeholder {
-    color: #666;
+    color: $gray-light;
   }
   &[disabled],
   &[readonly],
@@ -31,7 +31,6 @@ input, input.form-control {
     box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
   }
 }
-
 
 .form-inline {
   display: inline-block;
