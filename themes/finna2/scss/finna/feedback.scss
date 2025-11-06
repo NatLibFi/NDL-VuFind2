@@ -60,6 +60,11 @@ form[name=FeedbackRecord] .form-info {
     display: block;
   }
 }
+form[name=FeedbackRecord], form[name=FeedbackSite] {
+  textarea {
+    width: 100%;
+  }
+}
 
 div:not(.modal-body) > .feedback-content {
   @include media-breakpoint-up(sm) {

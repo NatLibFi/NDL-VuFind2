@@ -1,17 +1,8 @@
 .modal-content {
   & .comment-inappropriate-form {
-    & label {
-      font-weight: inherit;
-    }
     .form-control {
       width: 100%;
       margin-bottom: 12px;
-    }
-    .textarea {
-      .form-control {
-        width: 100%;
-        margin-bottom: 12px;
-      }
     }
   }
 }

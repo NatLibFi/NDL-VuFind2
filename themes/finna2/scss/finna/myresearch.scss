@@ -50,18 +50,6 @@
   margin-top: 2px;
 }
 
-.checkbox-container.mylist-select-all {
-  padding-left: 0;
-  white-space: nowrap;
-
-  .checkbox {
-    padding-left: 0;
-    label {
-      margin-left: 0;
-    }
-  }
-}
-
 .changeHolds {
   display: inline-block;
 }
@@ -138,6 +126,17 @@
       display: flex;
       align-items: baseline;
       padding: 5px;
+      .checkbox-container.mylist-select-all {
+        white-space: nowrap;
+        margin-right: 1rem;
+        line-height: $line-height-computed;
+        .checkbox {
+          padding-left: 0;
+          label {
+            margin-left: 0;
+          }
+        }
+      }
     }
     .list-functions {
       display: flex;
@@ -460,16 +459,9 @@
   }
 
 .online-payment-form > .payment-row {
-  .online-payment-area {
-    display: inline-block;
-    margin-bottom: 15px;
-
-    .online-payment-form {
-      display: inline-block;
-      input {
-        font-weight: bold;
-      }
-    }
+  display: inline-block;
+  input {
+    font-weight: bold;
   }
   @include media-breakpoint-up(sm) {
     > img {
@@ -494,17 +486,6 @@
       max-width: 60px;
       margin-top: 10px;
     }
-  }
-}
-
-.myresearch-table.online-payment {
-  .checkbox-col {
-    width: initial;
-  }
-  .toolbar {
-    border: 0;
-    padding-bottom: 0;
-    padding-left: 4px;
   }
 }
 
@@ -539,6 +520,15 @@
   }
 }
 
+.myresearch-table.online-payment {
+  .toolbar {
+    border: 0;
+    padding-left: 4px;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+}
+
 .toolbar-sticky-container {
   margin: 0;
   @include media-breakpoint-down(md) {
@@ -565,15 +555,6 @@
         }
       }
     }
-  }
-}
-
-.myresearch-table.online-payment .toolbar {
-  align-items: center;
-  margin-bottom: 1rem;
-
-  .checkbox-container.mylist-select-all {
-    margin-right: 1rem;
   }
 }
 
