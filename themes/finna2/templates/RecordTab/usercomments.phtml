@@ -46,7 +46,7 @@
       <div class="comment-col">
           <?=$this->icon('info', 'comment-info-icon') ?>
         <div class="comment-description">
-          <?=$this->translate('user_comment_description_html');?>
+          <?=$this->translate('user_comment_description_html', ['%%url%%' => $this->url('content-page', ['page' => 'help-comments-ratings'])]);?>
         </div>
       </div>
       <div class="clearfix"></div>
