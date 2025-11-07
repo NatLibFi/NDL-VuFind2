@@ -145,7 +145,6 @@ input, input.form-control {
   font-size: $font-size-large;
 }
 
-
 .dropdown.form-control.type-dropdown {
   border: none;
   display: inline-block;
@@ -192,57 +191,51 @@ button.multiselect {
 .template-dir-feedback .template-name-form form,
 .modal-dialog .feedback-content form,
 .modal-dialog form.dynamic-form {
-    input[name='url'] {
-        margin-bottom: 30px;
-    }
-    .form-info.post {
-        margin-bottom: 20px;
-    }
-    .form-info {
-        margin: 20px 0;
-        font-weight: initial;
-    }
+  .group-url {
+    margin-bottom: 2rem;
+  }
+  .form-info {
+    margin: 1.5rem 0;
+    font-weight: initial;
+  }
 
-    .required-notice {
-        font-size: $small-font-size;
-        color: $text-muted;
-    }
+  .required-notice {
+    font-size: $small-font-size;
+    color: $text-muted;
+  }
 
-    input[type=radio] {
-        height: 1em;
-        position: absolute;
-        margin-left: -20px;
-    }
+  input[type=radio] {
+    height: 1em;
+    position: absolute;
+    margin-left: -20px;
+  }
 
-    .form-group.checkbox,
-    .form-group.radio {
+  .form-group {
+    &.checkbox,
+    &.radio {
+      padding-left: 0;
+      label.form-label, label.control-label {
         padding-left: 0;
-        margin-bottom: 15px;
-        label.form-label, label.control-label {
-            padding-left: 0;
-            font-weight: 700;
-            margin-bottom: 5px;
+        font-weight: 700;
+        margin-bottom: 5px;
+      }
+      label {
+        display: table;
+        margin: 7px 0;
+        input {
+          margin-right: 10px;
+          margin-top: 3px;
         }
-        label {
-            display: table;
-            margin: 7px 0;
-            input {
-                margin-right: 10px;
-                margin-top: 3px;
-            }
-        }
+      }
     }
-
-    .form-group.checkbox label input {
-        height: 1em;
-        margin-top: -1px;
-        display: inline-block;
+    &.checkbox label input {
+      height: 1em;
+      margin-top: -1px;
+      display: inline-block;
     }
+  }
 }
 
-.form-cart-email {
-  button.btn.show-records {
-    color: $link-color;
-    padding-top: 8px;
-  }
+.show-records {
+  vertical-align: baseline;
 }
