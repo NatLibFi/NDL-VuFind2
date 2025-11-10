@@ -17,7 +17,7 @@ export default defineConfig({
     minify: "esbuild",
     rollupOptions: {
       input: path.resolve("js", CLIENT_DIR, 'index.tsx'),
-      treeshake: true,
+      treeshake: "smallest",
     }
   }
 })
