@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.3-apache-trixie
 
 LABEL org.opencontainers.image.authors="Ronja Koistinen <ronja.koistinen@helsinki.fi>"
 LABEL org.opencontainers.image.description="Local development Finna/VuFind container"
