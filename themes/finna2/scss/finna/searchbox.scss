@@ -1,6 +1,6 @@
 .searchbox {
   @extend .clearfix;
-  margin: 12px 0;
+  margin: 12px 0px;
 
   .searchbox-flex {
     display: flex;
@@ -39,17 +39,17 @@
     .search-links {
       flex-basis: 100%;
       .btn.btn-link {
-        background: $background-color;
-        border-radius: $border-radius-small;
+        display: inline-flex;
+        margin-top: 1em;
+        padding: 0px 8px 0px 5px;
         color: mix($background-color, contrast($background-color), 5%);
         font-weight: normal;
         line-height: 25px;
-        margin-top: 1em;
-        padding: 0px 8px 0 5px;
+        background: $background-color;
+        border-radius: $border-radius-small;
         overflow: hidden;
-        display: inline-flex;
         &:first-child {
-          margin-left: 0;
+          margin-left: 0px;
         }
         &.btn-advanced {
           gap: 5px;
@@ -60,14 +60,17 @@
       }
     }
   }
+  .search .searchForm .search-query {
+    font-size: $font-size-large;
+  }
   .pager {
     li.pager-text {
-      font-size: 1em;
       margin: 0px 3px;
+      font-size: 1em;
       color: mix($finna-search-background, contrast($finna-search-background), 5%);
     }
     li > a {
-      padding: 0 5px;
+      padding: 0px 5px;
       color: $pager-bg;
       background: transparent;
       border: none;
@@ -77,21 +80,18 @@
       }
     }
   }
-  @include media-breakpoint-down(lg) {
-    .pager {
-      margin-left: 6px;
-    }
-  }
-  @include media-breakpoint-down(md) {
-    .dropdown.form-control.type-dropdown {
-      display: none;
-    }
-  }
+}
+@include media-breakpoint-down(md) {
+  .searchbox .dropdown.form-control.type-dropdown { display: none; }
+}
+@include media-breakpoint-down(lg) {
+  .searchbox .pager { margin-left: 6px; }
 }
 
 .searchbox-flex {
-  .record-back, .pager {
-    margin: auto 0;
+  .record-back,
+  .pager {
+    margin: auto 0px;
   }
   .pager {
     display: flex;
@@ -122,37 +122,35 @@
       }
     }
   }
-  @include media-breakpoint-down(lg) {
-    .pager {
-      margin-left: 6px;
-    }
+}
+@include media-breakpoint-down(sm) {
+  .searchbox-flex .record-back {
+    margin-right: 0px;
+    margin-left: 15px;
   }
-  @include media-breakpoint-up(md) {
-    .search {
-      max-width: 70%;
-    }
-  }
-  @include media-breakpoint-down(md) {
+}
+@include media-breakpoint-down(md) {
+  .searchbox-flex {
     .pager {
-      min-width: 70px;
-      margin-left: 10px;
+    min-width: 70px;
+    margin-left: 10px;
       li:first-child {
         margin-right: 4px;
       }
       .pager-text {
-        display:none;
+        display: none;
       }
     }
     .record-back {
       margin-right: 10px;
     }
   }
-  @include media-breakpoint-down(sm) {
-    .record-back {
-      margin-right: 0px;
-      margin-left: 15px;
-    }
-  }
+}
+@include media-breakpoint-up(md) {
+  .searchbox-flex .search { max-width: 70%; }
+}
+@include media-breakpoint-down(lg) {
+  .searchbox-flex .pager { margin-left: 6px; }
 }
 
 .finna-filters {

@@ -1,6 +1,6 @@
 section.main.template-dir-content.template-name-content .container-fluid.finna-main-header > .container,
 section.main.template-dir-feedcontent.template-name-content .container-fluid.finna-main-header > .container {
-  padding-bottom: 0;
+  padding-bottom: 0px;
 }
 
 .finna-main-header-wrapper {
@@ -11,35 +11,64 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
 }
 
 .finna-main-header {
+  padding: 15px 0px;
   background: transparent;
-  padding: 15px 0 15px 0;
-  & .search-result-header, .content-header {
+  .search-result-header,
+  .content-header {
     font-size: $finna-header-font-size;
-    margin: 0;
+    margin: 0px;
   }
   .adv_search_terms {
-    font-weight: normal;
     display: block;
+    font-weight: normal;
     strong {
       font-weight: $headings-font-weight;
     }
   }
 }
-.template-name-content .finna-main-header {
-  background: $body-bg;
-}
+
+.template-name-content .finna-main-header { background: $body-bg; }
 
 .main.template-dir-feedcontent.template-name-content,
 .main.template-dir-content.template-name-content {
-  & .finna-main-header {
+  .finna-main-header {
     margin-bottom: 25px;
   }
 }
 
-.template-name-results, .template-name-search {
-  @include media-breakpoint-down(sm) {
-    & .finna-main-header {
-      & .search-result-header {
+.template-dir-myresearch,
+.template-dir-holds,
+.template-dir-search.template-name-history,
+.template-dir-librarycards {
+  .finna-main-header {
+    background: $myresearch-header-background;
+    h1 {
+      margin: 0px;
+      font-size: $finna-header-font-size;
+      line-height: 1.5em;
+    }
+    i {
+      color: $primary;
+    }
+    .btn,
+    .dropdown {
+      i {
+        color: #fff;
+      }
+    }
+    .form-inline {
+      margin-left: 20px;
+    }
+  }
+}
+
+.template-dir-list.template-name-list .finna-main-header { background: $myresearch-header-background; }
+
+@include media-breakpoint-down(sm) {
+  .template-name-results,
+  .template-name-search {
+    .finna-main-header {
+      .search-result-header {
         font-size: 1.3em;
       }
       .adv_search_links {
@@ -50,15 +79,15 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
 }
 
 .adv-search-header {
-  padding: 20px 0;
+  padding: 20px 0px;
   border-bottom: none;
   background-color: $well-bg;
   #searchForm {
-    flex: 1;
     position: relative;
+    flex: 1;
   }
   .searchbox-flex {
-    margin: 0;
+    margin: 0px;
   }
   .adv-search-menu {
     display: inline-block;
@@ -66,27 +95,23 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
   .adv_search_links {
     line-height: 1em;
     a {
-      white-space: nowrap;
       margin-right: 15px;
       color: $gray;
       font-weight: 600;
+      white-space: nowrap;
       .icon {
         font-size: 1.2em;
       }
     }
     .adv-search-menu-toggle {
+      padding: 5px 15px;
       color: $gray;
       font-size: $font-size-small;
-      padding: 5px 15px;
     }
   }
-  @include media-breakpoint-down(md) {
-    border-top: 1px solid white;
-    .container {
-      padding-left: 0;
-    }
-  }
-  @include media-breakpoint-down(sm) {
+}
+@include media-breakpoint-down(sm) {
+  .adv-search-header {
     a {
       display: block;
       margin-bottom: 5px;
@@ -99,8 +124,8 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     }
     .adv-search-menu {
       position: absolute;
-      background-color: white;
       padding: 10px;
+      background-color: #fff;
       border-radius: $border-radius-lg;
       border: 1px solid $gray-lighter;
       z-index: 1;
@@ -109,17 +134,17 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
         a {
           display: block;
           color: $text-color;
-          margin: 0 -10px;
+          margin: 0px -10px;
           padding: 10px 10px;
-          border-bottom: 1px solid $gray-lighter;
           text-align: left;
           font-weight: normal;
+          border-bottom: 1px solid $gray-lighter;
           &:first-child {
-            padding-top: 0;
+            padding-top: 0px;
           }
           &:last-child {
-            border-bottom: 0;
-            padding-bottom: 0;
+            border-bottom: 0px;
+            padding-bottom: 0px;
           }
         }
       }
@@ -135,30 +160,11 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     }
   }
 }
-
-.template-dir-myresearch, .template-dir-holds, .template-dir-search.template-name-history, .template-dir-librarycards {
-  .finna-main-header {
-    background: $myresearch-header-background;
-    & h1 {
-      font-size: $finna-header-font-size;
-      margin: 0;
-      line-height: 1.5em;
+@include media-breakpoint-down(md) {
+  .adv-search-header {
+    border-top: 1px solid #fff;
+    .container {
+      padding-left: 0px;
     }
-    i {
-      color: $primary;
-    }
-    .btn, .dropdown {
-      i {
-        color: #fff;
-      }
-    }
-    & .form-inline {
-      margin-left: 20px;
-    }
-  }
-}
-.template-dir-list.template-name-list {
-  & .finna-main-header {
-    background: $myresearch-header-background;
   }
 }
