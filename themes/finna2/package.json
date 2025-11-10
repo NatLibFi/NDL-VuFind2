@@ -1,13 +1,33 @@
 {
   "name": "finna2",
-  "description": "Dependencies for finna2 theme",
+  "private": true,
+  "type": "module",
   "scripts": {
-    "installBuildDeps": "npm install --no-audit && node tools/copyDependencies.mjs --only-build-deps",
-    "updateDeps": "npm update && node tools/copyDependencies.mjs"
+    "installBuildDeps": "npm install --no-audit",
+    "updateDeps": "npm update",
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
   },
-  "author": "",
-  "license": "GPL-2.0-only",
   "dependencies": {
-    "@samvera/clover-iiif": "^3.0.1"
+    "@samvera/clover-iiif": "^3.0.3",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.36.0",
+    "@types/node": "^24.6.0",
+    "@types/react": "^19.1.16",
+    "@types/react-dom": "^19.1.9",
+    "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^8.15.0",
+    "eslint-plugin-jsdoc": "50.2.2",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.22",
+    "globals": "^16.4.0",
+    "typescript": "~5.9.3",
+    "typescript-eslint": "^8.45.0",
+    "vite": "^7.1.7"
   }
 }

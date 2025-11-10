@@ -19,6 +19,7 @@
     },
     "require": {
         "league/mime-type-detection": "1.9.0",
+        "mindplay/php-vite": "^1.1",
         "natlibfi/besimple-soap": "3.0.1",
         "natlibfi/finna-code-sets": "0.5.2",
         "natlibfi/php-html-parser": "4.0.1",
@@ -31,10 +32,10 @@
         "post-install-cmd": ["@phing-install-dependencies", "@create-translation-files"],
         "post-update-cmd": ["@phing-install-dependencies", "@create-translation-files"],
         "update-npm-deps": [
-            "cd themes/finna2 && npm run updateDeps"
+            "cd themes/finna2 && npm run updateDeps && npm run build"
         ],
         "install-build-deps": [
-            "cd themes/finna2 && npm run installBuildDeps"
+            "cd themes/finna2 && npm run installBuildDeps && npm run build"
         ]
     }
 }

@@ -7438,6 +7438,44 @@
             "time": "2022-11-10T09:28:49+00:00"
         },
         {
+            "name": "mindplay/php-vite",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mindplay-dk/php-vite.git",
+                "reference": "4c41d9d14410e0bb44254def476e66e068205a9a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mindplay-dk/php-vite/zipball/4c41d9d14410e0bb44254def476e66e068205a9a",
+                "reference": "4c41d9d14410e0bb44254def476e66e068205a9a",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "mindplay/testies": "^1.1",
+                "phpunit/php-code-coverage": "^10"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "mindplay\\vite\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MPL-2.0"
+            ],
+            "description": "a lightweight PHP-backend integration for the Vite frontend build tool",
+            "support": {
+                "issues": "https://github.com/mindplay-dk/php-vite/issues",
+                "source": "https://github.com/mindplay-dk/php-vite/tree/1.1.0"
+            },
+            "time": "2025-10-19T12:21:52+00:00"
+        },
+        {
             "name": "monolog/monolog",
             "version": "3.9.0",
             "source": {
@@ -17515,7 +17553,7 @@
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "platform-overrides": {
         "php": "8.2"
     },

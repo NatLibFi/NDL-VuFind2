@@ -4,23 +4,42 @@
  *
  * @param string    manifestURL    URL of IIIF manifest to load
  */
-$js = <<<JS
-    finna.scriptLoader.load(
-      {'iiif-viewer': 'vendor/clover.umd.js'},
-      () => {}
-    );
+
+use mindplay\vite\Manifest;
+
+$themeBasePath = __DIR__ . '/../../..';
+$cloverJsxFile = 'components/react-clover/index.tsx';
+
+$vite = new Manifest(
+    manifest_path: $themeBasePath . '/js/vendor/clover/.vite/manifest.json',
+    base_path: '/vufind2/themes/finna2/js/vendor/clover/',
+    dev: false
+);
+$reactEntryTags = $vite->createTags('components/react-clover/index.tsx');
+
+$cloverEntry = addslashes($vite->getURL($cloverJsxFile));
+$manifestQuotesEsc = addslashes($this->manifestURL);
+$manifestUrlEnc = urlencode($this->manifestURL);
+$loadingText = addslashes($this->transEsc('loading_iiif_viewer'));
+
+/* Pass variables to React component through the window object */
+$cloverConfigJS = <<<JS
+    const cloverOptions = {};
+    window.cloverConfig = {
+      iiifManifestURL: "$manifestQuotesEsc",
+      loadingText: "$loadingText",
+      options: cloverOptions
+    };
+    /*finna.scriptLoader.load(
+    //  {'iiif-viewer': "$cloverEntry"},
+    );*/
     JS;
 
-echo $this->assetManager()->outputInlineScriptString($js);
-
-$encodedManifest = urlencode($this->manifestURL);
+echo $this->assetManager()->outputInlineScriptString($cloverConfigJS);
 ?>
 
 <div class="record-viewer-container container">
-  <clover-viewer id="<?=$this->manifestURL?>"></clover-viewer>
-  <span id="iiif-manifest-url-container" aria-hidden="true">
-    <?=$this->manifestURL?>
-  </span>
+  <div id="iiif-viewer"></div>
 </div>
 
 <div class="record-iiif-toolbar container">
@@ -29,8 +48,10 @@ $encodedManifest = urlencode($this->manifestURL);
       <?=$this->icon('download')?>
       <?=$this->transEsc('download_image')?>
     </button>
-    <button type="button" class="btn btn-outline-primary p-2 icon-link" data-bs-toggle="dropdown" aria-expanded="false">
-      <img src="<?=$this->imageSrc()->getSourceAddress('iiif_logo.min')?>" alt="IIIF" class="bi">
+    <button type="button" class="btn btn-outline-primary p-2 icon-link"
+            data-bs-toggle="dropdown" aria-expanded="false">
+      <img src="<?=$this->imageSrc()->getSourceAddress('iiif_logo.min')?>"
+           alt="IIIF" class="bi">
       <?=$this->transEsc('iiif_tools')?>
       <?=$this->icon('angle-down')?>
     </button>
@@ -59,7 +80,7 @@ $encodedManifest = urlencode($this->manifestURL);
       </li>
       <li>
         <a class="dropdown-item btn toolbar-btn"
-          href="https://uv-v4.netlify.app/#?manifest=<?=$encodedManifest?>"
+          href="https://uv-v4.netlify.app/#?manifest=<?=$manifestUrlEnc?>"
           target="_blank" rel="nofollow">
           <?=$this->icon('external-link')?>
           Universal Viewer
@@ -67,7 +88,7 @@ $encodedManifest = urlencode($this->manifestURL);
       </li>
       <li>
         <a class="dropdown-item btn toolbar-btn"
-          href="https://projectmirador.org/embed/?iiif-content=<?=$encodedManifest?>"
+          href="https://projectmirador.org/embed/?iiif-content=<?=$manifestUrlEnc?>"
           target="_blank" rel="nofollow">
           <?=$this->icon('external-link')?>
           Mirador
@@ -76,3 +97,9 @@ $encodedManifest = urlencode($this->manifestURL);
     </ul>
   </span>
 </div>
+
+<?php
+// Include Clover and its dependencies
+// TODO: Make this work with finna.scriptLoader
+echo $reactEntryTags->js;
+?>
