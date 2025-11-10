@@ -81,7 +81,8 @@ services:
     volumes:
       - type: volume
         source: finna-mariadb
-        target: /var/lib/mysql:rw
+        target: /var/lib/mysql
+        read_only: false
     networks:
       - finnadev
 
