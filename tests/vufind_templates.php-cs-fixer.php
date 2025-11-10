@@ -2,6 +2,7 @@
 
 $finder = new PhpCsFixer\Finder();
 $finder->in(__DIR__ . '/../themes')
+    ->exclude(['node_modules'])
     ->name('*.phtml');
 
 $rules = [

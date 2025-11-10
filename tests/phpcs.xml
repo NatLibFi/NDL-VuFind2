@@ -4,6 +4,7 @@
   <file>../module</file>
   <exclude-pattern>module/[^/]+/config/*</exclude-pattern>
   <exclude-pattern>module/[^/]+/tests/fixtures/*</exclude-pattern>
+  <exclude-pattern>themes/finna2/node_modules/**</exclude-pattern>
   <arg name="extensions" value="php"/>
   <!-- We only use PEAR to ensure complete comments at this time -->
   <rule ref="PEAR.Commenting">

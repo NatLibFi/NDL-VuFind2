@@ -10,7 +10,7 @@ $primary-darker: color.scale($primary, $lightness: -25%);
     }
 }
 
-clover-viewer {
+.clover-viewer {
 
     // Prevent Clover's information toggle button from appearing on top of
     // Finna's navbar
