@@ -26,13 +26,8 @@
       }
     }
   }
-  .searchbox-home {
-    .tooltip-button.tooltip-search-local {
-      .search-help-icon {
-        color: #fff;
-      }
-    }
-  }
+
+  .searchbox-home .tooltip-search-local .search-help-icon { color: #fff; }
   .searchbox-home,
   .searchbox-authority-search {
     flex-wrap: wrap;
@@ -44,7 +39,8 @@
         padding: 0px 8px 0px 5px;
         color: mix($background-color, contrast($background-color), 5%);
         font-weight: normal;
-        line-height: 25px;
+        line-height: 1.5em;
+
         background: $background-color;
         border-radius: $border-radius-small;
         overflow: hidden;
@@ -114,8 +110,8 @@
       font-weight: 600;
       color: $finna-search-link-color;
       .icon {
-        font-size: $font-size-icon-large;
         margin-right: 5px;
+        font-size: $font-size-icon-large;
       }
       .back-to-search-text {
         margin-right: 10px;
@@ -132,8 +128,8 @@
 @include media-breakpoint-down(md) {
   .searchbox-flex {
     .pager {
-    min-width: 70px;
-    margin-left: 10px;
+      min-width: 70px;
+      margin-left: 10px;
       li:first-child {
         margin-right: 4px;
       }

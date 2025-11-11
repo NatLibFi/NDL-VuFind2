@@ -50,8 +50,7 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     i {
       color: $primary;
     }
-    .btn,
-    .dropdown {
+    .btn, .dropdown {
       i {
         color: #fff;
       }
@@ -133,9 +132,9 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
         display: block !important;
         a {
           display: block;
-          color: $text-color;
           margin: 0px -10px;
           padding: 10px 10px;
+          color: $text-color;
           text-align: left;
           font-weight: normal;
           border-bottom: 1px solid $gray-lighter;
