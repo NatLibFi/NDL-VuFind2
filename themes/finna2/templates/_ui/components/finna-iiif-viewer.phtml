@@ -7,15 +7,15 @@
 
 use mindplay\vite\Manifest;
 
-$themeBasePath = __DIR__ . '/../../..';
 $cloverJsxFile = 'components/react-clover/index.tsx';
+$manifestPath = $this->scriptSrc('vendor/clover/.vite/manifest.json', true);
 
 $vite = new Manifest(
-    manifest_path: $themeBasePath . '/js/vendor/clover/.vite/manifest.json',
-    base_path: '/vufind2/themes/finna2/js/vendor/clover/',
+    manifest_path: $manifestPath,
+    base_path: '/vendor/clover/',
     dev: false
 );
-$reactEntryTags = $vite->createTags('components/react-clover/index.tsx');
+$reactEntryTags = $vite->createTags($cloverJsxFile);
 
 $cloverEntry = addslashes($vite->getURL($cloverJsxFile));
 $manifestQuotesEsc = addslashes($this->manifestURL);
@@ -30,9 +30,6 @@ $cloverConfigJS = <<<JS
       loadingText: "$loadingText",
       options: cloverOptions
     };
-    /*finna.scriptLoader.load(
-    //  {'iiif-viewer': "$cloverEntry"},
-    );*/
     JS;
 
 echo $this->assetManager()->outputInlineScriptString($cloverConfigJS);
@@ -100,6 +97,12 @@ echo $this->assetManager()->outputInlineScriptString($cloverConfigJS);
 
 <?php
 // Include Clover and its dependencies
-// TODO: Make this work with finna.scriptLoader
-echo $reactEntryTags->js;
+$loadClover = <<<JS
+    finna.scriptLoader.load(
+      {'iiif-viewer': "$cloverEntry"},
+    );
+    JS;
+
+echo $this->assetManager()->outputInlineScriptString($loadClover);
+
 ?>
