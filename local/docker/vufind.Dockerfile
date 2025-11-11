@@ -31,7 +31,9 @@ RUN set -e; \
     docker-php-ext-configure sockets; \
         docker-php-ext-install -j$(nproc) sockets; \
     docker-php-ext-configure xsl; \
-        docker-php-ext-install -j$(nproc) xsl
+        docker-php-ext-install -j$(nproc) xsl; \
+    docker-php-ext-configure soap; \
+        docker-php-ext-install -j$(nproc) soap
 
 RUN set -e; \
     pecl install xdebug; \
