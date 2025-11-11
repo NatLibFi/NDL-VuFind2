@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -242,7 +242,10 @@ class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
             ['[a      to      b]', '([a TO b] OR [A TO B])'],   // handle extra spaces
             // special case for timestamps:
             ['[1900-01-01t00:00:00z to 1900-12-31t23:59:59z]', '[1900-01-01T00:00:00Z TO 1900-12-31T23:59:59Z]'],
-            ['{1900-01-01T00:00:00Z       TO   1900-12-31T23:59:59Z}', '{1900-01-01T00:00:00Z TO 1900-12-31T23:59:59Z}'],
+            [
+                '{1900-01-01T00:00:00Z       TO   1900-12-31T23:59:59Z}',
+                '{1900-01-01T00:00:00Z TO 1900-12-31T23:59:59Z}',
+            ],
         ];
         // @codingStandardsIgnoreEnd
 

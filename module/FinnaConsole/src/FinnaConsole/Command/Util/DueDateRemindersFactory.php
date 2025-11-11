@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Service
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
@@ -53,7 +53,7 @@ use VuFind\Record\Loader;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class DueDateRemindersFactory implements FactoryInterface
 {
@@ -76,10 +76,10 @@ class DueDateRemindersFactory implements FactoryInterface
         $requestedName,
         ?array $options = null
     ) {
-        $configReader = $container->get(\VuFind\Config\PluginManager::class);
+        $configManager = $container->get(\VuFind\Config\ConfigManagerInterface::class);
 
         // We need to initialize the theme so that the view renderer works:
-        $mainConfig = $configReader->get('config');
+        $mainConfig = $configManager->getConfigObject('config');
         $theme = new \VuFindTheme\Initializer($mainConfig->Site, $container);
         $theme->init();
 
@@ -90,8 +90,8 @@ class DueDateRemindersFactory implements FactoryInterface
             $dbServiceManager->get(FinnaDueDateReminderServiceInterface::class),
             $container->get(Connection::class),
             $container->get(ILSAuthenticator::class),
-            $configReader->get('config'),
-            $configReader->get('datasources'),
+            $configManager->getConfigObject('config'),
+            $configManager->getConfigObject('datasources'),
             $container->get('ViewRenderer'),
             $container->get(Loader::class),
             $container->get(Mailer::class),

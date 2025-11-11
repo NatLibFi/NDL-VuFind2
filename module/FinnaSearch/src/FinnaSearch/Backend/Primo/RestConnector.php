@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -224,7 +224,7 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
      * @throws \Exception
      * @return string|false
      */
-    protected function getOpenUrl(\StdClass $doc)
+    protected function getOpenUrl(\stdClass $doc)
     {
         foreach ($doc->delivery->link ?? [] as $link) {
             if ('http://purl.org/pnx/linkType/openurl' === $link->linkType) {
@@ -237,9 +237,9 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
 
         if (!$result) {
             if (($url = (string)($doc->delivery->GetIt2->link ?? '')) !== '') {
-                $result = (string)$url;
+                $result = $url;
             } elseif (($url = (string)($doc->delivery->GetIt1[0]->links[0]->link ?? '')) !== '') {
-                $result = (string)$url;
+                $result = $url;
             }
         }
 

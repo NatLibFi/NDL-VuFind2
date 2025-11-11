@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Database
@@ -30,10 +30,13 @@
 namespace Finna\Db\Service;
 
 use Closure;
+use Doctrine\ORM\EntityManager;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Config\AccountCapabilities;
+use VuFind\Db\Entity\PluginManager as EntityPluginManager;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\PersistenceManager;
 
 use function in_array;
 
@@ -51,16 +54,28 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
     /**
      * Constructor
      *
+     * @param EntityManager       $entityManager          Doctrine ORM entity manager
+     * @param EntityPluginManager $entityPluginManager    VuFind entity plugin manager
+     * @param PersistenceManager  $persistenceManager     Entity persistence manager
      * @param ILSAuthenticator    $ilsAuthenticator       ILS authenticator
      * @param AccountCapabilities $capabilities           Account capabilities configuration
      * @param Closure             $getLoginTargetPrefixes Callback for getting a list of active login target prefixes
      */
     public function __construct(
+        EntityManager $entityManager,
+        EntityPluginManager $entityPluginManager,
+        PersistenceManager $persistenceManager,
         ILSAuthenticator $ilsAuthenticator,
         AccountCapabilities $capabilities,
         protected Closure $getLoginTargetPrefixes
     ) {
-        parent::__construct($ilsAuthenticator, $capabilities);
+        parent::__construct(
+            $entityManager,
+            $entityPluginManager,
+            $persistenceManager,
+            $ilsAuthenticator,
+            $capabilities
+        );
     }
 
     /**
