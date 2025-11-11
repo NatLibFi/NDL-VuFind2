@@ -44,6 +44,7 @@ class ScriptSrc extends ThemeSrc
      * Return path to JavaScript file in current theme.
      *
      * @param string $source filename
+     * @param bool $returnAbsolutePath Whether to return absolute file system path
      *
      * @return string
      */
