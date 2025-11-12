@@ -12,10 +12,10 @@
       data-location="<?=$current['selected'] ? $results->getUrlQuery()->removeFilter($current['filter']) : $results->getUrlQuery()->addFilter($current['filter']) ?>"
       <?=!empty($current['disabled']) ? 'disabled="disabled"' : ''?>
     >
-    <label aria-hidden="true" id="<?=$this->escapeHtmlAttr(str_replace(' ', '', $current['desc']))?>_label">
+    <div aria-hidden="true" id="<?=$this->escapeHtmlAttr(str_replace(' ', '', $current['desc']))?>_label">
       <span><?=$this->translate($current['desc']) // Intentionally left unescaped to allow HTML in the description ?></span>
       <span class="badge cb-facet avail-count"></span>
-    </label>
+    </div>
   </div>
 <?php endforeach; ?>
 <?php

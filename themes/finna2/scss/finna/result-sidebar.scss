@@ -16,16 +16,16 @@
     }
     display: flex;
     gap: 10px;
-  }
-  label {
-    margin-left: 0px;
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-  }
-  label:before {
-    margin-right: 5px;
-    margin-left: -22px;
+    > div {
+      margin-left: 0px;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      &:before {
+        margin-right: 5px;
+        margin-left: -22px;
+      }
+    }
   }
   .badge {
     margin-top: 4px;
@@ -40,7 +40,7 @@
       text-overflow: ellipsis;
       margin-right: 6px;
     }
-    label {
+    .checkbox > div {
       flex-wrap: wrap;
     }
   }
