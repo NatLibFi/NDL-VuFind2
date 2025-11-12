@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -26,10 +26,14 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
+
+use Finna\Db\Entity\UserEntityInterface;
+use Finna\Db\Service\CommentsServiceInterface;
+use Finna\RecordDriver\RenderContext;
 
 use function count;
 use function in_array;
@@ -46,7 +50,7 @@ use function is_callable;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 trait FinnaRecordTrait
 {
@@ -72,18 +76,138 @@ trait FinnaRecordTrait
     protected $defaultRecordSpecsClass = 'DefaultRecord';
 
     /**
+     * Maximum limit of images to get in search results per record.
+     *
+     * @var int
+     */
+    protected int $maxImagesInSearch = 20;
+
+    /**
+     * Maximum limit of URLs to render in search context
+     *
+     * @var int
+     */
+    protected int $maxURLsInSearch = 200;
+
+    /**
+     * Maximum limit of URLs to get in record context
+     *
+     * @var int
+     */
+    protected int $maxURLsInRecord = 200;
+
+    /**
+     * Maximum limit of images to get in record context
+     *
+     * @var int
+     */
+    protected int $maxImagesInRecord = 1000;
+
+    /**
+     * Current record render context
+     *
+     * @var RenderContext
+     */
+    protected RenderContext $renderContext = RenderContext::RECORD;
+
+    /**
+     * Current amount of images
+     *
+     * @var int
+     */
+    protected int $imagesCount = 0;
+
+    /**
+     * Current amount of URLs
+     *
+     * @var int
+     */
+    protected int $urlsCount = 0;
+
+    /**
+     * Set current record render context
+     *
+     * @param string $context Record render context
+     *
+     * @return void
+     */
+    public function setRenderContext(string $context): void
+    {
+        $this->renderContext = RenderContext::from($context);
+    }
+
+    /**
+     * Has the record exceeded maximum amount of images for its current context?
+     *
+     * @return bool
+     */
+    public function maxAmountOfImages(): bool
+    {
+        return ($this->renderContext === RenderContext::SEARCH && $this->imagesCount >= $this->maxImagesInSearch)
+            || ($this->renderContext === RenderContext::RECORD && $this->imagesCount >= $this->maxImagesInRecord);
+    }
+
+    /**
+     * Has the record exceeded maximum amount of URLs for its current context
+     *
+     * @return bool
+     */
+    public function maxAmountOfURLs(): bool
+    {
+        return ($this->renderContext === RenderContext::SEARCH && $this->urlsCount >= $this->maxURLsInSearch)
+            || ($this->renderContext === RenderContext::RECORD && $this->urlsCount >= $this->maxURLsInRecord);
+    }
+
+    /**
+     * Get amount of images allowed to be rendered in current context.
+     *
+     * @return int Current images render limit or -1 for all.
+     */
+    public function getImagesRenderLimit(): int
+    {
+        if ($this->renderContext === RenderContext::SEARCH) {
+            return $this->maxImagesInSearch;
+        }
+        return $this->maxImagesInRecord;
+    }
+
+    /**
+     * Get amount of URLs allowed to be rendered in current context
+     *
+     * @return int Current URLs render limit
+     */
+    public function getURLsReturnLimit(): int
+    {
+        if ($this->renderContext === RenderContext::SEARCH) {
+            return $this->maxURLsInSearch;
+        }
+        return $this->maxURLsInRecord;
+    }
+
+    /**
+     * Get the total image count for the record. Value is populated after calling the getAllImages function.
+     *
+     * @return int
+     */
+    public function getTotalAmountOfImages(): int
+    {
+        return $this->imagesCount;
+    }
+
+    /**
      * Get inappropriate comments for this record reported by the given user.
      *
-     * @param ?int $userId Reporter ID or null to use current session
+     * @param ?UserEntityInterface $user Reporter, or null to use current session
      *
      * @return array
      */
-    public function getInappropriateComments($userId)
+    public function getInappropriateComments(?UserEntityInterface $user)
     {
-        $table = $this->getDbTable('CommentsInappropriate');
-        return $table->getForRecord(
-            $userId,
-            $this->getUniqueID()
+        $commentsService = $this->getDbService(CommentsServiceInterface::class);
+        return $commentsService->getInappropriateForRecord(
+            $user,
+            $this->getUniqueID(),
+            $this->getSourceIdentifier()
         );
     }
 
@@ -228,29 +352,6 @@ trait FinnaRecordTrait
         }
 
         return '';
-    }
-
-    /**
-     * Get saved time associated with this record in a user list.
-     *
-     * @param int $list_id List id
-     * @param int $user_id List owner id
-     *
-     * @return timestamp
-     */
-    public function getListSavedDate($list_id, $user_id)
-    {
-        $db = $this->getDbTable('UserResource');
-        $data = $db->getSavedData(
-            $this->getUniqueId(),
-            $this->getSourceIdentifier(),
-            $list_id,
-            $user_id
-        );
-        foreach ($data as $current) {
-            return $current->saved;
-        }
-        return null;
     }
 
     /**

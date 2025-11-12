@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -46,38 +46,11 @@ use FinnaSearch\Backend\Primo\RestConnector;
 class PrimoBackendFactory extends \VuFind\Search\Factory\PrimoBackendFactory
 {
     /**
-     * Primo connector class
-     *
-     * @var string
-     */
-    protected $connectorClass = Connector::class;
-
-    /**
      * Primo REST API connector class
      *
      * @var string
      */
     protected $restConnectorClass = RestConnector::class;
-
-    /**
-     * Create the Primo Central connector.
-     *
-     * Finna: Add hidden filters and set cache manager
-     *
-     * @return Connector
-     */
-    protected function createConnector()
-    {
-        $connector = parent::createConnector();
-
-        if ($this->primoConfig->HiddenFilters) {
-            $connector->setHiddenFilters(
-                $this->primoConfig->HiddenFilters->toArray()
-            );
-        }
-
-        return $connector;
-    }
 
     /**
      * Create the Primo Central REST connector.
@@ -88,7 +61,7 @@ class PrimoBackendFactory extends \VuFind\Search\Factory\PrimoBackendFactory
     {
         $connector = parent::createRestConnector();
 
-        if ($this->primoConfig->HiddenFilters) {
+        if ($this->primoConfig->HiddenFilters && ($connector instanceof RestConnector)) {
             $connector->setHiddenFilters(
                 $this->primoConfig->HiddenFilters->toArray()
             );

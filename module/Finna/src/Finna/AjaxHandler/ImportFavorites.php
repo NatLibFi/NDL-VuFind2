@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -30,15 +30,13 @@
 
 namespace Finna\AjaxHandler;
 
-use Finna\Db\Service\FinnaUserListServiceInterface;
-use Finna\Db\Service\FinnaUserResourceServiceInterface;
+use Finna\Db\Service\UserListServiceInterface;
+use Finna\Db\Service\UserResourceServiceInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Session\SessionManager;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\SearchServiceInterface;
-use VuFind\Db\Service\UserListServiceInterface;
-use VuFind\Db\Service\UserResourceServiceInterface;
 use VuFind\Favorites\FavoritesService;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Record\Loader as RecordLoader;
@@ -214,13 +212,6 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
         $favoritesCount = 0;
         $listCount = 0;
 
-        if (!($this->userListService instanceof FinnaUserListServiceInterface)) {
-            throw new \Exception('Finna UserList service required for the operation');
-        }
-        if (!($this->userResourceService instanceof FinnaUserResourceServiceInterface)) {
-            throw new \Exception('Finna UserResource service required for the operation');
-        }
-
         foreach ($lists as $list) {
             if ('' === ($title = $list['title'] ?? '')) {
                 continue;
@@ -248,14 +239,14 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
 
                 $params = [
                     'notes' => $record['notes'] ?? '',
-                    'list' => $targetList->getId(),
+                    'list' => $targetList,
                     'mytags' => $record['tags'] ?? [],
                 ];
                 $this->favoritesService->saveRecordToFavorites($params, $this->user, $driver);
 
                 if (null !== ($order = $record['order'] ?? null)) {
                     if ($resource = $this->resourcePopulator->getOrCreateResourceForDriver($driver)) {
-                        $this->userResourceService->createOrUpdateLink(
+                        $this->userResourceService->createOrUpdateLinkWithOrder(
                             $resource,
                             $this->user,
                             $targetList,

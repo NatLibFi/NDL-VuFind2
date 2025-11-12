@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
@@ -51,7 +51,7 @@ use function strlen;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
@@ -921,32 +921,6 @@ trait SolrFinnaTrait
             );
         }
         return in_array($format, $this->undisplayableFormats);
-    }
-
-    /**
-     * Add or update user's rating for the record.
-     *
-     * @param int  $userId ID of the user posting the rating
-     * @param ?int $rating The user-provided rating, or null to clear any existing
-     * rating
-     *
-     * @return void
-     */
-    public function addOrUpdateRating(int $userId, ?int $rating): void
-    {
-        parent::addOrUpdateRating($userId, $rating);
-
-        // Also update ratings of any duplicates:
-        $mergedData = $this->getMergedRecordData();
-        if (empty($mergedData['records'])) {
-            return;
-        }
-        $source = $this->getSourceIdentifier();
-        $resources = $this->getDbTable('Resource');
-        foreach ($mergedData['records'] as $record) {
-            $resource = $resources->findResource($record['id'], $source);
-            $resource->addOrUpdateRating($userId, $rating);
-        }
     }
 
     /**

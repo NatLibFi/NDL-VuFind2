@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ReservationList
@@ -33,7 +33,6 @@ namespace Finna\ReservationList;
 
 use DateTime;
 use Exception;
-use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
@@ -42,6 +41,7 @@ use Finna\ReservationList\Handler\PluginManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use TypeError;
+use VuFind\Auth\ILSAuthenticator;
 use VuFind\Cache\Manager;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;

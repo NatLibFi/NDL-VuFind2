@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -34,16 +34,16 @@
 
 namespace Finna\Controller;
 
-use Finna\Db\Entity\FinnaUserEntityInterface;
-use Finna\Db\Entity\FinnaUserResourceEntityInterface;
+use Finna\Db\Entity\UserEntityInterface;
+use Finna\Db\Entity\UserResourceEntityInterface;
 use Finna\Db\Service\FinnaFeedbackServiceInterface;
-use Finna\Db\Service\FinnaUserListServiceInterface;
-use Finna\Db\Service\FinnaUserServiceInterface;
 use Finna\Db\Service\UserListService as FinnaUserListService;
-use VuFind\Db\Entity\UserEntityInterface;
+use Finna\Db\Service\UserListServiceInterface;
+use Finna\Db\Service\UserResourceService;
+use Finna\Db\Service\UserServiceInterface;
 use VuFind\Db\Service\SearchServiceInterface;
-use VuFind\Db\Service\UserListServiceInterface;
-use VuFind\Db\Service\UserServiceInterface;
+use VuFind\Db\Type\AuditEventSubtype;
+use VuFind\Db\Type\AuditEventType;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Exception\ListPermission as ListPermissionException;
@@ -72,7 +72,6 @@ use function strlen;
  */
 class MyResearchController extends \VuFind\Controller\MyResearchController
 {
-    use FinnaOnlinePaymentControllerTrait;
     use FinnaUnsupportedFunctionViewTrait;
     use FinnaPersonalInformationSupportTrait;
     use Feature\FinnaUserListTrait;
@@ -159,6 +158,18 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $patron
             )
             : [];
+
+        if ($renewResult) {
+            $this->getAuditEventService()->addEvent(
+                AuditEventType::ILS,
+                AuditEventSubtype::RenewLoans,
+                $this->getUser(),
+                data: [
+                    'username' => $patron['cat_username'],
+                    'result' => $renewResult,
+                ]
+            );
+        }
 
         // By default, assume we will not need to display a renewal form:
         $renewForm = false;
@@ -382,9 +393,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 ->get(\VuFind\Favorites\FavoritesService::class);
 
             $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
-            $tableManager = $this->serviceLocator
-                ->get(\VuFind\Db\Table\PluginManager::class);
-            $userResource = $tableManager->get(\VuFind\Db\Table\UserResource::class);
+            $userResourceService = $this->getDbService(UserResourceService::class);
 
             $notesSeparator = '#### ' . $this->translate('Loan History') . "\n";
 
@@ -422,15 +431,15 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     $notesBlocks = [];
 
                     // Keep existing notes
-                    $savedData = $userResource->getSavedData(
+                    $allSavedData = $userResourceService->getFavoritesForRecord(
                         $current['id'],
                         $current['source'] ?? DEFAULT_SEARCH_BACKEND,
                         $listId ?? null,
-                        $user->getId()
-                    )->current();
+                        $user
+                    );
+                    $savedData = current($allSavedData);
                     if (!empty($savedData['notes'])) {
-                        $notesBlocks
-                            = explode($notesSeparator, $savedData['notes']);
+                        $notesBlocks = explode($notesSeparator, $savedData['notes']);
                         // Separate any other notes from the loan notes blocks
                         $otherBlock = strncmp(
                             $savedData['notes'],
@@ -574,15 +583,22 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $list && $list->isPublic()
                 && (!$user || $user->getId() != $list->getUser()?->getId())
             ) {
-                return $this->redirect()->toRoute('list-page', ['lid' => $list->id]);
+                return $this->redirect()->toRoute('list-page', ['lid' => $list->getId()]);
             }
             if ($list) {
                 $this->rememberCurrentSearchUrl();
+                // Find out the total favorite count:
+                $runner = $this->getService(\VuFind\Search\SearchRunner::class);
+                $favoritesResults = $runner->run([], 'Favorites');
+                $view->totalResourceCount = $this->getDbService(UserResourceService::class)
+                    ->getTotalResourceCount($user);
             } else {
                 $memory  = $this->serviceLocator->get(\VuFind\Search\Memory::class);
                 $memory->rememberSearch(
                     $this->url()->fromRoute('myresearch-favorites')
                 );
+                // The results represent all favorites, so get the total count directly:
+                $view->totalResourceCount = $results->getResultTotal();
             }
         }
 
@@ -649,7 +665,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 + $this->getRequest()->getPost()->toArray()
                 + ['id' => $listId];
 
-            $setupCallback = function ($runner, $params, $searchId) {
+            $setupCallback = function ($runner, $params, $searchId): void {
                 $params->setLimit(1000);
             };
             $results = $runner->run($request, 'Favorites', $setupCallback);
@@ -685,7 +701,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $userService = $this->getDbService(UserServiceInterface::class);
         $values = $this->getRequest()->getPost();
         if (isset($values->due_date_reminder)) {
-            if ($userService instanceof FinnaUserServiceInterface) {
+            if ($userService instanceof UserServiceInterface) {
                 $userService->setDueDateReminderForUser($user, (int)$values->due_date_reminder);
                 $this->flashMessenger()->addSuccessMessage('profile_update');
             }
@@ -722,7 +738,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $showError = true;
             }
 
-            assert($user instanceof FinnaUserEntityInterface);
+            assert($user instanceof UserEntityInterface);
             $nicknameAvailable = $this->isNicknameAvailable($values->finna_nickname);
             $nicknameValid = $this->validateNicknameFormat($values->finna_nickname);
             if (empty($values->finna_nickname)) {
@@ -760,7 +776,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         // Check if due date reminder settings should be displayed
         $config = $this->getConfig();
-        $view->hideDueDateReminder = ($user instanceof FinnaUserEntityInterface)
+        $view->hideDueDateReminder = ($user instanceof UserEntityInterface)
             && ($user->getFinnaDueDateReminder() == 0)
             && ($config->Site->hideDueDateReminder ?? false);
         if (!$view->hideDueDateReminder && is_array($patron)) {
@@ -1115,7 +1131,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         ) {
             $orderedList = $this->params()->fromPost('orderedList');
             $userListService = $this->getDbService(\VuFind\Db\Service\UserListServiceInterface::class);
-            assert($userListService instanceof FinnaUserListServiceInterface);
+            assert($userListService instanceof UserListServiceInterface);
             if (
                 empty($listID)
                 || empty($orderedList)
@@ -1191,9 +1207,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $view = parent::finesAction();
         $view->blocks = $this->getAccountBlocks($patron);
-        if (isset($patron['source'])) {
-            $this->handleOnlinePayment($patron, $view->fines, $view);
-        }
         return $view;
     }
 
@@ -1227,21 +1240,22 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
                 $secretService = $this->serviceLocator->get(\VuFind\Crypt\SecretCalculator::class);
                 $secret = $secretService->getDueDateReminderUnsubscribeSecret($user);
-                // TODO: Remove old secret when table class no longer exists:
-                $dueDateTable = $this->getTable('duedatereminder');
-                $oldSecret = $dueDateTable->getUnsubscribeSecret(
-                    $this->serviceLocator->get(\VuFind\Crypt\HMAC::class),
-                    $user,
-                    $user->getId()
-                );
-                if ($key !== $secret && $key !== $oldSecret) {
+                if ($key !== $secret) {
                     throw new \Exception('Invalid parameters.');
                 }
                 $userService = $this->getDbService(UserServiceInterface::class);
-                if ($userService instanceof FinnaUserServiceInterface) {
+                if ($userService instanceof UserServiceInterface) {
                     $userService->setDueDateReminderForUser($user, 0);
                     $view->success = true;
                 }
+                $this->getAuditEventService()->addEvent(
+                    AuditEventType::User,
+                    AuditEventSubtype::Update,
+                    $user,
+                    data: [
+                        'due_date_reminder' => 0,
+                    ]
+                );
             }
         } else {
             $view->unsubscribeUrl
@@ -1564,7 +1578,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $tag['tag'] ?? '';
         };
 
-        $setupCallback = function ($searchRunner, $params, $runningSearchId) {
+        $setupCallback = function ($searchRunner, $params, $runningSearchId): void {
             $params->setLimit(1000);
         };
 
@@ -1602,7 +1616,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     'source' => $record->getSourceIdentifier(),
                     'notes' => $notes[0] ?? null,
                     'tags' => array_map($getTag, $tags),
-                    'order' => $userResource instanceof FinnaUserResourceEntityInterface
+                    'order' => $userResource instanceof UserResourceEntityInterface
                         ? $userResource->getFinnaCustomOrderIndex()
                         : null,
                 ];
@@ -1624,7 +1638,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     protected function isNicknameAvailable($nickname): bool
     {
         $userService = $this->getDbService(UserServiceInterface::class);
-        assert($userService instanceof FinnaUserServiceInterface);
+        assert($userService instanceof UserServiceInterface);
         return $userService->isNicknameAvailable($nickname);
     }
 
