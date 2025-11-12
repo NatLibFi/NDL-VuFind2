@@ -41,7 +41,6 @@
         color: mix($background-color, contrast($background-color), 5%);
         font-weight: normal;
         line-height: 1.5em;
-
         background: $background-color;
         border-radius: $border-radius-small;
         overflow: hidden;
@@ -86,8 +85,7 @@
 }
 
 .searchbox-flex {
-  .record-back,
-  .pager {
+  .record-back, .pager {
     margin: auto 0px;
   }
   .pager {
