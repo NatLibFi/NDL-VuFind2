@@ -32,7 +32,6 @@ namespace Finna\Db\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use VuFind\Db\Entity\ResourceEntityInterface;
-use VuFind\Db\Feature\DateTimeTrait;
 
 /**
  * Entity model for comments table
@@ -47,8 +46,6 @@ use VuFind\Db\Feature\DateTimeTrait;
 #[ORM\Index(name: 'finna_visible', columns: ['finna_visible'])]
 class Comments extends \VuFind\Db\Entity\Comments implements CommentsEntityInterface
 {
-    use DateTimeTrait;
-
     /**
      * Flag indicating comment visibility.
      *
@@ -86,7 +83,7 @@ class Comments extends \VuFind\Db\Entity\Comments implements CommentsEntityInter
      */
     public function getFinnaUpdated(): ?DateTime
     {
-        return $this->getNullableDateTimeFromNonNullable($this->finnaUpdated);
+        return $this->finnaUpdated;
     }
 
     /**
@@ -98,7 +95,7 @@ class Comments extends \VuFind\Db\Entity\Comments implements CommentsEntityInter
      */
     public function setFinnaUpdated(?DateTime $dateTime): static
     {
-        $this->finnaUpdated = $this->getNonNullableDateTimeFromNullable($dateTime);
+        $this->finnaUpdated = $dateTime;
         return $this;
     }
 

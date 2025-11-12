@@ -32,11 +32,14 @@ namespace Finna\Db\Service;
 use Closure;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrinePaginatorAdapter;
 use Finna\Db\Entity\Comments;
 use Finna\Db\Entity\CommentsEntityInterface;
 use Finna\Db\Entity\FinnaCommentsEntityInterface;
 use Finna\Db\Entity\FinnaCommentsInappropriateEntityInterface;
 use Finna\Db\Entity\FinnaCommentsRecordEntityInterface;
+use Laminas\Paginator\Paginator;
 use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\PluginManager as EntityPluginManager;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -170,6 +173,51 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
         $commentEntity->setComment($comment)
             ->setFinnaUpdated(new DateTime());
         $this->persistEntity($commentEntity);
+    }
+
+    /**
+     * Get a paginated result of all comments made by the user.
+     *
+     * @param int    $userId User ID
+     * @param int    $limit  Limit
+     * @param int    $page   Page
+     * @param string $sort   Sort
+     *
+     * @return Paginator
+     */
+    public function getCommentsPaginator(
+        int $userId,
+        int $limit,
+        int $page,
+        string $sort
+    ): Paginator {
+        $dql = 'SELECT c.id, c.comment, c.finnaVisible, c.created AS created, '
+            . 'u.id AS user_id, u.username AS username, '
+            . 'r.id AS resource_id, r.recordId AS record_id, r.source AS source, r.title AS title '
+            . 'FROM ' . CommentsEntityInterface::class . ' c '
+            . 'LEFT JOIN c.user u '
+            . 'LEFT JOIN c.resource r '
+            . 'WHERE c.user = :userId';
+
+        $parameters = ['userId' => $userId];
+
+        $sortOrder = $sort ? $sort : 'created DESC';
+
+        $dql .= ' ORDER BY ' . $sortOrder;
+
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($parameters);
+        $query->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $doctrinePaginator = new DoctrinePaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
+
+        $paginator = new Paginator(new DoctrinePaginatorAdapter($doctrinePaginator));
+        $paginator->setItemCountPerPage($limit);
+        $paginator->setCurrentPageNumber($page);
+
+        return $paginator;
     }
 
     /**

@@ -42,7 +42,7 @@ use VuFind\Db\Entity\UserEntityInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-#[ORM\Table(name: 'feedback')]
+#[ORM\Table(name: 'finna_feedback')]
 #[ORM\Index(name: 'feedback_user_id_idx', columns: ['user_id'])]
 #[ORM\Index(name: 'feedback_created_idx', columns: ['created'])]
 #[ORM\Index(name: 'feedback_status_idx', columns: ['status'], options: ['lengths' => [191]])]
