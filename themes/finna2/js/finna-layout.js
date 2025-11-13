@@ -282,6 +282,30 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
+   * Focus to skip to content link after a facet is chosen
+   */
+  function initFocusAfterReload() {
+    const facetLinkElements = ['a.main-link', 'input.checkbox-filter', 'button.submit'];
+    if (window.sessionStorage.getItem('facetWasSelected')) {
+      setTimeout(() => {
+        document.activeElement.blur();
+        document.querySelector('#skip-to-content').focus();
+        window.sessionStorage.removeItem('facetWasSelected');
+      },
+      200);
+    }
+    document.querySelectorAll('.side-facets-container-ajax').forEach((facetContainer) => {
+      facetContainer.addEventListener('click', function focusOnContent(e) {
+        facetLinkElements.some((element => {
+          if (e.target.closest(element)) {
+            window.sessionStorage.setItem('facetWasSelected', true);
+          }
+        }))
+      });
+    });
+  }
+
+  /**
    * Set my account header as sticky
    */
   function setStickyMyaccountHeader() {
@@ -1217,6 +1241,7 @@ finna.layout = (function finnaLayout() {
       initHelpTabs();
       initPrintTriggers();
       initSelectAllButtonListeners();
+      initFocusAfterReload();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };
