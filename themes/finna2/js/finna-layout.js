@@ -300,7 +300,7 @@ finna.layout = (function finnaLayout() {
           if (e.target.closest(element)) {
             window.sessionStorage.setItem('facetWasSelected', true);
           }
-        }))
+        }));
       });
     });
   }
