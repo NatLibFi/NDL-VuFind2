@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -924,7 +924,7 @@ class Quria extends AxiellWebServices
         $transactions = $this->objectToArray(
             $result->loanHistoryResponse->loanHistoryItems->loanHistoryItem ?? []
         );
-        foreach ($transactions as $transaction => $record) {
+        foreach ($transactions as $record) {
             $obj = $record->catalogueRecord;
             $title = $obj->title;
             if (!empty($record->note)) {
@@ -1325,7 +1325,7 @@ class Quria extends AxiellWebServices
         $username = $user['cat_username'];
         $password = $user['cat_password'];
 
-        $paymentConfig = $this->config['onlinePayment'] ?? [];
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
         $blockedTypes = $paymentConfig['nonPayable'] ?? [];
         $payableMinDate
             = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
@@ -1397,6 +1397,7 @@ class Quria extends AxiellWebServices
             $fine = [
                 'debt_id' => $debt->id,
                 'fine_id' => $debt->id,
+                'fineId' => $debt->id,
                 'amount' => $amount,
                 'checkout' => '',
                 'fine' => $description,

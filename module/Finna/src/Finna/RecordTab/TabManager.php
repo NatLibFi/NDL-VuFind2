@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordTabs
@@ -64,7 +64,7 @@ class TabManager extends \VuFind\RecordTab\TabManager
      *
      * @return array
      */
-    protected function getTabServiceNames(AbstractRecordDriver $driver)
+    protected function getTabServiceNames(AbstractRecordDriver $driver): array
     {
         $result = parent::getTabServiceNames($driver);
         // Make sure Details is always the last tab
@@ -83,7 +83,7 @@ class TabManager extends \VuFind\RecordTab\TabManager
      * @param AbstractRecordDriver $driver   Record driver
      * @param array                $tabs     Details on available tabs (returned
      * from getTabsForRecord()).
-     * @param string               $fallback Fallback to use if no tab specified
+     * @param ?string              $fallback Fallback to use if no tab specified
      * or matched.
      *
      * @return string
@@ -91,8 +91,8 @@ class TabManager extends \VuFind\RecordTab\TabManager
     public function getDefaultTabForRecord(
         AbstractRecordDriver $driver,
         array $tabs,
-        $fallback = null
-    ) {
+        ?string $fallback = null
+    ): string {
         $result = parent::getDefaultTabForRecord($driver, $tabs, $fallback);
         if ('Details' === $result) {
             $result = '';
@@ -110,7 +110,7 @@ class TabManager extends \VuFind\RecordTab\TabManager
     public function getSimilarItemsCarouselTab(
         AbstractRecordDriver $driver
     ): \VuFind\RecordTab\SimilarItemsCarousel {
-        $tab = $this->pluginManager->get('SimilarItemsCarousel');
+        $tab = $this->recordTabPluginManager->get('SimilarItemsCarousel');
         $tab->setRecordDriver($driver);
         return $tab;
     }

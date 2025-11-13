@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -68,13 +68,13 @@ class AuthorityHelperFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
         }
-        $confManager = $container->get(\VuFind\Config\PluginManager::class);
+        $configManager = $container->get(\VuFind\Config\ConfigManagerInterface::class);
         return new $requestedName(
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\VuFind\Search\SearchRunner::class),
             $container->get('ViewRenderer')->plugin('translate'),
-            $confManager->get('config'),
-            $confManager->get('authority')
+            $configManager->getConfigObject('config'),
+            $configManager->getConfigObject('authority')
         );
     }
 }

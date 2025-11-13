@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -26,11 +26,13 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
 
+use Finna\Db\Entity\UserEntityInterface;
+use Finna\Db\Service\CommentsServiceInterface;
 use Finna\RecordDriver\RenderContext;
 
 use function count;
@@ -48,7 +50,7 @@ use function is_callable;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 trait FinnaRecordTrait
 {
@@ -195,16 +197,17 @@ trait FinnaRecordTrait
     /**
      * Get inappropriate comments for this record reported by the given user.
      *
-     * @param ?int $userId Reporter ID or null to use current session
+     * @param ?UserEntityInterface $user Reporter, or null to use current session
      *
      * @return array
      */
-    public function getInappropriateComments($userId)
+    public function getInappropriateComments(?UserEntityInterface $user)
     {
-        $table = $this->getDbTable('CommentsInappropriate');
-        return $table->getForRecord(
-            $userId,
-            $this->getUniqueID()
+        $commentsService = $this->getDbService(CommentsServiceInterface::class);
+        return $commentsService->getInappropriateForRecord(
+            $user,
+            $this->getUniqueID(),
+            $this->getSourceIdentifier()
         );
     }
 
@@ -349,29 +352,6 @@ trait FinnaRecordTrait
         }
 
         return '';
-    }
-
-    /**
-     * Get saved time associated with this record in a user list.
-     *
-     * @param int $list_id List id
-     * @param int $user_id List owner id
-     *
-     * @return timestamp
-     */
-    public function getListSavedDate($list_id, $user_id)
-    {
-        $db = $this->getDbTable('UserResource');
-        $data = $db->getSavedData(
-            $this->getUniqueId(),
-            $this->getSourceIdentifier(),
-            $list_id,
-            $user_id
-        );
-        foreach ($data as $current) {
-            return $current->saved;
-        }
-        return null;
     }
 
     /**
