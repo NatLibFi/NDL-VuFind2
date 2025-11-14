@@ -17,24 +17,24 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 
-use Finna\OnlinePayment\Handler\Connector\Paytrail\PaytrailPaymentAPI\Client as FinnaPaytrailClient;
-use Laminas\Log\LoggerInterface;
 use Paytrail\SDK\Request\PaymentRequest;
 use Paytrail\SDK\Response\PaymentResponse;
-use VuFindHttp\HttpService;
+use VuFindHttp\HttpServiceAwareTrait;
+
+use function in_array;
 
 /**
  * Turku Payment API client
@@ -44,10 +44,12 @@ use VuFindHttp\HttpService;
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class Client extends FinnaPaytrailClient
+class Client extends \Paytrail\SDK\Client
 {
+    use HttpServiceAwareTrait;
+
     /**
      * OId for authorized users
      *
@@ -86,26 +88,22 @@ class Client extends FinnaPaytrailClient
     /**
      * Client constructor.
      *
-     * @param int             $merchantId       The merchant.
-     * @param string          $secretKey        The secret key.
-     * @param string          $platformName     Platform name.
-     * @param HttpService     $http             HTTP service.
-     * @param LoggerInterface $logger           Logger.
-     * @param string          $baseUrl          Service base url.
-     * @param string          $merchantIdString Merchant id as a string.
-     * @param string          $oId              oId.
+     * @param int    $merchantId       The merchant.
+     * @param string $secretKey        The secret key.
+     * @param string $platformName     Platform name.
+     * @param string $merchantIdString Merchant id as a string.
+     * @param string $oId              oId.
+     * @param string $baseUrl          Service base url.
      */
     public function __construct(
         int $merchantId,
         string $secretKey,
         string $platformName,
-        HttpService $http,
-        LoggerInterface $logger,
-        string $baseUrl,
         string $merchantIdString,
-        string $oId
+        string $oId,
+        protected string $baseUrl
     ) {
-        parent::__construct($merchantId, $secretKey, $platformName, $http, $logger, $baseUrl);
+        parent::__construct($merchantId, $secretKey, $platformName);
         $this->setMerchantIdString($merchantIdString);
         $this->setOId($oId);
         $this->generateTimeStamp();
@@ -192,27 +190,23 @@ class Client extends FinnaPaytrailClient
         $this->requestBody = json_encode($payment, JSON_UNESCAPED_SLASHES);
         $headers = $this->getHeaders('POST', null, null);
 
-        $response = $this->http_client->request(
-            'POST',
-            '',
-            [
-                'body' => $this->requestBody,
-                'headers' => $headers,
-            ]
-        );
-        if (!$response) {
-            throw new \Exception('Request failed');
+        $response = $this->httpService->post($this->baseUrl, $this->requestBody, headers: $headers);
+        if (!in_array($response->getStatusCode(), [200, 201])) {
+            throw new \Exception('Request failed: ' . $response->getStatusCode() . ': ' . $response->getBody());
         }
 
         $body = $response->getBody();
         // Handle header data and validate authorization field:
-        $responseHeaders = $response->getHeaders();
+        $responseHeaders = $response->getHeaders()->toArray();
+        foreach ($responseHeaders as $key => $value) {
+            $responseHeaders[strtolower($key)] = $value;
+        }
         TurkuSignature::validateHash(
             [],
             $body,
-            $responseHeaders['authorization'][0] ?? '',
+            $responseHeaders['authorization'] ?? '',
             $this->secretKey,
-            $responseHeaders['x-turku-ts'][0],
+            $responseHeaders['x-turku-ts'] ?? '',
             $this->platformName
         );
         // Create response:

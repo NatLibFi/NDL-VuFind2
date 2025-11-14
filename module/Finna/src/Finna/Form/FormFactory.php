@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Config
@@ -66,8 +66,8 @@ class FormFactory extends \VuFind\Form\FormFactory
         $requestedName,
         ?array $options = null
     ) {
-        $configManager = $container->get(\VuFind\Config\PluginManager::class);
-        $config = $configManager->get('config')->toArray();
+        $configManager = $container->get(\VuFind\Config\ConfigManagerInterface::class);
+        $config = $configManager->getConfigArray('config');
 
         $form = parent::__invoke($container, $requestedName, $options);
         if (isset($config['Site']['institution'])) {
@@ -90,7 +90,7 @@ class FormFactory extends \VuFind\Form\FormFactory
         $form->setRecordRequestFormsWithBarcode(
             (array)($config['Record']['repository_library_request_form'] ?? null)
         );
-        $form->setDataSourceConfig($configManager->get('datasources')->toArray());
+        $form->setDataSourceConfig($configManager->getConfigArray('datasources'));
         $form->setRecordLoader($container->get(\VuFind\Record\Loader::class));
         return $form;
     }
