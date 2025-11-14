@@ -1,14 +1,14 @@
 /* --- Login Screen --- */
 #authcontainer, #accountForm {
     h3 {
-        border-bottom: 1px solid $gray-lighter;
         font-weight: 400;
+        border-bottom: 1px solid $gray-lighter;
     }
     .login-info-icon {
-        font-size: $font-size-icon-large;
         float: left;
         margin-top: 0.4em;
         margin-left: 0.5em;
+        font-size: $font-size-icon-large;
         color: $primary;
     }
     .login-description {
@@ -21,16 +21,16 @@
         margin-left: 17px;
     }
     .login-description-terms, .register-description {
-        background-color: $info-bg-subtle;
         padding: 2em;
         padding-left: 2.5em;
         margin-bottom: 1em;
         margin-left: 0.5em;
+        background-color: $info-bg-subtle;
     }
     @include media-breakpoint-up(sm) {
         .login-col {
-            width: 50%;
             float: left;
+            width: 50%;
         }
     }
     @include media-breakpoint-down(sm) {
