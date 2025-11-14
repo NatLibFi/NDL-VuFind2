@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Service
@@ -26,12 +26,13 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Service\FinnaUserServiceInterface;
+use DateTime;
+use Finna\Db\Service\UserServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -54,7 +55,7 @@ use function sprintf;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 #[AsCommand(
     name: 'util/expire_users'
@@ -83,12 +84,12 @@ class ExpireUsers extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param FinnaUserServiceInterface $userService        User database service
-     * @param UserAccountService        $userAccountService User account database service
-     * @param \VuFind\Config\Config     $config             Main configuration
+     * @param UserServiceInterface  $userService        User database service
+     * @param UserAccountService    $userAccountService User account database service
+     * @param \VuFind\Config\Config $config             Main configuration
      */
     public function __construct(
-        protected FinnaUserServiceInterface $userService,
+        protected UserServiceInterface $userService,
         protected UserAccountService $userAccountService,
         \VuFind\Config\Config $config
     ) {
@@ -195,7 +196,7 @@ class ExpireUsers extends AbstractUtilCommand
      */
     protected function getExpiredUsers($days): array
     {
-        $expireDate = date('Y-m-d', strtotime(sprintf('-%d days', (int)$days)));
+        $expireDate = new DateTime(sprintf('-%d days', (int)$days));
         return $this->userService->getExpiringUsers($expireDate);
     }
 }

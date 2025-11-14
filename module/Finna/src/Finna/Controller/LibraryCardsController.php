@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -37,6 +37,8 @@ use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
+use VuFind\Db\Type\AuditEventSubtype;
+use VuFind\Db\Type\AuditEventType;
 use VuFind\Exception\Auth as AuthException;
 
 use function in_array;
@@ -83,14 +85,13 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $cards = [];
                 $patron = $this->getILSAuthenticator()->storedCatalogLogin();
                 foreach ($view->libraryCards as $card) {
-                    $card = $card->toArray();
                     if (
                         $patron
-                        && $patron['cat_username'] === $card['cat_username']
+                        && $patron['cat_username'] === $card->getCatUsername()
                     ) {
                         $profile = $this->getILS()->getMyProfile($patron);
                         if (!empty($profile['barcode'])) {
-                            $card['barcode'] = $profile['barcode'];
+                            $card->setBarcode($profile['barcode']);
                         }
                         array_unshift($cards, $card);
                         continue;
@@ -531,9 +532,29 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return false;
         }
 
-        if ('password' === $loginMethod && !$patron) {
-            $this->flashMessenger()
-                ->addMessage('authentication_error_invalid', 'error');
+        if ($patron) {
+            $this->getAuditEventService()->addEvent(
+                AuditEventType::User,
+                AuditEventSubtype::EditCard,
+                $user,
+                data: [
+                    'username' => $username,
+                    'card_id' => $id,
+                ]
+            );
+        } else {
+            if ('password' === $loginMethod) {
+                $this->flashMessenger()->addErrorMessage('authentication_error_invalid');
+            }
+            $this->getAuditEventService()->addEvent(
+                AuditEventType::User,
+                AuditEventSubtype::ILSLoginFailure,
+                $user,
+                data: [
+                    'username' => $username,
+                    'card_id' => $id,
+                ]
+            );
             return false;
         }
         if ('email' === $loginMethod) {
@@ -548,6 +569,16 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $info,
                     ['auth_method' => 'Email'],
                     'editLibraryCard'
+                );
+                $this->getAuditEventService()->addEvent(
+                    AuditEventType::User,
+                    AuditEventSubtype::SendCardAuthEmail,
+                    $user,
+                    data: [
+                        'username' => $username,
+                        'card_id' => $id,
+                        'email' => $info['email'],
+                    ]
                 );
             }
             // Don't reveal the result
@@ -678,6 +709,12 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $this->getAuthManager()->updateUserVerifyHash($user);
 
         $this->flashMessenger()->addSuccessMessage('new_password_success');
+
+        $this->getAuditEventService()->addEvent(
+            AuditEventType::User,
+            AuditEventSubtype::PasswordChanged,
+            $user,
+        );
 
         return $this->redirect()->toRoute('librarycards-home');
     }
