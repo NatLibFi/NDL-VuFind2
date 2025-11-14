@@ -88,8 +88,8 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
      */
     public function persistEntity(EntityInterface $entity): void
     {
-        assert(($comment = $entity instanceof Comments) || ($entity instanceof FinnaCommentsInappropriate));
-        if ($comment) {
+        assert($entity instanceof Comments || $entity instanceof FinnaCommentsInappropriate);
+        if ($entity instanceof Comments) {
             $entity->setFinnaUpdated(new DateTime());
         }
         parent::persistEntity($entity);
