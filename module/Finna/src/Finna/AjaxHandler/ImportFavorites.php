@@ -239,7 +239,7 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
 
                 $params = [
                     'notes' => $record['notes'] ?? '',
-                    'list' => $targetList,
+                    'list' => $targetList->getId(),
                     'mytags' => $record['tags'] ?? [],
                 ];
                 $this->favoritesService->saveRecordToFavorites($params, $this->user, $driver);

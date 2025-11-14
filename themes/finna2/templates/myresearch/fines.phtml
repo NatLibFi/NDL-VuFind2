@@ -191,7 +191,7 @@
           <input name="paymentId" type="hidden" value="<?=$this->escapeHtmlAttr($this->paymentId)?>">
           <?php if (!$this->selectFees): ?>
             <div class="fines-info-area payment-row">
-              <input type="submit" name="pay" class="btn btn-primary btn-lg" value="<?=$this->transEscAttr('Payment::start_payment', ['%%amount%%' => $this->safeMoneyFormat(($payableOnline + ($serviceFee ?? 0)) / 100.00)])?>">
+              <input type="submit" name="pay" class="btn btn-primary" value="<?=$this->transEscAttr('Payment::start_payment', ['%%amount%%' => $this->safeMoneyFormat(($payableOnline + ($serviceFee ?? 0)) / 100.00)])?>">
             </div>
           <?php endif; ?>
       <?php elseif (!empty($this->nonPayableReason) && !empty($this->fines)): ?>
