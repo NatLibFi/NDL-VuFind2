@@ -15,8 +15,8 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
   background: transparent;
   .search-result-header,
   .content-header {
-    font-size: $finna-header-font-size;
     margin: 0px;
+    font-size: $finna-header-font-size;
   }
   .adv_search_terms {
     display: block;
@@ -83,8 +83,8 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
 
 .adv-search-header {
   padding: 20px 0px;
-  border-bottom: none;
   background-color: $well-bg;
+  border-bottom: none;
   #searchForm {
     position: relative;
     flex: 1;
@@ -99,8 +99,8 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     line-height: 1em;
     a {
       margin-right: 15px;
-      color: $gray;
       font-weight: 600;
+      color: $gray;
       white-space: nowrap;
       .icon {
         font-size: 1.2em;
@@ -108,8 +108,8 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     }
     .adv-search-menu-toggle {
       padding: 5px 15px;
-      color: $gray;
       font-size: $font-size-small;
+      color: $gray;
     }
   }
 }
@@ -127,27 +127,27 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     }
     .adv-search-menu {
       position: absolute;
+      z-index: 1;
       padding: 10px;
       background-color: #fff;
-      border-radius: $border-radius-lg;
       border: 1px solid $gray-lighter;
-      z-index: 1;
+      border-radius: $border-radius-lg;
       &.active {
         display: block !important;
         a {
           display: block;
-          margin: 0px -10px;
           padding: 10px 10px;
+          margin: 0px -10px;
+          font-weight: normal;
           color: $text-color;
           text-align: left;
-          font-weight: normal;
           border-bottom: 1px solid $gray-lighter;
           &:first-child {
             padding-top: 0px;
           }
           &:last-child {
-            border-bottom: 0px;
             padding-bottom: 0px;
+            border-bottom: 0px;
           }
         }
       }
