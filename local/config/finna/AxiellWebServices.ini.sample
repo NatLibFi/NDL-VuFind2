@@ -212,6 +212,11 @@ currency = 'EUR'
 ; expression enclosed in slashes (e.g. '/^Lasku - Lasku\b/')
 nonPayable[] = '/^Lasku - Lasku\b/'
 nonPayable[] = '/^Muu maksu/'
+; Fine types that prevent payment completely
+;blockingNonPayableTypes[] = "XYZ"
+; Fine descriptions that prevent payment completely (enclose in // for regular expressions; modifiers supported,
+; other enclosures not)
+;blockingNonPayableDescriptions[] = "/Debt.*collection/"
 ; Whether the paid amount must match the payable amount. Default is true. If false,
 ; payments of less than the full amount are accepted.
 ;exactBalanceRequired = false

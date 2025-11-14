@@ -668,7 +668,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getImageRights($language, $skipImageCheck = false)
     {
-        if (!$skipImageCheck && !$this->getAllImages()) {
+        if (!$skipImageCheck && !$this->getAllImages($language)) {
             return false;
         }
 

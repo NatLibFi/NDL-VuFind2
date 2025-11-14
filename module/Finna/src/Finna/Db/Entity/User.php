@@ -186,7 +186,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Get a display name
+     * Get display name
      *
      * @return string
      */

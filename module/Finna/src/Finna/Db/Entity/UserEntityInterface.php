@@ -105,4 +105,18 @@ interface UserEntityInterface extends \VuFind\Db\Entity\UserEntityInterface
      * @return ?DateTime
      */
     public function getFinnaLastExpirationReminderDate(): ?DateTime;
+
+    /**
+     * Get display name
+     *
+     * @return string
+     */
+    public function getDisplayName();
+
+    /**
+     * Get a displayable version of username (improved version of getDisplayName)
+     *
+     * @return string
+     */
+    public function getDisplayableUsername(): string;
 }

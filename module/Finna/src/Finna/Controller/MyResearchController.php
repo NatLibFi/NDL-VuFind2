@@ -1558,7 +1558,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $searchService = $this->getDbService(SearchServiceInterface::class);
         $savedSearches = $searchService->getSearches('-', $user);
         $getSearchObject = function ($search) {
-            return $search['search_object'];
+            return serialize($search->getSearchObject());
         };
         return array_map($getSearchObject, $savedSearches);
     }
