@@ -229,10 +229,9 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getNonPresenterAuthorsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getNonPresenterAuthorsData')]
     public function testNonPresenterAuthors(
         string $language,
         array $expected
