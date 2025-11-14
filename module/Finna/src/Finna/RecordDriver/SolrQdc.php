@@ -863,9 +863,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      * @param string $role     Contributor role
      * @param string $fallback Fallback to use when no supported role is found
      *
-     * @return string Translation key
+     * @return ?string Translation key
      */
-    protected function translateRole($role, $fallback = null)
+    protected function translateRole($role, $fallback = null): ?string
     {
         // Map contributor role to CreatorRole translations
         $roleMap = [
