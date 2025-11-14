@@ -57,17 +57,19 @@ form[name=FeedbackRecord] .form-info {
     padding-top: 1em;
   }
 }
-form[name=FeedbackRecord], form[name=FeedbackSite] {
+form[name=FeedbackRecord],
+form[name=FeedbackSite] {
   textarea {
     width: 100%;
   }
 }
 
-div:not(.modal-body) > .feedback-content {
-  @include media-breakpoint-up(sm) {
+@include media-breakpoint-up(sm) {
+  div:not(.modal-body) > .feedback-content {
     width: 50%;
   }
 }
+
 .template-dir-feedback .feedback-content h1 {
     font-size: $finna-header-font-size;
 }

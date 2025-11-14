@@ -34,7 +34,12 @@ input, input.form-control {
 
 .form-inline {
   display: inline-block;
-  @include media-breakpoint-up(sm) {
+  .btn {
+    margin-left: 1px;
+  }
+}
+@include media-breakpoint-up(sm) {
+  .form-inline {
     .form-control {
       width: auto;
     }
@@ -42,9 +47,6 @@ input, input.form-control {
     .checkbox {
       padding-left: 0px;
     }
-  }
-  .btn {
-    margin-left: 1px;
   }
 }
 
@@ -67,7 +69,6 @@ input, input.form-control {
   &:not(:focus-visible) {
     box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
   }
-
   &:hover {
     background: darken($btn-primary-bg, 5%);
   }
@@ -107,20 +108,11 @@ input, input.form-control {
       outline: 0;
       box-shadow: $focus-ring-box-shadow;
     }
-
-    @include media-breakpoint-down(sm) {
-      width: percentage(($finna-search-input-width - 0.06));
-      font-size: 1.1em;
-    }
   }
   /* --- Autocomplete and form adjust accordingly --- */
   &.input-field-only .form-control.search-query {
     width: 85%;
-    @include media-breakpoint-down(sm) {
-      width: 80%;
-    }
   }
-
   #searchForm-reset {
     margin: auto 5px;
     color: $gray-light;
@@ -132,6 +124,18 @@ input, input.form-control {
   }
   .btn {
     border-radius: 0;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .navbar-form,
+  .searchForm {
+    .form-control.search-query {
+      width: percentage(($finna-search-input-width - 0.06));
+      font-size: 1.1em;
+    }
+    &.input-field-only .form-control.search-query {
+      width: 80%;
+    }
   }
 }
 

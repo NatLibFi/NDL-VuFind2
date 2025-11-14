@@ -20,20 +20,27 @@
     .remember-me-info {
         margin-left: 17px;
     }
-    .login-description-terms, .register-description {
+    .login-description-terms,
+    .register-description {
         padding: 2em;
         padding-left: 2.5em;
         margin-bottom: 1em;
         margin-left: 0.5em;
         background-color: $info-bg-subtle;
     }
-    @include media-breakpoint-up(sm) {
+}
+@include media-breakpoint-up(sm) {
+    #authcontainer,
+    #accountForm {
         .login-col {
             float: left;
             width: 50%;
         }
     }
-    @include media-breakpoint-down(sm) {
+}
+@include media-breakpoint-down(sm) {
+    #authcontainer,
+    #accountForm {
         .login-info-icon {
             margin-top: 0;
         }
@@ -42,8 +49,9 @@
         }
     }
 }
-#accountForm {
-    @include media-breakpoint-up(sm) {
+
+@include media-breakpoint-up(sm) {
+    #accountForm {
         .login-col:first-of-type {
             width: 40%;
         }
