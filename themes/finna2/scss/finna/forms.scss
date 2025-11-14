@@ -10,8 +10,8 @@ input, input.form-control {
 
 .form-control, .form-select {
   width: initial;
-  padding: 0px 5px;
   max-width: 100%; // make sure dropdowns don't overflow elements
+  padding: 0px 5px;
   vertical-align: middle !important;
 
   &::placeholder {
@@ -52,18 +52,18 @@ input, input.form-control {
 // --------------------------------------------------
 .navbar-form .btn[type="submit"],
 .searchForm .btn[type="submit"] {
-  color: $btn-primary-color;
-  padding: 6px 0px;
-  border-radius: 0px;
-  margin: 0;
-  transition: background .1s ease-in-out;
-  height: 48px;
-  width: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
+  padding: 6px 0px;
+  margin: 0px;
+  width: 48px;
+  height: 48px;
+  color: $btn-primary-color;
   background: $btn-primary-bg;
+  border: none;
+  border-radius: 0px;
+  transition: background .1s ease-in-out;
   &:not(:focus-visible) {
     box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
   }
@@ -72,39 +72,37 @@ input, input.form-control {
     background: darken($btn-primary-bg, 5%);
   }
   .icon {
+    vertical-align: inherit;
     font-size: 28px;
     color: $btn-primary-color;
-    vertical-align: inherit;
     cursor: pointer;
   }
 }
 .searchHomeContent .btn-link {
-  font-size: 1.2em;
   margin-top: 5px;
+  font-size: 1.2em;
 }
 
 .navbar-form,
 .searchForm {
+  display: flex;
   width: 100%;
-  display:flex;
-  margin-left: 0;
-  margin-right: 0;
   padding: 0px;
+  margin: 0px;
   background-color: $search-input-bg;
-  border-radius: 0;
   border-top: 0px;
   border-bottom: 0px;
-  margin: 0px;
-  box-shadow: 0px 0px 3px rgba(100,100,100,0.5);
+  border-radius: 0px;
+  box-shadow: 0px 0px 3px rgba(100, 100, 100, .5);
   .form-control.search-query {
+    display: inline-block !important;
     flex: 1 1 auto;
+    height: 48px;
+    padding-left: 10px;
+    color: $gray;
+    background: transparent;
     border: none;
     box-shadow: none;
-    background: transparent;
-    display: inline-block !important;
-    color: $gray;
-    padding-left: 10px;
-    height: 48px;
     &:focus-visible {
       outline: 0;
       box-shadow: $focus-ring-box-shadow;
@@ -124,14 +122,10 @@ input, input.form-control {
   }
 
   #searchForm-reset {
-    border: none;
-    margin-left: 0px;
-    background: transparent;
+    margin: auto 5px;
     color: $gray-light;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 5px;
-    margin-left: 5px;
+    background: transparent;
+    border: none;
     &:hover {
       cursor: pointer;
     }
@@ -146,28 +140,28 @@ input, input.form-control {
 }
 
 .dropdown.form-control.type-dropdown {
-  border: none;
   display: inline-block;
-  background: transparent;
-  box-shadow: none;
-  color: $gray;
   height: 48px;
   margin: auto;
+  color: $gray;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   a {
     color: black;
   }
   .dropdown-toggle {
-    min-width: 110px;
     display: inline-flex;
     align-content: center;
     justify-content: end;
     height: inherit;
+    min-width: 110px;
     padding: 6px 0px;
   }
   li {
-    text-align: left;
-    color: $text-color;
     min-width: 110px;
+    color: $text-color;
+    text-align: left;
   }
 }
 
@@ -184,8 +178,8 @@ button.multiselect {
 
 .radio,
 .checkbox {
-  padding-left: 10px;
   position: inherit;
+  padding-left: 10px;
 }
 
 .template-dir-feedback .template-name-form form,
@@ -205,8 +199,8 @@ button.multiselect {
   }
 
   input[type=radio] {
-    height: 1em;
     position: absolute;
+    height: 1em;
     margin-left: -20px;
   }
 
@@ -216,22 +210,22 @@ button.multiselect {
       padding-left: 0;
       label.form-label, label.control-label {
         padding-left: 0;
-        font-weight: 700;
         margin-bottom: 5px;
+        font-weight: 700;
       }
       label {
         display: table;
         margin: 7px 0;
         input {
-          margin-right: 10px;
           margin-top: 3px;
+          margin-right: 10px;
         }
       }
     }
     &.checkbox label input {
+      display: inline-block;
       height: 1em;
       margin-top: -1px;
-      display: inline-block;
     }
   }
 }
