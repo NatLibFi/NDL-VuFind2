@@ -27,7 +27,9 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
   }
 }
 
-.template-name-content .finna-main-header { background: $body-bg; }
+.template-name-content .finna-main-header {
+  background: $body-bg;
+}
 
 .main.template-dir-feedcontent.template-name-content,
 .main.template-dir-content.template-name-content {
@@ -61,7 +63,9 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
   }
 }
 
-.template-dir-list.template-name-list .finna-main-header { background: $myresearch-header-background; }
+.template-dir-list.template-name-list .finna-main-header {
+  background: $myresearch-header-background;
+}
 
 @include media-breakpoint-down(sm) {
   .template-name-results,

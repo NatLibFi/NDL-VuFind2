@@ -27,7 +27,9 @@
     }
   }
 
-  .searchbox-home .tooltip-search-local .search-help-icon { color: #fff; }
+  .searchbox-home .tooltip-search-local .search-help-icon {
+    color: #fff;
+  }
 
   .searchbox-home,
   .searchbox-authority-search {
@@ -78,10 +80,14 @@
   }
 }
 @include media-breakpoint-down(md) {
-  .searchbox .dropdown.form-control.type-dropdown { display: none; }
+  .searchbox .dropdown.form-control.type-dropdown {
+    display: none;
+  }
 }
 @include media-breakpoint-down(lg) {
-  .searchbox .pager { margin-left: 6px; }
+  .searchbox .pager {
+    margin-left: 6px;
+  }
 }
 
 .searchbox-flex {
@@ -142,10 +148,14 @@
   }
 }
 @include media-breakpoint-up(md) {
-  .searchbox-flex .search { max-width: 70%; }
+  .searchbox-flex .search {
+    max-width: 70%;
+  }
 }
 @include media-breakpoint-down(lg) {
-  .searchbox-flex .pager { margin-left: 6px; }
+  .searchbox-flex .pager {
+    margin-left: 6px;
+  }
 }
 
 .finna-filters {
