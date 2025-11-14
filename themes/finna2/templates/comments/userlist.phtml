@@ -83,7 +83,7 @@
                 </div>
               </td>
               <td class="mycomments-table-hidden">
-                  <?php if ($comment['finna_visible'] === 0): ?>
+                  <?php if (!$comment['finnaVisible']): ?>
                     <?php
                       $tooltipBtn = [
                         'label' => $this->transEsc('comment_hidden'),
@@ -94,7 +94,7 @@
                     <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
                   <?php endif; ?>
               </td>
-              <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment['created'])?></td>
+              <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('U', $comment['created']->getTimestamp())?></td>
               <td data-label="<?=$this->transEscAttr('Title')?>">
                 <?php $missing = $comment['missing']; ?>
                 <?php $titleEsc = $this->escapeHtml($comment['recordTitle']); ?>

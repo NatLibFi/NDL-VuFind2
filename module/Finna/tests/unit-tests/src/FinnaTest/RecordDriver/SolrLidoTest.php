@@ -691,6 +691,22 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             [
+                'heading' => ['Rakennus'],
+                'type' => 'prt',
+                'id' => 'PRT',
+                'ids' => [
+                    'PRT',
+                ],
+            ],
+            [
+                'heading' => ['Rakennus2'],
+                'type' => 'prt',
+                'id' => 'PRT2',
+                'ids' => [
+                    'PRT2',
+                ],
+            ],
+            [
                 'heading' => ['Lohja'],
                 'type' => 'mjr',
                 'id' => '123456',
@@ -711,6 +727,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ['juures'],
             ['Jussi, Jänö'],
             ['Etelä-Suomi'],
+            ['Rakennus'],
+            ['Rakennus2'],
             ['Lohja'],
             ['Kauppakatu 5, Lohja, Uusimaa, Suomi'],
         ];
@@ -734,6 +752,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     'lido_test2.xml' => [
                         'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                        'Suomi',
                     ],
                 ],
             ],
@@ -746,6 +765,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     'lido_test2.xml' => [
                         'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                        'Finland',
                     ],
                 ],
             ],
@@ -758,6 +778,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     'lido_test2.xml' => [
                         'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                        'Suomi',
                     ],
                 ],
             ],
@@ -818,6 +839,24 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             $driver->getNonPresenterAuthors()
+        );
+    }
+
+    /**
+     * Test getLocalIdentifiers.
+     *
+     * @return void
+     */
+    public function testGetLocalIdentifiers(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertEquals(
+            [
+                '000001',
+                '000002 (inventaarionumero)',
+                '000003 (esinenumero)',
+            ],
+            $driver->getLocalIdentifiers()
         );
     }
 

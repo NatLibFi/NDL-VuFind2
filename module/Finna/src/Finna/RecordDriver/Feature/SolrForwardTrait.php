@@ -62,7 +62,10 @@ trait SolrForwardTrait
     public function getAllImages($language = 'fi', $includePdf = false)
     {
         $images = [];
-
+        $cacheKey = __FUNCTION__ . '|' . $language;
+        if (isset($this->cache[$cacheKey])) {
+            return $this->cache[$cacheKey];
+        }
         foreach ($this->getAllRecordsXML() as $xml) {
             foreach ($xml->ProductionEvent as $event) {
                 $attributes = $event->ProductionEventType->attributes();
@@ -105,6 +108,7 @@ trait SolrForwardTrait
                 $this->imagesCount++;
             }
         }
+        $this->cache[$cacheKey] = $images;
         return $images;
     }
 }

@@ -32,11 +32,15 @@ namespace Finna\Db\Service;
 use Closure;
 use DateTime;
 use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Tools\Pagination\Paginator as DoctrinePaginator;
+use DoctrineORMModule\Paginator\Adapter\DoctrinePaginator as DoctrinePaginatorAdapter;
 use Finna\Db\Entity\Comments;
 use Finna\Db\Entity\CommentsEntityInterface;
 use Finna\Db\Entity\FinnaCommentsEntityInterface;
+use Finna\Db\Entity\FinnaCommentsInappropriate;
 use Finna\Db\Entity\FinnaCommentsInappropriateEntityInterface;
 use Finna\Db\Entity\FinnaCommentsRecordEntityInterface;
+use Laminas\Paginator\Paginator;
 use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\PluginManager as EntityPluginManager;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -84,8 +88,10 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
      */
     public function persistEntity(EntityInterface $entity): void
     {
-        assert($entity instanceof Comments);
-        $entity->setFinnaUpdated(new DateTime());
+        assert($entity instanceof Comments || $entity instanceof FinnaCommentsInappropriate);
+        if ($entity instanceof Comments) {
+            $entity->setFinnaUpdated(new DateTime());
+        }
         parent::persistEntity($entity);
     }
 
@@ -121,7 +127,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
     }
 
     /**
-     * Get inappropriate comments for a record reported by the given user.
+     * Get inappropriate comment IDs for a record reported by the given user.
      *
      * @param ?UserEntityInterface $user     Reporter, or null to use current session
      * @param string               $recordId Record ID
@@ -131,8 +137,8 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
      */
     public function getInappropriateForRecord(?UserEntityInterface $user, string $recordId, string $source): array
     {
-        $dql = 'SELECT ci FROM ' . FinnaCommentsInappropriateEntityInterface::class . ' ci'
-            . ' JOIN ' . FinnaCommentsRecordEntityInterface::class . ' cr WITH ci.comment_id = cr.comment_id'
+        $dql = 'SELECT IDENTITY(ci.comment) FROM ' . FinnaCommentsInappropriateEntityInterface::class . ' ci'
+            . ' JOIN ' . FinnaCommentsRecordEntityInterface::class . ' cr WITH ci.comment = cr.comment'
             . ' WHERE';
         $params = [];
         if ($user) {
@@ -142,13 +148,37 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
             $dql .= ' ci.sessionId = :sessionId';
             $params[':sessionId'] = (($this->sessionManagerLoader)())->getSessionId();
         }
-        $subQuery = $this->entityManager->createQuery($dql)
-            ->setParameters($params);
+        return $this->entityManager->createQuery($dql)
+            ->setParameters($params)
+            ->getSingleColumnResult();
+    }
 
-        return $this->entityManager
-            ->createQuery('SELECT c FROM ' . CommentsEntityInterface::class . ' WHERE c.id IN (:subQuery)')
-            ->setParameters(compact('subQuery'))
-            ->getResult();
+    /**
+     * Get comments associated with the specified record.
+     *
+     * @param string $id     Record ID to look up
+     * @param string $source Source of record to look up
+     *
+     * @return CommentsEntityInterface[]
+     */
+    public function getRecordComments(string $id, string $source = DEFAULT_SEARCH_BACKEND): array
+    {
+        $resourceService = $this->getDbService(ResourceServiceInterface::class);
+        $resource = $resourceService->getResourceByRecordId($id, $source);
+        if (!$resource) {
+            return [];
+        }
+        $dql = 'SELECT c '
+            . 'FROM ' . CommentsEntityInterface::class . ' c '
+            . 'LEFT JOIN c.user u '
+            . 'WHERE c.resource = :resource AND c.finnaVisible = 1'
+            . 'ORDER BY c.created ASC';
+
+        $parameters = compact('resource');
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($parameters);
+        $result = $query->getResult();
+        return $result;
     }
 
     /**
@@ -170,6 +200,51 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
         $commentEntity->setComment($comment)
             ->setFinnaUpdated(new DateTime());
         $this->persistEntity($commentEntity);
+    }
+
+    /**
+     * Get a paginated result of all comments made by the user.
+     *
+     * @param int    $userId User ID
+     * @param int    $limit  Limit
+     * @param int    $page   Page
+     * @param string $sort   Sort
+     *
+     * @return Paginator
+     */
+    public function getCommentsPaginator(
+        int $userId,
+        int $limit,
+        int $page,
+        string $sort
+    ): Paginator {
+        $dql = 'SELECT c.id, c.comment, c.finnaVisible, c.created AS created, '
+            . 'u.id AS user_id, u.username AS username, '
+            . 'r.id AS resource_id, r.recordId AS record_id, r.source AS source, r.title AS title '
+            . 'FROM ' . CommentsEntityInterface::class . ' c '
+            . 'LEFT JOIN c.user u '
+            . 'LEFT JOIN c.resource r '
+            . 'WHERE c.user = :userId';
+
+        $parameters = ['userId' => $userId];
+
+        $sortOrder = $sort ? $sort : 'created DESC';
+
+        $dql .= ' ORDER BY ' . $sortOrder;
+
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($parameters);
+        $query->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit);
+
+        $doctrinePaginator = new DoctrinePaginator($query);
+        $doctrinePaginator->setUseOutputWalkers(false);
+
+        $paginator = new Paginator(new DoctrinePaginatorAdapter($doctrinePaginator));
+        $paginator->setItemCountPerPage($limit);
+        $paginator->setCurrentPageNumber($page);
+
+        return $paginator;
     }
 
     /**
