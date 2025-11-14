@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -27,7 +27,7 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -46,9 +46,9 @@ use function in_array;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\LoggerAwareInterface
+class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -236,15 +236,18 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         $otherSizes = [];
         $highResolution = [];
         $rights = $this->getRights($language);
-        $addToResults = function ($imageData) use (&$results) {
-            if (!isset($imageData['urls']['small'])) {
-                $imageData['urls']['small'] = $imageData['urls']['medium']
-                    ?? $imageData['urls']['large']
-                    ?? $imageData['urls']['original'];
+        $addToResults = function ($imageData) use (&$results): void {
+            if (!$this->maxAmountOfImages()) {
+                if (!isset($imageData['urls']['small'])) {
+                    $imageData['urls']['small'] = $imageData['urls']['medium']
+                        ?? $imageData['urls']['large']
+                        ?? $imageData['urls']['original'];
+                }
+                $imageData = $this->ensureImageSizes($imageData);
+                $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
+                $results[] = $imageData;
             }
-            $imageData = $this->ensureImageSizes($imageData);
-            $imageData['downloadable'] = $this->allowRecordImageDownload($imageData);
-            $results[] = $imageData;
+            $this->imagesCount++;
         };
 
         foreach ($xml->file as $node) {
@@ -303,6 +306,8 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
                 ]
             );
         }
+        $thumbnails = [];
+        $otherSizes = [];
         // Attempt to find a PDF file to be converted to a coverimage
         if ($includePdf && empty($results)) {
             $urls = [];
@@ -654,7 +659,10 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
         $urls = [];
         foreach (parent::getURLs() as $url) {
             if (!$this->urlBlocked($url['url'] ?? '')) {
-                $urls[] = $url;
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = $url;
+                }
+                $this->urlsCount++;
             }
         }
         $urls = $this->resolveUrlTypes($urls);
@@ -776,5 +784,17 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\L
             return $descriptions[$first];
         }
         return [];
+    }
+
+    /**
+     * Given a Solr field name, return an appropriate caption.
+     *
+     * @param string $field Solr field name
+     *
+     * @return mixed        Caption if found, false if none available.
+     */
+    public function getSnippetCaption($field)
+    {
+        return $field !== 'contents' ? parent::getSnippetCaption($field) : false;
     }
 }

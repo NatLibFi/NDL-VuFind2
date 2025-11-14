@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OrganisationInfo\Provider;
@@ -50,12 +50,12 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 abstract class AbstractProvider implements
     TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     ProviderInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -381,6 +381,8 @@ abstract class AbstractProvider implements
         }
         $isAlwaysClosed = true;
         $hasSelfServiceTimes = false;
+        $now = time();
+        $currentScheduleTime = null;
         // empty() needed because we can't use null coalescing without breaking the reference:
         if (!empty($result['openTimes']['schedules'])) {
             foreach ($result['openTimes']['schedules'] as &$schedule) {
@@ -405,6 +407,10 @@ abstract class AbstractProvider implements
                         if (null === $lastClosingDateTime || $time['closes'] > $lastClosingDateTime) {
                             $lastClosingDateTime = $time['closes'];
                         }
+                        $time['current'] = $now >= $time['opens'] && $now < $time['closes'];
+                        if ($time['current']) {
+                            $currentScheduleTime = $time;
+                        }
                         if ($time['selfservice']) {
                             $selfServiceTimes[] = $time;
                             $hasSelfServiceTimes = true;
@@ -427,6 +433,10 @@ abstract class AbstractProvider implements
         }
         $result['isAlwaysClosed'] = $isAlwaysClosed;
         $result['hasSelfServiceTimes'] = $hasSelfServiceTimes;
+        if ($result['openNow'] && $hasSelfServiceTimes) {
+            $result['currentScheduleTime'] = $currentScheduleTime;
+        }
+        unset($now, $currentScheduleTime);
 
         if (!empty($result['address'])) {
             $address = $result['address'];

@@ -18,19 +18,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
 
+use Finna\Db\Service\UserResourceServiceInterface;
 use Finna\View\Helper\Root\RecordImage as RecordImageHelper;
 use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Service\CommentsServiceInterface;
@@ -49,7 +50,7 @@ use function is_string;
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
 {
@@ -63,14 +64,16 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
     /**
      * Constructor
      *
-     * @param RecordHelper             $recordHelper      Record helper
-     * @param RecordImageHelper        $recordImageHelper Record image helper
-     * @param CommentsServiceInterface $commentsService   Comments database service
+     * @param RecordHelper                 $recordHelper        Record helper
+     * @param RecordImageHelper            $recordImageHelper   Record image helper
+     * @param CommentsServiceInterface     $commentsService     Comments database service
+     * @param UserResourceServiceInterface $userResourceService User resource database service
      */
     public function __construct(
         protected RecordHelper $recordHelper,
         protected RecordImageHelper $recordImageHelper,
-        protected CommentsServiceInterface $commentsService
+        protected CommentsServiceInterface $commentsService,
+        protected UserResourceServiceInterface $userResourceService
     ) {
     }
 
@@ -117,14 +120,14 @@ class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
         $entry->setLink($url);
 
         if ($this->list) {
-            if (method_exists($record, 'getListSavedDate')) {
-                $saved = $record->getListSavedDate(
-                    $this->list->id,
-                    $this->list->user_id
-                );
-                if ($saved) {
-                    $entry->setDateModified(new \DateTime($saved));
-                }
+            $resources = $this->userResourceService->getFavoritesForRecord(
+                $record->getUniqueId(),
+                $record->getSourceIdentifier(),
+                $this->list,
+                $this->list->getUser()
+            );
+            if ($saved = current($resources)?->getSaved()) {
+                $entry->setDateModified($saved);
             }
         } else {
             $date = $this->getDateModified($record);

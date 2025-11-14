@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -135,9 +135,9 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
      * @param string $userFixture     Path to user fixture
      * @param string $expectedFixture Path to expected fixture
      *
-     * @return       void
-     * @dataProvider getTestUpdateAddressData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestUpdateAddressData')]
     public function testUpdateAddress(
         array $patron,
         array $details,
@@ -198,9 +198,9 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
      * @param string $fixtureKey Fixture key
      * @param array  $expected   Expected results
      *
-     * @return       void
-     * @dataProvider getTestPatronLoginData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestPatronLoginData')]
     public function testPatronLogin(string $fixtureKey, array $expected): void
     {
         $userFixture = $this->getFixture($fixtureKey, 'Finna');
@@ -222,68 +222,76 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
      */
     public static function getTestGetMyProfileData(): Generator
     {
+        $fullProfile = [
+            'barcode' => '01924019240',
+            'email' => 'pref@email.if',
+            'group_code' => 'test',
+            'expired' => null,
+            'expiration_soon' => null,
+            'self_service_pin' => null,
+            'address3' => 'Line 3',
+            'homeAddress' => 'Line 1, 00000 City',
+            'workAddress' => 'A street 1, 00000 Far away',
+            'account_type' => 'normal',
+            'language' => 'fi',
+            'firstname' => 'John',
+            'lastname' => 'Smith',
+            'birthdate' => '',
+            'address1' => 'Line 1',
+            'address2' => 'Line 2',
+            'city' => 'City',
+            'country' => new TranslatableString('Country', ''),
+            'zip' => '00000',
+            'phone' => '9876543210',
+            'mobile_phone' => null,
+            'home_library' => null,
+            'expiration_date' => null,
+            'group' => 'descgroup',
+            'addresses' => [
+                [
+                    'address1' => 'A street 1',
+                    'address2' => '          ',
+                    'address3' => 'Not a default field',
+                    'country' => new TranslatableString('Far', ''),
+                    'city' => 'Far away',
+                    'zip' => '00000',
+                    'types' => [
+                        'work',
+                        'something',
+                    ],
+                    'preferred' => false,
+                ],
+                [
+                    'address1' => 'Line 1',
+                    'address2' => 'Line 2',
+                    'address3' => 'Line 3',
+                    'country' => new TranslatableString('Country', ''),
+                    'city' => 'City',
+                    'zip' => '00000',
+                    'types' => [
+                        'Type 1',
+                        'home',
+                    ],
+                    'preferred' => true,
+                ],
+            ],
+            'guarantees' => [
+                ['lastname' => 'Tester Test'],
+                ['lastname' => 'Ttee Tst'],
+            ],
+            'messagingServices' => [],
+            'loan_history' => null,
+        ];
+        $fullProfileNonPreferredEmail = $fullProfile;
+        $fullProfileNonPreferredEmail['email'] = 'first@email.if';
+
         yield 'profile all values set' => [
             'alma/profile.xml',
-            [
-                'barcode' => '01924019240',
-                'email' => 'pref@email.if',
-                'group_code' => 'test',
-                'expired' => null,
-                'expiration_soon' => null,
-                'self_service_pin' => null,
-                'address3' => 'Line 3',
-                'homeAddress' => 'Line 1, 00000 City',
-                'workAddress' => 'A street 1, 00000 Far away',
-                'account_type' => 'normal',
-                'language' => 'fi',
-                'firstname' => 'John',
-                'lastname' => 'Smith',
-                'birthdate' => '',
-                'address1' => 'Line 1',
-                'address2' => 'Line 2',
-                'city' => 'City',
-                'country' => new TranslatableString('Country', ''),
-                'zip' => '00000',
-                'phone' => '9876543210',
-                'mobile_phone' => null,
-                'home_library' => null,
-                'expiration_date' => null,
-                'group' => 'descgroup',
-                'addresses' => [
-                    [
-                        'address1' => 'A street 1',
-                        'address2' => '          ',
-                        'address3' => 'Not a default field',
-                        'country' => new TranslatableString('Far', ''),
-                        'city' => 'Far away',
-                        'zip' => '00000',
-                        'types' => [
-                            'work',
-                            'something',
-                        ],
-                        'preferred' => false,
-                    ],
-                    [
-                        'address1' => 'Line 1',
-                        'address2' => 'Line 2',
-                        'address3' => 'Line 3',
-                        'country' => new TranslatableString('Country', ''),
-                        'city' => 'City',
-                        'zip' => '00000',
-                        'types' => [
-                            'Type 1',
-                            'home',
-                        ],
-                        'preferred' => true,
-                    ],
-                ],
-                'guarantees' => [
-                    ['lastname' => 'Tester Test'],
-                    ['lastname' => 'Ttee Tst'],
-                ],
-                'messagingServices' => [],
-                'loan_history' => null,
-            ],
+            $fullProfile,
+        ];
+        yield 'profile all values set but no preferred email' => [
+            'alma/profile_no_preferred_email.xml',
+            $fullProfileNonPreferredEmail,
         ];
         yield 'profile some values missing' => [
             'alma/profile_partial.xml',
@@ -326,9 +334,9 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
      * @param string $fixtureKey Fixture key
      * @param array  $expected   Expected results
      *
-     * @return       void
-     * @dataProvider getTestGetMyProfileData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestGetMyProfileData')]
     public function testGetMyProfile(string $fixtureKey, array $expected): void
     {
         $profileFixture = $this->getFixture($fixtureKey, 'Finna');
