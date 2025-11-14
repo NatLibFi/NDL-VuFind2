@@ -83,7 +83,7 @@
                 </div>
               </td>
               <td class="mycomments-table-hidden">
-                  <?php if ($comment['finnaVisible'] === 0): ?>
+                  <?php if (!$comment['finnaVisible']): ?>
                     <?php
                       $tooltipBtn = [
                         'label' => $this->transEsc('comment_hidden'),
