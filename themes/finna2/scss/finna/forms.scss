@@ -58,10 +58,10 @@ input, input.form-control {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 0px;
-  margin: 0px;
   width: 48px;
   height: 48px;
+  padding: 6px 0px;
+  margin: 0px;
   color: $btn-primary-color;
   background: $btn-primary-bg;
   border: none;
@@ -74,9 +74,9 @@ input, input.form-control {
     background: darken($btn-primary-bg, 5%);
   }
   .icon {
-    vertical-align: inherit;
     font-size: 28px;
     color: $btn-primary-color;
+    vertical-align: inherit;
     cursor: pointer;
   }
 }
@@ -106,8 +106,8 @@ input, input.form-control {
     border: none;
     box-shadow: none;
     &:focus-visible {
-      outline: 0;
       box-shadow: $focus-ring-box-shadow;
+      outline: 0;
     }
   }
   /* --- Autocomplete and form adjust accordingly --- */
@@ -131,7 +131,7 @@ input, input.form-control {
   .navbar-form,
   .searchForm {
     .form-control.search-query {
-      width: percentage(($finna-search-input-width - 0.06));
+      width: percentage(($finna-search-input-width - .06));
       font-size: 1.1em;
     }
     &.input-field-only .form-control.search-query {
@@ -153,7 +153,7 @@ input, input.form-control {
   border: none;
   box-shadow: none;
   a {
-    color: black;
+    color: #000;
   }
   .dropdown-toggle {
     display: inline-flex;
