@@ -37,6 +37,8 @@ use VuFind\Db\Entity\PluginManager as EntityPluginManager;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\PersistenceManager;
+use Finna\Db\Entity\User;
+use Finna\Db\Entity\UserCard;
 
 use function in_array;
 
@@ -116,17 +118,20 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
      */
     public function getUsersForLibraryCard(string $catUsername): array
     {
-        $userCards = $this->getDbTable('UserCard');
-        $callback = function ($select) use ($catUsername) {
-            $select
-                ->columns(['id', 'user_id', 'user_card_created' => 'created'])
-                ->where->equalTo('user_card.cat_username', $catUsername);
-            $select->join(
-                ['u' => 'user'],
-                'u.id = user_card.user_id',
-                ['username', 'auth_method', 'last_login']
-            );
-        };
-        return iterator_to_array($userCards->select($callback));
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select(
+                'uc.id',
+                'uc.created AS user_card_created',
+                'u.id AS user_id',
+                'u.username',
+                'u.authMethod',
+                'u.lastLogin'
+            )
+            ->from(UserCard::class, 'uc')
+            ->join('uc.user', 'u')
+            ->where('uc.catUsername = :catUsername')
+            ->setParameter('catUsername', $catUsername);
+
+        return $qb->getQuery()->getArrayResult();
     }
 }

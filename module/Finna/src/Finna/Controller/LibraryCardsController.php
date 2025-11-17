@@ -797,10 +797,10 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $userInfo = [];
         foreach ($users as $user) {
             $userInfo[] = [
-                'username' => $user->username,
-                'authMethod' => $user->auth_method,
-                'cardCreated' => $user->user_card_created,
-                'lastLogin' => $user->last_login,
+                'username' => $user['username'],
+                'authMethod' => $user['authMethod'],
+                'cardCreated' => $user['user_card_created'],
+                'lastLogin' => $user['lastLogin'],
             ];
         }
         return $this->createViewModel(['users' => $userInfo]);
