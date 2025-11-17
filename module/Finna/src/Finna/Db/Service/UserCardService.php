@@ -31,14 +31,13 @@ namespace Finna\Db\Service;
 
 use Closure;
 use Doctrine\ORM\EntityManager;
+use Finna\Db\Entity\UserCard;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Config\AccountCapabilities;
 use VuFind\Db\Entity\PluginManager as EntityPluginManager;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\PersistenceManager;
-use Finna\Db\Entity\User;
-use Finna\Db\Entity\UserCard;
 
 use function in_array;
 
@@ -120,17 +119,17 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
     {
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select(
-                'uc.id',
-                'uc.created AS user_card_created',
-                'u.id AS user_id',
-                'u.username',
-                'u.authMethod',
-                'u.lastLogin'
-            )
-            ->from(UserCard::class, 'uc')
-            ->join('uc.user', 'u')
-            ->where('uc.catUsername = :catUsername')
-            ->setParameter('catUsername', $catUsername);
+            'uc.id',
+            'uc.created AS user_card_created',
+            'u.id AS user_id',
+            'u.username',
+            'u.authMethod',
+            'u.lastLogin'
+        )
+        ->from(UserCard::class, 'uc')
+        ->join('uc.user', 'u')
+        ->where('uc.catUsername = :catUsername')
+        ->setParameter('catUsername', $catUsername);
 
         return $qb->getQuery()->getArrayResult();
     }
