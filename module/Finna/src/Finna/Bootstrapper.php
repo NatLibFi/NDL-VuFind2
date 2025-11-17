@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Bootstrap
@@ -77,7 +77,7 @@ class Bootstrapper
         $this->event = $event;
         $this->events = $event->getApplication()->getEventManager();
         $sm = $this->event->getApplication()->getServiceManager();
-        $this->config = $sm->get(\VuFind\Config\PluginManager::class)->get('config');
+        $this->config = $sm->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('config');
     }
 
     /**
@@ -182,7 +182,7 @@ class Bootstrapper
         }
 
         $sm = $this->event->getApplication()->getServiceManager();
-        $callback = function ($event) use ($sm) {
+        $callback = function ($event) use ($sm): void {
             if (!($routeMatch = $event->getRouteMatch())) {
                 return;
             }

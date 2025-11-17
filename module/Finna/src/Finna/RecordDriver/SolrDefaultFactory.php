@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -75,7 +75,7 @@ class SolrDefaultFactory extends \VuFind\RecordDriver\SolrDefaultWithoutSearchSe
         $driver->attachSearchService($container->get(\VuFindSearch\Service::class));
         $driver->attachDateConverter($container->get(\VuFind\Date\Converter::class));
         $driver->attachDatasourceSettings(
-            $container->get(\VuFind\Config\PluginManager::class)->get('datasources')
+            $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('datasources')
         );
         $driver->attachVideoHandler($container->get(\Finna\Video\Video::class));
         $driver->attachLocaleSettings($container->get(\VuFind\I18n\Locale\LocaleSettings::class));

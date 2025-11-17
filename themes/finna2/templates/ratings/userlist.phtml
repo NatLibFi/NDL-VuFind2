@@ -85,7 +85,7 @@
                   </div>
                 <?php endif; ?>
               </td>
-              <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $rating['created'])?></td>
+              <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('U', $rating['created']->getTimestamp())?></td>
               <td data-label="<?=$this->transEscAttr('Title')?>">
                 <?php $missing = $rating['missing']; ?>
                 <?php $titleEsc = $this->escapeHtml($rating['recordTitle']); ?>

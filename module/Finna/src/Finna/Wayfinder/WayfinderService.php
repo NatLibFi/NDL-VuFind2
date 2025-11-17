@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category Wayfinder
  * @package  Wayfinder
@@ -31,8 +31,8 @@
 namespace Finna\Wayfinder;
 
 use Laminas\Http\Response;
-use Laminas\Log\LoggerInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceInterface;
 

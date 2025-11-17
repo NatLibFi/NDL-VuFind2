@@ -598,10 +598,8 @@
             top: 0px;
             color: black;
             z-index: 6;
-            .image-index {
-                background-color: #efefefcc;
-                padding: 2px;
-            }
+            background-color: #efefefcc;
+            padding: 2px;
         }
         .iconlabel {
             display: none;
@@ -641,8 +639,7 @@
     }
 }
 .result .image-popup-trigger .paginator-info {
-    right: initial;
-    left: 35px;
+    right: 0;
 }
 .result .recordcover-holder .next-image {
     display: none;

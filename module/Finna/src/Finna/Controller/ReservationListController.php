@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -98,7 +98,7 @@ class ReservationListController extends AbstractBase
      *
      * @return mixed The value of the specified parameter.
      */
-    protected function getParam(string $param, mixed $default = null): mixed
+    protected function getParamFromRequest(string $param, mixed $default = null): mixed
     {
         return $this->params()->fromRoute($param)
             ?? $this->params()->fromPost($param)
@@ -134,10 +134,10 @@ class ReservationListController extends AbstractBase
         }
         $view = $this->createViewModel(
             [
-                'institution' => $this->getParam('institution'),
-                'listIdentifier' => $this->getParam('listIdentifier'),
-                'recordId' => $this->getParam('recordId'),
-                'source' => $this->getParam('source'),
+                'institution' => $this->getParamFromRequest('institution'),
+                'listIdentifier' => $this->getParamFromRequest('listIdentifier'),
+                'recordId' => $this->getParamFromRequest('recordId'),
+                'source' => $this->getParamFromRequest('source'),
             ]
         );
         $driver = $this->getRecordLoader()->load(
@@ -207,10 +207,10 @@ class ReservationListController extends AbstractBase
 
         $view = $this->createViewModel(
             [
-                'source' => $this->getParam('source'),
-                'recordId' => $this->getParam('recordId'),
-                'institution' => $this->getParam('institution'),
-                'listIdentifier' => $this->getParam('listIdentifier'),
+                'source' => $this->getParamFromRequest('source'),
+                'recordId' => $this->getParamFromRequest('recordId'),
+                'institution' => $this->getParamFromRequest('institution'),
+                'listIdentifier' => $this->getParamFromRequest('listIdentifier'),
             ]
         );
         $listHandler = $this->reservationListService->getListHandler(
@@ -233,14 +233,14 @@ class ReservationListController extends AbstractBase
                 $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
                 return $view;
             }
-            $title = $this->getParam('title');
+            $title = $this->getParamFromRequest('title');
             if (!$title) {
                 return $view;
             }
             $listEntity = $this->reservationListService->createListForUser($user);
             $newListValues = [
                 'title' => $title,
-                'desc' => $this->getParam('desc'),
+                'desc' => $this->getParamFromRequest('desc'),
                 'institution' => $listHandler->getInstitution(),
                 'listIdentifier' => $listHandler->getIdentifier(),
                 'connection' => $listHandler->getConnectionType(),
@@ -408,8 +408,8 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $institution = $this->getParam('institution');
-        $listIdentifier = $this->getParam('listIdentifier');
+        $institution = $this->getParamFromRequest('institution');
+        $listIdentifier = $this->getParamFromRequest('listIdentifier');
         $listHandler = $this->reservationListService->getListHandler(
             $institution,
             $listIdentifier
@@ -497,8 +497,8 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $listID = $this->getParam('listId');
-        if ($this->getParam('confirm')) {
+        $listID = $this->getParamFromRequest('listId');
+        if ($this->getParamFromRequest('confirm')) {
             try {
                 $listEntity = $this->reservationListService->getListById((int)$listID, $user);
                 $this->reservationListService->destroyList($listEntity, $user);
@@ -538,7 +538,7 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
 
-        $listID = $this->getParam('listID', false);
+        $listID = $this->getParamFromRequest('listID', false);
         if (false === $listID) {
             throw new \Exception('List ID not defined in deleteBulkAction');
         }
@@ -616,7 +616,7 @@ class ReservationListController extends AbstractBase
         $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);
         // Set up listener for recommendations:
         $rManager = $this->getService(\VuFind\Recommend\PluginManager::class);
-        $setupCallback = function ($runner, $params, $searchId) use ($rManager) {
+        $setupCallback = function ($runner, $params, $searchId) use ($rManager): void {
             $listener = new \VuFind\Search\RecommendListener($rManager, $searchId);
             $listener->setConfig(
                 $params->getOptions()->getRecommendationSettings()

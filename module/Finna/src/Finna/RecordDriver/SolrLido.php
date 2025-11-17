@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -28,7 +28,7 @@
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -55,9 +55,9 @@ use function strlen;
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\LoggerAwareInterface
+class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
@@ -186,6 +186,46 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     ];
 
     /**
+     * PlaceID source mappings
+     *
+     * @var array
+     */
+    protected $placeIDSourceMappings = [
+        'vtj' => 'prt',
+        'kiinteistörekisteri' => 'kiinteistötunnus',
+    ];
+
+    /**
+     * Inscription type mappings
+     *
+     * @var array
+     */
+    protected $inscriptionTypeMappings = [
+        'merkinnän sijainti' => 'location',
+        'merkintä' => 'description',
+        'merkintätekniikka' => 'technique',
+        'sijainti' => 'location',
+        'tekniikka' => 'technique',
+        'tulkinta' => 'interpretation',
+        'tyyppi' => 'type',
+        'merkinnän tyyppi' => 'type',
+    ];
+
+    /**
+     * Array of preferred title labels
+     *
+     * @var array
+     */
+    protected $preferredTitleLabels = ['preferred', 'http://terminology.lido-schema.org/lido00169'];
+
+    /**
+     * Array of alternative title labels
+     *
+     * @var array
+     */
+    protected $alternativeTitleLabels = ['alternate', 'alternative', 'http://terminology.lido-schema.org/lido00170'];
+
+    /**
      * Array of web friendly model formats
      *
      * @var array
@@ -307,15 +347,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 if (!isset($right->conceptID)) {
                     continue;
                 }
-                $type = strtolower((string)$right->conceptID->attributes()->type);
-                if ($type == 'copyright') {
-                    $term = (string)$this->getLanguageSpecificItem(
-                        $right->term,
-                        $language
-                    );
-                    if ($term) {
-                        $restrictions[] = $term;
-                    }
+                $term = (string)$this->getLanguageSpecificItem(
+                    $right->term,
+                    $language
+                );
+                if ($term) {
+                    $restrictions[] = $term;
                 }
             }
         }
@@ -342,20 +379,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         foreach ($rightsNodes as $rights) {
             if ($conceptID = $rights->xpath('conceptID')) {
                 $conceptID = $conceptID[0];
-                $attributes = $conceptID->attributes();
-                if ($attributes->type && strtolower($attributes->type) == 'copyright') {
-                    $data = [];
-
-                    $copyright = trim((string)$conceptID);
-                    if ($copyright) {
-                        $copyright = $this->getMappedRights($copyright);
-                        $data['copyright'] = $copyright;
-
-                        if ($link = $this->getRightsLink($copyright, $language)) {
-                            $data['link'] = $link;
-                        }
-                        return $data;
+                $data = [];
+                $copyright = trim((string)$conceptID);
+                if ($copyright) {
+                    $copyright = $this->getMappedRights($copyright);
+                    $data['copyright'] = $copyright;
+                    if ($link = $this->getRightsLink($copyright, $language)) {
+                        $data['link'] = $link;
                     }
+                    return $data;
                 }
             }
         }
@@ -400,7 +432,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @return array
      */
     protected function formatResourceMeasurements(
-        \SimpleXmlElement $measurements
+        \SimpleXMLElement $measurements
     ): array {
         $results = [];
         foreach ($measurements as $set) {
@@ -408,15 +440,16 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             if (!$value) {
                 continue;
             }
+            // Support both simple text and term element in measurementType and measurementUnit
             $type = '';
             foreach ($set->measurementType as $t) {
-                $type = trim((string)$t);
+                $type = trim((string)($t->term ?? $t));
                 $type = $this->measurementTypeMappings[$type] ?? $type;
                 break;
             }
             $unit = '';
             foreach ($set->measurementUnit as $u) {
-                $unit = trim((string)$u);
+                $unit = trim((string)($u->term ?? $u));
                 $unit = $this->measurementUnitMappings[$unit] ?? $unit;
                 break;
             }
@@ -522,10 +555,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             array $audios = [],
             array $videos = [],
             array $documents = []
-        ) use (&$results) {
+        ) use (&$results): void {
             if ($images) {
-                $images = $this->ensureImageSizes($images);
-                $images['downloadable'] = $this->allowRecordImageDownload($images);
+                if (!$this->maxAmountOfImages()) {
+                    $images = $this->ensureImageSizes($images);
+                    $images['downloadable'] = $this->allowRecordImageDownload($images);
+                } else {
+                    $images = [];
+                }
+                $this->imagesCount++;
             }
             $results[] = compact(
                 'images',
@@ -724,7 +762,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 // Trim resulting strings
                 array_walk_recursive(
                     $imageResult,
-                    function (&$current) {
+                    function (&$current): void {
                         if (is_string($current)) {
                             $current = trim($current);
                         }
@@ -761,7 +799,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @return array
      */
     protected function getResourceDescriptions(
-        \SimpleXmlElement $resourceSet,
+        \SimpleXMLElement $resourceSet,
         string $language
     ): array {
         $results = [];
@@ -793,7 +831,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @return array
      */
     protected function getExtraDetails(
-        \SimpleXmlElement $resourceSet,
+        \SimpleXMLElement $resourceSet,
         string $language
     ): array {
         $result = [];
@@ -863,7 +901,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $type,
-        ?\SimpleXmlElement $measurements
+        ?\SimpleXMLElement $measurements
     ): array {
         $type = $this->modelTypes[$type];
         $format = strtolower($format);
@@ -909,7 +947,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $language,
         string $id = '',
         string $format = '',
-        ?\SimpleXmlElement $measurements = null
+        ?\SimpleXMLElement $measurements = null
     ): array {
         // Check if the image is really an image
         // Original images can be any type and are not displayed
@@ -959,9 +997,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $description,
-        ?\SimpleXmlElement $measurements
+        ?\SimpleXMLElement $measurements
     ): array {
         if ($codec = $this->supportedAudioFormats[$format] ?? false) {
+            if ($this->maxAmountOfURLs()) {
+                $this->urlsCount++;
+                return [];
+            }
             $audio = [
                 'desc' => $description ?: null,
                 'url' => $url,
@@ -997,9 +1039,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $url,
         string $format,
         string $description,
-        ?\SimpleXmlElement $measurements
+        ?\SimpleXMLElement $measurements
     ): array {
         $mediaType = $this->supportedVideoFormats[$format] ?? false;
+        if ($this->maxAmountOfURLs()) {
+            $this->urlsCount++;
+            return [];
+        }
         $video = match ($mediaType) {
             'text/html' => [
                 'desc' => $description ?: null,
@@ -1045,6 +1091,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         string $linkType = 'proxy-link',
         string $type = '',
     ): array {
+        if ($this->maxAmountOfURLs()) {
+            $this->urlsCount++;
+            return [];
+        }
         $format = strtolower($format);
         // Do not display text/html mediatype
         if ('text/html' === $format) {
@@ -1071,7 +1121,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      * @return array
      */
     protected function getResourceRights(
-        \SimpleXmlElement $resourceSet,
+        \SimpleXMLElement $resourceSet,
         string $language,
         bool $useDefault = true
     ): array {
@@ -1080,8 +1130,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         foreach ($resourceSet->rightsResource ?? [] as $rightsResource) {
             if (!empty($rightsResource->rightsType->conceptID)) {
                 $conceptID = $rightsResource->rightsType->conceptID;
-                $type = strtolower((string)$conceptID->attributes()->type);
-                if ($type === 'copyright' && trim((string)$conceptID)) {
+                if (trim((string)$conceptID)) {
                     $rights['copyright']
                         = $this->getMappedRights((string)$conceptID);
                     $link
@@ -1556,7 +1605,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     $displayPlace = [
                         'placeName' => $place,
                     ];
-                    $idTypeFirst = trim((string)($placeId->attributes()->type ?? ''));
+                    $idTypeFirst = $this->getPlaceIDType($placeId);
                     $prependType = $idTypeFirst !== ''
                         && !in_array(strtolower($idTypeFirst), $this->uniquePlaceIDTypes);
                     $displayPlace['type'] = $idTypeFirst;
@@ -1564,7 +1613,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     foreach ($placenode->place->placeID ?? [] as $item) {
                         $details = [];
                         $id = (string)$item;
-                        $idType = trim((string)($item->attributes()->type ?? ''));
+                        $idType = $this->getPlaceIDType($item);
                         $prependType = $idType !== '' && !in_array(strtolower($idType), $this->uniquePlaceIDTypes);
                         $displayPlace['ids'][] = $prependType ? "($idType)$id" : $id;
                         $typeDesc = $idType ? 'place_id_type_' . $idType : '';
@@ -1599,11 +1648,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                             ->vitalDatesActor->earliestDate ?? '');
                         $latestDate = (string)($actor->actorInRole->actor
                             ->vitalDatesActor->latestDate ?? '');
+                        $id = trim((string)($actor->actorInRole->actor->actorID ?? ''));
                         $actors[] = [
                             'name' => $appellationValue,
                             'role' => $role,
                             'birth' => $earliestDate,
                             'death' => $latestDate,
+                            'id' => $id,
                         ];
                     }
                 }
@@ -1753,7 +1804,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $group = [];
             foreach ($inscriptions->inscriptionDescription as $node) {
                 $content = trim((string)$node->descriptiveNoteValue ?? '');
-                $type = $node->attributes()->type ?? '';
+                $type = mb_strtolower((string)($node->attributes()->type ?? ''), 'UTF-8');
+                $type = $this->inscriptionTypeMappings[$type] ?? $type;
                 $label = $node->descriptiveNoteValue->attributes()->label ?? '';
                 if ($content) {
                     $group[] = compact('type', 'label', 'content');
@@ -1937,10 +1989,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                         $roles = $this->getAllLanguageSpecificItems($langRoles, $language);
                         $role = implode(', ', $roles);
                     }
+                    $id = trim((string)($actor->actorInRole->actor->actorID ?? ''));
                     $key = $priority * 1000 + $index++;
                     $authors[$key] = compact(
                         'name',
-                        'role'
+                        'role',
+                        'id'
                     );
                 }
             }
@@ -2115,7 +2169,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         }
         // Ensure that all the values are an array
         if (!$extended) {
-            foreach ($headings as $key => &$value) {
+            foreach ($headings as &$value) {
                 if (!is_array($value)) {
                     $value = [$value];
                 }
@@ -2341,7 +2395,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                 $details = [];
                 foreach ($subjectPlace->place->placeID ?? [] as $placeId) {
                     $id = (string)$placeId;
-                    $type = trim((string)($placeId->attributes()->type ?? ''));
+                    $type = $this->getPlaceIDType($placeId);
                     if ($type && $prependType && !in_array(strtolower($type), $this->uniquePlaceIDTypes)) {
                         $id = "($type)$id";
                     }
@@ -2394,6 +2448,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
      */
     public function getURLs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $urls = [];
         foreach (parent::getURLs() as $url) {
             if (!$this->urlBlocked($url['url'] ?? '', $url['desc'] ?? '')) {
@@ -2401,8 +2458,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             }
         }
         $urls = $this->resolveUrlTypes($urls);
-        $urls = array_merge($urls, $this->getAudios(), $this->getVideos());
-        return $urls;
+        $this->cache[__FUNCTION__] = array_merge($urls, $this->getAudios(), $this->getVideos());
+        return $this->cache[__FUNCTION__];
     }
 
     /**
@@ -2474,20 +2531,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
     }
 
     /**
-     * Is social media sharing allowed
-     *
-     * @return boolean
-     */
-    public function socialMediaSharingAllowed()
-    {
-        $rights = $this->getXmlRecord()->xpath(
-            'lido/administrativeMetadata/resourceWrap/resourceSet/rightsResource/'
-            . 'rightsType/conceptID[@type="Social media links"]'
-        );
-        return empty($rights) || (string)$rights[0] != 'no';
-    }
-
-    /**
      * Does a record come from a source that has given data
      * source specific configuration set as true?
      *
@@ -2534,8 +2577,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     continue;
                 }
                 if ($identifier = trim((string)$node ?? '')) {
-                    if (($label || $type) && $includeType) {
-                        $identifier .= ' (' . ($label ?: $type) . ')';
+                    // Never display type if value is URI
+                    $displayType = preg_match('/^http?:/', $type) ? '' : $type;
+                    if (($label || $displayType) && $includeType) {
+                        $identifier .= ' (' . ($label ?: $displayType) . ')';
                     }
                     $results[] = $identifier;
                 }
@@ -2572,8 +2617,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             $this->getXmlRecord()->lido->descriptiveMetadata->objectIdentificationWrap
             ->repositoryWrap->repositorySet ?? [] as $repository
         ) {
-            $type = (string)($repository->attributes()->type ?? '');
-            if ($type !== 'Current location') {
+            $type = mb_strtolower((string)($repository->attributes()->type ?? ''), 'UTF-8');
+            if (!in_array($type, ['current location', 'http://terminology.lido-schema.org/lido01018'])) {
                 continue;
             }
             $locations = [];
@@ -2596,8 +2641,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     if (!($placeIdStr = trim((string)$placeId))) {
                         continue;
                     }
-                    $attr = $placeId->attributes();
-                    $idType = trim((string)($attr->type) ?? '');
+                    $idType = $this->getPlaceIDType($placeId);
                     $prependType = $idType !== '' && !in_array(strtolower($idType), $this->uniquePlaceIDTypes);
                     $id = $prependType ? "($idType)$placeIdStr" : $placeIdStr;
                     $locationInfo['ids'][] = $id;
@@ -2782,7 +2826,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
             foreach ($node->appellationValue ?? [] as $title) {
                 $pref = (string)($title->attributes()->pref ?? '');
                 $titleValues[] = $title;
-                if ($pref === 'preferred' || $pref === 'alternate') {
+                if (in_array($pref, $this->preferredTitleLabels) || in_array($pref, $this->alternativeTitleLabels)) {
                     $titlesNotInDesc[] = $title;
                 }
             }
@@ -2813,7 +2857,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
                     && $checkLength !== strlen($checkItem)
                 ) {
                     $title = ltrim(substr($title, strlen($displayTitle)), ' .,;:!?');
-                    $collectedTitles[] = (string)$title;
+                    $collectedTitles[] = $title;
                 } elseif ($displayTitle !== $title) {
                     $collectedTitles[] = (string)$title;
                 }
@@ -2951,5 +2995,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\
         }
 
         return $result;
+    }
+
+    /**
+     * Get placeID type
+     *
+     * @param \SimpleXmlElement $placeID element
+     *
+     * @return string
+     */
+    protected function getPlaceIDType(\SimpleXMLElement $placeID): string
+    {
+        $type = trim((string)($placeID->attributes()->type ?? ''));
+        if (
+            !in_array(mb_strtolower($type, 'UTF-8'), $this->uniquePlaceIDTypes)
+            && $source = trim((string)$placeID->attributes()->source ?? '')
+        ) {
+            $type = $this->placeIDSourceMappings[mb_strtolower($source, 'UTF-8')] ?? $source;
+        }
+        return $type;
     }
 }

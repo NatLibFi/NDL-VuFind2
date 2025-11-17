@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -65,6 +65,28 @@ class Citation extends \VuFind\View\Helper\Root\Citation
     ) {
         parent::__construct($converter);
         $this->recordLoader = $loader;
+    }
+
+    /**
+     * Store a record driver object and return this object so that the appropriate
+     * template can be rendered.
+     *
+     * @param \VuFind\RecordDriver\Base $driver Record driver object.
+     *
+     * @return Citation
+     */
+    public function __invoke($driver)
+    {
+        $result = parent::__invoke($driver);
+
+        // Use Finna's methods for retrieving the authors to display:
+        $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended')
+            ?? $this->driver->tryMethod('getNonPresenterAuthors');
+        if (null !== $authors) {
+            $this->details['authors'] = $this->prepareAuthors(array_unique(array_column($authors, 'name')));
+        }
+
+        return $result;
     }
 
     /**
