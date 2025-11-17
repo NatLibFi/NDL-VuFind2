@@ -381,9 +381,7 @@ class ReservationListController extends AbstractBase
         $result = $listHandler->placeOrder($orderSpecificValues, $user);
         if ($result['success']) {
             $this->reservationListService->setListOrdered($user, $listEntity, $result);
-            $this->flashMessenger()->addInfoMessage(
-                $this->getTranslator()->translate('ReservationList::after_order_instructions')
-            );
+            $this->flashMessenger()->addInfoMessage('ReservationList::after_order_instructions');
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         }
