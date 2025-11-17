@@ -1,7 +1,6 @@
 <?php foreach (array_values($documents) as $i => $document): ?>
     <?php
         $language = $this->layout()->userLang;
-        $description = ($document['description'] ?? $document['desc'] ?? null) ?: $this->translate('Download the file');
         if (!isset($document['rights'])) {
             $rights = $this->driver->getAccessRestrictionsType($language);
             $rightsDescription = $this->driver->getAccessRestrictions($language);
@@ -13,6 +12,12 @@
         $link = $rights['link'] ?? '';
         $format = $document['format'] ?? null;
         $linkType = $document['linkType'] ?? 'external-link';
+        $documentDescription = $document['description'] ?? $document['desc'] ?? null;
+        if ($linkType !== 'download') {
+            $description = $documentDescription ?: $this->translate('external_online_link');
+        } else {
+            $description = $documentDescription ?: $this->translate('Download the file');
+        }
     ?>
     <?php ob_start(); ?>
     <?php if ($linkType === 'proxy-link'): ?>
@@ -36,11 +41,10 @@
         if ($linkType === 'download') {
             $aAttrs['download'] = true;
         }
-        $descriptionDefault = $linkType !== 'download' ? $this->translate('external_online_link') : null;
         ?>
         <a <?=$this->htmlAttributes($aAttrs)?>>
             <?=$this->icon($linkType)?>
-            <?=$this->transEscWithPrefix('link_', $description, [], $descriptionDefault)?>
+            <?=$this->transEscWithPrefix('link_', $description, [], $description)?>
         </a>
     <?php endif; ?>
     <?php $linkToResource = trim(ob_get_clean()); ?>
