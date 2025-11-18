@@ -136,8 +136,8 @@ controlNumbers:
   type: array
   items:
     type: string
-humanReadableCreationDateRange:
-  vufind.method: getHumanReadableCreationDateRange
+getCreationDateRange:
+  vufind.method: getCreationDateRange
   description: Creation date range in human readable format
   type: string
 dedupIds:

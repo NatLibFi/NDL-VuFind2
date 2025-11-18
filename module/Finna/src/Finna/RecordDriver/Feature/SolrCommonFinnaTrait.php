@@ -272,14 +272,19 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Get record creation date range from index in human readable format.
+     * Get record creation date range from index in ISO 8601 format.
      *
      * @return string
      */
-    public function getHumanReadableCreationDateRange(): string
+    public function getCreationDateRange(): string
     {
         $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
-        return str_replace(['[', ']', 'TO'], ['', '', $ndash], $this->fields['creation_daterange'] ?? '');
+        $filteredRange = str_replace(['[', ']'], ['', ''], $this->fields['creation_daterange'] ?? '');
+        $isoRange = array_map(
+            fn ($date) => (new \DateTime($date))->format('Y-m-d\TH:i:s\Z'),
+            explode('TO', $filteredRange)
+        );
+        return implode(" $ndash ", $isoRange);
     }
 
     /**
