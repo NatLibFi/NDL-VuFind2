@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller_Plugins
@@ -35,7 +35,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 use VuFind\Cache\Manager as CacheManager;
-use VuFind\Config\PluginManager as ConfigManager;
+use VuFind\Config\ConfigManagerInterface;
 
 /**
  * Factory for Preview controller plugin.
@@ -73,7 +73,7 @@ class PreviewFactory implements FactoryInterface
 
         return new $requestedName(
             $container,
-            $container->get(ConfigManager::class)->get('config')->toArray(),
+            $container->get(ConfigManagerInterface::class)->getConfigArray('config'),
             $container->get(\VuFindHttp\HttpService::class),
             $container->get(CacheManager::class)->getCache('object')
         );

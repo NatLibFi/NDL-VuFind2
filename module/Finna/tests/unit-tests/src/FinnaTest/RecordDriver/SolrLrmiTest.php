@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -134,10 +134,9 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
      *
-     * @dataProvider getTestFunctionsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestFunctionsData')]
     public function testFunctions(
         string $function,
         $expected
@@ -200,10 +199,9 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getSummaryData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getSummaryData')]
     public function testSummary(
         string $language,
         array $expected
@@ -245,10 +243,9 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
      * @param array  $altTitles Alternative title index values to test
      * @param ?array $expected  Result to be expected
      *
-     * @dataProvider getAlternativeTitlesData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAlternativeTitlesData')]
     public function testGetAlternativeTitles(
         string $title,
         array $altTitles,

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -47,7 +47,7 @@ use VuFind\Session\Settings as SessionSettings;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase implements \Laminas\Log\LoggerAwareInterface
+class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase implements \Psr\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -156,7 +156,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
                         $otherResults = $this->searchRunner->run(
                             $uri->getQueryAsArray(),
                             $tab['class'],
-                            function ($runner, $params, $searchId) use ($count) {
+                            function ($runner, $params, $searchId) use ($count): void {
                                 $params->setLimit($count);
                                 $params->setPage(1);
                                 $params->resetFacetConfig();

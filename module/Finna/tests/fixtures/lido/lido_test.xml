@@ -25,6 +25,12 @@
       <objectIdentificationWrap>
         <repositoryWrap>
           <repositorySet>
+            <workID>Primary id</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113">000001</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113" label="inventaarionumero">000002</workID>
+            <workID type="esinenumero">000003</workID>
+          </repositorySet>
+          <repositorySet>
             <displayRepository lang="fi">Tätä paikkaa ei näytetä</displayRepository>
             <repositoryLocation>
               <namePlaceSet>
@@ -228,6 +234,10 @@
                   <nameActorSet>
                     <appellationValue>  Mattilainen, Meikä   </appellationValue>
                   </nameActorSet>
+                  <vitalDatesActor>
+                    <earliestDate>1951</earliestDate>
+                    <latestDate>2019</latestDate>
+                  </vitalDatesActor>
                 </actor>
                 <roleActor>
                   <term>haaveilija</term>
@@ -315,6 +325,7 @@
             <eventActor>
               <actorInRole>
                 <actor>
+                  <actorID type="URI" source="finaf">http://urn.fi/URN:NBN:fi:au:finaf:000228701</actorID>
                   <nameActorSet>
                     <appellationValue>Puu, Teisto</appellationValue>
                   </nameActorSet>
@@ -362,7 +373,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <conceptID>CC BY 4.0</conceptID>
               <term lang="fi">Tässä on kuvien copyright.</term>
             </rightsType>
           </rightsResource>
@@ -405,7 +416,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">InC</conceptID>
+              <conceptID>InC</conceptID>
               <term lang="fi">Tässä on kuvien copyright.</term>
             </rightsType>
           </rightsResource>
@@ -429,7 +440,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">InC</conceptID>
+              <conceptID>InC</conceptID>
               <term lang="fi">Tässä on mallien copyright.</term>
             </rightsType>
           </rightsResource>
@@ -468,7 +479,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <conceptID>CC BY 4.0</conceptID>
               <term lang="fi">Tekstitiedoston tarkempi käyttöoikeuskuvaus</term>
             </rightsType>
           </rightsResource>

@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Console
@@ -34,7 +34,7 @@ namespace FinnaConsole\Command\ScheduledSearch;
 
 use DateTime;
 use Exception;
-use Finna\Db\Service\FinnaSearchServiceInterface;
+use Finna\Db\Service\SearchServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -198,7 +198,7 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
      */
     protected function processAlerts()
     {
-        assert($this->searchService instanceof FinnaSearchServiceInterface);
+        assert($this->searchService instanceof SearchServiceInterface);
         $baseDirs = $this->searchService->getScheduledNotificationBaseUrls();
         $this->msg('Processing alerts for ' . count($baseDirs) . ' views: ');
         $this->msg('  ' . implode(', ', $baseDirs));
@@ -271,8 +271,8 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
      */
     protected function processViewAlerts()
     {
-        assert($this->searchService instanceof FinnaSearchServiceInterface);
         $todayTime = new \DateTime();
+        assert($this->searchService instanceof \Finna\Db\Service\SearchServiceInterface);
         $scheduled = $this->searchService->getScheduledSearchesByBaseUrl($this->scheduleBaseUrl);
         $scheduled = array_filter(
             $scheduled,

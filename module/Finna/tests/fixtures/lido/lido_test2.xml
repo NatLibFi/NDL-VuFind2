@@ -31,7 +31,7 @@
           <titleSet>
             <appellationValue>Otsikko näkyy partial.</appellationValue>
             <appellationValue>Näkyy kokonaan.</appellationValue>
-            <appellationValue pref="preferred">Ei näy preferred.</appellationValue>
+            <appellationValue pref="http://terminology.lido-schema.org/lido00169">Ei näy preferred.</appellationValue>
             <appellationValue pref="alternate">Ei näy alternate.</appellationValue>
           </titleSet>
         </titleWrap>
@@ -56,6 +56,10 @@
                 </partOfPlace>
               </partOfPlace>
             </repositoryLocation>
+          </repositorySet>
+          <repositorySet type="http://terminology.lido-schema.org/lido01018">
+            <displayRepository lang="fi">Suomi</displayRepository>
+            <displayRepository lang="en">Finland</displayRepository>
           </repositorySet>
         </repositoryWrap>
         <objectDescriptionWrap>
@@ -147,6 +151,7 @@
               <subjectPlace>
                 <displayPlace>Etelä-Suomi</displayPlace>
                 <place>
+                  <!--For URIs, get place type from type-->
                   <placeID type="URI" source="YSO">http://www.yso.fi/onto/yso/p105917</placeID>
                   <gml>
                     <Point>
@@ -156,7 +161,22 @@
                 </place>
               </subjectPlace>
               <subjectPlace>
+                <displayPlace>Rakennus</displayPlace>
+                <place>
+                  <!--For other identifiers, get place type from source-->
+                  <placeID type="Local identifier" source="prt">PRT</placeID>
+                </place>
+              </subjectPlace>
+              <subjectPlace>
+                <displayPlace>Rakennus2</displayPlace>
+                <place>
+                  <!--Map the values of source-->
+                  <placeID type="prt" source="VTJ">PRT2</placeID>
+                </place>
+              </subjectPlace>
+              <subjectPlace>
                 <displayPlace>Lohja</displayPlace>
+                <!--Use type if source not available-->
                 <place>
                   <placeID type="mjr">123456</placeID>
                   <placeID>extraid</placeID>

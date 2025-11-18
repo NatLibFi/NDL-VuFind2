@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -174,10 +174,9 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
      *
-     * @dataProvider getTestFunctionsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestFunctionsData')]
     public function testFunctions(
         string $function,
         $expected
@@ -243,10 +242,9 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
      *
-     * @dataProvider getPublicationDateRangeData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getPublicationDateRangeData')]
     public function testGetPublicationDateRange(
         string $indexValue,
         ?array $expected
@@ -333,10 +331,9 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
      *
-     * @dataProvider getHumanReadablePublicationDatesData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getHumanReadablePublicationDatesData')]
     public function testGetHumanReadablePublicationDates(
         string $indexValue,
         ?array $expected

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller_Plugins
@@ -34,9 +34,9 @@ use DOMXPath;
 use Finna\Record\Schema\Schematron;
 use Finna\Util\CachingHttpStreamWrapper;
 use Laminas\Cache\Storage\StorageInterface;
-use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mvc\Controller\Plugin\AbstractPlugin;
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerAwareInterface;
 use VuFind\Config\PathResolver;
 use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceInterface;
