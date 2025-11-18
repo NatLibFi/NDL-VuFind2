@@ -136,9 +136,9 @@ controlNumbers:
   type: array
   items:
     type: string
-getCreationDateRange:
+creationDateRange:
   vufind.method: getCreationDateRange
-  description: Creation date range in human readable format
+  description: Creation date range in ISO 8601 format
   type: string
 dedupIds:
   vufind.method: "Formatter::getDedupIds"
