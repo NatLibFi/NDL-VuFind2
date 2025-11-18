@@ -2,7 +2,9 @@ import { cp, mkdir, rm } from 'node:fs/promises';
 
 console.log('Erasing old dependencies...');
 
-await rm('js/vendor/UV/', {recursive: true});
+try {
+  await rm('js/vendor/UV/', {recursive: true});
+} catch {}
 await mkdir('js/vendor/UV/');
 
 console.log('Copying dependencies...');
