@@ -278,13 +278,12 @@ trait SolrCommonFinnaTrait
      */
     public function getCreationDateRange(): string
     {
-        $ndash = html_entity_decode('&#x2013;', ENT_NOQUOTES, 'UTF-8');
         $filteredRange = str_replace(['[', ']'], ['', ''], $this->fields['creation_daterange'] ?? '');
         $isoRange = array_map(
             fn ($date) => (new \DateTime($date))->format('Y-m-d\TH:i:s\Z'),
             explode('TO', $filteredRange)
         );
-        return implode(" $ndash ", $isoRange);
+        return implode('/', $isoRange);
     }
 
     /**
