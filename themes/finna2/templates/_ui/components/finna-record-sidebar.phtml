@@ -1,0 +1,37 @@
+<?php
+  /**
+   * Component to render record sidebar. Returns an empty string if no content is available.
+   *
+   * @param ?string class Classname for the div element. Default is 'sidebar vc-finna-record-sidebar'
+   * @param ?\VuFind\RecordDriver\DefaultRecord driver Driver to render sidebar for.
+   */
+  $divAttrs = [
+    'class' => trim(($this->class ?? '') . " sidebar $this->_componentClass"),
+  ];
+  $driver = $this->driver ?? null;
+  if (!$driver) {
+    return '';
+  }
+
+  $organisationMenu = $this->record($driver)->getOrganisationMenuPosition() === 'sidebar';
+  $relatedRecords = $this->related()->getList($driver);
+  $customContentTemplate = $this->content()->findTemplateForLng('content/Additions/record-post-recommendations');
+  if (!$organisationMenu && !$relatedRecords && !$customContentTemplate) {
+    return '';
+  }
+?>
+<div<?=$this->htmlAttributes($divAttrs)?>>
+  <?php if ($organisationMenu): ?>
+    <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+    </div>
+  <?php endif; ?>
+  <?php foreach ($relatedRecords as $current): ?>
+      <?=$this->related()->render($current)?>
+  <?php endforeach; ?>
+  <?php if ($customContentTemplate): ?>
+    <div>
+        <?=$this->render($customContentTemplate)?>
+    </div>
+  <?php endif; ?>
+</div>
