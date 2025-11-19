@@ -159,7 +159,7 @@ class AipaLrmi extends SolrLrmi implements
      *
      * @return array
      */
-    public function getNonPresenterAuthors()
+    public function getNonPresenterAuthors(): array
     {
         $nonPresenterAuthors = parent::getNonPresenterAuthors();
         if (!is_callable([$this->getContainerRecord(), 'getNonPresenterAuthors'])) {

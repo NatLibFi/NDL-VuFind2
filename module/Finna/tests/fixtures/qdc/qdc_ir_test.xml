@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <qualifieddc schemaLocation="http://kk/1.0/qdcfinna.xsd">
   <title lang="-">SolrQdc Institutional Repository test</title>
+  <creator>Kiira Kirjoittaja</creator>
+  <contributor type="illustrator">Piia Piirtäjä</contributor>
+  <contributor type="organisation" lang="fi">Helsingin yliopisto</contributor>
+  <contributor type="organisation" lang="sv">Helsingfors universitet</contributor>
   <subject lang="-">Duck</subject>
   <subject lang="-">Tasmanian Devil</subject>
   <description lang="fi">Kuvausteksti</description>
