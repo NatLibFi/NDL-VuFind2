@@ -203,8 +203,8 @@ class UserService extends \VuFind\Db\Service\UserService implements
      */
     public function isNicknameAvailable(string $nickname): bool
     {
-        return null
-            === $this->entityManager->getRepository(UserEntityInterface::class)->findBy(['finnaNickname' => $nickname]);
+        $userRepository = $this->entityManager->getRepository(UserEntityInterface::class);
+        return null === $userRepository->findOneBy(['finnaNickname' => $nickname]);
     }
 
     /**
