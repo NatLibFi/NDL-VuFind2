@@ -16,7 +16,7 @@
   <li role="none" class="favorites-menulist-item">
     <a role="menuitem" href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="dropdown-item<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
       <div class="favorite-list-holder">
-        <div class="float-start favorite-list-title"><?=$this->transEsc('default_list_title')?></div>
+        <div class="float-start favorite-list-title"><?=$this->transEsc('all_saved_items_title')?></div>
         <div class="float-end">(<?=$this->totalResourceCount?>)</div>
       </div>
     </a>
