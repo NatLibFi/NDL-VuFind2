@@ -233,11 +233,11 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     /**
      * Created getter
      *
-     * @return DateTime
+     * @return ?DateTime
      */
-    public function getCreated(): DateTime
+    public function getCreated(): ?DateTime
     {
-        return $this->getNonNullableDateTimeFromNullable($this->created);
+        return $this->getNullableDateTimeFromNonNullable($this->created);
     }
 
     /**
