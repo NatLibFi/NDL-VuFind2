@@ -624,4 +624,22 @@ class ReservationListController extends AbstractBase
 
         return $runner->run($request, 'ReservationList', $setupCallback);
     }
+
+    /**
+     * Get the url parameters
+     *
+     * @param string $param          A key to check the url params for.
+     * @param bool   $prioritizePost If true, check the POST params first
+     * @param mixed  $default        Value to return if no param found. Default is null.
+     *
+     * @return mixed
+     */
+    protected function getParam($param, $prioritizePost = true, $default = null)
+    {
+        $result = parent::getParam($param, $prioritizePost, $default);
+        if ($default === $result) {
+            return $this->params()->fromRoute($param) ?? $default;
+        }
+        return $result;
+    }
 }

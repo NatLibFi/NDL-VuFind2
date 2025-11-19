@@ -22,9 +22,9 @@
     }
     $reservationLists = $this->reservationList($user)->getReservationListsForUser();
     if ($this->active === 'reservationlist') {
-      $list = $this->results?->getListObject() ?? [];
+      $list = $this->results?->getListObject();
       $listParams = [
-        'activeId' => $list['id'] ?? false,
+        'activeId' => $list?->getId(),
         'lists' => $reservationLists,
         'results' => $this->results,
         'user' => $user,

@@ -93,7 +93,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
      *
      * @var DateTime
      */
-    #[ORM\Column(name: 'created', type: 'datetime', nullable: false)]
+    #[ORM\Column(name: 'created', type: 'datetime', nullable: false, options: ['default' => '2000-01-01 00:00:00'])]
     protected DateTime $created;
 
     /**
@@ -365,7 +365,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
      */
     public function getOrdered(): ?DateTime
     {
-        return $this->getNullableDateTimeFromNonNullable($this->ordered);
+        return $this->ordered ? $this->getNullableDateTimeFromNonNullable($this->ordered) : null;
     }
 
     /**
@@ -375,7 +375,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
      */
     public function getPickupDate(): ?DateTime
     {
-        return $this->getNullableDateTimeFromNonNullable($this->pickupDate);
+        return $this->pickupDate ? $this->getNullableDateTimeFromNonNullable($this->pickupDate) : null;
     }
 
     /**

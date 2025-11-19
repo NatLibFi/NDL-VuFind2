@@ -203,7 +203,7 @@ class FinnaResourceListService extends AbstractDbService implements
             return $containingLists;
         }
         $listIds = array_map(
-            fn ($relation) => $relation->getListId(),
+            fn ($relation) => $relation->getId(),
             $containingLists
         );
 

@@ -5,6 +5,7 @@
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
     ->add($title, active: true);
+  $listEntities = array_column($this->listEntities, 'list_entity');
 ?>
 
 <!-- Leftside navigationbar -->
@@ -17,7 +18,7 @@
   </div>
   <?= $this->flashmessages() ?>
   <ul class="reservations-list-home-ul">
-    <?php foreach ($this->listEntities ?? [] as $listEntity): ?>
+    <?php foreach ($listEntities ?? [] as $listEntity): ?>
       <?php
         $listHandler = $this->reservationList($this->auth()->getUserObject())->getListHandler($listEntity->getInstitution(), $listEntity->getListConfigIdentifier());
       ?>
