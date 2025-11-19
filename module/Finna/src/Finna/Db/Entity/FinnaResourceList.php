@@ -159,8 +159,6 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     {
         // Set the default values as DateTime objects
         $this->created = $this->getUnassignedDefaultDateTime();
-        $this->ordered = $this->getUnassignedDefaultDateTime();
-        $this->pickupDate = $this->getUnassignedDefaultDateTime();
     }
 
     /**
@@ -228,7 +226,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
      */
     public function setCreated(DateTime $dateTime): static
     {
-        $this->created = $this->getNullableDateTimeFromNonNullable($dateTime);
+        $this->created = $dateTime;
         return $this;
     }
 
@@ -239,7 +237,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
      */
     public function getCreated(): DateTime
     {
-        return $this->getNullableDateTimeFromNonNullable($this->created);
+        return $this->created;
     }
 
     /**
@@ -365,7 +363,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
      */
     public function getOrdered(): ?DateTime
     {
-        return $this->ordered ? $this->getNullableDateTimeFromNonNullable($this->ordered) : null;
+        return $this->ordered;
     }
 
     /**
@@ -375,7 +373,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
      */
     public function getPickupDate(): ?DateTime
     {
-        return $this->pickupDate ? $this->getNullableDateTimeFromNonNullable($this->pickupDate) : null;
+        return $this->pickupDate;
     }
 
     /**
