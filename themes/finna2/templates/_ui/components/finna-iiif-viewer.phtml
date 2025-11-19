@@ -31,7 +31,7 @@ $cssPath = $this->scriptSrc('vendor/tify/tify.css');
             'finna-iiif-menu',
             [
                 'manifestURL' => $this->manifestURL,
-                'alignRight' => true
+                'alignRight' => true,
             ]
         ); ?>
     </span>
@@ -52,6 +52,6 @@ $js = <<<JS
     new Tify(config);
     JS;
 
-echo $this->assetManager()->outputInlineScriptString($js, ["type" => "module"]);
+echo $this->assetManager()->outputInlineScriptString($js, ['type' => 'module']);
 ?>
 

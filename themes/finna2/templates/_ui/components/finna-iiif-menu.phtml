@@ -10,8 +10,8 @@
  *                                 right-hand edge
  */
 $encodedManifest = urlencode($this->manifestURL);
-$r = $this->alignRight ? "dropdown-menu-end" : "";
-$urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? "");
+$r = $this->alignRight ? 'dropdown-menu-end' : '';
+$urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? '');
 ?>
 <span class="iiif-manifest-url-container"
       id="<?=$urlContainerId?>"
