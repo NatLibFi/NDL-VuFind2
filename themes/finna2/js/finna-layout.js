@@ -181,13 +181,12 @@ finna.layout = (function finnaLayout() {
    * @returns {Element} The side facet container
    */
   function getSideFacetsContainer() {
-    const body = document.querySelector('body');
-    if (body.classList.contains('template-name-mylist')) {
+    if (document.body.classList.contains('template-name-mylist')) {
       return document.querySelector('.mylist-bar.mobile-sidebar-container');
-    } else if (body.classList.contains('template-name-displaylist')) {
+    } else if (document.body.classList.contains('template-name-displaylist')) {
       return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
     }
-    return document.querySelector('.side-facets-container-ajax') || document.querySelector('.mobile-sidebar-container');
+    return document.querySelector('.side-facets-container-ajax, .mobile-sidebar-container');
   }
 
   /**
@@ -196,7 +195,7 @@ finna.layout = (function finnaLayout() {
    */
   function onFocusOutOfFacetContainer(e) {
     const container = getSideFacetsContainer();
-    if (e.relatedTarget !== null && !container.contains(e.relatedTarget)) {
+    if (e.relatedTarget && !container.contains(e.relatedTarget)) {
       e.stopImmediatePropagation();
       e.preventDefault();
       setTimeout(() => {
@@ -260,8 +259,6 @@ finna.layout = (function finnaLayout() {
     if (container) {
       document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
-      });
-      document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
           onKeyPressMobileSidebar(e);
         });
