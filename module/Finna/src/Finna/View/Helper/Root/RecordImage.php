@@ -370,6 +370,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             'imageRightsLabel' => $imageRightsLabel,
             'numOfImages' => $numOfImages,
             'displayIcon' => $displayIcon,
+            'renderContext' => $renderContext,
         ];
 
         return $this->record->renderTemplate('record-image.phtml', $context);

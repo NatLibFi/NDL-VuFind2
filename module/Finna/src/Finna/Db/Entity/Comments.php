@@ -31,7 +31,6 @@ namespace Finna\Db\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
-use VuFind\Db\Entity\ResourceEntityInterface;
 
 /**
  * Entity model for comments table
@@ -65,16 +64,6 @@ class Comments extends \VuFind\Db\Entity\Comments implements CommentsEntityInter
         nullable: true,
     )]
     protected ?DateTime $finnaUpdated = null;
-
-    /**
-     * Resource getter.
-     *
-     * @return ResourceEntityInterface
-     */
-    public function getResource(): ResourceEntityInterface
-    {
-        return $this->resource;
-    }
 
     /**
      * Last update date getter

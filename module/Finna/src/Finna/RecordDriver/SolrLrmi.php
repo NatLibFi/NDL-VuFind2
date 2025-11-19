@@ -188,7 +188,7 @@ class SolrLrmi extends SolrQdc
      *
      * @return array
      */
-    public function getNonPresenterAuthors()
+    public function getNonPresenterAuthors(): array
     {
         $xml = $this->getXmlRecord();
         $result = [];

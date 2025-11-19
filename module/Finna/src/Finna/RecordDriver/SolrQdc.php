@@ -208,6 +208,65 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
+     * Get all authors apart from presenters
+     *
+     * @return array
+     */
+    public function getNonPresenterAuthors(): array
+    {
+        $xml = $this->getXmlRecord();
+        $authors = [];
+        foreach ($this->getPrimaryAuthors() as $author) {
+            $authors[] = [
+                'name' => $author,
+                'role' => 'aut',
+            ];
+        }
+        // Collect oganization names in preferred language
+        $organizationTypes = ['organization', 'organisation', 'school', 'faculty', 'department'];
+        $organization = [];
+        foreach ($xml->contributor as $contributor) {
+            $role = trim((string)($contributor->attributes()->type ?? ''));
+            $lang = trim((string)$contributor->attributes()->lang ?? self::NO_LOCALE);
+            if ($lang === '-') {
+                $lang = self::NO_LOCALE;
+            }
+            if (in_array($role, $organizationTypes)) {
+                $organization[$role][$lang] = trim((string)$contributor);
+            }
+        }
+        foreach ($organizationTypes as $orgtype) {
+            foreach ($this->getPrioritizedLanguages([], self::NO_LOCALE) as $l) {
+                if ($organization[$orgtype][$l] ?? '') {
+                    $organization[$orgtype]['preferred'] = $organization[$orgtype][$l];
+                    continue 2;
+                }
+            }
+        }
+        foreach ($xml->contributor as $contributor) {
+            $role = trim((string)($contributor->attributes()->type ?? ''));
+            if (($name = trim((string)$contributor)) && ($role !== 'orcid')) {
+                // For organization fields, include only the name in preferred language
+                if (in_array($role, $organizationTypes)) {
+                    if ($organization[$role]['preferred'] ?? '') {
+                        $authors[] = [
+                            'name' => $organization[$role]['preferred'],
+                            'role' => '',
+                        ];
+                        $organization[$role]['preferred'] = '';
+                    }
+                    continue;
+                }
+                $authors[] = [
+                    'name' => $name,
+                    'role' => $this->translateRole($role) ?? '',
+                ];
+            }
+        }
+        return $authors;
+    }
+
+    /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
      * - description Description text
@@ -796,5 +855,85 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     public function getSnippetCaption($field)
     {
         return $field !== 'contents' ? parent::getSnippetCaption($field) : false;
+    }
+
+    /**
+     * Get contributor role translation key
+     *
+     * @param string $role     Contributor role
+     * @param string $fallback Fallback to use when no supported role is found
+     *
+     * @return ?string Translation key
+     */
+    protected function translateRole($role, $fallback = null): ?string
+    {
+        // Map contributor role to CreatorRole translations
+        $roleMap = [
+            'actor' => 'act',
+            'advisor' => 'ths',
+            'animator' => 'anm',
+            'artist' => 'art',
+            'audioassistant' => 'Audio assistant',
+            'audioeditor' => 'Sound editor',
+            'audioengineer' => 'aue',
+            'author' => 'aut',
+            'cameraoperator' => 'cop',
+            'casting' => 'cad',
+            'choreographer' => 'chr',
+            'cinematographer' => 'cng',
+            'composer' => 'cmp',
+            'conceptor' => 'ccp',
+            'conductor' => 'cnd',
+            'consultant' => 'csl',
+            'contributor' => 'ctb',
+            'copyrightholder' => 'cph',
+            'costumedesigner' => 'cst',
+            'dancer' => 'dnc',
+            'degreeSupervisor' => 'dgs',
+            'degreesupervisor' => 'dgs',
+            'director' => 'drt',
+            'distributor' => 'dst',
+            'editor' => 'edt',
+            'engineer' => 'eng',
+            'filmeditor' => 'flm',
+            'filmmaker' => 'fmk',
+            'funder' => 'fnd',
+            'groupauthor' => 'aut',
+            'illustrator' => 'ill',
+            'instrumentalist' => 'itr',
+            'interviewee' => 'ive',
+            'interviewer' => 'ivr',
+            'lightingdesigner' => 'lgd',
+            'makeupartist' => 'mka',
+            'musicaldirector' => 'msd',
+            'musician' => 'mus',
+            'narrator' => 'nrt',
+            'opponent' => 'opn',
+            'organizer' => 'orm',
+            'other' => 'oth',
+            'performer' => 'prf',
+            'photographer' => 'pht',
+            'producer' => 'pro',
+            'productioncompany' => 'prn',
+            'productionmanager' => 'pmn',
+            'productionpersonnel' => 'prd',
+            'recordist' => 'rcd',
+            'researcher' => 'res',
+            'reviewer' => 'dgc',
+            'setdesigner' => 'std',
+            'singer' => 'sng',
+            'sounddesigner' => 'sds',
+            'speaker' => 'spk',
+            'specialeffectsprovider' => 'sfx',
+            'supervisor' => 'dgs',
+            'technicaldirector' => 'tcd',
+            'thesisadvisor' => 'ths',
+            'translator' => 'trl',
+            'visualeffectsprovider' => 'vfx',
+            'vocalist' => 'voc',
+            'voiceactor' => 'vac',
+            'writer' => 'rda:writer',
+        ];
+        return $roleMap[$role] ?? $fallback;
     }
 }

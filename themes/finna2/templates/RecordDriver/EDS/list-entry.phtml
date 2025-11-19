@@ -97,7 +97,8 @@
             <?php endif; ?>
           <?php endif; ?>
 
-          <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
+          <?php $recordHelper = $this->record($this->driver); ?>
+          <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $recordHelper->getTags(
                 null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
                 $user_id,
                 'tag'
@@ -110,7 +111,6 @@
             <br>
           <?php endif; ?>
 
-          <?php $recordHelper = $this->record($this->driver); ?>
           <?=$recordHelper->renderTemplate('holdings.phtml');?>
           <?=$recordHelper->getOnlineUrls('results');?>
           <?=$recordHelper->getPreviews();?>
