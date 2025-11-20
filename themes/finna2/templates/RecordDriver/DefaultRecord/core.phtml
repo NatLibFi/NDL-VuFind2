@@ -11,7 +11,7 @@
   $audioUrls = [];
   $otherUrls = [];
   $binding = $this->driver->tryMethod('getBinding');
-  $iiifManifests = $this->driver->tryMethod('getAllIiifManifests');
+  $iiifManifests = $this->driver->tryMethod('getIiifManifests');
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
     $renderedURLs[] = [

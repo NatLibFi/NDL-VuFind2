@@ -120,7 +120,7 @@
       </div>
     <?php endif; ?>
   <?php endif; ?>
-  <?php $iiifManifests = $this->driver->tryMethod('getAllIiifManifests');
+  <?php $iiifManifests = $this->driver->tryMethod('getIiifManifests');
     if ($iiifManifests):
       echo $this->record($this->driver)->renderTemplate(
           'record-iiif-viewer.phtml',

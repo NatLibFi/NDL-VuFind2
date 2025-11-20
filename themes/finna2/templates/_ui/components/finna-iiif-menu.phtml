@@ -11,12 +11,12 @@
  */
 $encodedManifest = urlencode($this->manifestURL);
 $r = $this->alignRight ? 'dropdown-menu-end' : '';
-$urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? '');
+$urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? 'container');
 ?>
-<span class="iiif-manifest-url-container"
+<span class="iiif-manifest-url-container hidden"
       id="<?=$urlContainerId?>"
       aria-hidden="true">
-  <?=$this->manifestURL?>
+  <?=$this->escapeHtml($this->manifestURL)?>
 </span>
 <ul class="dropdown-menu <?=$r?>">
   <li>
@@ -25,10 +25,12 @@ $urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? '');
     </span>
   </li>
   <li>
-    <a class="dropdown-item btn toolbar-btn" href="<?=$this->manifestURL?>"
+    <a class="dropdown-item btn toolbar-btn icon-link" href="<?=$this->manifestURL?>"
       target="_blank" rel="nofollow" class="iiif-manifest-url-link">
-      <?=$this->icon('external-link')?>
-      <?=$this->transEsc('Open in a new window')?>
+      <?=$this->icon('external-link', 'icon-link__icon')?>
+      <span class="icon-link__label">
+        <?=$this->transEsc('Open in a new window')?>
+      </span>
     </a>
   </li>
   <li class="iiif-manifest-url-list-item">
