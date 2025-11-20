@@ -113,15 +113,13 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
      *
      * @param string $catUsername Catalog username
      *
-     * @return array
+     * @return UserCardEntityInterface[]
      */
     public function getUsersForLibraryCard(string $catUsername): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select(
-            'uc.id',
-            'uc.created AS user_card_created',
-            'u.id AS user_id',
+            'uc.created',
             'u.username',
             'u.authMethod',
             'u.lastLogin'

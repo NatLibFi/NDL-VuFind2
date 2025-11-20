@@ -787,23 +787,14 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return $this->redirect()->toRoute('librarycards-home');
         }
         $userCardService = $this->getDbService(UserCardServiceInterface::class);
-        $card = $userCardService->getLibraryCards($user, $id)[0] ?? null;
+        $card = $userCardService->getOrCreateLibraryCard($user, $id) ?? null;
         if (!$card) {
             throw new \Exception('Library card not found');
         }
 
         $catUsername = $card->getCatUsername();
         $users = $userCardService->getUsersForLibraryCard($catUsername);
-        $userInfo = [];
-        foreach ($users as $user) {
-            $userInfo[] = [
-                'username' => $user['username'],
-                'authMethod' => $user['authMethod'],
-                'cardCreated' => $user['user_card_created'],
-                'lastLogin' => $user['lastLogin'],
-            ];
-        }
-        return $this->createViewModel(['users' => $userInfo]);
+        return $this->createViewModel(['users' => $users]);
     }
 
     /**

@@ -1,4 +1,4 @@
-<h2 class="lightbox-header"><?=$this->transEsc('library_card_connected_users')?></h2>
+<?=$this->component('page-title', ['title' => $this->transEsc('library_card_connected_users')]);?>
 <table class="table table-striped table-responsive">
   <thead>
     <tr>
@@ -11,8 +11,8 @@
   <tbody>
     <?php foreach ($this->users as $user): ?>
       <tr>
-        <td data-label="<?=$this->transEsc('library_card_date_of_connection')?>"><?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $user['cardCreated']->getTimeStamp()))?></td>
-        <td data-label="<?=$this->transEsc('Last Login')?>"><?=$this->escapeHtml($this->dateTime()->convertToDisplayDateAndTime('U', $user['lastLogin']->getTimestamp()))?></td>
+        <td data-label="<?=$this->transEsc('library_card_date_of_connection')?>"><?=$this->escapeHtml($user['created']->format($this->config()->dateTimeFormat()))?></td>
+        <td data-label="<?=$this->transEsc('Last Login')?>"><?=$this->escapeHtml($user['lastLogin']->format($this->config()->dateTimeFormat()))?></td>
         <td data-label="<?=$this->transEsc('account_username')?>"><?=$this->escapeHtml($user['username'])?></td>
         <td data-label="<?=$this->transEsc('account_login_method')?>"><?=$this->transEscWithPrefix('login_method_', $user['authMethod']) ?></td>
       </tr>

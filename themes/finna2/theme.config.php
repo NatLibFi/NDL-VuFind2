@@ -339,7 +339,7 @@ return [
             'feed-play' => 'FontAwesome:play-circle',
             'filter-collapse' => 'FinnaIcons:up',
             'filter-expand' => 'FinnaIcons:down',
-            'finna-logo' => 'FinnaIcons:finna',
+            'connected-accounts' => 'FinnaIcons:finna',
             'finna-suggestions-link' => 'FinnaIcons:arrow-right',
             'full-results-link' => 'FinnaIcons:right',
             'google-plus' => 'FinnaIcons:google+',
