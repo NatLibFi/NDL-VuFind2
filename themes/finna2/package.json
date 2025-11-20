@@ -9,5 +9,8 @@
   "license": "GPL-2.0-only",
   "dependencies": {
     "tify": "^0.34.5"
+  },
+  "overrides": {
+    "@iiif/parser": ">=2.2.6"
   }
 }
