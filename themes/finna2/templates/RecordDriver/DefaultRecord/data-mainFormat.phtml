@@ -48,22 +48,17 @@
   <?php if (!empty($event['culture'])): ?><?=$this->escapeHtml($event['culture'])?><br><?php endif; ?>
   <?php if (!empty($event['actors'])): ?>
     <?php
-      $displayActors = [];
-      foreach ($event['actors'] as $actor) {
-        $str = $actor['name'];
-        if (!empty($actor['role'])) {
-            $str .= ', ' . $actor['role'];
-        }
-        if (!empty($actor['birth']) || !empty($actor['death'])) {
-            $str .= ', ';
-            $sep = !empty($actor['birth']) && !empty($actor['death']) ? ' - ' : '--';
-            $str .= ($actor['birth'] ?? '') . $sep . ($actor['death'] ?? '');
-        }
-        $displayActors[] = $this->escapeHtml($str);
-      }
-    ?>
-    <?=implode(' ; ', $displayActors); ?>
-    <br>
+      foreach ($event['actors'] as $index => $actor): ?>
+        <?php
+          $actorDates = '';
+          if (!empty($actor['birth']) || !empty($actor['death'])) {
+              $actorDates .= ', ';
+              $sep = !empty($actor['birth']) && !empty($actor['death']) ? ' - ' : '--';
+              $actorDates .= ($actor['birth'] ?? '') . $sep . ($actor['death'] ?? '');
+          }
+        ?>
+        <?=($index > 0 ? '<br> ' : '')?><?=$this->record($this->driver)->renderTemplate('data-contributors-single.phtml', ['author' => $actor])?><?=$this->escapeHtml($actorDates);?>
+    <?php endforeach; ?>
   <?php endif; ?>
   <?php if (!empty($event['descriptions'])): ?>
     <?=$this->recordFieldMarkdown()->toHtml(implode("\n\n", $event['descriptions'])) ?>

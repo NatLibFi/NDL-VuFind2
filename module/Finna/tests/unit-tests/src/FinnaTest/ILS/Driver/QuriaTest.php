@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -176,9 +176,9 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
      * @param array  $expected   Expected results for the test
      * @param array  $config     Driver specific configuration
      *
-     * @return       void
-     * @dataProvider getTestGetMyProfileData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestGetMyProfileData')]
     public function testGetMyProfile(string $fixtureKey, array $expected, array $config = []): void
     {
         $conf = [
@@ -265,9 +265,9 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
      * @param string $fixtureKey Response fixture
      * @param array  $expected   Expected results for the test
      *
-     * @return       void
-     * @dataProvider getTestPatronLoginData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestPatronLoginData')]
     public function testPatronLogin(string $fixtureKey, array $expected): void
     {
         $conf = [

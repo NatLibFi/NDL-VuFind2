@@ -1,6 +1,5 @@
 <!-- START of: finna - myresearch/mylist-navi.phtml -->
 <?php
-  $numOfResources = $user->getNumOfResources();
   $currentLimit = 20; // default limit for favorites
   if (isset($this->results)) {
      $limitList = $this->results->getParams()->getLimitList();
@@ -13,12 +12,15 @@
   }
 ?>
 <ul class="dropdown-menu subtabs collapse show" role="presentation">
-  <li><h1 class="js-mobile-list-navigation visible-xs visible-sm"><?=$this->icon('sidebar-collapse') ?> <?=$this->transEsc('Your Lists')?></h1></li>
+  <li class="mobile-navigation-header-container visible-xs visible-sm">
+    <h1 class="mobile-navigation-header"><?=$this->transEsc('Favourite lists')?></h1>
+    <button class="sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+  </li>
   <li role="none" class="favorites-menulist-item">
     <a role="menuitem" href="<?=$this->url('myresearch-favorites')?>?limit=<?=$currentLimit;?>" class="dropdown-item<?=!$activeId ? ' active' : ''?>" aria-current="<?= !$activeId ? 'page' : 'false' ?>">
       <div class="favorite-list-holder">
         <div class="float-start favorite-list-title"><?=$this->transEsc('default_list_title')?></div>
-        <div class="float-end">(<?=$numOfResources;?>)</div>
+        <div class="float-end">(<?=$this->totalResourceCount?>)</div>
       </div>
     </a>
   </li>

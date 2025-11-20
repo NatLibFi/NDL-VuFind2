@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -163,10 +163,9 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
      *
-     * @dataProvider getTestFunctionsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestFunctionsData')]
     public function testFunctions(
         string $function,
         $expected
@@ -176,6 +175,78 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             $expected,
             $driver->$function()
+        );
+    }
+
+    /**
+     * Function to get expected author data
+     *
+     * @return array
+     */
+    public static function getNonPresenterAuthorsData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    0 => [
+                        'name' => 'Kiira Kirjoittaja',
+                        'role' => 'aut',
+                    ],
+                    1 => [
+                        'name' => 'Piia Piirtäjä',
+                        'role' => 'ill',
+                    ],
+                    2 => [
+                        'name' => 'Helsingin yliopisto',
+                        'role' => '',
+                    ],
+                ],
+            ],
+            [
+                'sv',
+                [
+                    0 => [
+                        'name' => 'Kiira Kirjoittaja',
+                        'role' => 'aut',
+                    ],
+                    1 => [
+                        'name' => 'Piia Piirtäjä',
+                        'role' => 'ill',
+                    ],
+                    2 => [
+                        'name' => 'Helsingfors universitet',
+                        'role' => '',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getNonPresenterAuthors
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getNonPresenterAuthorsData')]
+    public function testNonPresenterAuthors(
+        string $language,
+        array $expected
+    ): void {
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $driver = $this->getDriver();
+        $driver->setTranslator($translator);
+        $this->assertEquals(
+            $expected,
+            $driver->getNonPresenterAuthors()
         );
     }
 
@@ -243,6 +314,7 @@ class SolrQdcInstitutionalRepositoryTest extends \PHPUnit\Framework\TestCase
                     'usage_A',
                 ],
                 'format' => '0/Painting',
+                'author' => 'Kiira Kirjoittaja',
             ]
         );
         return $record;

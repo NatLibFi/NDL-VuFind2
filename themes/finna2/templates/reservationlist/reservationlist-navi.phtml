@@ -1,6 +1,5 @@
 <!-- START of: finna - reservationlist/reservationlist-navi.phtml -->
 <?php
-  $numOfResources = $user->getNumOfResources();
   $currentLimit = 20; // default limit for favorites
   if (isset($this->results)) {
      $limitList = $this->results->getParams()->getLimitList();
@@ -11,9 +10,13 @@
         }
      }
   }
+  $lists = array_column($lists, 'list_entity');
 ?>
 <ul class="dropdown-menu subtabs collapse show" role="presentation">
-  <li><h1 class="js-mobile-list-navigation visible-xs visible-sm"><?=$this->icon('sidebar-collapse') ?> <?=$this->transEsc('Your Lists')?></h1></li>
+  <li class="mobile-navigation-header-container visible-xs visible-sm">
+    <h1 class="mobile-navigation-header"><?=$this->transEsc('ReservationList::All hold requests')?></h1>
+    <button class="sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+  </li>
   <?php $active = empty($activeId); ?>
   <li>
     <a class="dropdown-item<?=$active ? ' active' : ''?>" role="menuitem" href="<?= $active ? '#' : $this->url('reservationlist-displaylists') ?>" aria-current="<?=$active ? 'page' : 'false'?>"><?= $this->transEsc('ReservationList::All Lists') ?></a>

@@ -508,9 +508,9 @@ FinnaPaginator.prototype.setButtons = function setButtons() {
 FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
   var _ = this;
   var imageIndex = +_.openImageIndex + 1;
-  let imageOfImages = `${imageIndex} - ${_.images.length}`;
+  let imageOfImages = `${imageIndex} / ${_.images.length}`;
   if (_.images.length < _.settings.totalImagesCount) {
-    imageOfImages += ` / ${_.settings.totalImagesCount}`;
+    imageOfImages += ` (${_.settings.totalImagesCount})`;
   }
   var advanced = `${translations.image} ${imageOfImages}`;
 

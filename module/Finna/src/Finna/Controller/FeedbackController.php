@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * PHP version 8
  *
@@ -36,6 +36,8 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Form\Form;
 use VuFind\Log\LoggerAwareTrait;
 
+use function assert;
+
 /**
  * Feedback Controller
  *
@@ -46,7 +48,7 @@ use VuFind\Log\LoggerAwareTrait;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class FeedbackController extends \VuFind\Controller\FeedbackController implements \Laminas\Log\LoggerAwareInterface
+class FeedbackController extends \VuFind\Controller\FeedbackController implements \Psr\Log\LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -96,6 +98,7 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
      */
     protected function prefillUserInfo(Form $form, ?UserEntityInterface $user)
     {
+        assert($form instanceof \Finna\Form\Form);
         return $form->setContactInformation($user);
     }
 }

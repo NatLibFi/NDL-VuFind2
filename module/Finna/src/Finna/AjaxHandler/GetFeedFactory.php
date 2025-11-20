@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -71,7 +71,7 @@ class GetFeedFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
         }
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\Config\PluginManager::class)->get('rss'),
+            $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('rss'),
             $container->get(\Finna\Feed\Feed::class),
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\VuFind\ILS\Connection::class),
