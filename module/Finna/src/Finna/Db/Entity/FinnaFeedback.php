@@ -129,10 +129,10 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     /**
      * Last modification date
      *
-     * @var DateTime
+     * @var ?DateTime
      */
     #[ORM\Column(name: 'modification_date', type: 'datetime', nullable: true)]
-    protected DateTime $modified;
+    protected ?DateTime $modified;
 
     /**
      * Constructor.
