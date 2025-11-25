@@ -127,17 +127,12 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected ?int $modifierId = null;
 
     /**
-     * Last update date
+     * Last modification date
      *
      * @var DateTime
      */
-    #[ORM\Column(
-        name: 'modification_date',
-        type: 'datetime',
-        nullable: false,
-        options: ['default' => 'CURRENT_TIMESTAMP']
-    )]
-    protected DateTime $updated;
+    #[ORM\Column(name: 'modification_date', type: 'datetime', nullable: true)]
+    protected DateTime $modified;
 
     /**
      * Constructor.
@@ -146,7 +141,6 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     {
         // Set the default value as a DateTime object
         $this->created = new DateTime();
-        $this->updated = new DateTime();
     }
 
     /**
@@ -252,29 +246,6 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Updated setter.
-     *
-     * @param DateTime $dateTime Last update date
-     *
-     * @return static
-     */
-    public function setUpdated(DateTime $dateTime): static
-    {
-        $this->updated = $dateTime;
-        return $this;
-    }
-
-    /**
-     * Updated getter
-     *
-     * @return DateTime
-     */
-    public function getUpdated(): DateTime
-    {
-        return $this->updated;
-    }
-
-    /**
      * Status setter.
      *
      * @param string $status Status
@@ -365,6 +336,56 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
         $this->modifierId = $modifierId;
 
         return $this;
+    }
+
+    /**
+     * Get modification date
+     *
+     * @return ?DateTime
+     */
+    public function getModified(): ?DateTime
+    {
+        return $this->modified;
+    }
+
+    /**
+     * Set modification date
+     *
+     * @param ?DateTime $modified Modification date
+     *
+     * @return static
+     */
+    public function setModified(?DateTime $modified): static
+    {
+        $this->modified = $modified;
+        return $this;
+    }
+
+    /**
+     * Updated setter.
+     *
+     * Note: this updates the same field as setModificationDate
+     *
+     * @param DateTime $dateTime Last update date
+     *
+     * @return static
+     */
+    public function setUpdated(DateTime $dateTime): static
+    {
+        $this->modified = $dateTime;
+        return $this;
+    }
+
+    /**
+     * Updated getter
+     *
+     * Note: this gets the date from the same field as getModificationDate, but returns current date if it's null
+     *
+     * @return DateTime
+     */
+    public function getUpdated(): DateTime
+    {
+        return $this->modified ?? new DateTime();
     }
 
     /**
