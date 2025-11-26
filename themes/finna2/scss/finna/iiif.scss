@@ -11,6 +11,29 @@
 
 #tify {
     height: 65vh;
+    color-scheme: inherit;
+
+    .tify-header {
+        color: $action-link-color;
+
+        .-page-select  {
+            button {
+                @extend .btn, .btn-primary;
+            }
+
+            .tify-page-select .tify-dropdown-button {
+                border-radius: $finna-button-radius 0 0 $finna-button-radius;
+            }
+
+            .tify-header-button {
+                border-radius: 0 $finna-button-radius $finna-button-radius 0;
+            }
+        }
+
+        .-title {
+            visibility: hidden;
+        }
+    }
 }
 
 .record-iiif-toolbar {
