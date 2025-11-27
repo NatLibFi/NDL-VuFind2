@@ -14,13 +14,7 @@
     color-scheme: inherit;
 
     .tify-header {
-        color: $action-link-color;
-
         .-page-select  {
-            button {
-                @extend .btn, .btn-primary;
-            }
-
             .tify-page-select .tify-dropdown-button {
                 border-radius: $finna-button-radius 0 0 $finna-button-radius;
             }
@@ -33,27 +27,88 @@
         .-title {
             visibility: hidden;
         }
+
+        button:hover {
+            background-color: $action-link-color;
+            color: $body-bg;
+        }
+    }
+
+    .tify-media-buttons.-pagination {
+        button {
+            @extend .btn, .btn-primary;
+            border-radius: 100%;
+            box-shadow: 0px 4px 3px rgba(0, 0, 0, 0.3) ;
+            transition: 0.2s ease;
+            &:hover {
+                transform: scale(1.1);
+            }
+        }
+    }
+
+    .tify-media-buttons.-controls {
+        button:hover {
+            background-color: $action-link-color;
+            color: $body-bg;
+        }
+    }
+
+    .tify-icon {
+        height: 28px;
     }
 }
 
+
 .record-iiif-toolbar {
+    $icon-size: 2.25ex;
+
     border-top: thin solid $gray-lighter;
     background-color: $gray-ultralight;
     padding-bottom: 1ex;
     padding-top: 1ex;
     margin-bottom: $field-margin-vertical;
+
+    img.bi {
+        height: $icon-size;
+        width: $icon-size;
+    }
 }
 
 .iiif-menu-button-badge {
-    min-width: 28pt;
-    min-height: 28pt;
-    max-height: 33%;
-    max-width: 33%;
-    margin-block-end: 3pt;
-    margin-inline-end: 3pt;
+    @extend .btn, .btn-secondary;
 
-    img.bi {
-        width: 98%;
-        height: 98%;
+    @media screen and (width > 700px) {
+        min-width: 22pt;
+        min-height: 22pt;
+        max-height: 33%;
+        max-width: 33%;
+        border: none;
+        border-radius: 0;
+        border-start-start-radius: $finna-button-radius;
+        background-color: white;
+
+        img.bi {
+            width: 98%;
+            height: 98%;
+        }
+    }
+
+    @media screen and (width <= 700px) {
+        & {
+            position: relative;
+            width: 100%;
+            max-width: 100%;
+
+            img.bi {
+                margin-left: auto;
+                margin-right: auto;
+                width: 27.5%;
+                height: auto;
+            }
+        }
+    }
+
+    @media print {
+        display: none;
     }
 }
