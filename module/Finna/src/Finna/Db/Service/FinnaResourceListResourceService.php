@@ -105,10 +105,10 @@ class FinnaResourceListResourceService extends AbstractDbService implements
         FinnaResourceListEntityInterface $list
     ): void {
         $dql = 'DELETE FROM ' . FinnaResourceListResourceEntityInterface::class . ' frlr '
-            . 'WHERE frlr.resource IN (:resource_id) AND frlr.list = :list';
+            . 'WHERE frlr.resource IN (:resource_id) AND frlr.list = :list AND frlr.user = :user';
         $parameters = [
-            'user' => $$user,
-            'resource' => (array)($resourceId ?? []),
+            'user' => $user,
+            'resource_id' => (array)($resourceId ?? []),
             'list' => $list,
         ];
         $query = $this->entityManager->createQuery($dql);

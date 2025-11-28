@@ -90,7 +90,7 @@ class AccountExpirationRemindersFactory implements FactoryInterface
             $container->get('ViewRenderer'),
             $configManager->getConfigObject('datasources'),
             $container->get(Mailer::class),
-            $container->get(\Laminas\I18n\Translator\Translator::class),
+            $container->get(\Laminas\Translator\TranslatorInterface::class),
             $configManager,
             ...($options ?? [])
         );

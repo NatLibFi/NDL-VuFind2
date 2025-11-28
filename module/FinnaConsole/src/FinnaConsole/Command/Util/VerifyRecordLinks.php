@@ -93,7 +93,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
         protected ResourceServiceInterface $resourceService,
         protected \VuFindSearch\Backend\Solr\Backend $solr,
         protected RecordLoader $recordLoader,
-        protected \VuFind\Config\Config $searchConfig
+        protected array $searchConfig
     ) {
         $recordLoader->setCacheContext(\VuFind\Record\Cache::CONTEXT_DISABLED);
 
@@ -233,11 +233,12 @@ class VerifyRecordLinks extends AbstractUtilCommand
             // Remove any orphaned links
             $links = $this->finnaCommentsRecordService->findByComment($current['comment']);
             foreach ($links as $link) {
-                if (!in_array($link->getRecordId(), $recordIds)) {
+                $linkRecordId = $link->getRecordId();
+                if (!in_array($linkRecordId, $recordIds)) {
                     $this->entityManager->remove($link);
                     ++$fixed;
                 } else {
-                    $linkedRecordIds[] = $link->record_id;
+                    $linkedRecordIds[] = $linkRecordId;
                 }
             }
 
@@ -271,8 +272,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
             $ratings = $this->ratingsService->getEntityBatch($lastId, $this->batchSize);
             $lastId = null;
 
-            foreach ($ratings as $current) {
-                $rating = $current['rating'];
+            foreach ($ratings as $rating) {
                 assert($rating instanceof RatingsEntityInterface);
                 // Re-read the record since since it may have changed:
                 $this->entityManager->refresh($rating);
@@ -326,7 +326,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
             $rating = $current['rating'];
             $recordId = $current['recordId'];
             $ids = $allIds[$recordId] ?? [];
-            if (!$allIds) {
+            if (!$allIds || !$rating->getUser()) {
                 continue;
             }
             foreach ($ids as $id) {
@@ -341,14 +341,13 @@ class VerifyRecordLinks extends AbstractUtilCommand
                 $targetRating = $this->ratingsService->getByResourceAndUser($resource, $rating->getUser());
                 if ($targetRating) {
                     if ($targetRating->getRating() !== $rating->getRating()) {
-                        // Count as fixed (actual update below):
                         ++$fixed;
                     }
                 } else {
                     ++$fixed;
                     $targetRating = $this->ratingsService->createEntity();
                     $targetRating->setUser($rating->getUser())
-                        ->setResource($rating->getResource());
+                        ->setResource($resource);
                 }
                 $targetRating->setRating($rating->getRating());
                 // Don't set creation date to indicate that this is a generated entry

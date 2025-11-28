@@ -1362,6 +1362,31 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
+     * Action for sending all of a user's saved favorites to the view
+     *
+     * @return mixed
+     */
+    public function favoritesAction()
+    {
+        // Check permission:
+        $response = $this->permission()->check('feature.Favorites', false);
+        if (is_object($response)) {
+            return $response;
+        }
+
+        // Redirect to the first list, if available:
+        if ($user = $this->getUser()) {
+            $userListService = $this->getDbService(UserListServiceInterface::class);
+            $lists = $userListService->getUserListsAndCountsByUser($user);
+            if ($lists) {
+                $firstList = reset($lists);
+                return $this->forwardTo('MyResearch', 'MyList', ['id' => $firstList['list_entity']->getId()]);
+            }
+        }
+        return parent::favoritesAction();
+    }
+
+    /**
      * Change phone number, email and checkout history state from library info.
      *
      * @param array  $patron patron data

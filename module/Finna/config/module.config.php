@@ -636,6 +636,7 @@ $config = [
                         => \Finna\Db\Entity\FinnaResourceListResource::class,
                     \Finna\Db\Entity\FinnaSessionStatsEntityInterface::class
                         => \Finna\Db\Entity\FinnaSessionStats::class,
+                    \Finna\Db\Entity\RatingsEntityInterface::class => \Finna\Db\Entity\Ratings::class,
                     \Finna\Db\Entity\UserEntityInterface::class
                         => \Finna\Db\Entity\User::class,
                     \Finna\Db\Entity\UserCardEntityInterface::class
@@ -696,6 +697,8 @@ $config = [
                     \Finna\Db\Service\AccessTokenService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\CommentsService::class => \Finna\Db\Service\CommentsServiceFactory::class,
                     \Finna\Db\Service\FinnaCacheService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\FinnaCommentsRecordService::class
+                        => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaDueDateReminderService::class
                         => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaFeedbackService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
@@ -719,6 +722,8 @@ $config = [
                     \Finna\Db\Service\AccessTokenServiceInterface::class => \Finna\Db\Service\AccessTokenService::class,
                     \Finna\Db\Service\CommentsServiceInterface::class => \Finna\Db\Service\CommentsService::class,
                     \Finna\Db\Service\FinnaCacheServiceInterface::class => \Finna\Db\Service\FinnaCacheService::class,
+                    \Finna\Db\Service\FinnaCommentsRecordServiceInterface::class
+                        => \Finna\Db\Service\FinnaCommentsRecordService::class,
                     \Finna\Db\Service\FinnaDueDateReminderServiceInterface::class
                         => \Finna\Db\Service\FinnaDueDateReminderService::class,
                     \Finna\Db\Service\FinnaFeedbackServiceInterface::class

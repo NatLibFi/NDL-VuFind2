@@ -124,6 +124,7 @@
       </div>
     </div>
     <?=$this->flashmessages()?>
+    <?=$this->methodTimedBlocks('registerPayment')?>
     <?=$this->partial('myresearch/borrowing-block.phtml', ['blocks' => $this->blocks]); ?>
     <div class="fines-info-area" tabindex="0">
 
