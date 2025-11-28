@@ -54,8 +54,10 @@ trait FinnaSearchControllerTrait
         if ($savedTabs = $this->getRequest()->getQuery()->get('search')) {
             $saved = [];
             foreach ((array)$savedTabs as $tab) {
-                [$searchClass, $searchId] = explode(':', $tab);
-                $saved[$searchClass] = $searchId;
+                $parts = explode(':', $tab);
+                if (isset($parts[1])) {
+                    $saved[$parts[0]] = $parts[1];
+                }
             }
             $this->layout()->savedTabs = $saved;
         }

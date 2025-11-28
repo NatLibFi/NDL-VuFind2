@@ -162,18 +162,23 @@ class UserService extends \VuFind\Db\Service\UserService implements
      */
     public function getExpiringUsers(DateTime $lastLoginDateThreshold): array
     {
-        $dql = 'SELECT ul.user FROM ' . UserListEntityInterface::class . ' ul'
+        $dql = 'SELECT IDENTITY(ul.user) FROM ' . UserListEntityInterface::class . ' ul'
             . ' WHERE ul.finnaProtected = 1';
         $subQuery = $this->entityManager->createQuery($dql);
+        $subResult = $subQuery->getResult();
 
         $dql = 'SELECT u FROM ' . UserEntityInterface::class . ' u'
-            . ' WHERE u.lastLogin != :nullDate AND u.lastLogin < :lastLoginDateThreshold AND u NOT IN (:subQuery)';
-        $query = $this->entityManager->createQuery($dql);
-        $query->setParameters([
+            . ' WHERE u.lastLogin != :nullDate AND u.lastLogin < :lastLoginDateThreshold';
+        $params = [
             'nullDate' => $this->getNonNullableDateTimeFromNullable(null),
             'lastLoginDateThreshold' => $lastLoginDateThreshold,
-            'subQuery' => $subQuery,
-        ]);
+        ];
+        if ($subResult) {
+            $dql .= ' AND u NOT IN (:subQuery)';
+            $params['subQuery'] = $subResult;
+        }
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($params);
         return $query->getResult();
     }
 
@@ -184,13 +189,14 @@ class UserService extends \VuFind\Db\Service\UserService implements
      */
     public function getUsersWithDueDateReminders(): array
     {
-        $dql = 'SELECT uc FROM ' . UserCardEntityInterface::class . ' WHERE uc.finnaDueDateReminder > 0';
+        $dql = 'SELECT IDENTITY(uc.user) FROM ' . UserCardEntityInterface::class . ' uc'
+            . ' WHERE uc.finnaDueDateReminder > 0';
         $subQuery = $this->entityManager->createQuery($dql);
 
         $dql = 'SELECT u FROM ' . UserEntityInterface::class . ' u'
             . ' WHERE u IN (:subQuery)';
         $query = $this->entityManager->createQuery($dql);
-        $query->setParameters(compact('subQuery'));
+        $query->setParameter('subQuery', $subQuery->getResult());
         return $query->getResult();
     }
 
@@ -203,8 +209,8 @@ class UserService extends \VuFind\Db\Service\UserService implements
      */
     public function isNicknameAvailable(string $nickname): bool
     {
-        return null
-            === $this->entityManager->getRepository(UserEntityInterface::class)->findBy(['finnaNickname' => $nickname]);
+        $userRepository = $this->entityManager->getRepository(UserEntityInterface::class);
+        return null === $userRepository->findOneBy(['finnaNickname' => $nickname]);
     }
 
     /**

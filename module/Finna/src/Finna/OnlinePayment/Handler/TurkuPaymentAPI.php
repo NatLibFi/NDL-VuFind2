@@ -34,6 +34,7 @@ use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\Client;
 use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\Item;
 use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\PaymentRequest;
 use Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI\TurkuSignature;
+use Finna\OnlinePayment\Handler\Feature\OrganizationProductCodeMappingsTrait;
 use Laminas\Http\PhpEnvironment\Response;
 use Paytrail\SDK\Model\CallbackUrl;
 use Paytrail\SDK\Model\Customer;
@@ -54,6 +55,8 @@ use VuFind\Exception\PaymentException;
  */
 class TurkuPaymentAPI extends \VuFind\OnlinePayment\Handler\AbstractBase
 {
+    use OrganizationProductCodeMappingsTrait;
+
     /**
      * Mappings from VuFind language codes to Paytrail
      *

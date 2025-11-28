@@ -1,4 +1,4 @@
-/*global VuFind, finna */
+/*global VuFind, finna, unwrapJQuery */
 finna.common = (function finnaCommon() {
   /**
    * Decode an HTML string
@@ -55,7 +55,7 @@ finna.common = (function finnaCommon() {
     finna.itemStatus.initDedupRecordSelection(container);
     $.fn.finnaPopup.reIndex();
     if (typeof includeVuFind === 'undefined' || includeVuFind) {
-      VuFind.initResultScripts(container);
+      VuFind.initResultScripts(unwrapJQuery(container));
     }
   }
 

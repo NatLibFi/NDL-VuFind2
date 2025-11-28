@@ -24,7 +24,6 @@ $config = [
                     'FinnaConsole\Command\Util\ProcessStatsQueue' => 'FinnaConsole\Command\Util\ProcessStatsQueueFactory',
                     'FinnaConsole\Command\Util\ScheduledAlerts' => 'VuFindConsole\Command\ScheduledSearch\NotifyCommandFactory',
                     'FinnaConsole\Command\Util\VerifyRecordLinks' => 'FinnaConsole\Command\Util\VerifyRecordLinksFactory',
-                    'FinnaConsole\Command\Util\VerifyResourceMetadata' => 'FinnaConsole\Command\Util\VerifyResourceMetadataFactory',
                 ],
                 'aliases' => [
                     'lists/list_protected' => 'FinnaConsole\Command\Lists\ListProtected',
@@ -40,7 +39,6 @@ $config = [
                     'util/import_comments' => 'FinnaConsole\Command\Util\ImportComments',
                     'util/process_record_stats' => 'FinnaConsole\Command\Util\ProcessRecordStatsLog',
                     'util/verify_record_links' => 'FinnaConsole\Command\Util\VerifyRecordLinks',
-                    'util/verify_resource_metadata' => 'FinnaConsole\Command\Util\VerifyResourceMetadata',
 
                     'VuFindConsole\Command\ScheduledSearch\NotifyCommand' => 'FinnaConsole\Command\ScheduledSearch\NotifyCommand',
 

@@ -63,7 +63,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function exportDisabled($format)
     {
         // Support export for EndNote and RefWorks
-        return !in_array($format, ['EndNote', 'RefWorks', 'RIS']);
+        return !in_array($format, ['EndNote', 'RefWorks', 'RIS', 'ZoteroWebLibrary']);
     }
 
     /**

@@ -330,6 +330,7 @@ class FinnaStatisticsService extends AbstractDbService implements
             if (!($entity = $query->getOneOrNullResult())) {
                 $entity = $this->entityPluginManager->get(FinnaRecordViewRecordFormatEntityInterface::class);
                 $entity->setFormats($format);
+                $this->persistEntity($entity);
             }
             $this->formatCache[$format] = $entity;
         }
@@ -353,6 +354,7 @@ class FinnaStatisticsService extends AbstractDbService implements
             if (!($entity = $query->getOneOrNullResult())) {
                 $entity = $this->entityPluginManager->get(FinnaRecordViewRecordRightsEntityInterface::class);
                 $entity->setRights($rights);
+                $this->persistEntity($entity);
             }
             $this->usageRightsCache[$rights] = $entity;
         }

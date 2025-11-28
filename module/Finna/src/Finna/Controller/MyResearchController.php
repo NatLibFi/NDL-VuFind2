@@ -41,6 +41,7 @@ use Finna\Db\Service\UserListService as FinnaUserListService;
 use Finna\Db\Service\UserListServiceInterface;
 use Finna\Db\Service\UserResourceService;
 use Finna\Db\Service\UserServiceInterface;
+use Laminas\View\Model\ViewModel;
 use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Db\Type\AuditEventSubtype;
 use VuFind\Db\Type\AuditEventType;
@@ -341,7 +342,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             )
         );
 
-        $view->blocks = $this->getAccountBlocks($patron);
+        if ($view instanceof ViewModel) {
+            $view->blocks = $this->getAccountBlocks($patron);
+        }
         return $view;
     }
 
@@ -438,11 +441,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                         $user
                     );
                     $savedData = current($allSavedData);
-                    if (!empty($savedData['notes'])) {
-                        $notesBlocks = explode($notesSeparator, $savedData['notes']);
+                    if ($savedData && !empty($savedData->getNotes())) {
+                        $notesBlocks = explode($notesSeparator, $savedData->getNotes());
                         // Separate any other notes from the loan notes blocks
                         $otherBlock = strncmp(
-                            $savedData['notes'],
+                            $savedData->getNotes(),
                             $notesSeparator,
                             strlen($notesSeparator)
                         );
@@ -468,7 +471,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                     }
                     if ($loc) {
                         $notes[] = $this->translate('Borrowing Location') . ': '
-                            . $this->translateWithPrefix('location_', $inst);
+                            . $this->translateWithPrefix('location_', $loc);
                     }
 
                     if (!empty($current['checkoutDate'])) {
@@ -790,7 +793,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         // Check whether to hide email address in profile
         $view->hideProfileEmailAddress = $config->Site->hideProfileEmailAddress ?? false;
 
-        if (is_array($patron)) {
+        if (is_array($patron) && $view instanceof ViewModel) {
             $view->blocks = $this->getAccountBlocks($patron);
         }
 
@@ -1163,7 +1166,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $view = parent::storageRetrievalRequestsAction();
         $view->recordList = $this->sortRequestsByAvailability($view->recordList);
-        $view->blocks = $this->getAccountBlocks($patron);
+        if ($view instanceof ViewModel) {
+            $view->blocks = $this->getAccountBlocks($patron);
+        }
         return $view;
     }
 
@@ -1185,7 +1190,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
 
         $view = parent::illRequestsAction();
         $view->recordList = $this->sortRequestsByAvailability($view->recordList);
-        $view->blocks = $this->getAccountBlocks($patron);
+        if ($view instanceof ViewModel) {
+            $view->blocks = $this->getAccountBlocks($patron);
+        }
         return $view;
     }
 
@@ -1206,7 +1213,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         }
 
         $view = parent::finesAction();
-        $view->blocks = $this->getAccountBlocks($patron);
+        if ($view instanceof ViewModel) {
+            $view->blocks = $this->getAccountBlocks($patron);
+        }
         return $view;
     }
 
@@ -1350,6 +1359,31 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public function addAccountBlocksToFlashMessenger($catalog, $patron)
     {
         // We don't use the flash messenger for blocks.
+    }
+
+    /**
+     * Action for sending all of a user's saved favorites to the view
+     *
+     * @return mixed
+     */
+    public function favoritesAction()
+    {
+        // Check permission:
+        $response = $this->permission()->check('feature.Favorites', false);
+        if (is_object($response)) {
+            return $response;
+        }
+
+        // Redirect to the first list, if available:
+        if ($user = $this->getUser()) {
+            $userListService = $this->getDbService(UserListServiceInterface::class);
+            $lists = $userListService->getUserListsAndCountsByUser($user);
+            if ($lists) {
+                $firstList = reset($lists);
+                return $this->forwardTo('MyResearch', 'MyList', ['id' => $firstList['list_entity']->getId()]);
+            }
+        }
+        return parent::favoritesAction();
     }
 
     /**

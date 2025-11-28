@@ -254,7 +254,7 @@ class Client
      */
     public static function sanitize($value)
     {
-        return str_replace(';', '', strip_tags(trim(filter_var($value, FILTER_SANITIZE_STRING))));
+        return str_replace(';', '', strip_tags(trim($value)));
     }
 }
 // @codingStandardsIgnoreEnd

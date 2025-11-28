@@ -146,7 +146,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
             $params[':user'] = $user;
         } else {
             $dql .= ' ci.sessionId = :sessionId';
-            $params[':sessionId'] = (($this->sessionManagerLoader)())->getSessionId();
+            $params[':sessionId'] = (($this->sessionManagerLoader)())->getId();
         }
         return $this->entityManager->createQuery($dql)
             ->setParameters($params)

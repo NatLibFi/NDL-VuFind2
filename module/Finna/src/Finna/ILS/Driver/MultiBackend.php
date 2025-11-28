@@ -223,7 +223,6 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     protected function remapPaymentConfig(array $config): array
     {
         static $map = [
-            'organizationProductCodeMappings' => 'organizationProductCodePrefixMappings',
             'transactionFee' => 'serviceFee',
             'transactionMaxDuration' => 'paymentMaxDuration',
         ];
@@ -232,6 +231,8 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
         foreach ($config as $key => $value) {
             if ('handler' === $key && 'PaytrailPaymentAPI' === $value) {
                 $value = 'Paytrail';
+            } elseif ('handler' === $key && 'TurkuPayment' === $value) {
+                $value = 'TurkuPaymentAPI';
             } elseif ('productCodeMappings' === $key && is_array($value)) {
                 // If productCodeMappings is an array, it should be mapped to driverProductCodeMappings:
                 $key = 'driverProductCodeMappings';

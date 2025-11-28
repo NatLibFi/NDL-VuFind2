@@ -1,4 +1,4 @@
-<?= $this->translate('due_date_hello', ['%%firstname%%' => $this->user->firstname]) ?>
+<?= $this->translate('due_date_hello', ['%%firstname%%' => $this->user->getFirstName()]) ?>
 
 
 <?php if (!empty($this->loans)): ?>

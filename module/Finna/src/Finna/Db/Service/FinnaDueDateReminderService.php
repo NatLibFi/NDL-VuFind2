@@ -104,7 +104,7 @@ class FinnaDueDateReminderService extends AbstractDbService implements
     public function deleteRemindedLoan(UserEntityInterface $user, string $loanId): void
     {
         $dql = 'DELETE ' . FinnaDueDateReminderEntityInterface::class . ' d'
-            . ' WHERE user = :user AND loanId = :loanId';
+            . ' WHERE d.user = :user AND d.loanId = :loanId';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameters(compact('user', 'loanId'));
         $query->execute();

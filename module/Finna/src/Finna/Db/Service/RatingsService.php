@@ -63,7 +63,7 @@ class RatingsService extends \VuFind\Db\Service\RatingsService implements Rating
      * @param ?int $lastId    ID of last retrieved entity, or null to start from beginning
      * @param int  $batchSize Batch size
      *
-     * @return FinnaCommentsEntityInterface[]
+     * @return RatingsEntityInterface[]
      */
     public function getEntityBatch(?int $lastId, int $batchSize): array
     {
@@ -87,13 +87,13 @@ class RatingsService extends \VuFind\Db\Service\RatingsService implements Rating
      * Get a rating by resource and user.
      *
      * @param ResourceEntityInterface $resource Resource
-     * @param UserEntityInterface     $user     User
+     * @param ?UserEntityInterface    $user     User
      *
      * @return ?RatingsEntityInterface
      */
     public function getByResourceAndUser(
         ResourceEntityInterface $resource,
-        UserEntityInterface $user
+        ?UserEntityInterface $user
     ): ?RatingsEntityInterface {
         return $this->entityManager->getRepository(RatingsEntityInterface::class)
             ->findOneBy(compact('resource', 'user'));

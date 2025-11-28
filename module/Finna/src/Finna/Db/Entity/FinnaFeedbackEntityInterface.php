@@ -29,6 +29,8 @@
 
 namespace Finna\Db\Entity;
 
+use DateTime;
+
 /**
  * Interface for representing a feedback message.
  *
@@ -40,4 +42,35 @@ namespace Finna\Db\Entity;
  */
 interface FinnaFeedbackEntityInterface extends \VuFind\Db\Entity\FeedbackEntityInterface
 {
+    /**
+     * Get modifier ID
+     *
+     * @return ?int
+     */
+    public function getModifierId(): ?int;
+
+    /**
+     * Set modifier ID
+     *
+     * @param ?int $modifierId Modifier ID
+     *
+     * @return static
+     */
+    public function setModifierId(?int $modifierId): static;
+
+    /**
+     * Get modification date
+     *
+     * @return ?DateTime
+     */
+    public function getModified(): ?DateTime;
+
+    /**
+     * Set modification date
+     *
+     * @param ?DateTime $modified Modification date
+     *
+     * @return static
+     */
+    public function setModified(?DateTime $modified): static;
 }

@@ -73,6 +73,9 @@ class FileSize extends \Laminas\View\Helper\AbstractHelper
         if (!is_numeric($bytes)) {
             return $bytes;
         }
+        if (!$bytes) {
+            return 0;
+        }
         $exponent = min(floor(log($bytes) / log(1000)), count($this->units) - 1);
         $localizedNumber = $this->getView()->plugin('localizedNumber');
         $value = $localizedNumber(($bytes / 1000 ** $exponent), $decimals);
