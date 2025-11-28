@@ -222,19 +222,17 @@
   </div>
     <?php if (!$fullWidthLayout && !$largeImageLayout):?>
       <?php // This sidebar is used for larger screens when not in full width or large image layout ?>
-      <?= $this->component('finna-record-sidebar', [
-            'class' => 'right smaller-image-sidebar hidden-xs hidden-sm',
-            'driver' => $this->driver,
-        ]);?>
+      <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
+        <?= $this->render('record/sidebar-contents.phtml'); ?>
+      </div>
     <?php endif; ?>
   </div>
 
   <?php if (!$fullWidthLayout): ?>
     <?php // This sidebar is used for smaller screens and always in large image layout, but never in full width layout ?>
-    <?= $this->component('finna-record-sidebar', [
-          'class' => 'left large-image-sidebar visible-xs visible-sm',
-          'driver' => $this->driver,
-        ]); ?>
+    <div class="sidebar left large-image-sidebar visible-xs visible-sm">
+      <?= $this->render('record/sidebar-contents.phtml'); ?>
+    </div>
   <?php endif; ?>
   <?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs' && $this->driver->getSourceIdentifier() === 'Solr'): ?>
     <div class="similar-bottom container">
