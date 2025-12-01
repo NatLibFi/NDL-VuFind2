@@ -13,6 +13,17 @@
     height: 65vh;
     color-scheme: inherit;
 
+    $tify-bg-base: $gray-ultralight;
+    $tify-bg-a: color.mix($tify-bg-base, #aaa, $weight: 85%, $method: oklab);
+    $tify-bg-b: color.mix($tify-bg-base, #333, $weight: 85%, $method: oklab);
+    $tify-bg-c: color.mix($tify-bg-base, #bbb, $weight: 95%, $method: oklab);
+    $tify-bg-d: color.mix($tify-bg-base, #444, $weight: 85%, $method: oklab);
+
+    --tify-body-bg: radial-gradient(
+            light-dark(#{$tify-bg-a}, #{$tify-bg-b}) 1px,
+            light-dark(#{$tify-bg-c}, #{$tify-bg-d}) 0
+        ) 2px 1px/3px 3px;
+
     .tify-header {
         .-page-select  {
             .tify-page-select .tify-dropdown-button {
@@ -34,6 +45,8 @@
         }
     }
 
+    // Circular pagination buttons with hover effects in bottom corners of
+    // viewer area
     .tify-media-buttons.-pagination {
         button {
             @extend .btn, .btn-primary;
@@ -53,16 +66,21 @@
         }
     }
 
+    // Hide button labels
+    .tify-header-button > span {
+        @include visually-hidden;
+    }
+
     .tify-icon {
         height: 28px;
     }
+
 }
 
 
 .record-iiif-toolbar {
     $icon-size: 2.25ex;
 
-    border-top: thin solid $gray-lighter;
     background-color: $gray-ultralight;
     padding-bottom: 1ex;
     padding-top: 1ex;

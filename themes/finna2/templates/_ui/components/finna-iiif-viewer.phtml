@@ -40,8 +40,11 @@ $cssPath = $this->scriptSrc('vendor/tify/tify.css');
 <?php
 $tifyJsPath = $this->scriptSrc('vendor/tify/tify.js');
 $tifyJsPathEsc = addslashes($tifyJsPath);
-$languageEsc = addslashes($this->language ?? 'fi');
+$languageEsc = addslashes(substr($this->language, 0, 2) ?? 'fi');
 
+// Default colorMode is "auto" which autodetects the browser preference. Finna
+// does not currently support dark modes, so we must force "light" to prevent
+// mismatching colors.
 $js = <<<JS
     import Tify from '$tifyJsPathEsc';
     const config = {
