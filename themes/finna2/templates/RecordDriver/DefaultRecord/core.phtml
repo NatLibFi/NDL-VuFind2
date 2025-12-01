@@ -92,7 +92,7 @@
     <?=$this->extraControls['availabilityInfo'] ?? ''?>
   <?php endif; ?>
 
-  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
+  <?php if ($thumbnail && $thumbnailAlignment == 'left' && !$iiifManifests): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
@@ -301,7 +301,7 @@
     </div>
     <?php endif; ?>
   </div>
-  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
+  <?php if ($thumbnail && $thumbnailAlignment == 'right' && !$iiifManifests): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
 </div>
