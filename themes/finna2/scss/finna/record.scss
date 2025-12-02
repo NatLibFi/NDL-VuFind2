@@ -147,6 +147,17 @@
     }
   }
 }
+.record-details, .sidebar .recordProvidedBy {
+  .more-link, .less-link {
+    .icon {
+      margin-left: 3px;
+    }
+  }
+}
+.record-alt-titles {
+  color: $gray-slightly-lighter;
+  margin-bottom: 12px;
+}
 
 .record-information {
   button.less-link {
@@ -338,7 +349,7 @@
   display: inline-block;
   .show-info {
     .icon {
-      font-size: 1.0rem;
+      font-size: 0.7em;
       vertical-align: middle;
     }
     .icon.expand {

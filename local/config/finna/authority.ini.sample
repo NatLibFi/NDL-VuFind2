@@ -32,7 +32,7 @@ AllFields           = "All Fields"
 
 [Sorting]
 relevance = sort_relevance
-heading   = "Heading"
+heading   = sort_name_asc
 
 [Facets]
 source             = "Authority File"

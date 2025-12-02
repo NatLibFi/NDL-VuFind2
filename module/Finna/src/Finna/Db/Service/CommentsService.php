@@ -165,16 +165,29 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
     {
         $resourceService = $this->getDbService(ResourceServiceInterface::class);
         $resource = $resourceService->getResourceByRecordId($id, $source);
-        if (!$resource) {
+
+        $commentsRecordRepo = $this->entityManager->getRepository(FinnaCommentsRecordEntityInterface::class);
+        $commentsRecord = $commentsRecordRepo->findBy(['recordId' => $id]);
+
+        if (!$resource && !$commentsRecord) {
             return [];
+        }
+        $terms = [];
+        $parameters = [];
+        if ($resource) {
+            $terms[] = 'c.resource = :resource';
+            $parameters['resource'] = $resource;
+        }
+        if ($commentsRecord) {
+            $terms[] = 'c IN (:commentsRecord)';
+            $parameters['commentsRecord'] = array_map(fn ($c) => $c->getComment(), $commentsRecord);
         }
         $dql = 'SELECT c '
             . 'FROM ' . CommentsEntityInterface::class . ' c '
             . 'LEFT JOIN c.user u '
-            . 'WHERE c.resource = :resource AND c.finnaVisible = 1'
+            . 'WHERE c.finnaVisible = 1 AND (' . implode(' OR ', $terms) . ') '
             . 'ORDER BY c.created ASC';
 
-        $parameters = compact('resource');
         $query = $this->entityManager->createQuery($dql);
         $query->setParameters($parameters);
         $result = $query->getResult();
