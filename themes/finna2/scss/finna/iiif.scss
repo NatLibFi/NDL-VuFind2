@@ -61,8 +61,6 @@
 
     .tify-media-buttons.-controls {
         --tify-bg-color: #fff;
-        left: initial;
-        right: calc(var(--tify-grid-base, 1.5em) * .5);
 
         button:hover {
             background-color: $action-link-color;
