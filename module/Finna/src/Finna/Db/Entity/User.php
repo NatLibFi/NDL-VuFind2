@@ -212,6 +212,9 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
         if ($this->getAuthMethod() === 'multiils') {
             $parts = explode('.', $username, 2);
             $displayName = $parts[1] ?? $parts[0];
+            if (filter_var($username, FILTER_VALIDATE_EMAIL) && !filter_var($displayName, FILTER_VALIDATE_EMAIL)) {
+                $displayName = $username;
+            }
         } else {
             $displayName = $username;
         }
