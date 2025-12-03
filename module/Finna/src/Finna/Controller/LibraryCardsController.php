@@ -31,11 +31,11 @@
 
 namespace Finna\Controller;
 
+use Finna\Db\Service\UserCardServiceInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container as SessionContainer;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Db\Type\AuditEventSubtype;
 use VuFind\Db\Type\AuditEventType;
@@ -793,7 +793,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         }
 
         $catUsername = $card->getCatUsername();
-        $users = $userCardService->getUsersForLibraryCard($catUsername);
+        $users = $userCardService->getConnectedAccountInfoForLibraryCard($catUsername);
         return $this->createViewModel(['users' => $users]);
     }
 

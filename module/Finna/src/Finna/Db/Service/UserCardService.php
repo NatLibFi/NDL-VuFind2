@@ -115,7 +115,7 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
      *
      * @return UserCardEntityInterface[]
      */
-    public function getUsersForLibraryCard(string $catUsername): array
+    public function getConnectedAccountInfoForLibraryCard(string $catUsername): array
     {
         $qb = $this->entityManager->createQueryBuilder();
         $qb->select(
