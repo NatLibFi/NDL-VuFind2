@@ -186,6 +186,7 @@ return [
         [ 'file' => 'finna.css' ],
         [ 'file' => 'finnaicons.css' ],
         [ 'file' => 'vendor/priority-nav-core.css' ],
+        [ 'file' => 'vendor/tify.min.css' ],
     ],
     'js' => [
         [ 'file' => 'finna-object-editor.js' ],
