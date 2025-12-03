@@ -298,6 +298,12 @@ label.list-group-item {
     margin-bottom: 0;
   }
 }
+.more-link,
+.less-link {
+  .icon {
+    margin-left: 3px;
+  }
+}
 .more-link, .less-link, .less-link-top {
   cursor: pointer;
   font-weight: 600;

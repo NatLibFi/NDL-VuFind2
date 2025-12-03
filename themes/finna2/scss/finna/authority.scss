@@ -43,28 +43,20 @@ a.authority-link {
   }
 }
 
-.record-main {
-  .authority-records-summary {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    > div {
-      .info-row {
-        display: flex;
-        align-items: baseline;
-      }
-      .text {
-        width: 30%;
-        font-weight: 700;
-      }
-      .count {
-        font-size: 1.4em;
-      }
+.record-main .authority-records-summary {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  > div {
+    .info-row {
+      display: flex;
+      align-items: baseline;
     }
-  }
-  .table-finna-record.record-details {
-    .info {
-      font-size: $font-size-small;
-      color: $gray;
+    .text {
+      width: 30%;
+      font-weight: 700;
+    }
+    .count {
+      font-size: 1.4em;
     }
   }
 }
@@ -110,6 +102,9 @@ a.authority-link {
     .record-details th {
       width: 20%;
     }
+  }
+  .table.table-finna-record tbody tr > * {
+    background-color: transparent;
   }
   .tabs-table .nav-tabs {
     position: relative;
