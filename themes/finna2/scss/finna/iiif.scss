@@ -13,16 +13,7 @@
     height: 65vh;
     color-scheme: inherit;
 
-    $tify-bg-base: $gray-ultralight;
-    $tify-bg-a: color.mix($tify-bg-base, #aaa, $weight: 85%, $method: oklab);
-    $tify-bg-b: color.mix($tify-bg-base, #333, $weight: 85%, $method: oklab);
-    $tify-bg-c: color.mix($tify-bg-base, #bbb, $weight: 95%, $method: oklab);
-    $tify-bg-d: color.mix($tify-bg-base, #444, $weight: 85%, $method: oklab);
-
-    --tify-body-bg: radial-gradient(
-            light-dark(#{$tify-bg-a}, #{$tify-bg-b}) 1px,
-            light-dark(#{$tify-bg-c}, #{$tify-bg-d}) 0
-        ) 2px 1px/3px 3px;
+    --tify-body-bg: #{$gray-ultralight};
 
     .tify-header {
         .-page-select  {
