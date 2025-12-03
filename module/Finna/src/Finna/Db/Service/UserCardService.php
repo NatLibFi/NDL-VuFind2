@@ -39,7 +39,9 @@ use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\PersistenceManager;
 
+use function assert;
 use function in_array;
+use function is_int;
 
 /**
  * Database service for UserCard.
@@ -50,7 +52,7 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-class UserCardService extends \VuFind\Db\Service\UserCardService
+class UserCardService extends \VuFind\Db\Service\UserCardService implements UserCardServiceInterface
 {
     /**
      * Constructor
@@ -81,6 +83,8 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
 
     /**
      * Get all library cards associated with the user.
+     *
+     * Finna: filters out cards for inactive login targets.
      *
      * @param UserEntityInterface|int $userOrId    User object or identifier
      * @param ?int                    $id          Optional card ID filter
@@ -113,7 +117,7 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
      *
      * @param string $catUsername Catalog username
      *
-     * @return UserCardEntityInterface[]
+     * @return array
      */
     public function getConnectedAccountInfoForLibraryCard(string $catUsername): array
     {
@@ -130,5 +134,57 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
         ->setParameter('catUsername', $catUsername);
 
         return $qb->getQuery()->getArrayResult();
+    }
+
+    /**
+     * Get all library cards associated with the user.
+     *
+     * @param UserEntityInterface|int $userOrId    User object or identifier
+     * @param ?int                    $id          Optional card ID filter
+     * @param ?string                 $catUsername Optional catalog username filter
+     *
+     * @return UserCardEntityInterface[]
+     */
+    public function getAllLibraryCards(
+        UserEntityInterface|int $userOrId,
+        ?int $id = null,
+        ?string $catUsername = null
+    ): array {
+        return parent::getLibraryCards($userOrId, $id, $catUsername);
+    }
+
+    /**
+     * Verify that the user's current ILS settings exist in their library card data
+     * (if enabled) and are up to date. Designed to be called after updating the
+     * user row; will create or modify library card rows as needed.
+     *
+     * @param UserEntityInterface|int $userOrId User object or identifier
+     *
+     * @return bool
+     * @throws \VuFind\Exception\PasswordSecurity
+     */
+    public function synchronizeUserLibraryCardData(UserEntityInterface|int $userOrId): bool
+    {
+        parent::synchronizeUserLibraryCardData($userOrId);
+
+        // Synchronize due date reminder setting
+        if (!$this->capabilities->libraryCardsEnabled()) {
+            return true; // success, because there's nothing to do
+        }
+        $user = is_int($userOrId)
+            ? $this->getDbService(UserServiceInterface::class)->getUserById($userOrId) : $userOrId;
+        assert($user instanceof \Finna\Db\Entity\UserEntityInterface);
+        if (!$user->getCatUsername()) {
+            return true; // success, because there's nothing to do
+        }
+        $cards = $this->getLibraryCards($user, catUsername: $user->getCatUsername());
+        if (!($card = reset($cards))) {
+            // This should never happen!
+            return true;
+        }
+        $card->setFinnaDueDateReminder($user->getFinnaDueDateReminder());
+
+        $this->persistEntity($card);
+        return true;
     }
 }

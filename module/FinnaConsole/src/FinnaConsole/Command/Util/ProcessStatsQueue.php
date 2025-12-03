@@ -29,7 +29,6 @@
 
 namespace FinnaConsole\Command\Util;
 
-use DateTime;
 use Finna\Db\Service\FinnaStatisticsServiceInterface;
 use Finna\Db\Type\FinnaStatisticsClientType;
 use Finna\Statistics\Driver\Redis as RedisDriver;
@@ -113,7 +112,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
                 ->setInstitution($entry['institution'])
                 ->setView($entry['view'])
                 ->setType(FinnaStatisticsClientType::from($entry['crawler']))
-                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']));
+                ->setDate($entry['date']);
 
             $this->statisticsService->addSession($logEntry);
         };
@@ -133,7 +132,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
                 ->setInstitution($entry['institution'])
                 ->setView($entry['view'])
                 ->setType(FinnaStatisticsClientType::from($entry['crawler']))
-                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']))
+                ->setDate($entry['date'])
                 ->setController($entry['controller'])
                 ->setAction($entry['action']);
 
@@ -208,7 +207,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
                 ->setInstitution($entry['institution'])
                 ->setView($entry['view'])
                 ->setType(FinnaStatisticsClientType::from($entry['crawler']))
-                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']))
+                ->setDate($entry['date'])
                 ->setBackend($entry['backend'])
                 ->setSource($entry['source'])
                 ->setRecordId($entry['record_id'])

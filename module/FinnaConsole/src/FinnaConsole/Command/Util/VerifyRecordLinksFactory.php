@@ -34,6 +34,7 @@ use Finna\Db\Service\CommentsServiceInterface;
 use Finna\Db\Service\FinnaCommentsRecordServiceInterface;
 use Finna\Db\Service\RatingsServiceInterface;
 use Finna\Db\Service\RecordServiceInterface;
+use Finna\Record\ResourcePopulator;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
@@ -80,6 +81,7 @@ class VerifyRecordLinksFactory implements FactoryInterface
             $dbServiceManager->get(FinnaCommentsRecordServiceInterface::class),
             $dbServiceManager->get(RatingsServiceInterface::class),
             $dbServiceManager->get(ResourceServiceInterface::class),
+            $container->get(ResourcePopulator::class),
             $container->get(\VuFind\Search\BackendManager::class)->get('Solr'),
             $container->get(\VuFind\Record\Loader::class),
             $container->get(\VuFind\Config\ConfigManager::class)->getConfigArray('searches'),

@@ -79,7 +79,7 @@ class UserListService extends \VuFind\Db\Service\UserListService implements User
             . ' WHERE ur.list = :list';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameters(compact('list'));
-        $result = $query->getOneOrNullResult();
+        $result = $query->getSingleScalarResult();
         return null === $result ? 0 : $result + 1;
     }
 

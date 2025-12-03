@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database service for UserCard.
+ * Database service interface for UserCard.
  *
  * PHP version 8
  *
@@ -22,21 +22,24 @@
  *
  * @category VuFind
  * @package  Database
- * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
 
 namespace Finna\Db\Service;
 
+use VuFind\Db\Entity\UserCardEntityInterface;
+use VuFind\Db\Entity\UserEntityInterface;
+
 /**
- * Database service for UserCard.
+ * Database service interface for search.
  *
  * @category VuFind
  * @package  Database
- * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
+ * @link     https://vufind.org/wiki/development:plugins:database_gateways interface
  */
 interface UserCardServiceInterface extends \VuFind\Db\Service\UserCardServiceInterface
 {
@@ -45,7 +48,22 @@ interface UserCardServiceInterface extends \VuFind\Db\Service\UserCardServiceInt
      *
      * @param string $catUsername Catalog username
      *
-     * @return UserCardEntityInterface[]
+     * @return array
      */
     public function getConnectedAccountInfoForLibraryCard(string $catUsername): array;
+
+    /**
+     * Get all library cards associated with the user.
+     *
+     * @param UserEntityInterface|int $userOrId    User object or identifier
+     * @param ?int                    $id          Optional card ID filter
+     * @param ?string                 $catUsername Optional catalog username filter
+     *
+     * @return UserCardEntityInterface[]
+     */
+    public function getAllLibraryCards(
+        UserEntityInterface|int $userOrId,
+        ?int $id = null,
+        ?string $catUsername = null
+    ): array;
 }

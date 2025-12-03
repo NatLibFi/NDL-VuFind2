@@ -6,7 +6,8 @@
   }
 }
 
-.main.template-dir-myresearch.template-name-mylist {
+.main.template-dir-myresearch.template-name-mylist,
+.main-template-dir-reservationlist.template-name-displaylist {
   .search-controls {
     margin-top: 10px;
     margin-bottom: 0px;
@@ -31,9 +32,11 @@
   }
 }
 
-.template-name-mylist .bulk-action-buttons-col {
-  padding: 10px;
-  padding-bottom: 0px;
+.template-name-mylist, .template-name-displaylist {
+  .bulk-action-buttons-col {
+    padding: 10px;
+    padding-bottom: 0px;
+  }
 }
 
 .mylist-bar, .reservationlist-bar {
@@ -206,6 +209,7 @@
   &.no-edit {
     border: 0;
     margin-top: 5px;
+    padding-left: 0;
     &:hover {
       border: 0;
     }
@@ -470,33 +474,17 @@ span.caret {
 }
 
 @include media-breakpoint-down(md) {
-  .mylist-mobile.mobile-navigation {
-    left: 0;
-    border-top: 1px solid $body-bg;
-    position: fixed;
-    height: 44px;
-    bottom: 0;
-    z-index: 2;
-    width: 100%;
-    background: $sidebar-background;
-    li.sidebar-navigation {
-      padding: 11px;
-      color: $sidebar-header-text-color;
-      font-size: 1.1em;
-      text-transform: uppercase;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    span.active-filters {
-      float: right;
-      max-width: 55%;
-    }
+  .sidebar.open {
+    margin-top: 0px;
+  }
+  .dropdown-menu {
+    border: none;
+    border-radius: none;
+    margin: 0;
   }
 }
 
 .mylist-header {
-  display: inline-block;
   width: 100%;
   .alert {
     margin-top: 1em;

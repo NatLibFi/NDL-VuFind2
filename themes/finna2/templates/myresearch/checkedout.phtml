@@ -37,6 +37,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
+      <?=$this->methodTimedBlocks('Renewals')?>
       <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkedout-pre-list')): ?>
         <div class="checkedout-pre-list"><?=$this->render($template)?></div>
       <?php endif; ?>

@@ -36,6 +36,7 @@ use VuFind\Solr\Utils;
 
 use function in_array;
 use function is_array;
+use function is_callable;
 use function strlen;
 
 /**
@@ -592,7 +593,11 @@ class Params extends \VuFind\Search\Solr\Params
     {
         // We used to include the tie breaker in all sort options, so strip it out before doing anything else so that
         // any saved searches or links containing it still work properly and display the correct value:
-        if ($sort && ($tieBreaker = $this->getOptions()->getSortTieBreaker())) {
+        if (
+            $sort
+            && is_callable([$this->getOptions(), 'getSortTieBreaker'])
+            && ($tieBreaker = $this->getOptions()->getSortTieBreaker())
+        ) {
             if (str_ends_with($sort, ",$tieBreaker")) {
                 $sort = substr($sort, 0, -strlen($tieBreaker) - 1);
             }

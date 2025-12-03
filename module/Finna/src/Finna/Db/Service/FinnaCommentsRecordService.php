@@ -43,7 +43,7 @@ use VuFind\Db\Service\AbstractDbService;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class FinnaResourceListService extends AbstractDbService implements FinnaCommentsRecordServiceInterface
+class FinnaCommentsRecordService extends AbstractDbService implements FinnaCommentsRecordServiceInterface
 {
     /**
      * Create a FinnaResourceList entity object.

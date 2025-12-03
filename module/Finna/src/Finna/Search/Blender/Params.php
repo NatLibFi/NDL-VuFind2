@@ -50,22 +50,15 @@ class Params extends \VuFind\Search\Blender\Params
     use \Finna\Search\Solr\ParamsSharedTrait;
 
     /**
-     * Helper for formatting authority id filter display texts.
-     *
-     * @var AuthorityHelper
-     */
-    protected $authorityHelper = null;
-
-    /**
      * Constructor
      *
-     * @param \VuFind\Search\Base\Options $options       Options to use
-     * @param ConfigManagerInterface      $configManager Config manager
-     * @param HierarchicalFacetHelper     $facetHelper   Hierarchical facet helper
-     * @param array                       $searchParams  Search params for backends
-     * @param \VuFind\Config\Config       $blenderConfig Blender configuration
-     * @param array                       $mappings      Blender mappings
-     * @param AuthorityHelper             $authHelper    Authority helper
+     * @param \VuFind\Search\Base\Options $options         Options to use
+     * @param ConfigManagerInterface      $configManager   Config manager
+     * @param HierarchicalFacetHelper     $facetHelper     Hierarchical facet helper
+     * @param array                       $searchParams    Search params for backends
+     * @param \VuFind\Config\Config       $blenderConfig   Blender configuration
+     * @param array                       $mappings        Blender mappings
+     * @param AuthorityHelper             $authorityHelper Authority helper
      */
     public function __construct(
         \VuFind\Search\Base\Options $options,
@@ -74,7 +67,7 @@ class Params extends \VuFind\Search\Blender\Params
         array $searchParams,
         \VuFind\Config\Config $blenderConfig,
         array $mappings,
-        protected AuthorityHelper $authHelper
+        protected AuthorityHelper $authorityHelper
     ) {
         parent::__construct(
             $options,

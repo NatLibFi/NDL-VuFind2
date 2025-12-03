@@ -386,8 +386,9 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
         $result['record_ids_text'] = '';
         $result['record_source_and_ids'] = [];
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
-            $result['record_ids_text'] .= $resource->getTitle() . ' (' . $resource->getRecordId() . ')' . PHP_EOL;
-            $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
+            $record = $resource->getResource();
+            $result['record_ids_text'] .= $record->getTitle() . ' (' . $record->getRecordId() . ')' . PHP_EOL;
+            $result['record_source_and_ids'][] = $record->getSource() . '|' . $record->getRecordId();
         }
         return $result;
     }
@@ -451,7 +452,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
         $cardName = $patron['__local_cat_username'] ?? $patron['cat_username'];
         if ($cards = $cardService->getLibraryCards($user, null, $patron['cat_username'])) {
             $dbCardName = reset($cards)->getCardName();
-            if ($dbCardName !== $patron['cat_username']) {
+            if ($dbCardName && $dbCardName !== $patron['cat_username']) {
                 $cardName = $dbCardName;
             }
         }

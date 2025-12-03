@@ -61,6 +61,16 @@ class Ratings extends \VuFind\Db\Entity\Ratings implements RatingsEntityInterfac
     protected ?DateTime $finnaChecked;
 
     /**
+     * Constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        // Set the default value as a DateTime object
+        $this->finnaChecked = $this->getUnassignedDefaultDateTime();
+    }
+
+    /**
      * Last check date getter
      *
      * @return DateTime

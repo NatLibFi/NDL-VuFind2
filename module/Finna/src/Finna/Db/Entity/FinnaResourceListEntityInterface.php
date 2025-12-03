@@ -113,9 +113,9 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     /**
      * Created getter
      *
-     * @return DateTime
+     * @return ?DateTime
      */
-    public function getCreated(): DateTime;
+    public function getCreated(): ?DateTime;
 
     /**
      * Get the institution

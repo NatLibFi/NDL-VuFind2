@@ -32,6 +32,8 @@ namespace Finna\Db\Entity;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
+use function is_resource;
+
 /**
  * Entity model for finna_cache table
  *
@@ -183,7 +185,7 @@ class FinnaCache implements FinnaCacheEntityInterface
      */
     public function getData(): string
     {
-        return $this->data;
+        return is_resource($this->data) ? stream_get_contents($this->data) : $this->data;
     }
 
     /**

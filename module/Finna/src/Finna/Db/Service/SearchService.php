@@ -66,8 +66,8 @@ class SearchService extends \VuFind\Db\Service\SearchService implements SearchSe
     public function getScheduledSearchesByBaseUrl(string $notificationBaseUrl): array
     {
         $dql = 'SELECT s FROM ' . SearchEntityInterface::class
-            . ' WHERE s.notificationBaseUrl = :notificationBaseUrl AND s.notificationFrequency > 0 AND s.saved = 1'
-            . ' ORDER BY s.userId';
+            . ' s WHERE s.notificationBaseUrl = :notificationBaseUrl AND s.notificationFrequency > 0 AND s.saved = 1'
+            . ' ORDER BY IDENTITY(s.user)';
         $query = $this->entityManager->createQuery($dql);
         $query->setParameters(compact('notificationBaseUrl'));
         return $query->getResult();

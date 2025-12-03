@@ -295,6 +295,13 @@ a.authority {
     }
   }
 }
+.record-details, .sidebar .recordProvidedBy {
+  .more-link, .less-link {
+    .icon {
+      margin-left: 3px;
+    }
+  }
+}
 .record-alt-titles {
   color: $gray-slightly-lighter;
   margin-bottom: 12px;
@@ -922,6 +929,9 @@ finna-model-viewer .object-editor {
     }
     .icon.collapse {
       display: none;
+    }
+    span.icon {
+      font-size: 0.7em;
     }
   }
 
