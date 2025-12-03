@@ -199,22 +199,20 @@ class FinnaResourceListService extends AbstractDbService implements
             $institution,
             $listType
         );
-        if (!$containingLists) {
-            return $containingLists;
-        }
         $listIds = array_map(
             fn ($relation) => $relation->getId(),
             $containingLists
         );
-
         $parameters = [
             'userId' => $user->getId(),
-            'listsContaining' => $listIds,
         ];
 
         $dql = 'SELECT frl FROM ' . FinnaResourceListEntityInterface::class . ' frl '
-            . 'WHERE frl.id NOT IN (:listsContaining) AND frl.user = :userId';
-
+            . 'WHERE frl.user = :userId';
+        if ($listIds) {
+            $dql .= ' AND frl.id NOT IN (:listsContaining)';
+            $parameters['listsContaining'] = $listIds;
+        }
         if ($listIdentifier) {
             $dql .= ' AND frl.listConfigIdentifier = :listConfigIdentifier';
             $parameters['listConfigIdentifier'] = $listIdentifier;
