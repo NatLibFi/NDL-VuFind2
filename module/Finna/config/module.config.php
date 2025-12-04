@@ -395,6 +395,7 @@ $config = [
             'Finna\OrganisationInfo\Provider\MuseotFi' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
             \Finna\Ratings\RatingsService::class => \VuFind\Ratings\RatingsServiceFactory::class,
             'Finna\Record\Loader' => 'Finna\Record\LoaderFactory',
+            'Finna\Record\IIIF\IIIFManifestGenerator' => 'Finna\Record\IIIF\IIIFManifestGeneratorFactory',
             \Finna\Record\ResourcePopulator::class => \VuFind\Record\ResourcePopulatorFactory::class,
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
@@ -1167,6 +1168,7 @@ $recordRoutes = [
 // Define non tab record actions
 $nonTabRecordActions = [
     'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest', 'ValidationReport',
+    'IIIFManifest',
 ];
 
 // Define dynamic routes -- controller => [route name => action]
