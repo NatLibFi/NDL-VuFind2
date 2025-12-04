@@ -34,9 +34,9 @@ $tifyConfig = json_encode([
     'container' => '#tify',
     'manifestUrl' => $this->manifestUrls[0]['url'],
     'language' => substr($this->layout()->userLang, 0, 2) ?? 'fi',
-    // Default colorMode is "auto" which autodetects the browser preference. Finna
-    // does not currently support dark modes, so we must force "light" to prevent
-    // mismatching colors.
+    // Default colorMode is "auto" which autodetects the browser preference.
+    // Finna does not currently support dark modes, so we must force "light" to
+    // prevent mismatching colors.
     'colorMode' => 'light',
 ]);
 

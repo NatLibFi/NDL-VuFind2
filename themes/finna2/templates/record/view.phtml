@@ -122,8 +122,8 @@
   <?php endif; ?>
   <?php if ($iiifManifests = $this->driver->tryMethod('getIiifManifests')):
       echo $this->record($this->driver)->renderTemplate(
-        'record-iiif-viewer.phtml',
-        ['manifests' => $iiifManifests]
+          'record-iiif-viewer.phtml',
+          ['manifests' => $iiifManifests]
       );
   endif; ?>
   <div class="record-main <?= (!$fullWidthLayout && !$largeImageLayout) ? 'mainbody left' : ''?>">

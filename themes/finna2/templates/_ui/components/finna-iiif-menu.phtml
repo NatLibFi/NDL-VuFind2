@@ -41,14 +41,14 @@ $viewers = $this->config()->get('config')->IiifExternalViewers->viewers ?? [];
       <?=$this->copyToClipboardButton("#$urlContainerId", false);?>
     </span>
   </li>
-  <?php if($viewers):?>
+  <?php if ($viewers):?>
     <li>
         <span class="dropdown-header fs-5">
         <?=$this->transEsc('open_in_external_viewer')?>
         </span>
     </li>
     <?php
-    foreach($viewers as $viewer):
+    foreach ($viewers as $viewer):
         $viewerName = strtok($viewer, '|');
         $viewerHref = strtok('|');
         $viewerHref = str_replace('{manifest}', $encodedManifest, $viewerHref);
