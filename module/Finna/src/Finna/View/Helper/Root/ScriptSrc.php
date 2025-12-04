@@ -49,7 +49,7 @@ class ScriptSrc extends ThemeSrc
      */
     public function __invoke($source)
     {
-        if ($url = $this->fileFromCurrentTheme("js/$source")) {
+        if ($url = $this->fileFromCurrentTheme("js/$source", false, true)) {
             return $url;
         }
         return '';

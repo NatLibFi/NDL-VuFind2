@@ -2,21 +2,23 @@
 /**
  * Dropdown menu for IIIF functions
  *
- * @param string    manifestURL    URL of IIIF manifest to work with
+ * @param array     manifestUrls   URLs of IIIF manifest to work with
  * @param ?string   uniqueID       Any unique string to be appended to the id
  *                                 attribute of a span containing the manifest
  *                                 URL for copying to the clipboard
  * @param ?bool     alignRight     Align the menu to the trigger button on the
  *                                 right-hand edge
  */
-$encodedManifest = urlencode($this->manifestURL);
+$manifest = $this->manifestUrls[0]['url'];
+$encodedManifest = urlencode($manifest);
 $r = $this->alignRight ? 'dropdown-menu-end' : '';
 $urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? 'container');
+$viewers = $this->config()->get('config')->IiifExternalViewers->viewers ?? [];
 ?>
 <span class="iiif-manifest-url-container hidden"
-      id="<?=$urlContainerId?>"
+      id="<?=$this->escapeHtmlAttr($urlContainerId)?>"
       aria-hidden="true">
-  <?=$this->escapeHtml($this->manifestURL)?>
+  <?=$this->escapeHtml($manifest)?>
 </span>
 <ul class="dropdown-menu <?=$r?>">
   <li>
@@ -25,7 +27,8 @@ $urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? 'container');
     </span>
   </li>
   <li>
-    <a class="dropdown-item btn toolbar-btn icon-link" href="<?=$this->manifestURL?>"
+    <a class="dropdown-item btn toolbar-btn icon-link"
+       href="<?=$this->escapeHtmlAttr($manifest)?>"
       target="_blank" rel="nofollow" class="iiif-manifest-url-link">
       <?=$this->icon('external-link', 'icon-link__icon')?>
       <span class="icon-link__label">
@@ -38,25 +41,28 @@ $urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? 'container');
       <?=$this->copyToClipboardButton("#$urlContainerId", false);?>
     </span>
   </li>
-  <li>
-    <span class="dropdown-header fs-5">
-      <?=$this->transEsc('open_in_external_viewer')?>
-    </span>
-  </li>
-  <li>
-    <a class="dropdown-item btn toolbar-btn"
-      href="https://uv-v4.netlify.app/#?manifest=<?=$encodedManifest?>"
-      target="_blank" rel="nofollow">
-      <?=$this->icon('external-link')?>
-      Universal Viewer
-    </a>
-  </li>
-  <li>
-    <a class="dropdown-item btn toolbar-btn"
-      href="https://projectmirador.org/embed/?iiif-content=<?=$encodedManifest?>"
-      target="_blank" rel="nofollow">
-      <?=$this->icon('external-link')?>
-      Mirador
-    </a>
-  </li>
+  <?php if($viewers):?>
+    <li>
+        <span class="dropdown-header fs-5">
+        <?=$this->transEsc('open_in_external_viewer')?>
+        </span>
+    </li>
+    <?php
+    foreach($viewers as $viewer):
+        $viewerName = strtok($viewer, '|');
+        $viewerHref = strtok('|');
+        $viewerHref = str_replace('{manifest}', $encodedManifest, $viewerHref);
+        ?>
+        <li>
+            <a class="dropdown-item btn toolbar-btn"
+               href="<?=$this->escapeHtmlAttr($viewerHref)?>"
+               target="_blank"
+               rel="nofollow noreferrer">
+            <?=$this->icon('external-link')?>
+            <?=$this->escapeHtml($viewerName)?>
+            </a>
+        </li>
+    <?php
+    endforeach;
+  endif; ?>
 </ul>
