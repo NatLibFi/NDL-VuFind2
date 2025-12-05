@@ -31,12 +31,12 @@
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 
-  $hasEmbeddedMedia = $this->record($this->driver)->hasEmbeddedMedia();
+  $hasEmbeddedMedia = $this->record($this->driver)->hasDigitalObject();
 
   ob_start(); ?>
   <?php if (!$hasEmbeddedMedia): ?>
     <div class="media-<?=$thumbnailAlignment ?>">
-      <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
+      <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
       <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
     </div>
 

@@ -1,39 +1,63 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-audio-player.phtml -->
 <?php
   $this->partial('Helpers/videojs-translations.phtml');
+  // Check if there are more than one type of digital object present
+  $hasManyAudios = count(array_filter($audioUrls)) > 1;
 ?>
-<div class="audio-accordion">
-<?php foreach ($audioUrls as $ind => $url):
-    $format = $this->driver->tryMethod('getRecordFormat', [], '');
-    $showDetails = $format === 'lido' ? true : false;
-  ?>
-  <div class="audio-item-wrapper">
-    <div class="audio-title-wrapper">
-      <div class="audio-title">
-      <?php if (!empty($url['desc'])): ?>
-        <strong><?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?></strong>
-      <?php else: ?>
-        <strong><?=$this->transEsc('format_Sound')?></strong>
-      <?php endif ?>
-      </div>
-    </div>
-    <div class="audio-accordion-item">
-      <a class="play">
-        <?=$this->icon('audio-play') ?>
-      </a>
-      <div class="audio-player-wrapper hide">
-        <audio id="audio-<?=$ind?>" class="vjs-default-skin hide" autoplay controls preload="auto">
-          <source data-src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>">
-        </audio>
-      </div>
-      <?php if (!$showDetails): ?>
-        <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?></a></div>
-      </div>
-      <?php else: ?>
+<div class="audio-player-container">
+  <!-- Audio content -->
+  <div class="tab-content" id="audioTabContent">
+    <?php foreach ($audioUrls as $ind => $url):
+        $format = $this->driver->tryMethod('getRecordFormat', [], '');
+        $showDetails = $format === 'lido' ? true : false;
+    ?>
+    <div class="tab-pane fade <?= $ind === 0 ? 'show active' : '' ?>" id="tab-<?= $ind ?>" role="tabpanel" aria-labelledby="tab-<?= $ind ?>-tab">
+    <div class="audio-item-wrapper">
+      <div class="audio-title-wrapper">
+        <div class="audio-title">
+        <?php if (!empty($url['desc'])): ?>
+          <?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?>
+        <?php else: ?>
+          <?=$this->transEsc('format_Sound')?>
+        <?php endif ?>
         </div>
-        <?=$this->record($this->driver)->renderTemplate('audio-information.phtml', ['ind' => $ind, 'url' => $url]);?>
-      <?php endif; ?>
+      </div>
+      <div class="audio-player-wrapper">
+        <button class="play">
+          <?=$this->icon('audio-play') ?>
+        </button>
+        <div class="audio-player-wrapper hide">
+          <audio id="audio-<?=$ind?>" class="vjs-default-skin hide" autoplay controls preload="auto">
+            <source data-src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>">
+          </audio>
+        </div>
+        <?php if (!$showDetails): ?>
+          <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?></a></div>
+        <?php else: ?>
+          <?=$this->record($this->driver)->renderTemplate('audio-information.phtml', ['ind' => $ind, 'url' => $url]);?>
+        <?php endif; ?>
+      </div>
+      </div>
+      </div>
+    <?php endforeach; ?>
   </div>
-<?php endforeach; ?>
+    <!-- Audio tabs -->
+  <?php if ($hasManyAudios): ?>
+    <ul class="nav nav-pills" id="audioTab" role="tablist">
+      <?php foreach ($audioUrls as $ind => $url): ?>
+        <li class="nav-item" role="presentation">
+          <a class="nav-link <?= $ind === 0 ? 'active' : '' ?>" id="tab-<?= $ind ?>-tab" data-bs-toggle="tab" href="#tab-<?= $ind ?>" role="tab" aria-controls="tab-<?= $ind ?>" aria-selected="<?= $ind === 0 ? 'true' : 'false' ?>">
+            <?php if (!empty($url['desc'])): ?>
+              <?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?>
+            <?php else: ?>
+              <?= $this->transEsc('format_Sound') ?>
+            <?php endif ?>
+          </a>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  <?php endif; ?>
 </div>
+
+
 <!-- END of: finna - RecordDriver/DefaultRecord/record-audio-player.phtml -->

@@ -18,45 +18,19 @@
     }
   }
 
-  $hasEmbeddedMedia = $this->record($this->driver)->hasEmbeddedMedia();
+  $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
+  $hasThumbnailImage = !($this->record($this->driver)->hasLargeImage());
 
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start();
 ?>
-  <?php if (!$hasEmbeddedMedia): ?>
-    <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
-
-      <?php if (!empty($videoUrls) && $this->config()->inlineVideoEnabled()): ?>
-        <?php $i = 0; ?>
-          <?php foreach ($videoUrls as $url): ?>
-            <div class="resource-details">
-              <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a></div>
-              <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
-            </div>
-          <?php $i++; ?>
-        <?php endforeach; ?>
-      <?php endif; ?>
-
-      <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
-
-      <?php if (!empty($videoUrls)): ?>
-        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrLido']);?>
-      <?php endif; ?>
-
-      <?php if (!empty($audioUrls)): ?>
-        <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
-      <?php endif; ?>
-
-      <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-        <div class="organisation-menu">
-          <?=$this->render('record/record-organisation-menu.phtml') ?>
-        </div>
-      <?php endif; ?>
-
-      <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
-    </div>
+<div class="media-<?=$thumbnailAlignment ?>">
+  <?php if ($hasThumbnailImage): ?>
+    <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
+    <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   <?php endif; ?>
+</div>
 <?php
   $thumbnail = ob_get_contents();
   ob_end_clean();

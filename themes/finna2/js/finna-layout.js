@@ -760,7 +760,7 @@ finna.layout = (function finnaLayout() {
       'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
       'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
     };
-    $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
+    $('.audio-item-wrapper').each(function initAudioPlayer() {
       var self = $(this);
       var play = self.find('.play');
       var source = self.find('source');
@@ -948,7 +948,7 @@ finna.layout = (function finnaLayout() {
    * Initialize image paginators
    */
   function initImagePaginators() {
-    if (document.querySelector('.nav-record-media')) {
+    if (document.querySelector('.nav-record-tabbed-media')) {
       document.querySelectorAll('button[data-bs-toggle="pill"]')
         .forEach(tabEl => {
           tabEl.addEventListener('shown.bs.tab', event => {

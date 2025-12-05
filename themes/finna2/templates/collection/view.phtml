@@ -44,7 +44,7 @@
 
   // LIDO records are displayed like on the record page:
   $displayAsFullRecord = $this->driver instanceof \Finna\RecordDriver\SolrLido;
-  $largeImageLayout = $displayAsFullRecord && $this->record($this->driver)->hasLargeImageLayout();
+  $largeImageLayout = $displayAsFullRecord && $this->record($this->driver)->hasLargeImage();
 ?>
 <?php if (!empty($lastSearch)) : ?>
 </div>

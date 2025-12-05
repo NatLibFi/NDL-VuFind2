@@ -42,28 +42,19 @@
   }
 
   $img = $this->recordImage($this->record($this->driver));
+
+  $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
+  $hasThumbnailImage = !($this->record($this->driver)->hasLargeImage());
+
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
-
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
-
-    <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
+  <div class="media-<?=$thumbnailAlignment ?>">
+    <?php var_dump($hasDigitalObject) ?>
+    <?php if ($hasThumbnailImage): ?>
+      <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
+      <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
     <?php endif; ?>
-
-    <?php if (!empty($audioUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
-    <?php endif; ?>
-
-    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-      <div class="organisation-menu">
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
-    <?php endif; ?>
-
-    <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   </div>
   <?php $thumbnail = ob_get_contents(); ?>
 <?php ob_end_clean(); ?>

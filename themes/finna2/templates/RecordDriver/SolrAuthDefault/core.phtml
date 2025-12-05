@@ -9,7 +9,7 @@
     $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
     ob_start(); ?>
     <div class="media-<?=$thumbnailAlignment ?>">
-      <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', [
+      <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', [
         'img' => $img, 'imageClick' => 'none', 'imageRightsLabel' => 'Image Rights Authority',
         'numOfImages' => ['mobile' => 4, 'normal' => 4],
       ]);?>

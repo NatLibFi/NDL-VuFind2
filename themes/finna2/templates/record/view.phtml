@@ -69,8 +69,6 @@
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $recordFormat = $this->driver->tryMethod('getRecordFormat');
   $fullWidthLayout = $this->record($this->driver)->hasFullWidthLayout();
-  $largeImageLayout = $this->record($this->driver)->hasLargeImageLayout();
-
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
       echo $this->inlineScript(
           \Laminas\View\Helper\HeadScript::SCRIPT,
@@ -96,7 +94,6 @@
       $recordFormat ? 'record-format-' . $recordFormat : '',
       'record-row',
       $fullWidthLayout ? 'full-width-layout' : '',
-      $largeImageLayout ? 'large-image-layout' : '',
     ],
   ]); ?>
 <div<?= $recordAttributes ?>>
@@ -104,10 +101,9 @@
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
   <?php
-    $hasEmbeddedMedia = $this->record($this->driver)->hasEmbeddedMedia();
+    $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
   ?>
-  <?= ($hasEmbeddedMedia) ? $this->record($this->driver)->renderTemplate('record-media.phtml') : ''?>
-
+  <?= ($hasDigitalObject) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : ''?>
   <div class="record-main <?= (!$fullWidthLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">

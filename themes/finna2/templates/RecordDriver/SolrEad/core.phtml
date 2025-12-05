@@ -21,23 +21,19 @@
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  $hasLargeImage = $this->record($this->driver)->hasLargeImage();
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
-
-    <?php $urls = $this->record($this->driver)->getLinkDetails(); ?>
+    <?php if (!$hasLargeImage): ?>
+      <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
+    <?php endif; ?>
+      <?php $urls = $this->record($this->driver)->getLinkDetails(); ?>
     <?php if (!empty($videoUrls)): ?>
       <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrEad']);?>
     <?php endif; ?>
 
     <?php if (!empty($audioUrls)): ?>
       <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
-    <?php endif; ?>
-
-    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-      <div class="organisation-menu">
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
     <?php endif; ?>
 
     <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>

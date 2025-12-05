@@ -7,7 +7,7 @@
   <div class="recordcover-holder paginate" aria-hidden="true" data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
     <?=
       $this->record($this->driver)->renderTemplate(
-          'record-image-seadragon-paginator.phtml',
+          'record-image-paginator.phtml',
           [
               'images' => $images,
               'type' => $type,

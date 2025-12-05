@@ -12,7 +12,8 @@
   $videoUrls = [];
   $audioUrls = [];
   $otherUrls = [];
-  $hasEmbeddedMedia = $this->record($this->driver)->hasEmbeddedMedia();
+  $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
+  $hasLargeImage = $this->record($this->driver)->hasLargeImage();
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
     $renderedURLs[] = [
@@ -62,8 +63,8 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
-    <?php if (!$hasEmbeddedMedia): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
+    <?php if (!$hasHiresImage): ?>
+      <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img]);?>
     <?php endif; ?>
 
     <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>

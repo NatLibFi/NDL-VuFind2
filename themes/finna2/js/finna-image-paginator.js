@@ -1156,9 +1156,6 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
 
   if (this.settings.triggerClick === 'zoom') {
 
-    var image = _.images[_.openImageIndex]
-    console.log(image);
-
     var zoomTrigger = $('<div class="image-trigger zoom"></div>');
 
     _.trigger.children().appendTo(zoomTrigger);

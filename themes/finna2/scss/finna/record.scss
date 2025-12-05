@@ -8,10 +8,10 @@
 
   .media-left,
   .media-right {
-    width: 25%;
+    max-width: 25%;
     @media(max-width: $screen-xs-max) {
       display: block;
-      width: 100%;
+      max-width: 100%;
       float: none;
     }
     .recordcover-container {
@@ -23,12 +23,15 @@
       justify-content: center;
     }
   }
+  .media-left:empty,
+  .media-right:empty { display: none }
+
   @media(min-width: $screen-xs){
     .media-left { padding-right: 20px; }
     .media-right { padding-left: 20px; }
   }
 
-  & .nav>li:not(.share-buttons) a {
+  & .nav-tabs>li:not(.share-buttons) a {
     color: $action-link-color;
     font-size: 1em;
     font-weight: 600;
@@ -154,22 +157,6 @@ a.authority {
     display: none;
   }
   .toggle-video-information:not(.collapsed) .show-video-information {
-    display: none;
-  }
-}
-.audio-details {
-  table {
-    margin-left: 20px;
-  }
-  .toggle-audio-information.collapsed .hide-audio-information {
-    display: none;
-  }
-  .toggle-audio-information:not(.collapsed) .show-audio-information {
-    display: none;
-  }
-}
-.audio-item-wrapper:not(.active) {
-  .open-link, .audio-details {
     display: none;
   }
 }
@@ -1259,13 +1246,12 @@ finna-model-viewer .object-editor {
   }
 }
 
-// Inline media
+// Tabbed media
 
-
-.tab-content.tab-content-record-media {
+.tab-content.tab-content-record-tabbed {
   padding: 0;
 }
-.nav-record-media {
+.nav-record-tabbed-media {
   margin-bottom: 0;
   .nav-item:first-child .nav-link {
     border-radius: 4px 0 0 0;
@@ -1291,7 +1277,7 @@ finna-model-viewer .object-editor {
       }
   }
 }
-.record-media {
+.record-tabbed-media {
   .recordcover-image-detail {
     display: flex;
     justify-content: center;
@@ -1325,10 +1311,10 @@ finna-model-viewer .object-editor {
 
 
 // Iframe video
-.record-media .inline-video-container {
+.record-tabbed-media .inline-video-container {
   background: $gray-ultralight;
 }
-.record-media .inline-video-container .inline-video .finna-iframe.modal-holder {
+.record-tabbed-media .inline-video-container .inline-video .finna-iframe.modal-holder {
   aspect-ratio: 1.7778/1;
   height: 100%;
   max-width: 100%;

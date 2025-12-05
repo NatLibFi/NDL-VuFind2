@@ -67,6 +67,8 @@ use function is_string;
  */
 class Record extends \VuFind\View\Helper\Root\Record
 {
+    use Feature\RecordMediaTrait;
+
     /**
      * Record loader
      *
@@ -1326,62 +1328,41 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if record has media object
+     * Check if record has digital object
      *
      * @return bool
      */
-    public function hasEmbeddedMedia(): bool
+    public function hasDigitalObject(): bool
     {
+        // Check if the driver can get 3d models
         if ($this->driver->tryMethod('getModels')) {
             return true;
         }
 
-        $language = $this->getView()->layout()->userLang;
-
-        $imageTypes = ['small', 'medium', 'large', 'master'];
-        $images = $this->getAllImages($language, false, false);
-        $hasValidImages = false;
-        foreach ($images as $image) {
-            if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
-                $hasValidImages = true;
-                break;
-            }
-        }
-        if ($hasValidImages) {
+        // Check if the driver can get audios
+        if ($this->driver->tryMethod('getAudios')) {
             return true;
         }
 
-        $hasVideos = false;
-        $videos = array_filter(
-          $this->driver->tryMethod('getURLs'),
-          fn($url) => isset($url['embed']) && ($url['embed'] === 'video' || ($url['embed'] === 'iframe'))
-        );
-        $hasVideos = !empty($videos);
-
-        if ($hasVideos) {
+        // Check if the driver can get videos
+        if ($this->driver->tryMethod('getVideos')) {
             return true;
         }
 
-        $hasAudios = false;
-        $audios = array_filter(
-          $this->driver->tryMethod('getURLs'),
-          fn($url) => isset($url['embed']) && ($url['embed'] === 'audio')
-        );
-        $hasAudios = !empty($audios);
-
-        if ($hasAudios) {
+        // Check for large image
+        if ($this->hasLargeImage()) {
             return true;
         }
-
         return false;
     }
 
+
     /**
-     * Check if large image layout should be used for the record
+     * Check if record has large image
      *
      * @return bool
      */
-    public function hasLargeImageLayout(): bool
+    public function hasLargeImage(): bool
     {
         if ($this->driver->tryMethod('getModels')) {
             return true;
@@ -1401,11 +1382,11 @@ class Record extends \VuFind\View\Helper\Root\Record
             return false;
         }
 
-        // Check for record formats that always use large image layout:
+        // Check for record formats:
         $largeImageRecordFormats
             = isset($this->config->Record->large_image_record_formats)
             ? $this->config->Record->large_image_record_formats->toArray()
-            : ['lido', 'forward', 'forwardAuthority'];
+            : ['lido', 'forward', 'forwardAuthority', 'ead3'];
         $recordFormat = $this->driver->tryMethod('getRecordFormat');
         if (in_array($recordFormat, $largeImageRecordFormats)) {
             return true;
@@ -1441,7 +1422,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!in_array($source, $localSources)) {
             return false;
         }
-        return $this->hasLargeImageLayout() ? 'inline' : 'sidebar';
+        return $this->hasLargeImage() ? 'inline' : 'sidebar';
     }
 
     /**

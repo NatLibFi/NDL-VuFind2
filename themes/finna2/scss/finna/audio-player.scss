@@ -1,3 +1,7 @@
+.audio-player-container {
+    background: $gray-ultralight;
+}
+
 .audio-item-wrapper {
   margin-bottom: 5px;
   padding-bottom: 5px;
@@ -25,43 +29,24 @@
   &.details-uncontained {
     margin-bottom: 15px;
   }
-}
-
-.audio-title-wrapper {
-  background-color: $primary;
-  color: white;
-  border-radius: 5px;
-  position: relative;
-}
-
-.audio-title {
-  margin-left: 25px;
-  &::before {
-    content: "\f107";
-    font-family: VideoJS;
-    background: white;
-    width: 20px;
-    height: 20px;
-    display: inline-block;
-    border-radius: 10px;
-    text-align: center;
-    color: $primary;
-    position: absolute;
-    top:  calc(50% - 10px);
-    left: 5px;
+  .audio-title {
+    font-weight: bold;
   }
 }
 
-.audio-accordion-item {
-  border-left: $sidebar-border;
-  border-right: $sidebar-border;
-  border-bottom: $sidebar-border;
-  border-radius: 0 0 5px 5px;
+.audio-player-wrapper {
   text-align: center;
   .play {
-    font-size: 35px;
+    width: 100%;
+    background: #fff;
+    font-size: 44px;
+    border: none;
     color: $action-link-color;
   }
+}
+
+.audio-player-container {
+  padding: 1rem;
 }
 
 .audio-accordion-item {
@@ -86,6 +71,23 @@
 
 .audio-player-wrapper {
   margin-bottom: 15px;
+}
+
+.audio-details {
+  table {
+    margin-left: 20px;
+  }
+  .toggle-audio-information.collapsed .hide-audio-information {
+    display: none;
+  }
+  .toggle-audio-information:not(.collapsed) .show-audio-information {
+    display: none;
+  }
+}
+.audio-container .tab-pane:not(.active) {
+  .open-link, .audio-details {
+    display: none;
+  }
 }
 
 .vjs-audio {

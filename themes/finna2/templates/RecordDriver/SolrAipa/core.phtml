@@ -47,7 +47,7 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
+    <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img]);?>
 
     <?php if (!empty($videoUrls)): ?>
       <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>

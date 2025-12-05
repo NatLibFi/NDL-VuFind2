@@ -1,0 +1,13 @@
+<?php
+  $localSizes = $sizes ?? ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]];
+?>
+
+<?php /* Display thumbnail if appropriate: */ ?>
+<?php if ($img): ?>
+  <?=
+  $img->renderImage(
+      'record',
+      $localSizes,
+      ['imageClick' => $this->imageClick ?? 'zoom', 'imageRightsLabel' => $this->imageRightsLabel ?? null, 'numOfImages' => $numOfImages ?? null]
+  ) ?>
+<?php endif;?>
