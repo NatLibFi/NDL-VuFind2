@@ -57,7 +57,11 @@
 
     // Hide button labels
     .tify-header-button > span {
-        @include visually-hidden;
+        // In a narrow viewport, Tify wants to show these labels in a hamburger
+        // menu, so we allow it. On larger viewports, we want them hidden.
+        @include media-breakpoint-up(lg) {
+            @include visually-hidden;
+        }
     }
 
     .tify-icon {
@@ -84,34 +88,31 @@
 .iiif-menu-button-badge {
     @extend .btn, .btn-secondary;
 
-    @media screen and (width > 700px) {
-        min-width: 22pt;
-        min-height: 22pt;
-        max-height: 33%;
-        max-width: 33%;
-        border: none;
-        border-radius: 0;
-        border-start-start-radius: $finna-button-radius;
-        background-color: white;
+    min-width: 22pt;
+    min-height: 22pt;
+    max-height: 33%;
+    max-width: 33%;
+    border: none;
+    border-radius: 0;
+    border-start-start-radius: $finna-button-radius;
+    background-color: white;
 
-        img.bi {
-            width: 98%;
-            height: 98%;
-        }
+    img.bi {
+        width: 98%;
+        height: 98%;
     }
 
-    @media screen and (width <= 700px) {
-        & {
-            position: relative;
-            width: 100%;
-            max-width: 100%;
+    @include media-breakpoint-down(md) {
+        position: relative;
+        width: 100%;
+        max-width: 100%;
+        border-radius: $finna-button-radius;
 
-            img.bi {
-                margin-left: auto;
-                margin-right: auto;
-                width: 27.5%;
-                height: auto;
-            }
+        img.bi {
+            margin-left: auto;
+            margin-right: auto;
+            width: 27.5%;
+            height: auto;
         }
     }
 

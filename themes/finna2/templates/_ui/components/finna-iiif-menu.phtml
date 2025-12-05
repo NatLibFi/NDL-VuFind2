@@ -13,7 +13,7 @@ $manifest = $this->manifestUrls[0]['url'];
 $encodedManifest = urlencode($manifest);
 $r = $this->alignRight ? 'dropdown-menu-end' : '';
 $urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? 'container');
-$viewers = $this->config()->get('config')->IiifExternalViewers->viewers ?? [];
+$viewers = $this->config()->get('config')->IIIF->externalViewers ?? [];
 ?>
 <span class="iiif-manifest-url-container hidden"
       id="<?=$this->escapeHtmlAttr($urlContainerId)?>"
@@ -49,17 +49,18 @@ $viewers = $this->config()->get('config')->IiifExternalViewers->viewers ?? [];
     </li>
     <?php
     foreach ($viewers as $viewer):
-        $viewerName = strtok($viewer, '|');
-        $viewerHref = strtok('|');
+        [$viewerName, $viewerHref] = explode('|', "$viewer|");
         $viewerHref = str_replace('{manifest}', $encodedManifest, $viewerHref);
         ?>
         <li>
-            <a class="dropdown-item btn toolbar-btn"
+            <a class="dropdown-item btn toolbar-btn icon-link"
                href="<?=$this->escapeHtmlAttr($viewerHref)?>"
                target="_blank"
                rel="nofollow noreferrer">
-            <?=$this->icon('external-link')?>
-            <?=$this->escapeHtml($viewerName)?>
+            <?=$this->icon('external-link', 'icon-link__icon')?>
+            <span class="icon-link__label">
+                <?=$this->escapeHtml($viewerName)?>
+            </span>
             </a>
         </li>
     <?php

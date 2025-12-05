@@ -24,9 +24,6 @@
     }
   }
 
-  .media-left:empty,
-  .media-right:empty { display: none }
-
   @include media-breakpoint-up(xs) {
     .media-left { padding-right: 20px; }
     .media-right { padding-left: 20px; }
