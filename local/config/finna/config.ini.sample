@@ -1958,8 +1958,8 @@ Summon = tabs_summon
 ; Default value is 'production'.
 site_status = production
 
-[IiifExternalViewers]
+[IIIF]
 ; Pipe-separated tuple of viewer name and URL, the latter containing a
 ; placeholder for a percent-encoded manifest URL
-viewers[] = "Mirador|https://projectmirador.org/embed/?iiif-content={manifest}"
-viewers[] = "Universal Viewer|https://uv-v4.netlify.app/#?manifest={manifest}"
+externalViewers[] = "Mirador|https://projectmirador.org/embed/?iiif-content={manifest}"
+externalViewers[] = "Universal Viewer|https://uv-v4.netlify.app/#?manifest={manifest}"
