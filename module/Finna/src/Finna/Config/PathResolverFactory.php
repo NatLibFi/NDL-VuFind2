@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Config
@@ -33,6 +33,7 @@ use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Config\PathResolver;
 
 use function defined;
 use function strlen;
@@ -65,7 +66,7 @@ class PathResolverFactory extends \VuFind\Config\PathResolverFactory
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
@@ -79,14 +80,12 @@ class PathResolverFactory extends \VuFind\Config\PathResolverFactory
                     ],
                     [
                         'directory' => LOCAL_OVERRIDE_DIR,
-                        'defaultConfigSubdir' => $this->defaultLocalConfigSubdir,
+                        'defaultConfigSubdir' => PathResolver::DEFAULT_CONFIG_SUBDIR,
                     ],
                 ] : [];
         return new $requestedName(
-            [
-                'directory' => APPLICATION_PATH,
-                'defaultConfigSubdir' => $this->defaultBaseConfigSubdir,
-            ],
+            $container->get(\VuFind\Config\Handler\PluginManager::class),
+            PathResolver::getBaseDirSpec(APPLICATION_PATH),
             $localDirs
         );
     }

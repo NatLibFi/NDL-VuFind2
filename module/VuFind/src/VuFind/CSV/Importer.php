@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  CSV
@@ -93,7 +93,7 @@ class Importer
         $encoding = $config->getEncoding();
         $data = [];
         $output = '';
-        while ($line = fgetcsv($in)) {
+        while ($line = fgetcsv($in, escape: '\\')) {
             $data[] = $this->collectValuesFromLine(
                 $this->adjustEncoding($line, $encoding),
                 $config
@@ -177,14 +177,14 @@ class Importer
         switch (strtolower(trim($mode))) {
             case 'fields':
                 // Load configuration from the header row:
-                $row = fgetcsv($in);
+                $row = fgetcsv($in, escape: '\\');
                 foreach ($row as $i => $field) {
                     $config->configureColumn($i, ['field' => $field]);
                 }
                 break;
             case 'skip':
                 //  Just skip a row:
-                fgetcsv($in);
+                fgetcsv($in, escape: '\\');
                 break;
             case 'none':
             default:

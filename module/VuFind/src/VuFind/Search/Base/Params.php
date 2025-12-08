@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Base
@@ -31,6 +31,7 @@
 
 namespace VuFind\Search\Base;
 
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\I18n\TranslatableString;
 use VuFind\Search\Minified;
 use VuFind\Search\QueryAdapter;
@@ -49,7 +50,6 @@ use function intval;
 use function is_array;
 use function is_callable;
 use function is_object;
-use function strlen;
 
 /**
  * Abstract parameters search model.
@@ -228,13 +228,6 @@ class Params
     protected $searchContextParameters = [];
 
     /**
-     * Config loader
-     *
-     * @var \VuFind\Config\PluginManager
-     */
-    protected $configLoader;
-
-    /**
      * Query adapter
      *
      * @var ?QueryAdapterInterface
@@ -249,33 +242,40 @@ class Params
     protected $queryAdapterClass = QueryAdapter::class;
 
     /**
+     * Is this a specialized search (i.e. a customized scenario like new items,
+     * rather than a "normal" backend search)?
+     *
+     * @var bool
+     */
+    protected $isSpecializedSearch = false;
+
+    /**
      * Constructor
      *
-     * @param \VuFind\Search\Base\Options  $options      Options to use
-     * @param \VuFind\Config\PluginManager $configLoader Config loader
+     * @param \VuFind\Search\Base\Options $options       Options to use
+     * @param ConfigManagerInterface      $configManager Config manager
      */
-    public function __construct($options, \VuFind\Config\PluginManager $configLoader)
+    public function __construct($options, protected ConfigManagerInterface $configManager)
     {
         $this->setOptions($options);
-
-        $this->configLoader = $configLoader;
 
         // Make sure we have some sort of query object:
         $this->query = new Query();
 
         // Set up facet label settings, to be used as fallbacks if specific facets
         // are not already configured:
-        $config = $configLoader->get($options->getFacetsIni());
-        $sections = $config->FacetLabels->labelSections
+        $facetConfigName = $options->getFacetsIni();
+        $config = ($facetConfigName !== null) ? $configManager->getConfigArray($facetConfigName) : [];
+        $sections = $config['FacetLabels']['labelSections']
             ?? $this->defaultFacetLabelSections;
         foreach ($sections as $section) {
-            foreach ($config->$section ?? [] as $field => $label) {
+            foreach ($config[$section] ?? [] as $field => $label) {
                 $this->extraFacetLabels[$field] = $label;
             }
         }
 
         // Activate all relevant checkboxes, also important for labeling:
-        $checkboxSections = $config->FacetLabels->checkboxSections
+        $checkboxSections = $config['FacetLabels']['checkboxSections']
             ?? $this->defaultFacetLabelCheckboxSections;
         foreach ($checkboxSections as $checkboxSection) {
             $this->initCheckboxFacets($checkboxSection);
@@ -376,6 +376,7 @@ class Params
         $this->initSort($request);
         $this->initFilters($request);
         $this->initHiddenFilters($request);
+        $this->isSpecializedSearch = $request->get('specializedSearch', false);
     }
 
     /**
@@ -507,7 +508,7 @@ class Params
             $lookfor = $lookfor[0];
         }
 
-        // Flatten type arrays for backward compatibility:
+        // Flatten type arrays for backward compatibility with legacy URLs:
         $handler = $request->get('type');
         if (is_array($handler)) {
             $handler = $handler[0];
@@ -719,6 +720,24 @@ class Params
     }
 
     /**
+     * Check if sort is valid.
+     *
+     * @param ?string $sort            Sort value
+     * @param bool    $allowHiddenSort If hidden sort is allowed
+     *
+     * @return bool
+     */
+    public function isValidSort(?string $sort, bool $allowHiddenSort = true): bool
+    {
+        $valid = array_keys($this->getOptions()->getSortOptions());
+        return !empty($sort)
+            && (
+                in_array($sort, $valid)
+                || $allowHiddenSort && $this->getMatchingHiddenSortingPatterns($sort)
+            );
+    }
+
+    /**
      * Set the sorting value (note: sort will be set to default if an illegal
      * or empty value is passed in).
      *
@@ -736,16 +755,7 @@ class Params
         }
 
         // Validate and assign the sort value:
-        $valid = array_keys($this->getOptions()->getSortOptions());
-
-        $matchedHiddenPatterns = array_filter(
-            $this->getOptions()->getHiddenSortOptions(),
-            function ($pattern) use ($sort) {
-                return preg_match('/' . $pattern . '/', $sort);
-            }
-        );
-
-        if (!empty($sort) && (in_array($sort, $valid) || count($matchedHiddenPatterns) > 0)) {
+        if ($this->isValidSort($sort)) {
             $this->sort = $sort;
         } else {
             $this->sort = $this->getDefaultSort();
@@ -1311,14 +1321,14 @@ class Params
     /**
      * Get information on the current state of the boolean checkbox facets.
      *
-     * @param array $include        List of checkbox filters to return (null for all)
-     * @param bool  $includeDynamic Should we include dynamically-generated
+     * @param ?array $include        List of checkbox filters to return (null for all)
+     * @param bool   $includeDynamic Should we include dynamically-generated
      * checkboxes that are not part of the include list above?
      *
      * @return array
      */
     public function getCheckboxFacets(
-        array $include = null,
+        ?array $include = null,
         bool $includeDynamic = true
     ) {
         // Build up an array of checkbox facets with status booleans and
@@ -1405,16 +1415,7 @@ class Params
     protected function formatYearForDateRange($year, $rangeEnd = false)
     {
         // Make sure parameter is set and numeric; default to wildcard otherwise:
-        $year = ($year && preg_match('/\d{2,4}/', $year)) ? $year : '*';
-
-        // Pad to four digits:
-        if (strlen($year) == 2) {
-            $year = '19' . $year;
-        } elseif (strlen($year) == 3) {
-            $year = '0' . $year;
-        }
-
-        return $year;
+        return preg_match('/^-?\d+$/', $year ?? '') ? $year : '*';
     }
 
     /**
@@ -1856,11 +1857,21 @@ class Params
         $valid = $this->getOptions()->getSortOptions();
         $defaultSort = $this->getDefaultSort();
         $list = [];
+        $currentSort = $this->getSort();
         foreach ($valid as $sort => $desc) {
             $list[$sort] = [
                 'desc' => $desc,
-                'selected' => ($sort == $this->getSort()),
+                'selected' => ($sort == $currentSort),
                 'default' => $sort == $defaultSort,
+            ];
+        }
+        if (!isset($list[$currentSort])) {
+            $matchingHiddenSortingPatterns = $this->getMatchingHiddenSortingPatterns($currentSort);
+            // Add selected sort with a generic description so that we display it:
+            $list[$currentSort] = [
+                'desc' => $matchingHiddenSortingPatterns[0]['label'] ?? 'unrecognized_sort_option',
+                'selected' => true,
+                'default' => false,
             ];
         }
         return $list;
@@ -2049,18 +2060,18 @@ class Params
      */
     protected function initFacetList($facetList, $facetSettings, $cfgFile = null)
     {
-        $config = $this->configLoader
-            ->get($cfgFile ?? $this->getOptions()->getFacetsIni());
-        if (!isset($config->$facetList)) {
+        $facetConfigName = $cfgFile ?? $this->getOptions()->getFacetsIni();
+        $config = ($facetConfigName !== null) ? $this->configManager->getConfigArray($facetConfigName) : [];
+        if (!isset($config[$facetList])) {
             return false;
         }
-        if (isset($config->$facetSettings->orFacets)) {
+        if (isset($config[$facetSettings]['orFacets'])) {
             $orFields
-                = array_map('trim', explode(',', $config->$facetSettings->orFacets));
+                = array_map('trim', explode(',', $config[$facetSettings]['orFacets']));
         } else {
             $orFields = [];
         }
-        foreach ($config->$facetList as $key => $value) {
+        foreach ($config[$facetList] as $key => $value) {
             $useOr = (isset($orFields[0]) && $orFields[0] == '*')
                 || in_array($key, $orFields);
             $this->addFacet($key, $value, $useOr);
@@ -2092,17 +2103,17 @@ class Params
         $facetList = 'CheckboxFacets',
         $cfgFile = null
     ) {
-        $config = $this->configLoader
-            ->get($cfgFile ?? $this->getOptions()->getFacetsIni());
+        $facetConfigName = $cfgFile ?? $this->getOptions()->getFacetsIni();
+        $config = ($facetConfigName !== null) ? $this->configManager->getConfigArray($facetConfigName) : [];
         $retVal = false;
         // If the section is in reverse order, the tilde will flag this:
         if (str_starts_with($facetList, '~')) {
-            foreach ($config->{substr($facetList, 1)} ?? [] as $value => $key) {
+            foreach ($config[substr($facetList, 1)] ?? [] as $value => $key) {
                 $this->addCheckboxFacet($key, $value);
                 $retVal = true;
             }
         } else {
-            foreach ($config->$facetList ?? [] as $key => $value) {
+            foreach ($config[$facetList] ?? [] as $key => $value) {
                 $this->addCheckboxFacet($key, $value);
                 $retVal = true;
             }
@@ -2121,5 +2132,38 @@ class Params
     {
         $translatedFacets = $this->getOptions()->getTranslatedFacets();
         return method_exists($this, 'setFacetContains') && !in_array($facet, $translatedFacets);
+    }
+
+    /**
+     * Is this a specialized search (i.e. a customized scenario like new items,
+     * rather than a "normal" backend search)?
+     *
+     * @return bool
+     */
+    public function isSpecializedSearch(): bool
+    {
+        return $this->isSpecializedSearch;
+    }
+
+    /**
+     * Get HiddenSorting patterns matching the given sort
+     *
+     * @param ?string $sort Sort
+     *
+     * @return array Array of associative arrays with keys 'label' and 'pattern'
+     */
+    protected function getMatchingHiddenSortingPatterns(?string $sort): array
+    {
+        if (null === $sort) {
+            return [];
+        }
+        return array_values(
+            array_filter(
+                $this->getOptions()->getHiddenSortOptions(),
+                function ($option) use ($sort) {
+                    return preg_match('/' . $option['pattern'] . '/', $sort);
+                }
+            )
+        );
     }
 }

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -29,6 +29,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 
 use function array_key_exists;
@@ -49,6 +50,8 @@ use function strlen;
  */
 class SierraRest extends \VuFind\ILS\Driver\SierraRest
 {
+    use FinnaCommonILSTrait;
+
     /**
      * Fine types that allow online payment
      *
@@ -151,6 +154,15 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
      */
     public function init()
     {
+        // BC for product code mappings:
+        if (
+            isset($this->config['OnlinePayment']['productCodeMappings'])
+            && !isset($this->config['OnlinePayment']['driverProductCodeMappings'])
+        ) {
+            $this->config['OnlinePayment']['driverProductCodeMappings']
+                = $this->config['OnlinePayment']['productCodeMappings'];
+        }
+
         parent::init();
 
         if ($types = $this->config['OnlinePayment']['fineTypes'] ?? '') {
@@ -163,19 +175,6 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
         if (isset($this->config['Catalog'][$key])) {
             $this->daysBeforeAccountExpirationNotification
                 = $this->config['Catalog'][$key];
-        }
-
-        if ($mappings = $this->config['OnlinePayment']['productCodeMappings'] ?? []) {
-            foreach ($mappings as $mapping) {
-                $parts = explode('=', $mapping, 2);
-                if (!isset($parts[1])) {
-                    continue;
-                }
-                $this->productCodeMappings[] = [
-                    'productCode' => $parts[0],
-                    'regexp' => $parts[1],
-                ];
-            }
         }
     }
 
@@ -217,17 +216,17 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             $lastname = $parts[0];
             $firstname = $parts[1] ?? '';
         }
-        return [
-            'id' => $patron['id'],
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'email' => !empty($patron['emails']) ? $patron['emails'][0] : '',
-            'major' => null,
-            'college' => null,
-            'home_library' => $patron['homeLibraryCode'] ?? '',
-        ];
+        return $this->createPatronArray(
+            id: $patron['id'],
+            firstname: $firstname,
+            lastname: $lastname,
+            cat_username: $username,
+            cat_password: $password,
+            email: $patron['emails'][0] ?? '',
+            nonDefaultFields: [
+                'home_library' => $patron['homeLibraryCode'] ?? '',
+            ]
+        );
     }
 
     /**
@@ -436,46 +435,35 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             }
         }
 
-        $profile = [
-            'firstname' => $firstname,
-            'lastname' => $lastname,
-            'phone' => $phone,
-            'smsnumber' => $sms,
-            'email' => !empty($result['emails']) ? $result['emails'][0] : '',
-            'address1' => $address,
-            'zip' => $zip,
-            'city' => $city,
-            'birthdate' => $result['birthDate'] ?? '',
-            'messages' => $messages,
-            'home_library' => $result['homeLibraryCode'],
-        ];
-
+        $expirationDate = null;
+        $expirationSoon = false;
+        $expired = false;
         if (!empty($result['expirationDate'])) {
-            $profile['expiration_date'] = $this->dateConverter->convertToDisplayDate(
+            $expirationDate = $this->dateConverter->convertToDisplayDate(
                 'Y-m-d',
                 $result['expirationDate']
             );
             $date = \DateTime::createFromFormat('Y-m-d', $result['expirationDate']);
-            $diff = $date->diff(new \Datetime());
+            $diff = $date->diff(new \DateTime());
             if (!$diff->invert && $diff->days > 0) {
-                $profile['expired'] = true;
+                $expired = true;
             } elseif (
                 $this->daysBeforeAccountExpirationNotification
                 && $diff->days === 0
                 || ($diff->invert
                 && $diff->days <= $this->daysBeforeAccountExpirationNotification)
             ) {
-                $profile['expiration_soon'] = true;
+                $expirationSoon = true;
             }
         }
-
+        $selfServiceLibrary = null;
         // PCODE3: self-service library access
         if ($field = $result['fixedFields'][46] ?? null) {
-            $profile['self_service_library'] = (string)$field['value'] === '1';
+            $selfServiceLibrary = (string)$field['value'] === '1';
         }
 
         // Checkout history:
-        $result = $this->makeRequest(
+        $historyResult = $this->makeRequest(
             [
                 'v6', 'patrons', $patron['id'], 'checkouts', 'history',
                 'activationStatus',
@@ -484,11 +472,27 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
             'GET',
             $patron
         );
-        if (array_key_exists('readingHistoryActivation', $result)) {
-            $profile['loan_history'] = $result['readingHistoryActivation'];
-        }
 
-        return $profile;
+        return $this->createProfileArray(
+            firstname: $firstname,
+            lastname: $lastname,
+            phone: $phone,
+            birthdate: $result['birthDate'] ?? '',
+            zip: $zip,
+            city: $city,
+            address1: $address,
+            home_library: $result['homeLibraryCode'],
+            expiration_date: $expirationDate,
+            loan_history: $historyResult['readingHistoryActivation'] ?? null,
+            email: $result['emails'][0] ?? '',
+            nonDefaultFields: [
+                'self_service_library' => $selfServiceLibrary,
+                'expired' => $expired,
+                'expiration_soon' => $expirationSoon,
+                'messages' => $messages,
+                'smsnumber' => $sms,
+            ]
+        );
     }
 
     /**
@@ -669,7 +673,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 }
             }
 
-            $fines[] = [
+            $fine = [
                 'amount' => (int)round($amount * 100),
                 'fine' => $this->fineTypeMappings[$type] ?? $type,
                 'description' => $entry['description'] ?? '',
@@ -681,288 +685,16 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'checkout' => '',
                 'id' => $this->formatBibId($bibId),
                 'title' => $title,
-                'fine_id' => $this->extractId($entry['id']),
+                'fineId' => $this->extractId($entry['id']),
                 'organization' => substr($entry['location']['code'] ?? '', 0, 1),
-                'payableOnline' => $balance > 0 && $this->finePayableOnline($entry),
-                '__invoiceNumber' => $entry['invoiceNumber'],
-                '__productCode' => $this->getFineProductCode($entry),
+                'productCode' => $this->getFineProductCode($entry),
+                '__invoice_number' => $entry['invoiceNumber'], // Internal invoice number required for payment
             ];
+            $fine['payableOnline'] = $this->fineIsPayable($fine, $entry);
+            $fine['taxPercent'] = $this->getFineTaxRate($fine, $entry);
+            $fines[] = $fine;
         }
         return $fines;
-    }
-
-    /**
-     * Return details on fees payable online.
-     *
-     * @param array  $patron          Patron
-     * @param array  $fines           Patron's fines
-     * @param ?array $selectedFineIds Selected fines
-     *
-     * @throws ILSException
-     * @return array Associative array of payment details,
-     * false if an ILSException occurred.
-     */
-    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
-    {
-        if (!$fines) {
-            return [
-                'payable' => false,
-                'amount' => 0,
-                'reason' => 'online_payment_minimum_fee',
-            ];
-        }
-
-        $nonPayableReason = false;
-        $amount = 0;
-        $payableFines = [];
-        foreach ($fines as $fine) {
-            if (
-                null !== $selectedFineIds
-                && !in_array($fine['fine_id'], $selectedFineIds)
-            ) {
-                continue;
-            }
-            if ($fine['payableOnline']) {
-                $amount += $fine['balance'];
-                $payableFines[] = $fine;
-            }
-        }
-        $config = $this->getConfig('onlinePayment');
-        $transactionFee = $config['transactionFee'] ?? 0;
-        if (
-            isset($config['minimumFee'])
-            && $amount + $transactionFee < $config['minimumFee']
-        ) {
-            $nonPayableReason = 'online_payment_minimum_fee';
-        }
-        $res = [
-            'payable' => empty($nonPayableReason),
-            'amount' => $amount,
-            'fines' => $payableFines,
-        ];
-        if ($nonPayableReason) {
-            $res['reason'] = $nonPayableReason;
-        }
-        return $res;
-    }
-
-    /**
-     * Mark fees as paid.
-     *
-     * This is called after a successful online payment.
-     *
-     * @param array  $patron            Patron
-     * @param int    $amount            Amount to be registered as paid
-     * @param string $transactionId     Transaction ID
-     * @param int    $transactionNumber Internal transaction number
-     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
-     *
-     * @throws ILSException
-     * @return true|string True on success, error description on error
-     */
-    public function markFeesAsPaid(
-        $patron,
-        $amount,
-        $transactionId,
-        $transactionNumber,
-        $fineIds = null
-    ) {
-        if (empty($fineIds)) {
-            $this->logError('Bulk payment not supported');
-            return false;
-        }
-
-        $fines = $this->getMyFines($patron);
-        if (!$fines) {
-            $this->logError('No fines to pay found');
-            return 'fines_updated';
-        }
-
-        $amountRemaining = $amount;
-        $payments = [];
-        foreach ($fines as $fine) {
-            if (
-                in_array($fine['fine_id'], $fineIds)
-                && $fine['payableOnline'] && $fine['balance'] > 0
-            ) {
-                $pay = (int)round(min($fine['balance'], $amountRemaining));
-                $payments[] = [
-                    'amount' => $pay,
-                    'paymentType' => 1,
-                    'invoiceNumber' => (string)$fine['__invoiceNumber'],
-                ];
-                $amountRemaining -= $pay;
-            }
-        }
-        if (!$payments) {
-            $this->logError('Fine IDs do not match any of the payable fines');
-            return 'fines_updated';
-        }
-
-        $request = [
-            'payments' => $payments,
-        ];
-        if ($this->statGroup) {
-            $request['statgroup'] = $this->statGroup;
-        }
-
-        $result = $this->makeRequest(
-            [
-                'v6', 'patrons', $patron['id'], 'fines', 'payment',
-            ],
-            json_encode($request),
-            'PUT',
-            $patron,
-            true
-        );
-
-        if (!in_array($result['statusCode'], ['200', '204'])) {
-            $this->logError(
-                "Payment request failed with status code {$result['statusCode']}: "
-                . (var_export($result['response'] ?? '', true))
-            );
-            return 'payment request failed';
-        }
-        // Sierra doesn't support storing any remaining amount, so we'll just have to
-        // live with the assumption that any fine amount didn't somehow get smaller
-        // during payment. That would be unlikely in any case.
-        return true;
-    }
-
-    /**
-     * Get a password recovery token for a user
-     *
-     * @param array $params Required params such as cat_username and email
-     *
-     * @return array Associative array of the results
-     */
-    public function getPasswordRecoveryToken($params)
-    {
-        $request = [
-            'queries' => [
-                [
-                    'target' => [
-                        'record' => [
-                            'type' => 'patron',
-                        ],
-                        'field' => [
-                            'tag' => 'b',
-                        ],
-                    ],
-                    'expr' => [
-                        'op' => 'equals',
-                        'operands' => [
-                            str_replace(' ', '', $params['cat_username']),
-                        ],
-                    ],
-                ],
-                'and',
-                [
-                    'target' => [
-                        'record' => [
-                            'type' => 'patron',
-                        ],
-                        'field' => [
-                            'tag' => 'z',
-                        ],
-                    ],
-                    'expr' => [
-                        'op' => 'equals',
-                        'operands' => [
-                            trim($params['email']),
-                        ],
-                    ],
-                ],
-            ],
-        ];
-
-        $result = $this->makeRequest(
-            [
-                [
-                    'type' => 'encoded',
-                    'value' => 'v6/patrons/query?offset=0&limit=1',
-                ],
-            ],
-            json_encode($request),
-            'POST'
-        );
-
-        if (
-            $result['total'] === 1
-            && $link = $result['entries'][0]['link'] ?? null
-        ) {
-            $patronId = $this->extractId($link);
-
-            // Check that there's an existing PIN in varFields:
-            $result = $this->makeRequest(
-                [$this->apiBase, 'patrons', $patronId],
-                [
-                    'fields' => 'varFields',
-                ],
-                'GET'
-            );
-            $pinExists = false;
-            foreach ($result['varFields'] ?? [] as $field) {
-                if ('=' === $field['fieldTag']) {
-                    $pinExists = true;
-                    break;
-                }
-            }
-            if (!$pinExists) {
-                return [
-                    'success' => false,
-                    'error' => 'authentication_error_account_locked',
-                ];
-            }
-            return [
-                'success' => true,
-                'token' => $patronId,
-            ];
-        }
-        return [
-            'success' => false,
-            'error' => 'recovery_user_not_found',
-        ];
-    }
-
-    /**
-     * Recover user's password with a token from getPasswordRecoveryToken
-     *
-     * @param array $params Required params such as cat_username, token and new
-     * password
-     *
-     * @return array Associative array of the results
-     */
-    public function recoverPassword($params)
-    {
-        $request = [
-            'pin' => $params['password'],
-        ];
-        $result = $this->makeRequest(
-            [
-                'v6', 'patrons', $params['token'],
-            ],
-            json_encode($request),
-            'PUT',
-            false,
-            true
-        );
-
-        if (!in_array($result['statusCode'], ['200', '204'])) {
-            $this->logError(
-                'Patron update request failed with status code'
-                . " {$result['statusCode']}: "
-                . (var_export($result['response'] ?? '', true))
-            );
-            return [
-                'success' => false,
-                'error' => 'profile_update_failed',
-            ];
-        }
-
-        return [
-            'success' => true,
-        ];
     }
 
     /**
@@ -1049,18 +781,11 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
                 'default_sort' => 'due asc',
             ];
         }
-        if ('onlinePayment' === $function) {
+        if ('OnlinePayment' === $function) {
             $result = $this->config['OnlinePayment'] ?? [];
             $result['exactBalanceRequired'] = false;
             $result['selectFines'] = true;
             return $result;
-        }
-        if (
-            'getPasswordRecoveryToken' === $function
-            || 'recoverPassword' === $function
-        ) {
-            return !empty($this->config['PasswordRecovery']['enabled'])
-                ? $this->config['PasswordRecovery'] : false;
         }
         if ('updateAddress' === $function) {
             $function = 'updateProfile';

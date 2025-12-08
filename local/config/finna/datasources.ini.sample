@@ -104,7 +104,8 @@ onlinePayment['productCodeMappings'] = 'Overdue=demo_003:Long Overdue=demo_004'
 ; Product code mappings from organization names or codes to product codes. If there's
 ; already a product code from other mappings above, this value is prepended to it
 ; without any delimiter. Used unless product code is provided by the ILS driver.
-;onlinePayment['organizationProductCodeMappings'] = 'Helsinki=demo_003:Tampere=demo_004'
+; Old setting with name 'organizationProductCodeMappings' is also recognized.
+;onlinePayment['organizationProductCodePrefixMappings'] = 'Helsinki=demo_003:Tampere=demo_004'
 ; Mappings from organization names or codes to merchant id's for shop-in-shop
 ; functionality.
 ;onlinePayment['organizationMerchantIdMappings'] = 'Helsinki=123:Vantaa=234'
@@ -137,3 +138,21 @@ archiveRequestRequireFilingUnit = true
 ; Each value is a field label defined in RecordDataFormatterFactory
 ;hidden_record_fields[] = 'Archive'
 ;hidden_record_fields[] = 'Subject'
+
+; Use collection specific field order for records with child records.
+; Available record field specs are CollectionRecord, DefaultRecord.
+; Default is DefaultRecord.
+;record[record_field_specs] = CollectionRecord
+
+; Used for linking records with linkingId. Checks if prefix in 003 should match with the linkable records
+;prefixIn003 = true
+; In addition multiple prefixes can be declared with a comma separated list
+;link_prefixes = 'FI-MELINDA,FI-NL'
+
+; Use legacy linking id (datasource.id) for records in this datasource
+;legacy_settings[linking_id] = true
+
+; Permissive settings for a datasource
+; Allow piping images from provider, must have a permission which is granted by the
+; provider. Used in CoverController::PipeAction.
+;permissions[image_piping] = 1

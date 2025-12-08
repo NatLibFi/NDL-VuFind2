@@ -18,14 +18,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -38,7 +38,7 @@ namespace Finna\RecordDriver;
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 class SolrDefault extends \VuFind\RecordDriver\SolrDefault
 {
@@ -47,11 +47,11 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * @param \VuFind\Config\Config $recordConfig   Record-specific configuration
      * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * @param \VuFind\Config\Config $searchSettings Search-specific configuration
      * file
      */
     public function __construct(
@@ -61,18 +61,21 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
     ) {
         parent::__construct($mainConfig, $recordConfig, $searchSettings);
         $this->searchSettings = $searchSettings;
-    }
-
-    /**
-     * Return the collection search ID for this record.
-     *
-     * @return string
-     */
-    public function getCollectionSearchId(): string
-    {
-        if ($this->mainConfig->Hierarchy->showFullHierarchyTree ?? false) {
-            return $this->getHierarchyTopID()[0] ?? $this->getUniqueID();
+        $maxImagesInSearch = $mainConfig->Content->maxImagesInSearchContext ?? 0;
+        if ($maxImagesInSearch > 0) {
+            $this->maxImagesInSearch = min($maxImagesInSearch, $this->maxImagesInSearch);
         }
-        return $this->getUniqueID();
+        $maxImagesInRecord = $mainConfig->Content->maxImagesInRecordContext ?? 0;
+        if ($maxImagesInRecord > 0) {
+            $this->maxImagesInRecord = min($maxImagesInRecord, $this->maxImagesInRecord);
+        }
+        $maxURLsInRecord = $mainConfig->Content->maxURLsInRecord ?? 0;
+        if ($maxURLsInRecord > 0) {
+            $this->maxURLsInRecord = min($maxURLsInRecord, $this->maxURLsInRecord);
+        }
+        $maxURLsInSearch = $mainConfig->Content->maxURLsInSearch ?? 0;
+        if ($maxURLsInSearch > 0) {
+            $this->maxURLsInSearch = min($maxURLsInSearch, $this->maxURLsInSearch);
+        }
     }
 }

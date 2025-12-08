@@ -1,6 +1,6 @@
 .finna-popup {
     width: 100%;
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
         &.marc {
             max-width: 800px;
         }
@@ -19,27 +19,16 @@
         padding: 12px;
         overflow: hidden auto;
 
-        @media (min-width: $screen-sm-min) {
+        @include media-breakpoint-up(sm) {
             padding: 40px;
-        }
-    }
-    >.large-spinner {
-        position: absolute;
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
-        .fa-spinner::before {
-            font-size: 80px;
-            color: white;
-            text-shadow: 2px 2px #565656;
         }
     }
     &.content {
         width: 100%;
-        @media (min-width: $screen-sm-min) {
+        @include media-breakpoint-up(sm) {
             height: 100%;
         }
-        @media (max-width: $screen-xs-max) {
+        @include media-breakpoint-down(sm) {
             padding: 0;
         }
     }
@@ -63,7 +52,7 @@
             box-shadow: $focus-ring-light-box-shadow;
         }
 
-        @media (min-width: $screen-sm-min) {
+        @include media-breakpoint-up(sm) {
             right: -30px;
         }
     }
@@ -78,7 +67,7 @@
         border: none;
         z-index: 1500;
         top: 45vh;
-        @media (min-width: $screen-sm-min) {
+        @include media-breakpoint-up(sm) {
             width: 48px;
             height: 96px;
         }
@@ -87,7 +76,7 @@
             color: #fff;
             text-shadow: 1px 0 0 #000, 0 1px 0 #000, -1px 0 0 #000, 0 -1px 0 #000;
         }
-        @media (max-width: $screen-xs-max) {
+        @include media-breakpoint-down(sm) {
             position: -webkit-sticky;
             position: sticky;
             bottom: 0;
@@ -100,12 +89,12 @@
             }
         }
         &.popup-left-arrow {
-            @media (min-width: $screen-sm-min) {
+            @include media-breakpoint-up(sm) {
                 left: 0px;
             }
         }
         &.popup-right-arrow {
-            @media (min-width: $screen-sm-min) {
+            @include media-breakpoint-up(sm) {
                 right: 0px;
             }
         }
@@ -121,7 +110,7 @@
     background: fade-out($gray, 0.4);
     color: white;
     border-radius: 5px;
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
         width: 48px;
     }
     .zoom-button {
@@ -140,7 +129,7 @@
         cursor: pointer;
         box-sizing: padding-box;
         border-bottom: 2px solid $gray-light;
-        @media (min-width: $screen-sm-min) {
+        @include media-breakpoint-up(sm) {
             height: 48px;
             width: 48px;
             font-size: 24px;
@@ -151,15 +140,9 @@
         &.inactive {
             color: $gray-lighter;
             cursor: not-allowed;
-            i {
-                cursor: not-allowed;
-            }
         }
         &:focus-visible {
             box-shadow: $focus-ring-light-box-shadow;
-        }
-        i {
-            cursor: pointer;
         }
     }
 }
@@ -212,7 +195,7 @@
     justify-content: space-between;
     min-height: 400px;
 
-    @media (max-width: $screen-xs-max) {
+    @include media-breakpoint-down(sm) {
         flex-flow: column;
     }
 
@@ -230,7 +213,7 @@
             flex: 20 1 0;
             min-height: 50%;
             position: relative;
-            @media (max-width: $screen-xs-max) {
+            @include media-breakpoint-down(sm) {
                 height: 324px;
             }
             img {
@@ -269,7 +252,7 @@
                 &.no-image {
                     position: relative;
 
-                    @media (min-width: $screen-sm) {
+                    @include media-breakpoint-up(sm) {
                         height: initial;
                     }
                     .iconlabel::before {
@@ -280,7 +263,7 @@
                         color: #d1d1d1;
                         font-size: 3.5em;
 
-                        @media (max-width: $screen-xs-max) {
+                        @include media-breakpoint-down(sm) {
                             top: 50%;
                         }
                     }
@@ -337,22 +320,27 @@
             box-shadow: $focus-ring-box-shadow;
         }
 
-        @media (min-width: $screen-sm-min) {
+        @include media-breakpoint-up(sm) {
             max-width: 400px;
             border-left: 1px solid #ccc;
         }
         .popup-link-buttons {
-            margin: 2px 0px;
+            margin: 2px 0px 20px 0px;
             .videourl {
+                display: inline-flex;
                 text-transform: uppercase;
                 font-weight: bold;
-                margin: 2px 0;
+                margin-bottom: 0.5rem;
+                .icon {
+                    margin-right: 0.3rem;
+                    font-size: $font-size-icon-large;
+                }
             }
         }
         .collapse-content-holder {
             flex: 1;
 
-            @media (max-width: $screen-xs-max) {
+            @include media-breakpoint-down(sm) {
                 order: 2;
             }
             .large-spinner {
@@ -361,7 +349,7 @@
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                i::before {
+                .icon {
                     font-size: 64px;
                 }
             }
@@ -374,7 +362,7 @@
             letter-spacing: .5px;
             font-weight: 400;
             padding: 6px;
-            @media (max-width: $screen-xs-max) {
+            @include media-breakpoint-down(sm) {
                 order: 1;
             }
         }
@@ -415,12 +403,6 @@
             &.loading {
                 max-height: 100px;
                 overflow: hidden;
-            }
-        }
-        .popup-link-buttons {
-            margin-bottom: 20px;
-            i {
-                margin-right: 2px;
             }
         }
         .record-link {
@@ -505,7 +487,7 @@
     display: inline-block;
 }
 
-@media(max-width:$screen-xs-max) {
+@include media-breakpoint-down(sm) {
     .imagepopup-holder {
         h3.title {
             border:none;
@@ -560,7 +542,7 @@
             width: 100%;
             height: 100%;
         }
-        @media (min-width: $screen-sm-min) {
+        @include media-breakpoint-up(sm) {
             height: 100%;
         }
     }
@@ -574,7 +556,7 @@
             .finna-element-track {
                 a {
                     background-color: #efefefcc;
-                    @media (min-width: $screen-sm-min) {
+                    @include media-breakpoint-up(sm) {
                         height: 96px;
                         max-width: 96px;
                     }
@@ -617,10 +599,8 @@
             top: 0px;
             color: black;
             z-index: 6;
-            .image-index {
-                background-color: #efefefcc;
-                padding: 2px;
-            }
+            background-color: #efefefcc;
+            padding: 2px;
         }
         .iconlabel {
             display: none;
@@ -637,7 +617,7 @@
                 font-size: 39px;
                 color: $gray-lighter;
                 padding: 0;
-                @media (max-width:$screen-sm-max) {
+                @include media-breakpoint-down(md) {
                     font-size: 26px;
                 }
             }
@@ -658,9 +638,8 @@
         }
     }
 }
-.result .image-trigger .paginator-info {
-    right: initial;
-    left: 35px;
+.result .image-popup-trigger .paginator-info {
+    right: 0;
 }
 .result .recordcover-holder .next-image {
     display: none;
@@ -678,16 +657,12 @@
     &.paginated {
         display: flex;
         > button {
-                appearance: none;
-                height: 44px;
-                border: none;
-                background-color: transparent;
-                padding: 0 2px;
-                flex: 0 0 0;
-            i {
-                cursor: pointer;
-                font-size: 24px;
-            }
+            appearance: none;
+            height: 44px;
+            border: none;
+            background-color: transparent;
+            padding: 0 2px;
+            flex: 0 0 0;
             .finna-popup &:not(:disabled){
                 color: white;
 
@@ -699,9 +674,6 @@
             &:disabled {
                 background-color: #d6d6d600;
                 color: transparent;
-                i {
-                    cursor: not-allowed;
-                }
             }
         }
         .track-holder {
@@ -786,11 +758,5 @@
         flex: 1;
         appearance: none;
         border: none;
-        i {
-            cursor: pointer;
-        }
-    }
-    button:disabled i {
-        cursor: initial;
     }
 }

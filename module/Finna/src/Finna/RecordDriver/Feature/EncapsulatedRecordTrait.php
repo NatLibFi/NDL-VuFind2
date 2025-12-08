@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -108,7 +108,10 @@ trait EncapsulatedRecordTrait
         if (false === ($needed = $this->needsRecordLoaded())) {
             throw new \LogicException('Record loading not needed');
         } elseif ($record->getUniqueID() !== $needed['id']) {
-            throw new \LogicException('Record ID does not match needed record ID');
+            // Try previous ID.
+            if ($record->tryMethod('getPreviousUniqueID') !== $needed['id']) {
+                throw new \LogicException('Record ID does not match needed record ID');
+            }
         } elseif ($record->getSourceIdentifier() !== $needed['source']) {
             throw new \LogicException('Record source does not match needed record source');
         }

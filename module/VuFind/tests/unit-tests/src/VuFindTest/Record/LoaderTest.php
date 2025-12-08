@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -329,18 +329,18 @@ class LoaderTest extends \PHPUnit\Framework\TestCase
     /**
      * Build a loader to test.
      *
-     * @param SearchService  $service        Search service
-     * @param RecordFactory  $factory        Record factory (optional)
-     * @param Cache          $recordCache    Record Cache
-     * @param FallbackLoader $fallbackLoader Fallback record loader
+     * @param SearchService   $service        Search service
+     * @param ?RecordFactory  $factory        Record factory (optional)
+     * @param ?Cache          $recordCache    Record Cache (optional)
+     * @param ?FallbackLoader $fallbackLoader Fallback record loader (optional)
      *
      * @return Loader
      */
     protected function getLoader(
         SearchService $service,
-        RecordFactory $factory = null,
-        Cache $recordCache = null,
-        FallbackLoader $fallbackLoader = null
+        ?RecordFactory $factory = null,
+        ?Cache $recordCache = null,
+        ?FallbackLoader $fallbackLoader = null
     ): Loader {
         if (null === $factory) {
             $factory = $this->createMock(\VuFind\RecordDriver\PluginManager::class);

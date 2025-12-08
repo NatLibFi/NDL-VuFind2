@@ -27,15 +27,8 @@
         text-decoration: none;
       }
     }
-    i {
-      font-size: 12px;
-      position: absolute;
-      top: 8px;
-      right: 11px;
-    }
-
     .dropdown-menu {
-      @media (max-width: $screen-sm) {
+      @include media-breakpoint-down(md) {
         right: 0;
         left: auto;
       }

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -130,14 +130,14 @@ class FileTest extends \VuFindTest\Unit\SessionHandlerTestCase
     /**
      * Get the session handler to test.
      *
-     * @param \Laminas\Config\Config $config Optional configuration
+     * @param \VuFind\Config\Config $config Optional configuration
      *
      * @return Database
      */
     protected function getHandler($config = null)
     {
         if (null === $config) {
-            $config = new \Laminas\Config\Config(
+            $config = new \VuFind\Config\Config(
                 ['file_save_path' => $this->path]
             );
         }

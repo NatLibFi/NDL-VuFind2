@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -61,9 +61,9 @@ class Syndetics extends \VuFind\Content\AbstractCover implements \VuFind\Http\Ca
     /**
      * Constructor
      *
-     * @param ?\Laminas\Config\Config $config Syndetics configuration
+     * @param ?\VuFind\Config\Config $config Syndetics configuration
      */
-    public function __construct(?\Laminas\Config\Config $config = null)
+    public function __construct(?\VuFind\Config\Config $config = null)
     {
         $this->useSSL = $config->use_ssl ?? false;
         $this->useSyndeticsCoverImageFallback = $config->use_syndetics_cover_image_fallback ?? false;

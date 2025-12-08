@@ -15,10 +15,13 @@
   .open-link:not(.download-audio) {
     font-size: $font-size-small;
   }
+  .open-link a:focus-visible {
+    outline: 2px solid $action-link-color;
+  }
 }
 
 .audio-accordion {
-  @media (min-width: $screen-sm-max) {
+  @include media-breakpoint-up(md) {
     max-width: 300px;
   }
 }
@@ -42,6 +45,9 @@
     font-size: 44px;
     border: none;
     color: $action-link-color;
+    &:focus-visible {
+      outline: 2px solid $action-link-color;
+    }
   }
 }
 
@@ -120,6 +126,9 @@
     > div, > button {
       height: 3em;
       position: absolute;
+    }
+    > button:focus-visible {
+      outline: 2px solid $action-link-color;
     }
   }
 

@@ -1,12 +1,13 @@
 .template-dir-myresearch.template-name-mylist {
-  @media (max-width: $screen-sm-max) {
+  @include media-breakpoint-down(md) {
     &.prevent-scroll {
       overflow: hidden;
     }
   }
 }
 
-.main.template-dir-myresearch.template-name-mylist {
+.main.template-dir-myresearch.template-name-mylist,
+.main-template-dir-reservationlist.template-name-displaylist {
   .search-controls {
     margin-top: 10px;
     margin-bottom: 0px;
@@ -16,7 +17,7 @@
   }
   .bulk-action-buttons-col {
     width: 100%;
-    @media (min-width: $screen-sm-min) {
+    @include media-breakpoint-up(sm) {
       padding-right: 0;
     }
     @media (max-width: $grid-float-breakpoint) {
@@ -31,9 +32,11 @@
   }
 }
 
-.template-name-mylist .bulk-action-buttons-col {
-  padding: 10px;
-  padding-bottom: 0px;
+.template-name-mylist, .template-name-displaylist {
+  .bulk-action-buttons-col {
+    padding: 10px;
+    padding-bottom: 0px;
+  }
 }
 
 .mylist-bar, .reservationlist-bar {
@@ -55,7 +58,9 @@
     > li {
       max-width: none;
       border: none;
-
+      > h1 {
+        width: 100%;
+      }
       > a {
         padding: 3px 20px;
         &.active {
@@ -91,7 +96,7 @@
   .list-visibility {
     padding: 2px 2px 10px 20px;
     background-color: $gray-ultralight;
-    @media (min-width: $screen-sm-max) {
+    @include media-breakpoint-up(md) {
       font-size: 0.8em;
     }
     .list-url {
@@ -130,7 +135,7 @@
       display: -webkit-flex;
       display: flex;
       border-radius: 2px;
-      @media (max-width: $screen-sm-max) {
+      @include media-breakpoint-down(md) {
         margin-bottom: 25px;
       }
       input {
@@ -139,7 +144,7 @@
         padding-left: 4px;
         border: none;
         display: inline-block;
-        @media (max-width: $screen-sm-max) {
+        @include media-breakpoint-down(md) {
           font-size: 16px;
         }
       }
@@ -156,7 +161,7 @@
 .bulk-action-buttons-row {
   margin: 0;
   border-bottom: 1px solid $gray-lighter;
-  @media (max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     margin-right: calc(-0.5 * var(--bs-gutter-x));
     margin-left: calc(-0.5 * var(--bs-gutter-x));
     @include clearfix;
@@ -197,12 +202,14 @@
 .list-title {
   margin-bottom: 0;
   margin-top: 0px;
-  i.list-title-edit {
+  .icon.list-title-edit {
     margin-bottom: -22px;
+    cursor: pointer;
   }
   &.no-edit {
     border: 0;
     margin-top: 5px;
+    padding-left: 0;
     &:hover {
       border: 0;
     }
@@ -213,13 +220,9 @@
   padding-left: 5px;
 }
 
-.resource-note i.fa-pen {
-  margin-bottom: -18px;
-}
-
 .list-title, .add-new-list {
   border: 1px solid transparent;
-  display: inline-block;
+  display: flex;
   padding: 5px;
   width: -webkit-calc(100% - 30px);
   width: -moz-calc(100% - 30px);
@@ -227,16 +230,16 @@
   width: 100%;
   &:hover, &:active, &:focus {
     border: 1px solid $gray-lighter;
-    i {
+    .icon {
       transition: all 0.2s linear;
       color: $gray;
     }
   }
-  i {
+  .icon {
     color: $gray-light;
-    float: right;
+    cursor: pointer;
   }
-  span {
+  .js-list-title {
     width: 100%;
     display: inline-block;
     word-wrap: break-word;
@@ -317,14 +320,14 @@
     .info {
       font-weight: bold;
       color: $danger;
-      i {
+      .icon {
        border-radius: 50%;
        border: 2px solid $danger;
        font-size: 1em;
        padding: 1px;
       }
     }
-    .fa {
+    .icon {
       cursor: inherit;
     }
     .toggle {
@@ -337,17 +340,17 @@
       padding-left: 0.5em;
       font-size: 0.9em;
       white-space: nowrap;
-      @media (max-width: $screen-xxs-max) {
+      @include media-breakpoint-down(xs) {
         align-self: flex-end;
         white-space: inherit;
 
       }
-      i {
+      .icon {
         margin-left: 5px;
         transform: rotate(90deg);
       }
     }
-    @media (max-width: $screen-xxs-max) {
+    @include media-breakpoint-down(xs) {
       flex-direction: column;
     }
     .ui {
@@ -355,7 +358,7 @@
       padding: 10px;
       .add-new {
         display: flex;
-        @media (max-width: $screen-xxs-min) {
+        @include media-breakpoint-down(xs) {
           height: inherit;
           flex-wrap: wrap;
           input {
@@ -366,7 +369,7 @@
           margin-right: 0.5em;
           margin-bottom: 5px;
           padding-left: 5px;
-          @media (max-width: $screen-xxs-min) {
+          @include media-breakpoint-down(xs) {
             width: 100%;
           }
         }
@@ -464,43 +467,24 @@ span.caret {
     margin-bottom: 10px;
     margin-right: 10px;
   }
-  @media (max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     margin-left: 5px;
     margin-right: 10px;
   }
 }
 
-@media (max-width: $screen-sm-max) {
-  .mylist-mobile.mobile-navigation {
-    left: 0;
-    border-top: 1px solid $body-bg;
-    position: fixed;
-    height: 44px;
-    bottom: 0;
-    z-index: 2;
-    width: 100%;
-    background: $sidebar-background;
-    i {
-      font-size: 15px;
-    }
-    li.sidebar-navigation {
-      padding: 11px;
-      color: $sidebar-header-text-color;
-      font-size: 1.1em;
-      text-transform: uppercase;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    span.active-filters {
-      float: right;
-      max-width: 55%;
-    }
+@include media-breakpoint-down(md) {
+  .sidebar.open {
+    margin-top: 0px;
+  }
+  .dropdown-menu {
+    border: none;
+    border-radius: none;
+    margin: 0;
   }
 }
 
 .mylist-header {
-  display: inline-block;
   width: 100%;
   .alert {
     margin-top: 1em;
@@ -521,15 +505,9 @@ span.caret {
       padding-bottom: 7px;
     }
     .sort-option-container {
-      @media (max-width: $screen-sm) {
+      @include media-breakpoint-down(md) {
         a.dropdown-toggle {
           white-space: initial;
-          i.fa-arrow-down {
-            position: absolute;
-            top: 30%;
-            right: 0.7em;
-            margin-left: 0;
-          }
         }
       }
     }

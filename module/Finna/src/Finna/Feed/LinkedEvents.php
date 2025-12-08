@@ -17,23 +17,23 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Feed;
 
-use Finna\View\Helper\Root\CleanHtml;
-use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Url;
 use VuFind\Cache\Manager as CacheManager;
+use VuFind\Config\Config;
+use VuFind\View\Helper\Root\CleanHtml;
 
 use function is_array;
 use function strlen;
@@ -46,11 +46,11 @@ use function strlen;
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class LinkedEvents implements
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -67,9 +67,9 @@ class LinkedEvents implements
     /**
      * Publisher ID
      *
-     * @var string
+     * @var ?string
      */
-    protected $publisherId = '';
+    protected $publisherId = null;
 
     /**
      * Language
@@ -115,10 +115,18 @@ class LinkedEvents implements
 
     /**
      * Include super events in response?
+     * Legacy compatibility
      *
      * @var bool
      */
     protected $includeSuperEvents;
+
+    /**
+     * Default parameters used in search
+     *
+     * @var array
+     */
+    protected $defaultParams = [];
 
     /**
      * How many related events (if available) are displayed on
@@ -131,7 +139,7 @@ class LinkedEvents implements
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $config        OrganisationInfo config
+     * @param \VuFind\Config\Config  $config        OrganisationInfo config
      * @param \VuFind\Date\Converter $dateConverter Date converter
      * @param Url                    $url           Url helper
      * @param CleanHtml              $cleanHtml     cleanHtml helper
@@ -139,7 +147,7 @@ class LinkedEvents implements
      * @param Config                 $mainConfig    Main configuration
      */
     public function __construct(
-        \Laminas\Config\Config $config,
+        \VuFind\Config\Config $config,
         \VuFind\Date\Converter $dateConverter,
         Url $url,
         CleanHtml $cleanHtml,
@@ -150,10 +158,15 @@ class LinkedEvents implements
         if (!str_ends_with($this->apiUrl, '/')) {
             $this->apiUrl .= '/';
         }
-        $this->publisherId = $config->LinkedEvents->publisher_id ?? '';
+        $this->publisherId = $config->LinkedEvents->publisher_id ?? null;
         // Exclude super events from results by default
         $this->includeSuperEvents
             = $config->LinkedEvents->include_super_events ?? false;
+
+        $this->defaultParams = $config->LinkedEvents?->default_params?->toArray() ?? [
+            'include' => 'location',
+            'sort' => 'start_time',
+        ];
         $this->dateConverter = $dateConverter;
         $this->url = $url;
         $this->cleanHtml = $cleanHtml;
@@ -172,7 +185,7 @@ class LinkedEvents implements
      */
     public function getEvents($params)
     {
-        if (empty($this->apiUrl) || empty($this->publisherId)) {
+        if (empty($this->apiUrl)) {
             $this->logError('Missing LinkedEvents configuration');
             return false;
         }
@@ -191,7 +204,7 @@ class LinkedEvents implements
                     $paramArray['start']
                 );
             } elseif (empty($paramArray['end'])) {
-                $paramArray['start'] = date('Y-m-d');
+                $paramArray['start'] = 'today';
             }
             if (isset($paramArray['end'])) {
                 $paramArray['end'] = $this->dateConverter->convert(
@@ -200,20 +213,23 @@ class LinkedEvents implements
                     $paramArray['end']
                 );
             }
-            $paramArray['language'] = $this->getLanguage();
             $url = $this->apiUrl . 'event/';
+
             if (!empty($paramArray['id'])) {
                 $url .= $paramArray['id'] . '/?include=location,audience,keywords,' .
                  'sub_events,super_event';
             } else {
-                $url .= '?'
-                . 'publisher=' . urlencode($this->publisherId) . '&'
-                . http_build_query($paramArray)
-                . '&sort=start_time'
-                . '&include=location';
-            }
-            if (!$this->includeSuperEvents) {
-                $url .= '&super_event_type=none';
+                $paramArray['language'] = $this->getLanguage();
+                if ($this->publisherId) {
+                    $paramArray['publisher'] = $this->publisherId;
+                }
+                if ($this->defaultParams) {
+                    $paramArray = array_merge($this->defaultParams, $paramArray);
+                }
+                if (!$this->includeSuperEvents && empty($paramArray['super_event_type'])) {
+                    $paramArray['super_event_type'] = 'none';
+                }
+                $url .= '?' . http_build_query($paramArray);
             }
         }
 

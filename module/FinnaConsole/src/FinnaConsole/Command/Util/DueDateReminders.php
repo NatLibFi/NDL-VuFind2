@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Service
@@ -26,16 +26,17 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
 
 use Finna\Crypt\SecretCalculator;
-use Finna\Db\Entity\FinnaUserCardEntityInterface;
-use Finna\Db\Entity\FinnaUserEntityInterface;
+use Finna\Db\Entity\UserCardEntityInterface;
+use Finna\Db\Entity\UserEntityInterface;
 use Finna\Db\Service\FinnaDueDateReminderServiceInterface;
-use Finna\Db\Service\FinnaUserServiceInterface;
+use Finna\Db\Service\UserCardServiceInterface;
+use Finna\Db\Service\UserServiceInterface;
 use Laminas\Mvc\I18n\Translator;
 use Laminas\View\Renderer\PhpRenderer;
 use Laminas\View\Resolver\AggregateResolver;
@@ -44,7 +45,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VuFind\Db\Service\UserCardServiceInterface;
+use VuFind\Config\Feature\EmailSettingsTrait;
 use VuFind\Mailer\Mailer;
 
 use function assert;
@@ -60,19 +61,15 @@ use function in_array;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 #[AsCommand(
     name: 'util/due_date_reminders'
 )]
 class DueDateReminders extends AbstractUtilCommand
 {
+    use EmailSettingsTrait;
     use EmailWithRetryTrait;
-
-    /**
-     * Date format for due dates in database.
-     */
-    public const DUE_DATE_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * URL Helper
@@ -119,13 +116,13 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param FinnaUserServiceInterface            $userService            User database service
+     * @param UserServiceInterface                 $userService            User database service
      * @param UserCardServiceInterface             $userCardService        User card database service
      * @param FinnaDueDateReminderServiceInterface $dueDateReminderService Due date reminder database service
      * @param \VuFind\ILS\Connection               $catalog                ILS connection
      * @param \VuFind\Auth\ILSAuthenticator        $ilsAuthenticator       ILS authenticator
-     * @param \Laminas\Config\Config               $mainConfig             Main config
-     * @param \Laminas\Config\Config               $datasourceConfig       Data source config
+     * @param \VuFind\Config\Config                $mainConfig             Main config
+     * @param \VuFind\Config\Config                $datasourceConfig       Data source config
      * @param PhpRenderer                          $viewRenderer           View renderer
      * @param \VuFind\Record\Loader                $recordLoader           Record loader
      * @param Mailer                               $mailer                 Mailer
@@ -133,13 +130,13 @@ class DueDateReminders extends AbstractUtilCommand
      * @param SecretCalculator                     $secretCalculator       Secret calculator
      */
     public function __construct(
-        protected FinnaUserServiceInterface $userService,
+        protected UserServiceInterface $userService,
         protected UserCardServiceInterface $userCardService,
         protected FinnaDueDateReminderServiceInterface $dueDateReminderService,
         protected \VuFind\ILS\Connection $catalog,
         protected \VuFind\Auth\ILSAuthenticator $ilsAuthenticator,
-        protected \Laminas\Config\Config $mainConfig,
-        protected \Laminas\Config\Config $datasourceConfig,
+        protected \VuFind\Config\Config $mainConfig,
+        protected \VuFind\Config\Config $datasourceConfig,
         protected PhpRenderer $viewRenderer,
         protected \VuFind\Record\Loader $recordLoader,
         Mailer $mailer,
@@ -187,6 +184,8 @@ class DueDateReminders extends AbstractUtilCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->output = $output;
+
         // Current view local configuration directory
         $this->baseDir = $input->getArgument('vufind_dir');
 
@@ -248,11 +247,11 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Get reminders for a user.
      *
-     * @param FinnaUserEntityInterface $user User.
+     * @param UserEntityInterface $user User.
      *
      * @return array Array of loans to be reminded and possible login errors.
      */
-    protected function getReminders(FinnaUserEntityInterface $user): array
+    protected function getReminders(UserEntityInterface $user): array
     {
         if (trim($user->getEmail()) === '') {
             $this->warn(
@@ -264,9 +263,13 @@ class DueDateReminders extends AbstractUtilCommand
 
         $remindLoans = [];
         $errors = [];
-        foreach ($this->userCardService->getLibraryCards($user) as $card) {
-            assert($card instanceof FinnaUserCardEntityInterface);
+        foreach ($this->userCardService->getAllLibraryCards($user) as $card) {
+            assert($card instanceof UserCardEntityInterface);
             if (!$card->getId() || $card->getFinnaDueDateReminder() === 0) {
+                $this->msg(
+                    'Due date reminders disabled for card ' . $card->getId(),
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
                 continue;
             }
             $ddrConfig = $this->catalog->getConfig(
@@ -277,6 +280,10 @@ class DueDateReminders extends AbstractUtilCommand
             // boolean..
             if (isset($ddrConfig['enabled']) && $ddrConfig['enabled'] !== true) {
                 // Due date reminders disabled for the source
+                $this->msg(
+                    'Due date reminders disabled for card ' . $card->getId() . ' source',
+                    OutputInterface::VERBOSITY_VERBOSE
+                );
                 continue;
             }
 
@@ -309,7 +316,7 @@ class DueDateReminders extends AbstractUtilCommand
                     . " (id {$card->getId()}) -- disabling due date reminders for the"
                     . ' card'
                 );
-                $errors[] = ['card' => $card['cat_username']];
+                $errors[] = ['card' => $card->getCatUserName()];
                 // Disable due date reminders for this card
                 if ($user->getCatUsername() === $card->getCatUsername()) {
                     // Card is the active one, update user too:
@@ -341,6 +348,10 @@ class DueDateReminders extends AbstractUtilCommand
                 );
                 continue;
             }
+            $this->msg(
+                $loans['count'] . ' loans to check for card ' . $card->getId(),
+                OutputInterface::VERBOSITY_VERBOSE
+            );
             foreach ($loans['records'] as $loan) {
                 $dueDate = new \DateTime($loan['duedate']);
                 $dayDiff = $dueDate->diff($todayTime)->days;
@@ -350,6 +361,10 @@ class DueDateReminders extends AbstractUtilCommand
                 ) {
                     if ($this->dueDateReminderService->getRemindedLoan($user, $loan['item_id'], $dueDate)) {
                         // Reminder already sent
+                        $this->msg(
+                            'Loan ' . $loan['item_id'] . ' for card ' . $card->getId() . ': Reminder already sent',
+                            OutputInterface::VERBOSITY_VERBOSE
+                        );
                         continue;
                     }
 
@@ -373,6 +388,10 @@ class DueDateReminders extends AbstractUtilCommand
                         'title' => $loan['title'] ?? null,
                         'record' => $record,
                     ];
+                    $this->msg(
+                        'Loan ' . $loan['item_id'] . ' for card ' . $card->getId() . ': Reminder needed',
+                        OutputInterface::VERBOSITY_VERBOSE
+                    );
                 }
             }
         }
@@ -382,13 +401,13 @@ class DueDateReminders extends AbstractUtilCommand
     /**
      * Send reminders for a user.
      *
-     * @param FinnaUserEntityInterface $user        User.
-     * @param array                    $remindLoans Loans to be reminded.
-     * @param array                    $errors      Errors in due date checking.
+     * @param UserEntityInterface $user        User.
+     * @param array               $remindLoans Loans to be reminded.
+     * @param array               $errors      Errors in due date checking.
      *
      * @return boolean success.
      */
-    protected function sendReminder(FinnaUserEntityInterface $user, $remindLoans, $errors)
+    protected function sendReminder(UserEntityInterface $user, $remindLoans, $errors)
     {
         if (trim($user->getEmail()) === '') {
             $this->msg(
@@ -398,7 +417,7 @@ class DueDateReminders extends AbstractUtilCommand
             return false;
         }
 
-        [$userInstitution, ] = explode(':', $user['username'], 2);
+        [$userInstitution, ] = explode(':', $user->getUsername(), 2);
 
         if (
             !$this->currentInstitution
@@ -489,7 +508,7 @@ class DueDateReminders extends AbstractUtilCommand
         }
         $message = $this->viewRenderer->render('Email/due-date-reminder.phtml', $params);
         $to = $user->getEmail();
-        $from = $this->currentSiteConfig['Site']['email'];
+        $from = $this->getEmailSenderAddress($this->currentSiteConfig);
         try {
             $this->sendEmailWithRetry($to, $from, $subject, $message);
         } catch (\Exception $e) {

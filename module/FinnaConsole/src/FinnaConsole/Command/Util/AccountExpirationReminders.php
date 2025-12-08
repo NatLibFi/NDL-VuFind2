@@ -26,23 +26,27 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
 
 use DateInterval;
 use DateTime;
-use Finna\Db\Entity\FinnaUserEntityInterface;
-use Finna\Db\Service\FinnaUserServiceInterface;
-use Laminas\I18n\Translator\Translator;
-use Laminas\I18n\Translator\TranslatorInterface;
+use Finna\Db\Entity\UserEntityInterface;
+use Finna\Db\Service\UserServiceInterface;
+use Laminas\Mvc\I18n\Translator;
+use Laminas\Translator\TranslatorInterface;
 use Laminas\View\Resolver\AggregateResolver;
 use Laminas\View\Resolver\TemplatePathStack;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use VuFind\Config\ConfigManagerInterface;
+use VuFind\Config\Feature\EmailSettingsTrait;
+use VuFind\Config\Feature\ExplodeSettingTrait;
+use VuFind\Config\Location\ConfigFile;
 use VuFind\Db\Service\ResourceServiceInterface;
 use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Db\Service\TagServiceInterface;
@@ -63,7 +67,7 @@ use function sprintf;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 #[AsCommand(
     name: 'util/account_expiration_reminders'
@@ -71,7 +75,9 @@ use function sprintf;
 class AccountExpirationReminders extends AbstractUtilCommand
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use EmailSettingsTrait;
     use EmailWithRetryTrait;
+    use ExplodeSettingTrait;
 
     /**
      * Current view local configuration directory.
@@ -104,14 +110,14 @@ class AccountExpirationReminders extends AbstractUtilCommand
     /**
      * Current site config
      *
-     * @var object
+     * @var array
      */
     protected $currentSiteConfig = null;
 
     /**
      * Current MultiBackend config
      *
-     * @var object
+     * @var array
      */
     protected $currentMultiBackendConfig = null;
 
@@ -153,31 +159,31 @@ class AccountExpirationReminders extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param FinnaUserServiceInterface          $userService      User database service
+     * @param UserServiceInterface               $userService      User database service
      * @param SearchServiceInterface             $searchService    Search database service
      * @param ResourceServiceInterface           $resourceService  Resource database service
      * @param UserListServiceInterface           $userListService  User list database service
      * @param TagServiceInterface                $tagService       Tag database service
      * @param \Laminas\View\Renderer\PhpRenderer $renderer         View renderer
-     * @param \Laminas\Config\Config             $datasourceConfig Data source config
+     * @param \VuFind\Config\Config              $datasourceConfig Data source config
      * @param Mailer                             $mailer           Mailer
      * @param TranslatorInterface                $translator       Translator
-     * @param \VuFind\Config\PluginManager       $configManager    Config manager
+     * @param ConfigManagerInterface             $configManager    Config manager
      */
     public function __construct(
-        protected FinnaUserServiceInterface $userService,
+        protected UserServiceInterface $userService,
         protected SearchServiceInterface $searchService,
         protected ResourceServiceInterface $resourceService,
         protected UserListServiceInterface $userListService,
         protected TagServiceInterface $tagService,
         protected \Laminas\View\Renderer\PhpRenderer $renderer,
-        protected \Laminas\Config\Config $datasourceConfig,
+        protected \VuFind\Config\Config $datasourceConfig,
         Mailer $mailer,
         TranslatorInterface $translator,
-        protected \VuFind\Config\PluginManager $configManager
+        protected ConfigManagerInterface $configManager
     ) {
         $this->urlHelper = $renderer->plugin('url');
-        $this->translator = $translator;
+        $this->setTranslator($translator);
         $this->mailer = $mailer;
 
         parent::__construct();
@@ -309,7 +315,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
      * @param int $remindDaysBefore How many days before expiration reminder starts
      * @param int $frequency        The freqency in days for reminding the user
      *
-     * @return FinnaUserEntityInterface[]
+     * @return UserEntityInterface[]
      */
     protected function getUsersToRemind($days, $remindDaysBefore, $frequency): array
     {
@@ -324,10 +330,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             );
         }
 
-        $limitDate = date(
-            'Y-m-d',
-            strtotime(sprintf('-%d days', (int)$days - (int)$remindDaysBefore))
-        );
+        $limitDate = new DateTime(sprintf('-%d days', (int)$days - (int)$remindDaysBefore));
 
         $initialReminderThreshold = time() + $frequency * 86400;
 
@@ -335,7 +338,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
         $results = [];
         foreach ($users as $user) {
-            assert($user instanceof FinnaUserEntityInterface);
+            assert($user instanceof UserEntityInterface);
             $secsSinceLast = time() - ($user->getFinnaLastExpirationReminderDate()?->getTimestamp() ?? 0);
             if ($secsSinceLast < $frequency * 86400) {
                 continue;
@@ -352,7 +355,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             // Avoid sending a reminder if it comes too late (i.e. no reminders have
             // been sent before and there's less than $frequency days before
             // expiration)
-            $expirationDatetime = $user->getLastLogin();
+            $expirationDatetime = clone $user->getLastLogin();
             $expirationDatetime->add(new DateInterval('P' . $days . 'D'));
 
             $lastExpirationReminder = $user->getFinnaLastExpirationReminderDate()?->getTimestamp() ?? 0;
@@ -393,12 +396,12 @@ class AccountExpirationReminders extends AbstractUtilCommand
     /**
      * Send account expiration reminder for a user.
      *
-     * @param FinnaUserEntityInterface $user           User.
-     * @param int                      $expirationDays Number of days after the account expires.
+     * @param UserEntityInterface $user           User.
+     * @param int                 $expirationDays Number of days after the account expires.
      *
      * @return bool
      */
-    protected function sendAccountExpirationReminder(FinnaUserEntityInterface $user, int $expirationDays): bool
+    protected function sendAccountExpirationReminder(UserEntityInterface $user, int $expirationDays): bool
     {
         if (str_contains($user->getUsername(), ':')) {
             [$userInstitution, $userName] = explode(':', $user->getUsername(), 2);
@@ -445,14 +448,10 @@ class AccountExpirationReminders extends AbstractUtilCommand
             // currently support specifying an absolute path alone.
             $parts = explode('/', LOCAL_OVERRIDE_DIR);
             $configPath = str_repeat('../', count($parts)) . ".$viewPath/local/config/vufind";
-            $this->currentSiteConfig = $this->configManager->get(
-                'config',
-                compact('configPath')
-            );
-            $this->currentMultiBackendConfig = $this->configManager->get(
-                'MultiBackend',
-                compact('configPath')
-            );
+            $this->currentSiteConfig
+                = $this->configManager->loadConfigFromLocation(new ConfigFile($configPath . '/config.ini'));
+            $this->currentMultiBackendConfig
+                = $this->configManager->loadConfigFromLocation(new ConfigFile($configPath . '/MultiBackend.ini'));
         }
 
         if (
@@ -470,10 +469,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
         $authMethod = $this->currentSiteConfig['Authentication']['method'] ?? '';
         if ('ChoiceAuth' === $authMethod) {
-            $authOptions = explode(
-                ',',
-                $this->currentSiteConfig['ChoiceAuth']['choice_order'] ?? ''
-            );
+            $authOptions = $this->explodeListSetting($this->currentSiteConfig['ChoiceAuth']['choice_order'] ?? '');
         } else {
             $authOptions = [$authMethod];
         }
@@ -503,14 +499,21 @@ class AccountExpirationReminders extends AbstractUtilCommand
         }
 
         if (strcasecmp($userAuthMethod, 'multiils') === 0) {
-            [$target] = explode('.', $userName);
+            // Try to get target from cat id because it's the most reliable source:
+            if ($catId = $user->getCatId()) {
+                if (str_contains($catId, ':')) {
+                    [, $catId] = explode(':', $catId, 2);
+                }
+                [$target] = explode('.', $catId);
+            } else {
+                // Fall back to catalog username:
+                [$target] = explode('.', $user->getCatUsername());
+            }
             if (empty($this->currentMultiBackendConfig['Drivers'][$target])) {
-                $this->msg("$consoleMsgPrefix: unknown MultiILS login target, bypassing expiration reminder");
+                $this->msg("$consoleMsgPrefix: unknown MultiILS login target '$target', bypassing expiration reminder");
                 return false;
             }
-            $loginTargets = $this->currentMultiBackendConfig['Login']['drivers']
-                ? $this->currentMultiBackendConfig['Login']['drivers']->toArray()
-                : [];
+            $loginTargets = $this->currentMultiBackendConfig['Login']['drivers'] ?? [];
             if (!in_array($target, (array)$loginTargets)) {
                 $this->msg(
                     "$consoleMsgPrefix: MultiILS target '$target' not available for login, bypassing expiration"
@@ -520,7 +523,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
             }
         }
 
-        $expirationDatetime = $user->getLastLogin();
+        $expirationDatetime = clone $user->getLastLogin();
         $expirationDatetime->add(new DateInterval('P' . $expirationDays . 'D'));
 
         $language = $this->currentSiteConfig['Site']['language'] ?? 'fi';
@@ -604,7 +607,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
 
         $to = $user->getEmail();
         try {
-            $from = $this->currentSiteConfig['Site']['email'];
+            $from = $this->getEmailSenderAddress($this->currentSiteConfig);
 
             if ($this->reportOnly) {
                 echo <<<EOT

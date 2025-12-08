@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
@@ -39,23 +39,23 @@ use function in_array;
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class Autocomplete extends \Laminas\View\Helper\AbstractHelper
 {
     /**
      * Search configuration.
      *
-     * @var \Laminas\Config\Config
+     * @var \VuFind\Config\Config
      */
     protected $searchConfig = null;
 
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $searchConfig Search configiration.
+     * @param \VuFind\Config\Config $searchConfig Search configiration.
      */
-    public function __construct(\Laminas\Config\Config $searchConfig)
+    public function __construct(\VuFind\Config\Config $searchConfig)
     {
         $this->searchConfig = $searchConfig;
     }

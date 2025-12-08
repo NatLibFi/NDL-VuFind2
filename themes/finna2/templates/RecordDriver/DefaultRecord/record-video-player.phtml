@@ -40,21 +40,22 @@
     <?php foreach ($videoUrls as $url): ?>
       <?php
       $embeddedVideo = $this->recordLinker()->getEmbeddedVideo($url['url']);
-      $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
       switch ($this->driver->tryMethod('getRecordFormat', [], '')) {
         case 'ead':
         case 'ead3':
           $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $this->translate('link_' . $url['desc'], null, $url['desc']);
         break;
         case 'forward':
-          $desc = $this->translate('default::link_' . $desc, null, $desc);
+          $text = $url['desc'] ?? $this->truncateUrl($url['url']);
+          $desc = $this->translate('default::link_' . $text, null, $text);
         break;
         case 'lido':
           $showDetails = true;
-          $desc = $desc ?: $this->translate('format_Video');
+          $desc = $url['desc'] !== $url['url'] ? $url['desc'] : $this->translate('format_Video');
         break;
         default:
-          $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $desc;
+          $text = $url['desc'] ?? $this->truncateUrl($url['url']);
+          $desc = $embeddedVideo === 'data-embed-iframe' ? $this->translate('format_Video') : $text;
         break;
       }
 
@@ -65,6 +66,7 @@
         class="video-link-container active-video"
         popup-id="<?=$popupId?>"
         type="<?=$type?>"
+        tabindex="0"
         index="<?=$i?>"
         source="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>"
         title="<?=$this->escapeHtmlAttr($url['url'])?>"
@@ -82,9 +84,14 @@
         <?=$this->icon('video-play', 'video-play-icon') ?>
         <span class="video-desc"><?=$this->escapeHtml($this->truncate(ucfirst($desc), 30))?></span>
       </finna-video>
-      <?php if ($showDetails && !$inlineVideo): ?>
+      <?php
+        if ($showDetails && !$inlineVideo):
+          if ($fileSize = $url['data']['size'] ?? '') {
+            $fileSize = !empty($fileSize['value']) && $fileSize['unit'] === 'byte' ? '(' . $this->fileSize($fileSize['value']) . ')' : '';
+          }
+      ?>
         <div class="resource-details">
-          <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a></div>
+          <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a> <span class="file-size"><?=$fileSize?></span></div>
           <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
         </div>
       <?php endif; ?>

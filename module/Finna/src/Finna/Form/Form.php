@@ -169,16 +169,15 @@ class Form extends \VuFind\Form\Form
     {
         parent::setFormId($formId, $params, $prefill);
 
-        if ($this->reportPatronBarcode()) {
-            if ($this->user && ($catUsername = $this->user->getCatUsername())) {
-                [, $barcode] = explode('.', $catUsername);
-                $this->userCatUsername = $barcode;
+        if ($this->ilsPatron) {
+            if ($this->reportPatronBarcode()) {
+                $this->userCatUsername = $this->ilsPatron['__local_cat_username'] ?? $this->ilsPatron['cat_username'];
+            }
+            if ($this->reportPatronId()) {
+                $this->userCatId = $this->ilsPatron['__local_id'] ?? $this->ilsPatron['id'];
             }
         }
-        if ($this->reportPatronId() && $catId = $this->user?->getCatId()) {
-            [, $id] = explode('.', $catId);
-            $this->userCatId = $id;
-        }
+
         $this->setName($formId);
     }
 
@@ -207,6 +206,31 @@ class Form extends \VuFind\Form\Form
             $this->setRecord($driver);
         }
         return parent::setData($data);
+    }
+
+    /**
+     * Sets name and email field values from preferred source
+     *
+     * @return static
+     */
+    public function setContactInformation(): static
+    {
+        if ($this->preferPatronInformation()) {
+            $this->setData(
+                [
+                    'name' => $this->ilsPatron['firstname'] . ' ' . $this->ilsPatron['lastname'],
+                    'email' => $this->ilsPatron['email'],
+                ]
+            );
+        } elseif ($this->user) {
+            $this->setData(
+                [
+                    'name' => $this->user->getFirstname() . ' ' . $this->user->getLastname(),
+                    'email' => $this->user->getEmail(),
+                ]
+            );
+        }
+        return $this;
     }
 
     /**
@@ -329,6 +353,21 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
+     * Should the form fill user data from patron?
+     *
+     * @return bool
+     */
+    public function preferPatronInformation(): bool
+    {
+        return $this->ilsPatron
+            && (
+                $this->reportPatronBarcode()
+                || $this->reportPatronId()
+                || (bool)($this->formConfig['preferPatronInformation'] ?? false)
+            );
+    }
+
+    /**
      * Return form recipient.
      *
      * @param array $postParams Posted form data
@@ -443,19 +482,15 @@ class Form extends \VuFind\Form\Form
         }
 
         // Help texts from configuration
-        $pre = isset($this->formConfig['help']['pre'])
-            && !$translationEmpty($this->formConfig['help']['pre'])
-            ? $this->translate($this->formConfig['help']['pre'])
-            : null;
-        if ($pre) {
-            $preParagraphs[] = $pre;
+        foreach ((array)($this->formConfig['help']['pre'] ?? []) as $translation) {
+            if (!$translationEmpty($translation)) {
+                $preParagraphs[] = $this->translate($translation);
+            }
         }
-        $post = isset($this->formConfig['help']['post'])
-            && !$translationEmpty($this->formConfig['help']['post'])
-            ? $this->translate($this->formConfig['help']['post'])
-            : null;
-        if ($post) {
-            $postParagraphs[] = $post;
+        foreach ((array)($this->formConfig['help']['post'] ?? []) as $translation) {
+            if (!$translationEmpty($translation)) {
+                $postParagraphs[] = $this->translate($translation);
+            }
         }
 
         if ($this->getFormId() === self::RECORD_FEEDBACK_FORM && null !== $this->record) {
@@ -819,6 +854,7 @@ class Form extends \VuFind\Form\Form
                 'hideSenderInfo',
                 'includeBarcode',
                 'includePatronId',
+                'preferPatronInformation',
                 'readonly',
                 'rows',
                 'senderInfoHelp',

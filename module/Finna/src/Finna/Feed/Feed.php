@@ -17,22 +17,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Feed;
 
 use Finna\OrganisationInfo\OrganisationInfo;
-use Finna\View\Helper\Root\CleanHtml;
-use Laminas\Config\Config;
 use Laminas\Feed\Reader\Entry\AbstractEntry;
 use Laminas\Feed\Reader\Feed\AbstractFeed;
 use Laminas\Feed\Reader\Reader;
@@ -40,6 +38,8 @@ use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Helper\ServerUrl;
 use Psr\Container\ContainerInterface;
 use VuFind\Cache\Manager as CacheManager;
+use VuFind\Config\Config;
+use VuFind\View\Helper\Root\CleanHtml;
 use VuFindTheme\View\Helper\ImageLink;
 
 use function in_array;
@@ -55,12 +55,12 @@ use function strlen;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class Feed implements
     \VuFind\I18n\Translator\TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface
+    \Psr\Log\LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -665,8 +665,7 @@ class Feed implements
                 $cnt = 0;
                 foreach ($items as &$item) {
                     foreach ($xpathContent as $setting => $xpathElement) {
-                        $content = $xpath->query($xpathElement, $xpathItem)
-                            ->item($cnt++)->nodeValue;
+                        $content = $xpath->query($xpathElement, $xpathItem)->item($cnt++)?->nodeValue;
 
                         $content = $this->processItemContent(
                             $content ?: '',
@@ -833,14 +832,14 @@ class Feed implements
     /**
      * Populate icon data for feed slide.
      *
-     * @param array                  $data   Data for slide
-     * @param \Laminas\Config\Config $config Config for feed
+     * @param array                 $data   Data for slide
+     * @param \VuFind\Config\Config $config Config for feed
      *
      * @return void
      */
     protected function populateIcon(
         array &$data,
-        \Laminas\Config\Config $config
+        \VuFind\Config\Config $config
     ): void {
         if (
             empty($config->showIcons)

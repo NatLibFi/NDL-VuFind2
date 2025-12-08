@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -30,7 +30,7 @@
 namespace VuFind\ILS\Driver;
 
 use Laminas\Http\Response;
-use Laminas\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareInterface;
 use VuFind\Exception\BadConfig;
 use VuFind\Exception\ILS as ILSException;
 use VuFindHttp\HttpServiceAwareInterface;
@@ -185,12 +185,16 @@ abstract class AbstractAPI extends AbstractBase implements
                 $client->setParameterPost($params);
             }
         }
+        $startTime = microtime(true);
         try {
             $response = $client->send();
         } catch (\Exception $e) {
             $this->logError('Unexpected ' . $e::class . ': ' . (string)$e);
             throw new ILSException('Error during send operation.');
         }
+        $endTime = microtime(true);
+        $responseTime = $endTime - $startTime;
+        $this->debug('Request Response Time --- ' . $responseTime . ' seconds. ' . $path);
         $code = $response->getStatusCode();
         if (
             !$response->isSuccess()

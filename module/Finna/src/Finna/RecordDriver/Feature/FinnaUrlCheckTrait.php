@@ -21,8 +21,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -91,6 +91,12 @@ trait FinnaUrlCheckTrait
         }
 
         $config = $this->getConfig();
+
+        // Check for kirjavalitys links seperately as it is an option set in config
+        $useKirjavalitysLinks = $config->Record->kirjavalitys_links ?? false;
+        if (str_contains($url, 'http://data.kirjavalitys.fi/') && !$useKirjavalitysLinks) {
+            return self::$urlCheckResultCache[$url] = false;
+        }
 
         $allowedMode = $config->Record->allowed_external_hosts_mode ?? 'enforce';
         if ('disable' === $allowedMode) {

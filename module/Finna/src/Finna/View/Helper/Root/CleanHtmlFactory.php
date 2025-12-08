@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2020.
+ * Copyright (C) The National Library of Finland 2020-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -30,9 +30,9 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\View\CustomElement\CustomElementInterface;
+use HTMLPurifier_Config;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
@@ -45,8 +45,15 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class CleanHtmlFactory implements FactoryInterface
+class CleanHtmlFactory extends \VuFind\View\Helper\Root\CleanHtmlFactory
 {
+    /**
+     * Container configuration
+     *
+     * @var array
+     */
+    protected array $containerConfig;
+
     /**
      * Create an object
      *
@@ -64,33 +71,47 @@ class CleanHtmlFactory implements FactoryInterface
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
+        $this->containerConfig = $container->get('config');
+
+        return parent::__invoke($container, $requestedName, $options);
+    }
+
+    /**
+     * Sets additional configuration
+     *
+     * @param HTMLPurifier_Config $config  Configuration
+     * @param array               $options Additional options
+     *
+     * @return void
+     */
+    protected function setAdditionalConfiguration(HTMLPurifier_Config $config, array $options): void
+    {
+        parent::setAdditionalConfiguration($config, $options);
+
+        $customElements = $this->containerConfig['vufind']['plugin_managers']['view_customelement']['aliases'];
+        $definition = $config->getHTMLDefinition(true);
+        foreach (self::getAllowedCustomElements($customElements) as $elementName => $elementInfo) {
+            $definition->addElement(
+                $elementName,
+                $elementInfo[CustomElementInterface::TYPE],
+                $elementInfo[CustomElementInterface::CONTENTS],
+                $elementInfo[CustomElementInterface::ATTR_COLLECTIONS],
+                $elementInfo[CustomElementInterface::ATTRIBUTES]
+            );
         }
-        $cacheDir = $container->get(\VuFind\Cache\Manager::class)
-            ->getCache('object')->getOptions()->getCacheDir();
-
-        $config = $container->get('config');
-        $customElements
-            = $config['vufind']['plugin_managers']['view_customelement']['aliases'];
-
-        return new $requestedName(
-            $cacheDir,
-            self::getAllowedElements($customElements)
-        );
     }
 
     /**
      * Returns an array containing HTML Purifier compatible information about all
-     * allowed HTML elements, based on the provided array of custom elements.
+     * allowed custom HTML elements, based on the provided array of custom elements.
      *
      * @param array $customElements Custom elements
      *
      * @return array
      */
-    public static function getAllowedElements($customElements)
+    public static function getAllowedCustomElements($customElements)
     {
         $attrs = CustomElementInterface::ATTRIBUTES;
         $allowedElements = [];

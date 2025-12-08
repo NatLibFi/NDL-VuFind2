@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -27,7 +27,7 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -49,9 +49,9 @@ use function is_array;
  * @author   Luke O'Sullivan <l.osullivan@swansea.ac.uk>
  * @author   Lutz Biedinger <lutz.Biedinger@gmail.com>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
+class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait {
         getSupportedCitationFormats as getSupportedCitationFormatsFinna;
@@ -69,11 +69,11 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * @param \VuFind\Config\Config $recordConfig   Record-specific configuration
      * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * @param \VuFind\Config\Config $searchSettings Search-specific configuration
      * file
      */
     public function __construct(
@@ -192,13 +192,16 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             } else {
                 $description = '';
             }
-            $image = [
-                'urls' => $urls,
-                'description' => (string)$description,
-                'rights' => $rights,
-            ];
-            $image['downloadable'] = $this->allowRecordImageDownload($image);
-            $result[] = $image;
+            if (!$this->maxAmountOfImages()) {
+                $image = [
+                    'urls' => $urls,
+                    'description' => (string)$description,
+                    'rights' => $rights,
+                ];
+                $image['downloadable'] = $this->allowRecordImageDownload($image);
+                $result[] = $image;
+            }
+            $this->imagesCount++;
         }
 
         $this->cache[$cacheKey] = $result;
@@ -514,6 +517,9 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
      */
     public function getURLs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $urls = [];
         $url = '';
         $record = $this->getXmlRecord();
@@ -541,10 +547,13 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             }
             $desc = empty($desc) ? $url : $desc;
             if (!$this->urlBlocked($url, $desc)) {
-                $urls[] = [
-                    'url' => $url,
-                    'desc' => $desc,
-                ];
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = [
+                        'url' => $url,
+                        'desc' => $desc,
+                    ];
+                }
+                $this->urlsCount++;
             }
         }
 
@@ -556,14 +565,17 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
                 $matches
             );
             if ($match && !$this->urlBlocked($matches[2], $matches[1])) {
-                $urls[] = [
-                    'url' => $matches[2],
-                    'desc' => $matches[1],
-                ];
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = [
+                        'url' => $matches[2],
+                        'desc' => $matches[1],
+                    ];
+                }
+                $this->urlsCount++;
             }
         }
-        $urls = $this->resolveUrlTypes($urls);
-        return $urls;
+        $this->cache[__FUNCTION__] = $this->resolveUrlTypes($urls);
+        return $this->cache[__FUNCTION__];
     }
 
     /**

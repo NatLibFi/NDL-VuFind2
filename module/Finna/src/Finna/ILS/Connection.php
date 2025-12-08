@@ -20,8 +20,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -86,8 +86,8 @@ class Connection extends \VuFind\ILS\Connection
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports Holds.
      *
-     * @param array $functionConfig The Hold configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig The Hold configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed On success, an associative array with specific function keys
      * and values either for placing holds via a form or a URL; on failure, false.
@@ -112,9 +112,9 @@ class Connection extends \VuFind\ILS\Connection
      * the driver configuration to determine if the system supports storage
      * retrieval requests.
      *
-     * @param array $functionConfig The storage retrieval request configuration
+     * @param array  $functionConfig The storage retrieval request configuration
      * values
-     * @param array $params         An array of function-specific params (or null)
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed On success, an associative array with specific function keys
      * and values either for placing requests via a form; on failure, false.
@@ -142,8 +142,8 @@ class Connection extends \VuFind\ILS\Connection
      * the driver configuration to determine if the system supports storage
      * retrieval requests.
      *
-     * @param array $functionConfig The ILL request configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig The ILL request configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed On success, an associative array with specific function keys
      * and values either for placing requests via a form; on failure, false.
@@ -451,58 +451,10 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check if online payment is supported.
-     *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
-     *
-     * @return boolean
-     */
-    protected function checkMethodmarkFeesAsPaid($functionConfig, $params)
-    {
-        if ($this->checkCapability('markFeesAsPaid', [$params ?: []])) {
-            return ['function' => 'markFeesAsPaid'];
-        }
-        return false;
-    }
-
-    /**
-     * Check if password recovery is supported.
-     *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
-     *
-     * @return boolean
-     */
-    protected function checkMethodgetPasswordRecoveryToken($functionConfig, $params)
-    {
-        if ($this->checkCapability('getPasswordRecoveryToken', [$params ?: []])) {
-            return $functionConfig;
-        }
-        return false;
-    }
-
-    /**
-     * Check if password recovery is supported.
-     *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
-     *
-     * @return boolean
-     */
-    protected function checkMethodrecoverPassword($functionConfig, $params)
-    {
-        if ($this->checkCapability('recoverPassword', [$params ?: []])) {
-            return $functionConfig;
-        }
-        return false;
-    }
-
-    /**
      * Check if title lists are enabled
      *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig Function configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed array|false
      */
@@ -520,8 +472,8 @@ class Connection extends \VuFind\ILS\Connection
     /**
      * Check if self-registration.
      *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig Function configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return boolean
      */
@@ -546,5 +498,37 @@ class Connection extends \VuFind\ILS\Connection
             return $functionConfig;
         }
         return false;
+    }
+
+    /**
+     * Return details on fees payable online.
+     *
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
+     *
+     * @throws ILSException
+     * @return array Associative array of payment details
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getOnlinePaymentDetails(array $patron, array $fines, ?array $selectedFineIds): array
+    {
+        // @phpstan-ignore-next-line
+        $result = parent::getOnlinePaymentDetails($patron, $fines, $selectedFineIds);
+        if ($result['payable'] ?? false) {
+            // Check that payment is not disabled:
+            if (!($this->config->online_payment ?? true)) {
+                $result['payable'] = false;
+                $result['reason'] = $this->translate(
+                    'service_blocked',
+                    [
+                        '%%service%%'
+                            => $this->translate('service_description_payment', [], 'default_service_description'),
+                    ]
+                );
+            }
+        }
+        return $result;
     }
 }

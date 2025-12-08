@@ -6,7 +6,9 @@
 .*.sw[po]
 
 .php_cs_cache
+.phpmd.result-cache.php
 .phpstan_cache
+.rector
 .vagrant
 .vscode/*
 /downloads
@@ -22,7 +24,6 @@ import/solrmarc.log*
 lessphp_*.list
 module/VuFind/tests/.phpunit*
 node_modules
-package-lock.json
 
 # OS Created Files
 .DS_Store
@@ -53,6 +54,8 @@ local/config/finna/*.ini
 local/config/finna/*.yaml
 local/config/finna/*.json
 local/config/finna/*.wsdl
+local/config/finna/*.xsd
+local/config/finna/*.sch
 local/config/vufind/*.ini
 local/config/vufind/*.yaml
 local/config/vufind/*.wsdl
@@ -70,7 +73,13 @@ public/swagger-ui
 tests/phpcs.cache.json
 themes/bootstrap5/scss/vendor/bootstrap
 local/DirLocations.ini
-local/config/vufind/*.ini
-local/config/vufind/*.json
-local/config/vufind/*.key
-local/config/vufind/*.yaml
+local/config/vufind.bak
+local/config/vufind/*
+!local/config/vufind/README.txt
+!local/config/vufind/*.sample
+!local/config/vufind/*.national
+
+# Docker Compose dev environment
+socat.log
+.env
+local/*.secret

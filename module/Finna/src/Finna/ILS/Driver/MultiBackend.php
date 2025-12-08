@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILSdrivers
@@ -118,8 +118,11 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
         $patron = $this->callMethodIfSupported(null, 'patronLogin', func_get_args());
         if (is_array($patron)) {
             $patron['source'] = $this->getSource($username);
+            $patron['__source'] = $patron['source'];
+            $patron['__local_cat_username'] = $this->getLocalId($patron['cat_username']);
+            $patron['__local_id'] = $this->getLocalId($patron['id']);
         }
-        return $patron;
+        return $patron ?: null;
     }
 
     /**
@@ -176,25 +179,69 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     protected function getDriverConfig($source)
     {
         // Determine config file name based on class name:
+        $config = [];
         try {
-            $config = $this->configLoader->get(
+            $config = $this->configManager->getConfigArray(
                 $this->drivers[$source] . '_' . $source
-            )->toArray();
-            if (!empty($config)) {
-                return $config;
-            }
+            );
             // Fallback for KohaRestSuomi to also look for KohaRest_$source.ini
-            if ('KohaRestSuomi' === $this->drivers[$source]) {
-                $config = $this->configLoader->get(
+            if (!$config && 'KohaRestSuomi' === $this->drivers[$source]) {
+                $config = $this->configManager->getConfigArray(
                     'KohaRest_' . $source
-                )->toArray();
-                if (!empty($config)) {
-                    return $config;
-                }
+                );
             }
         } catch (\Laminas\Config\Exception\RuntimeException $e) {
             // Fall through
         }
-        return parent::getDriverConfig($source);
+        if (!$config) {
+            $config = parent::getDriverConfig($source);
+        }
+
+        // Remap online payment settings and merge settings from datasources.ini for back-compatibility:
+        if (empty($config['OnlinePayment']) && !empty($config['onlinePayment'])) {
+            $config['OnlinePayment'] = $config['onlinePayment'];
+        }
+        if (isset($config['OnlinePayment'])) {
+            $config['OnlinePayment'] = $this->remapPaymentConfig($config['OnlinePayment']);
+            $datasourceConfig = $this->configManager->getConfigArray('datasources');
+            if ($paymentConfig = $datasourceConfig[$source]['onlinePayment'] ?? null) {
+                $config['OnlinePayment']
+                    = array_merge($this->remapPaymentConfig($paymentConfig), $config['OnlinePayment']);
+            }
+        }
+
+        return $config;
+    }
+
+    /**
+     * Remap legacy online payment configuration
+     *
+     * @param array $config Payment configuration
+     *
+     * @return array
+     */
+    protected function remapPaymentConfig(array $config): array
+    {
+        static $map = [
+            'transactionFee' => 'serviceFee',
+            'transactionMaxDuration' => 'paymentMaxDuration',
+        ];
+
+        $result = [];
+        foreach ($config as $key => $value) {
+            if ('handler' === $key && 'PaytrailPaymentAPI' === $value) {
+                $value = 'Paytrail';
+            } elseif ('handler' === $key && 'TurkuPayment' === $value) {
+                $value = 'TurkuPaymentAPI';
+            } elseif ('productCodeMappings' === $key && is_array($value)) {
+                // If productCodeMappings is an array, it should be mapped to driverProductCodeMappings:
+                $key = 'driverProductCodeMappings';
+            }
+            $result[$map[$key] ?? $key] = $value;
+        }
+        if (!isset($result['vatBreakdown'])) {
+            $result['vatBreakdown'] = true;
+        }
+        return $result;
     }
 }

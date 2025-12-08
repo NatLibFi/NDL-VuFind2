@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -28,6 +28,8 @@
  */
 
 namespace VuFind\Content\Summaries;
+
+use VuFind\String\PropertyString;
 
 /**
  * Syndetics Summaries content loader.
@@ -110,7 +112,7 @@ class Syndetics extends \VuFind\Content\AbstractSyndetics
                 // If we have syndetics plus, we don't actually want the content
                 // we'll just stick in the relevant div
                 if ($this->usePlus) {
-                    $summaries[] = $sourceInfo['div'];
+                    $summaries[] = PropertyString::fromHtml($sourceInfo['div'])->setHtmlTrusted(true);
                 } else {
                     // Get the marc field for summaries. (520)
                     $nodes = $xmldoc2->GetElementsbyTagName('Fld520');

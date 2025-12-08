@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -26,7 +26,7 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -43,9 +43,9 @@ use function is_array;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\Log\LoggerAwareInterface
+class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\SolrForwardTrait {
@@ -353,9 +353,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
         'festivalSubjectMappings' => [
             'elokuva-elofestivaaliosallistuminen-aihe' => 'festivalInfo',
         ],
-        'foreignDistributorMappings' => [
-            'elokuva-eloulkomaanmyynti-levittaja' => 'foreignDistribution',
-        ],
         'otherScreeningMappings' => [
             'elokuva-muuesitys-aihe' => 'otherScreenings',
         ],
@@ -392,28 +389,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
     ];
 
     /**
-     * Video types, which are related to certain production.
-     * These videotypes are marked in the metadata as online-video=0 so
-     * we have to check the type.
-     *
-     * @var array
-     */
-    protected $relatedVideoTypes = [
-        'animaatio',
-        'dokumentti',
-        'fiktio',
-        'katsaus',
-        'luokittelematon',
-        'mainos',
-        'musiikkiohjelma',
-        'musiikkivideo',
-        'radiotuotanto',
-        'sarja',
-        'tv-tuotanto',
-        'traileri',
-    ];
-
-    /**
      * Record metadata
      *
      * @var array
@@ -423,11 +398,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * @param \VuFind\Config\Config $recordConfig   Record-specific configuration
      * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * @param \VuFind\Config\Config $searchSettings Search-specific configuration
      * file
      */
     public function __construct(
@@ -693,7 +668,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
      */
     public function getImageRights($language, $skipImageCheck = false)
     {
-        if (!$skipImageCheck && !$this->getAllImages()) {
+        if (!$skipImageCheck && !$this->getAllImages($language)) {
             return false;
         }
 
@@ -1069,7 +1044,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
     /**
      * Get all original records as a SimpleXML object
      *
-     * @return SimpleXMLElement The record as SimpleXML
+     * @return \SimpleXMLElement The record as SimpleXML
      */
     protected function getAllRecordsXML()
     {
@@ -1134,19 +1109,28 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
             $type = (string)($event->ProductionEventType ?? '');
             $regionName = (string)($event->Region->RegionName ?? '');
             $dateText = (string)($event->DateText ?? '');
-            // Get premiere theater information
-            if ('PRE' === $type) {
-                if (!empty($regionName)) {
-                    $results['premiereTheater'] = explode(';', $regionName);
-                }
-                if (!empty($dateText)) {
-                    $results['premiereTime'] = $dateText;
-                }
-            }
 
             $attributes = $event->ProductionEventType->attributes();
             $broadcastingResult = [];
             $inspectionResult = [];
+
+            switch ($type) {
+                case 'PRL':
+                    $distributorName = trim((string)$attributes->{'elokuva-eloulkomaanmyynti-levittaja'});
+                    $results['foreignDistribution'][] = [
+                        'name' => $distributorName ?: $regionName,
+                        'region' => $distributorName ? $regionName : '',
+                    ];
+                    break;
+                case 'PRE':
+                    if (!empty($regionName)) {
+                        $results['premiereTheater'] = explode(';', $regionName);
+                    }
+                    if (!empty($dateText)) {
+                        $results['premiereTime'] = $dateText;
+                    }
+                    break;
+            }
             foreach ($attributes as $key => $value) {
                 $stringValue = (string)$value;
                 // Get production attribute
@@ -1165,15 +1149,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                         'date' => $dateText,
                     ];
                 }
-                // Get foreign distribution info
-                if (
-                    $distributor = $config['foreignDistributorMappings'][$key] ?? ''
-                ) {
-                    $results[$distributor][] = [
-                        'name' => $stringValue,
-                        'region' => $regionName,
-                    ];
-                }
+
                 // Get other screening info
                 if ($screening = $config['otherScreeningMappings'][$key] ?? '') {
                     $results[$screening][] = [
@@ -1218,7 +1194,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
     /**
      * Get the original main record as a SimpleXML object
      *
-     * @return SimpleXMLElement The record as SimpleXML
+     * @return \SimpleXMLElement The record as SimpleXML
      */
     protected function getRecordXML()
     {
@@ -1259,8 +1235,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                     continue;
                 }
                 $attributes = $titleValue->attributes();
-                $videoType = (string)($attributes->{'video-tyyppi'} ?? 'elokuva');
-                if (empty($attributes->{'online-video'}) && !in_array($videoType, $this->relatedVideoTypes)) {
+                $videoType = (string)($attributes->{'video-tyyppi'} ?? '');
+                if (!$videoType) {
                     continue;
                 }
                 $warnings = [];
@@ -1276,16 +1252,19 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Laminas\L
                         }
                     }
                 }
-                $videos[] = [
-                    'id' => $videoID,
-                    'url' => '',
-                    'posterName' => (string)$titleValue,
-                    'type' => $videoType,
-                    'description' => $videoType,
-                    'text' => $videoType,
-                    'source' => $source,
-                    'warnings' => $warnings,
-                ];
+                if (!$this->maxAmountOfURLs()) {
+                    $videos[] = [
+                        'id' => $videoID,
+                        'url' => '',
+                        'posterName' => (string)$titleValue,
+                        'type' => $videoType,
+                        'description' => $videoType,
+                        'text' => $videoType,
+                        'source' => $source,
+                        'warnings' => $warnings,
+                    ];
+                }
+                $this->urlsCount++;
             }
         }
         return $this->cache[$cacheKey] = $handler->getData($videos);

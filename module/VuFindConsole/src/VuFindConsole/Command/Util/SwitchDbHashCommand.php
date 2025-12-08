@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Console
@@ -31,13 +31,12 @@ namespace VuFindConsole\Command\Util;
 
 use Closure;
 use InvalidArgumentException;
-use Laminas\Config\Config;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use VuFind\Config\Locator as ConfigLocator;
+use VuFind\Config\Config;
 use VuFind\Config\PathResolver;
 use VuFind\Config\Writer as ConfigWriter;
 use VuFind\Crypt\BlockCipher;
@@ -72,17 +71,17 @@ class SwitchDbHashCommand extends Command
      * @param UserCardServiceInterface $userCardService UserCard database service
      * @param Closure                  $cipherFactory   Callback to generate a BlockCipher object (must
      * take two arguments: algorithm and key)
+     * @param PathResolver             $pathResolver    Config file path resolver
      * @param ?string                  $name            The name of the command; passing null means
      * it must be set in configure()
-     * @param ?PathResolver            $pathResolver    Config file path resolver
      */
     public function __construct(
         protected Config $config,
         protected UserServiceInterface $userService,
         protected UserCardServiceInterface $userCardService,
         protected Closure $cipherFactory,
+        protected PathResolver $pathResolver,
         ?string $name = null,
-        protected ?PathResolver $pathResolver = null
     ) {
         parent::__construct($name);
     }
@@ -193,9 +192,7 @@ class SwitchDbHashCommand extends Command
 
         // Next update the config file, so if we are unable to write the file,
         // we don't go ahead and make unwanted changes to the database:
-        $configPath = $this->pathResolver
-            ? $this->pathResolver->getLocalConfigPath('config.ini', null, true)
-            : ConfigLocator::getLocalConfigPath('config.ini', null, true);
+        $configPath = $this->pathResolver->getLocalConfigPath('config.ini', null, true);
         $output->writeln("\tUpdating $configPath...");
         $writer = $this->getConfigWriter($configPath);
         $writer->set('Authentication', 'encrypt_ils_password', true);

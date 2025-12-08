@@ -145,8 +145,11 @@ indexBasedNewItems = true
 ; Whether to hide email address in patron profile. Default is false
 ;hideProfileEmailAddress = true
 ; Scale for advanced search year slider. Current year + 1 is always added to the end.
-; Default scale is "0,900,1800,1910"
-;advSearchYearScale = "1600,1800,2000,2010"
+; Default scale is "-1000,0,900,1800,1910"
+; DEPRECATED - Only the first value is used as fallback. Use the facet-specific settings in facets configuration
+; (e.g. [Facet_search_daterange_mv] in facets.ini or [Facet_creationdate] in Primo.ini) instead.
+;
+;advSearchYearScale = "1600"
 
 ; This section allows you to configure the mechanism used for storing user
 ; sessions.  Available types: File, Memcache, Database.
@@ -318,6 +321,9 @@ loan_history_download_batch_limit = 1000
 ; Whether to display the item barcode for each loan. Default is false.
 display_checked_out_item_barcode = true
 
+; Online payment availability. Default is true.
+online_payment = true
+
 ; This section controls features related to user accounts
 [Account]
 ; Allow the user to set a home library through the Profile screen, which will
@@ -429,6 +435,9 @@ delete_ratings_with_user = false
 
 ; Persistent login token lifetime in days
 ;persistent_login_lifetime = 60
+
+; Whether to send email warnings about suspicious logins. Default is true.
+send_login_warnings = false
 
 ; Subject for the email sent after a suspicious login has been detected.
 ; Default email subject will be the translation for
@@ -821,6 +830,22 @@ recordMap = openlayers
 ; A colon-separated list of formats that are enabled for image zoom function
 zoomFormats = qdc:forward:ead3:ead:lido
 
+; Sets the amount of images allowed to be returned in search context.
+; Default and hard limit is 20.
+;maxImagesInSearchContext = 10
+
+; Sets the amount of images allowed to be returned in record context.
+; Default and hard limit is 1000.
+;maxImagesInRecordContext = 500
+
+; Sets the amount of URLs allowed to be returned in search context.
+; Default and hard limit is 200.
+;maxUrlsInSearchContext = 20
+
+; Sets the amount of URLs allowed to be returned in record context.
+; Default and hard limit is 200.
+;maxUrlsInRecordContext = 200
+
 [QRCode]
 ; This setting controls the image to display when no qrcode is available.
 ; The path is relative to the base of your theme directory.
@@ -949,6 +974,23 @@ url             = http://www.refworks.com
 [EndNoteWeb]
 vendor          = Finna
 url             = https://www.myendnoteweb.com/EndNoteWeb.html
+
+; These settings affect Zotero record exports. You will need to register your
+; VuFind instance with Zotero at https://www.zotero.org/oauth/apps and enter the
+; credentials below for the user-facing OAuth authentication to work properly.
+; Note: Zotero requires user login in VuFind because the Zotero access token must
+; be persisted across sessions (it doesn't expire in Zotero automatically).
+; time.
+; Users using Zotero desktop application will need to enable sync in Zotero (see
+; https://www.zotero.org/support/sync) to get the exported records to the client.
+[Zotero]
+; Client key
+identifier = ""
+; Client secret
+secret = ""
+; Callback URI pointing to VuFind's /Zotero/Callback action. Normally left
+; blank (VuFind will automatically create it based on the used server address).
+;callback_uri = ""
 
 ; These settings affect your OAI server if you choose to use it.
 ;
@@ -1162,6 +1204,9 @@ MARC = false
 MARCXML = false
 RDF = false
 BibTeX = false
+; Note: ZoteroWebLibrary requires proper settings in [Zotero] section!
+;ZoteroWebLibrary = "record,bulk"
+
 
 [BulkExport]
 ; Export behavior to use when no bulkExportType setting is found in the matching
@@ -1222,7 +1267,7 @@ marc_links = "760,762,765,767,770,772,775,776,780,785"
 ; until it finds one that matches. If you don't have id numbers in the fields,
 ; you can also use title to construct a title based search. id represents a raw
 ; bib id, dlc represents an LCCN.  Default setting:
-;marc_links_link_types = id,oclc,dlc,isbn,issn,title
+;marc_links_link_types = linkingId,id,oclc,dlc,isbn,issn,title
 ; Set use_visibility_indicator to false if you want to show links that are marked as
 ; "Do not show" in the MARC record (indicator 1). Otherwise, these links will be
 ; suppressed. (Default = true)
@@ -1329,6 +1374,10 @@ arranger_roles[] = "arrangör"
 arranger_roles[] = "sov"
 arranger_roles[] = "sovittaja"
 
+; Hidden author roles for authors that are not displayed as authors at all
+hidden_author_roles[] = "kustantaja"
+hidden_author_roles[] = "utgivare"
+
 ; Datasource specific EAD record link templates
 ; Currently supports the following placeholders for record data:
 ; {id} Record ID
@@ -1379,9 +1428,6 @@ allowed_url_schemes[] = 'maps'
 ; report  - Matching hosts are reported but loading is not blocked
 ; disable - List processing is disabled
 ;disallowed_external_hosts_mode = enforce
-
-; Allow image links from BTJ (default is false)
-;btj_links = true
 
 ; Allow image links from Kirjavälitys (default is false)
 ;kirjavalitys_links = true
@@ -1728,6 +1774,11 @@ custom_dimensions[Language] = 16
 [NormalizationPreview]
 ; Backend URL
 url = http://finna-be-1.csc.fi/preview
+; Validation settings. Files are searched in the configuration directory stack.
+; XML schema
+validation_xsd[lido] = "lido-v1.1-profile-FINNA-v0.1.xsd"
+; Schematron validation rules
+validation_schematron[lido] = "lido-v1.1-profile-FINNA-v0.1.sch"
 
 ; Links to copyright information used for image rights.
 ; Note: keys must be in ALL CAPS.

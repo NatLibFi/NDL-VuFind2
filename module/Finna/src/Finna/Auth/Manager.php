@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Authentication
@@ -74,14 +74,12 @@ class Manager extends \VuFind\Auth\Manager
      * @param string $target Login target (only for MultiILS)
      *
      * @return string|false
+     *
+     * @deprecated Exists for back-compatibility with old implementation only
      */
     public function ilsSupportsPasswordRecovery($target = '')
     {
-        $auth = $this->getAuth();
-        if (is_callable([$auth, 'ilsSupportsPasswordRecovery'])) {
-            return $auth->ilsSupportsPasswordRecovery($target);
-        }
-        return false;
+        return $this->supportsRecovery('MultiILS', $target);
     }
 
     /**

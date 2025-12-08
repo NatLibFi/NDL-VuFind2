@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordTabs
@@ -48,6 +48,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $aliases = [
+        'channels' => Channels::class,
         'collectionhierarchytree' => CollectionHierarchyTree::class,
         'collectionlist' => CollectionList::class,
         'componentparts' => ComponentParts::class,
@@ -76,6 +77,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
      * @var array
      */
     protected $factories = [
+        Channels::class => ChannelsFactory::class,
         CollectionHierarchyTree::class => CollectionHierarchyTreeFactory::class,
         CollectionList::class => CollectionListFactory::class,
         ComponentParts::class => ComponentPartsFactory::class,
@@ -113,9 +115,6 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
         array $v3config = []
     ) {
         $this->addAbstractFactory(PluginFactory::class);
-        $this->addInitializer(
-            \LmcRbacMvc\Initializer\AuthorizationServiceInitializer::class
-        );
         parent::__construct($configOrContainerInstance, $v3config);
     }
 

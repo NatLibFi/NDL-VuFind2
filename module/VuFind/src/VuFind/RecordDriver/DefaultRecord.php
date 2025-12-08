@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -29,6 +29,7 @@
 
 namespace VuFind\RecordDriver;
 
+use VuFind\String\PropertyString;
 use VuFind\View\Helper\Root\RecordLinker;
 use VuFindCode\ISBN;
 
@@ -61,11 +62,11 @@ class DefaultRecord extends AbstractBase
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $mainConfig     VuFind main configuration (omit
+     * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
-     * @param \Laminas\Config\Config $recordConfig   Record-specific configuration
+     * @param \VuFind\Config\Config $recordConfig   Record-specific configuration
      * file (omit to use $mainConfig as $recordConfig)
-     * @param \Laminas\Config\Config $searchSettings Search-specific configuration
+     * @param \VuFind\Config\Config $searchSettings Search-specific configuration
      * file
      */
     public function __construct(
@@ -461,7 +462,7 @@ class DefaultRecord extends AbstractBase
         }
 
         // deduplicate
-        $dedup = function (&$array1, &$array2) {
+        $dedup = function (&$array1, &$array2): void {
             if (!empty($array1) && !empty($array2)) {
                 $keys = array_keys($array1);
                 foreach ($keys as $author) {
@@ -480,7 +481,7 @@ class DefaultRecord extends AbstractBase
         $dedup($authors['secondary'], $authors['corporate']);
         $dedup($authors['primary'], $authors['secondary']);
 
-        $dedup_data = function (&$array) {
+        $dedup_data = function (&$array): void {
             foreach ($array as $author => $data) {
                 foreach ($data as $field => $values) {
                     if (is_array($values)) {
@@ -815,12 +816,20 @@ class DefaultRecord extends AbstractBase
         $pubDate = $this->getPublicationDates();
         $pubDate = empty($pubDate) ? '' : $pubDate[0];
 
+        // Add DOI to rft_id (if available)
+        $rftId = [];
+        $doi = (string)$this->getCleanDOI();
+        if ($doi !== '') {
+            $rftId[] = 'info:doi/' . $doi;
+        }
+
         // Start an array of OpenURL parameters:
         return [
             'url_ver' => 'Z39.88-2004',
             'ctx_ver' => 'Z39.88-2004',
             'ctx_enc' => 'info:ofi/enc:UTF-8',
             'rfr_id' => 'info:sid/' . $this->getCoinsID() . ':generator',
+            'rft_id' => $rftId,
             'rft.title' => $this->getTitle(),
             'rft.date' => $pubDate,
         ];
@@ -976,8 +985,9 @@ class DefaultRecord extends AbstractBase
         // Assemble the URL:
         $query = [];
         foreach ($params as $key => $value) {
-            $value = (array)$value;
-            foreach ($value as $sub) {
+            // Avoid casting since the field can be a PropertyString too (and casting would return an array of object
+            // properties):
+            foreach (is_array($value) ? $value : [$value] as $sub) {
                 $query[] = urlencode($key) . '=' . urlencode($sub);
             }
         }
@@ -1271,9 +1281,9 @@ class DefaultRecord extends AbstractBase
     public function getSummary()
     {
         // We need to return an array, so if we have a description, turn it into an
-        // array (it should be a flat string according to the default schema, but we
-        // might as well support the array case just to be on the safe side:
-        return (array)($this->fields['description'] ?? []);
+        // array (it is a flat string in the default Solr schema, but we also
+        // support multivalued fields for other backends):
+        return $this->getFieldAsArray('description');
     }
 
     /**
@@ -1365,7 +1375,7 @@ class DefaultRecord extends AbstractBase
     public function getTitleSection()
     {
         // Not currently stored in the default index schema
-        return null;
+        return '';
     }
 
     /**
@@ -1377,7 +1387,7 @@ class DefaultRecord extends AbstractBase
     public function getTitleStatement()
     {
         // Not currently stored in the default index schema
-        return null;
+        return '';
     }
 
     /**
@@ -1815,5 +1825,34 @@ class DefaultRecord extends AbstractBase
     public function getCoordinateLabels()
     {
         return (array)($this->fields['long_lat_label'] ?? []);
+    }
+
+    /**
+     * Get class name for RecordDataFormatter spec.
+     *
+     * @return ?string
+     */
+    public function getRecordDataFormatterSpecClass(): ?string
+    {
+        return \VuFind\RecordDataFormatter\Specs\DefaultRecord::class;
+    }
+
+    /**
+     * Get a field as an array
+     *
+     * @param string $field Field
+     *
+     * @return array
+     */
+    protected function getFieldAsArray(string $field): array
+    {
+        // Make sure to return only non-empty values:
+        $value = $this->fields[$field] ?? '';
+        if ('' === $value) {
+            return [];
+        }
+        // Avoid casting since the field can be a PropertyString too (and casting would return an array of object
+        // properties):
+        return is_array($value) ? $value : [$value];
     }
 }

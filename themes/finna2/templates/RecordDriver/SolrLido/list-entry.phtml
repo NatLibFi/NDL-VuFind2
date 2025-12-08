@@ -23,7 +23,7 @@
   <?php ob_end_clean(); ?>
 <?php endif; ?>
 <!-- start list-entry -->
-<div class="result record-container<?php if($this->driver->supportsAjaxStatus()): ?> ajaxItem<?php endif ?> myresearch-row">
+<div class="result record-container<?php if ($this->driver->supportsAjaxStatus()): ?> ajaxItem<?php endif ?> myresearch-row">
     <div class="checkbox-container">
       <div class="checkbox">
         <?php // Request a checkbox with a label (can't add the label here as checkbox template contains more than one field): ?>
@@ -48,7 +48,7 @@
           <?php endif; ?>
           <h3><?=$this->record($this->driver)->getTitleHtml()?></h3>
           <?php if (!$missing): ?>
-            <span class="sr-only"> <?=$this->transEsc('To the record')?></span></a>
+            <span class="visually-hidden"> <?=$this->transEsc('To the record')?></span></a>
           <?php endif; ?>
           <?php if ($altTitles = $this->driver->tryMethod('getAlternativeTitles')): ?>
             <div class="result-alt-titles truncate-field" data-rows="5">
@@ -62,13 +62,13 @@
           <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
           if (!empty($authors)): ?>
             <div class="truncate-field" data-rows="1">
-              <?php foreach($authors as $index => $author): ?>
+              <?php foreach ($authors as $index => $author): ?>
                 <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
               <?php endforeach; ?>
             </div>
           <?php elseif ($authors = $this->driver->getPrimaryAuthors()): ?>
             <div class="truncate-field" data-rows="1">
-              <?php foreach($authors as $index => $author): ?>
+              <?php foreach ($authors as $index => $author): ?>
                 <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author)?>"><?=$this->escapeHtml($author)?></a>
               <?php endforeach; ?>
             </div>
@@ -117,8 +117,9 @@
             }
           ?>
 
+          <?php $recordHelper = $this->record($this->driver); ?>
           <?php
-          $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
+          $listTags = ($this->usertags()->getMode() !== 'disabled') ? $recordHelper->getTags(
               null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
               $user_id,
               'tag'
@@ -131,7 +132,6 @@
             <br>
           <?php endif; ?>
 
-          <?php $recordHelper = $this->record($this->driver); ?>
           <?=$recordHelper->getOnlineUrls('results');?>
           <?=$recordHelper->getPreviews();?>
         </div>
@@ -156,7 +156,7 @@
           <div class="saved-lists">
             <strong><?=$this->transEsc('Saved in')?>:</strong>
             <?php $i = 0;
-            foreach($this->lists as $current): ?>
+            foreach ($this->lists as $current): ?>
               <a href="<?=$this->url('userList', ['id' => $current->getId()])?>"><?=$this->escapeHtml($current->getTitle())?></a><?php if ($i++ < count($this->lists) - 1): ?>,<?php endif; ?>
             <?php endforeach; ?>
             <br>

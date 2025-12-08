@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OrganisationInfo;
@@ -51,10 +51,10 @@ use function is_array;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class OrganisationInfo implements
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     \VuFind\I18n\HasSorterInterface,
     \VuFind\I18n\Translator\TranslatorAwareInterface
 {
@@ -65,7 +65,7 @@ class OrganisationInfo implements
     /**
      * Organisation info configuration
      *
-     * @var Laminas\Config\Config
+     * @var VuFind\Config\Config
      */
     protected $config = null;
 
@@ -114,7 +114,7 @@ class OrganisationInfo implements
     /**
      * Constructor.
      *
-     * @param \Laminas\Config\Config  $config         Organisation info configuration
+     * @param \VuFind\Config\Config   $config         Organisation info configuration
      * @param \VuFind\Cache\Manager   $cacheManager   Cache manager
      * @param PluginManager           $resultsManager Results manager
      * @param HierarchicalFacetHelper $facetHelper    Hierarchical facet helper
@@ -122,7 +122,7 @@ class OrganisationInfo implements
      * @param MuseotFi                $museotFi       MuseotFi provider
      */
     public function __construct(
-        \Laminas\Config\Config $config,
+        \VuFind\Config\Config $config,
         \VuFind\Cache\Manager $cacheManager,
         PluginManager $resultsManager,
         HierarchicalFacetHelper $facetHelper,

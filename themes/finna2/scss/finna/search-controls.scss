@@ -15,7 +15,7 @@
   .button-label {
     padding: 3px;
   }
-  @media (max-width: $screen-xxs) {
+  @include media-breakpoint-down(xs) {
     & .view-options, & .view-dropdown, & .sort-button {
       &  .dropdown > a {
         max-width: 150px;
@@ -26,7 +26,7 @@
       }
     }
   }
-  @media (max-width: $screen-xxs) {
+  @include media-breakpoint-down(xs) {
     .view-dropdown .dropdown-menu {
       left: -50%;
     }
@@ -41,7 +41,7 @@
   }
 }
 
-@media (min-width: 768px) {
+@include media-breakpoint-up(sm) {
   .search-header { display: flex; }
   .search-stats { flex-grow: 1; }
   .search-controls {
@@ -67,20 +67,7 @@
       background: $action-link-color;
       color: $body-bg;
       transition: background 0.2s linear;
-      i {
-        color: $body-bg;
-      }
     }
-  }
-  i {
-    font-size: 1.3em;
-    color: $action-link-color;
-    margin-right: 0;
-    border-radius: $finna-button-radius;
-  }
-  i.fa-arrow-down {
-    font-size: 1em;
-    margin-left: -18px;
   }
   .dropdown-menu {
     border-radius: $border-radius-base;
@@ -91,20 +78,13 @@
       color: $gray;
       padding-top: 10px;
       padding-bottom: 10px;
-      i {
-        color: $gray;
-      }
-      i.fa-available {
-        font-size: 1em;
-        float: right;
-      }
     }
   }
-  @media(min-width: $screen-lg-min){
+  @include media-breakpoint-up(lg) {
     display: inline-block;
   }
   .dropdown-menu &:not(.sort-button) {
-    @media(max-width:$screen-sm-max) {
+    @include media-breakpoint-down(md) {
       font-size: 1.1em;
     }
   }

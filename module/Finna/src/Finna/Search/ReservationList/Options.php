@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_ReservationList
@@ -29,6 +29,8 @@
  */
 
 namespace Finna\Search\ReservationList;
+
+use VuFind\Config\ConfigManagerInterface;
 
 /**
  * Reservation List Options
@@ -45,26 +47,26 @@ class Options extends \VuFind\Search\Base\Options
     /**
      * Constructor
      *
-     * @param \VuFind\Config\PluginManager $configLoader Config loader
+     * @param ConfigManagerInterface $configManager Config manager
      */
-    public function __construct(\VuFind\Config\PluginManager $configLoader)
+    public function __construct(ConfigManagerInterface $configManager)
     {
-        parent::__construct($configLoader);
+        parent::__construct($configManager);
 
         $this->defaultSort = 'title';
         $this->sortOptions = [
             'title' => 'sort_title', 'author' => 'sort_author',
             'year DESC' => 'sort_year', 'year' => 'sort_year asc',
         ];
-        $config = $configLoader->get($this->mainIni);
-        if (isset($config->Social->lists_default_limit)) {
-            $this->defaultLimit = $config->Social->lists_default_limit;
+
+        if ($limit = $this->mainConfig['Social']['lists_default_limit'] ?? null) {
+            $this->defaultLimit = $limit;
         }
-        if (isset($config->Social->lists_limit_options)) {
-            $this->limitOptions = explode(',', $config->Social->lists_limit_options);
+        if ($limitOptions = $this->mainConfig['Social']['lists_limit_options'] ?? null) {
+            $this->limitOptions = explode(',', $limitOptions);
         }
-        if (isset($config->Social->lists_view)) {
-            $this->listviewOption = $config->Social->lists_view;
+        if ($view = $this->mainConfig['Social']['lists_view'] ?? null) {
+            $this->listviewOption = $view;
         }
     }
 

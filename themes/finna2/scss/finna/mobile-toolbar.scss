@@ -1,5 +1,5 @@
 .mobile-toolbar {
-  @media (max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     border-top: 1px solid $body-bg;
     position: fixed;
     height: 44px;
@@ -112,7 +112,7 @@ section.template-name-blended .sidebar,
 section.template-name-mylist .sidebar,
 section.template-dir-record.template-name-view .sidebar.search-facets,
 section.template-dir-collection.template-name-view .sidebar {
-  @media (max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     position: fixed;
     background: $body-bg;
     z-index: $zindex-sidebar;
@@ -141,35 +141,9 @@ section.template-dir-collection.template-name-view .sidebar {
     }
   }
 }
-.mobile-navigation {
-  @extend .mobile-toolbar;
-  @media (max-width: $screen-xs-max) {
-    left: 0;
-    z-index: 60;
-    i {
-      font-size: 15px;
-    }
-    li.sidebar-navigation {
-      padding: 11px;
-      color: $sidebar-header-text-color;
-      font-size: 1em;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    span.narrow-search-link {
-      font-size: 1.2em;
-      font-weight: 500;
-      text-transform: uppercase;
-    }
-    span.active-filters {
-      float: right;
-      max-width: 55%;
-    }
-  }
-}
-.finna-search-filter-toggle {
-  @media (max-width: $screen-xs-max) {
+
+.mobile-nav-toggle {
+  @include media-breakpoint-down(md) {
     position: sticky;
     top: $navbar-height;
     margin-left: calc((#{$grid-gutter-width} / 2) * -1);
@@ -182,10 +156,15 @@ section.template-dir-collection.template-name-view .sidebar {
     background: #fff;
 
     &.sticky {
-      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 3px 3px -3px rgba(0, 0, 0, 0.3);
     }
-    .btn-search-filter {
+    .btn-mobile-nav {
       width: 100%;
+    }
+  }
+  @include media-breakpoint-down(sm) {
+    &.sticky {
+      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
     }
   }
 }

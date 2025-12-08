@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -45,7 +45,7 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 class Primo extends \VuFind\RecordDriver\Primo
 {
@@ -63,7 +63,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function exportDisabled($format)
     {
         // Support export for EndNote and RefWorks
-        return !in_array($format, ['EndNote', 'RefWorks', 'RIS']);
+        return !in_array($format, ['EndNote', 'RefWorks', 'RIS', 'ZoteroWebLibrary']);
     }
 
     /**
@@ -111,10 +111,13 @@ class Primo extends \VuFind\RecordDriver\Primo
         // Try to take the part after the title. Account for any 'The' etc. in the
         // beginning.
         if ($containerTitle && ($p = strpos($partOf, $containerTitle)) !== false) {
-            return trim(
-                substr($partOf, $p + strlen($containerTitle) + 1),
-                " \t\n\r,"
+            $arrRef = explode(
+                ',',
+                trim(substr($partOf, $p + strlen($containerTitle) + 1), " \t\n\r,")
             );
+            // Remove month & day from date
+            $arrRef[0] = preg_replace('/\b(\d{4})(?:-\d{2}){0,2}\b/', '$1', $arrRef[0]);
+            return implode(',', $arrRef);
         }
         return $partOf;
     }
@@ -272,7 +275,12 @@ class Primo extends \VuFind\RecordDriver\Primo
      */
     public function getPublicationDates()
     {
-        return $this->fields['date'] ?? [];
+        $result = [];
+        $dates = (array)($this->fields['date'] ?? []);
+        foreach ($dates as $date) {
+            $result[] = preg_replace('/\b(\d{4})(?:-\d{2}){0,2}\b/', '$1', $date);
+        }
+        return $result;
     }
 
     /**

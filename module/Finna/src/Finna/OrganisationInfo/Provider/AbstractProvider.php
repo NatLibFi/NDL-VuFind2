@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OrganisationInfo\Provider;
@@ -50,12 +50,12 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 abstract class AbstractProvider implements
     TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     ProviderInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -86,7 +86,7 @@ abstract class AbstractProvider implements
     /**
      * Organisation info configuration
      *
-     * @var Laminas\Config\Config
+     * @var VuFind\Config\Config
      */
     protected $config;
 
@@ -135,7 +135,7 @@ abstract class AbstractProvider implements
     /**
      * Constructor.
      *
-     * @param \Laminas\Config\Config  $config         Configuration
+     * @param \VuFind\Config\Config   $config         Configuration
      * @param \VuFind\Cache\Manager   $cacheManager   Cache manager
      * @param \VuFind\Date\Converter  $dateConverter  Date converter
      * @param Url                     $url            URL plugin
@@ -144,7 +144,7 @@ abstract class AbstractProvider implements
      * @param Sorter                  $sorter         Sorter
      */
     public function __construct(
-        \Laminas\Config\Config $config,
+        \VuFind\Config\Config $config,
         \VuFind\Cache\Manager $cacheManager,
         \VuFind\Date\Converter $dateConverter,
         Url $url,
@@ -193,6 +193,8 @@ abstract class AbstractProvider implements
         if (!empty($result['consortium']['logo']['small'])) {
             $result['consortium']['logo']['small'] = $this->proxifyImageUrl($result['consortium']['logo']['small']);
         }
+        // Ensure that the result to be returned contains the 'list' element:
+        $result['list'] ??= [];
         foreach ($result['list'] as &$item) {
             $item = $this->processDetails($item);
         }
@@ -374,8 +376,13 @@ abstract class AbstractProvider implements
      */
     protected function processDetails(array $result): array
     {
+        if (!$result) {
+            return $result;
+        }
         $isAlwaysClosed = true;
         $hasSelfServiceTimes = false;
+        $now = time();
+        $currentScheduleTime = null;
         // empty() needed because we can't use null coalescing without breaking the reference:
         if (!empty($result['openTimes']['schedules'])) {
             foreach ($result['openTimes']['schedules'] as &$schedule) {
@@ -400,6 +407,10 @@ abstract class AbstractProvider implements
                         if (null === $lastClosingDateTime || $time['closes'] > $lastClosingDateTime) {
                             $lastClosingDateTime = $time['closes'];
                         }
+                        $time['current'] = $now >= $time['opens'] && $now < $time['closes'];
+                        if ($time['current']) {
+                            $currentScheduleTime = $time;
+                        }
                         if ($time['selfservice']) {
                             $selfServiceTimes[] = $time;
                             $hasSelfServiceTimes = true;
@@ -422,6 +433,10 @@ abstract class AbstractProvider implements
         }
         $result['isAlwaysClosed'] = $isAlwaysClosed;
         $result['hasSelfServiceTimes'] = $hasSelfServiceTimes;
+        if ($result['openNow'] && $hasSelfServiceTimes) {
+            $result['currentScheduleTime'] = $currentScheduleTime;
+        }
+        unset($now, $currentScheduleTime);
 
         if (!empty($result['address'])) {
             $address = $result['address'];

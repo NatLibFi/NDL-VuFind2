@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -134,10 +134,9 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
      *
-     * @dataProvider getTestFunctionsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestFunctionsData')]
     public function testFunctions(
         string $function,
         $expected
@@ -200,10 +199,9 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getSummaryData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getSummaryData')]
     public function testSummary(
         string $language,
         array $expected
@@ -223,6 +221,54 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected alternative titles data
+     *
+     * @return array
+     */
+    public static function getAlternativeTitlesData(): array
+    {
+        return [
+            [
+                'Pääotsikko',
+                ['Pääotsikko', 'Vaihtoehtoinen otsikko 1', 'Vaihtoehtoinen otsikko 2'],
+                ['Vaihtoehtoinen otsikko 1', 'Vaihtoehtoinen otsikko 2'],
+            ],
+        ];
+    }
+
+    /**
+     * Test getAlternativeTitles
+     *
+     * @param string $title     Title index value to test
+     * @param array  $altTitles Alternative title index values to test
+     * @param ?array $expected  Result to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAlternativeTitlesData')]
+    public function testGetAlternativeTitles(
+        string $title,
+        array $altTitles,
+        ?array $expected
+    ): void {
+        $record = new SolrLrmi(
+            [],
+            [],
+            new \VuFind\Config\Config([])
+        );
+        $record->setRawData(
+            [
+                'title' => $title,
+                'title_alt' => $altTitles,
+            ]
+        );
+        $this->assertEquals(
+            $expected,
+            $record->getAlternativeTitles()
+        );
+    }
+
+    /**
      * Get a record driver with fake data.
      *
      * @param string $recordXml    Xml record to use for the test
@@ -237,7 +283,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
         $record = new SolrLrmi(
             null,
             null,
-            new \Laminas\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig)
         );
         $localeConfig = [
             'Site' => [
@@ -253,7 +299,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
                 'se' => 'Northern Sámi',
             ],
         ];
-        $localeConfig = new \Laminas\Config\Config($localeConfig);
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         $record->setRawData(['fullrecord' => $fixture]);
         return $record;

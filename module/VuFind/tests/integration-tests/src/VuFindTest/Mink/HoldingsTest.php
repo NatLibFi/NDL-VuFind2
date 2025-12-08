@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -113,10 +113,9 @@ class HoldingsTest extends \VuFindTest\Integration\MinkTestCase
      * @param bool   $loadBatchWise      If status should be loaded batch wise
      * @param bool   $loadObservableOnly If status of only observable records should be loaded
      *
-     * @dataProvider itemStatusAndHoldingsProvider
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('itemStatusAndHoldingsProvider')]
     public function testItemStatus(
         $availability,
         string $status,
@@ -221,11 +220,10 @@ class HoldingsTest extends \VuFindTest\Integration\MinkTestCase
      * @param bool   $loadObservableOnly If status of only observable records should be loaded
      * @param string $customTemplate     Include extra steps to test custom template?
      *
-     * @dataProvider itemStatusAndHoldingsProvider
-     * @dataProvider itemStatusAndHoldingsCustomTemplateProvider
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('itemStatusAndHoldingsProvider')]
+    #[\PHPUnit\Framework\Attributes\DataProvider('itemStatusAndHoldingsCustomTemplateProvider')]
     public function testItemStatusFull(
         $availability,
         string $status,
@@ -305,10 +303,9 @@ class HoldingsTest extends \VuFindTest\Integration\MinkTestCase
      * @param string $expectedType      Expected status type (e.g. 'success')
      * @param string $multipleLocations Configuration setting for multiple locations
      *
-     * @dataProvider itemStatusAndHoldingsProvider
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('itemStatusAndHoldingsProvider')]
     public function testHoldings(
         $availability,
         string $status,
@@ -328,12 +325,63 @@ class HoldingsTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
+     * Data provider for testCallNoDisplay().
+     *
+     * @return array[]
+     */
+    public static function callNoDisplayProvider(): array
+    {
+        return [
+            'first' => ['first', 'Test1 A1234'],
+            'all' => ['all', 'Test1 A1234, Test2 B1234'],
+            'msg' => ['msg', 'Multiple Call Numbers'],
+        ];
+    }
+
+    /**
+     * Test call number display
+     *
+     * @param string $mode           Call number mode to configure
+     * @param string $expectedCallNo Expected call number output
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('callNoDisplayProvider')]
+    public function testCallNoDisplay(string $mode, string $expectedCallNo): void
+    {
+        $items = [
+            ['callnumber' => 'A1234', 'callnumber_prefix' => 'Test1'],
+            ['callnumber' => 'B1234', 'callnumber_prefix' => 'Test2'],
+        ];
+        $demoSettings = [
+            'Records' => [
+                'services' => [],
+            ],
+            'Failure_Probabilities' => [
+                'getStatuses' => 0,
+            ],
+            'StaticHoldings' => ['testsample1' => json_encode($items)],
+        ];
+
+        $this->changeConfigs(
+            [
+                'config' => $this->getConfigIniOverrides(false, 'msg', multipleCallNos: $mode),
+                'Demo' => $demoSettings,
+            ]
+        );
+
+        $page = $this->goToSearchResults();
+        $this->assertEquals($expectedCallNo, $this->findCssAndGetText($page, '.callnumAndLocation .callnumber'));
+    }
+
+    /**
      * Get config.ini override settings for testing ILS functions.
      *
      * @param bool   $fullStatus         Whether to show full item status in results
      * @param string $multipleLocations  Setting to use for multiple locations
      * @param bool   $loadBatchWise      If status should be loaded batch wise
      * @param bool   $loadObservableOnly If status of only observable records should be loaded
+     * @param string $multipleCallNos    Setting to use for multiple call numbers
      *
      * @return array
      */
@@ -341,7 +389,8 @@ class HoldingsTest extends \VuFindTest\Integration\MinkTestCase
         bool $fullStatus,
         string $multipleLocations,
         bool $loadBatchWise = true,
-        bool $loadObservableOnly = true
+        bool $loadObservableOnly = true,
+        string $multipleCallNos = 'first'
     ): array {
         return [
             'Catalog' => [
@@ -349,6 +398,7 @@ class HoldingsTest extends \VuFindTest\Integration\MinkTestCase
             ],
             'Item_Status' => [
                 'show_full_status' => $fullStatus,
+                'multiple_call_nos' => $multipleCallNos,
                 'multiple_locations' => $multipleLocations,
                 'load_batch_wise' => $loadBatchWise,
                 'load_observable_only' => $loadObservableOnly,

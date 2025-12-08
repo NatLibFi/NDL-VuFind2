@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -31,9 +31,9 @@
 namespace VuFindTest\Recommend;
 
 use Laminas\Cache\Storage\StorageInterface as CacheAdapter;
-use Laminas\Config\Config;
 use PHPUnit\Framework\MockObject\MockObject;
-use VuFind\Config\PluginManager as ConfigPluginManager;
+use VuFind\Config\Config;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Connection\LibGuides;
 use VuFind\Recommend\LibGuidesProfile;
 use VuFind\Search\Base\Options;
@@ -83,9 +83,7 @@ class LibGuidesProfileTest extends \PHPUnit\Framework\TestCase
     public function setUp(): void
     {
         // Mock LibGuides connector
-        $this->connector = $this->getMockBuilder(LibGuides::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->connector = $this->createMock(LibGuides::class);
         $accountsFixture = $this->getFixture('libguides/api/accounts');
         $accounts = json_decode(substr($accountsFixture, strpos($accountsFixture, '[')));
         $this->connector->method('getAccounts')->willReturn($accounts);
@@ -223,7 +221,7 @@ class LibGuidesProfileTest extends \PHPUnit\Framework\TestCase
         // Build query Params
         $queryParams = new Params(
             $this->createStub(Options::class),
-            $this->createStub(ConfigPluginManager::class)
+            $this->createStub(ConfigManagerInterface::class)
         );
         $queryParams->getQuery()->setString($queryString);
 
@@ -231,9 +229,7 @@ class LibGuidesProfileTest extends \PHPUnit\Framework\TestCase
         $queryResults = new Results(
             $queryParams,
             $this->createStub(\VuFindSearch\Service::class),
-            $this->getMockBuilder(\VuFind\Record\Loader::class)
-                ->disableOriginalConstructor()
-                ->getMock(),
+            $this->createMock(\VuFind\Record\Loader::class),
             null,
             $facets
         );

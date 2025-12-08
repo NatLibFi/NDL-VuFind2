@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -30,6 +30,7 @@
 namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrEad3;
+use Generator;
 
 /**
  * SolrEad3 Record Driver Test Class
@@ -131,10 +132,9 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getOtherRelatedMaterialData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getOtherRelatedMaterialData')]
     public function testGetOtherRelatedMaterial(
         string $language,
         array $expected
@@ -279,10 +279,9 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getAuthorData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAuthorData')]
     public function testAuthors(
         string $function,
         array $expected
@@ -343,6 +342,8 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
+            ],
+            [
                 'sv',
                 [
                     'ead3_test.xml' => [
@@ -381,7 +382,9 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                         ],
                     ],
                 ],
-                'en',
+            ],
+            [
+                'en-gb',
                 [
                     'ead3_test.xml' => [
                         [
@@ -414,10 +417,9 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getAllSubjectHeadingsExtendedData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAllSubjectHeadingsExtendedData')]
     public function testAllSubjectHeadingsExtended(
         string $language,
         array $expected
@@ -448,26 +450,30 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                         'Koteloita 5',
                     ],
                     'ead3_test2.xml' => [
-                        '9 koteloa',
+                        '9 koteloa (kuva, luetteloitu ja kuvailtu)',
                     ],
                 ],
+            ],
+            [
                 'sv',
                 [
                     'ead3_test.xml' => [
                         'Hyllmeter ordnat 0.96 hm',
                     ],
                     'ead3_test2.xml' => [
-                        '9 mappar',
+                        '9 mappar (bild, listad och beskriven)',
                     ],
                 ],
-                'en',
+            ],
+            [
+                'en-gb',
                 [
                     'ead3_test.xml' => [
                         'Hyllymetriä järjestetty 0.96 hm',
                         'Koteloita 5',
                     ],
                     'ead3_test2.xml' => [
-                        '9 koteloa',
+                        '9 koteloa (kuva, luetteloitu ja kuvailtu)',
                     ],
                 ],
             ],
@@ -480,10 +486,9 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getPhysicalDescriptionsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getPhysicalDescriptionsData')]
     public function testPhysicalDescriptions(
         string $language,
         array $expected
@@ -496,6 +501,130 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
                 $driver->getPhysicalDescriptions()
             );
         }
+    }
+
+    /**
+     * Data provider for testGetImages
+     *
+     * @return Generator
+     */
+    public static function getTestGetImagesData(): Generator
+    {
+        $expected = [
+            'urls' => [
+                'large' => 'https://testikuva.large/test',
+                'small' => 'https://testikuva.large/test',
+                'medium' => 'https://testikuva.large/test',
+            ],
+            'description' => 'Lavastussuunnitelma esitykseen "Makean ystävä" (KILPAILUTYÖ) 0',
+            'rights' => false,
+            'descId' => '',
+            'sort' => '0',
+            'type' => 'fullres',
+            'pdf' => [
+                'large' => false,
+                'small' => false,
+                'medium' => false,
+            ],
+            'highResolution' => [],
+            'cacheSizes' => [
+                'small' => 'large',
+                'medium' => 'large',
+            ],
+            'downloadable' => false,
+        ];
+        yield 'record with 1 image' => [
+            'ead3_test3.xml',
+            [$expected],
+        ];
+        $expected['type'] = '';
+        yield 'record with image type unset' => [
+            'ead3_test4.xml',
+            [$expected],
+        ];
+        $expected['urls'] = [
+            'large' => 'https://testpdflinkki.fi/pdf',
+            'small' => 'https://testikuvalinkki.fi/kuva',
+            'medium' => 'https://testikuvalinkki.fi/kuva',
+        ];
+        $expected['description'] = 'Kuvaus';
+        $expected['sort'] = '';
+        $expected['type'] = 'fullsize';
+        $expected['pdf']['large'] = true;
+        $expected['cacheSizes'] = [
+            'small' => 'medium',
+        ];
+        yield 'record with pdf and a image' => [
+            'ead3_test5.xml',
+            [$expected],
+        ];
+    }
+
+    /**
+     * Test get images
+     *
+     * @param string $xmlPath  Path for the record xml
+     * @param array  $expected Return value to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestGetImagesData')]
+    public function testGetImages(string $xmlPath, array $expected)
+    {
+        $driver = $this->getDriver($xmlPath, ['id' => 'test_id']);
+        $this->assertEquals($expected, $driver->getAllImages());
+    }
+
+    /**
+     * Function to get expected general notes data
+     *
+     * @return array
+     */
+    public static function getGeneralNotesData(): array
+    {
+        return [
+            [
+                'fi',
+                [
+                    'Aineisto on digitoitu',
+                    'Aineisto on osa Unescon maailmanperintöä',
+                ],
+            ],
+            [
+                'en-gb',
+                [
+                    'Aineisto on digitoitu',
+                    'Aineisto on osa Unescon maailmanperintöä',
+                ],
+            ],
+            [
+                'sv',
+                [
+                    'Samlingen är digitaliserad',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getGeneralNotes
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getGeneralNotesData')]
+    public function testGetGeneralNotes(
+        string $language,
+        array $expected
+    ): void {
+        $driver = $this->getDriver('ead3_test5.xml');
+        $driver->setPreferredLanguage($language);
+        $this->assertEquals(
+            $expected,
+            $driver->getGeneralNotes()
+        );
     }
 
     /**
@@ -513,14 +642,14 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         $record = new SolrEad3(
             null,
             null,
-            new \Laminas\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig)
         );
         $record->setTranslator(
             $this->getMockTranslator(
                 ['default' => ['year_decade_or_century' => '%%year%%-luku']]
             )
         );
-        $record->setRawData(['fullrecord' => $fixture]);
+        $record->setRawData(array_merge(['fullrecord' => $fixture], $overrides));
         return $record;
     }
 }

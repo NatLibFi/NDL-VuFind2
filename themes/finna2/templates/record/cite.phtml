@@ -1,11 +1,11 @@
 <?php
-  // Set page title.
-  $this->headTitle($this->translate('Record Citations'));
-
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'), '<li class="breadcrumb-item">', '</li> ')
-    . '<li class="breadcrumb-item">' . $this->recordLinker()->getBreadcrumbHtml($this->driver) . '</li> '
-    . '<li class="breadcrumb-item active">' . $this->transEsc('Record Citations') . '</li>';
+  $this->breadcrumbs()->reset();
+  if ($url = $this->searchMemory()->getLastSearchUrl()) {
+    $this->breadcrumbs()->add($this->translate('Search'), $url);
+  }
+  $this->breadcrumbs()->add(...$this->recordLinker()->getBreadcrumbParams($this->driver))
+    ->add($this->translate('Record Citations'), active: true);
 
   // Collect citation data:
   $helper = $this->citation($this->driver);
@@ -14,7 +14,7 @@
     $citations[$format . ' Citation'] = $helper->getCitation($format);
   }
 ?>
-<h1><?=$this->transEsc('Record Citations')?></h1>
+<?=$this->component('page-title', ['title' => $this->translate('Record Citations'), 'level' => 1]);?>
 <?php if (count($citations) == 0): ?>
   <?=$this->transEsc('No citations are available for this record')?>
 <?php else: ?>

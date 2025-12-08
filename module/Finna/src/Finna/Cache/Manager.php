@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Cache
@@ -32,7 +32,6 @@
 namespace Finna\Cache;
 
 use Laminas\Cache\Service\StorageAdapterFactory;
-use Laminas\Config\Config;
 
 /**
  * Finna Cache Manager
@@ -89,17 +88,15 @@ class Manager extends \VuFind\Cache\Manager
     /**
      * Constructor
      *
-     * @param Config                $config       Main VuFind configuration
-     * @param Config                $searchConfig Search configuration
-     * @param StorageAdapterFactory $factory      Cache storage adapter factory
+     * @param array                 $config  Main VuFind configuration
+     * @param StorageAdapterFactory $factory Cache storage adapter factory
      */
     public function __construct(
-        Config $config,
-        Config $searchConfig,
+        array $config,
         StorageAdapterFactory $factory
     ) {
         $this->cacheSpecs = array_merge($this->cacheSpecs, $this->finnaCacheSpecs);
-        parent::__construct($config, $searchConfig, $factory);
+        parent::__construct($config, $factory);
     }
 
     /**

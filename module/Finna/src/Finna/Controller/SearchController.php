@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -61,12 +61,14 @@ class SearchController extends \VuFind\Controller\SearchController
         $view = parent::advancedAction();
 
         $config = $this->getConfig();
+        $rangeMin = null;
         $ticks = [-1000, 0, 900, 1800, 1900];
         if (!empty($config->Site->advSearchYearScale)) {
             $ticks = array_map(
                 'trim',
                 explode(',', $config->Site->advSearchYearScale)
             );
+            $rangeMin = (int)$ticks[0];
         }
         $rangeEnd = date('Y', strtotime('+1 year'));
 
@@ -76,6 +78,8 @@ class SearchController extends \VuFind\Controller\SearchController
         $range = [
             'type' => 'date',
             'field' => $params->getDateRangeSearchField(),
+            'rangeMin' => $rangeMin,
+            'rangeMax' => null,
         ];
 
         if (

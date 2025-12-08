@@ -9,13 +9,17 @@
   <div class="tab-content" id="audioTabContent">
     <?php foreach ($audioUrls as $ind => $url):
         $format = $this->driver->tryMethod('getRecordFormat', [], '');
-        $showDetails = $format === 'lido' ? true : false;
+        $showDetails = $showFormat = false;
+    if ($format === 'lido') {
+      $showDetails = true;
+      $showFormat = $url['desc'] === $url['url'];
+    }
     ?>
     <div class="tab-pane fade <?= $ind === 0 ? 'show active' : '' ?>" id="tab-<?= $ind ?>" role="tabpanel" aria-labelledby="tab-<?= $ind ?>-tab">
     <div class="audio-item-wrapper">
       <div class="audio-title-wrapper">
         <div class="audio-title">
-        <?php if (!empty($url['desc'])): ?>
+        <?php if (!empty($url['desc']) && !$showFormat): ?>
           <?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?>
         <?php else: ?>
           <?=$this->transEsc('format_Sound')?>
@@ -23,7 +27,7 @@
         </div>
       </div>
       <div class="audio-player-wrapper">
-        <button class="play">
+        <button class="play" tabindex="0" aria-label="<?=$this->transEsc('Play recording')?>">
           <?=$this->icon('audio-play') ?>
         </button>
         <div class="audio-player-wrapper hide">

@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  OAI_Server
@@ -59,6 +59,8 @@ use function strlen;
  */
 class Server
 {
+    use \VuFind\ResumptionToken\ResumptionTokenTrait;
+
     /**
      * Repository base URL
      *
@@ -212,6 +214,22 @@ class Server
     protected $useCursorMark = true;
 
     /**
+     * List of possible valid OAI-PMH error codes
+     *
+     * @var string[]
+     */
+    protected $legalErrorCodes = [
+        'cannotDisseminateFormat',
+        'idDoesNotExist',
+        'badArgument',
+        'badVerb',
+        'noMetadataFormats',
+        'noRecordsMatch',
+        'badResumptionToken',
+        'noSetHierarchy',
+    ];
+
+    /**
      * Constructor
      *
      * @param \VuFind\Search\Results\PluginManager $resultsManager    Search manager for retrieving records
@@ -223,21 +241,21 @@ class Server
         protected \VuFind\Search\Results\PluginManager $resultsManager,
         protected \VuFind\Record\Loader $recordLoader,
         protected ChangeTrackerServiceInterface $trackerService,
-        protected OaiResumptionServiceInterface $resumptionService
+        OaiResumptionServiceInterface $resumptionService
     ) {
+        $this->setResumptionService($resumptionService);
     }
 
     /**
      * Initialize settings
      *
-     * @param \Laminas\Config\Config $config  VuFind configuration
-     * @param string                 $baseURL The base URL for the OAI server
-     * @param array                  $params  The incoming OAI-PMH parameters (i.e.
-     * $_GET)
+     * @param \VuFind\Config\Config $config  VuFind configuration
+     * @param string                $baseURL The base URL for the OAI server
+     * @param array                 $params  The incoming OAI-PMH parameters (i.e. $_GET)
      *
      * @return void
      */
-    public function init(\Laminas\Config\Config $config, $baseURL, array $params)
+    public function init(\VuFind\Config\Config $config, $baseURL, array $params)
     {
         $this->baseURL = $baseURL;
         $parts = parse_url($baseURL);
@@ -504,7 +522,7 @@ class Server
      * @param AbstractRecordDriver $record A record driver object
      * @param string               $format Metadata format to obtain
      *
-     * @return string|false String or false if an error occured
+     * @return string|false String or false if an error occurred
      */
     protected function getRecordAsXML(AbstractRecordDriver $record, string $format): string|false
     {
@@ -665,11 +683,11 @@ class Server
      * constructor and is only a separate method to allow easy override by child
      * classes).
      *
-     * @param \Laminas\Config\Config $config VuFind configuration
+     * @param \VuFind\Config\Config $config VuFind configuration
      *
      * @return void
      */
-    protected function initializeSettings(\Laminas\Config\Config $config)
+    protected function initializeSettings(\VuFind\Config\Config $config)
     {
         // Override default repository name if configured:
         if (isset($config->OAI->repository_name)) {
@@ -790,7 +808,7 @@ class Server
             $params = $this->listRecordsGetParams();
         } catch (\Exception $e) {
             $parts = explode(':', $e->getMessage(), 2);
-            if (count($parts) != 2) {
+            if (count($parts) != 2 || !in_array($parts[0], $this->legalErrorCodes)) {
                 throw $e;
             }
             return $this->showError($parts[0], $parts[1]);
@@ -939,12 +957,10 @@ class Server
         }
 
         // Iterate over custom sets:
-        if (!empty($this->setQueries)) {
-            foreach ($this->setQueries as $setName => $solrQuery) {
-                $set = $xml->addChild('set');
-                $set->setName = $set->setSpec = $setName;
-                $set->setDescription = $solrQuery;
-            }
+        foreach ($this->setQueries as $setName => $solrQuery) {
+            $set = $xml->addChild('set');
+            $set->setName = $set->setSpec = $setName;
+            $set->setDescription = $solrQuery;
         }
 
         // Display the list:
@@ -1069,7 +1085,7 @@ class Server
         // parameters or fail if it is invalid.
         if (!empty($this->params['resumptionToken'])) {
             $params = $this->loadResumptionToken($this->params['resumptionToken']);
-            if ($params === false) {
+            if (null === $params) {
                 throw new \Exception(
                     'badResumptionToken:Invalid or expired resumption token'
                 );
@@ -1251,28 +1267,6 @@ class Server
     }
 
     /**
-     * Load parameters associated with a resumption token.
-     *
-     * @param string $token The resumption token to look up
-     *
-     * @return array        Parameters associated with token
-     */
-    protected function loadResumptionToken($token)
-    {
-        // Clean up expired records before doing our search:
-        $this->resumptionService->removeExpired();
-
-        // Load the requested token if it still exists:
-        if ($row = $this->resumptionService->findToken($token)) {
-            parse_str($row->getResumptionParameters(), $params);
-            return $params;
-        }
-
-        // If we got this far, the token is invalid or expired:
-        return false;
-    }
-
-    /**
      * Normalize a date to a Unix timestamp.
      *
      * @param string $date Date (ISO-8601 or YYYY-MM-DD HH:MM:SS)
@@ -1331,17 +1325,11 @@ class Server
         // Save the old cursor position before overwriting it for storage in the
         // database!
         $oldCursor = $params['cursor'];
-        $params['cursor'] = $currentCursor;
-        $params['cursorMark'] = $cursorMark;
-
-        // Save everything to the database:
-        $expire = time() + 24 * 60 * 60;
-        $token = $this->resumptionService->createAndPersistToken($params, $expire)->getId();
-
+        $resumptionToken = $this->createResumptionToken($params, $currentCursor, $cursorMark);
         // Add details to the xml:
-        $token = $xml->addChild('resumptionToken', $token);
+        $token = $xml->addChild('resumptionToken', $resumptionToken->getToken());
         $token->addAttribute('cursor', $oldCursor);
-        $token->addAttribute('expirationDate', date($this->iso8601, $expire));
+        $token->addAttribute('expirationDate', date($this->iso8601, $resumptionToken->getExpiry()->getTimestamp()));
         $token->addAttribute('completeListSize', $listSize);
     }
 

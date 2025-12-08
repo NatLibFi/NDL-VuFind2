@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -27,7 +27,7 @@
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
@@ -46,7 +46,7 @@ use function is_array;
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
@@ -210,7 +210,9 @@ trait SolrCommonFinnaTrait
     public function getRecordImage($size = 'small', $index = 0)
     {
         if ($images = $this->getAllImages()) {
-            if (isset($images[$index]['urls'][$size])) {
+            $image = $images[$index]['urls'][$size] ?? null;
+            $cacheSize = $images[$index]['cacheSizes'][$size] ?? $size;
+            if ($image) {
                 $params = $images[$index]['urls'][$size];
                 if (!is_array($params)) {
                     $params = [
@@ -223,6 +225,7 @@ trait SolrCommonFinnaTrait
                 $params['id'] = $this->getUniqueId();
                 $params['pdf'] = !empty($images[$index]['pdf'][$size])
                     || true === ($images[$index]['pdf'] ?? false);
+                $params['cacheSize'] = $cacheSize;
                 return $params;
             }
         }
@@ -254,9 +257,24 @@ trait SolrCommonFinnaTrait
     }
 
     /**
+     * Return the unique identifier of this record within the index;
+     * useful for retrieving additional information (like tags and user
+     * comments) from the external MySQL database.
+     *
+     * @return string Unique identifier.
+     */
+    public function getUniqueID()
+    {
+        if ($this->getExtraDetail('preview_record')) {
+            return '0';
+        }
+        return parent::getUniqueID();
+    }
+
+    /**
      * Get the VuFind configuration.
      *
-     * @return \Laminas\Config\Config
+     * @return \VuFind\Config\Config
      */
     protected function getConfig()
     {

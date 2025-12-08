@@ -1,15 +1,13 @@
 <!-- START of: finna - authority/home.phtml -->
 <?php
-  // Set page title.
-  $this->headTitle($this->translate('Authority Search'));
-  $this->layout()->finnaMainHeader = '<div><h1 class="content-header">' . $this->transEsc('Authority Search') . '</h1></div>';
+  $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->translate('Authority Search'), 'class' => 'content-header', 'level' => 1]);
 
   // Set default value if necessary:
   if (!isset($this->searchClassId)) {
     $this->searchClassId = 'SolrAuth';
   }
 
-  $this->layout()->breadcrumbs = false;
+  $this->breadcrumbs()->disable();
   $this->layout()->logosection = true;
   $this->layout()->ignoreHiddenFilterMemory = true;
 ?>

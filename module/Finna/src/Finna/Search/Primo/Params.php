@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Primo
@@ -67,14 +67,14 @@ class Params extends \VuFind\Search\Primo\Params
     /**
      * Get information on the current state of the boolean checkbox facets.
      *
-     * @param array $include        List of checkbox filters to return (null for all)
-     * @param bool  $includeDynamic Should we include dynamically-generated
+     * @param ?array $include        List of checkbox filters to return (null for all)
+     * @param bool   $includeDynamic Should we include dynamically-generated
      * checkboxes that are not part of the include list above?
      *
      * @return array
      */
     public function getCheckboxFacets(
-        array $include = null,
+        ?array $include = null,
         bool $includeDynamic = true
     ) {
         // Build up an array of checkbox facets with status booleans and
@@ -112,7 +112,7 @@ class Params extends \VuFind\Search\Primo\Params
     {
         $field = $this->getDateRangeSearchField();
         $filterList = $this->getFilterList();
-        foreach ($filterList as $facet => $filters) {
+        foreach ($filterList as $filters) {
             foreach ($filters as $filter) {
                 if ($filter['field'] == $field) {
                     return $filter;

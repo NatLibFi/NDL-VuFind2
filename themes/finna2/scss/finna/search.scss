@@ -5,7 +5,7 @@ $thumbnail-width-large:  200px !default;
 
 /* Results */
 /* --- Layout --- */
-@media (min-width: $screen-sm-min) {
+@include media-breakpoint-up(sm) {
   .mainbody { width: 75%; }
   .sidebar { width: 25%; }
   .sidebar.left { float: left; }
@@ -28,16 +28,19 @@ $thumbnail-width-large:  200px !default;
     position: relative;
   }
 }
-@media (max-width: $screen-sm-max) {
+@include media-breakpoint-down(md) {
   .template-dir-myresearch .container.main-content > .mainbody,
   .template-dir-holds .container.main-content > .mainbody,
   .template-dir-librarycards .container.main-content > .mainbody,
   .template-name-mylist .container.main-content > .mainbody,
-  .template-name-history .container.main-content > .mainbody {
+  .template-name-history .container.main-content > .mainbody,
+  .template-dir-comments.template-name-userlist .container.main-content > .mainbody,
+  .template-dir-ratings.template-name-userlist .container.main-content > .mainbody,
+  .template-dir-reservationlist .container.main-content > .mainbody {
     width: 100%;
   }
 }
-@media (max-width: $screen-xs-max) {
+@include media-breakpoint-down(sm) {
   .media-left {
     float: right;
   }
@@ -78,25 +81,8 @@ mark, .highlight {
 
   // Loading spinner
   .loading-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    padding: 2rem;
-    display: flex;
-    font-size: 150%;
+    @include loading-overlay();
     align-items: flex-start;
-    justify-content: center;
-    background-color: rgba(0,0,0,0.2);
-    z-index: 1;
-
-    .loading-spinner {
-      padding: 2rem;
-      background-color: rgba(0,0,0,0.6);
-      border-radius: $border-radius-large;
-      color: $gray-lighter;
-    }
   }
 }
 
@@ -106,7 +92,7 @@ mark, .highlight {
   &:last-child {
     padding-bottom: 15px;
   }
-  @media (max-width:$screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     border-bottom: 1px solid $gray-lighter;
     &#result0, &:first-child {
       border-top: 1px solid $gray-lighter;
@@ -136,7 +122,7 @@ mark, .highlight {
 }
 
 .add-to-favorites {
-  @media(max-width: $screen-xxs) {
+  @include media-breakpoint-down(xs) {
     padding-right: 5px;
   }
 }
@@ -144,16 +130,13 @@ mark, .highlight {
 .result .cart-add,
 .result .cart-remove {
   font-size: medium;
-  @media(max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     font-size: 1em;
     float: none;
     margin-top: 10px;
     text-transform: uppercase;
     font-weight: 600;
     color: $action-link-color;
-    i {
-      color: mix(#ffffff, $action-link-color, 22%);
-    }
   }
 }
 .available-online-links {
@@ -184,7 +167,7 @@ mark, .highlight {
   margin: 0.5rem 0;
 }
 .add-to-favorite-col {
-  @media(max-width: $screen-xs-max) {
+  @include media-breakpoint-down(sm) {
     margin-top: 10px;
   }
   a {
@@ -235,7 +218,7 @@ mark, .highlight {
 }
 
 .result-body { padding-left: 1rem; }
-@media (min-width: 768px) {
+@include media-breakpoint-up(sm) {
   .result-body {
     position: relative;
     float: left;
@@ -364,7 +347,7 @@ mark, .highlight {
   margin-bottom: 1em;
 }
 
-@media(min-width: $screen-md) {
+@include media-breakpoint-up(md) {
   .search-home-left {
     width: 40%;
     float: left;
@@ -416,7 +399,7 @@ h2 {
 }
 
 // mobile toolbar
-@media (max-width: $screen-xs-max) {
+@include media-breakpoint-down(sm) {
   .prevent-scroll {
     overflow: hidden;
   }
@@ -452,7 +435,7 @@ h2 {
     background-color: $background-color;
     background-image: $background-image-url;
     background-repeat: no-repeat;
-    @media(max-width:$screen-sm-max) {
+    @include media-breakpoint-down(md) {
       background-size: 150% auto;
       background-position: 50% 0;
       .record-view-header > .container {
@@ -460,7 +443,7 @@ h2 {
         padding-right: 0;
       }
     }
-    @media(max-width:$screen-xs-max) {
+    @include media-breakpoint-down(sm) {
       background-size: 350% auto;
     }
   }
@@ -511,7 +494,9 @@ h2 {
   .record-type-lrmi,
   .record-type-aipa {
     .material-rights,
-    .targeted-information {
+    .targeted-information,
+    .targeted-information + .more-link,
+    .targeted-information + .less-link {
       display: none;
     }
   }
@@ -546,17 +531,21 @@ table.search-history-table {
     white-space: nowrap;
   }
 
-  @media screen and (min-width: 768px) {
-    border: 1px solid $gray-lighter;
-    tbody > tr > td { vertical-align: middle; }
-    .history_time {
-      width: 20%;
-    }
-  }
-
-  @media screen and (max-width: 767px) {
-    tbody > tr {
+  @media screen {
+    @include media-breakpoint-up(sm) {
       border: 1px solid $gray-lighter;
+      tbody > tr > td { vertical-align: middle; }
+      .history_time {
+        width: 20%;
+      }
+    }
+    @include media-breakpoint-down(sm) {
+      tbody > tr {
+        border: 1px solid $gray-lighter;
+      }
     }
   }
+}
+.result-edition {
+  display: none;
 }

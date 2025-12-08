@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Cover_Generator
@@ -77,7 +77,7 @@ class Loader extends \VuFind\ImageLoader
     /**
      * VuFind configuration settings
      *
-     * @var \Laminas\Config\Config
+     * @var \VuFind\Config\Config
      */
     protected $config;
 
@@ -189,7 +189,7 @@ class Loader extends \VuFind\ImageLoader
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config  $config      VuFind configuration
+     * @param \VuFind\Config\Config   $config      VuFind configuration
      * @param ApiManager              $manager     Plugin manager for API handlers
      * @param \VuFindTheme\ThemeInfo  $theme       VuFind theme tools
      * @param \VuFindHttp\HttpService $httpService HTTP client factory

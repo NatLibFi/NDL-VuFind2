@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -111,7 +111,9 @@ class SearchController extends AbstractSolrSearch
                 ->rememberSearch($base . $query->getParams(false));
         }
 
-        // Send the user back where they came from:
+        // Send the user back where they came from (but strip off the SID
+        // so we don't override the modified search with an older version):
+        $from = rtrim(preg_replace('/([?&])sid=\d+/', '$1', $from), '&?');
         return $this->redirect()->toUrl($from);
     }
 
@@ -132,8 +134,8 @@ class SearchController extends AbstractSolrSearch
         $view->url = $this->params()->fromPost('url')
             ?? $this->params()->fromQuery('url')
             ?? $this->getRequest()->getServer()->get('HTTP_REFERER');
-        if (!$this->isLocalUrl($view->url)) {
-            throw new \Exception('Unexpected value passed to emailAction: ' . $view->url);
+        if (!$view->url || !$this->isLocalUrl($view->url)) {
+            throw new \Exception('Unexpected value passed to emailAction: ' . ($view->url ?? '<null>'));
         }
 
         $emailActionSettings = $this->getService(\VuFind\Config\AccountCapabilities::class)->getEmailActionSetting();
@@ -297,8 +299,14 @@ class SearchController extends AbstractSolrSearch
             $this->getRequest()->getQuery()->set('hiddenFilters', $hiddenFilters);
         }
 
-        // Don't save to history -- history page doesn't handle correctly:
+        // Flag this as a specialized search to avoid bleeding defaults into the
+        // standard search box:
+        $this->getRequest()->getQuery()->set('specializedSearch', true);
+
+        // Don't save to history or memory -- history page doesn't handle correctly
+        // and we don't want hidden filters bleeding to weird places:
         $this->saveToHistory = false;
+        $this->getSearchMemory()->disable();
 
         // Call rather than forward, so we can use custom template
         $view = $this->resultsAction();
@@ -310,11 +318,12 @@ class SearchController extends AbstractSolrSearch
             $view->results->getUrlQuery()
                 ->setDefaultParameter('range', $range)
                 ->setDefaultParameter('department', $dept)
+                ->disableHiddenFilters()
                 ->setSuppressQuery(true);
         }
 
         // We don't want new items hidden filters to propagate to other searches:
-        $view->ignoreHiddenFilterMemory = true;
+        $this->serviceLocator->get('ViewHelperManager')->get('searchTabs')->disableCurrentHiddenFilterParams();
         $view->ignoreHiddenFiltersInRequest = true;
 
         return $view;
@@ -343,15 +352,25 @@ class SearchController extends AbstractSolrSearch
         }
 
         // If we got this far, we're using driver-based searching and need to
-        // send options to the view:
+        // send options to the view (but we should tolerate drivers that do not
+        // define all of the department/instructor/courses getters):
         $catalog = $this->getILS();
-        return $this->createViewModel(
-            [
-                'deptList' => $catalog->getDepartments(),
-                'instList' => $catalog->getInstructors(),
-                'courseList' =>  $catalog->getCourses(),
-            ]
-        );
+        try {
+            $deptList = $catalog->getDepartments();
+        } catch (\VuFind\Exception\ILS $e) {
+            $deptList = [];
+        }
+        try {
+            $instList = $catalog->getInstructors();
+        } catch (\VuFind\Exception\ILS $e) {
+            $instList = [];
+        }
+        try {
+            $courseList =  $catalog->getCourses();
+        } catch (\VuFind\Exception\ILS $e) {
+            $courseList = [];
+        }
+        return $this->createViewModel(compact('deptList', 'instList', 'courseList'));
     }
 
     /**
@@ -483,10 +502,10 @@ class SearchController extends AbstractSolrSearch
     {
         switch ($this->params()->fromQuery('method')) {
             case 'describe':
-                $config = $this->getConfig();
+                $config = $this->getConfigArray();
                 $xml = $this->getViewRenderer()->render(
                     'search/opensearch-describe.phtml',
-                    ['site' => $config->Site]
+                    ['site' => $config['Site']]
                 );
                 break;
             default:
@@ -527,16 +546,5 @@ class SearchController extends AbstractSolrSearch
             json_encode([$query->get('lookfor', ''), $suggestions])
         );
         return $response;
-    }
-
-    /**
-     * Is the result scroller active?
-     *
-     * @return bool
-     */
-    protected function resultScrollerActive()
-    {
-        $config = $this->getService(\VuFind\Config\PluginManager::class)->get('config');
-        return $config->Record->next_prev_navigation ?? false;
     }
 }

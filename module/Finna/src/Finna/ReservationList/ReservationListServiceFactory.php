@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ReservationList
@@ -29,6 +29,7 @@
 
 namespace Finna\ReservationList;
 
+use Finna\ReservationList\Handler\PluginManager;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
@@ -52,7 +53,7 @@ class ReservationListServiceFactory implements FactoryInterface
      *
      * @return ReservationListService
      */
-    public function __invoke(ContainerInterface $container, $name, array $options = null)
+    public function __invoke(ContainerInterface $container, $name, ?array $options = null)
     {
         $serviceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
@@ -68,6 +69,10 @@ class ReservationListServiceFactory implements FactoryInterface
             $container->get(\Finna\Record\Loader::class),
             $container->get(\VuFind\Record\Cache::class),
             $session,
+            $container->get(\VuFindHttp\HttpService::class),
+            $container->get(\VuFind\Auth\ILSAuthenticator::class),
+            $container->get(\VuFind\Cache\Manager::class),
+            $container->get(PluginManager::class),
             $reservationListYaml ?: []
         );
     }

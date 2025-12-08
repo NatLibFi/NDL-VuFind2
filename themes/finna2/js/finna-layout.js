@@ -89,7 +89,6 @@ finna.layout = (function finnaLayout() {
 
     var truncation = [];
     var rowHeight = [];
-    $(holder).find('.truncate-field').parent().attr('tabindex', '-1');
     $(holder).find('.truncate-field').not('.truncate-done').each(function handleTruncate(index) {
       var self = $(this);
       self.addClass('truncate-done');
@@ -178,19 +177,95 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
+   * Return the container for side facets
+   * @returns {Element} The side facet container
+   */
+  function getSideFacetsContainer() {
+    if (document.body.classList.contains('template-name-mylist')) {
+      return document.querySelector('.mylist-bar.mobile-sidebar-container');
+    } else if (document.body.classList.contains('template-name-displaylist')) {
+      return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
+    }
+    return document.querySelector('.side-facets-container-ajax, .mobile-sidebar-container');
+  }
+
+  /**
+   * Check and keep focus within the search facet list
+   * @param {object} e Event object
+   */
+  function onFocusOutOfFacetContainer(e) {
+    const container = getSideFacetsContainer();
+    if (e.relatedTarget && !container.contains(e.relatedTarget)) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      setTimeout(() => {
+        document.activeElement.blur();
+        container.focus();
+      },
+      200
+      );
+    }
+  }
+
+  /**
+   * Toggle visibility of sidebar on mobile
+   * @param {object} e Event object
+   */
+  function toggleMobileSidebar(e) {
+    e.stopImmediatePropagation();
+    const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
+    if (sidebar) {
+      sidebar.classList.toggle('open');
+      const container = getSideFacetsContainer();
+      document.querySelector('body').classList.toggle('prevent-scroll');
+      if (container) {
+        if (sidebar.classList.contains('open')) {
+          container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
+          container.role = 'dialog';
+          container.ariaModal = true;
+          container.tabIndex = '-1';
+          container.querySelector('h1').tabIndex = '0';
+          document.activeElement.blur();
+          container.querySelector('h1').focus();
+        } else {
+          container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
+          container.removeAttribute('role');
+          container.removeAttribute('aria-modal');
+          container.removeAttribute('tabindex');
+          container.querySelector('h1').removeAttribute('tabindex');
+          document.activeElement.blur();
+          document.querySelector('.mobile-nav-toggle .btn-mobile-nav').focus();
+        }
+      }
+    }
+  }
+
+  /**
+   * On keypress of mobile sidebar
+   * @param {object} e Event object
+   */
+  function onKeyPressMobileSidebar(e) {
+    if (e.which === 32 || e.which === 13) {
+      e.preventDefault();
+      toggleMobileSidebar(e);
+    }
+  }
+
+  /**
    * Initialize mobile narrow search
    */
   function initMobileNarrowSearch() {
-    $('.mobile-navigation .sidebar-navigation, .finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn, .sidebar .mylist-bar h1').off('click').on('click', function onClickMobileNav() {
-      $('.sidebar').toggleClass('open');
-      $('.mobile-navigation .sidebar-navigation i').toggleClass('fa-arrow-down');
-      $('body').toggleClass('prevent-scroll');
-    });
-    $('.mobile-navigation .sidebar-navigation .active-filters').off('click').on('click', function onClickMobileActiveFilters() {
-      $('.sidebar').scrollTop(0);
-    });
-    const narrowSearchMobileTrigger = document.querySelector('.finna-search-filter-toggle-trigger');
-    const narrowSearchMobile = document.querySelector('.finna-search-filter-toggle');
+    const container = getSideFacetsContainer();
+    if (container) {
+      document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
+        el.addEventListener('click', toggleMobileSidebar);
+        el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
+          onKeyPressMobileSidebar(e);
+        });
+      });
+    }
+    const narrowSearchMobileTrigger = document.querySelector('.mobile-nav-toggle-trigger');
+    const narrowSearchMobile = document.querySelector('.mobile-nav-toggle');
     if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
       const narrowSearchMobileObserver = new IntersectionObserver(
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
@@ -301,10 +376,18 @@ finna.layout = (function finnaLayout() {
     $('.select-type').on('click', function onClickSelectType(event) {
       event.preventDefault();
       var dropdownToggle = $('.type-dropdown .dropdown-toggle');
+      var dropdownItems = $('.type-dropdown .dropdown-menu .dropdown-item');
 
       $('input[name=type]:hidden').val($(this).siblings().val());
-      dropdownToggle.find('span:not(.icon)').text($(this).text());
-      dropdownToggle.attr('aria-label', ($(this).text()));
+      var itemText = $(this).text();
+      dropdownToggle.find('span:not(.icon)').text(itemText);
+      dropdownToggle.attr('aria-label', VuFind.translate('Narrow Search') + ': ' + (itemText) + ' ' + VuFind.translate('selected'));
+      dropdownItems.removeAttr('aria-description');
+      $.each (dropdownItems, function changeDescription(index, value) {
+        if (itemText === $(value).text()) {
+          $(value).attr('aria-description', 'selected');
+        }
+      });
       dropdownToggle.dropdown('toggle');
       dropdownToggle.focus();
     });
@@ -319,6 +402,57 @@ finna.layout = (function finnaLayout() {
    * @param {HTMLElement} holder Holder to look for toggletip elements from
    */
   function initToggleTips(holder) {
+
+    /**
+     * Close a ToggleTip
+     * @param {HTMLElement} tipEl Tip container element
+     */
+    function closeToggleTip(tipEl) {
+      // Reset focus from any active element in the toggletip:
+      const activeElement = document.activeElement;
+      const parentEl = tipEl.closest('.finna-toggletip');
+      if (parentEl) {
+        const buttonEl = parentEl.querySelector('.finna-toggletip__button');
+        if (buttonEl) {
+          buttonEl.setAttribute('aria-expanded', 'false');
+          if (parentEl.contains(activeElement)) {
+            buttonEl.focus();
+          }
+        }
+      }
+
+      tipEl.classList.remove('show');
+      const tipInnerEl = tipEl.querySelector('.js-status-inner');
+      if (tipInnerEl) {
+        tipInnerEl.innerHTML = '';
+      }
+      // If focus was in the toggletip, return it to the button:
+    }
+
+    /**
+     * Click event handler that closes all toggletips not being clicked
+     * @param {object} e Event object
+     */
+    function closeToggleTipsOnClick(e) {
+      document.querySelectorAll('.finna-toggletip .js-status.show').forEach((tipEl) => {
+        if (tipEl !== e.target && !tipEl.contains(e.target)) {
+          closeToggleTip(tipEl);
+        }
+      });
+    }
+
+    /**
+     * Keydown event handler that closes all toggletips
+     * @param {object} e Event object
+     */
+    function closeToggleTipsOnEsc(e) {
+      if ((e.keyCode || e.which) === 27) {
+        document.querySelectorAll('.finna-toggletip .js-status.show').forEach((tipEl) => {
+          closeToggleTip(tipEl);
+        });
+      }
+    }
+
     holder.querySelectorAll('[data-toggle="finna-toggletip"]').forEach(toggletip => {
       if (toggletip.dataset.initialized) {
         return;
@@ -357,38 +491,22 @@ finna.layout = (function finnaLayout() {
       );
       toggletip.addEventListener('click', () => {
         if (tipEl.classList.contains('show')) {
-          tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
+          closeToggleTip(tipEl);
         } else {
           window.setTimeout(() => {
             tipInnerEl.innerHTML = message;
             tipEl.classList.add('show');
             popperInst.update();
+            toggletip.setAttribute('aria-expanded', 'true');
           }, 100);
         }
       });
 
       // Close on outside click
-      document.addEventListener('click', (e) => {
-        if (toggletip !== e.target) {
-          tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
-        }
-      });
+      document.addEventListener('click', closeToggleTipsOnClick);
 
       // Remove toggletip on Esc
-      toggletip.addEventListener('keydown', (e) => {
-        if ((e.keyCode || e.which) === 27) {
-          tipEl.classList.remove('show');
-          tipInnerEl.innerHTML = '';
-        }
-      });
-
-      // Remove on blur
-      toggletip.addEventListener('blur', () => {
-        tipEl.classList.remove('show');
-        tipInnerEl.innerHTML = '';
-      });
+      document.addEventListener('keydown', closeToggleTipsOnEsc);
     });
   }
 
@@ -534,17 +652,10 @@ finna.layout = (function finnaLayout() {
    * Initialize ILS password recovery link
    * @param {object} links Object containing identifier and url for link href
    * @param {string} idPrefix Prepend selector with idPrefix
+   * @deprecated Exists for back-compatibility with old implementation only
    */
   function initILSPasswordRecoveryLink(links, idPrefix) {
-    var searchPrefix = idPrefix ? '#' + idPrefix : '#';
-    $(searchPrefix + 'target').on('change', function onChangeLoginTargetLink() {
-      var target = $(searchPrefix + 'target').val();
-      if (links[target]) {
-        $('#login_library_card_recovery').attr('href', links[target]).show();
-      } else {
-        $('#login_library_card_recovery').hide();
-      }
-    }).trigger("change");
+    VuFind.displayILSPasswordRecoveryLink(links, idPrefix);
   }
 
   /**
@@ -765,23 +876,40 @@ finna.layout = (function finnaLayout() {
       var play = self.find('.play');
       var source = self.find('source');
       play.one('click', function onPlay() {
-        finna.scriptLoader.loadInOrder(
+        finna.scriptLoader.load(
           scripts,
-          subScripts,
-          function onVideoJsLoaded() {
-            self.find('.audio-player-wrapper').removeClass('hide');
-            var audio = self.find('audio');
-            audio.removeClass('hide').addClass('video-js');
-            source.attr('src', source.data('src'));
-            videojs(
-              audio.attr('id'),
-              { controlBar: { volumePanel: false, muteToggle: false } },
-              function onVideoJsInited() {}
+          () => {
+            finna.scriptLoader.load(
+              subScripts,
+              function onVideoJsLoaded() {
+                self.find('.audio-player-wrapper').removeClass('hide');
+                var audio = self.find('audio');
+                audio.removeClass('hide').addClass('video-js');
+                source.attr('src', source.data('src'));
+                videojs(
+                  audio.attr('id'),
+                  { controlBar: { volumePanel: false, muteToggle: false } },
+                  function onVideoJsInited() {}
+                );
+                play.remove();
+                self.find('.vjs-play-control').focus();
+              }
             );
-            play.remove();
           }
         );
       });
+      play.on('keydown', function onKeyDown(e) {
+        if (e.which === 13 || e.which === 32) {
+          e.preventDefault();
+          play.trigger('click');
+        }
+      });
+    });
+    $('finna-video').on('keydown', function onKeyDown(e) {
+      if (e.which === 13 || e.which === 32) {
+        e.preventDefault();
+        $(this).trigger('click');
+      }
     });
   }
 

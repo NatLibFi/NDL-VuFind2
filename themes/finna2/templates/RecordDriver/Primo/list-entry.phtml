@@ -29,13 +29,13 @@
       <div class="result-body">
         <div class="resultItemLine1">
           <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>">
-            <h3 class="record-title"><?=$this->record($this->driver)->getTitleHtml()?><span class="sr-only"> <?=$this->transEsc('To the record')?></span></h3>
+            <h3 class="record-title"><?=$this->record($this->driver)->getTitleHtml()?><span class="visually-hidden"> <?=$this->transEsc('To the record')?></span></h3>
           </a>
         </div>
 
         <div class="record-core-metadata">
           <?=$this->record($this->driver)->getFormatList() ?><br>
-          <?php if($this->driver->isCollection()): ?>
+          <?php if ($this->driver->isCollection()): ?>
             <?=implode('<br>', array_map([$this, 'escapeHtml'], $this->driver->getSummary())); ?>
           <?php else: ?>
             <?php
@@ -86,7 +86,7 @@
         </div>
 
         <div class="last">
-          <?php if(!$this->driver->isCollection()): ?>
+          <?php if (!$this->driver->isCollection()): ?>
             <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
               <?php if (!empty($snippet['caption'])): ?>
                 <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
@@ -97,7 +97,8 @@
             <?php endif; ?>
           <?php endif; ?>
 
-          <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
+          <?php $recordHelper = $this->record($this->driver); ?>
+          <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $recordHelper->getTags(
                 null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
                 $user_id,
                 'tag'
@@ -110,7 +111,6 @@
             <br>
           <?php endif; ?>
 
-          <?php $recordHelper = $this->record($this->driver); ?>
           <?=$recordHelper->renderTemplate('holdings.phtml');?>
           <?=$recordHelper->getOnlineUrls('results');?>
           <?=$recordHelper->getCitationLinks();?>

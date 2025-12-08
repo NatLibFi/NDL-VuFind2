@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -82,6 +82,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                         'downloadable' => false,
+                        'cacheSizes' => [],
                     ],
                 ],
             ],
@@ -153,6 +154,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                 'getDescriptions',
                 [
                     0 => 'painting by Juha Kuoma',
+                    1 => 'abstract should be removed',
                 ],
             ],
             [
@@ -172,10 +174,9 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
      *
-     * @dataProvider getTestFunctionsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestFunctionsData')]
     public function testFunctions(
         string $function,
         $expected
@@ -241,10 +242,9 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
      *
-     * @dataProvider getPublicationDateRangeData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getPublicationDateRangeData')]
     public function testGetPublicationDateRange(
         string $indexValue,
         ?array $expected
@@ -252,7 +252,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
         $record = new SolrQdc(
             [],
             [],
-            new \Laminas\Config\Config([])
+            new \VuFind\Config\Config([])
         );
         $record->setRawData(
             [
@@ -264,6 +264,18 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
             $expected,
             $record->getPublicationDateRange()
         );
+    }
+
+    /**
+     * Simple function to test element filtering works properly
+     *
+     * @return void
+     */
+    public function testXmlElementFilter(): void
+    {
+        $driver = $this->getDriver();
+        $filtered = $this->getFixture('qdc/qdc_museum_test_filtered.xml', 'Finna');
+        $this->assertEquals($filtered, $driver->getFilteredXML());
     }
 
     /**
@@ -319,10 +331,9 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
      *
-     * @dataProvider getHumanReadablePublicationDatesData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getHumanReadablePublicationDatesData')]
     public function testGetHumanReadablePublicationDates(
         string $indexValue,
         ?array $expected
@@ -330,7 +341,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
         $record = new SolrQdc(
             [],
             [],
-            new \Laminas\Config\Config([])
+            new \VuFind\Config\Config([])
         );
         $record->setRawData(
             [
@@ -374,7 +385,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
         $record = new SolrQdc(
             $config,
             $config,
-            new \Laminas\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig)
         );
         $localeConfig = [
             'Site' => [
@@ -389,7 +400,7 @@ class SolrQdcMuseumTest extends \PHPUnit\Framework\TestCase
                 'en-gb' => 'British English',
             ],
         ];
-        $localeConfig = new \Laminas\Config\Config($localeConfig);
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         $record->setRawData(['id' => 'knp-247394', 'fullrecord' => $fixture]);
         return $record;

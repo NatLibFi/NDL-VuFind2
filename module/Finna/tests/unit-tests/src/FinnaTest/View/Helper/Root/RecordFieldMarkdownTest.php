@@ -3,7 +3,7 @@
 /**
  * RecordFieldMarkdown Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -29,7 +29,6 @@
 
 namespace FinnaTest\View\Helper\Root;
 
-use Finna\View\Helper\Root\CleanHtml;
 use Finna\View\Helper\Root\RecordFieldMarkdown;
 
 /**
@@ -44,6 +43,7 @@ use Finna\View\Helper\Root\RecordFieldMarkdown;
 class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
 {
     use \VuFindTest\Feature\ViewTrait;
+    use \FinnaTest\Traits\ViewTrait;
 
     /**
      * Get view helper to test.
@@ -53,7 +53,9 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
     protected function getHelper(): RecordFieldMarkdown
     {
         $view = $this->getPhpRenderer(
-            ['cleanHtml' => new CleanHtml(null, [])],
+            [
+                'cleanHtml' => $this->getCleanHtml([]),
+            ],
             'finna2'
         );
         $markdown = new RecordFieldMarkdown(

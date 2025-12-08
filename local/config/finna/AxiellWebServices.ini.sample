@@ -195,7 +195,7 @@ enabled = false
 ;sort['AUTHOR ASCENDING'] = 'sort_author'
 ;sort['TITLE ASCENDING'] = 'sort_title'
 
-[onlinePayment]
+[OnlinePayment]
 ; Whether online payment is enabled. Default is false.
 enabled = true
 ; Transaction fee (in cents) added to each payment
@@ -212,6 +212,11 @@ currency = 'EUR'
 ; expression enclosed in slashes (e.g. '/^Lasku - Lasku\b/')
 nonPayable[] = '/^Lasku - Lasku\b/'
 nonPayable[] = '/^Muu maksu/'
+; Fine types that prevent payment completely
+;blockingNonPayableTypes[] = "XYZ"
+; Fine descriptions that prevent payment completely (enclose in // for regular expressions; modifiers supported,
+; other enclosures not)
+;blockingNonPayableDescriptions[] = "/Debt.*collection/"
 ; Whether the paid amount must match the payable amount. Default is true. If false,
 ; payments of less than the full amount are accepted.
 ;exactBalanceRequired = false
@@ -231,3 +236,21 @@ options[0] = loan_history_never
 ;settings[lastreturned] = 15
 ;settings[mostborrowed] = 480
 ;settings[mostrequested] = 240
+
+; Block ILS methods during given times. Format is "method[] = "value""
+; method  - Method in ILS driver
+; value   - startDate/endDate or startTime/endTime, where startDate and endDate are YYYY-MM-DD or YYYY-MM-DD HH:MM
+;           and startTime and endTime are HH:MM
+; startDate and endDate specify fixed start and end dates (with optional times) to make the method unavailable.
+; You do not need to specify both -- you can use either on its own for an open-ended range.
+; You MUST use slash as a separator, for example to only define endDate: "/2025-09-01".
+; startTime and endTime specify a time window that will block the method every day.
+; If endTime is lower than startTime, the driver will assume a time window crossing from one day into the next day.
+; When setting a recurring window, both startTime and endTime MUST be set.
+; Timed blocks can be displayed using MethodTimedBlocks view helper.
+; Common methods for blocking features:
+; - Renewals: Blocks renewing loans
+; - registerPayment: Blocks online payment
+[TimedBlocks]
+;Renewals[] = "2025-08-01/2025-09-01"
+;Renewals[] = "23:00/01:00"

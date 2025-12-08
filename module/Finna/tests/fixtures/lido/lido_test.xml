@@ -25,6 +25,12 @@
       <objectIdentificationWrap>
         <repositoryWrap>
           <repositorySet>
+            <workID>Primary id</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113">000001</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113" label="inventaarionumero">000002</workID>
+            <workID type="esinenumero">000003</workID>
+          </repositorySet>
+          <repositorySet>
             <displayRepository lang="fi">Tätä paikkaa ei näytetä</displayRepository>
             <repositoryLocation>
               <namePlaceSet>
@@ -160,6 +166,60 @@
             </subject>
           </subjectSet>
         </subjectWrap>
+        <relatedWorksWrap>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject label="Julkaistu teoksessa">Helsinki = Empirekaupungin synty 1550-1850, Helsinki, s. 89</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">URN:ISBN:951-746-543-2</objectID>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is reproduced in</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Multiple titles in one field; Should be discarded from search</displayObject>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is reproduced in</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject label="Verkkojulkaisu">Online publication, discarded from search</displayObject>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is reproduced in</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>This is a very long title and for better result, only the first 30 words should be included in search title, which means that its last word should be this. The rest of the title should be included only in display title.</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">URN:ISBN:951-772-866-2</objectID>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>julkaisu</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>A publication with no valid ISBN</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">12345678</objectID>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>kirjallisuus</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+        </relatedWorksWrap>
       </objectRelationWrap>
       <eventWrap>
         <eventSet>
@@ -174,6 +234,10 @@
                   <nameActorSet>
                     <appellationValue>  Mattilainen, Meikä   </appellationValue>
                   </nameActorSet>
+                  <vitalDatesActor>
+                    <earliestDate>1951</earliestDate>
+                    <latestDate>2019</latestDate>
+                  </vitalDatesActor>
                 </actor>
                 <roleActor>
                   <term>haaveilija</term>
@@ -261,6 +325,7 @@
             <eventActor>
               <actorInRole>
                 <actor>
+                  <actorID type="URI" source="finaf">http://urn.fi/URN:NBN:fi:au:finaf:000228701</actorID>
                   <nameActorSet>
                     <appellationValue>Puu, Teisto</appellationValue>
                   </nameActorSet>
@@ -308,7 +373,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <conceptID>CC BY 4.0</conceptID>
               <term lang="fi">Tässä on kuvien copyright.</term>
             </rightsType>
           </rightsResource>
@@ -351,7 +416,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">InC</conceptID>
+              <conceptID>InC</conceptID>
               <term lang="fi">Tässä on kuvien copyright.</term>
             </rightsType>
           </rightsResource>
@@ -359,6 +424,13 @@
         <resourceSet>
           <resourceRepresentation type="preview_3D">
             <linkResource formatResource="glTF">https://gltfmalli.gltf</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">bytes</measurementUnit>
+              <measurementValue>60840000</measurementValue>
+            </resourceMeasurementsSet>
           </resourceRepresentation>
           <resourceRepresentation type="preview_3D">
             <linkResource formatResource="glb">https://glbmalli.glb</linkResource>
@@ -368,7 +440,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">InC</conceptID>
+              <conceptID>InC</conceptID>
               <term lang="fi">Tässä on mallien copyright.</term>
             </rightsType>
           </rightsResource>
@@ -383,6 +455,15 @@
           <resourceDescription type="displayLink">VideoTesti.mp4</resourceDescription>
           <resourceRepresentation type="preview_video">
             <linkResource formatResource="mp4">https://linkkivideoon.fi</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementType lang="sv">storlek</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">byte</measurementUnit>
+              <measurementUnit lang="sv">byte</measurementUnit>
+              <measurementValue>74576596</measurementValue>
+            </resourceMeasurementsSet>
           </resourceRepresentation>
         </resourceSet>
         <resourceSet>
@@ -398,7 +479,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <conceptID>CC BY 4.0</conceptID>
               <term lang="fi">Tekstitiedoston tarkempi käyttöoikeuskuvaus</term>
             </rightsType>
           </rightsResource>

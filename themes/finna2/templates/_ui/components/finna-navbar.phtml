@@ -1,4 +1,27 @@
 <?php
+  /**
+   * Navbar component based on Bootstrap's Navbar. Navbars are responsive components
+   * that serve as navigation headers for your application or site. They begin
+   * collapsed (and are toggleable) in mobile views and become horizontal as the
+   * available viewport width increases.
+   *
+   * @param ?string   ariaLabel          Value for aria-label attribute
+   * @param ?iterable attributes         Additional attributes
+   * @param ?string   brandContent       Brand content HTML
+   * @param ?string   brandLink          Brand link (href value)
+   * @param ?string   brandSrOnly        Brand text for screen readers only
+   * @param ?string   collapseContent    Collapse content HTML
+   * @param ?string   collapseId         Id attribute value for collapse content
+   * @param ?string   toggleBtnSrOnly    Toggle button text for screen readers only
+   * @param ?string   toggleBtnIconClass Toggle button icon class
+   * @param ?string   toggleBtnLabel     Toggle button label
+   *
+   * Supported variations using CSS classes:
+   * - finna-navbar-content
+   *     Content navigation variation. This variation has a prominent color for the
+   *     navbar and the mobile collapse content is styled to look similar to dropdown
+   *     menus.
+   */
   $__attributes = $this->htmlAttributes($attributes ?? []);
   if (isset($ariaLabel)) {
     $__attributes['aria-label'] = $ariaLabel;
@@ -10,13 +33,13 @@
       <?php if (isset($brandContent)): ?>
         <span class="navbar-brand">
           <?php if (isset($brandLink)): ?><a href="<?= $brandLink ?>"><?php endif; ?>
-          <?php if (isset($brandSrOnly)): ?><span class="sr-only"><?= $brandSrOnly ?></span><?php endif; ?>
+          <?php if (isset($brandSrOnly)): ?><span class="visually-hidden"><?= $brandSrOnly ?></span><?php endif; ?>
           <?= $brandContent ?>
           <?php if (isset($brandLink)): ?></a><?php endif; ?>
         </span>
       <?php endif; ?>
       <button type="button" class="navbar-toggler navbar-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#<?= $collapseId ?? '' ?>" aria-expanded="false">
-        <?php if (isset($toggleBtnSrOnly)): ?><span class="sr-only"><?= $toggleBtnSrOnly ?></span><?php endif; ?>
+        <?php if (isset($toggleBtnSrOnly)): ?><span class="visually-hidden"><?= $toggleBtnSrOnly ?></span><?php endif; ?>
         <?php if (isset($toggleBtnLabel)): ?><?= $toggleBtnLabel ?><?php endif; ?>
         <?php if (isset($toggleBtnIconClass)): ?><i class="<?= $toggleBtnIconClass ?>"></i><?php endif; ?>
       </button>

@@ -3,7 +3,7 @@
 /**
  * SolrForward Test Class
  *
- * PHP version 7
+ * PHP version 8
  *
  * Copyright (C) The National Library of Finland 2022.
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -485,10 +485,9 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      * @param string $key      Key of the array to test.
      * @param array  $expected Result to be expected.
      *
-     * @dataProvider getPresentersData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getPresentersData')]
     public function testGetPresenters(string $key, array $expected): void
     {
         $driver = $this->getDriver();
@@ -588,10 +587,9 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      * @param string $key      Key of the array to test.
      * @param array  $expected Result to be expected.
      *
-     * @dataProvider getNonPresenterSecondaryAuthorsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getNonPresenterSecondaryAuthorsData')]
     public function testGetNonPresenterSecondaryAuthors(
         string $key,
         array $expected
@@ -709,6 +707,10 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     [
                         'name' => 'Pat',
                         'region' => 'Norja',
+                    ],
+                    [
+                        'name' => 'Tanska',
+                        'region' => '',
                     ],
                 ],
             ],
@@ -834,10 +836,9 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test.
      * @param string $expected Result to be expected.
      *
-     * @dataProvider getEventsStringData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getEventsStringData')]
     public function testEvents(
         string $function,
         string $expected
@@ -856,10 +857,9 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test.
      * @param array  $expected Result to be expected.
      *
-     * @dataProvider getEventsArrayData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getEventsArrayData')]
     public function testEventsWithArrayExpected(
         string $function,
         array $expected
@@ -886,7 +886,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
         $record = new SolrForward(
             null,
             null,
-            new \Laminas\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig)
         );
         $record->setRawData(['fullrecord' => $fixture]);
         return $record;

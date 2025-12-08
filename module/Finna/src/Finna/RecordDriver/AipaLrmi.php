@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2024.
+ * Copyright (C) The National Library of Finland 2022-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -159,7 +159,7 @@ class AipaLrmi extends SolrLrmi implements
      *
      * @return array
      */
-    public function getNonPresenterAuthors()
+    public function getNonPresenterAuthors(): array
     {
         $nonPresenterAuthors = parent::getNonPresenterAuthors();
         if (!is_callable([$this->getContainerRecord(), 'getNonPresenterAuthors'])) {
@@ -261,43 +261,13 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Return encapsulated record view type.
-     *
-     * @return string
-     */
-    public function getEncapsulatedRecordViewType(): string
-    {
-        $attributes = $this->getXmlRecord()->attributes();
-        return (string)($attributes->{'display'} ?? 'grid');
-    }
-
-    /**
      * Returns the tag name of XML elements containing an encapsulated record.
      *
      * @return string
      */
-    public function getEncapsulatedRecordElementTagName(): string
+    protected function getEncapsulatedRecordElementTagName(): string
     {
         return 'material';
-    }
-
-    /**
-     * Return ID for an encapsulated record.
-     *
-     * @param mixed $item Encapsulated record item.
-     *
-     * @return string
-     */
-    protected function getEncapsulatedRecordId($item): string
-    {
-        // Implementation for XML items with ID specified in an 'identifier' element
-        if ($item instanceof \SimpleXMLElement) {
-            return (string)$item->identifier;
-        }
-        if ($item instanceof \DOMNode) {
-            return $item->getElementsByTagName('identifier')[0]->nodeValue;
-        }
-        throw new \RuntimeException('Unable to determine ID');
     }
 
     /**
@@ -361,33 +331,5 @@ class AipaLrmi extends SolrLrmi implements
                 unset($baseElement->{$filterField}[0]);
             }
         }
-    }
-
-    /**
-     * Return record driver instance for an encapsulated curated record.
-     *
-     * @param \SimpleXMLElement $item Curated record item XML
-     *
-     * @return CuratedRecord
-     *
-     * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
-     */
-    protected function getCuratedRecordDriver(\SimpleXMLElement $item): CuratedRecord
-    {
-        /* @var CuratedRecord $driver */
-        $driver = $this->recordDriverManager->get('CuratedRecord');
-
-        $driver->setContainerRecord($this);
-
-        $data = [
-            'id' => (string)$item->identifier,
-            'position' => (int)$item->position,
-            'notes' => (string)$item->comment,
-            'fullrecord' => $item->asXML(),
-        ];
-
-        $driver->setRawData($data);
-
-        return $driver;
     }
 }

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -114,6 +114,11 @@ class SearchMemory extends AbstractHelper
             $queryHelper = $queryHelper->setJumpto(false);
 
             $url .= $queryHelper->getParams(false);
+
+            // Make sure the URL stored in search memory stays in sync; if the stored URL has been manipulated
+            // through the EditMemory action and the user goes back to a page with a sid parameter, things can
+            // get into a bad state. Refreshing the value here ensures consistent behavior.
+            $this->memory->rememberSearch($url);
 
             return $url;
         }

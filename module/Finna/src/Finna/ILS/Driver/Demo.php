@@ -22,8 +22,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -35,11 +35,7 @@
 
 namespace Finna\ILS\Driver;
 
-use VuFind\Exception\ILS as ILSException;
-
 use function count;
-use function in_array;
-use function is_callable;
 
 /**
  * Advanced Dummy ILS Driver -- Returns sample values based on Solr index.
@@ -66,24 +62,6 @@ class Demo extends \VuFind\ILS\Driver\Demo
      */
     public function getConfig($function, $params = null)
     {
-        if ($function == 'onlinePayment') {
-            // Lower-case o is used in all other drivers, so use it here as well by
-            // default but allow OnlinePayment as a fallback:
-            $functionConfig = $this->config['onlinePayment']
-                ?? $this->config['OnlinePayment'] ?? [];
-            if ($functionConfig) {
-                $functionConfig['exactBalanceRequired'] = true;
-            }
-            return $functionConfig;
-        }
-        if (
-            'getPasswordRecoveryToken' === $function
-            || 'recoverPassword' === $function
-        ) {
-            return !empty($this->config['PasswordRecovery']['enabled'])
-                ? $this->config['PasswordRecovery'] : false;
-        }
-
         $result = parent::getConfig($function, $params);
         if ($function == 'Holdings') {
             $result['display_total_item_count_in_results']
@@ -121,271 +99,20 @@ class Demo extends \VuFind\ILS\Driver\Demo
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options
      *
      * @return array On success, an associative array with the following keys:
      * id, availability (boolean), status, location, reserve, callnumber,
      * duedate, number, barcode.
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         $result = parent::getHolding($id, $patron, $options);
         if (!empty($result['holdings'])) {
             $result['holdings'][] = $this->getHoldingsSummary($result['holdings'], $id);
         }
         return $result;
-    }
-
-    /**
-     * Get Patron Fines
-     *
-     * This is responsible for retrieving all fines by a specific patron.
-     *
-     * @param array $patron The patron array from patronLogin
-     *
-     * @return mixed        Array of the patron's fines on success.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function getMyFines($patron)
-    {
-        $fines = parent::getMyFines($patron);
-        if (!empty($fines)) {
-            $fines[0]['fine'] = 'Accrued Fine';
-        }
-        $fines = $this->markOnlinePayableFines($fines);
-        $session = $this->getSession($patron['id'] ?? null);
-        $session->fines = $fines;
-        return $fines;
-    }
-
-    /**
-     * Return details on fees payable online.
-     *
-     * @param array  $patron          Patron
-     * @param array  $fines           Patron's fines
-     * @param ?array $selectedFineIds Selected fines
-     *
-     * @throws ILSException
-     * @return array Associative array of payment details,
-     * false if an ILSException occurred.
-     */
-    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
-    {
-        if (!empty($fines)) {
-            $nonPayableReason = false;
-            $amount = 0;
-            $payableFines = [];
-            foreach ($fines as $fine) {
-                if (
-                    null !== $selectedFineIds
-                    && !in_array($fine['fine_id'], $selectedFineIds)
-                ) {
-                    continue;
-                }
-                if (!$fine['payableOnline'] && !$fine['accruedFine']) {
-                    $nonPayableReason
-                        = 'online_payment_fines_contain_nonpayable_fees';
-                } elseif ($fine['payableOnline']) {
-                    $amount += $fine['balance'];
-                    $payableFines[] = $fine;
-                }
-            }
-            $config = $this->getConfig('onlinePayment');
-            $transactionFee = $config['transactionFee'] ?? 0;
-            if (
-                !$nonPayableReason
-                && isset($config['minimumFee'])
-                && $amount + $transactionFee < $config['minimumFee']
-            ) {
-                $nonPayableReason = 'online_payment_minimum_fee';
-            }
-            $res = [
-                'payable' => empty($nonPayableReason),
-                'amount' => $amount,
-                'fines' => $payableFines,
-            ];
-            if ($nonPayableReason) {
-                $res['reason'] = $nonPayableReason;
-            }
-            return $res;
-        }
-        return [
-            'payable' => false,
-            'amount' => 0,
-            'reason' => 'online_payment_minimum_fee',
-        ];
-    }
-
-    /**
-     * Support method for getMyFines.
-     *
-     * Appends booleans 'accruedFine' and 'payableOnline' to a fine.
-     *
-     * @param array $fines Processed fines.
-     *
-     * @return array $fines Fines.
-     */
-    protected function markOnlinePayableFines($fines)
-    {
-        $accruedType = 'Accrued Fine';
-
-        $config = $this->config['OnlinePayment'] ?? [];
-        $nonPayable = $config['nonPayable'] ?? [];
-        $nonPayable[] = $accruedType;
-        $id = 0;
-        foreach ($fines as &$fine) {
-            ++$id;
-            $payableOnline = true;
-            if (isset($fine['fine'])) {
-                if (in_array($fine['fine'], $nonPayable)) {
-                    $payableOnline = false;
-                }
-            }
-            $fine['accruedFine'] = ($fine['fine'] === $accruedType);
-            $fine['payableOnline'] = $payableOnline;
-            $fine['fine_id'] = $id;
-            $fine['organization'] = $this->getFakeLoc();
-        }
-
-        return $fines;
-    }
-
-    /**
-     * Mark fees as paid.
-     *
-     * This is called after a successful online payment.
-     *
-     * @param array  $patron            Patron
-     * @param int    $amount            Amount to be registered as paid
-     * @param string $transactionId     Transaction ID
-     * @param int    $transactionNumber Internal transaction number
-     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
-     *
-     * @throws ILSException
-     * @return true|string True on success, error description on error
-     */
-    public function markFeesAsPaid(
-        $patron,
-        $amount,
-        $transactionId,
-        $transactionNumber,
-        $fineIds = null
-    ) {
-        if ($this->isFailing(__METHOD__, 10)) {
-            throw new ILSException('online_payment_registration_failed');
-        }
-
-        $session = $this->getSession($patron['id'] ?? null);
-        $paid = 0;
-        if (isset($session->fines)) {
-            foreach ($session->fines as $key => $fine) {
-                if (
-                    $fine['payableOnline']
-                    && (!$fineIds || in_array($fine['fine_id'], $fineIds))
-                ) {
-                    unset($session->fines[$key]);
-                    $paid += $fine['balance'];
-                }
-            }
-        }
-        if ($paid < $amount) {
-            $session->fines[] = [
-                'amount'   => $paid - $amount,
-                'createdate' => $this->dateConverter
-                    ->convertToDisplayDate('U', time()),
-                'fine'     => 'Balance',
-                'balance'  => $paid - $amount,
-            ];
-        }
-
-        return true;
-    }
-
-    /**
-     * Helper method to determine whether or not a certain method can be
-     * called on this driver. Required method for any smart drivers.
-     *
-     * @param string $method The name of the called method.
-     * @param array  $params Array of passed parameters
-     *
-     * @return bool True if the method can be called with the given parameters,
-     * false otherwise.
-     *
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
-     */
-    public function supportsMethod($method, $params)
-    {
-        if ($method == 'markFeesAsPaid') {
-            $required = [
-                'currency', 'enabled',
-            ];
-
-            foreach ($required as $req) {
-                if (
-                    !isset($this->config['OnlinePayment'][$req])
-                    || empty($this->config['OnlinePayment'][$req])
-                ) {
-                    return false;
-                }
-            }
-
-            if (!$this->config['OnlinePayment']['enabled']) {
-                return false;
-            }
-
-            return true;
-        }
-        return is_callable([$this, $method]);
-    }
-
-    /**
-     * Get a password recovery token for a user
-     *
-     * @param array $params Required params such as cat_username and email
-     *
-     * @return array Associative array of the results
-     */
-    public function getPasswordRecoveryToken($params)
-    {
-        if ((rand() % 10) > 8) {
-            throw new ILSException('ils_connection_failed');
-        }
-        if ((rand() % 10) > 8) {
-            return [
-                'success' => false,
-                'error' => 'Simulating failure',
-            ];
-        }
-        $session = $this->getSession();
-        $session->passwordRecoveryToken = md5(rand());
-        return [
-            'success' => true,
-            'token' => $session->passwordRecoveryToken,
-        ];
-    }
-
-    /**
-     * Recover user's password with a token from getPasswordRecoveryToken
-     *
-     * @param array $params Required params such as cat_username, token and new
-     * password
-     *
-     * @return array Associative array of the results
-     */
-    public function recoverPassword($params)
-    {
-        $session = $this->getSession();
-        if ($session->passwordRecoveryToken != $params['token']) {
-            return [
-                'success' => false,
-                'error' => 'Recovery token mismatch',
-            ];
-        }
-        return [
-            'success' => true,
-        ];
     }
 
     /**
@@ -439,6 +166,11 @@ class Demo extends \VuFind\ILS\Driver\Demo
                     && empty($item['inTransit']);
                 if (!isset($item['available'])) {
                     $list[$key]['available'] = false;
+                }
+                if (!empty($list[$key]['last_pickup_date'])) {
+                    $days = rand(1, 7);
+                    $list[$key]['last_pickup_date'] = $this->dateConverter
+                            ->convertToDisplayDate('U', strtotime("now + $days days"));
                 }
             }
         }
@@ -524,5 +256,19 @@ class Demo extends \VuFind\ILS\Driver\Demo
             'ordered' => rand(0, 20),
         ];
         return $result;
+    }
+
+    /**
+     * Generate random fines
+     *
+     * @return array
+     */
+    protected function getRandomFines(): array
+    {
+        $fines = parent::getRandomFines();
+        foreach ($fines as &$fine) {
+            $fine['organization'] ??= $this->getFakeLoc();
+        }
+        return $fines;
     }
 }

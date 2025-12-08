@@ -7,7 +7,7 @@
   <?php return; ?>
 <?php endif; ?>
 
-<span class="sr-only" aria-live="polite"><?=$this->transEsc('result_count', ['%%count%%' => count($results)])?></span>
+<span class="visually-hidden" aria-live="polite"><?=$this->transEsc('result_count', ['%%count%%' => count($results)])?></span>
 <?php foreach ($results as $result): ?>
   <div class="location-search-result">
     <div class="location-search-result-main">
@@ -28,9 +28,9 @@
     <div class="open-times-info">
       <div class="open-or-closed">
         <?php if ($result['openNow']): ?>
-          <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open')?></span>
+          <span class="location-is-open info-element"><?=$this->transEsc('organisation_info_is_open_now')?></span>
         <?php else: ?>
-          <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed')?></span>
+          <span class="location-is-closed info-element"><?=$this->transEsc('organisation_info_is_closed_now')?></span>
         <?php endif; ?>
       </div>
       <?php foreach ($result['openTimes']['schedules'] as $schedule): ?>

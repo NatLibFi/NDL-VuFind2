@@ -15,12 +15,14 @@
     </form>
 </div>
 <?php
-    echo $this->inlineScript()->appendFile('finna-favorites.js');
     $script = <<<JS
-        $('.btn-upload').on('click', function () {
-          finna.favorites.upload();
-        });
+        finna.scriptLoader.load(
+            {'finna-favorites': 'finna-favorites.js'},
+            () => {
+                document.querySelector('#favorites-import-dialog .btn-upload').addEventListener('click', finna.favorites.upload);
+            }
+        )
         JS;
-    echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+    echo $this->assetManager()->outputInlineScriptString($script);
 ?>
 <!-- END of: finna - myresearch/import.phtml -->

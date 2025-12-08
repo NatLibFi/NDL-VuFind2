@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Db_Interface
@@ -52,15 +52,6 @@ interface FinnaDueDateReminderEntityInterface extends EntityInterface
     public function getId(): ?int;
 
     /**
-     * Set user.
-     *
-     * @param UserEntityInterface $user User owning the list.
-     *
-     * @return FinnaFeeEntityInterface
-     */
-    public function setUser(UserEntityInterface $user): FinnaDueDateReminderEntityInterface;
-
-    /**
      * Get user.
      *
      * @return UserEntityInterface
@@ -68,50 +59,59 @@ interface FinnaDueDateReminderEntityInterface extends EntityInterface
     public function getUser(): UserEntityInterface;
 
     /**
-     * Loan Id setter
+     * Set user.
      *
-     * @param string $loanId Loan Id
+     * @param UserEntityInterface $user User owning the list.
      *
-     * @return FinnaDueDateReminderEntityInterface
+     * @return static
      */
-    public function setLoanId(string $loanId): FinnaDueDateReminderEntityInterface;
+    public function setUser(UserEntityInterface $user): static;
 
     /**
-     * Loan Id getter
+     * Get loan ID.
      *
      * @return string
      */
     public function getLoanId(): string;
 
     /**
-     * Due date setter
+     * Set loan ID.
+     *
+     * @param string $loanId Loan Id
+     *
+     * @return static
+     */
+    public function setLoanId(string $loanId): static;
+
+    /**
+     * Get due date.
+     *
+     * @return DateTime
+     */
+    public function getDueDate(): DateTime;
+
+    /**
+     * Set due date.
      *
      * @param DateTime $dateTime Due date
      *
-     * @return FinnaTransactionEntityInterface
+     * @return static
      */
-    public function setDueDate(DateTime $dateTime): FinnaDueDateReminderEntityInterface;
+    public function setDueDate(DateTime $dateTime): static;
 
     /**
-     * Due date getter
+     * Get notification date.
      *
      * @return DateTime
      */
-    public function getDueDate(): Datetime;
+    public function getNotificationDate(): DateTime;
 
     /**
-     * Notification date setter
+     * Set notification date.
      *
      * @param ?DateTime $dateTime Notification date
      *
-     * @return FinnaTransactionEntityInterface
+     * @return static
      */
-    public function setNotificationDate(?DateTime $dateTime): FinnaDueDateReminderEntityInterface;
-
-    /**
-     * Notification date getter
-     *
-     * @return DateTime
-     */
-    public function getNotificationDate(): Datetime;
+    public function setNotificationDate(?DateTime $dateTime): static;
 }

@@ -20,8 +20,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Session_Handlers
@@ -32,7 +32,7 @@
 
 namespace VuFind\Session;
 
-use Laminas\Config\Config;
+use VuFind\Config\Config;
 
 use function get_class;
 use function in_array;
@@ -58,10 +58,10 @@ class Memcache extends AbstractBase
     /**
      * Constructor
      *
-     * @param Config                    $config Session configuration ([Session] section of config.ini)
+     * @param ?Config                   $config Session configuration ([Session] section of config.ini)
      * @param \Memcache|\Memcached|null $client Optional Memcache client object
      */
-    public function __construct(Config $config = null, object $client = null)
+    public function __construct(?Config $config = null, ?object $client = null)
     {
         parent::__construct($config);
         $this->connect($config, $client);

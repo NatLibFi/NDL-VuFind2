@@ -67,6 +67,11 @@ function FinnaPaginator(element, images, settings) {
   _.onDocumentLoadCallbacks = [];
   _.openImageIndex = 0;
   _.imagePopup = $(imageElement).clone();
+  // Prevent toggletip click event from propagating to other elements.
+  _.root.find('.finna-toggletip .partial-images').on('click', (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  });
   _.init();
 
   // Handle throttled resize
@@ -719,13 +724,16 @@ FinnaPaginator.prototype.setButtons = function setButtons() {
 FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
   var _ = this;
   var imageIndex = +_.openImageIndex + 1;
-  var advanced = translations.image + ' ' + imageIndex + ' / ' + _.images.length;
-  var plain = '<span class="image-current">' +  imageIndex + '</span>' + '/' + '<span class="image-all">'  + _.images.length + '</span>';
+  let imageOfImages = `${imageIndex} / ${_.images.length}`;
+  if (_.images.length < _.settings.totalImagesCount) {
+    imageOfImages += ` (${_.settings.totalImagesCount})`;
+  }
+  var advanced = `${translations.image} ${imageOfImages}`;
 
   if (_.popup.pagerInfo) {
     _.popup.pagerInfo.find('.image-index').html(advanced);
   }
-  _.pagerInfo.find('.image-index').html(plain);
+  _.pagerInfo.find('.image-index').html(imageOfImages);
 };
 
 /**

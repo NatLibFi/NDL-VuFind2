@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -31,13 +31,14 @@
 
 namespace Finna\Controller;
 
-use Finna\Db\Service\FinnaCacheServiceInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container as SessionContainer;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
+use VuFind\Db\Type\AuditEventSubtype;
+use VuFind\Db\Type\AuditEventType;
 use VuFind\Exception\Auth as AuthException;
 
 use function in_array;
@@ -84,14 +85,13 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $cards = [];
                 $patron = $this->getILSAuthenticator()->storedCatalogLogin();
                 foreach ($view->libraryCards as $card) {
-                    $card = $card->toArray();
                     if (
                         $patron
-                        && $patron['cat_username'] === $card['cat_username']
+                        && $patron['cat_username'] === $card->getCatUsername()
                     ) {
                         $profile = $this->getILS()->getMyProfile($patron);
                         if (!empty($profile['barcode'])) {
-                            $card['barcode'] = $profile['barcode'];
+                            $card->setBarcode($profile['barcode']);
                         }
                         array_unshift($cards, $card);
                         continue;
@@ -209,81 +209,22 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
      * Recover a library account
      *
      * @return View object
+     *
+     * @deprecated Exists for back-compatibility with old implementation only
      */
     public function recoverAction()
     {
-        // Make sure we're configured to do this
-        $target = $this->params()->fromQuery(
-            'target',
-            $this->params()->fromPost('target', '')
+        $params = [
+            'target' => $this->params()->fromQuery('target') ?? $this->params()->fromPost('target'),
+            'auth_method' => $this->params()->fromQuery('auth_method')
+                ?? $this->params()->fromPost('auth_method')
+                ?? 'MultiILS',
+        ];
+        return $this->redirect()->toRoute(
+            'default',
+            ['controller' => 'MyResearch', 'action' => 'Recover'],
+            ['query' => $params]
         );
-        $catalog = $this->getILS();
-        $recoveryConfig = $catalog->checkFunction(
-            'getPasswordRecoveryToken',
-            ['patron' => ['cat_username' => "$target.123"]]
-        );
-        $view = $this->createViewModel(
-            [
-                'target' => $target,
-            ]
-        );
-        if (!$recoveryConfig) {
-            $view->recoveryDisabled = true;
-        }
-        $view->useCaptcha = $this->captcha()->active('passwordRecovery');
-        // If we have a submitted form
-        if (
-            $recoveryConfig
-            && $this->formWasSubmitted(null, $view->useCaptcha)
-        ) {
-            // Check if we have a submitted form, and use the information
-            // to get the user's information
-            $username = $this->params()->fromPost('username');
-            $email = $this->params()->fromPost('email');
-
-            $result = $catalog->getPasswordRecoveryToken(
-                [
-                    'cat_username' => "$target.$username",
-                    'email' => $email,
-                ]
-            );
-
-            if (!empty($result['success'])) {
-                // Make totally sure the timestamp is exactly 10 characters:
-                $time = str_pad(substr((string)time(), 0, 10), 10, '0', STR_PAD_LEFT);
-                $hash = md5($username . $email . rand()) . $time;
-
-                $finnaCacheService = $this->getDbService(FinnaCacheServiceInterface::class);
-                $row = $finnaCacheService->createEntity()
-                    ->setResourceId($hash . '.recovery_hash')
-                    ->setModificationTimestamp(time())
-                    ->setData(
-                        json_encode(
-                            [
-                                'target' => $target,
-                                'username' => $username,
-                                'email' => $email,
-                                'token' => $result['token'],
-                            ]
-                        )
-                    );
-                $finnaCacheService->persistEntity($row);
-                $this->sendRecoveryEmail(
-                    $email,
-                    $target,
-                    [
-                        'hash' => $hash,
-                    ]
-                );
-                $view->emailSent = true;
-                $this->flashMessenger()
-                    ->addMessage('library_card_recovery_email_sent', 'success');
-            } else {
-                $this->flashMessenger()
-                    ->addErrorMessage($result['error'] ?? 'recovery_user_not_found');
-            }
-        }
-        return $view;
     }
 
     /**
@@ -556,124 +497,6 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     }
 
     /**
-     * Handling submission of a new password for a library card.
-     *
-     * @return view
-     */
-    public function resetPasswordAction()
-    {
-        if ($this->getUser()) {
-            return $this->redirect()->toRoute(
-                'myresearch-home',
-                [],
-                ['query' => ['redirect' => 0]]
-            );
-        }
-
-        $hash = $this->params()->fromQuery(
-            'hash',
-            $this->params()->fromPost('hash', '')
-        );
-        // Make sure to not include '>' if the mail client doesn't handle links
-        // properly
-        $hash = preg_replace('/>$/', '', $hash);
-
-        // Check if hash is expired
-        $hashtime = $this->getHashAge($hash);
-        $config = $this->getConfig();
-        $hashLifetime = $config->Authentication->recover_hash_lifetime
-            ?? 1209600; // Two weeks
-        if (time() - $hashtime > $hashLifetime) {
-            error_log(
-                "Recovery hash expired: $hash, time: $hashtime,"
-                . " lifetime: $hashLifetime, hash age: " . (time() - $hashtime)
-                . ', query: ' . $_SERVER['QUERY_STRING']
-            );
-            $this->flashMessenger()->addErrorMessage('recovery_expired_hash');
-            return $this->redirect()->toRoute(
-                'myresearch-home',
-                [],
-                ['query' => ['redirect' => 0]]
-            );
-        }
-
-        $finnaCacheService = $this->getDbService(FinnaCacheServiceInterface::class);
-        $recoveryRecord = $finnaCacheService->getByResourceId("$hash.recovery_hash");
-        if (!$recoveryRecord) {
-            $this->flashMessenger()->addMessage('recovery_invalid_hash', 'error');
-            return $this->redirect()->toRoute(
-                'myresearch-home',
-                [],
-                ['query' => ['redirect' => 0]]
-            );
-        }
-        $recoveryData = json_decode($recoveryRecord->getData(), true);
-
-        $target = $recoveryData['target'];
-        $catalog = $this->getILS();
-        $recoveryConfig = $catalog->checkFunction(
-            'recoverPassword',
-            ['patron' => ['cat_username' => "$target." . $recoveryData['username']]]
-        );
-        if (!$recoveryConfig) {
-            $this->flashMessenger()->addMessage('recovery_disabled', 'error');
-            return $this->redirect()->toRoute(
-                'myresearch-home',
-                [],
-                ['query' => ['redirect' => 0]]
-            );
-        }
-        $policy = $catalog->getPasswordPolicy(['cat_username' => "$target.123"]);
-        if (isset($policy['pattern']) && empty($policy['hint'])) {
-            $policy['hint']
-                = in_array($policy['pattern'], ['numeric', 'alphanumeric'])
-                    ? 'password_only_' . $policy['pattern'] : null;
-        }
-        $view = $this->createViewModel(
-            [
-                'target' => $target,
-                'hash' => $hash,
-                'passwordPolicy' => $policy,
-            ]
-        );
-        $view->useCaptcha = $this->captcha()->active('changePassword');
-        // Check Captcha
-        if ($this->formWasSubmitted(null, $view->useCaptcha)) {
-            $password = $this->params()->fromPost('password', '');
-            $password2 = $this->params()->fromPost('password2', '');
-            if ($password !== $password2) {
-                $this->flashMessenger()->addErrorMessage('Passwords do not match');
-                return $view;
-            }
-
-            $result = $catalog->recoverPassword(
-                [
-                    'cat_username' => "$target." . $recoveryData['username'],
-                    'email' => $recoveryData['email'],
-                    'token' => $recoveryData['token'],
-                    'password' => $password,
-                ]
-            );
-
-            if (!empty($result['success'])) {
-                $this->flashMessenger()->addSuccessMessage('new_password_success');
-                $finnaCacheService->deleteCacheEntry($recoveryRecord);
-                return $this->redirect()->toRoute(
-                    'myresearch-home',
-                    [],
-                    ['query' => ['redirect' => 0]]
-                );
-            } else {
-                $this->flashMessenger()->addErrorMessage('password_error_invalid');
-                if (!empty($result['error'])) {
-                    $this->flashMessenger()->addErrorMessage($result['error']);
-                }
-            }
-        }
-        return $view;
-    }
-
-    /**
      * Process the "edit library card" submission.
      *
      * @param UserEntityInterface $user Logged in user
@@ -709,9 +532,29 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return false;
         }
 
-        if ('password' === $loginMethod && !$patron) {
-            $this->flashMessenger()
-                ->addMessage('authentication_error_invalid', 'error');
+        if ($patron) {
+            $this->getAuditEventService()->addEvent(
+                AuditEventType::User,
+                AuditEventSubtype::EditCard,
+                $user,
+                data: [
+                    'username' => $username,
+                    'card_id' => $id,
+                ]
+            );
+        } else {
+            if ('password' === $loginMethod) {
+                $this->flashMessenger()->addErrorMessage('authentication_error_invalid');
+            }
+            $this->getAuditEventService()->addEvent(
+                AuditEventType::User,
+                AuditEventSubtype::ILSLoginFailure,
+                $user,
+                data: [
+                    'username' => $username,
+                    'card_id' => $id,
+                ]
+            );
             return false;
         }
         if ('email' === $loginMethod) {
@@ -726,6 +569,16 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $info,
                     ['auth_method' => 'Email'],
                     'editLibraryCard'
+                );
+                $this->getAuditEventService()->addEvent(
+                    AuditEventType::User,
+                    AuditEventSubtype::SendCardAuthEmail,
+                    $user,
+                    data: [
+                        'username' => $username,
+                        'card_id' => $id,
+                        'email' => $info['email'],
+                    ]
                 );
             }
             // Don't reveal the result
@@ -857,52 +710,13 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
 
         $this->flashMessenger()->addSuccessMessage('new_password_success');
 
-        return $this->redirect()->toRoute('librarycards-home');
-    }
+        $this->getAuditEventService()->addEvent(
+            AuditEventType::User,
+            AuditEventSubtype::PasswordChanged,
+            $user,
+        );
 
-    /**
-     * Helper function for recoverAction
-     *
-     * @param string $email     User's email address
-     * @param string $target    Login target
-     * @param array  $urlParams Recovery URL params
-     *
-     * @return void (sends email or adds error message)
-     */
-    protected function sendRecoveryEmail($email, $target, $urlParams)
-    {
-        // Attempt to send the email
-        try {
-            $config = $this->getConfig();
-            $renderer = $this->getViewRenderer();
-            $library = !empty($target)
-                ? $this->translate("source_$target", null, $target)
-                : $config->Site->title;
-            // Custom template for emails (text-only)
-            $message = $renderer->render(
-                'Email/recover-library-card-password.phtml',
-                [
-                    'library' => $library,
-                    'url' => $this->getServerUrl('librarycards-resetpassword')
-                        . '?' . http_build_query($urlParams),
-                ]
-            );
-            $config = $this->getConfig();
-            $subject = $this->translate(
-                'library_card_recovery_email_subject',
-                [
-                    '%%library%%' => $library,
-                ]
-            );
-            $this->serviceLocator->get(\VuFind\Mailer\Mailer::class)->send(
-                $email,
-                $this->getEmailSenderAddress($config),
-                $subject,
-                $message
-            );
-        } catch (\VuFind\Exception\Mail $e) {
-            $this->flashMessenger()->addMessage($e->getDisplayMessage(), 'error');
-        }
+        return $this->redirect()->toRoute('librarycards-home');
     }
 
     /**
@@ -944,7 +758,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $auth->getCatPasswordForUser($loginUser)
                 );
             }
-            if ($patron['cat_username'] === $card->getCatUsername()) {
+            if (($patron['cat_username'] ?? null) === $card->getCatUsername()) {
                 $profile = $catalog->getMyProfile($patron);
                 if (!empty($profile['barcode'])) {
                     $barcode = $profile['barcode'];

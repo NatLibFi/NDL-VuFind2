@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Related_Records
@@ -70,7 +70,7 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
     /**
      * Search configuration
      *
-     * @var \Laminas\Config\Config
+     * @var \VuFind\Config\Config
      */
     protected $searchConfig;
 
@@ -91,12 +91,12 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
     /**
      * Constructor
      *
-     * @param \VuFindSearch\Service  $search       Search service
-     * @param \Laminas\Config\Config $searchConfig Search configuration
+     * @param \VuFindSearch\Service $search       Search service
+     * @param \VuFind\Config\Config $searchConfig Search configuration
      */
     public function __construct(
         \VuFindSearch\Service $search,
-        \Laminas\Config\Config $searchConfig
+        \VuFind\Config\Config $searchConfig
     ) {
         $this->searchService = $search;
         $this->searchConfig = $searchConfig;

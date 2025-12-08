@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -29,12 +29,12 @@
 
 namespace VuFindTest\Auth;
 
-use Laminas\Config\Config;
 use Laminas\Http\Headers;
 use Laminas\Http\Request;
 use VuFind\Auth\Shibboleth;
 use VuFind\Auth\Shibboleth\MultiIdPConfigurationLoader;
 use VuFind\Auth\Shibboleth\SingleIdPConfigurationLoader;
+use VuFind\Config\Config;
 
 /**
  * Shibboleth authentication test class.
@@ -106,6 +106,16 @@ final class ShibbolethTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Standard teardown method.
+     *
+     * @return void
+     */
+    public function tearDown(): void
+    {
+        $this->tearDownLiveDatabaseContainer();
+    }
+
+    /**
      * Get an authentication object.
      *
      * @param ?array $config             Configuration to use (null for default)
@@ -132,7 +142,6 @@ final class ShibbolethTest extends \PHPUnit\Framework\TestCase
             $this->createMock(\VuFind\Auth\ILSAuthenticator::class)
         );
         $obj->setDbServiceManager($this->getLiveDbServiceManager());
-        $obj->setDbTableManager($this->getLiveTableManager());
         $obj->setConfig($config);
         return $obj;
     }
@@ -311,8 +320,8 @@ final class ShibbolethTest extends \PHPUnit\Framework\TestCase
     public function testLogin(): void
     {
         $user = $this->getAuthObject()->authenticate($this->getLoginRequest());
-        $this->assertEquals('testuser', $user->username);
-        $this->assertEquals('user@test.com', $user->email);
+        $this->assertEquals('testuser', $user->getUsername());
+        $this->assertEquals('user@test.com', $user->getEmail());
     }
 
     /**
@@ -324,8 +333,8 @@ final class ShibbolethTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getAuthObject(null, $this->getShibbolethConfig())
             ->authenticate($this->getLoginRequest($this->user1, false));
-        $this->assertEquals($user->cat_username, 'example1.testuser1');
-        $this->assertEquals($user->username, 'testuser1');
+        $this->assertEquals($user->getCatUsername(), 'example1.testuser1');
+        $this->assertEquals($user->getUsername(), 'testuser1');
     }
 
     /**
@@ -337,8 +346,8 @@ final class ShibbolethTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getAuthObject(null, $this->getShibbolethConfig())
             ->authenticate($this->getLoginRequest($this->user2, false));
-        $this->assertEquals($user->cat_username, 'example2.12345');
-        $this->assertEquals($user->username, 'testuser2');
+        $this->assertEquals($user->getCatUsername(), 'example2.12345');
+        $this->assertEquals($user->getUsername(), 'testuser2');
     }
 
     /**
@@ -362,8 +371,8 @@ final class ShibbolethTest extends \PHPUnit\Framework\TestCase
     {
         $user = $this->getAuthObject(null, $this->getShibbolethConfig(), true, false)
             ->authenticate($this->getLoginRequest($this->proxyUser, true));
-        $this->assertEquals($user->cat_username, 'example1.testuser3');
-        $this->assertEquals($user->username, 'testuser3');
+        $this->assertEquals($user->getCatUsername(), 'example1.testuser3');
+        $this->assertEquals($user->getUsername(), 'testuser3');
     }
 
     /**

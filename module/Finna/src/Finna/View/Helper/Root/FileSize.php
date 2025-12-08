@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -72,6 +72,9 @@ class FileSize extends \Laminas\View\Helper\AbstractHelper
     {
         if (!is_numeric($bytes)) {
             return $bytes;
+        }
+        if (!$bytes) {
+            return 0;
         }
         $exponent = min(floor(log($bytes) / log(1000)), count($this->units) - 1);
         $localizedNumber = $this->getView()->plugin('localizedNumber');

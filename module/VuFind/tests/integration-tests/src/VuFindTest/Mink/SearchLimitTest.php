@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -59,15 +59,15 @@ class SearchLimitTest extends \VuFindTest\Integration\MinkTestCase
     /**
      * Set up a search page with limits configured
      *
-     * @param string $limitParam Value of limit GET parameter
-     * @param string $options    limit_options setting for searches.ini
-     * @param string $default    default_limit setting for searches.ini
+     * @param string  $limitParam Value of limit GET parameter
+     * @param ?string $options    limit_options setting for searches.ini
+     * @param string  $default    default_limit setting for searches.ini
      *
      * @return Element
      */
     protected function setUpLimitedSearch(
         string $limitParam,
-        string $options = null,
+        ?string $options = null,
         string $default = '20'
     ): Element {
         $config = ['default_limit' => $default, 'limit_options' => $options];

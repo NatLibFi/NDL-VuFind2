@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -108,23 +108,23 @@ class IconTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()->getMock();
         $mock->expects($this->once())->method('__invoke')
             ->with($this->equalTo($expected))
-            ->will($this->returnValue(basename($expected)));
+            ->willReturn(basename($expected));
         return $mock;
     }
 
     /**
      * Get an Icon helper
      *
-     * @param array            $config  Icon helper configuration array
-     * @param StorageInterface $cache   Cache storage adapter (null for BlackHole)
-     * @param array            $plugins Array of extra plugins for renderer
-     * @param bool             $rtl     Are we in right-to-left mode?
+     * @param ?array            $config  Icon helper configuration array
+     * @param ?StorageInterface $cache   Cache storage adapter (null for BlackHole)
+     * @param array             $plugins Array of extra plugins for renderer
+     * @param bool              $rtl     Are we in right-to-left mode?
      *
      * @return Icon
      */
     protected function getIconHelper(
-        array $config = null,
-        StorageInterface $cache = null,
+        ?array $config = null,
+        ?StorageInterface $cache = null,
         array $plugins = [],
         $rtl = false
     ): Icon {
@@ -266,10 +266,9 @@ class IconTest extends \PHPUnit\Framework\TestCase
      * @param string       $icon            Icon alias
      * @param string|array $attrs           Classes or attributes
      *
-     * @dataProvider unicodeIconProvider
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('unicodeIconProvider')]
     public function testUnicodeIcons(
         string $expectedClasses,
         string $expectedAttrs,

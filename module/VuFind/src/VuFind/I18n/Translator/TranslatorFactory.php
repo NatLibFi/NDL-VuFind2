@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Translator
@@ -29,7 +29,7 @@
 
 namespace VuFind\I18n\Translator;
 
-use Laminas\I18n\Translator\TranslatorInterface;
+use Laminas\Mvc\I18n\Translator;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\DelegatorFactoryInterface;
@@ -73,7 +73,7 @@ class TranslatorFactory implements DelegatorFactoryInterface
         ContainerInterface $container,
         $name,
         callable $callback,
-        array $options = null
+        ?array $options = null
     ) {
         $this->setPathResolver($container->get(PathResolver::class));
         $translator = $callback();
@@ -94,13 +94,13 @@ class TranslatorFactory implements DelegatorFactoryInterface
     /**
      * Add caching to a translator object
      *
-     * @param TranslatorInterface $translator Translator object
-     * @param ContainerInterface  $container  Service manager
+     * @param Translator         $translator Translator object
+     * @param ContainerInterface $container  Service manager
      *
      * @return void
      */
     protected function enableCaching(
-        TranslatorInterface $translator,
+        Translator $translator,
         ContainerInterface $container
     ): void {
         // Set up language caching for better performance:

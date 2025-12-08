@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -33,7 +33,8 @@ use Finna\Search\Solr\AuthorityHelper;
 use Finna\Search\Solr\HierarchicalFacetHelper;
 use Finna\Search\Solr\Options;
 use Finna\Search\Solr\Params;
-use VuFind\Config\PluginManager;
+use VuFind\Config\ConfigManager;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Date\Converter as DateConverter;
 
 /**
@@ -47,7 +48,7 @@ use VuFind\Date\Converter as DateConverter;
  */
 class ParamsTest extends \PHPUnit\Framework\TestCase
 {
-    use \VuFindTest\Feature\ConfigPluginManagerTrait;
+    use \VuFindTest\Feature\ConfigRelatedServicesTrait;
 
     /**
      * Data provider for testSort
@@ -118,12 +119,11 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
      * @param string $expectedSort Expected Solr sort string
      *
      * @return void
-     *
-     * @dataProvider sortDataProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('sortDataProvider')]
     public function testSort(array $searchConfig, string $sort, string $expectedSort): void
     {
-        $params = $this->getParams(mockConfig: $this->getMockConfigPluginManager(['searches' => $searchConfig]));
+        $params = $this->getParams(mockConfig: $this->getMockConfigManager(['searches' => $searchConfig]));
         $params->setSort($sort);
         $backendParams = $params->getBackendParameters();
         $this->assertEquals([$expectedSort], $backendParams->get('sort'));
@@ -132,16 +132,16 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
     /**
      * Get Params object
      *
-     * @param Options       $options    Options object (null to create)
-     * @param PluginManager $mockConfig Mock config plugin manager (null to create)
+     * @param ?Options                $options    Options object (null to create)
+     * @param ?ConfigManagerInterface $mockConfig Mock config manager (null to create)
      *
      * @return Params
      */
     protected function getParams(
-        Options $options = null,
-        PluginManager $mockConfig = null
+        ?Options $options = null,
+        ?ConfigManagerInterface $mockConfig = null
     ): Params {
-        $mockConfig ??= $this->createMock(PluginManager::class);
+        $mockConfig ??= $this->createMock(ConfigManager::class);
         return new Params(
             $options ?? new Options($mockConfig),
             $mockConfig,

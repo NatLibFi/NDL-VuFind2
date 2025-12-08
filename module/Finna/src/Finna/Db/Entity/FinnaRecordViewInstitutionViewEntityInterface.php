@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Db_Interface
@@ -43,41 +43,41 @@ use VuFind\Db\Entity\EntityInterface;
 interface FinnaRecordViewInstitutionViewEntityInterface extends EntityInterface
 {
     /**
-     * Id getter
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
      * @return ?int
      */
     public function getId(): ?int;
 
     /**
-     * Institution setter
-     *
-     * @param string $institution Institution
-     *
-     * @return FinnaRecordViewInstitutionViewEntityInterface
-     */
-    public function setInstitution(string $institution): FinnaRecordViewInstitutionViewEntityInterface;
-
-    /**
-     * Institution getter
+     * Get institution.
      *
      * @return string
      */
     public function getInstitution(): string;
 
     /**
-     * View setter
+     * Set institution.
      *
-     * @param string $view View
+     * @param string $institution Institution
      *
-     * @return FinnaRecordViewInstitutionViewEntityInterface
+     * @return static
      */
-    public function setView(string $view): FinnaRecordViewInstitutionViewEntityInterface;
+    public function setInstitution(string $institution): static;
 
     /**
-     * View getter
+     * Set view.
      *
      * @return string
      */
     public function getView(): string;
+
+    /**
+     * Get view.
+     *
+     * @param string $view View
+     *
+     * @return static
+     */
+    public function setView(string $view): static;
 }

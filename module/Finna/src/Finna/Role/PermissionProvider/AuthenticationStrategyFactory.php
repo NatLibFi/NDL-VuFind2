@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Authorization
@@ -67,7 +67,7 @@ class AuthenticationStrategyFactory implements \Laminas\ServiceManager\Factory\F
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options passed to factory.');
@@ -75,7 +75,7 @@ class AuthenticationStrategyFactory implements \Laminas\ServiceManager\Factory\F
         return new $requestedName(
             $container->get(\Finna\Auth\Manager::class),
             $container->get(\Finna\ILS\Connection::class),
-            $container->get(\Finna\Auth\ILSAuthenticator::class),
+            $container->get(\VuFind\Auth\ILSAuthenticator::class),
             new \Laminas\Session\Container(
                 'AuthenticationStrategy',
                 $container->get(\Laminas\Session\SessionManager::class)

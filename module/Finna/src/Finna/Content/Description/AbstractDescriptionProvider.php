@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -76,6 +76,10 @@ abstract class AbstractDescriptionProvider implements DescriptionProviderInterfa
 
         // Trim leading and trailing whitespace
         $content = trim($content);
+
+        // Trim any leading and trailing empty paragraphs (repeating and possibly containing NBSP in UTF-8)
+        $content = preg_replace('{^(<p>\s*</p>\s*)*}u', '', $content);
+        $content = preg_replace('{(\s*<p>\s*</p>)*$}u', '', $content);
 
         // Replace line breaks with <br>
         $content = preg_replace(

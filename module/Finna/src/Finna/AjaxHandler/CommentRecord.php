@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -30,7 +30,7 @@
 
 namespace Finna\AjaxHandler;
 
-use Finna\Db\Service\FinnaCommentsServiceInterface;
+use Finna\Db\Service\CommentsServiceInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Search\SearchRunner;
 
@@ -78,7 +78,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
      */
     public function handleRequest(Params $params)
     {
-        assert($this->commentsService instanceof FinnaCommentsServiceInterface);
+        assert($this->commentsService instanceof CommentsServiceInterface);
 
         // Make sure comments are enabled:
         if (!$this->enabled) {
@@ -109,7 +109,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
         $resource = $this->resourcePopulator->getOrCreateResourceForRecordId($id, $source);
         if ($commentId = $params->fromPost('commentId')) {
             // Edit existing comment
-            $this->commentsService->editComment($this->user->id, $commentId, $comment);
+            $this->commentsService->editComment($this->user, $commentId, $comment);
         } else {
             // Add new comment
             if (!$this->checkCaptcha()) {
@@ -129,7 +129,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
             $results = $this->searchRunner->run(
                 ['lookfor' => 'local_ids_str_mv:"' . addcslashes($id, '"') . '"'],
                 $source,
-                function ($runner, $params, $searchId) {
+                function ($runner, $params, $searchId): void {
                     $params->setLimit(1000);
                     $params->setPage(1);
                     $params->resetFacetConfig();

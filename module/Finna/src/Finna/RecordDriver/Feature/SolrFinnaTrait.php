@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
@@ -51,7 +51,7 @@ use function strlen;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
@@ -224,6 +224,19 @@ trait SolrFinnaTrait
     public function getBuilding()
     {
         return $this->getBuildings();
+    }
+
+    /**
+     * Return the collection search ID for this record.
+     *
+     * @return string
+     */
+    public function getCollectionSearchId(): string
+    {
+        if ($this->mainConfig->Hierarchy->showFullHierarchyTree ?? false) {
+            return $this->getHierarchyTopID()[0] ?? $this->getUniqueID();
+        }
+        return $this->getUniqueID();
     }
 
     /**
@@ -730,7 +743,7 @@ trait SolrFinnaTrait
      */
     public function getSource()
     {
-        return $this->fields['source_str_mv'][0] ?? '';
+        return $this->getSources()[0] ?? '';
     }
 
     /**
@@ -740,7 +753,7 @@ trait SolrFinnaTrait
      */
     public function getSources()
     {
-        return $this->fields['source_str_mv'] ?? [];
+        return (array)($this->fields['source_str_mv'] ?? []);
     }
 
     /**
@@ -760,7 +773,7 @@ trait SolrFinnaTrait
      */
     public function getFirstIndexed()
     {
-        return $this->fields['first_indexed'] ?? '';
+        return $this->fields['catalog_date'] ?? $this->fields['first_indexed'] ?? '';
     }
 
     /**
@@ -835,16 +848,6 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Is social media sharing allowed
-     *
-     * @return boolean
-     */
-    public function socialMediaSharingAllowed()
-    {
-        return true;
-    }
-
-    /**
      * Returns true if the record supports real-time AJAX status lookups.
      *
      * @return bool
@@ -908,32 +911,6 @@ trait SolrFinnaTrait
             );
         }
         return in_array($format, $this->undisplayableFormats);
-    }
-
-    /**
-     * Add or update user's rating for the record.
-     *
-     * @param int  $userId ID of the user posting the rating
-     * @param ?int $rating The user-provided rating, or null to clear any existing
-     * rating
-     *
-     * @return void
-     */
-    public function addOrUpdateRating(int $userId, ?int $rating): void
-    {
-        parent::addOrUpdateRating($userId, $rating);
-
-        // Also update ratings of any duplicates:
-        $mergedData = $this->getMergedRecordData();
-        if (empty($mergedData['records'])) {
-            return;
-        }
-        $source = $this->getSourceIdentifier();
-        $resources = $this->getDbTable('Resource');
-        foreach ($mergedData['records'] as $record) {
-            $resource = $resources->findResource($record['id'], $source);
-            $resource->addOrUpdateRating($userId, $rating);
-        }
     }
 
     /**
@@ -1351,6 +1328,9 @@ trait SolrFinnaTrait
      */
     public function getChildRecordCount()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         // Shortcut: if this record is not part of a hierarchy, let's not find out the count.
         if (
             !$this->containerLinking
@@ -1367,8 +1347,9 @@ trait SolrFinnaTrait
         // Disable highlighting for efficiency; not needed here:
         $params = new \VuFindSearch\ParamBag(['hl' => ['false']]);
         $command = new SearchCommand($this->sourceIdentifier, $query, 0, 0, $params);
-        return $this->searchService
-            ->invoke($command)->getResult()->getTotal();
+        $result = $this->searchService->invoke($command)->getResult()->getTotal();
+        $this->cache[__FUNCTION__] = $result;
+        return $result;
     }
 
     /**
@@ -1413,5 +1394,59 @@ trait SolrFinnaTrait
             $url = '//' . $url;
         }
         return parse_url($url, $component);
+    }
+
+    /**
+     * Ensure that small, medium and large images do exist in the image array.
+     *
+     * @param array $images Array containing key 'urls' and respective sizes.
+     *
+     * @return array Images and duplicate image information
+     */
+    protected function ensureImageSizes(array $images): array
+    {
+        $hasSmallImage = isset($images['urls']['small']);
+        $hasMediumImage = isset($images['urls']['medium']);
+        $hasLargeImage = isset($images['urls']['large']);
+        $images['cacheSizes'] = [];
+        if (!$hasSmallImage && !$hasMediumImage && !$hasLargeImage) {
+            return $images;
+        }
+        if (!$hasLargeImage) {
+            $images['urls']['large'] = $hasMediumImage ? $images['urls']['medium'] : $images['urls']['small'];
+            $images['cacheSizes']['large'] = $hasMediumImage ? 'medium' : 'small';
+        }
+        if (!$hasSmallImage) {
+            $images['urls']['small'] = $hasMediumImage ? $images['urls']['medium'] : $images['urls']['large'];
+            $images['cacheSizes']['small'] = $hasMediumImage ? 'medium' : 'large';
+        }
+        if (!$hasMediumImage) {
+            $images['urls']['medium'] = $hasSmallImage ? $images['urls']['small'] : $images['urls']['large'];
+            $images['cacheSizes']['medium'] = $hasSmallImage ? 'small' : 'large';
+        }
+        return $images;
+    }
+
+    /**
+     * Compare the title of current object with items from given array as titles
+     *
+     * @param array $compare An array of items to compare
+     *
+     * @return array
+     */
+    protected function compareWithTitle(array $compare): array
+    {
+        $compareDone = [];
+        $title = str_replace([',', ';'], '', $this->getTitle());
+        $compareFull = str_replace([',', ';'], '', implode(' ', $compare));
+        if ($compareFull != $title) {
+            foreach ($compare as $item) {
+                $checkTitle = str_replace([',', ';'], ' ', (string)$item) != $title;
+                if ($checkTitle) {
+                    $compareDone[] = (string)$item;
+                }
+            }
+        }
+        return array_unique($compareDone);
     }
 }

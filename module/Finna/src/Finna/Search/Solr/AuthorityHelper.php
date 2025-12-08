@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -126,14 +126,14 @@ class AuthorityHelper
     /**
      * Authority config
      *
-     * @var \Laminas\Config\Config|null
+     * @var \VuFind\Config\Config|null
      */
     protected $authorityConfig;
 
     /**
      * Authority search config
      *
-     * @var \Laminas\Config\Config
+     * @var \VuFind\Config\Config
      */
     protected $authoritySearchConfig;
 
@@ -144,17 +144,18 @@ class AuthorityHelper
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
      * @param \VuFind\View\Helper\Root\Translate $translator            Translator
      * view helper
-     * @param \Laminas\Config\Config             $config                Config
-     * config
-     * @param \Laminas\Config\Config             $authoritySearchConfig Authority
-     * search config
+     * @param \VuFind\Config\Config              $config                Config
+     *                                                                  config
+     * @param \VuFind\Config\Config              $authoritySearchConfig Authority
+     *                                                                  search
+     *                                                                  config
      */
     public function __construct(
         \VuFind\Record\Loader $recordLoader,
         \VuFind\Search\SearchRunner $searchRunner,
         \VuFind\View\Helper\Root\Translate $translator,
-        \Laminas\Config\Config $config,
-        \Laminas\Config\Config $authoritySearchConfig
+        \VuFind\Config\Config $config,
+        \VuFind\Config\Config $authoritySearchConfig
     ) {
         $this->recordLoader = $recordLoader;
         $this->searchRunner = $searchRunner;
@@ -308,7 +309,7 @@ class AuthorityHelper
         $results = $this->searchRunner->run(
             [],
             'Solr',
-            function ($runner, $params, $searchId) use ($onlyCount, $query) {
+            function ($runner, $params, $searchId) use ($onlyCount, $query): void {
                 $params->setLimit($onlyCount ? 0 : 100);
                 $params->setPage(1);
                 $params->addFilter($query);

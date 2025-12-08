@@ -1,11 +1,9 @@
 <!-- START of: finna - myresearch/historicloans.phtml -->
 <?php
-    // Set up page title:
-    $this->headTitle($this->translate('Loan History'));
     $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
     // Set up breadcrumbs:
-    $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Loan History') . '</li>';
+    $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))->add($this->translate('Loan History'), active: true);
 
     $recordCount = $this->paginator ? $this->paginator->getTotalItemCount() : count($this->transactions ?? []);
     $catalog = $this->ils();
@@ -26,8 +24,8 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
-      <h2><?=$this->transEsc('Loan History')?> (<?=$recordCount;?>)</h2>
+    <div id="useraccount-content-heading" class="useraccount-header">
+      <?=$this->component('page-title', ['title' => $this->translate('Loan History') . " ($recordCount)", 'headTitle' => $this->translate('Loan History')]);?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -119,7 +117,7 @@
               </div>
 
               <table class="myresearch-table" aria-label="<?=$this->transEscAttr('Loan History')?>" tabindex="0">
-                <tr class="sr-only myresearch-row" aria-hidden="true">
+                <tr class="visually-hidden myresearch-row" aria-hidden="true">
                   <th id="label-select-column"><?=$this->transEsc('Select');?></th>
                   <th class="hidden-xs"></th>
                   <th id="label-title-column"><?=$this->transEsc('Loan Details');?></th>
@@ -184,7 +182,7 @@
                   </tr>
                 <?php endforeach; ?>
               </table>
-              <h3 class="sr-only"><?=$this->transEsc('End of List')?></h3>
+              <h3 class="visually-hidden"><?=$this->transEsc('End of List')?></h3>
               <div class="loan-history-buttons-bottom">
                 <?php if ($purgeAllAllowed): ?>
                   <div class="dropdown loan-history-purge-all">

@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -36,6 +36,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\PluginManager;
 
 /**
  * Cover controller factory.
@@ -66,17 +67,23 @@ class CoverControllerFactory implements FactoryInterface
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
-        array $options = null
+        ?array $options = null
     ) {
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
+        $dbManager = $container->get(PluginManager::class);
+        $configManager = $container->get(\VuFind\Config\ConfigManagerInterface::class);
+        $contentConfig = $configManager->getConfigArray('config')['Content'] ?? [];
         return new $requestedName(
             $container->get(\VuFind\Cover\Loader::class),
             $container->get(\VuFind\Cover\CachingProxy::class),
             $container->get(\VuFind\Session\Settings::class),
-            $container->get(\VuFind\Config\PluginManager::class)->get('datasources'),
-            $container->get(\VuFind\Record\Loader::class)
+            $configManager->getConfigObject('datasources'),
+            $container->get(\VuFind\Record\Loader::class),
+            $contentConfig,
+            $container->get(\Finna\File\Loader::class),
+            $dbManager->get(\VuFind\Db\Service\AccessTokenService::class)
         );
     }
 }

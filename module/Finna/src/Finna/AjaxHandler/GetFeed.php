@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -32,13 +32,13 @@
 namespace Finna\AjaxHandler;
 
 use Finna\Feed\Feed as FeedService;
-use Laminas\Config\Config;
 use Laminas\Escaper\Escaper;
 use Laminas\Feed\Writer\Feed;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Mvc\Controller\Plugin\Url;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Cache\Manager as CacheManager;
+use VuFind\Config\Config;
 use VuFind\Exception\BadRequest;
 use VuFind\ILS\Connection;
 use VuFind\Record\Loader;

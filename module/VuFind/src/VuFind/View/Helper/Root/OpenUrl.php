@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -56,7 +56,7 @@ class OpenUrl extends \Laminas\View\Helper\AbstractHelper
     /**
      * VuFind OpenURL configuration
      *
-     * @var \Laminas\Config\Config
+     * @var \VuFind\Config\Config
      */
     protected $config;
 
@@ -91,10 +91,10 @@ class OpenUrl extends \Laminas\View\Helper\AbstractHelper
     /**
      * Constructor
      *
-     * @param Context                $context       Context helper
-     * @param array                  $openUrlRules  VuFind OpenURL rules
-     * @param PluginManager          $pluginManager Resolver plugin manager
-     * @param \Laminas\Config\Config $config        VuFind OpenURL config
+     * @param Context               $context       Context helper
+     * @param array                 $openUrlRules  VuFind OpenURL rules
+     * @param PluginManager         $pluginManager Resolver plugin manager
+     * @param \VuFind\Config\Config $config        VuFind OpenURL config
      */
     public function __construct(
         Context $context,

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -132,26 +132,6 @@ class CuratedRecord extends SolrDefault implements
         $this->checkSetLoadedRecord($record);
         $this->fields['record'] = $record;
         $this->fields['title'] = $record->getTitle();
-    }
-
-    /**
-     * Get the full title of the record.
-     *
-     * @return string
-     */
-    public function getTitle(): string
-    {
-        return $this->fields['title'] ?? '';
-    }
-
-    /**
-     * Get the position of the record.
-     *
-     * @return int
-     */
-    public function getPosition(): int
-    {
-        return $this->fields['position'] ?? 0;
     }
 
     /**

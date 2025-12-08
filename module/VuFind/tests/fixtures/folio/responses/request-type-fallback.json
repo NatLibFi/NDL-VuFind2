@@ -1,12 +1,11 @@
 [
     {
-        "comment": "Initial token check"
-    },
-    {
         "expectedMethod": "GET",
         "expectedPath": "\/instance-storage\/instances",
         "expectedParams": {
-            "query": "(id==\"record1\")"
+            "query": "id == (\"record1\")",
+            "offset": 0,
+            "limit": 1000
         },
         "body": {
             "instances": [

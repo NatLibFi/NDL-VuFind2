@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -26,13 +26,15 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
 
 use Finna\Search\UrlQueryHelper;
 use VuFind\Search\Memory;
+
+use function sprintf;
 
 /**
  * RecordLinker view helper
@@ -43,7 +45,7 @@ use VuFind\Search\Memory;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
 {
@@ -147,18 +149,42 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
      */
     public function related($link, $source = DEFAULT_SEARCH_BACKEND)
     {
+        $driver = $this->getView()->plugin('record')->getDriver();
+
         if ('identifier' === $link['type']) {
             $urlHelper = $this->getView()->plugin('url');
-            $baseUrl = $urlHelper($this->getSearchActionForSource($source));
-
-            $result = $baseUrl
-                . '?lookfor=' . urlencode($link['value'])
-                . '&type=Identifier&jumpto=1';
+            $result = $urlHelper(
+                $this->getSearchActionForSource($source),
+                [],
+                [
+                    'query' => [
+                        'lookfor' => $link['value'],
+                        'type' => 'Identifier',
+                        'jumpto' => 1,
+                    ],
+                ],
+            );
+        } elseif ('linkingId' === $link['type']) {
+            $urlHelper = $this->getView()->plugin('url');
+            $lookFor = sprintf(
+                'linking_id_str_mv:"%s" AND datasource_str_mv:"%s"',
+                $link['value'],
+                $driver->getDataSource()
+            );
+            $result = $urlHelper(
+                $this->getSearchActionForSource($source),
+                [],
+                [
+                        'query' => [
+                            'lookfor' => $lookFor,
+                            'filter[]' => 'finna.include_hidden_parts:1',
+                            'jumpto' => 1,
+                        ],
+                    ],
+            );
         } else {
             $result = parent::related($link, $source);
         }
-
-        $driver = $this->getView()->plugin('record')->getDriver();
 
         $prepend = (!str_contains($result, '?')) ? '?' : '&amp;';
         $hiddenFilters = null;

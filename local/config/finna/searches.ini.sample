@@ -92,6 +92,10 @@ retain_filters_by_default = false
 ; in CheckboxFacets section of facets.ini for user-selectable options.
 hide_component_parts = true
 
+; Filter for hidden component parts to be included in results, regardless of exclusion.
+; Includes results with the specified conditions.
+;displayable_component_part_filter = "(format:1/Book/eBook/ OR format:1/Journal/Serial/)"
+
 ; Maximum result to display
 result_limit = 100000
 
@@ -197,6 +201,17 @@ last_indexed desc = sort_last_indexed
 [DefaultSortingByType]
 CallNumber = callnumber
 WorkKeys = "main_date_str desc"
+
+; This section allows you to specify hidden sorting options. They can be used to
+; create a whitelist of sort values using regular expressions. If you want to do
+; this add regexes to the pattern[] array. All sort values that match at least one
+; of these pattern are allowed in searches.
+; The first matching option is shown in the sort selection in the result list when
+; none of the normal options in [Sorting] section is selected. The labels for the
+; entries can be defined in pattern[] array keys or a separate label[] array.
+[HiddenSorting]
+pattern[sort_first_indexed_desc] = "^first_indexed desc$"
+pattern[sort_first_indexed_desc] = "^catalog_date desc$"
 
 ; These settings control which fields are available to sort on in the collections
 ; module.
@@ -491,7 +506,7 @@ author = sort_author
 ; You can build your own recommendations modules if you wish.  See the developer's
 ; guide here:
 ;
-;       http://vufind.org/wiki/vufind2:recommendation_modules
+;       https://vufind.org/wiki/development:plugins:recommendation_modules
 [SideRecommendations]
 ; No search-specific settings by default -- add your own here.
 ;Subject[]          = SideFacets
@@ -590,7 +605,7 @@ sort = "last_indexed desc,id asc"
 ; You can build your own autocomplete modules if you wish.  See the developer's
 ; guide here:
 ;
-;       http://vufind.org/wiki/vufind2:autosuggesters
+;       https://vufind.org/wiki/development:plugins:autosuggesters
 [Autocomplete]
 ; Set this to false to disable all autocomplete behavior
 enabled = true

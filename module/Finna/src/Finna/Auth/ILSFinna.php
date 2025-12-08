@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Authentication
@@ -43,23 +43,6 @@ use VuFind\Exception\Auth as AuthException;
  */
 trait ILSFinna
 {
-    /**
-     * Check if ILS supports password recovery
-     *
-     * @param string $target Login target (MultiILS)
-     *
-     * @return string
-     */
-    public function ilsSupportsPasswordRecovery($target)
-    {
-        $catalog = $this->getCatalog();
-        $recoveryConfig = $catalog->checkFunction(
-            'recoverPassword',
-            ['cat_username' => "$target.123"]
-        );
-        return $recoveryConfig ? true : false;
-    }
-
     /**
      * Check if ILS supports self-registration
      *
@@ -121,6 +104,14 @@ trait ILSFinna
             $profile = $this->getCatalog()->getMyProfile($info);
             if (!empty($profile['email'])) {
                 $info['email'] = $profile['email'];
+            }
+        }
+
+        // Add institution prefix to id
+        if (isset($info['id'])) {
+            $config = $this->getConfig()->toArray();
+            if ($institution = $config['Site']['institution'] ?? null) {
+                $info['id'] = "$institution:" . $info['id'];
             }
         }
 

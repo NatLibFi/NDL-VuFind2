@@ -69,18 +69,16 @@
       $finnaSurvey = in_array($this->layout()->templateDir, ['search', 'record']) && $this->finnaSurvey()->isEnabled();
 
       if ($finnaSurvey) {
-        $this->headScript()->appendFile('finna-survey.js');
+        $this->assetManager()->appendScriptLink('finna-survey.js');
       }
       $isLandingPage = $this->layout()->templateName === 'home' && $this->layout()->templateDir === 'search';
     ?>
-    <?=$this->headLink()?>
-    <?=$this->headStyle()?>
     <?php
       // Collect small scripts together and append as one block:
       $appendScripts = [];
 
       // Set global variables for Javascript code:
-      $this->headScript()->prependScript(
+      $this->assetManager()->prependScriptString(
           'var userIsLoggedIn = ' . ($this->auth()->getUserObject() ? 'true' : 'false') . ';'
       );
 
@@ -88,25 +86,25 @@
         // Deal with cart stuff:
         $cart = $this->cart();
         if ($cart->isActive()) {
-          $this->headScript()->appendFile('vendor/js.cookie.js');
-          $this->headScript()->appendFile('cart.js');
+          $this->assetManager()->appendScriptLink('vendor/js.cookie.js');
+          $this->assetManager()->appendScriptLink('cart.js');
         }
       }
 
       // Session keep-alive
       if ($this->keepAlive()) {
           $appendScripts[] = 'var keepAliveInterval = ' . $this->keepAlive() . ';';
-          $this->headScript()->appendFile('keep_alive.js');
+          $this->assetManager()->appendScriptLink('keep_alive.js');
       }
 
       // If account ajax is active, load script and add language strings
       $account = $this->auth()->getManager();
       if ($account->ajaxEnabled()) {
-        $this->headScript()->appendFile('account_ajax.js');
+        $this->assetManager()->appendScriptLink('account_ajax.js');
       }
 
       if ($this->scriptSrc('custom.js')) {
-        $this->headScript()->appendFile('custom.js');
+        $this->assetManager()->appendScriptLink('custom.js');
       }
 
       $root = rtrim($this->url('home'), '/');
@@ -147,10 +145,10 @@
         $appendScripts[] = 'VuFind.lightbox.child = ' . $lightboxChild;
       }
 
-      $this->headScript()->appendScript(implode("\n", $appendScripts));
+      $this->assetManager()->appendScriptString(implode("\n", $appendScripts));
     ?>
     <?=$this->cookieConsent()->render()?>
-    <?=$this->headScript()?>
+    <?=$this->assetManager()->outputHeaderAssets()?>
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/general-post-head')): ?>
       <?=$this->render($template)?>
     <?php endif; ?>
@@ -158,7 +156,7 @@
   <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?> <?=$this->layoutClass('offcanvas-row')?><?php if ($this->layout()->rtl): ?> rtl<?php endif; ?>">
     <?=$this->render('search/modals.phtml') ?>
     <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
-      <span class="sr-only"><?=$this->layout()->srmessage ?></span>
+      <span class="visually-hidden"><?=$this->layout()->srmessage ?></span>
     <?php endif; ?>
       <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
         <?=$this->layout()->skiplink ?>
@@ -206,7 +204,7 @@
       <?php if ($isLandingPage): ?>
         <a class="btn btn-primary btn-uppercase floating-feedback-btn" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
       <?php endif; ?>
-      <h1 class="sr-only"><?=$this->transEsc('Search')?></h1>
+      <h1 class="visually-hidden"><?=$this->transEsc('Search')?></h1>
       <?php if (!empty($this->layout()->infoMessage)): ?>
         <div class="alert alert-info street-info">
           <div class="container">
@@ -245,13 +243,7 @@
       <?=$this->render($template)?>
     <?php endif; ?>
     </section>
-    <?php if (!empty($this->layout()->showBreadcrumbs ?? true) && !empty($this->layout()->breadcrumbs)): ?>
-      <nav class="breadcrumbs hidden-print" aria-label="<?=$this->transEsc('Breadcrumbs') ?>">
-        <div class="container">
-          <ul class="breadcrumb"><?=$this->layout()->breadcrumbs ?></ul>
-        </div>
-      </nav>
-    <?php endif; ?>
+    <?=$this->breadcrumbs()->render(); ?>
     <?php // TODO: get rid of template-dir-* and template-name-* here ?>
     <section id="main" role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
       <?php if (!empty($this->layout()->advSearchHeader)): ?>
@@ -316,10 +308,10 @@
               finna.layout.showPostLoginLightbox('{$url}');
             });
             EOT;
-          echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+          echo $this->assetManager()->outputInlineScriptString($script);
       }
     ?>
-    <?=$this->footScript() ?>
+    <?=$this->assetManager()->outputFooterAssets() ?>
   </body>
 </html>
 <!-- END of: finna - layout/layout.phtml -->

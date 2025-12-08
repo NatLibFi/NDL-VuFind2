@@ -20,19 +20,23 @@
     $dom->preserveWhiteSpace = false;
     $dom->formatOutput = true;
     if ($dom->loadXML($rawFieldData['fullrecord'])) {
-      echo '<pre id="record-data">' . $this->escapeHtml($dom->saveXML()) . '</pre>';
-      $this->inlineScript(\Laminas\View\Helper\HeadScript::FILE, 'vendor/highlight.pack.js');
-      echo $this->inlineScript();
+      echo '<pre id="record-data" data-double-click-select-all>' . $this->escapeHtml($dom->saveXML()) . '</pre>';
       $script = <<<JS
             $(document).ready(function() {
-              $('#record-data').each(function(i, block) {
-                hljs.highlightBlock(block);
-              });
+              const recordData = document.getElementById('record-data');
+              if (recordData) {
+                finna.scriptLoader.load(
+                  {'vendor-highlight': 'vendor/highlight.pack.js'},
+                  () => {
+                    hljs.highlightBlock(recordData);
+                  }
+                );
+              }
             });
           JS;
-      echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+      echo $this->assetManager()->outputInlineScriptString($script);
     } else {
-      echo '<pre id="record-data">' . $this->escapeHtml($rawFieldData['fullrecord']) . '</pre>';
+      echo '<pre id="record-data" data-double-click-select-all>' . $this->escapeHtml($rawFieldData['fullrecord']) . '</pre>';
     }
   ?>
 <h2><?=$this->transEsc('staff_view_finna_index')?></h2>
@@ -42,7 +46,7 @@
   ksort($rawData);
   foreach ($rawData as $field => $values): ?>
     <tr>
-      <th><?=$this->escapeHtml($field)?></th>
+      <th scope="row"><?=$this->escapeHtml($field)?></th>
       <td><?=$this->printArrayHtml($values)?></td>
     </tr>
   <?php endforeach; ?>

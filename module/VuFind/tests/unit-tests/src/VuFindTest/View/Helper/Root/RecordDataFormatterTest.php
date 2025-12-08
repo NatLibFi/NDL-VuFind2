@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -32,10 +32,12 @@ namespace VuFindTest\View\Helper\Root;
 use PHPUnit\Framework\MockObject\MockObject;
 use Psr\Container\ContainerInterface;
 use VuFind\Escaper\Escaper;
+use VuFind\RecordDataFormatter\Specs\DefaultRecord as DefaultRecordSpec;
 use VuFind\RecordDriver\Response\PublicationDetails;
 use VuFind\Tags\TagsService;
 use VuFind\View\Helper\Root\RecordDataFormatter;
 use VuFind\View\Helper\Root\RecordDataFormatterFactory;
+use VuFind\View\Helper\Root\SchemaOrg;
 
 use function count;
 use function func_get_args;
@@ -51,10 +53,9 @@ use function func_get_args;
  */
 class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
 {
-    use \VuFindTest\Feature\ConfigPluginManagerTrait;
     use \VuFindTest\Feature\FixtureTrait;
     use \VuFindTest\Feature\ViewTrait;
-    use \VuFindTest\Feature\PathResolverTrait;
+    use \VuFindTest\Feature\ConfigRelatedServicesTrait;
 
     /**
      * Get a mock record router.
@@ -75,11 +76,12 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
     /**
      * Get view helpers needed by test.
      *
-     * @param ContainerInterface $container Mock service container
+     * @param ContainerInterface $container       Mock service container
+     * @param SchemaOrg          $schemaOrgHelper schema.org helper
      *
      * @return array
      */
-    protected function getViewHelpers($container): array
+    protected function getViewHelpers(ContainerInterface $container, SchemaOrg $schemaOrgHelper): array
     {
         $context = new \VuFind\View\Helper\Root\Context();
         $record = new \VuFind\View\Helper\Root\Record($this->createMock(TagsService::class));
@@ -94,8 +96,10 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
                 $this->createMock(\VuFind\Auth\ILSAuthenticator::class)
             ),
             'context' => $context,
-            'config' => new \VuFind\View\Helper\Root\Config($container->get(\VuFind\Config\PluginManager::class)),
-            'doi' => new \VuFind\View\Helper\Root\Doi($context),
+            'config' => new \VuFind\View\Helper\Root\Config(
+                $container->get(\VuFind\Config\ConfigManagerInterface::class)
+            ),
+            'identifierLinker' => new \VuFind\View\Helper\Root\IdentifierLinker($context),
             'htmlSafeJsonEncode' => new \VuFind\View\Helper\Root\HtmlSafeJsonEncode(),
             'icon' => new \VuFind\View\Helper\Root\Icon(
                 [],
@@ -110,9 +114,7 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'proxyUrl' => new \VuFind\View\Helper\Root\ProxyUrl(),
             'record' => $record,
             'recordLinker' => new \VuFind\View\Helper\Root\RecordLinker($this->getMockRecordRouter()),
-            'schemaOrg' => new \VuFind\View\Helper\Root\SchemaOrg(
-                new \Laminas\View\Helper\HtmlAttributes()
-            ),
+            'schemaOrg' => $schemaOrgHelper,
             'searchMemory' => $this->getSearchMemoryViewHelper(),
             'searchOptions' => new \VuFind\View\Helper\Root\SearchOptions(
                 new \VuFind\Search\Options\PluginManager($container)
@@ -150,9 +152,9 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
         // Force a return value of zero so we can test this edge case value (even
         // though in the context of "building"/"container title" it makes no sense):
         $record->expects($this->any())->method('getBuildings')
-            ->will($this->returnValue(['0']));
+            ->willReturn(['0']);
         $record->expects($this->any())->method('getContainerTitle')
-            ->will($this->returnValue('0'));
+            ->willReturn('0');
         // Expect only one call to getDeduplicatedAuthors to confirm that caching
         // works correctly (we need this data more than once, but should only pull
         // it from the driver once).
@@ -161,36 +163,35 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'secondary' => ['Pandolfi, Claudia.' => []],
         ];
         $record->expects($this->once())->method('getDeduplicatedAuthors')
-            ->will($this->returnValue($authors));
+            ->willReturn($authors);
 
         // Functions for testing combine alt
         $record->expects($this->any())->method('getFullTitle')
-            ->will($this->returnValue(['Standard Title']));
+            ->willReturn(['Standard Title']);
         $record->expects($this->any())->method('getFullTitleAltScript')
-            ->will($this->returnValue('Alternative Title'));
+            ->willReturn('Alternative Title');
         $record->expects($this->any())->method('getAltFullTitle')
-            ->will($this->returnValue('Other Alternative Title'));
+            ->willReturn('Other Alternative Title');
         $record->expects($this->any())->method('getBuildingsAltScript')
-            ->will($this->returnValue(null));
+            ->willReturn(null);
         $record->expects($this->any())->method('getNotExistingAltScript')
-            ->will($this->returnValue('Alternative Value'));
-        $record->expects($this->any())->method('getSummary')
-        ->will($this->returnValue(null));
+            ->willReturn('Alternative Value');
+        $record->expects($this->any())->method('getSummary')->willReturn(null);
         $record->expects($this->any())->method('getSummaryAltScript')
-            ->will($this->returnValue('Alternative Summary'));
+            ->willReturn('Alternative Summary');
         $record->expects($this->any())->method('getPublicationDetailsAltScript')
-            ->will($this->returnValue([
+            ->willReturn([
                 new PublicationDetails('Alt Place', 'Alt Name', 'Alt Date'),
-            ]));
+            ]);
         $record->expects($this->any())->method('getNewerTitles')
-            ->will($this->returnValue(['New Title', 'Second New Title']));
+            ->willReturn(['New Title', 'Second New Title']);
         $record->expects($this->any())->method('getNewerTitlesAltScript')
-            ->will($this->returnValue(['Alt New Title', 'Second Alt New Title']));
+            ->willReturn(['Alt New Title', 'Second Alt New Title']);
         $record->expects($this->any())->method('getFunctionWithParams')
-            ->will($this->returnCallback(function () {
+            ->willReturnCallback(function () {
                 $args = func_get_args();
                 return implode(' ', $args);
-            }));
+            });
 
         // Load record data from fixture file:
         $fixture = $this->getJsonFixture('misc/testbug2.json');
@@ -202,10 +203,11 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
      * Build a formatter, including necessary mock view w/ helpers.
      *
      * @param array $additionalConfig Additional RecordDataFormatter config
+     * @param array $additionalSpecs  Additional specs
      *
      * @return RecordDataFormatter
      */
-    protected function getFormatter($additionalConfig = [])
+    protected function getFormatter($additionalConfig = [], $additionalSpecs = [])
     {
         // Build the formatter:
         $factory = new RecordDataFormatterFactory();
@@ -235,19 +237,27 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
                 'enabled' => true,
             ],
         ]);
-        $container->set(
-            \VuFind\Config\PluginManager::class,
-            $this->getMockConfigPluginManager([
-                'config' => [
-                    'Record' => [],
-                ],
-                'RecordDataFormatter' => $recordDataFormatterConfig,
-            ])
+        $schemaOrgHelper = new \VuFind\View\Helper\Root\SchemaOrg(
+            new \Laminas\View\Helper\HtmlAttributes()
         );
-        $this->addPathResolverToContainer($container);
+        $specManager = $this->createMock(\VuFind\RecordDataFormatter\Specs\PluginManager::class);
+        $specs = new DefaultRecordSpec($recordDataFormatterConfig, $schemaOrgHelper);
+        foreach ($additionalSpecs as $context => $additionalContextSpec) {
+            $contextSpec = $specs->getDefaults($context);
+            $specs->setDefaults($context, array_merge($additionalContextSpec, $contextSpec));
+        }
+        $specManager->expects($this->any())
+            ->method('get')
+            ->with($this->isType('string'))
+            ->willReturn($specs);
+        $container->set(
+            \VuFind\RecordDataFormatter\Specs\PluginManager::class,
+            $specManager
+        );
+        $this->addConfigRelatedServicesToContainer($container);
 
         // Create a view object with a set of helpers:
-        $helpers = $this->getViewHelpers($container);
+        $helpers = $this->getViewHelpers($container, $schemaOrgHelper);
         $view = $this->getPhpRenderer($helpers);
         $container->set(\Laminas\View\HelperPluginManager::class, $view->getHelperPluginManager());
         $formatter = $factory($container, RecordDataFormatter::class);
@@ -324,14 +334,11 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function to test the formatting with.
      *
      * @return void
-     *
-     * @dataProvider getFormattingData
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getFormattingData')]
     public function testFormatting(string $function): void
     {
-        $driver = $this->getDriver();
-        $formatter = $this->getFormatter();
-        $spec = $formatter->getDefaults('core');
+        $spec = [];
         $spec['Building'] = [
             'dataMethod' => 'getBuildings', 'pos' => 0, 'context' => ['foo' => 1],
             'translationTextDomain' => 'prefix_',
@@ -412,14 +419,29 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'multiFunction' => function () {
                 return [
                     [
+                        'label' => 'f',
+                        'values' => 'f',
+                        'options' => ['pos' => 3000],
+                    ],
+                    [
+                        'label' => 'e',
+                        'values' => 'e',
+                        'options' => ['pos' => 3000],
+                    ],
+                    [
+                        'label' => 'd',
+                        'values' => 'd',
+                        'options' => ['pos' => 3000, 'multiPos' => 0],
+                    ],
+                    [
                         'label' => 'b',
                         'values' => 'b',
-                        'options' => ['pos' => 3000],
+                        'options' => ['pos' => 3000, 'multiPos' => 10],
                     ],
                     [
                         'label' => 'a',
                         'values' => 'a',
-                        'options' => ['pos' => 3000],
+                        'options' => ['pos' => 3000, 'multiPos' => 10],
                     ],
                     [
                         'label' => 'c',
@@ -512,6 +534,11 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'renderType' => 'Simple',
             'pos' => 7000,
         ];
+
+        $driver = $this->getDriver();
+        $formatter = $this->getFormatter([], ['core' => $spec]);
+        $spec = $formatter->getDefaults('core');
+
         $expected = [
             'Building' => 'prefix_0',
             'Published in' => '0',
@@ -523,16 +550,19 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'Published' => 'Centro di Studi Vichiani, 1992',
             'Edition' => 'Fictional edition.',
             'Series' => 'Vico, Giambattista, 1668-1744. Works. 1982 ;',
-            'Multi Count' => 1,
             'Multi Data' => 'Book',
+            'Multi Count' => 1,
             'Subjects' => 'Naples (Kingdom) History Spanish rule, 1442-1707 Sources',
             'Online Access' => 'http://fictional.com/sample/url',
             // Double slash at the end comes from inline javascript
             'Tags' => 'Add Tag No Tags, Be the first to tag this record! //',
             'ZeroAllowed' => 0,
             'c' => 'c',
+            'd' => 'd',
             'a' => 'a',
             'b' => 'b',
+            'f' => 'f',
+            'e' => 'e',
             'CombineAlt' => 'Standard Title Alternative Title',
             'CombineAltPrioritizeAlt' => 'Alternative Title Standard Title',
             'CombineAltDataMethod' => 'Standard Title Other Alternative Title',
@@ -550,9 +580,6 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'ContextSensitive' => '0',
         ];
 
-        // Calling getDefaults again to apply changes from config
-        $formatter->setDefaults('core', $spec);
-        $spec = $formatter->getDefaults('core');
         // Call the method specified by the data provider
         $results = $this->$function($driver, $spec);
         // Check for expected array keys
@@ -633,15 +660,11 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function to test the formatting with.
      *
      * @return void
-     *
-     * @dataProvider getFormattingDataWithGlobalOptions
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getFormattingDataWithGlobalOptions')]
     public function testFormattingWithGlobalOptions(string $function): void
     {
-        $driver = $this->getDriver();
-        $formatter = $this->getFormatter($this->getGlobalTestConfig());
-        $spec = $formatter->getDefaults('core');
-
+        $spec = [];
         $spec['NormalField'] = [
             'dataMethod' => 'getContainerTitle',
             'renderType' => 'Simple',
@@ -691,6 +714,10 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'pos' => 2002,
         ];
 
+        $driver = $this->getDriver();
+        $formatter = $this->getFormatter($this->getGlobalTestConfig(), ['core' => $spec]);
+        $spec = $formatter->getDefaults('core');
+
         $expected = [
             'EnabledField' => '0',
             'EnabledFieldByConfig' => '0',
@@ -700,9 +727,6 @@ class RecordDataFormatterTest extends \PHPUnit\Framework\TestCase
             'Extra' => '0',
         ];
 
-        // Calling getDefaults again to apply changes from config
-        $formatter->setDefaults('core', $spec);
-        $spec = $formatter->getDefaults('core');
         // Call the method specified by the data provider
         $results = $this->$function($driver, $spec);
         // Check for expected array keys

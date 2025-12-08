@@ -15,9 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301
- * USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  DigitalContent
@@ -32,15 +31,19 @@ namespace VuFind\DigitalContent;
 
 use Exception;
 use Laminas\Cache\Storage\StorageInterface;
-use Laminas\Config\Config;
 use Laminas\Http\Client;
-use Laminas\Log\LoggerAwareInterface;
 use Laminas\Session\Container;
-use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
-use LmcRbacMvc\Service\AuthorizationServiceAwareTrait;
+use Lmc\Rbac\Mvc\Service\AuthorizationServiceAwareInterface;
+use Lmc\Rbac\Mvc\Service\AuthorizationServiceAwareTrait;
+use Psr\Log\LoggerAwareInterface;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Cache\KeyGeneratorTrait;
+use VuFind\Config\Config;
 use VuFind\Exception\ILS as ILSException;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
+use VuFind\I18n\Translator\TranslatorAwareTrait;
+use VuFindHttp\HttpServiceAwareInterface;
+use VuFindHttp\HttpServiceAwareTrait;
 
 use function count;
 
@@ -66,19 +69,21 @@ use function count;
 class OverdriveConnector implements
     LoggerAwareInterface,
     AuthorizationServiceAwareInterface,
-    \VuFindHttp\HttpServiceAwareInterface
+    HttpServiceAwareInterface,
+    TranslatorAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait {
         logError as error;
     }
     use AuthorizationServiceAwareTrait;
-    use \VuFindHttp\HttpServiceAwareTrait;
+    use HttpServiceAwareTrait;
+    use TranslatorAwareTrait;
     use KeyGeneratorTrait;
 
     /**
      * Session Container
      *
-     * @var Container
+     * @var ?Container
      */
     protected $sessionContainer;
 
@@ -125,13 +130,13 @@ class OverdriveConnector implements
      * @param Config           $mainConfig       VuFind main conf
      * @param Config           $recordConfig     Record-specific conf file
      * @param ILSAuthenticator $ilsAuth          ILS Authenticator
-     * @param Container        $sessionContainer container
+     * @param ?Container       $sessionContainer container
      */
     public function __construct(
         Config $mainConfig,
         Config $recordConfig,
         ILSAuthenticator $ilsAuth,
-        Container $sessionContainer = null
+        ?Container $sessionContainer = null
     ) {
         $this->mainConfig = $mainConfig;
         $this->recordConfig = $recordConfig;
@@ -157,8 +162,7 @@ class OverdriveConnector implements
      *
      * Returns the currently logged in user or false if the user is not
      *
-     * @return array|boolean  an array of user info from the ILSAuthenticator
-     *                        or false if user is not logged in.
+     * @return array|bool  an array of user info from the ILSAuthenticator or false if user is not logged in.
      */
     public function getUser()
     {
@@ -225,6 +229,29 @@ class OverdriveConnector implements
         }
 
         return $result;
+    }
+
+    /**
+     * Is Overdrive content active?
+     *
+     * @return bool
+     */
+    public function isContentActive()
+    {
+        $config = $this->getConfig();
+        if ($config->showMyContent == 'always') {
+            return true;
+        } elseif ($config->showMyContent == 'never') {
+            return false;
+        } else {
+            // assume that it is accessOnly
+            $result = $this->getAccess();
+
+            if (!$result->status && $result->code == 'od_account_noaccess') {
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -356,19 +383,11 @@ class OverdriveConnector implements
                     // Now look for items not returned
                     foreach ($overDriveIds as $id) {
                         if (!isset($result->data[$id])) {
-                            if ($loginRequired) {
-                                $result->data[$id] = $this->getResultObject(
-                                    $status = false,
-                                    $msg = '',
-                                    $code = 'od_code_login_for_avail'
-                                );
-                            } else {
-                                $result->data[$id] = $this->getResultObject(
-                                    $status = false,
-                                    $msg = '',
-                                    $code = 'od_code_resource_not_found'
-                                );
-                            }
+                            $result->data[$id] = $this->getResultObject(
+                                false,
+                                '',
+                                $loginRequired ? 'od_code_login_for_avail' : 'od_code_resource_not_found'
+                            );
                         }
                     }
                 }
@@ -573,8 +592,6 @@ class OverdriveConnector implements
                 $this->error('Update hold - OverDrive patron APIs are disabled.');
                 return $holdResult;
             }
-            $autoCheckout = true;
-            $ignoreHoldEmail = false;
             $url = $config->circURL . '/v1/patrons/me/holds/' . $overDriveId;
             $action = 'PUT';
             $params = [
@@ -594,7 +611,7 @@ class OverdriveConnector implements
             if ($response) {
                 $holdResult->status = true;
             } else {
-                $holdResult->msg = $response->message;
+                $holdResult->msg = $this->translate('od_code_connection_failed');
             }
         }
         return $holdResult;
@@ -703,7 +720,7 @@ class OverdriveConnector implements
             if ($response) {
                 $holdResult->status = true;
             } else {
-                $holdResult->msg = $response->message;
+                $holdResult->msg = $this->translate('od_code_connection_failed');
             }
         }
         return $holdResult;
@@ -744,7 +761,7 @@ class OverdriveConnector implements
             if ($response) {
                 $holdResult->status = true;
             } else {
-                $holdResult->msg = $response->message;
+                $holdResult->msg = $this->translate('od_code_connection_failed');
             }
         }
         return $holdResult;
@@ -785,7 +802,7 @@ class OverdriveConnector implements
             if ($response) {
                 $holdResult->status = true;
             } else {
-                $holdResult->msg = $response->message;
+                $holdResult->msg = $this->translate('od_code_connection_failed');
             }
         }
         return $holdResult;
@@ -825,7 +842,7 @@ class OverdriveConnector implements
             if ($response) {
                 $result->status = true;
             } else {
-                $result->msg = $response->message;
+                $result->msg = $this->translate('od_code_connection_failed');
             }
         }
         return $result;
@@ -842,9 +859,8 @@ class OverdriveConnector implements
     public function getDownloadRedirect($overDriveId)
     {
         $result = $this->getResultObject();
-        $downloadLink = false;
         if (!$user = $this->getUser()) {
-            $this->error('user is not logged in', false, true);
+            $this->error('user is not logged in');
             return $result;
         }
         if (($config = $this->getConfig()) && !$config->usePatronAPI) {
@@ -895,13 +911,8 @@ class OverdriveConnector implements
             return $result;
         }
         // todo: check result
-        $patronTokenData = $this->connectToPatronAPI(
-            $user['cat_username'],
-            $user['cat_password'],
-            $forceNewConnection = false
-        );
-        $authorizationData = $patronTokenData->token_type .
-            ' ' . $patronTokenData->access_token;
+        $patronTokenData = $this->connectToPatronAPI($user['cat_username'], $user['cat_password'], false);
+        $authorizationData = $patronTokenData->token_type . ' ' . $patronTokenData->access_token;
         $header = "Authorization: $authorizationData";
         $result->data->authheader = $header;
         $result->status = true;
@@ -1028,7 +1039,6 @@ class OverdriveConnector implements
             return $result;
         }
         if ($conf = $this->getConfig()) {
-            $libraryURL = $conf->libraryURL;
             $productsKey = $this->getCollectionToken();
             $baseUrl = $conf->discURL;
             $issuesURL = "$baseUrl/v1/collections/$productsKey/products/$overDriveId/issues";
@@ -1043,7 +1053,7 @@ class OverdriveConnector implements
             if ($checkouts) {
                 $checkoutResult = $this->getCheckouts();
                 $checkoutData = $checkoutResult->data;
-                foreach ($result->data->products as $key => $issue) {
+                foreach ($result->data->products as $issue) {
                     $issue->checkedout = isset($checkoutData[strtolower($issue->id)]);
                 }
             }
@@ -1295,7 +1305,7 @@ class OverdriveConnector implements
                             // check for hold suspension
                             $result->data[$key]->holdSuspension = $hold->holdSuspension ?? false;
                             // check if ready for checkout
-                            foreach ($hold->actions as $action => $value) {
+                            foreach (array_keys($hold->actions) as $action) {
                                 if ($action == 'checkout') {
                                     $result->data[$key]->holdReadyForCheckout = true;
                                     // format the expires date.
@@ -1744,11 +1754,11 @@ class OverdriveConnector implements
     /**
      * Set a cache storage object.
      *
-     * @param StorageInterface $cache Cache storage interface
+     * @param ?StorageInterface $cache Cache storage interface
      *
      * @return void
      */
-    public function setCacheStorage(StorageInterface $cache = null)
+    public function setCacheStorage(?StorageInterface $cache = null)
     {
         $this->cache = $cache;
     }

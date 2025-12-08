@@ -30,7 +30,7 @@ topic_facet         = Topic
 ;usage_rights_str_mv = "Usage Rights"
 usage_rights_ext_str_mv = usage_rights_ext
 hierarchy_parent_title = component_part_is_part_of
-first_indexed       = "New Items in Index"
+catalog_date       = "New Items in Index"
 category_str_mv     = category_facet_heading
 
 ; Facets that will appear at the top of search results when the TopFacets
@@ -81,14 +81,27 @@ hierarchical[] = sector_str_mv
 hierarchical[] = category_str_mv
 hierarchical[] = format_ext_str_mv
 hierarchical[] = usage_rights_ext_str_mv
-; Sort options for hierarchical facets:
-; How hierarchical facets are sorted. Default is result count, but alternative ways
-; can be specified:
-; top = Sort the top level list alphabetically, others by result count (useful e.g.
-;       for a large number of building facets where top level is organization and
-;       second level the library branch)
-; all = Sort all levels alphabetically
+
+; You can set a general default setting with * and set field-specific overrides
+; using field names (see example below).
+;
+; Available options:
+; top       = Sort the top level list alphabetically, others by result count (useful e.g.
+;             for a large number of building facets where top level is organization and
+;             second level the library branch)
+; all       = Sort all levels alphabetically
+; count     = Sort all levels by count
+; top-value = Like top, but sorts by field value (case-sensitive ascii sort) instead of display text
+; all-value = Like all, but sorts by field value (case-sensitive ascii sort) instead of display text
+;
+; Note: this section may be overridden for HomePage and Advanced search facets (see
+; hierarchicalFacetSortOptions in HomePage_Settings and Advanced_Settings below).
+;
+; By default, if no settings are configured in this file, the default sort will be
+; 'count' for SideFacets values, 'all' for HomePage values, and 'top' for Advanced
+; values.
 hierarchicalFacetSortOptions[building] = top
+hierarchicalFacetSortOptions[usage_rights_ext_str_mv] = all-value
 ; How hierarchical facet values are displayed in the records:
 ; single = Display only the deepest level (default)
 ; full   = Display full hierarchy for each entry
@@ -296,3 +309,28 @@ Solr[author2_id_role_str_mv] = "count=sort_count"
 
 ; Example: sort Solr author_facet only alphabetically
 ; Solr[author_facet] = "index=sort_alphabetic"
+
+; Settings specific to a facet field. Each section is named [Facet_<field_name>].
+; The example section is used for publishDate. Additional sections can be added for
+; other fields as needed.
+[Facet_publishDate]
+; Minimum value for date range sliders in search forms (default is 1400). Value
+; must be a number or a string that PHP's strtotime can parse. Only the year part
+; is used.
+;slider_min_value = "1400"
+
+; Maximum value for date range sliders in search forms (default is current
+; year + 1). Value must be a number or a string that PHP's strtotime can parse.
+; Only the year part is used.
+;slider_max_value = "+1 year"
+
+[Facet_search_daterange_mv]
+; Minimum value for date range sliders in search forms (default is 1400). Value
+; must be a number or a string that PHP's strtotime can parse. Only the year part
+; is used.
+;slider_min_value = "1400"
+
+; Maximum value for date range sliders in search forms (default is current
+; year + 1). Value must be a number or a string that PHP's strtotime can parse.
+; Only the year part is used.
+;slider_max_value = "+1 year"

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Db_Interface
@@ -43,123 +43,123 @@ use VuFind\Db\Entity\EntityInterface;
 interface FinnaRecordViewRecordEntityInterface extends EntityInterface
 {
     /**
-     * Id getter
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
-     * @return int
+     * @return ?int
      */
     public function getId(): ?int;
 
     /**
-     * Backend setter
-     *
-     * @param string $backend Backend
-     *
-     * @return FinnaRecordViewRecordEntityInterface
-     */
-    public function setBackend(string $backend): FinnaRecordViewRecordEntityInterface;
-
-    /**
-     * Backend getter
+     * Get backend.
      *
      * @return string
      */
     public function getBackend(): string;
 
     /**
-     * Source setter
+     * Set backend.
      *
-     * @param string $source Source
+     * @param string $backend Backend
      *
-     * @return FinnaRecordViewRecordEntityInterface
+     * @return static
      */
-    public function setSource(string $source): FinnaRecordViewRecordEntityInterface;
+    public function setBackend(string $backend): static;
 
     /**
-     * Source getter
+     * Get source.
      *
      * @return string
      */
     public function getSource(): string;
 
     /**
-     * Record Id setter
+     * Set source.
      *
-     * @param string $recordId Record Id
+     * @param string $source Source
      *
-     * @return FinnaRecordViewRecordEntityInterface
+     * @return static
      */
-    public function setRecordId(string $recordId): FinnaRecordViewRecordEntityInterface;
+    public function setSource(string $source): static;
 
     /**
-     * Record Id getter
+     * Get record ID.
      *
      * @return string
      */
     public function getRecordId(): string;
 
     /**
-     * Format setter
+     * Set record ID.
      *
-     * @param FinnaRecordViewRecordFormatEntityInterface $format Format
+     * @param string $recordId Record Id
      *
-     * @return FinnaRecordViewRecordEntityInterface
+     * @return static
      */
-    public function setFormat(FinnaRecordViewRecordFormatEntityInterface $format): FinnaRecordViewRecordEntityInterface;
+    public function setRecordId(string $recordId): static;
 
     /**
-     * Format getter
+     * Get format.
      *
-     * @return string
+     * @return FinnaRecordViewRecordFormatEntityInterface
      */
     public function getFormat(): FinnaRecordViewRecordFormatEntityInterface;
 
     /**
-     * Usage rights setter
+     * Set format.
      *
-     * @param FinnaRecordViewRecordRightsEntityInterface $usageRights Usage rights
+     * @param FinnaRecordViewRecordFormatEntityInterface $format Format
      *
-     * @return FinnaRecordViewRecordEntityInterface
+     * @return static
      */
-    public function setUsageRights(
-        FinnaRecordViewRecordRightsEntityInterface $usageRights
-    ): FinnaRecordViewRecordEntityInterface;
+    public function setFormat(FinnaRecordViewRecordFormatEntityInterface $format): static;
 
     /**
-     * Usage rights getter
+     * Get usage rights.
      *
-     * @return string
+     * @return FinnaRecordViewRecordRightsEntityInterface
      */
     public function getUsageRights(): FinnaRecordViewRecordRightsEntityInterface;
 
     /**
-     * Online setter
+     * Set usage rights.
      *
-     * @param bool $online Online
+     * @param FinnaRecordViewRecordRightsEntityInterface $usageRights Usage rights
      *
-     * @return FinnaRecordViewRecordEntityInterface
+     * @return static
      */
-    public function setOnline(bool $online): FinnaRecordViewRecordEntityInterface;
+    public function setUsageRights(
+        FinnaRecordViewRecordRightsEntityInterface $usageRights
+    ): static;
 
     /**
-     * Online getter
+     * Get online.
      *
-     * @return string
+     * @return bool
      */
     public function getOnline(): bool;
 
     /**
-     * Extra metadata setter
+     * Set online.
      *
-     * @param ?string $extraMetadata Extra metadata
+     * @param bool $online Online
      *
-     * @return FinnaRecordViewRecordEntityInterface
+     * @return static
      */
-    public function setExtraMetadata(?string $extraMetadata): FinnaRecordViewRecordEntityInterface;
+    public function setOnline(bool $online): static;
 
     /**
-     * Extra metadata getter
+     * Get extra metadata.
      *
      * @return ?string
      */
     public function getExtraMetadata(): ?string;
+
+    /**
+     * Set extra metadata.
+     *
+     * @param ?string $extraMetadata Extra metadata
+     *
+     * @return static
+     */
+    public function setExtraMetadata(?string $extraMetadata): static;
 }

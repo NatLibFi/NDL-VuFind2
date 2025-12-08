@@ -1,17 +1,11 @@
 <!-- START of: finna - search/advanced/layout.phtml -->
 <?php
-  // Set page title.
-  $this->headTitle($this->translate('Advanced Search'));
-
   // Disable top search box -- this page has a special layout.
   $this->layout()->searchbox = false;
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li class="breadcrumb-item">';
-  $lastSearchLink = $this->searchMemory()->getLastSearchLink($this->transEsc('Search'));
-  $this->layout()->breadcrumbs .= !empty($lastSearchLink)
-    ? $lastSearchLink : $this->transEsc('Search');
-  $this->layout()->breadcrumbs .= '</li> <li class="breadcrumb-item active">' . $this->transEsc('Advanced') . '</li>';
+  $this->breadcrumbs()->set($this->translate('Search'), $this->searchMemory()->getLastSearchUrl())
+    ->add($this->translate('Advanced'), active: true);
 
   // Set up saved search details:
   if (isset($this->saved) && is_object($this->saved)) {
@@ -32,18 +26,18 @@
 
   // Search type and tabs
   $this->searchType = 'advanced';
-  $this->layout()->finnaMainHeader = '<div><h1 class="content-header">' . $this->translate('Advanced Search') . '</h1></div>';
+  $this->layout()->finnaMainHeader = $this->component('page-title', ['title' => $this->translate('Advanced Search'), 'class' => 'content-header', 'level' => 1]);
   $searchTabs = $this->searchtabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $hiddenFilters, []);
   $this->layout()->finnaMainTabs = $this->context($this)->renderInContext('search/searchTabs', ['searchTabs' => $searchTabs['tabs'], 'hiddenFilters' => $hiddenFilters]);
 
   // Step 1: Load the javascript
-  $this->headScript()->appendFile(
+  $this->assetManager()->appendScriptLink(
       $this->advancedSearchJsOverride ?? 'advanced_search.js'
   );
-  $this->headScript()->appendFile('finna-daterange-vis.js');
+  $this->assetManager()->appendScriptLink('finna-daterange-vis.js');
 
   // Step 2: Build the page
-  $this->headScript()->appendScript(
+  $this->assetManager()->appendScriptString(
       $this->partial(
           $this->buildPageOverride ?? 'search/advanced/build_page.phtml',
           ['options' => $this->options, 'searchDetails' => $searchDetails]
@@ -95,15 +89,15 @@
             'icon' => 'help',
             'contentHtml' => $this->translate("tooltip_{$tooltipSource}_advanced_html"),
             'labelHtml' => $this->transEsc('Help with Advanced Search'),
-            'class' => 'tooltip-pci-advanced pull-right',
+            'class' => 'tooltip-pci-advanced float-end',
           ])?>
         <?php endif; ?>
       </div>
       <input type="hidden" name="sort" value="relevance">
 
       <?php /* An empty div. This is the target for the javascript that builds this screen */ ?>
-      <h3 id="adv-search-groups-header" class="sr-only"><?=$this->transEsc('search_groups')?></h3>
-      <div id="groupPlaceHolder" class="hidden pull-left">
+      <h3 id="adv-search-groups-header" class="visually-hidden"><?=$this->transEsc('search_groups')?></h3>
+      <div id="groupPlaceHolder" class="hidden float-start">
         <button type="button" class="btn btn-primary"><?=$this->icon('adv-search-group-add') ?> <?= $this->transEsc('add_search_group') ?></button>
       </div>
       <?php /* fallback to a fixed set of search groups/fields if JavaScript is turned off */ ?>
@@ -131,7 +125,7 @@
               <div class="adv-search-group">
                 <div class="adv-group-match match">
                   <label class="search_bool"><?=$msgSearchMatch?>:</label>
-                  <select name="bool<?=$group ?>[]" id="search_bool<?=$group ?>" class="form-control form-inline form-select">
+                  <select name="bool<?=$group ?>[]" id="search_bool<?=$group ?>" class="form-select form-inline">
                     <option value="AND"<?php if (isset($setSearchGroups[$group]) && 'AND' == $setSearchGroups[$group]):?> selected<?php endif;?>><?=$msgSearchAnd?></option>
                     <option value="OR"<?php if (isset($setSearchGroups[$group]) && 'OR' == $setSearchGroups[$group]):?> selected<?php endif;?>><?=$msgSearchOr?></option>
                     <option value="NOT"<?php if (isset($setSearchGroups[$group]) && 'NOT' == $setSearchGroups[$group]):?> selected<?php endif;?>><?=$msgSearchNot?></option>
@@ -214,7 +208,7 @@
       <div class="group-join-container">
         <div id="groupJoin" class="form text-center">
           <label for="groupJoinOptions"><?=$this->transEsc('adv_search_group_join')?>:</label>
-          <select id="groupJoinOptions" name="join" class="form-control form-inline form-select">
+          <select id="groupJoinOptions" name="join" class="form-select form-inline">
             <option value="AND"<?php if ($searchDetails && $searchDetails->getOperator() == 'ALL'):?> selected<?php endif?>><?= $this->transEsc('group_AND') ?></option>
             <option value="OR"<?php if ($searchDetails && $searchDetails->getOperator() == 'OR'):?> selected<?php endif?>><?= $this->transEsc('group_OR') ?></option>
           </select>
@@ -228,7 +222,7 @@
        <span class="limit-container">
           <?=$this->render('search/advanced/limit.phtml')?>
         </span>
-        <button class="btn btn-lg btn-primary pull-right" type="submit" value="<?= $this->transEscAttr('Find')?>"><?=$this->icon('search-advanced') ?> <?= $this->transEsc('Find')?></button>
+        <button class="btn btn-lg btn-primary float-end" type="submit" value="<?= $this->transEscAttr('Find')?>"><?=$this->icon('search-advanced') ?> <?= $this->transEsc('Find')?></button>
       </div>
     </div>
     <?php if ($hasDefaultsApplied): ?>
@@ -247,5 +241,5 @@ $script = <<<JS
                               });
                               JS;
 ?>
-<?=$this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');?>
+<?=$this->assetManager()->outputInlineScriptString($script);?>
 <!-- END of: finna - search/advanced/layout.phtml -->

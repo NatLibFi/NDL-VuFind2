@@ -1,16 +1,18 @@
 <?php
-  // Set up page title:
-  $pageTitle = 'ReservationList::Create New Reservation List';
-  $this->headTitle($this->translate($pageTitle));
+  $pageTitle = $this->translate('ReservationList::Create new list for holds');
 
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('reservationlist-createlist') . '">' . $this->transEsc('ReservationList::Add List') . '</a></li>'
-    . '<li class="breadcrumb-item active">' . $this->transEsc($pageTitle) . '</li>';
+  if ($this->driver) {
+    $this->breadcrumbs()->set(...$this->recordLinker()->getBreadcrumbParams($this->driver));
+  } else {
+    $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'));
+  }
+  $this->breadcrumbs()->add($pageTitle, active: true);
 ?>
 
 <?=$this->flashmessages()?>
 
-<h2><?=$this->transEsc($pageTitle); ?></h2>
+<?=$this->component('page-title', ['title' => $pageTitle]);?>
 
 <form class="form-edit-list" method="post" name="CreateReservationList" action="<?=$this->url('reservationlist-createlist'); ?>">
   <input type="hidden" name="recordId" value="<?=$this->escapeHtmlAttr($this->recordId)?>">
@@ -19,14 +21,14 @@
   <input type="hidden" name="institution" value="<?=$this->escapeHtmlAttr($this->institution)?>">
   <input type="hidden" name="csrf" value="<?=$this->auth()->getManager()->getCsrfHash()?>">
   <div class="form-group">
-    <label class="control-label" for="list_title"><?=$this->transEsc('ReservationList::Reservation List Name'); ?>*:</label>
+    <label class="form-label" for="list_title"><?=$this->transEsc('ReservationList::Name of the list'); ?>*:</label>
     <input id="list_title" class="form-control" type="text" name="title" value="" required>
   </div>
   <div class="form-group">
-    <label class="control-label" for="list_desc"><?=$this->transEsc('ReservationList::Description') ?></label>
+    <label class="form-label" for="list_desc"><?=$this->transEsc('Description') ?></label>
     <textarea id="list_desc" class="form-control" name="desc" rows="3"></textarea>
   </div>
   <div class="form-group">
-    <input class="btn btn-primary" type="submit" name="list_created" value="<?=$this->transEscAttr('ReservationList::Create New Reservation List') ?>">
+    <input class="btn btn-primary" type="submit" name="list_created" value="<?=$this->transEscAttr('ReservationList::Create new list for holds') ?>">
   </div>
 </form>

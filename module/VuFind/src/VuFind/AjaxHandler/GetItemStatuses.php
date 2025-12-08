@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -33,9 +33,9 @@
 
 namespace VuFind\AjaxHandler;
 
-use Laminas\Config\Config;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\View\Renderer\RendererInterface;
+use VuFind\Config\Config;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\ILS\Connection;
@@ -325,7 +325,7 @@ class GetItemStatuses extends AbstractBase implements
             'id' => $record[0]['id'],
             'availability' => $combinedAvailability->availabilityAsString(),
             'availability_message' => $availabilityMessage,
-            'location' => htmlentities(implode(",\t", $location), ENT_COMPAT, 'UTF-8'),
+            'location' => implode(",\t", $location),
             'locationList' => false,
             'reserve' => $reserve ? 'true' : 'false',
             'reserve_message'
@@ -370,11 +370,7 @@ class GetItemStatuses extends AbstractBase implements
 
             $locationInfo = [
                 'availability' => $locationStatus['availability'],
-                'location' => htmlentities(
-                    $this->translateWithPrefix('location_', $location),
-                    ENT_COMPAT,
-                    'UTF-8'
-                ),
+                'location' => $this->translateWithPrefix('location_', $location),
                 'callnumberHtml' =>
                     $this->renderCallnumbers($callnumberSetting, $locationCallnumbers),
             ];

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Authentication
@@ -30,7 +30,6 @@
 
 namespace VuFind\Auth;
 
-use Laminas\Log\PsrLoggerAdapter;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Auth as AuthException;
 
@@ -182,9 +181,9 @@ class CAS extends AbstractBase
      * @param string $target Full URL where external authentication method should
      * send user after login (some drivers may override this).
      *
-     * @return bool|string
+     * @return ?string
      */
-    public function getSessionInitiator($target)
+    public function getSessionInitiator(string $target): ?string
     {
         $config = $this->getConfig();
         if (isset($config->CAS->target)) {
@@ -221,21 +220,17 @@ class CAS extends AbstractBase
     }
 
     /**
-     * Perform cleanup at logout time.
+     * Get URL users should be redirected to for logout in external services if necessary.
      *
-     * @param string $url URL to redirect user to after logging out.
+     * @param string $url Internal URL to redirect user to after logging out.
      *
-     * @return string     Redirect URL (usually same as $url, but modified in
-     * some authentication modules).
+     * @return string Redirect URL (usually same as $url, but modified in some authentication modules).
      */
-    public function logout($url)
+    public function getLogoutRedirectUrl(string $url): string
     {
         // If single log-out is enabled, use a special URL:
         $config = $this->getConfig();
-        if (
-            isset($config->CAS->logout)
-            && !empty($config->CAS->logout)
-        ) {
+        if (!empty($config->CAS->logout)) {
             $url = $config->CAS->logout . '?service=' . urlencode($url);
         }
 
@@ -313,7 +308,7 @@ class CAS extends AbstractBase
         if (!$this->phpCASSetup) {
             $cas = $this->getConfig()->CAS;
 
-            $casauth->setLogger(new PsrLoggerAdapter($this->logger));
+            $casauth->setLogger($this->logger);
 
             if ($cas->debug ?? false) {
                 $casauth->setVerbose(true);

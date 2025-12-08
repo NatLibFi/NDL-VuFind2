@@ -17,13 +17,14 @@
         'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null,
         'results' => $this->results,
         'user' => $user,
+        'totalResourceCount' => $this->totalResourceCount,
       ];
     }
     $reservationLists = $this->reservationList($user)->getReservationListsForUser();
-    if ($reservationLists && $this->active === 'reservationlist') {
-      $list = $this->results?->getListObject() ?? [];
+    if ($this->active === 'reservationlist') {
+      $list = $this->results?->getListObject();
       $listParams = [
-        'activeId' => $list['id'] ?? false,
+        'activeId' => $list?->getId(),
         'lists' => $reservationLists,
         'results' => $this->results,
         'user' => $user,
@@ -68,7 +69,7 @@
         'librarycards' => [
           'url' => 'librarycards-home',
           'translation' => 'Library Cards',
-          'show' => $user && $user->libraryCardsEnabled(),
+          'show' => $user && $this->accountCapabilities()->libraryCardsEnabled(),
         ],
       ];
     }
@@ -91,15 +92,15 @@
         'translation' => 'saved_items',
         'show' => $this->userlist()->getMode() !== 'disabled',
       ],
-      'reservationlist' => [
-        'url' => 'reservationlist-displaylists',
-        'translation' => 'Reservation List',
-        'show' => $reservationLists,
+      'usercontent' => [
+        'url' => 'myresearch-usercontent',
+        'translation' => 'comments_and_ratings',
+        'show' => !empty($this->accountCapabilities()->getUserContentTabs()),
       ],
       'logout' => [
         'url' => 'myresearch-logout',
         'translation' => 'Log Out',
-        'iconClass' => $this->icon('sign-out', 'pull-right'),
+        'iconClass' => $this->icon('sign-out', 'float-end'),
         'desktopOnly' => true,
       ],
     ];
@@ -111,6 +112,17 @@
       'holds',
       'storageretrievalrequests',
       'illrequests',
+      'reservationlist' => [
+        'active' => $this->active === 'reservationlist',
+        'url' => 'reservationlist-displaylists',
+        'translation' => 'ReservationList::reservation_lists_research_room',
+        'show' => $this->reservationList()->isFunctionalityEnabled(),
+        'partial' => [
+          'url' => 'reservationlist/reservationlist-navi.phtml',
+          'wrapperClass' => 'reservationlist-bar mobile-sidebar-container',
+          'params' => $listParams ?? [],
+        ],
+      ],
       'historicloans',
       'fines',
       'librarycards',
@@ -123,21 +135,11 @@
         'show' => $this->userlist()->getMode() !== 'disabled',
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',
-          'wrapperClass' => 'mylist-bar',
+          'wrapperClass' => 'mylist-bar mobile-sidebar-container',
           'params' => $listParams ?? [],
         ],
       ],
-      'reservationlist' => [
-        'active' => $this->active === 'reservationlist',
-        'url' => 'reservationlist-displaylists',
-        'translation' => 'ReservationList::Reservation Lists',
-        'show' => $reservationLists,
-        'partial' => [
-          'url' => 'reservationlist/reservationlist-navi.phtml',
-          'wrapperClass' => 'reservationlist-bar',
-          'params' => $listParams ?? [],
-        ],
-      ],
+      'usercontent',
       'logout',
     ];
 
@@ -145,7 +147,7 @@
     $activeMobileTab = $menuListItems[$headerKey]['translation'] ?? 'Your Account';
 ?>
 
-<ul class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs finna-movement myresearch-menu account-menu" role="menu">
+<ul role="presentation" class="<?=$this->layoutClass('sidebar-myresearch')?> <?= $listOpen ? '' : 'move-list' ?> nav-tabs-personal list-group useraccount-nav nav-tabs finna-movement myresearch-menu account-menu">
   <li role="none" class="menu-header hidden-xs hidden-sm">
     <h1>
       <?= $this->transEsc('Your Account') ?>

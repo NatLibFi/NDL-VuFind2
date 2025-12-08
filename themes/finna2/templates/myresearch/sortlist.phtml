@@ -1,18 +1,15 @@
 <!-- START of: finna - myresearch/sortlist.phtml -->
 <?php
-  $this->headScript()->appendFile('finna-mylist.js');
+  $this->assetManager()->appendScriptLink('finna-mylist.js');
   $list = $this->results->getListObject();
   $user = $this->auth()->getUserObject();
 
-  // Set up page title:
-  $this->headTitle($this->translate('Sort manually'));
-  $this->layout()->finnaMainHeader = '<div><h3 class="finna-main-header">' . $this->transEsc('Sort manually') . '</h3></div>';
-
   // Set up breadcrumbs:
-  $this->layout()->breadcrumbs = '<li class="breadcrumb-item"><a href="' . $this->url('myresearch-home') . '">' . $this->transEsc('Your Account') . '</a></li> <li class="breadcrumb-item active">' . $this->transEsc('Sort manually') . '</li>';
+  $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
+    ->add($this->translate('Sort manually'), active: true);
 ?>
 
-<h2><?=$this->transEsc('Sort manually') ?></h2>
+<?=$this->component('page-title', ['title' => $this->translate('Sort manually')]);?>
 
 <?=$this->flashmessages()?>
 <form method="post" id="sort_form" name="sortForm">
@@ -46,7 +43,7 @@ $script = <<<EOT
     EOT;
 
 // Inline the script for lightbox compatibility
-echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+echo $this->assetManager()->outputInlineScriptString($script);
 ?>
 <!-- END of: finna - myresearch/sortlist.phtml -->
 

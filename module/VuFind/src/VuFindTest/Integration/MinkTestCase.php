@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -41,6 +41,7 @@ use function call_user_func;
 use function floatval;
 use function in_array;
 use function intval;
+use function is_callable;
 use function is_string;
 use function strlen;
 
@@ -56,7 +57,7 @@ use function strlen;
 abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
 {
     use \VuFindTest\Feature\LiveDetectionTrait;
-    use \VuFindTest\Feature\PathResolverTrait;
+    use \VuFindTest\Feature\ConfigRelatedServicesTrait;
     use \VuFindTest\Feature\RemoteCoverageTrait;
 
     public const DEFAULT_TIMEOUT = 5000;
@@ -178,7 +179,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      */
     protected function getTestName(): string
     {
-        return $this::class . '::' . $this->name();
+        return $this::class . '::' . $this->nameWithDataSet();
     }
 
     /**
@@ -225,7 +226,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     /**
      * Support method for changeConfig; act on a single file.
      *
-     * @param string $configName Configuration to modify.
+     * @param string $configName Configuration to modify. Use 'Source:Target" to copy from Source.ini to Target.ini.
      * @param array  $settings   Settings to change.
      * @param bool   $replace    Should we replace the existing config entirely
      * (as opposed to extending it with new settings)?
@@ -234,20 +235,28 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      */
     protected function changeConfigFile(string $configName, array $settings, bool $replace = false): void
     {
-        $file = $configName . '.ini';
-        $local = $this->pathResolver->getLocalConfigPath($file, null, true);
-        if (!in_array($configName, $this->modifiedConfigs)) {
-            if (file_exists($local)) {
+        $parts = explode(':', $configName);
+        if (isset($parts[1])) {
+            $sourceConfig = $parts[0];
+            $destConfig = $parts[1];
+        } else {
+            $sourceConfig = $destConfig = $configName;
+        }
+        $sourceFile = $sourceConfig . '.ini';
+        $destFile = $destConfig . '.ini';
+        $localFile = $this->pathResolver->getLocalConfigPath($destFile, null, true);
+        if (!in_array($destConfig, $this->modifiedConfigs)) {
+            if (file_exists($localFile)) {
                 // File exists? Make a backup!
-                copy($local, $local . '.bak');
+                copy($localFile, $localFile . '.bak');
             } else {
                 // File doesn't exist? Make a baseline version.
-                copy($this->pathResolver->getBaseConfigPath($file), $local);
+                copy($this->pathResolver->getBaseConfigPath($sourceFile), $localFile);
             }
 
-            $this->modifiedConfigs[] = $configName;
+            $this->modifiedConfigs[] = $destConfig;
         }
-        $this->writeConfigFile($local, $settings, $replace);
+        $this->writeConfigFile($localFile, $settings, $replace);
     }
 
     /**
@@ -306,6 +315,39 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
         $config = $replace ? [] : Yaml::parseFile($local);
         $config = array_replace_recursive($config, $settings);
         file_put_contents($local, Yaml::dump($config));
+    }
+
+    /**
+     * Get configuration from an ini file
+     *
+     * Note: This is just a simple ini file reader and does not handle inheritance
+     *
+     * @param string $configName Configuration name (without file suffix)
+     *
+     * @return array
+     */
+    protected function getConfig($configName = 'config'): array
+    {
+        $file = $configName . '.ini';
+        $configPath = $this->pathResolver->getLocalConfigPath($file, null, true);
+        if (!file_exists($configPath)) {
+            $configPath = $this->pathResolver->getBaseConfigPath($file);
+            if (!file_exists($configPath)) {
+                throw new \Exception("Configuration file $file does not exist");
+            }
+        }
+        return parse_ini_file($configPath, true);
+    }
+
+    /**
+     * Get current theme name
+     *
+     * @return string
+     */
+    protected function getCurrentTheme(): string
+    {
+        $config = $this->getConfig();
+        return $config['Site']['theme'] ?? '';
     }
 
     /**
@@ -836,6 +878,8 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      * @param string  $selector CSS selector
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkFieldIsValid(Element $page, string $selector): void
     {
@@ -853,6 +897,8 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      * @param string  $selector CSS selector
      *
      * @return void
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     protected function checkFieldIsInvalid(Element $page, string $selector): void
     {
@@ -870,7 +916,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      * @param callable $callback    Callback used to get the results
      * @param callable $compareFunc Callback used to compare the results
      * @param callable $assertion   Assertion to make
-     * @param int      $timeout     Wait timeout (in ms)
+     * @param ?int     $timeout     Wait timeout (in ms)
      *
      * @return void
      */
@@ -879,7 +925,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
         callable $callback,
         callable $compareFunc,
         callable $assertion,
-        int $timeout = null
+        ?int $timeout = null
     ) {
         $timeout ??= $this->getDefaultTimeout();
         $result = null;
@@ -910,14 +956,14 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      *
      * @param mixed    $expected Expected value
      * @param callable $callback Callback
-     * @param int      $timeout  Wait timeout (in ms)
+     * @param ?int     $timeout  Wait timeout (in ms)
      *
      * @return void
      */
     protected function assertEqualsWithTimeout(
         $expected,
         callable $callback,
-        int $timeout = null
+        ?int $timeout = null
     ) {
         $this->assertWithTimeout(
             $expected,
@@ -935,14 +981,14 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      *
      * @param string   $expected Expected value
      * @param callable $callback Callback
-     * @param int      $timeout  Wait timeout (in ms)
+     * @param ?int     $timeout  Wait timeout (in ms)
      *
      * @return void
      */
     protected function assertStringContainsStringWithTimeout(
         string $expected,
         callable $callback,
-        int $timeout = null
+        ?int $timeout = null
     ) {
         $this->assertWithTimeout(
             $expected,
@@ -993,7 +1039,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
         if ($handler) {
             $this->findCssAndSetValue($page, '#searchForm_type', $handler);
         }
-        $this->clickCss($page, '.btn.btn-primary');
+        $this->clickCss($page, '.btn.btn-primary[type=submit]');
         $this->waitForPageLoad($page);
     }
 
@@ -1001,13 +1047,13 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
      * Wait for page load (full page or any element) to complete
      *
      * @param Element $page    Page element
-     * @param int     $timeout Wait timeout (in ms)
+     * @param ?int    $timeout Wait timeout (in ms)
      *
      * @return void
      */
     protected function waitForPageLoad(
         Element $page,
-        int $timeout = null
+        ?int $timeout = null
     ) {
         $timeout ??= $this->getDefaultTimeout();
         $session = $this->getMinkSession();
@@ -1067,7 +1113,13 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
             $button = $this->findCss($page, '#modal .modal-content > button.close');
         }
         $button->click();
-        $this->waitForLightboxHidden();
+        // Try twice just in case we missed the first click:
+        try {
+            $this->waitForLightboxHidden();
+        } catch (\Exception $e) {
+            $button->click();
+            $this->waitForLightboxHidden();
+        }
     }
 
     /**
@@ -1095,7 +1147,7 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(
             $title,
-            $page->find('css', '#lightbox-title')->getText()
+            $this->findCss($page, '#lightbox-title')->getText()
         );
     }
 
@@ -1179,6 +1231,14 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
             return;
         }
 
+        $page ??= $this->session->getPage();
+        // Don't validate Whoops error pages:
+        if (str_contains($page->getOuterHtml(), '<div class="Whoops container')) {
+            return;
+        }
+
+        $this->waitForPageLoad($page);
+
         $http = new \VuFindHttp\HttpService();
         $client = $http->createClient(
             $nuAddress,
@@ -1190,8 +1250,6 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
                 'out' => 'json',
             ]
         );
-        $page ??= $this->session->getPage();
-        $this->waitForPageLoad($page);
         $client->setFileUpload(
             $this->session->getCurrentUrl(),
             'file',
@@ -1374,6 +1432,10 @@ abstract class MinkTestCase extends \PHPUnit\Framework\TestCase
 
         $this->stopMinkSession();
         $this->restoreConfigs();
+
+        if (($this->hasLiveDatabaseTrait ?? false) && is_callable([$this, 'tearDownLiveDatabaseContainer'])) {
+            $this->tearDownLiveDatabaseContainer();
+        }
 
         if (null !== $htmlValidationException) {
             throw $htmlValidationException;

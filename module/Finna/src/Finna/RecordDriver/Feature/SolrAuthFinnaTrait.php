@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
@@ -36,7 +36,7 @@ namespace Finna\RecordDriver\Feature;
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
@@ -72,21 +72,6 @@ trait SolrAuthFinnaTrait
     public function getCorporateType()
     {
         return '';
-    }
-
-    /**
-     * Return the unique identifier of this record within the index;
-     * useful for retrieving additional information (like tags and user
-     * comments) from the external MySQL database.
-     *
-     * @return string Unique identifier.
-     */
-    public function getUniqueID()
-    {
-        if (!isset($this->fields['id'])) {
-            throw new \Exception('ID not set!');
-        }
-        return $this->fields['id'];
     }
 
     /**
@@ -407,5 +392,15 @@ trait SolrAuthFinnaTrait
     public function getOnlineURLs($raw = false)
     {
         return [];
+    }
+
+    /**
+     * Is rating allowed.
+     *
+     * @return bool
+     */
+    public function isRatingAllowed(): bool
+    {
+        return false;
     }
 }

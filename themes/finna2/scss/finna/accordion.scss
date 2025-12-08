@@ -11,7 +11,7 @@
     border-right: 1px solid $gray-lighter;
     border-bottom: 1px solid $gray-lighter;
     border-left: 4px solid $gray-lighter;
-    @media(min-width: $screen-md) {
+    @include media-breakpoint-up(md) {
       display: none;
     }
     @media print {
@@ -19,7 +19,7 @@
       i {
         display: none;
       }
-      @media (max-width: $screen-md-min) {
+      @include media-breakpoint-down(lg) {
         padding: 15px 0 0;
       }
     }
@@ -42,12 +42,11 @@
       font-size: 24px;
       content: "\e91a";
       color: $action-link-color;
-      flex: 1;
       font-style: normal;
     }
   }
-  &.accordion-details{
-    @media(max-width: $screen-sm-max) {
+  &.accordion-details {
+    @include media-breakpoint-down(md) {
       display: $accordion-details-display;
     }
   }
@@ -67,7 +66,7 @@
         border-left: none;
       }
     }
-    @media (max-width: $screen-sm-max) {
+    @include media-breakpoint-down(md) {
       .tab-content {
         display: block;
         margin: 10px 0;
@@ -92,7 +91,7 @@
     margin-bottom: 0;
   }
   .feed-accordions-title {
-    @media (min-width: $screen-sm-max) {
+    @include media-breakpoint-up(md) {
       display: none;
     }
   }
@@ -113,7 +112,7 @@
     text-overflow: ellipsis;
     line-height: $content-headings-line-height;
     width: 100%;
-    @media(min-width: $screen-md) {
+    @include media-breakpoint-up(md) {
       display: none;
     }
     .feed-accordion-anchor {
@@ -134,8 +133,8 @@
     .js-accordion-open {
       display: none;
     }
-    &.accordion-details{
-      @media(max-width: $screen-sm-max) {
+    &.accordion-details {
+      @include media-breakpoint-down(md) {
         display: $accordion-details-display;
       }
     }
@@ -151,7 +150,7 @@
       .js-accordion-close {
         display: none;
       }
-      @media (max-width: $screen-sm-max) {
+      @include media-breakpoint-down(md) {
         .tab-content {
           display: block;
           margin: 10px 0;
@@ -167,14 +166,14 @@
       display: none;
   }
   .events-tabs {
-      @media (max-width: $screen-sm-max) {
+      @include media-breakpoint-down(md) {
           margin-bottom: 0;
       }
   }
 }
 .feed-tabs.mobile-accordion-show, .linked-events-tabs.mobile-accordion-show {
   .feed-tabs-container {
-    @media (max-width: $screen-sm-max) {
+    @include media-breakpoint-down(md) {
       display: none;
     }
   }

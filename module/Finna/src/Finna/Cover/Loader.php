@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Cover_Generator
@@ -213,6 +213,9 @@ class Loader extends \VuFind\Cover\Loader
             $this->id = $driver->getUniqueID();
             $this->url = $params['url'];
             $this->imageParams = $params;
+            // Sometimes records only contain 1 size of an image, so check if the current requested image
+            // is actually different size image. This helps to reduce amount of images cached.
+            $this->size = $params['cacheSize'] ?? $size;
             return $this->fetchFromAPI();
         }
     }

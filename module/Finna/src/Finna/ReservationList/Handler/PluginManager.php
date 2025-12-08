@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ReservationList
@@ -91,19 +91,5 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     protected function getExpectedInterface()
     {
         return HandlerInterface::class;
-    }
-
-    /**
-     * Get connection handler with list configuration.
-     *
-     * @param array $listProperties List properties
-     *
-     * @return HandlerInterface
-     */
-    public function getWithConfig(array $listProperties): HandlerInterface
-    {
-        $connection = parent::get($listProperties['Connection']['type']);
-        $connection->init($listProperties);
-        return $connection;
     }
 }

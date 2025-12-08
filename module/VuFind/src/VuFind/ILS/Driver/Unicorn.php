@@ -15,8 +15,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -126,7 +126,7 @@ class Unicorn extends AbstractBase implements
         // allow user to specify the full url to the Sirsi side perl script
         $this->url = $this->config['Catalog']['url'];
 
-        // host/port/search_prog kept for backward compatibility
+        // host/port/search_prog kept for backward compatibility with legacy configs
         if (
             isset($this->config['Catalog']['host'])
             && isset($this->config['Catalog']['port'])
@@ -411,7 +411,7 @@ class Unicorn extends AbstractBase implements
      * record.
      *
      * @param string $id      The record id to retrieve the holdings for
-     * @param array  $patron  Patron data
+     * @param ?array $patron  Patron data
      * @param array  $options Extra options (not currently used)
      *
      * @throws DateException
@@ -422,7 +422,7 @@ class Unicorn extends AbstractBase implements
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function getHolding($id, array $patron = null, array $options = [])
+    public function getHolding($id, ?array $patron = null, array $options = [])
     {
         return $this->getStatus($id);
     }
@@ -517,37 +517,35 @@ class Unicorn extends AbstractBase implements
         [$user_key, $alt_id, $barcode, $name, $library, $profile, $cat1, $cat2,
             $cat3, $cat4, $cat5, $expiry, $holds, $status] = explode('|', $response);
 
-        [$last, $first] = explode(',', $name);
-        $first = rtrim($first, ' ');
+        [$last, $first] = $this->getLastAndFirstName($name);
 
         if ($expiry != '0') {
             $expiry = $this->parseDateTime(trim($expiry));
         }
         $expired = ($expiry == '0') ? false : $expiry < time();
-        return [
-            'id' => $username,
-            'firstname' => $first,
-            'lastname' =>  $last,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'email' => null,
-            'major' => null,
-            'college' => null,
-            'library' => $library,
-            'barcode' => $barcode,
-            'alt_id' => $alt_id,
-            'cat1' => $cat1,
-            'cat2' => $cat2,
-            'cat3' => $cat3,
-            'cat4' => $cat4,
-            'cat5' => $cat5,
-            'profile' => $profile,
-            'expiry_date' => $this->formatDateTime($expiry),
-            'expired' => $expired,
-            'number_of_holds' => $holds,
-            'status' => $status,
-            'user_key' => $user_key,
-        ];
+        return $this->createPatronArray(
+            id: $username,
+            firstname: $first,
+            lastname: $last,
+            cat_username: $username,
+            cat_password: $password,
+            nonDefaultFields: [
+                'barcode' => $barcode,
+                'library' => $library,
+                'alt_id' => $alt_id,
+                'cat1' => $cat1,
+                'cat2' => $cat2,
+                'cat3' => $cat3,
+                'cat4' => $cat4,
+                'cat5' => $cat5,
+                'profile' => $profile,
+                'expiry_date' => $this->formatDateTime($expiry),
+                'expired' => $expired,
+                'number_of_holds' => $holds,
+                'status' => $status,
+                'user_key' => $user_key,
+            ]
+        );
     }
 
     /**
@@ -573,18 +571,20 @@ class Unicorn extends AbstractBase implements
 
         [, , , , $library, $profile, , , , , , , , $email, $address1, $zip, $phone,
             $address2] = explode('|', $response);
-
-        return [
-            'firstname' => $patron['firstname'],
-            'lastname' => $patron['lastname'],
-            'address1' => $address1,
-            'address2' => $address2,
-            'zip' => $zip,
-            'phone' => $phone,
-            'email' => $email,
-            'group' => $profile,
-            'library' => $library,
-        ];
+        return $this->createProfileArray(
+            firstname: $patron['firstname'],
+            lastname: $patron['lastname'],
+            address1: $address1,
+            address2: $address2,
+            zip: $zip,
+            phone: $phone,
+            group: $profile,
+            home_library: $library,
+            nonDefaultFields: [
+                'email' => $email,
+                'library' => $library, // Leave library for legacy support
+            ]
+        );
     }
 
     /**

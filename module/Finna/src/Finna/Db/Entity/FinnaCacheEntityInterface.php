@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Db_Interface
@@ -44,73 +44,73 @@ use VuFind\Db\Entity\EntityInterface;
 interface FinnaCacheEntityInterface extends EntityInterface
 {
     /**
-     * Id getter
+     * Get identifier (returns null for an uninitialized or non-persisted object).
      *
      * @return ?int
      */
     public function getId(): ?int;
 
     /**
-     * Resource ID setter
-     *
-     * @param string $id Resource ID
-     *
-     * @return FinnaCacheEntityInterface
-     */
-    public function setResourceId(string $id): FinnaCacheEntityInterface;
-
-    /**
-     * Resource ID getter
+     * Get resource ID.
      *
      * @return string
      */
     public function getResourceId(): string;
 
     /**
-     * Created setter
+     * Set resource ID.
      *
-     * @param DateTime $dateTime Created date
+     * @param string $id Resource ID
      *
-     * @return FinnaCacheEntityInterface
+     * @return static
      */
-    public function setCreated(DateTime $dateTime): FinnaCacheEntityInterface;
+    public function setResourceId(string $id): static;
 
     /**
-     * Created getter
+     * Get creation date.
      *
      * @return DateTime
      */
-    public function getCreated(): Datetime;
+    public function getCreated(): DateTime;
 
     /**
-     * Modification timestamp setter
+     * Set creation date.
      *
-     * @param int $mtime Unix timestamp of modification
+     * @param DateTime $dateTime Created date
      *
-     * @return FinnaCacheEntityInterface
+     * @return static
      */
-    public function setModificationTimestamp(int $mtime): FinnaCacheEntityInterface;
+    public function setCreated(DateTime $dateTime): static;
 
     /**
-     * Modification timestamp getter
+     * Get modification UNIX timestamp.
      *
-     * @return bool
+     * @return int
      */
     public function getModificationTimestamp(): int;
 
     /**
-     * Data setter
+     * Set modification UNIX timestamp.
      *
-     * @param string $data Data
+     * @param int $mtime Unix timestamp of modification
      *
-     * @return FinnaCacheEntityInterface
+     * @return static
      */
-    public function setData(string $data): FinnaCacheEntityInterface;
+    public function setModificationTimestamp(int $mtime): static;
 
     /**
-     * Data getter
+     * Get data.
      *
      * @return string
      */
     public function getData(): string;
+
+    /**
+     * Set data.
+     *
+     * @param string $data Data
+     *
+     * @return static
+     */
+    public function setData(string $data): static;
 }

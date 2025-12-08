@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -38,9 +38,9 @@ use function is_array;
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrAuthForward extends SolrAuthDefault implements \Laminas\Log\LoggerAwareInterface
+class SolrAuthForward extends SolrAuthDefault implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrAuthFinnaTrait;
     use Feature\SolrForwardTrait {
@@ -50,6 +50,13 @@ class SolrAuthForward extends SolrAuthDefault implements \Laminas\Log\LoggerAwar
     use Feature\FinnaXmlReaderTrait;
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
+
+    /**
+     * Runtime cache for method results to avoid duplicate processing
+     *
+     * @var array
+     */
+    protected $cache = [];
 
     /**
      * Get an array of alternative titles for the record.
@@ -235,7 +242,7 @@ class SolrAuthForward extends SolrAuthDefault implements \Laminas\Log\LoggerAwar
     /**
      * Get the main metadata element
      *
-     * @return SimpleXMLElement
+     * @return \SimpleXMLElement
      */
     protected function getMainElement()
     {
@@ -276,7 +283,7 @@ class SolrAuthForward extends SolrAuthDefault implements \Laminas\Log\LoggerAwar
     /**
      * Get all original records as a SimpleXML object
      *
-     * @return SimpleXMLElement The record as SimpleXML
+     * @return \SimpleXMLElement The record as SimpleXML
      */
     protected function getAllRecordsXML()
     {

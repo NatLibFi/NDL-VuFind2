@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Export
@@ -28,6 +28,8 @@
  */
 
 namespace Finna;
+
+use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
 /**
  * Export support class
@@ -43,12 +45,12 @@ class Export extends \VuFind\Export
     /**
      * Does the specified record support the specified export format?
      *
-     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
-     * @param string                            $format Format to check
+     * @param RecordDriver $driver Record driver
+     * @param string       $format Format to check
      *
      * @return bool
      */
-    public function recordSupportsFormat($driver, $format)
+    public function recordSupportsFormat(RecordDriver $driver, string $format): bool
     {
         if ('Finna' === $format) {
             return true;
@@ -63,7 +65,7 @@ class Export extends \VuFind\Export
      *
      * @return array
      */
-    public function getHeaders($format)
+    public function getHeaders(string $format): array
     {
         if ('Finna' === $format) {
             return ['Content-type: application/json'];

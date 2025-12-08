@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,14 +43,14 @@ class SyndeticsPlus extends \Laminas\View\Helper\AbstractHelper
     /**
      * Syndetics configuration
      *
-     * \Laminas\Config\Config
+     * \VuFind\Config\Config
      */
     protected $config;
 
     /**
      * Constructor
      *
-     * @param \Laminas\Config\Config $config Syndetics configuration (should contain
+     * @param \VuFind\Config\Config $config Syndetics configuration (should contain
      * 'plus' boolean value (true if Syndetics Plus is enabled) and 'plus_id' string
      * value (Syndetics Plus user ID). If these values are absent, SyndeticsPlus
      * will be disabled.

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -29,9 +29,9 @@
 
 namespace VuFindTest\Command\Import;
 
-use Laminas\Config\Config;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Console\Tester\CommandTester;
+use VuFind\Config\Config;
 use VuFind\Solr\Writer;
 use VuFind\XSLT\Importer;
 use VuFindConsole\Command\Import\WebCrawlCommand;
@@ -102,9 +102,8 @@ class WebCrawlCommandTest extends \PHPUnit\Framework\TestCase
      * @param string $expectedOutput Expected normalized output string
      *
      * @return void
-     *
-     * @dataProvider successWithMinimalParametersProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('successWithMinimalParametersProvider')]
     public function testSuccessWithMinimalParameters(bool $verbose, bool $cache, string $expectedOutput): void
     {
         $cacheDir = realpath($this->getFixtureDir('VuFindConsole') . 'webcrawl/cache');
@@ -191,17 +190,17 @@ class WebCrawlCommandTest extends \PHPUnit\Framework\TestCase
     /**
      * Get a mock command object
      *
-     * @param Importer $importer Importer object
-     * @param Writer   $solr     Solr writer object
-     * @param Config   $config   Configuration
-     * @param array    $methods  Methods to mock
+     * @param ?Importer $importer Importer object
+     * @param ?Writer   $solr     Solr writer object
+     * @param ?Config   $config   Configuration
+     * @param array     $methods  Methods to mock
      *
      * @return MockObject&WebCrawlCommand
      */
     protected function getMockCommand(
-        Importer $importer = null,
-        Writer $solr = null,
-        Config $config = null,
+        ?Importer $importer = null,
+        ?Writer $solr = null,
+        ?Config $config = null,
         array $methods = ['downloadFile', 'removeTempFile', 'updateTransformCache']
     ): MockObject&WebCrawlCommand {
         return $this->getMockBuilder(WebCrawlCommand::class)
