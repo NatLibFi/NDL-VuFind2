@@ -68,9 +68,17 @@
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <div class="logged-in-as">
+        <?php
+          $authMethod = $user->getAuthMethod();
+          $loginMethod = '';
+          if ($authMethod === 'multiils') {
+            $loginConfig = $this->ils()->getConfig('patronLogin');
+            $loginMethod = $loginConfig['loginMethod'] ?? '';
+          }
+        ?>
         <div>
-          <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getDisplayableUsername())?></span></div>
-          <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $user->getAuthMethod())?></span></div>
+          <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getDisplayableUsername($loginMethod))?></span></div>
+          <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $authMethod)?></span></div>
           <?php if ($email = $user->getEmail()): ?>
             <div><span class="profile-title"><?=$this->transEsc('account_email')?>: </span><span><?=$this->escapeHtml($email)?></span></div>
           <?php endif; ?>

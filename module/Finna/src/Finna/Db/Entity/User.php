@@ -200,22 +200,23 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     /**
      * Get a displayable version of username
      *
+     * @param string $loginMethod loginMethod config (optional)
+     *
      * @return string
      */
-    public function getDisplayableUsername(): string
+    public function getDisplayableUsername($loginMethod = ''): string
     {
         $view = null;
         $username = $this->getUsername();
+        $displayName = '';
         if (str_contains($username, ':')) {
             [$view, $username] = explode(':', $username, 2);
         }
-        if ($this->getAuthMethod() === 'multiils') {
+        if ($this->getAuthMethod() === 'multiils' && $loginMethod !== 'email') {
             $parts = explode('.', $username, 2);
             $displayName = $parts[1] ?? $parts[0];
-            if (filter_var($username, FILTER_VALIDATE_EMAIL) && !filter_var($displayName, FILTER_VALIDATE_EMAIL)) {
-                $displayName = $username;
-            }
-        } else {
+        }
+        if (!$displayName) {
             $displayName = $username;
         }
         if ($view) {
