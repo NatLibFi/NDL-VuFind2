@@ -200,7 +200,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     /**
      * Get a displayable version of username
      *
-     * @param string $loginMethod loginMethod config (optional)
+     * @param string $loginMethod loginMethod config (MultiIls only)
      *
      * @return string
      */

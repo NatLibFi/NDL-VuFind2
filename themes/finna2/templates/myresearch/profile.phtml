@@ -73,7 +73,7 @@
           $loginMethod = '';
           if ($authMethod === 'multiils') {
             $loginConfig = $this->ils()->getConfig('patronLogin');
-            $loginMethod = $loginConfig['loginMethod'] ?? '';
+            $loginMethod = $loginConfig['loginMethod'] ?? 'password';
           }
         ?>
         <div>
