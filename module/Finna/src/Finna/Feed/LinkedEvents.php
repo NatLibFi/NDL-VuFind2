@@ -303,6 +303,7 @@ class LinkedEvents implements
                             $eventData['images'][0]['url'] ?? '',
                             $params
                         ),
+                        'source' => $eventData['images'][0]['photographer_name'] ?? '',
                     ],
                     'short_description' =>
                         $this->getField($eventData, 'short_description'),

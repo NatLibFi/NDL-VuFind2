@@ -110,6 +110,11 @@ finna.linkedEvents = (function finnaLinkedEvents() {
         }
         if (field === 'image') {
           $('.linked-event-image').attr('src', value.url);
+          if (value.source !== '') {
+            $('.linked-event-image-source')
+              .removeClass('hidden')
+              .append(value.source)
+          }
         } if (field === 'keywords') {
           $.each(value, function initKeywords(key, val) {
             var html = '<span class="linked-event-keyword">#' + val + '</span>';
