@@ -62,7 +62,7 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
-    <?php if (!$hasHiresImage): ?>
+    <?php if (!$hasLargeImage): ?>
       <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img]);?>
     <?php endif; ?>
 
