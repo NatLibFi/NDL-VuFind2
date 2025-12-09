@@ -11,9 +11,9 @@ trait RecordMediaTrait
       return $this->cache[$cacheKey];
     }
     $onlineURLs = $this->driver->tryMethod('getOnlineURLs', [], []);
-    $mergedData = $this->driver->tryMethod('getMergedRecordData')['urls'] ?? [];
+    $mergedDataURLs = $this->driver->tryMethod('getMergedRecordData')['urls'] ?? [];
     $urls = $this->getLinkDetails($openUrlActive);
-    $combinedURLs = array_merge($urls, $mergedData, $onlineURLs);
+    $combinedURLs = array_merge($urls, $mergedDataURLs, $onlineURLs);
 
     $audios = $this->getAudios($combinedURLs);
     $videos = $this->getVideos($combinedURLs);
@@ -22,19 +22,30 @@ trait RecordMediaTrait
     $hasDigitalObjects = $audios || $videos || $models;
     return $this->cache[$cacheKey] = compact('medias', 'hasDigitalObjects');
   }
-  public function getAudios($urls): array
+  public function getAudios(&$urls): array
   {
-    return array_filter(
-      $urls,
-      fn ($url) => ($url['embed'] ?? false) === 'audio'
-    );
+    $results = [];
+    foreach ($urls as $i => $url) {
+      if ($url['embed'] ?? false === 'audio') {
+        $results[$i] = $url;
+      }
+    }
+    $urls = array_diff_key($urls, $results);
+    return $results;
   }
-  public function getVideos(): array
+  public function getVideos(&$urls): array
   {
+    $results = [];
     $recordLinker = $this->getView()->plugin('recordLinker');
-    return array_filter(
-      $this->getAllURLs(),
-      fn ($url) => ($url['embed'] ?? false) === 'video' || $recordLinker()->getEmbeddedVideo($url['url']) === 'data-embed-iframe'
-    );
+    foreach ($urls as $i => $url) {
+      if (
+        ($url['embed'] ?? false) === 'video'
+        || $recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe'
+      ) {
+        $results[$i] = $url;
+      }
+    }
+    $urls = array_diff_key($urls, $results);
+    return $results;
   }
 }
