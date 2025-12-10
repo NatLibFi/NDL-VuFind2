@@ -1,8 +1,8 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-audio-player.phtml -->
 <?php
   $this->partial('Helpers/videojs-translations.phtml');
-  // Check if there are more than one type of digital object present
-  $hasManyAudios = count(array_filter($audioUrls)) > 1;
+  $audioUrls = array_values($audioUrls);
+  $hasMultipleAudios = is_array($audioUrls) && count(array_filter($audioUrls)) > 1;
 ?>
 <div class="audio-player-container">
   <!-- Audio content -->
@@ -46,7 +46,7 @@
     <?php endforeach; ?>
   </div>
     <!-- Audio tabs -->
-  <?php if ($hasManyAudios): ?>
+  <?php if ($hasMultipleAudios): ?>
     <ul class="nav nav-pills" id="audioTab" role="tablist">
       <?php foreach ($audioUrls as $ind => $url): ?>
         <li class="nav-item" role="presentation">

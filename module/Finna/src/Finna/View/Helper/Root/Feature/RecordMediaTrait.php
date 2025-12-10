@@ -35,7 +35,6 @@ public function getMediaURLs($openUrlActive = false): array
     // Return cached result
     return $this->cache[$cacheKey] = compact('largeImages', 'audios', 'videos', 'models', 'hasMedia', 'hasMultipleMediaTypes');
   }
-
   public function getAudios(&$urls): array
   {
     $results = [];
