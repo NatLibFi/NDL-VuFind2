@@ -102,9 +102,14 @@
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
   <?php
-    $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
+    // Retrieve media URLs from the record
+    $mediaUrls = $this->record($this->driver)->getMediaURLs();
+    // Check if media exists
+    $hasMedia = !empty($mediaUrls['hasMedia'] ?? false) && $mediaUrls['hasMedia'] === true;
+    // Check if there is a large image
+    $hasLargeImage = $this->record($this->driver)->hasLargeImage() === true;
   ?>
-  <?= ($hasDigitalObject) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : ''?>
+  <?= ($hasMedia && $hasLargeImage) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : '' ?>
   <div class="record-main <?= (!$fullWidthLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">

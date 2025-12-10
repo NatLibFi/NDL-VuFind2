@@ -1,40 +1,36 @@
 <?php
+  // Retrieve the record image
   $img = $this->recordImage($this->record($this->driver));
-  $urls = $this->record($this->driver)->getLinkDetails();
-  if (!empty($urls)) {
-    $videoUrls = [];
-    $audioUrls = [];
-    $otherUrls = [];
-    foreach ($urls as $url) {
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
-        array_push($videoUrls, $url);
-      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
-        array_push($audioUrls, $url);
-      } else {
-        array_push($otherUrls, $url);
-      }
-    }
-  }
 
-  $images = $this->driver->tryMethod('getAllImages') ?? [];
-  $imageCount = count($images);
+  // Get media URLs from the record
+  $mediaUrls = $this->record($this->driver)->getMediaURLs();
+
+  // Check for images
+  $imageUrls = $mediaUrls['images'] ?? [];
+  $imageCount = count($imageUrls);
   $hasImages = $imageCount > 0;
 
-  $hasVideos = isset($videoUrls) && count($videoUrls) > 0;
-  $videoCount = count($videoUrls ?? []);
+  // Check for videos
+  $videoUrls = $mediaUrls['videos'] ?? [];
+  $videoCount = count($videoUrls);
+  $hasVideos = $videoCount > 0;
 
-  $hasAudios = isset($audioUrls) && count($audioUrls) > 0;
-  $audioCount = count($audioUrls ?? []);
+  // Check for audios
+  $audioUrls = $mediaUrls['audios'] ?? [];
+  $audioCount = count($audioUrls);
+  $hasAudios = $audioCount > 0;
 
-  // Create an array of boolean values indicating the presence of digital objects
-  $digitalObjects = [$hasImages, $hasVideos, $hasAudios];
+  // Check if the record has a large image
+  $hasLargeImage = $this->record($this->driver)->hasLargeImage() === true;
 
-  // Check if there are more than one type of digital object present
-  $hasManyDigitalObjects = count(array_filter($digitalObjects)) > 1;
+  // Check if media exists
+  $hasMedia = !empty($mediaUrls['hasMedia']) && $mediaUrls['hasMedia'] === true;
 
+  // Check if multiple media types are present
+  $hasMultipleMediaTypes = !empty($mediaUrls['hasMultipleMediaTypes']) && $mediaUrls['hasMultipleMediaTypes'] === true;
 ?>
 <div class="record-media record-tabbed-media container"">
-  <?php if ($hasManyDigitalObjects): ?>
+  <?php if ($hasMultipleMediaTypes): ?>
     <ul class="nav nav-pills nav-record-tabbed-media" role="tablist">
       <?php if ($hasVideos): ?><li class="nav-item" role="presentation"><button type="button" role="tab" class="nav-link" data-bs-toggle="pill" href="#video"><?=$this->transEsc('Videot')?> (<?= $videoCount ?>)</button></li><?php endif; ?>
       <?php if ($hasAudios): ?><li class="nav-item" role="presentation"><button type="button" role="tab" class="nav-link" data-bs-toggle="pill" href="#audio"><?=$this->transEsc('Audio')?> (<?= $audioCount ?>)</button></li><?php endif; ?>
