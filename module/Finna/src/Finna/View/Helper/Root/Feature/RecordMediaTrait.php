@@ -20,20 +20,20 @@ public function getMediaURLs($openUrlActive = false): array
     $combinedURLs = array_merge($urls, $mergedDataURLs, $onlineURLs);
 
     // Get media types
-    $images = $this->driver->tryMethod('getAllImages') ?? [];
+    $largeImages = $this->hasLargeImage() ? $this->driver->tryMethod('getAllImages') : [];
     $audios = $this->getAudios($combinedURLs);
     $videos = $this->getVideos($combinedURLs);
     $models = $this->driver->tryMethod('getModels', [], []);
-    $medias = [$images, $audios, $videos, $models];
+    $medias = [$largeImages, $audios, $videos, $models];
 
     // Determine if any media objects (images, audios, videos, models) are present
-    $hasMedia = !empty($images) || !empty($audios) || !empty($videos) || !empty($models);
+    $hasMedia = !empty($largeImages) || !empty($audios) || !empty($videos) || !empty($models);
 
     // Check if there are multiple distinct types of media present
     $hasMultipleMediaTypes = count(array_filter($medias)) > 1;
 
     // Return cached result
-    return $this->cache[$cacheKey] = compact('images', 'audios', 'videos', 'models', 'hasMedia', 'hasMultipleMediaTypes');
+    return $this->cache[$cacheKey] = compact('largeImages', 'audios', 'videos', 'models', 'hasMedia', 'hasMultipleMediaTypes');
   }
 
   public function getAudios(&$urls): array
@@ -71,9 +71,7 @@ public function getMediaURLs($openUrlActive = false): array
    */
   public function hasLargeImage(): bool
   {
-
       $language = $this->getView()->layout()->userLang;
-
       $imageTypes = ['small', 'medium', 'large', 'master'];
       $images = $this->getAllImages($language, false, false);
       $hasValidImages = false;

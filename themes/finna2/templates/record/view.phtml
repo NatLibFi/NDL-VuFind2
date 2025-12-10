@@ -109,7 +109,7 @@
     // Check if there is a large image
     $hasLargeImage = $this->record($this->driver)->hasLargeImage() === true;
   ?>
-  <?= ($hasMedia && $hasLargeImage) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : '' ?>
+  <?= ($hasMedia) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : '' ?>
   <div class="record-main <?= (!$fullWidthLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">

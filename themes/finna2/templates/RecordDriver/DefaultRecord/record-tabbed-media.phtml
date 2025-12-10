@@ -6,7 +6,7 @@
   $mediaUrls = $this->record($this->driver)->getMediaURLs();
 
   // Check for images
-  $imageUrls = $mediaUrls['images'] ?? [];
+  $imageUrls = $mediaUrls['largeImages'] ?? [];
   $imageCount = count($imageUrls);
   $hasImages = $imageCount > 0;
 
@@ -67,7 +67,7 @@
   <?php endif; ?>
         </div>
       <?php endif; ?>
-            <?php if ($hasAudios): ?>
+      <?php if ($hasAudios): ?>
         <div id="audio" class="tab-pane">
           <?php if (!empty($audioUrls)): ?>
             <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
