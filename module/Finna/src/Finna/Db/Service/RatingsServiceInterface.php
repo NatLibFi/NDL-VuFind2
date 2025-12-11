@@ -65,12 +65,12 @@ interface RatingsServiceInterface extends \VuFind\Db\Service\RatingsServiceInter
      * Get a rating by resource and user.
      *
      * @param ResourceEntityInterface $resource Resource
-     * @param UserEntityInterface     $user     User
+     * @param ?UserEntityInterface    $user     User
      *
      * @return ?RatingsEntityInterface
      */
     public function getByResourceAndUser(
         ResourceEntityInterface $resource,
-        UserEntityInterface $user
+        ?UserEntityInterface $user
     ): ?RatingsEntityInterface;
 }

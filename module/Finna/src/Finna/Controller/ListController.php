@@ -105,8 +105,8 @@ class ListController extends \VuFind\Controller\AbstractBase
                 $feed = $this->getViewRenderer()->plugin('resultfeed');
                 $feed->setList($listObj);
                 $feed = $feed($results);
-                $feed->setTitle($listObj->title);
-                if ($desc = $listObj->description) {
+                $feed->setTitle($listObj->getTitle());
+                if ($desc = $listObj->getDescription()) {
                     $feed->setDescription($desc);
                 }
                 $feed->setLink($this->getServerUrl('home') . "List/$lid");

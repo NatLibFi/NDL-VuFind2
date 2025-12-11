@@ -758,7 +758,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $auth->getCatPasswordForUser($loginUser)
                 );
             }
-            if ($patron['cat_username'] === $card->getCatUsername()) {
+            if (($patron['cat_username'] ?? null) === $card->getCatUsername()) {
                 $profile = $catalog->getMyProfile($patron);
                 if (!empty($profile['barcode'])) {
                     $barcode = $profile['barcode'];

@@ -76,6 +76,7 @@
     margin-bottom: 0.5em;
   }
   svg {
+    color-scheme: light only;
     background-color: white;
     padding: .1em;
   }
@@ -312,7 +313,7 @@
   }
 }
 // Custom styles for user account functions
-.template-dir-myresearch, .template-dir-holds, .template-dir-checkouts.template-name-history, .template-dir-search.template-name-history, .template-dir-librarycards, .template-dir-comments.template-name-userlist, .template-dir-ratings.template-name-userlist {
+.template-dir-myresearch, .template-dir-holds, .template-dir-checkouts.template-name-history, .template-dir-search.template-name-history, .template-dir-librarycards, .template-dir-comments.template-name-userlist, .template-dir-ratings.template-name-userlist, .template-dir-reservationlist {
   &.main {
     padding-bottom: 30px;
   }

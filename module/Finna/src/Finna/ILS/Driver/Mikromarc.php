@@ -492,8 +492,8 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 && !in_array($typeCode, $blockedTypes)
                 && $balance >= 1;
             $fine = [
-                'amount' => $entry['Amount'] * 100,
-                'balance' => $balance,
+                'amount' => (int)($entry['Amount'] * 100),
+                'balance' => (int)$balance,
                 'fine' => $type,
                 'createdate' => $createDate,
                 'checkout' => '',

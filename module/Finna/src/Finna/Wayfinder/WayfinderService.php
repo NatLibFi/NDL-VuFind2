@@ -160,18 +160,30 @@ class WayfinderService
         );
 
         if ($response->getStatusCode() !== Response::STATUS_CODE_200) {
-            $this->logError(
-                'Failed to read placement marker'
-                . ' from url [' . $url . ']'
-                . ' with args [' . var_export($placement, true) . '].'
-                . ' Status code [' . $response->getStatusCode() . '].'
-                . ' Response message [' . $response->getBody() . '].'
-            );
+            $message = 'Failed to read placement marker'
+                    . ' from url [' . $url . ']'
+                    . ' with args [' . var_export($placement, true) . '].'
+                    . ' Status code [' . $response->getStatusCode() . '].'
+                    . ' Response message [' . $response->getBody() . '].';
+
+            // If we got 404 with JSON response, assume a marker wasn't found and log with lower priority:
+            if (
+                $response->getStatusCode() === Response::STATUS_CODE_404
+                && 'application/json' === $response->getHeaders()->get('Content-Type')?->getMediaType()
+            ) {
+                $this->debug($message);
+            } else {
+                try {
+                    $decoded = json_decode($response->getBody(), true, flags: JSON_THROW_ON_ERROR);
+                } catch (\JsonException $exception) {
+                    $this->logError($message);
+                }
+            }
             return '';
         }
 
         try {
-            $decoded = json_decode($response->getBody(), true, 512, JSON_THROW_ON_ERROR);
+            $decoded = json_decode($response->getBody(), true, flags: JSON_THROW_ON_ERROR);
         } catch (\JsonException $exception) {
             $this->logError('Failed to parse Wayfinder response: ' . (string)$exception);
             return '';
