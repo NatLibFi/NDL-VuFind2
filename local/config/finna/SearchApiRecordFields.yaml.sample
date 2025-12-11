@@ -162,6 +162,12 @@ embeddedComponentParts:
   type: array
   items:
     $ref: '#/components/schemas/ComponentPart'
+eraSubjects:
+  vufind.method: getEraSubjects
+  description: Chronological subject headings
+  type: array
+  items:
+    type: string
 events:
   vufind.method: getEvents
   description: >
@@ -220,14 +226,8 @@ geoLocations:
   type: array
   items:
     type: string
-era:
-  vufind.method: getEraField
-  description: Chronological subject headings
-  type: array
-  items:
-    type: string
-geographic:
-  vufind.method: getGeographicField
+geographicSubjects:
+  vufind.method: getGeographicSubjects
   description: Geographic subject headings
   type: array
   items:

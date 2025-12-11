@@ -291,7 +291,7 @@ trait SolrCommonFinnaTrait
      *
      * @return array
      */
-    public function getGeographicField(): array
+    public function getGeographicSubject(): array
     {
         return (array)($this->fields['geographic'] ?? []);
     }
@@ -301,7 +301,7 @@ trait SolrCommonFinnaTrait
      *
      * @return array
      */
-    public function getEraField(): array
+    public function getEraSubjects(): array
     {
         return (array)($this->fields['era'] ?? []);
     }
