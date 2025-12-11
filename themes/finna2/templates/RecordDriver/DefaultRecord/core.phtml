@@ -10,6 +10,8 @@
   $videoUrls = [];
   $audioUrls = [];
   $otherUrls = [];
+  $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
+  $hasLargeImage = $this->record($this->driver)->hasLargeImage();
   $binding = $this->driver->tryMethod('getBinding');
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
