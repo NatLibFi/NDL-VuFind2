@@ -287,7 +287,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Get geographic field value
+     * Get geographic subject headings
      *
      * @return array
      */
