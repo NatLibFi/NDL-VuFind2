@@ -297,7 +297,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Get era field value
+     * Get chronological subject headings
      *
      * @return array
      */
