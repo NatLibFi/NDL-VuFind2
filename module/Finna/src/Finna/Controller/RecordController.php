@@ -898,7 +898,7 @@ class RecordController extends \VuFind\Controller\RecordController
         $corsAllow = $config['IIIF']['recordControllerManifestCORS'] ?? ['*'];
         $response = $this->getResponse();
         $headers = $response->getHeaders();
-        foreach($corsAllow as $allow) {
+        foreach ($corsAllow as $allow) {
             $headers->addHeaderLine('Access-Control-Allow-Origin', $allow);
         }
         if ($manifest = $generator->generate($driver)) {
