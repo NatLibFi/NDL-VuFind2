@@ -43,26 +43,26 @@ $viewers = $this->config()->get('config')->IIIF->externalViewers ?? [];
   </li>
   <?php if ($viewers):?>
     <li>
-        <span class="dropdown-header fs-5">
+      <span class="dropdown-header fs-5">
         <?=$this->transEsc('open_in_external_viewer')?>
-        </span>
+      </span>
     </li>
     <?php
     foreach ($viewers as $viewer):
-        [$viewerName, $viewerHref] = explode('|', "$viewer|");
-        $viewerHref = str_replace('{manifest}', $encodedManifest, $viewerHref);
-        ?>
-        <li>
-            <a class="dropdown-item btn toolbar-btn icon-link"
-               href="<?=$this->escapeHtmlAttr($viewerHref)?>"
-               target="_blank"
-               rel="nofollow noreferrer">
-            <?=$this->icon('external-link', 'icon-link__icon')?>
-            <span class="icon-link__label">
-                <?=$this->escapeHtml($viewerName)?>
-            </span>
-            </a>
-        </li>
+      [$viewerName, $viewerHref] = explode('|', "$viewer|");
+      $viewerHref = str_replace('{manifest}', $encodedManifest, $viewerHref);
+      ?>
+      <li>
+        <a class="dropdown-item btn toolbar-btn icon-link"
+           href="<?=$this->escapeHtmlAttr($viewerHref)?>"
+           target="_blank"
+           rel="nofollow noreferrer">
+        <?=$this->icon('external-link', 'icon-link__icon')?>
+        <span class="icon-link__label">
+          <?=$this->escapeHtml($viewerName)?>
+        </span>
+        </a>
+      </li>
     <?php
     endforeach;
   endif; ?>

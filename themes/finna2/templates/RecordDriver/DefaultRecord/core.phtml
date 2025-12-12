@@ -64,17 +64,17 @@
 
       <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
       <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
+        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
       <?php endif; ?>
 
       <?php if (!empty($audioUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
+        <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
       <?php endif; ?>
 
       <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-      <div class="organisation-menu">
-          <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
+        <div class="organisation-menu">
+            <?=$this->render('record/record-organisation-menu.phtml') ?>
+        </div>
       <?php endif; ?>
 
       <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
