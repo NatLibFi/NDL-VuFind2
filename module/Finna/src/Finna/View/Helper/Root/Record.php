@@ -1329,36 +1329,57 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if record has digital object
+     * Check if large image layout should be used for the record
      *
      * @return bool
      */
-    public function hasDigitalObject(): bool
+    public function hasLargeImageLayout(): bool
     {
-        // Check if the driver can get 3d models
         if ($this->driver->tryMethod('getModels')) {
             return true;
         }
+        $language = $this->getView()->layout()->userLang;
 
-        // Check if the driver can get audios
-        if ($this->driver->tryMethod('getAudios')) {
+        $imageTypes = ['small', 'medium', 'large', 'master'];
+        $images = $this->getAllImages($language, false, false);
+        $hasValidImages = false;
+        foreach ($images as $image) {
+            if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {
+                $hasValidImages = true;
+                break;
+            }
+        }
+        if (!$hasValidImages) {
+            return false;
+        }
+
+        // Check for record formats that always use large image layout:
+        $largeImageRecordFormats
+            = isset($this->config->Record->large_image_record_formats)
+            ? $this->config->Record->large_image_record_formats->toArray()
+            : ['lido', 'forward', 'forwardAuthority'];
+        $recordFormat = $this->driver->tryMethod('getRecordFormat');
+        if (in_array($recordFormat, $largeImageRecordFormats)) {
             return true;
         }
 
-        // Check if the driver can get videos
-        if ($this->driver->tryMethod('getVideos')) {
+        // Check for formats that use large image layout:
+        $largeImageFormats
+            = isset($this->config->Record->large_image_formats)
+            ? $this->config->Record->large_image_formats->toArray()
+            : [
+                '0/Image/',
+                '0/PhysicalObject/',
+                '0/WorkOfArt/',
+                '0/Video/',
+            ];
+        $formats = $this->driver->tryMethod('getFormats');
+        if (array_intersect($formats, $largeImageFormats)) {
             return true;
         }
 
-        // Check for large image
-        if ($this->hasLargeImage()) {
-            return true;
-        }
         return false;
     }
-
-
-
 
     /**
      * Get the organisation menu position for the record
@@ -1372,7 +1393,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!in_array($source, $localSources)) {
             return false;
         }
-        return $this->hasLargeImage() ? 'inline' : 'sidebar';
     }
 
     /**

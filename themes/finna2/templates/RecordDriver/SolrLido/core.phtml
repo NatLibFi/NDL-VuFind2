@@ -18,15 +18,14 @@
     }
   }
 
-  $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
-  $hasThumbnailImage = !($this->record($this->driver)->hasLargeImage());
+  $hasLargeImageLayout = $this->record($this->driver)->hasLargeImageLayout() === true;
 
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start();
 ?>
 <div class="media-<?=$thumbnailAlignment ?>">
-  <?php if ($hasThumbnailImage): ?>
+  <?php if (!($hasLargeImageLayout)): ?>
     <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
     <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
   <?php endif; ?>

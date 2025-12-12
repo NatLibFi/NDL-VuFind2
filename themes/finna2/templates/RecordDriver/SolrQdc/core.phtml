@@ -42,15 +42,13 @@
 
   $img = $this->recordImage($this->record($this->driver));
 
-  $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
-
-  $hasThumbnailImage = !($this->record($this->driver)->hasLargeImage());
+  $hasLargeImage = $this->driver->tryMethod('getAllImages', ['large']);
 
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?>">
-    <?php if ($hasThumbnailImage): ?>
+    <?php if (!$hasLargeImage): ?>
       <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
       <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
     <?php endif; ?>

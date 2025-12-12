@@ -106,10 +106,10 @@
     $mediaUrls = $this->record($this->driver)->getMediaURLs();
     // Check if media exists
     $hasMedia = !empty($mediaUrls['hasMedia'] ?? false) && $mediaUrls['hasMedia'] === true;
-    // Check if there is a large image
-    $hasLargeImage = $this->record($this->driver)->hasLargeImage() === true;
+    // Check large image layout
+    $hasLargeImageLayout = $this->record($this->driver)->hasLargeImageLayout() === true;
   ?>
-  <?= ($hasMedia) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : '' ?>
+  <?= ($hasMedia || $hasLargeImageLayout) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : '' ?>
   <div class="record-main <?= (!$fullWidthLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">

@@ -1,9 +1,7 @@
 <!-- START of: finna - record/sidebar-contents.phtml -->
-<?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>
-  <div class="organisation-menu">
-      <?=$this->render('record/record-organisation-menu.phtml') ?>
-  </div>
-<?php endif; ?>
+<div class="organisation-menu">
+    <?=$this->render('record/record-organisation-menu.phtml') ?>
+</div>
 <?php foreach ($this->related()->getList($this->driver) as $current): ?>
     <?=$this->related()->render($current)?>
 <?php endforeach; ?>

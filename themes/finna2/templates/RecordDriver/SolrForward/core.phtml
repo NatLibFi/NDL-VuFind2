@@ -29,10 +29,10 @@
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 
-  $hasEmbeddedMedia = $this->record($this->driver)->hasDigitalObject();
+  $hasLargeImageLayout = $this->record($this->driver)->hasLargeImageLayout() === true;
 
   ob_start(); ?>
-  <?php if (!$hasEmbeddedMedia): ?>
+  <?php if (!$hasLargeImageLayout): ?>
     <div class="media-<?=$thumbnailAlignment ?>">
       <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
       <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>

@@ -10,8 +10,7 @@
   $videoUrls = [];
   $audioUrls = [];
   $otherUrls = [];
-  $hasDigitalObject = $this->record($this->driver)->hasDigitalObject();
-  $hasLargeImage = $this->record($this->driver)->hasLargeImage();
+  $hasLargeImageLayout = $this->record($this->driver)->hasLargeImageLayout() === true;
   $binding = $this->driver->tryMethod('getBinding');
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
@@ -62,7 +61,7 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
-    <?php if (!$hasLargeImage): ?>
+    <?php if (!$hasLargeImageLayout): ?>
       <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img]);?>
     <?php endif; ?>
 
