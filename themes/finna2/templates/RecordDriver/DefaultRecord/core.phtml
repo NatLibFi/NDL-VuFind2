@@ -10,6 +10,7 @@
   $videoUrls = [];
   $audioUrls = [];
   $otherUrls = [];
+  $hasLargeImageLayout = $this->record($this->driver)->hasLargeImageLayout() === true;
   $binding = $this->driver->tryMethod('getBinding');
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
@@ -60,13 +61,8 @@
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
-    <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
-    <?php endif; ?>
-
-    <?php if (!empty($audioUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
+    <?php if (!$hasLargeImageLayout): ?>
+      <?=$this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img]);?>
     <?php endif; ?>
 
     <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
@@ -250,7 +246,7 @@
           <span><?=$this->escapeHtml($edition)?></span>
         </span>
       <?php endif; ?>
-      
+
       <?php if (
           isset($this->tabs['ComponentParts'])
           && $this->driver->tryMethod('getEmbeddedComponentParts')

@@ -68,6 +68,8 @@ use function is_string;
  */
 class Record extends \VuFind\View\Helper\Root\Record
 {
+    use Feature\RecordMediaTrait;
+
     /**
      * Record loader
      *
@@ -1391,7 +1393,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         if (!in_array($source, $localSources)) {
             return false;
         }
-        return $this->hasLargeImageLayout() ? 'inline' : 'sidebar';
     }
 
     /**

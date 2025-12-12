@@ -72,8 +72,6 @@
   $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
   $recordFormat = $this->driver->tryMethod('getRecordFormat');
   $fullWidthLayout = $this->record($this->driver)->hasFullWidthLayout();
-  $largeImageLayout = $this->record($this->driver)->hasLargeImageLayout();
-
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
       echo $this->assetManager()->outputInlineScriptString(
           'finna.record.handleRedirect(' . json_encode($oldRecordId) . ', ' . json_encode($this->driver->getUniqueID()) . ');'
@@ -97,30 +95,22 @@
       $recordFormat ? 'record-format-' . $recordFormat : '',
       'record-row',
       $fullWidthLayout ? 'full-width-layout' : '',
-      $largeImageLayout ? 'large-image-layout' : '',
     ],
   ]); ?>
 <div<?= $recordAttributes ?>>
   <div>
       <?=$this->record($this->driver)->getToolbar()?>
   </div>
-  <?php if ($this->config()->inlineVideoEnabled()): ?>
-    <?php
-      $videoUrls = [];
-      foreach ($this->record($this->driver)->getLinkDetails() as $url) {
-        if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
-          $videoUrls[] = $url;
-        }
-      }
-    ?>
-    <?php if (!empty($videoUrls)): ?>
-      <div class="inline-video-container">
-        <div class="inline-video" id="inline-video"></div>
-        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
-      </div>
-    <?php endif; ?>
-  <?php endif; ?>
-  <div class="record-main <?= (!$fullWidthLayout && !$largeImageLayout) ? 'mainbody left' : ''?>">
+  <?php
+    // Retrieve media URLs from the record
+    $mediaUrls = $this->record($this->driver)->getMediaURLs();
+    // Check if media exists
+    $hasMedia = !empty($mediaUrls['hasMedia'] ?? false) && $mediaUrls['hasMedia'] === true;
+    // Check large image layout
+    $hasLargeImageLayout = $this->record($this->driver)->hasLargeImageLayout() === true;
+  ?>
+  <?= ($hasMedia || $hasLargeImageLayout) ? $this->record($this->driver)->renderTemplate('record-tabbed-media.phtml') : '' ?>
+  <div class="record-main <?= (!$fullWidthLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">
     <?=$this->flashmessages()?>
@@ -220,7 +210,7 @@
       <div class="clearfix hidden-lg hidden-md"></div>
     </div>
   </div>
-    <?php if (!$fullWidthLayout && !$largeImageLayout):?>
+    <?php if (!$fullWidthLayout):?>
       <?php // This sidebar is used for larger screens when not in full width or large image layout ?>
       <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
         <?= $this->render('record/sidebar-contents.phtml'); ?>

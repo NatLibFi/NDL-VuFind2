@@ -12,7 +12,7 @@
   $formats = $this->driver->getFormats();
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment?>">
-    <?= $this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'imageClick' => 'none']) ?>
+    <?= $this->record($this->driver)->renderTemplate('record-thumbnail-image.phtml', ['img' => $img, 'imageClick' => 'none']) ?>
 
     <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
       <div class="organisation-menu">

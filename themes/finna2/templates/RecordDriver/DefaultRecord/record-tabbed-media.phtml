@@ -1,0 +1,104 @@
+<?php
+  // Retrieve the record image
+  $img = $this->recordImage($this->record($this->driver));
+
+  // Get image URLs from the record
+  $imageUrls = $this->driver->tryMethod('getAllImages');
+
+  // Get media URLs from the record
+  $mediaUrls = $this->record($this->driver)->getMediaURLs();
+
+  // Check for media
+  $hasMedia = !empty($mediaUrls['hasMedia']) && $mediaUrls['hasMedia'] === true;
+
+  // Check for images
+  $imageCount = count($imageUrls);
+  $hasImages = $imageCount > 0;
+
+  // Check for videos
+  $videoUrls = $mediaUrls['videos'] ?? [];
+  $videoCount = count($videoUrls);
+  $hasVideos = $videoCount > 0;
+
+  // Check for audios
+  $audioUrls = $mediaUrls['audios'] ?? [];
+  $audioCount = count($audioUrls);
+  $hasAudios = $audioCount > 0;
+
+  // Check for multiple media types
+  $hasMultipleMediaTypes = !empty($mediaUrls['hasMultipleMediaTypes']) && $mediaUrls['hasMultipleMediaTypes'] === true;
+  if ($hasImages && $hasMedia) {
+    $hasMultipleMediaTypes = true;
+  }
+  ?>
+<div class="record-media record-tabbed-media container"">
+  <?php if ($hasMultipleMediaTypes): ?>
+    <ul class="nav nav-pills nav-record-tabbed-media" role="tablist">
+      <?php if ($hasVideos): ?><li class="nav-item" role="presentation"><button type="button" role="tab" class="nav-link" data-bs-toggle="pill" href="#video"><?=$this->transEsc('Videot')?> (<?= $videoCount ?>)</button></li><?php endif; ?>
+      <?php if ($hasAudios): ?><li class="nav-item" role="presentation"><button type="button" role="tab" class="nav-link" data-bs-toggle="pill" href="#audio"><?=$this->transEsc('Audio')?> (<?= $audioCount ?>)</button></li><?php endif; ?>
+      <?php if ($hasImages): ?><li class="nav-item" role="presentation"><button type="button" role="tab" class="nav-link" data-bs-toggle="pill" href="#image"><?=$this->transEsc('Kuvat')?> (<?= $imageCount ?>)</button></li><?php endif; ?>
+    </ul>
+  <?php endif; ?>
+
+  <div class="tab-content tab-content-record-tabbed-media">
+    <?php if ($hasVideos): ?>
+        <?php
+          $videoUrls = [];
+          foreach ($this->record($this->driver)->getLinkDetails() as $url) {
+            if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+              $videoUrls[] = $url;
+            }
+          }
+        ?>
+        <div id="video" class="tab-pane">
+        <?php if ($this->config()->inlineVideoEnabled()): ?>
+    <?php
+      $videoUrls = [];
+      foreach ($this->record($this->driver)->getLinkDetails() as $url) {
+        if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
+          $videoUrls[] = $url;
+        }
+      }
+    ?>
+    <?php if (!empty($videoUrls)): ?>
+      <div class="inline-video-container">
+        <div class="inline-video" id="inline-video"></div>
+        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
+      </div>
+    <?php endif; ?>
+  <?php endif; ?>
+        </div>
+      <?php endif; ?>
+      <?php if ($hasAudios): ?>
+        <div id="audio" class="tab-pane">
+          <?php if (!empty($audioUrls)): ?>
+            <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
+      <?php if ($hasImages): ?>
+        <div id="image" class="tab-pane">
+          <?=$this->record($this->driver)->renderTemplate('record-zoomable-image.phtml', ['img' => $img]); ?>
+        </div>
+      <?php endif; ?>
+    </div>
+</div>
+
+<?php
+  $script = <<<JS
+
+  document.addEventListener("DOMContentLoaded", function() {
+    var firstTab = document.querySelector('.record-tabbed-media .nav-record-tabbed-media li button:first-child');
+    var firstTabContent = document.querySelector('.record-tabbed-media .tab-content .tab-pane:first-child');
+    if (firstTab && firstTabContent) {
+        firstTab.classList.add('active');
+        firstTabContent.classList.add('active');
+    }
+    if (!firstTab && firstTabContent) {
+        firstTabContent.classList.add('active');
+    }
+    });
+JS;
+
+  echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
+?>

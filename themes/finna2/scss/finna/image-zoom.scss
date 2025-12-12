@@ -1,0 +1,62 @@
+.zoom {
+  img {
+     cursor: zoom-in;
+   }
+   .image-controls {
+    .zoom-out, .reset, .rotate-left, .rotate-right {
+      display: none;
+    }
+    }
+
+  .image-controls {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    left: 10px;
+    top: 10px;
+  }
+  .image-fullscreen {
+    position: absolute;
+    z-index: 1;
+    display: flex;
+    right: 10px;
+    top: 10px;
+  }
+  .icon {
+  color: $action-link-color
+  }
+}
+.zoom.open {
+  .image-controls {
+    .zoom-out, .reset, .rotate-left, .rotate-right {
+      display: block;
+    }
+  }
+}
+
+// OpenSeadragon specific styles
+#osd-image {
+  opacity: 0;
+  transition: opacity 1s ease;
+  width: 100%;
+  height: 600px;
+  position:relative;
+  display:none;
+}
+#osd-image.loaded {
+  opacity: 1;
+}
+.openseadragon-canvas {
+  cursor: zoom-in;
+}
+.openseadragon-canvas.panning {
+  cursor: grabbing;
+}
+.image-loading-spinner {
+  display: none;
+  position: absolute;
+  font-size: 1.5rem;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}

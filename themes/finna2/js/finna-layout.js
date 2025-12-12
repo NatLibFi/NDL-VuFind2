@@ -871,7 +871,7 @@ finna.layout = (function finnaLayout() {
       'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
       'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
     };
-    $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
+    $('.audio-item-wrapper').each(function initAudioPlayer() {
       var self = $(this);
       var play = self.find('.play');
       var source = self.find('source');
@@ -1076,9 +1076,20 @@ finna.layout = (function finnaLayout() {
    * Initialize image paginators
    */
   function initImagePaginators() {
-    $('.image-popup-trigger.init').each(function initImages() {
-      $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
-    });
+    if (document.querySelector('.nav-record-tabbed-media')) {
+      document.querySelectorAll('button[data-bs-toggle="pill"]')
+        .forEach(tabEl => {
+          tabEl.addEventListener('shown.bs.tab', event => {
+            $('.image-trigger.init').each(function initImages() {
+              $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
+            });
+          });
+        });
+    } else {
+      $('.image-trigger.init').each(function initImages() {
+        $(this).finnaPaginator($(this).data('settings'), $(this).data('images'));
+      });
+    }
   }
 
   /**
