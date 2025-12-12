@@ -101,16 +101,22 @@ class IIIFManifestGenerator implements
         ];
 
         foreach ($images as $idx => $image) {
+            $rightsLink = preg_replace(
+                '/\/[^\/]*$/',
+                '/',
+                $images[$idx]['rights']['link'],
+            );
             $canvasItem = [
                 'id' => "$manifestId/$idx",
                 'type' => 'Canvas',
+                'rights' => $rightsLink,
                 'items' => [],
             ];
             foreach (['large', 'medium', 'small'] as $size) {
                 if (isset($image['urls'][$size])) {
                     $bodyId = $this->createBodyId(
-                        $idx,
                         $recordId,
+                        $idx,
                         $size,
                         $source,
                     );
