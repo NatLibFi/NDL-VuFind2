@@ -82,6 +82,7 @@ class IIIFManifestGenerator implements
         }
 
         $recordId = $driver->getUniqueID();
+        $source = $driver->getSourceIdentifier();
         $manifestId = ($this->serverUrl)(
             $this->recordLinker->getActionUrl(
                 $driver,
@@ -107,12 +108,17 @@ class IIIFManifestGenerator implements
             ];
             foreach (['large', 'medium', 'small'] as $size) {
                 if (isset($image['urls'][$size])) {
+                    $bodyId = $this->createBodyId(
+                        $idx,
+                        $recordId,
+                        $size,
+                        $source,
+                    );
                     $canvasItem['items'][] =
                         $this->createAnnotationPage(
-                            $recordId,
                             $idx,
                             $size,
-                            $driver,
+                            $bodyId,
                             $manifestId
                         );
                     break; // only take the largest $size
@@ -129,39 +135,52 @@ class IIIFManifestGenerator implements
     }
 
     /**
-     * Creates annotation page representing a given image
+     * Builds the cover URL for this image
      *
-     * @param string       $recordId   Record unique ID
-     * @param int          $index      Image number
-     * @param string       $size       Image size: 'large', 'medium', 'small'
-     * @param RecordDriver $driver     Record driver
-     * @param string       $manifestId Manifest ID, i.e. URI to the calling
-     *                                 RecordController action
+     * @param string $recordId Record unique ID
+     * @param int    $index    Image number
+     * @param string $size     Image size: 'large', 'medium', 'small'
+     * @param string $source   Record source (e.g. 'Solr')
      *
-     * @return array
+     * @return string
      */
-    private function createAnnotationPage(
-        string $recordId,
-        int $index,
-        string $size,
-        RecordDriver $driver,
-        string $manifestId
-    ): array {
-        $bodyId = ($this->url)(
+    private function createBodyId(string $recordId, int $index, string $size, string $source)
+    {
+        return ($this->url)(
             'cover-show',
             [],
             ['force_canonical' => true]
         ) . '?' . http_build_query([
-            'id' => $recordId,
-            'index' => $index,
-            'size' => $size,
-            'source' => $driver->getSourceIdentifier(),
-        ]);
+                    'id' => $recordId,
+                    'index' => $index,
+                    'size' => $size,
+                    'source' => $source,
+                ]);
+    }
+
+    /**
+     * Creates annotation page representing a given image
+     *
+     * @param int    $index      Image number
+     * @param string $size       Image size: 'large', 'medium', 'small'
+     * @param string $bodyId     Cover URL of the image
+     * @param string $manifestId Manifest ID, i.e. URI to the calling
+     *                           RecordController action
+     *
+     * @return array
+     */
+    private function createAnnotationPage(
+        int $index,
+        string $size,
+        string $bodyId,
+        string $manifestId
+    ): array {
+        $annotationPageId = "$manifestId/$index/$size";
         $annotationPage = [
-            'id' => "$manifestId/$index/$size",
+            'id' => $annotationPageId,
             'type' => 'AnnotationPage',
             'items' => [[
-                'id' => "$manifestId/$index/$size/1",
+                'id' => "$annotationPageId/1",
                 'type' => 'Annotation',
                 'motivation' => 'painting',
                 'body' => [
