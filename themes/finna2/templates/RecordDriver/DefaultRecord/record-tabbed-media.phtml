@@ -99,6 +99,6 @@
     }
     });
 JS;
+  echo $this->assetManager()->outputInlineScriptString($script);
 
-  echo $this->inlineScript(\Laminas\View\Helper\HeadScript::SCRIPT, $script, 'SET');
 ?>
