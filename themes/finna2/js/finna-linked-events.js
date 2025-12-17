@@ -110,10 +110,10 @@ finna.linkedEvents = (function finnaLinkedEvents() {
         }
         if (field === 'image') {
           $('.linked-event-image').attr('src', value.url);
-          if (value.source !== '') {
-            $('.js-linked-event-image-source')
+          if (value.photographer !== '') {
+            $('.js-linked-event-image-photographer')
               .removeClass('hidden')
-              .append(value.source);
+              .append(value.photographer);
           }
         } if (field === 'keywords') {
           $.each(value, function initKeywords(key, val) {
