@@ -81,8 +81,10 @@ class IIIFManifestGenerator implements
             return null;
         }
 
-        $recordId = $driver->getUniqueID();
-        $source = $driver->getSourceIdentifier();
+        $recordId    = $driver->getUniqueID();
+        $recordTitle = $driver->getTitle();
+        $source      = $driver->getSourceIdentifier();
+
         $manifestId = ($this->serverUrl)(
             $this->recordLinker->getActionUrl(
                 $driver,
@@ -96,22 +98,48 @@ class IIIFManifestGenerator implements
             'id' => $manifestId,
             'type' => 'Manifest',
             'thumbnail' => [],
+            'label' => [
+                'fi' => $recordTitle,
+                'sv' => $recordTitle,
+                'en' => $recordTitle,
+                'se' => $recordTitle,
+            ],
             'metadata' => [],
             'items' => [],
         ];
 
         foreach ($images as $idx => $image) {
-            $rightsLink = preg_replace(
-                '/\/[^\/]*$/',
-                '/',
-                $images[$idx]['rights']['link'],
-            );
             $canvasItem = [
                 'id' => "$manifestId/$idx",
                 'type' => 'Canvas',
-                'rights' => $rightsLink,
+                'metadata' => [],
                 'items' => [],
             ];
+
+            $rightsLink = isset($image['rights']['link']) ?
+                preg_replace('/\/[^\/]*$/', '/', $image['rights']['link'])
+                : null;
+            if ($rightsLink) {
+                $canvasItem['rights'] = $rightsLink;
+            }
+
+            if (isset($image['description'])) {
+                $canvasItem['metadata'][] = [
+                    'label' => [
+                        'en' => 'Description',
+                        'fi' => 'Kuvaus',
+                        'sv' => 'Beskrivning',
+                        'se' => 'Govvádus',
+                    ],
+                    'value' => [
+                        'en' => $image['description'],
+                        'fi' => $image['description'],
+                        'sv' => $image['description'],
+                        'se' => $image['description'],
+                    ],
+                ];
+            }
+
             foreach (['large', 'medium', 'small'] as $size) {
                 if (isset($image['urls'][$size])) {
                     $bodyId = $this->createBodyId(
@@ -125,7 +153,7 @@ class IIIFManifestGenerator implements
                             $idx,
                             $size,
                             $bodyId,
-                            $manifestId
+                            $manifestId,
                         );
                     break; // only take the largest $size
                 }
