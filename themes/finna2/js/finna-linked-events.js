@@ -111,7 +111,7 @@ finna.linkedEvents = (function finnaLinkedEvents() {
         if (field === 'image') {
           $('.linked-event-image').attr('src', value.url);
           if (value.source !== '') {
-            $('.linked-event-image-source')
+            $('.js-linked-event-image-source')
               .removeClass('hidden')
               .append(value.source);
           }
