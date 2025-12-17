@@ -1,7 +1,15 @@
 .audio-player-container {
+  .tab-content {
     background: $gray-ultralight;
+    padding: 1rem;
+  }
+  .nav-link {
+    width: 200px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
-
 .audio-item-wrapper {
   margin-bottom: 5px;
   padding-bottom: 5px;
@@ -49,10 +57,6 @@
       outline: 2px solid $action-link-color;
     }
   }
-}
-
-.audio-player-container {
-  padding: 1rem;
 }
 
 .audio-accordion-item {

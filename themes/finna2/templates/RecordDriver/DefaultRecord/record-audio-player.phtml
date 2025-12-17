@@ -10,6 +10,7 @@
     <?php foreach ($audioUrls as $ind => $url):
         $format = $this->driver->tryMethod('getRecordFormat', [], '');
         $showDetails = $showFormat = false;
+        $desc = isset($url['desc']) ? $url['desc'] : ($url['text'] ?? '');
     if ($format === 'lido') {
       $showDetails = true;
       $showFormat = $url['desc'] === $url['url'];
@@ -19,8 +20,8 @@
     <div class="audio-item-wrapper">
       <div class="audio-title-wrapper">
         <div class="audio-title">
-        <?php if (!empty($url['desc']) && !$showFormat): ?>
-          <?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?>
+        <?php if (!empty($desc)): ?>
+          <?= $desc ?>
         <?php else: ?>
           <?=$this->transEsc('format_Sound')?>
         <?php endif ?>
@@ -48,11 +49,13 @@
     <!-- Audio tabs -->
   <?php if ($hasMultipleAudios): ?>
     <ul class="nav nav-pills" id="audioTab" role="tablist">
-      <?php foreach ($audioUrls as $ind => $url): ?>
+      <?php foreach ($audioUrls as $ind => $url):
+        $desc = isset($url['desc']) ? $url['desc'] : ($url['text'] ?? '');
+        ?>
         <li class="nav-item" role="presentation">
           <a class="nav-link <?= $ind === 0 ? 'active' : '' ?>" id="tab-<?= $ind ?>-tab" data-bs-toggle="tab" href="#tab-<?= $ind ?>" role="tab" aria-controls="tab-<?= $ind ?>" aria-selected="<?= $ind === 0 ? 'true' : 'false' ?>">
-            <?php if (!empty($url['desc'])): ?>
-              <?= $this->escapeHtml($this->translate('link_' . $url['desc'], null, $url['desc'])); ?>
+            <?php if (!empty($desc)): ?>
+              <?= $desc ?>
             <?php else: ?>
               <?= $this->transEsc('format_Sound') ?>
             <?php endif ?>
