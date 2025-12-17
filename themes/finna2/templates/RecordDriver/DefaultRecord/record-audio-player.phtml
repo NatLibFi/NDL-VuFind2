@@ -55,9 +55,9 @@
         <li class="nav-item" role="presentation">
           <a class="nav-link <?= $ind === 0 ? 'active' : '' ?>" id="tab-<?= $ind ?>-tab" data-bs-toggle="tab" href="#tab-<?= $ind ?>" role="tab" aria-controls="tab-<?= $ind ?>" aria-selected="<?= $ind === 0 ? 'true' : 'false' ?>">
             <?php if (!empty($desc)): ?>
-              <?= $desc ?>
+              <?=$this->icon('video-play', 'video-play-icon') ?> <?= $desc ?>
             <?php else: ?>
-              <?= $this->transEsc('format_Sound') ?>
+              <?=$this->icon('video-play', 'video-play-icon') ?> <?= $this->transEsc('format_Sound') ?>
             <?php endif ?>
           </a>
         </li>
