@@ -169,7 +169,7 @@ class IIIFManifestGenerator implements
     }
 
     /**
-     * Builds the cover URL for this image
+     * Build the cover URL for this image
      *
      * @param string $recordId Record unique ID
      * @param int    $index    Image number
@@ -193,7 +193,7 @@ class IIIFManifestGenerator implements
     }
 
     /**
-     * Creates annotation page representing a given image
+     * Create annotation page representing a given image
      *
      * @param int    $index      Image number
      * @param string $size       Image size: 'large', 'medium', 'small'

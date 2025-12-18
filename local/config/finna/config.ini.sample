@@ -1967,4 +1967,4 @@ externalViewers[] = "Universal Viewer|https://uv-v4.netlify.app/#?manifest={mani
 ; Origins to be listed in Access-Control-Allow-Origin headers in the
 ; RecordController IIIFManifest action. Recommended to allow all origins for
 ; general IIIF use
-recordControllerManifestCORS[] = "*"
+;manifestCORS[] = "*"
