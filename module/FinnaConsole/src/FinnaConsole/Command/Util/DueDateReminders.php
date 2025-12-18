@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2013-2024.
+ * Copyright (C) The National Library of Finland 2013-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -46,6 +46,8 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Config\Feature\EmailSettingsTrait;
+use VuFind\Db\Service\AuditEventServiceInterface;
+use VuFind\Db\Type\AuditEventType;
 use VuFind\Mailer\Mailer;
 
 use function assert;
@@ -119,6 +121,7 @@ class DueDateReminders extends AbstractUtilCommand
      * @param UserServiceInterface                 $userService            User database service
      * @param UserCardServiceInterface             $userCardService        User card database service
      * @param FinnaDueDateReminderServiceInterface $dueDateReminderService Due date reminder database service
+     * @param AuditEventServiceInterface           $auditEventService      Audit event database service
      * @param \VuFind\ILS\Connection               $catalog                ILS connection
      * @param \VuFind\Auth\ILSAuthenticator        $ilsAuthenticator       ILS authenticator
      * @param \VuFind\Config\Config                $mainConfig             Main config
@@ -133,6 +136,7 @@ class DueDateReminders extends AbstractUtilCommand
         protected UserServiceInterface $userService,
         protected UserCardServiceInterface $userCardService,
         protected FinnaDueDateReminderServiceInterface $dueDateReminderService,
+        protected AuditEventServiceInterface $auditEventService,
         protected \VuFind\ILS\Connection $catalog,
         protected \VuFind\Auth\ILSAuthenticator $ilsAuthenticator,
         protected \VuFind\Config\Config $mainConfig,
@@ -509,8 +513,23 @@ class DueDateReminders extends AbstractUtilCommand
         $message = $this->viewRenderer->render('Email/due-date-reminder.phtml', $params);
         $to = $user->getEmail();
         $from = $this->getEmailSenderAddress($this->currentSiteConfig);
+        $eventData = [
+            'loans' => [],
+        ];
+        foreach ($remindLoans as $loan) {
+            $eventData['loans'][] = [
+                'id' => $loan['loanId'],
+                'due' => (new \DateTime($loan['dueDate']))->format('Y-m-d'),
+            ];
+        }
         try {
             $this->sendEmailWithRetry($to, $from, $subject, $message);
+            $this->auditEventService->addEvent(
+                AuditEventType::User,
+                'send_due_date_reminder_email',
+                $user,
+                data: $eventData
+            );
         } catch (\Exception $e) {
             $this->err(
                 "Failed to send due date reminders to user {$user->getUsername()}"
@@ -518,6 +537,12 @@ class DueDateReminders extends AbstractUtilCommand
                 'Failed to send due date reminders to a user'
             );
             $this->err('   ' . $e->getMessage());
+            $this->auditEventService->addEvent(
+                AuditEventType::User,
+                'send_due_date_reminder_email_fail',
+                $user,
+                data: $eventData + ['error' => $e->getMessage()]
+            );
             return false;
         }
 

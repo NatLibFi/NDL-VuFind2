@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2024.
+ * Copyright (C) The National Library of Finland 2015-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -39,6 +39,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Crypt\SecretCalculator;
+use VuFind\Db\Service\AuditEventServiceInterface;
 use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 use VuFind\ILS\Connection;
@@ -88,6 +89,7 @@ class DueDateRemindersFactory implements FactoryInterface
             $dbServiceManager->get(UserServiceInterface::class),
             $dbServiceManager->get(UserCardServiceInterface::class),
             $dbServiceManager->get(FinnaDueDateReminderServiceInterface::class),
+            $dbServiceManager->get(AuditEventServiceInterface::class),
             $container->get(Connection::class),
             $container->get(ILSAuthenticator::class),
             $configManager->getConfigObject('config'),
