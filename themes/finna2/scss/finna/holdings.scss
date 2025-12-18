@@ -500,12 +500,11 @@
     .header {
         margin-bottom: 6px;
         font-weight: 600;
-        span {
+        span:not(.icon) {
             font-weight: 400;
-            &.icon {
-                vertical-align: baseline;
-                font-weight: 600;
-            }
+        }
+        .icon {
+            vertical-align: baseline;
         }
         .info {
             color: lighten($text-color, 18%);
