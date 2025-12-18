@@ -279,7 +279,12 @@ trait SolrCommonFinnaTrait
     public function getCreationDateRange(): string
     {
         $filteredRange = str_replace(['[', ']'], ['', ''], $this->fields['creation_daterange'] ?? '');
-        return implode('/', explode('TO', $filteredRange));
+        $filteredRange = explode('TO', $filteredRange);
+        $filteredRange = array_map(
+            fn ($date) => trim($date),
+            $filteredRange
+        );
+        return implode('/', $filteredRange);
     }
 
     /**
