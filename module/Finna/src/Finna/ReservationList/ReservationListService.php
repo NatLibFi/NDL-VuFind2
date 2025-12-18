@@ -651,7 +651,8 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     {
         if ($list->databaseAccountAllowed()) {
             return true;
-        } elseif ($patron = $this->ilsAuthenticator->storedCatalogLogin()) {
+        }
+        if ($patron = $this->ilsAuthenticator->storedCatalogLogin()) {
             return $list->cardIsValid($patron['source']);
         }
         return false;
