@@ -895,7 +895,7 @@ class RecordController extends \VuFind\Controller\RecordController
             \Finna\Record\IIIF\IIIFManifestGenerator::class
         );
         $config = $this->getConfigArray();
-        $corsAllow = $config['IIIF']['recordControllerManifestCORS'] ?? ['*'];
+        $corsAllow = $config['IIIF']['manifestCORS'] ?? [];
         $response = $this->getResponse();
         $headers = $response->getHeaders();
         foreach ($corsAllow as $allow) {
@@ -912,6 +912,11 @@ class RecordController extends \VuFind\Controller\RecordController
                 $headers->addHeaderLine('Content-Type: text/plain');
                 $response->setStatusCode(500);
                 $response->setContent('Error encoding JSON');
+                error_log(
+                    'IIIFManifest: Error encoding JSON for ' .
+                    $driver->getUniqueID() . ': ' .
+                    json_last_error_msg()
+                );
             }
         } else {
             $response->setStatusCode(404);

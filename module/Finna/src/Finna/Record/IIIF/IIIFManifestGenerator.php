@@ -81,9 +81,8 @@ class IIIFManifestGenerator implements
             return null;
         }
 
-        $recordId    = $driver->getUniqueID();
-        $recordTitle = $driver->getTitle();
-        $source      = $driver->getSourceIdentifier();
+        $recordId = $driver->getUniqueID();
+        $source   = $driver->getSourceIdentifier();
 
         $manifestId = ($this->serverUrl)(
             $this->recordLinker->getActionUrl(
@@ -93,51 +92,22 @@ class IIIFManifestGenerator implements
             )
         );
 
-        $manifest = [
-            '@context' => 'http://iiif.io/api/presentation/3/context.json',
-            'id' => $manifestId,
-            'type' => 'Manifest',
-            'thumbnail' => [],
-            'label' => [
-                'fi' => $recordTitle,
-                'sv' => $recordTitle,
-                'en' => $recordTitle,
-                'se' => $recordTitle,
-            ],
-            'metadata' => [],
-            'items' => [],
-        ];
+        $manifestItems = [];
 
         foreach ($images as $idx => $image) {
             $canvasItem = [
                 'id' => "$manifestId/$idx",
                 'type' => 'Canvas',
-                'metadata' => [],
+                'metadata' => $this->createCanvasMetadata($image),
                 'items' => [],
             ];
 
-            $rightsLink = isset($image['rights']['link']) ?
-                preg_replace('/\/[^\/]*$/', '/', $image['rights']['link'])
-                : null;
-            if ($rightsLink) {
+            if (
+                $rightsLink = isset($image['rights']['link']) ?
+                preg_replace('/\/[^\/]*$/', '/', $image['rights']['link']) :
+                null
+            ) {
                 $canvasItem['rights'] = $rightsLink;
-            }
-
-            if (isset($image['description'])) {
-                $canvasItem['metadata'][] = [
-                    'label' => [
-                        'en' => 'Description',
-                        'fi' => 'Kuvaus',
-                        'sv' => 'Beskrivning',
-                        'se' => 'Govvádus',
-                    ],
-                    'value' => [
-                        'en' => $image['description'],
-                        'fi' => $image['description'],
-                        'sv' => $image['description'],
-                        'se' => $image['description'],
-                    ],
-                ];
             }
 
             foreach (['large', 'medium', 'small'] as $size) {
@@ -158,14 +128,60 @@ class IIIFManifestGenerator implements
                     break; // only take the largest $size
                 }
             }
-            $manifest['items'][] = $canvasItem;
+            $manifestItems[] = $canvasItem;
         }
 
-        if (empty($manifest['items'])) {
+        if (empty($manifestItems)) {
             return null;
-        } else {
-            return $manifest;
         }
+
+        $recordTitle = $driver->getTitle();
+
+        $manifest = [
+            '@context' => 'http://iiif.io/api/presentation/3/context.json',
+            'id' => $manifestId,
+            'type' => 'Manifest',
+            'thumbnail' => [],
+            'label' => [
+                'fi' => $recordTitle,
+                'sv' => $recordTitle,
+                'en' => $recordTitle,
+                'se' => $recordTitle,
+            ],
+            'metadata' => [],
+            'items' => $manifestItems,
+        ];
+
+        return $manifest;
+    }
+
+    /**
+     * Create metadata array for a canvas
+     *
+     * @param array $image Image
+     *
+     * @return array
+     */
+    protected function createCanvasMetadata(array $image): array
+    {
+        $metadata = [];
+        if (isset($image['description'])) {
+            $metadata[] = [
+                'label' => [
+                    'en' => 'Description',
+                    'fi' => 'Kuvaus',
+                    'sv' => 'Beskrivning',
+                    'se' => 'Govvádus',
+                ],
+                'value' => [
+                    'en' => $image['description'],
+                    'fi' => $image['description'],
+                    'sv' => $image['description'],
+                    'se' => $image['description'],
+                ],
+            ];
+        }
+        return $metadata;
     }
 
     /**
@@ -178,18 +194,25 @@ class IIIFManifestGenerator implements
      *
      * @return string
      */
-    private function createBodyId(string $recordId, int $index, string $size, string $source)
-    {
+    protected function createBodyId(
+        string $recordId,
+        int $index,
+        string $size,
+        string $source
+    ): string {
         return ($this->url)(
             'cover-show',
             [],
-            ['force_canonical' => true]
-        ) . '?' . http_build_query([
-                    'id' => $recordId,
-                    'index' => $index,
-                    'size' => $size,
+            [
+                'force_canonical' => true,
+                'query' => [
+                    'id'     => $recordId,
+                    'index'  => $index,
+                    'size'   => $size,
                     'source' => $source,
-                ]);
+                ],
+            ]
+        );
     }
 
     /**
@@ -203,7 +226,7 @@ class IIIFManifestGenerator implements
      *
      * @return array
      */
-    private function createAnnotationPage(
+    protected function createAnnotationPage(
         int $index,
         string $size,
         string $bodyId,

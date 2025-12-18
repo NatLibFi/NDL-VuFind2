@@ -64,8 +64,8 @@ class IIIFManifestGeneratorFactory implements FactoryInterface
         }
         $viewRenderer = $container->get('ViewRenderer');
         $generator = new IIIFManifestGenerator(
-            $viewRenderer->plugin('Url'),
-            $viewRenderer->plugin('ServerUrl'),
+            $viewRenderer->plugin('url'),
+            $viewRenderer->plugin('serverUrl'),
             $viewRenderer->plugin('recordLinker'),
         );
         return $generator;
