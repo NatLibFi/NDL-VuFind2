@@ -649,7 +649,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      */
     public function checkUserRightsForList(HandlerInterface $list): bool
     {
-        if ($list->getUseDbAccount()) {
+        if ($list->databaseAccountAllowed()) {
             return true;
         } elseif ($patron = $this->ilsAuthenticator->storedCatalogLogin()) {
             return $list->cardIsValid($patron['source']);

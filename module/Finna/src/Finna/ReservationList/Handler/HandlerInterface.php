@@ -88,7 +88,7 @@ interface HandlerInterface
      *
      * @return bool
      */
-    public function getUseDbAccount(): bool;
+    public function databaseAccountAllowed(): bool;
 
     /**
      * Check if library card matches to allowed sources

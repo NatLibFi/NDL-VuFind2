@@ -115,7 +115,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
      *
      * @var bool
      */
-    protected bool $useDbAccount = false;
+    protected bool $databaseAccountAllowed = false;
 
     /**
      * Datasources
@@ -232,9 +232,9 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
      *
      * @return bool
      */
-    public function getUseDbAccount(): bool
+    public function databaseAccountAllowed(): bool
     {
-        return $this->useDbAccount;
+        return $this->databaseAccountAllowed;
     }
 
     /**
@@ -464,7 +464,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
      */
     protected function getPreferredCardInfo(UserEntityInterface $user): array
     {
-        if ($this->useDbAccount) {
+        if ($this->databaseAccountAllowed) {
             $firstName = $user->getFirstname();
             $lastName = $user->getLastname();
             $fullName = trim("$firstName $lastName");
@@ -572,7 +572,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
         $this->addressInfo = $config['Information'] ?? [];
         $this->identifier = $config['Identifier'] ?? '';
         $this->libraryCardSources = $config['LibraryCardSources'] ?? [];
-        $this->useDbAccount = $config['DatabaseAccount'] ?? false;
+        $this->databaseAccountAllowed = $config['DatabaseAccount'] ?? false;
         $this->datasources = $config['Datasources'] ?? [];
         $this->recipient = $config['Recipient'] ?? [];
         $this->connectionType = $config['Connection']['type'] ?? '';
