@@ -1,0 +1,618 @@
+[
+    {
+        "accessRestrictions": [
+            "Lorem ipsum dolor sit",
+            "Lorem ipsum dolor sit"
+        ],
+        "alternativeTitles": [],
+        "authors": {
+            "primary": {
+                "Lorem": {
+                    "role": [
+                        "-"
+                    ]
+                }
+            },
+            "secondary": {
+                "Minka MäyräMinka Mäyrä": {
+                    "role": [
+                        "-",
+                        "curator"
+                    ]
+                }
+            },
+            "corporate": []
+        },
+        "awards": [],
+        "bibliographicLevel": "Collection",
+        "bibliographyNotes": [],
+        "buildings": [
+            {
+                "value": "0\/WHISKER\/",
+                "translated": "Whisker Library"
+            }
+        ],
+        "callNumbers": [],
+        "childRecordCount": 0,
+        "classifications": [],
+        "corporateAuthors": [
+            "Minka MäyräMinka Mäyrä"
+        ],
+        "controlNumbers": [
+            "FCC019185651"
+        ],
+        "embeddedComponentParts": [
+            {
+                "number": 1,
+                "id": "lorem.5781725",
+                "title": "Lorem = Ipsum = Dolor Sit",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 2,
+                "id": "lorem.5781726",
+                "title": "Lorem ipsum dolor = Sit amet consectetur = Adipiscing elit Sed",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 3,
+                "id": "lorem.5781727",
+                "title": "Lorem ipsum dolor = Sit amet consectetur = Adipiscing elit Sed",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 4,
+                "id": "lorem.5781728",
+                "title": "Lorem = Ipsum = Dolor Sit",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 5,
+                "id": "lorem.5781729",
+                "title": "Lorem = Ipsum = Dolor",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 6,
+                "id": "lorem.5781731",
+                "title": "Lorem (1827–1917) = Ipsum (1827–1917) = Dolor (1827–1917)",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 7,
+                "id": "lorem.5781732",
+                "title": "Lorem- ipsum dolor = Sit- amet consectetur = Adipiscing elit Sed Do",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 8,
+                "id": "lorem.5781735",
+                "title": "Lorem ipsum dolor = Sit amet consectetur = Adipiscing elit Sed",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 9,
+                "id": "lorem.5781736",
+                "title": "Lorem (1828–1917) = Ipsum (1828–1917) = Dolor (1828–1917)",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 10,
+                "id": "lorem.5781737",
+                "title": "Lorem = Ipsum = Dolor Sit",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 11,
+                "id": "lorem.5781738",
+                "title": "Lorem = Ipsum = Dolor Sit",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 12,
+                "id": "lorem.5803990",
+                "title": "Lorem = Ipsum = Dolor",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 13,
+                "id": "lorem.5803996",
+                "title": "Lorem = Ipsum = Dolor Sit",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 14,
+                "id": "lorem.5804000",
+                "title": "Lorem = Ipsum = Dolor Sit",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 15,
+                "id": "lorem.5804165",
+                "title": "Lorem ipsum = Dolor sit = Amet Consectetur",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            },
+            {
+                "number": 16,
+                "id": "lorem.5804208",
+                "title": "Lorem = Ipsum = Dolor Sit",
+                "authors": [
+                    "Lorem, ipsum dolor, sit"
+                ],
+                "presenters": [],
+                "arrangers": [],
+                "otherAuthors": [
+                    "Lorem, ipsum dolor, sit"
+                ]
+            }
+        ],
+        "eraSubjects": [],
+        "findingAids": [],
+        "formats": [
+            "0\/Other\/",
+            "1\/Other\/Collection\/"
+        ],
+        "fullRecord": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<collection xmlns:xsi=\"http:\/\/www.w3.org\/2001\/XMLSchema-instance\" xmlns=\"http:\/\/www.loc.gov\/MARC21\/slim\" xsi:schemaLocation=\"http:\/\/www.loc.gov\/MARC21\/slim http:\/\/www.loc.gov\/standards\/marcxml\/schema\/MARC21slim.xsd\"><record><leader>00000cac a22000004i 4500<\/leader><controlfield tag=\"001\">019185651<\/controlfield><controlfield tag=\"003\">FI-MELINDA<\/controlfield><controlfield tag=\"005\">20250915160359.0<\/controlfield><controlfield tag=\"007\">cr |||||||||||<\/controlfield><controlfield tag=\"008\">241003i18281917fi |||| o    |||||||mul| <\/controlfield><datafield tag=\"015\" ind1=\" \" ind2=\" \"><subfield code=\"a\">lorem2024100375956<\/subfield><\/datafield><datafield tag=\"024\" ind1=\"7\" ind2=\" \"><subfield code=\"a\">Lorem:Ipsum:dolor-sit2024100375956<\/subfield><subfield code=\"2\">lorem<\/subfield><\/datafield><datafield tag=\"035\" ind1=\" \" ind2=\" \"><subfield code=\"a\">Lorem019185651<\/subfield><\/datafield><datafield tag=\"040\" ind1=\" \" ind2=\" \"><subfield code=\"a\">Lorem-Ipsum<\/subfield><subfield code=\"b\">lorem<\/subfield><subfield code=\"e\">lorem<\/subfield><\/datafield><datafield tag=\"041\" ind1=\"0\" ind2=\" \"><subfield code=\"a\">lorem<\/subfield><\/datafield><datafield tag=\"245\" ind1=\"0\" ind2=\"0\"><subfield code=\"a\">Lorem Ipsum dolor sit amet consectetur (1828–1917) =<\/subfield><subfield code=\"b\">Lorem ipsum dolor sit amet Consectetur Adipiscing-elit (1828–1917) = Sed do Eiusmod tempor Incididunt Ut Labore (1828–1917).<\/subfield><\/datafield><datafield tag=\"264\" ind1=\" \" ind2=\"1\"><subfield code=\"a\">Lorem :<\/subfield><subfield code=\"b\">Lorem,<\/subfield><subfield code=\"c\">2024.<\/subfield><\/datafield><datafield tag=\"300\" ind1=\" \" ind2=\" \"><subfield code=\"a\">Lorem ipsum<\/subfield><\/datafield><datafield tag=\"336\" ind1=\" \" ind2=\" \"><subfield code=\"a\">lorem<\/subfield><subfield code=\"b\">lorem<\/subfield><subfield code=\"2\">lorem<\/subfield><\/datafield><datafield tag=\"337\" ind1=\" \" ind2=\" \"><subfield code=\"a\">lorem<\/subfield><subfield code=\"b\">lorem<\/subfield><subfield code=\"2\">lorem<\/subfield><\/datafield><datafield tag=\"338\" ind1=\" \" ind2=\" \"><subfield code=\"a\">lorem<\/subfield><subfield code=\"b\">lorem<\/subfield><subfield code=\"2\">lorem<\/subfield><\/datafield><datafield tag=\"506\" ind1=\"0\" ind2=\" \"><subfield code=\"a\">Lorem ipsum dolor sit.<\/subfield><subfield code=\"f\">Lorem ipsum dolor<\/subfield><subfield code=\"2\">lorem<\/subfield><\/datafield><datafield tag=\"506\" ind1=\"1\" ind2=\" \"><subfield code=\"a\">Lorem ipsum dolor sit.<\/subfield><subfield code=\"f\">Lorem ipsum dolor sit<\/subfield><subfield code=\"2\">lorem<\/subfield><\/datafield><datafield tag=\"540\" ind1=\" \" ind2=\" \"><subfield code=\"a\">Lorem ipsum<\/subfield><subfield code=\"u\">http:\/\/creativecommons.org\/publicdomain\/mark\/1.0\/deed.fi<\/subfield><\/datafield><datafield tag=\"653\" ind1=\" \" ind2=\"6\"><subfield code=\"a\">lorem ipsum<\/subfield><\/datafield><datafield tag=\"653\" ind1=\" \" ind2=\"6\"><subfield code=\"a\">lorem ipsum<\/subfield><\/datafield><datafield tag=\"653\" ind1=\" \" ind2=\"6\"><subfield code=\"a\">lorem ipsum<\/subfield><\/datafield><datafield tag=\"710\" ind1=\"2\" ind2=\" \"><subfield code=\"a\">Lorem,<\/subfield><subfield code=\"e\">lorem ipsum,<\/subfield><subfield code=\"e\">lorem.<\/subfield><subfield code=\"0\">(Lorem-Ipsum-Dolor)000034269<\/subfield><\/datafield><datafield tag=\"856\" ind1=\"4\" ind2=\"0\"><subfield code=\"u\">https:\/\/test.tests.fi\/place?id=561<\/subfield><subfield code=\"y\">Lorem ipsum<\/subfield><\/datafield><datafield tag=\"856\" ind1=\"4\" ind2=\"0\"><subfield code=\"u\">https:\/\/test.tests.fi\/place?id=561<\/subfield><subfield code=\"z\">Lorem ipsum<\/subfield><\/datafield><datafield tag=\"856\" ind1=\"4\" ind2=\"2\"><subfield code=\"q\">lorem\/ipsum<\/subfield><subfield code=\"u\">https:\/\/www.testisivu.fi\/test\/kuva1.jpg<\/subfield><subfield code=\"z\">Lorem<\/subfield><\/datafield><datafield tag=\"960\" ind1=\" \" ind2=\" \"><subfield code=\"a\">Lorem Ipsum-dolor sit<\/subfield><\/datafield><datafield tag=\"960\" ind1=\" \" ind2=\" \"><subfield code=\"a\">Lorem Ipsum-dolor sit<\/subfield><\/datafield><datafield tag=\"999\" ind1=\" \" ind2=\" \"><subfield code=\"c\">5787671<\/subfield><subfield code=\"d\">5787671<\/subfield><\/datafield><datafield tag=\"979\" ind1=\" \" ind2=\" \"><subfield code=\"a\">lorem.5781725<\/subfield><subfield code=\"a\">lorem.5781726<\/subfield><subfield code=\"a\">lorem.5781727<\/subfield><subfield code=\"a\">lorem.5781728<\/subfield><subfield code=\"a\">lorem.5781729<\/subfield><subfield code=\"a\">lorem.5781731<\/subfield><subfield code=\"a\">lorem.5781732<\/subfield><subfield code=\"a\">lorem.5781735<\/subfield><subfield code=\"a\">lorem.5781736<\/subfield><subfield code=\"a\">lorem.5781737<\/subfield><subfield code=\"a\">lorem.5781738<\/subfield><subfield code=\"a\">lorem.5803990<\/subfield><subfield code=\"a\">lorem.5803996<\/subfield><subfield code=\"a\">lorem.5804000<\/subfield><subfield code=\"a\">lorem.5804165<\/subfield><subfield code=\"a\">lorem.5804208<\/subfield><\/datafield><\/record><\/collection>\n",
+        "generalNotes": [],
+        "genres": [
+            "purr studies",
+            "whiskerology",
+            "cat history"
+        ],
+        "geoCenter": [],
+        "geoLocations": [],
+        "hierarchicalPlaceNames": [],
+        "hierarchyParentId": [],
+        "hierarchyParentTitle": [],
+        "hierarchyTopId": [],
+        "hierarchyTopTitle": [],
+        "humanReadablePublicationDates": [
+            "2024."
+        ],
+        "id": "meow.123123",
+        "images": [],
+        "imagesExtended": [],
+        "institutions": [
+            {
+                "value": "WHISKER"
+            }
+        ],
+        "isbns": [],
+        "issns": [],
+        "languages": [
+            "mul"
+        ],
+        "majorGenres": [],
+        "mediaTypes": [],
+        "newerTitles": [],
+        "nonPresenterAuthors": [
+            {
+                "name": "Lorem",
+                "role": "lorem ipsum, lorem",
+                "id": "(Lorem-Ipsum-Dolor)000034269",
+                "type": "Corporate Name"
+            }
+        ],
+        "oclc": [],
+        "onlineUrls": [
+            {
+                "url": "https:\/\/digi.kansalliskirjasto.fi\/collections?id=561",
+                "text": "Käytettävissä vapaakappaletyöasemilla",
+                "source": {
+                    "value": [
+                        "fikka",
+                        "fikka"
+                    ],
+                    "translated": []
+                }
+            }
+        ],
+        "originalLanguages": [
+            "lorem"
+        ],
+        "otherLinks": [],
+        "physicalDescriptions": [
+            "Multiple digital cat resources"
+        ],
+        "placesOfPublication": [
+            "Lorem :"
+        ],
+        "playingTimes": [],
+        "presenters": {
+            "presenters": [],
+            "details": []
+        },
+        "previousTitles": [],
+        "primaryAuthors": [
+            "Lorem"
+        ],
+        "productionCredits": [],
+        "publicationDates": [
+            "2024"
+        ],
+        "publicationEndDate": "1917",
+        "publicationFrequency": [],
+        "publicationInfo": [
+            "Lorem :"
+        ],
+        "publishers": [
+            "Purr & Paw Press"
+        ],
+        "rating": {
+            "count": 5000,
+            "average": 10
+        },
+        "rawData": {
+            "id": "meow.123123",
+            "record_format": "marc",
+            "ctrlnum": [
+                "FCC019185651"
+            ],
+            "language": [
+                "mul"
+            ],
+            "format": [
+                "0\/Other\/",
+                "1\/Other\/Collection\/"
+            ],
+            "author2": [
+                "Minka MäyräMinka Mäyrä"
+            ],
+            "author_corporate": [
+                "Minka MäyräMinka Mäyrä"
+            ],
+            "author_corporate_role": [
+                "curator"
+            ],
+            "title": "Meow manuscripts Purr treatises Feline Publications Meow Manuscripts Purr Treatises Feline Publications (1828–1917) = Meow manuscripts Purr Treatises Feline Publications Meow Manuscripts Purr Treatises Feline publications Meow manuscripts-Purr Treatises (1828–1917) = Feline publications Meow Manuscripts Purr treatises Feline Publications Meow manuscripts Purr treatises Feline publications (1828–1917)",
+            "title_txtP": "Meow manuscripts Purr treatises Feline Publications Meow Manuscripts Purr Treatises Feline Publications (1828–1917) = Meow manuscripts Purr Treatises Feline Publications Meow Manuscripts Purr Treatises Feline publications Meow manuscripts-Purr Treatises (1828–1917) = Feline publications Meow Manuscripts Purr treatises Feline Publications Meow manuscripts Purr treatises Feline publications (1828–1917)",
+            "title_sub": "Meow manuscripts Purr Treatises Feline Publications Meow Manuscripts Purr Treatises Feline publications Meow manuscripts-Purr Treatises (1828–1917) = Feline publications Meow Manuscripts Purr treatises Feline Publications Meow manuscripts Purr treatises Feline publications (1828–1917)",
+            "title_short": "Meow manuscripts Purr treatises Feline Publications Meow Manuscripts Purr Treatises Feline Publications (1828–1917)",
+            "title_full": "Meow manuscripts Purr treatises Feline Publications Meow Manuscripts Purr Treatises Feline Publications (1828–1917) = Meow manuscripts Purr Treatises Feline Publications Meow Manuscripts Purr Treatises Feline publications Meow manuscripts-Purr Treatises (1828–1917) = Feline publications Meow Manuscripts Purr treatises Feline Publications Meow manuscripts Purr treatises Feline publications (1828–1917)",
+            "title_fullStr": "Meow manuscripts Purr treatises Feline Publications Meow Manuscripts Purr Treatises Feline Publications (1828–1917) = Meow manuscripts Purr Treatises Feline Publications Meow Manuscripts Purr Treatises Feline publications Meow manuscripts-Purr Treatises (1828–1917) = Feline publications Meow Manuscripts Purr treatises Feline Publications Meow manuscripts Purr treatises Feline publications (1828–1917)",
+            "title_full_unstemmed": "Meow manuscripts Purr treatises Feline Publications Meow Manuscripts Purr Treatises Feline Publications (1828–1917) = Meow manuscripts Purr Treatises Feline Publications Meow Manuscripts Purr Treatises Feline publications Meow manuscripts-Purr Treatises (1828–1917) = Feline publications Meow Manuscripts Purr treatises Feline Publications Meow manuscripts Purr treatises Feline publications (1828–1917)",
+            "title_alt": [
+                "Meow manuscripts = Purr treatises = Feline publications Meow manuscripts",
+                "Meow manuscripts Purr Treatises Feline Publications = Meow manuscripts Purr Treatises Feline Publications = Meow manuscripts Purr Treatises Feline publications",
+                "Meow manuscripts Purr Treatises Feline Publications = Meow manuscripts Purr Treatises Feline Publications = Meow manuscripts Purr Treatises Feline publications",
+                "Meow manuscripts = Purr treatises = Feline publications Meow manuscripts",
+                "Meow manuscripts = Purr treatises = Feline publications",
+                "Meow manuscripts (1827–1917) = Purr treatises (1827–1917) = Feline publications (1827–1917)",
+                "Meow manuscripts- Purr Treatises Feline Publications = Meow manuscripts- Purr Treatises Feline Publications = Meow manuscripts Purr Treatises Feline publications Meow manuscripts",
+                "Meow manuscripts Purr Treatises Feline Publications = Meow manuscripts Purr Treatises Feline Publications = Meow manuscripts Purr Treatises Feline publications",
+                "Meow manuscripts (1828–1917) = Purr treatises (1828–1917) = Feline publications (1828–1917)",
+                "Meow manuscripts = Purr treatises = Feline publications Meow manuscripts",
+                "Meow manuscripts = Purr treatises = Feline publications Meow manuscripts",
+                "Meow manuscripts = Purr treatises = Feline publications",
+                "Meow manuscripts = Purr treatises = Feline publications Meow manuscripts",
+                "Meow manuscripts = Purr treatises = Feline publications Meow manuscripts",
+                "Meow manuscripts Purr Treatises = Feline publications Meow Manuscripts = Purr treatises Feline publications",
+                "Meow manuscripts = Purr treatises = Feline publications Meow manuscripts"
+            ],
+            "publisher": [
+                "Purr & Paw Press"
+            ],
+            "genre": [
+                "purr studies",
+                "whiskerology",
+                "cat history"
+            ],
+            "url": [
+                "https:\/\/digi.kansalliskirjasto.fi\/collections?id=561",
+                "https:\/\/www.kansalliskirjasto.fi\/sites\/default\/files\/2025-01\/kokoelmakansi_Keisarillisen_Aleksanterin_yliopiston_vaitoskirjat.jpg"
+            ],
+            "main_date": "2024-01-01T00:00:00Z",
+            "publication_daterange": "[1828-01-01 TO 1917-12-31]",
+            "search_daterange_mv": [
+                "[1828-01-01 TO 1917-12-31]"
+            ],
+            "publication_place_txt_mv": [
+                "Whiskerford"
+            ],
+            "nbn_isn_mv": [
+                "fe2024100375956"
+            ],
+            "author_facet": [
+                "Minka MäyräMinka Mäyrä"
+            ],
+            "author_variant": [
+                "Minka MäyräMinka Mäyrä",
+                "Sir Whiskers von PurrSir Whiskers von Purr",
+                "K. KissanenK. Kissanen",
+                "Tabitha TailTabitha Tail",
+                "Leo LeijonaLeo Leijona",
+                "Professor MittensProfessor Mittens",
+                "P. PääkkönenP. Pääkkönen",
+                "Felix FelineFelix Feline"
+            ],
+            "is_hierarchy_id": "fikka.5787671",
+            "is_hierarchy_title": "Meow manuscripts Purr treatises Feline Publications Meow Manuscripts Purr Treatises Feline Publications (1828–1917) = Meow manuscripts Purr Treatises Feline Publications Meow Manuscripts Purr Treatises Feline publications Meow manuscripts-Purr Treatises (1828–1917) = Feline publications Meow Manuscripts Purr treatises Feline Publications Meow manuscripts Purr treatises Feline publications (1828–1917)",
+            "first_indexed": "2024-10-03T11:55:20Z",
+            "last_indexed": "2025-12-17T12:55:23Z",
+            "catalog_date": "2024-10-03T11:55:20Z",
+            "publishDate": [
+                "2024"
+            ],
+            "building": [
+                {
+                    "value": "0\/WHISKER\/",
+                    "translated": "Whisker Library"
+                }
+            ],
+            "usage_rights_str_mv": [
+                "usage_A",
+                "usage_B",
+                "usage_C",
+                "usage_D",
+                "usage_E"
+            ],
+            "institution": [
+                "WHISKER"
+            ],
+            "sector_str_mv": [
+                "0\/lib\/",
+                "1\/lib\/uni\/"
+            ],
+            "online_boolean": 1,
+            "genre_facet": [
+                "purr studies",
+                "whiskerology",
+                "cat history"
+            ],
+            "online_str_mv": [
+                "fikka"
+            ],
+            "free_online_str_mv": [
+                "fikka"
+            ],
+            "project_id_str_mv": [
+                "Imperial Cat University Publications",
+                "Imperial Cat University Dissertations"
+            ],
+            "publisherStr": [
+                "Purr & Paw Press"
+            ],
+            "illustrated": "Not Illustrated",
+            "source_str_mv": [
+                "fikka"
+            ],
+            "original_lng_str_mv": [
+                "mul"
+            ],
+            "work_keys_str_mv": [
+                "AT kansalliskirjasto keisarillisenaleksanterinyliopistonväitöskirjatjajulkaisut18281917=dissertatio"
+            ],
+            "author2_id_str_mv": [
+                "melinda.(FI-ASTERI-N)000034269"
+            ],
+            "publishDateSort": "2024",
+            "linking_id_str_mv": [
+                "(FI-MELINDA)019185651",
+                "(FI-MELINDA)5787671",
+                "FCC019185651"
+            ],
+            "author2_id_role_str_mv": [
+                "melinda.(FI-ASTERI-N)000034269###kokoelman muodostaja"
+            ],
+            "nbn_str_mv": [
+                "fe2024100375956"
+            ],
+            "main_date_str": "2024",
+            "physical": [
+                "Multiple digital cat resources"
+            ],
+            "title_sort": "Meow Purr Feline Cat Whisker Paw Meow Purr Feline Cat Whisker Paw 1828 1917 Meow Purr Feline Cat Whisker Paw Meow Purr Feline Cat Whisker Paw Meow Purr Feline Cat 1828 1917 Whisker Paw Meow Purr Feline Cat Whisker Paw Meow Purr Feline Cat Whisker Paw 1828 1917",
+            "free_online_boolean": 1,
+            "online_urls_str_mv": [
+                "{\"url\":\"https:\\\/\\\/digi.kansalliskirjasto.fi\\\/collections?id=561\",\"mediaType\":\"\",\"text\":\"K\\u00e4ytett\\u00e4viss\\u00e4 vapaakappalety\\u00f6asemilla\",\"source\":\"fikka\"}",
+                "{\"url\":\"https:\\\/\\\/digi.kansalliskirjasto.fi\\\/collections?id=561\",\"mediaType\":\"\",\"text\":\"Linkki verkkoaineistoon\",\"source\":\"fikka\"}"
+            ],
+            "format_ext_str_mv": [
+                {
+                    "value": "0\/Other\/",
+                    "translated": "Muu"
+                },
+                {
+                    "value": "1\/Other\/Collection\/",
+                    "translated": "Kokoelma"
+                }
+            ],
+            "usage_rights_ext_str_mv": [
+                {
+                    "value": "0\/A Free\/",
+                    "translated": "Täysin vapaat"
+                },
+                {
+                    "value": "1\/A Free\/B PD\/",
+                    "translated": "Public Domain"
+                }
+            ],
+            "datasource_str_mv": [
+                "fikka"
+            ],
+            "_version_": 1851760253911171072
+        },
+        "recordFormat": "marc",
+        "recordLinks": [],
+        "recordPage": "http:\/\/record.fi\/record",
+        "relationshipNotes": [],
+        "secondaryAuthors": [
+            "Minka MäyräMinka Mäyrä"
+        ],
+        "sectors": [
+            {
+                "value": "0\/lib\/"
+            },
+            {
+                "value": "1\/lib\/uni\/"
+            }
+        ],
+        "series": [],
+        "shortTitle": "Lorem Ipsum dolor sit amet consectetur (1828–1917)",
+        "source": [
+            {
+                "value": "fikka"
+            }
+        ],
+        "subjects": [
+            [
+                "lorem ipsum"
+            ]
+        ],
+        "subjectsExtended": [
+            {
+                "heading": [
+                    "lorem ipsum"
+                ],
+                "source": "rvm"
+            }
+        ],
+        "subTitle": "Lorem ipsum dolor sit amet Consectetur Adipiscing-elit (1828–1917) = Sed do Eiusmod tempor Incididunt Ut Labore (1828–1917)",
+        "summary": [
+            "Lorem ipsum dolor Sit Amet consectetur adipiscing elit sed do eiusmod. Tempor incididunt ut 2000 labore et 600 dolore magna aliqua. Ut enim ad minim veniam quis. Nostrud exercitation ullamco laboris 2020 Nisi ut aliquip. Ex ea commodo Consequat duis. Aute irure dolor: 1828–1917. In reprehenderit in voluptate velit esse.",
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do Eiusmod Tempor incididunt. Ut labore et 2 000 dolore magna 600 aliqua ut enim. Ad minim veniam quis nostrud exercitation ullamco laboris. Nisi ut aliquip 2020 ex ea commodo Consequat duis. Aute irure dolor in Reprehenderit in. Voluptate velit esse 1828–1917. Cillum dolore eu fugiat nulla pariatur excepteur sint occaecat cupidatat non.",
+            "Lorem ipsum dolor sit amet consectetur adipiscing elit sed do eiusmod Tempor Incididunt Ut: labore 2,000 et dolore 600 magna aliqua ut. Enim ad minim veniam quis nostrud exercitation ullamco laboris-nisi. Ut aliquip ex ea commodo 2020 consequat duis aute irure Dolor In’reprehenderit in voluptate velit esse cillum dolore Eu fugiat Nulla. Pariatur excepteur sint occaecat cupidatat non 1828 proident 1917. Sunt in culpa qui officia deserunt mollit anim id est laborum lorem."
+        ],
+        "systemDetails": [],
+        "targetAudienceNotes": [],
+        "title": "Lorem Ipsum dolor sit amet consectetur (1828–1917) = Lorem ipsum dolor sit amet Consectetur Adipiscing-elit (1828–1917) = Sed do Eiusmod tempor Incididunt Ut Labore (1828–1917)",
+        "toc": [],
+        "uniformTitles": [],
+        "urls": [
+            {
+                "url": "https:\/\/test.tests.fi\/place?id=561",
+                "desc": "Lorem ipsum"
+            },
+            {
+                "url": "https:\/\/www.testisivu.fi\/test\/kuva1.jpg",
+                "desc": "Lorem",
+                "type": "image",
+                "codec": "jpg"
+            }
+        ],
+        "usageRights": [
+            "usage_A",
+            "usage_B",
+            "usage_C",
+            "usage_D",
+            "usage_E"
+        ],
+        "usageRightsExtended": [
+            {
+                "value": "0\/A Free\/",
+                "translated": "Täysin vapaat"
+            },
+            {
+                "value": "1\/A Free\/B PD\/",
+                "translated": "Public Domain"
+            }
+        ],
+        "year": "2024",
+        "geographicSubjects": []
+    }
+]

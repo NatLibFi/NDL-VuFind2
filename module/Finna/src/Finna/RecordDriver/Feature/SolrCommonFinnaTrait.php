@@ -279,11 +279,7 @@ trait SolrCommonFinnaTrait
     public function getCreationDateRange(): string
     {
         $filteredRange = str_replace(['[', ']'], ['', ''], $this->fields['creation_daterange'] ?? '');
-        $isoRange = array_map(
-            fn ($date) => (new \DateTime($date))->format('Y-m-d\TH:i:s\Z'),
-            explode('TO', $filteredRange)
-        );
-        return implode('/', $isoRange);
+        return implode('/', explode('TO', $filteredRange));
     }
 
     /**
@@ -291,7 +287,7 @@ trait SolrCommonFinnaTrait
      *
      * @return array
      */
-    public function getGeographicSubject(): array
+    public function getGeographicSubjects(): array
     {
         return (array)($this->fields['geographic'] ?? []);
     }

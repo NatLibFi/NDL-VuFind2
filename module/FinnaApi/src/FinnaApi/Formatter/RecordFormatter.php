@@ -101,9 +101,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     protected function getExtendedImages($record)
     {
         $imageHelper = $this->helperManager->get('recordImage');
-        $recordHelper = $this->helperManager->get('record');
         $translate = $this->helperManager->get('translate');
-        $images = $imageHelper($recordHelper($record))->getAllImagesAsCoverLinks(
+        $images = $imageHelper(($this->helperManager->get('record'))($record))->getAllImagesAsCoverLinks(
             $this->locale,
             [],
             false,

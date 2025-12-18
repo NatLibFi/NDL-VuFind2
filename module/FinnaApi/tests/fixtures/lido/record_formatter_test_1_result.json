@@ -1,0 +1,316 @@
+[
+    {
+        "accessRestrictions": [
+            "Whiskerology cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history\/feline arts nap science meow linguistics whiskerology cat history feline arts nap science. \n\nMeow linguistics:\nWhiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science, meow linguistics whiskerology cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history, feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history feline arts, nap science meow linguistics Whiskerology Cat history (feline arts@nap science.meow linguistics). \n\n3Whiskerology: Cat history-feline arts nap science meow linguistics 3Whiskerology cat history feline arts nap science meow linguistics whiskerology."
+        ],
+        "alternativeTitles": [],
+        "authors": {
+            "primary": [],
+            "secondary": [],
+            "corporate": []
+        },
+        "awards": [],
+        "bibliographyNotes": [],
+        "buildings": [],
+        "callNumbers": [],
+        "childRecordCount": 0,
+        "collections": [],
+        "corporateAuthors": [],
+        "controlNumbers": [],
+        "eraSubjects": [
+          "Victorian Era",
+          "Edwardian Era"
+        ],
+        "events": {
+            "whiskerology": [
+                {
+                    "type": "whiskerology",
+                    "date": "whiskerology 1800- cat history 1900-lukujen feline arts, 1900-luvun nap science",
+                    "methods": [],
+                    "methodsExtended": [],
+                    "materials": [],
+                    "materialsExtended": [],
+                    "places": [
+                        "Whiskerology, Cat history"
+                    ],
+                    "actors": [
+                        {
+                            "name": "Whiskerology, Cat history Feline arts",
+                            "role": "whiskerology, cat history"
+                        }
+                    ],
+                    "descriptions": []
+                }
+            ]
+        },
+        "findingAids": [],
+        "formats": [],
+        "fullRecord": "<?xml version='1.0' encoding='utf-8'?>\n<lidoWrap>\n  <lido>\n    <lidoRecID type=\"item\">00074689368Whiskerology581213Cat history4215Feline arts229Nap science0Meow linguistics<\/lidoRecID>\n    <descriptiveMetadata lang=\"fi\">\n      <objectClassificationWrap>\n        <objectWorkTypeWrap>\n          <objectWorkType>\n            <term>whiskerology<\/term>\n          <\/objectWorkType>\n        <\/objectWorkTypeWrap>\n        <classificationWrap>\n          <classification>\n            <term lang=\"fi\" label=\"luokitus\">whiskerology<\/term>\n          <\/classification>\n        <\/classificationWrap>\n      <\/objectClassificationWrap>\n      <objectIdentificationWrap>\n        <titleWrap>\n          <titleSet type=\"title\">\n            <appellationValue lang=\"fi\" pref=\"alternate\" label=\"nimi\">whiskerology Cat history<\/appellationValue>\n          <\/titleSet>\n        <\/titleWrap>\n        <inscriptionsWrap \/>\n        <repositoryWrap>\n          <repositorySet>\n            <repositoryName>\n              <legalBodyName>\n                <appellationValue>Whiskerology<\/appellationValue>\n              <\/legalBodyName>\n              <legalBodyWeblink>whiskerology.Cat history.feline arts<\/legalBodyWeblink>\n            <\/repositoryName>\n            <workID>KK1773:53<\/workID>\n          <\/repositorySet>\n        <\/repositoryWrap>\n        <objectDescriptionWrap>\n          <objectDescriptionSet type=\"description\">\n            <descriptiveNoteValue lang=\"fi\" label=\"kuvaus\">whiskerology cat history: feline arts<\/descriptiveNoteValue>\n          <\/objectDescriptionSet>\n          <objectDescriptionSet>\n            <descriptiveNoteValue label=\"ominaisuudet\">whiskerology<\/descriptiveNoteValue>\n          <\/objectDescriptionSet>\n        <\/objectDescriptionWrap>\n        <objectMeasurementsWrap>\n          <objectMeasurementsSet>\n            <displayObjectMeasurements \/>\n            <objectMeasurements>\n              <measurementsSet>\n                <measurementType>\n                  <conceptID type=\"URI\" source=\"Metadata thesaurus\">https:\/\/cats.example\/purr\/99971<\/conceptID>\n                  <term lang=\"en\">whiskerology<\/term>\n                <\/measurementType>\n                <measurementUnit lang=\"fi\">whiskerology<\/measurementUnit>\n                <measurementUnit lang=\"en\">whiskerology<\/measurementUnit>\n                <measurementUnit lang=\"sv\">whiskerology<\/measurementUnit>\n                <measurementValue>1<\/measurementValue>\n              <\/measurementsSet>\n            <\/objectMeasurements>\n          <\/objectMeasurementsSet>\n          <objectMeasurementsSet>\n            <displayObjectMeasurements lang=\"fi\">9 whiskerology 11 cat history<\/displayObjectMeasurements>\n            <displayObjectMeasurements lang=\"en\">9 whiskerology 11 cat history<\/displayObjectMeasurements>\n            <displayObjectMeasurements lang=\"sv\">9 whiskerology 11 cat history<\/displayObjectMeasurements>\n          <\/objectMeasurementsSet>\n        <\/objectMeasurementsWrap>\n        <objectMaterialsTechWrap>\n          <objectMaterialsTechSet>\n            <materialsTech>\n              <termMaterialsTech type=\"color name\">\n                <conceptID type=\"URI\" source=\"mts\">https:\/\/cats.example\/purr\/11649<\/conceptID>\n                <term lang=\"fi\">whiskerology<\/term>\n              <\/termMaterialsTech>\n            <\/materialsTech>\n          <\/objectMaterialsTechSet>\n        <\/objectMaterialsTechWrap>\n      <\/objectIdentificationWrap>\n      <eventWrap>\n        <eventSet>\n          <event>\n            <eventType>\n              <term>whiskerology<\/term>\n              <term lang=\"en\">Whiskerology<\/term>\n            <\/eventType>\n            <eventActor>\n              <actorInRole>\n                <actor>\n                  <nameActorSet>\n                    <appellationValue>Whiskerology, Cat history Feline arts<\/appellationValue>\n                  <\/nameActorSet>\n                <\/actor>\n                <roleActor>\n                  <term lang=\"fi\">whiskerology cat history<\/term>\n                  <term lang=\"en\">whiskerology, cat history<\/term>\n                  <term lang=\"sv\">whiskerology cat history<\/term>\n                <\/roleActor>\n              <\/actorInRole>\n            <\/eventActor>\n            <eventDate>\n              <displayDate lang=\"fi\">whiskerology 1800- cat history 1900-lukujen feline arts, 1900-luvun nap science<\/displayDate>\n              <displayDate lang=\"en\" \/>\n              <displayDate lang=\"sv\" \/>\n              <date>\n                <earliestDate \/>\n                <latestDate \/>\n              <\/date>\n            <\/eventDate>\n            <eventPlace>\n              <displayPlace lang=\"fi\">Whiskerology, Cat history<\/displayPlace>\n              <displayPlace lang=\"en\">Whiskerology, Cat history<\/displayPlace>\n              <displayPlace lang=\"sv\">Whiskerology, Cat history<\/displayPlace>\n              <place \/>\n            <\/eventPlace>\n            <eventPlace \/>\n            <eventMaterialsTech \/>\n            <eventDescriptionSet \/>\n          <\/event>\n        <\/eventSet>\n        <eventSet>\n          <event>\n            <eventType>\n              <term>Whiskerology<\/term>\n              <term lang=\"en\">whiskerology<\/term>\n            <\/eventType>\n            <eventPlace \/>\n          <\/event>\n        <\/eventSet>\n        <eventSet>\n          <event>\n            <eventType>\n              <term lang=\"fi\">whiskerology<\/term>\n              <term lang=\"en\">Whiskerology<\/term>\n            <\/eventType>\n            <eventPlace \/>\n          <\/event>\n        <\/eventSet>\n      <\/eventWrap>\n      <objectRelationWrap>\n        <subjectWrap>\n          <term>whiskerology<\/term>\n          <subjectSet>\n            <subject>\n              <subjectDate>\n                <displayDate lang=\"fi\">1800- whiskerology 1900-lukujen cat history, 1900-luvun feline arts<\/displayDate>\n                <displayDate lang=\"en\" \/>\n                <displayDate lang=\"sv\" \/>\n              <\/subjectDate>\n              <subjectPlace>\n                <displayPlace lang=\"fi\">Whiskerology, Cat history, Feline arts, Nap science<\/displayPlace>\n                <displayPlace lang=\"en\">Whiskerology, Cat history, Feline arts, Nap science<\/displayPlace>\n                <displayPlace lang=\"sv\">Whiskerology, Cat history, Feline arts, Nap science<\/displayPlace>\n                <place \/>\n              <\/subjectPlace>\n              <subjectPlace \/>\n            <\/subject>\n          <\/subjectSet>\n          <subjectSet>\n            <subject>\n              <subjectConcept>\n                <conceptID source=\"sanaston nimi\">Whiskerology cat history Feline arts<\/conceptID>\n                <term label=\"asiasana\" lang=\"fi\">whiskerology<\/term>\n                <conceptID type=\"URI\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n                <conceptID source=\"asiasanateksti\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n              <\/subjectConcept>\n            <\/subject>\n          <\/subjectSet>\n          <subjectSet>\n            <subject>\n              <subjectConcept>\n                <conceptID source=\"sanaston nimi\">Whiskerology cat history Feline arts<\/conceptID>\n                <term label=\"asiasana\" lang=\"fi\">whiskerology<\/term>\n                <conceptID type=\"URI\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n                <conceptID source=\"asiasanateksti\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n              <\/subjectConcept>\n            <\/subject>\n          <\/subjectSet>\n          <subjectSet>\n            <subject>\n              <subjectConcept>\n                <conceptID source=\"sanaston nimi\">Whiskerology cat history Feline arts<\/conceptID>\n                <term label=\"asiasana\" lang=\"fi\">whiskerology<\/term>\n                <conceptID type=\"URI\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n                <conceptID source=\"asiasanateksti\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n              <\/subjectConcept>\n            <\/subject>\n          <\/subjectSet>\n          <subjectSet>\n            <subject>\n              <subjectConcept>\n                <conceptID source=\"sanaston nimi\">Whiskerology cat history Feline arts<\/conceptID>\n                <term label=\"asiasana\" lang=\"fi\">whiskerology<\/term>\n                <conceptID type=\"URI\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n                <conceptID type=\"asiasanateksti\" \/>\n                <term label=\"asiasana\" lang=\"fi\" \/>\n              <\/subjectConcept>\n            <\/subject>\n          <\/subjectSet>\n        <\/subjectWrap>\n        <relatedWorksWrap>\n          <relatedWorkSet>\n            <relatedWork>\n              <displayObject lang=\"fi\">Whiskerology cat history<\/displayObject>\n              <displayObject lang=\"en\">Whiskerology cat history<\/displayObject>\n              <displayObject lang=\"sv\">Whiskerology cat history<\/displayObject>\n            <\/relatedWork>\n            <relatedWorkRelType>\n              <term>Whiskerology<\/term>\n            <\/relatedWorkRelType>\n          <\/relatedWorkSet>\n          <relatedWorkSet>\n            <relatedWork>\n              <object>\n                <objectWebResource \/>\n                <objectType>\n                  <conceptID type=\"URI\">https:\/\/cats.example\/purr\/83607<\/conceptID>\n                  <term>whiskerology<\/term>\n                <\/objectType>\n              <\/object>\n            <\/relatedWork>\n            <relatedWorkRelType>\n              <conceptID type=\"\" \/>\n              <term>whiskerology cat history feline arts<\/term>\n            <\/relatedWorkRelType>\n          <\/relatedWorkSet>\n          <relatedWorkSet>\n            <relatedWork>\n              <object>\n                <objectWebResource \/>\n                <objectType>\n                  <conceptID type=\"URI\" \/>\n                  <term>whiskerology<\/term>\n                <\/objectType>\n              <\/object>\n            <\/relatedWork>\n            <relatedWorkRelType>\n              <conceptID type=\"\" \/>\n              <term>whiskerology cat history feline arts<\/term>\n            <\/relatedWorkRelType>\n          <\/relatedWorkSet>\n          <relatedWorkSet>\n            <relatedWork>\n              <displayObject label=\"kohde\" \/>\n            <\/relatedWork>\n            <relatedWorkRelType>\n              <term>whiskerology<\/term>\n            <\/relatedWorkRelType>\n          <\/relatedWorkSet>\n        <\/relatedWorksWrap>\n      <\/objectRelationWrap>\n    <\/descriptiveMetadata>\n    <administrativeMetadata lang=\"fi\">\n      <rightsWorkWrap>\n        <rightsWorkSet>\n          <creditLine \/>\n        <\/rightsWorkSet>\n      <\/rightsWorkWrap>\n      <recordWrap>\n        <recordID type=\"item\">KK1773:53<\/recordID>\n        <recordType>\n          <term>whiskerology<\/term>\n        <\/recordType>\n        <recordSource>\n          <legalBodyName>\n            <appellationValue>Whiskerology<\/appellationValue>\n          <\/legalBodyName>\n          <legalBodyWeblink>whiskerology.Cat history.feline arts<\/legalBodyWeblink>\n        <\/recordSource>\n        <recordRights>\n          <rightsType>\n            <conceptID type=\"copyright\">Whiskerology0<\/conceptID>\n            <term>whiskerology<\/term>\n          <\/rightsType>\n        <\/recordRights>\n        <recordInfoSet>\n          <recordInfoID type=\"old item\" \/>\n        <\/recordInfoSet>\n      <\/recordWrap>\n      <resourceWrap>\n        <resourceSet>\n          <resourceID type=\"ID\">815913<\/resourceID>\n          <resourceDescription type=\"displayLink\">1773_53.tif<\/resourceDescription>\n          <resourceRepresentation type=\"image_thumb\">\n            <linkResource>https:\/\/cats.example\/purr\/21692<\/linkResource>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"image_large\">\n            <linkResource>https:\/\/cats.example\/purr\/74242<\/linkResource>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"image_master\">\n            <linkResource>https:\/\/cats.example\/purr\/33234<\/linkResource>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"image_original\">\n            <linkResource formatResource=\"jpg\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"image_original\">\n            <linkResource formatResource=\"tif\">https:\/\/cats.example\/purr\/58389<\/linkResource>\n            <resourceMeasurementsSet>\n              <measurementType lang=\"fi\">whiskerology<\/measurementType>\n              <measurementType lang=\"en\">whiskerology<\/measurementType>\n              <measurementUnit lang=\"fi\">whiskerology<\/measurementUnit>\n              <measurementUnit lang=\"en\">whiskerology<\/measurementUnit>\n              <measurementValue>86764 99027 108534 110259 111175 110915 108966 109326 107973 109318 107209 109287 107587 106453 107299 106693 108043 109346 109868 109894 109896 111920 119965 130358 140037 153253 167938 175981 184333 194157 194757 187428 183834 181871 174412 172186 169609 167479 165588 163839 163133 161418 161708 161493 162401 160800 159914 157721 153268 154731 154428 154826 154371 151139 128022 101314 24171<\/measurementValue>\n            <\/resourceMeasurementsSet>\n            <resourceMeasurementsSet>\n              <measurementType lang=\"fi\">whiskerology<\/measurementType>\n              <measurementType lang=\"en\">whiskerology<\/measurementType>\n              <measurementUnit lang=\"fi\">whiskerology<\/measurementUnit>\n              <measurementUnit lang=\"en\">whiskerology<\/measurementUnit>\n              <measurementValue>2500<\/measurementValue>\n            <\/resourceMeasurementsSet>\n            <resourceMeasurementsSet>\n              <measurementType lang=\"fi\">whiskerology<\/measurementType>\n              <measurementType lang=\"en\">whiskerology<\/measurementType>\n              <measurementUnit lang=\"fi\">whiskerology<\/measurementUnit>\n              <measurementUnit lang=\"en\">whiskerology<\/measurementUnit>\n              <measurementValue>1914<\/measurementValue>\n            <\/resourceMeasurementsSet>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"preview_3D\">\n            <linkResource formatResource=\"glTF\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"preview_3D\">\n            <linkResource formatResource=\"glb\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"preview_audio\">\n            <linkResource formatResource=\"mp3\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"preview_audio\">\n            <linkResource formatResource=\"wav\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"preview_video\">\n            <linkResource formatResource=\"mp4\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"provided_text\">\n            <linkResource formatResource=\"pdf\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"provided_text\">\n            <linkResource formatResource=\"docx\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"provided_text\">\n            <linkResource formatResource=\"xlsx\" \/>\n          <\/resourceRepresentation>\n          <resourceRepresentation type=\"provided_3D\">\n            <linkResource formatResource=\"text\/html\" \/>\n          <\/resourceRepresentation>\n          <rightsResource>\n            <rightsType>\n              <conceptID type=\"copyright\">Whiskerology Cat history 4.0<\/conceptID>\n              <term lang=\"fi\">Whiskerology cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history\/feline arts nap science meow linguistics whiskerology cat history feline arts nap science. \n\nMeow linguistics:\nWhiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science, meow linguistics whiskerology cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history, feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history feline arts, nap science meow linguistics Whiskerology Cat history (feline arts@nap science.meow linguistics). \n\n3Whiskerology: Cat history-feline arts nap science meow linguistics 3Whiskerology cat history feline arts nap science meow linguistics whiskerology.<\/term>\n              <term lang=\"en\">Whiskerology cat history feline arts nap science meow linguistics whiskerology, cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history\/feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science. \n\nMeow linguistics whiskerology cat history:\nFeline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history. Feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology, cat history feline arts nap science meow linguistics whiskerology cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history. Feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics, whiskerology cat history Feline arts Nap science meow linguistics whiskerology Cat history Feline arts Nap science (meow linguistics@whiskerology.cat history).\n\nFeline arts: Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology (Cat history) feline arts nap science, meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology, cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics.\n\n3Whiskerology: Cat history feline arts nap science meow linguistics whiskerology 3Cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history Feline arts nap science.<\/term>\n              <term lang=\"sv\">Whiskerology cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics\/whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history. \n\nFeline arts:\nNap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history. Feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts, nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science. Meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts, nap science Meow linguistics Whiskerology (cat history@feline arts.nap science).\n\nMeow linguistics: Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts, nap science meow linguistics whiskerology (Cat history) feline arts nap science meow linguistics whiskerology cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history.\n\n3Feline arts: Nap science meow linguistics whiskerology cat history 3Feline arts-nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics Whiskerology.<\/term>\n            <\/rightsType>\n            <rightsHolder>\n              <legalBodyName>\n                <appellationValue \/>\n              <\/legalBodyName>\n              <legalBodyWeblink \/>\n            <\/rightsHolder>\n            <creditLine \/>\n          <\/rightsResource>\n        <\/resourceSet>\n      <\/resourceWrap>\n    <\/administrativeMetadata>\n  <\/lido>\n<\/lidoWrap>\n",
+        "generalNotes": [],
+        "genres": [],
+        "geoCenter": [],
+        "geoLocations": [],
+        "hierarchicalPlaceNames": [],
+        "hierarchyParentId": [],
+        "hierarchyParentTitle": [],
+        "hierarchyTopId": [],
+        "hierarchyTopTitle": [],
+        "humanReadablePublicationDates": [],
+        "id": "whiskerlib.506239",
+        "identifierString": "KK1773:53",
+        "imageRights": {
+            "copyright": "Whiskerology Cat history 4.0",
+            "description": [
+                "Whiskerology cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history\/feline arts nap science meow linguistics whiskerology cat history feline arts nap science. \n\nMeow linguistics:\nWhiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science, meow linguistics whiskerology cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history, feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history feline arts, nap science meow linguistics Whiskerology Cat history (feline arts@nap science.meow linguistics). \n\n3Whiskerology: Cat history-feline arts nap science meow linguistics 3Whiskerology cat history feline arts nap science meow linguistics whiskerology."
+            ]
+        },
+        "images": [
+            "\/Cover\/Show?source=&id=whiskerlib.506239&index=0&size=large"
+        ],
+        "imagesExtended": [
+            {
+                "urls": {
+                    "small": "\/Cover\/Show?source=&id=whiskerlib.506239&index=0&size=small",
+                    "large": "\/Cover\/Show?source=&id=whiskerlib.506239&index=0&size=large",
+                    "master": "\/Cover\/Show?source=&id=whiskerlib.506239&index=0&size=master",
+                    "medium": "\/Cover\/Show?source=&id=whiskerlib.506239&index=0&size=medium"
+                },
+                "rights": {
+                    "copyright": "Whiskerology Cat history 4.0",
+                    "description": [
+                        "Whiskerology cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history\/feline arts nap science meow linguistics whiskerology cat history feline arts nap science. \n\nMeow linguistics:\nWhiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science, meow linguistics whiskerology cat history feline arts. Nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics whiskerology cat history feline arts nap science meow linguistics. Whiskerology cat history feline arts nap science meow linguistics whiskerology cat history, feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology. Cat history feline arts nap science meow linguistics whiskerology cat history feline arts, nap science meow linguistics Whiskerology Cat history (feline arts@nap science.meow linguistics). \n\n3Whiskerology: Cat history-feline arts nap science meow linguistics 3Whiskerology cat history feline arts nap science meow linguistics whiskerology."
+                    ]
+                },
+                "highResolution": {
+                    "master": [
+                        {
+                            "data": [],
+                            "url": "https:\/\/cats.example\/purr\/33234",
+                            "format": "jpg",
+                            "resourceID": "815913",
+                            "params": {
+                                "id": "whiskerlib.506239",
+                                "index": 0,
+                                "size": "master",
+                                "format": "jpg",
+                                "key": 0,
+                                "type": "highresimg"
+                            }
+                        }
+                    ],
+                    "original": [
+                        {
+                            "data": {
+                                "whiskerology": {
+                                    "unit": "whiskerology",
+                                    "value": "1914"
+                                }
+                            },
+                            "url": "https:\/\/cats.example\/purr\/58389",
+                            "format": "tif",
+                            "resourceID": "815913",
+                            "params": {
+                                "id": "whiskerlib.506239",
+                                "index": 0,
+                                "size": "original",
+                                "format": "tif",
+                                "key": 0,
+                                "type": "highresimg"
+                            }
+                        }
+                    ]
+                },
+                "identifier": "815913",
+                "resourceName": "1773_53.tif",
+                "cacheSizes": {
+                    "medium": "small"
+                }
+            }
+        ],
+        "inscriptions": [],
+        "isbns": [],
+        "issns": [],
+        "languages": [],
+        "majorGenres": [],
+        "measurements": [
+            "1 whiskerology",
+            "9 whiskerology 11 cat history"
+        ],
+        "mediaTypes": [],
+        "newerTitles": [],
+        "nonPresenterAuthors": [],
+        "oclc": [],
+        "onlineUrls": [],
+        "originalLanguages": [],
+        "physicalDescriptions": [],
+        "physicalLocations": [],
+        "placesOfPublication": [],
+        "playingTimes": [],
+        "presenters": [],
+        "previousTitles": [],
+        "primaryAuthors": [],
+        "productionCredits": [],
+        "publicationDates": [],
+        "publicationFrequency": [],
+        "publishers": [],
+        "rating": {
+            "count": 5000,
+            "average": 10
+        },
+        "rawData": {
+            "buildings": [
+                {
+                    "value": "0\/Whisker Library\/",
+                    "translated": "Whisker Library"
+                },
+                {
+                    "value": "1\/Whisker Library\/Purr Collections\/",
+                    "translated": "Purr Collections"
+                }
+            ],
+            "formats": [
+                {
+                    "value": "0\/Image\/",
+                    "translated": "Kissa"
+                },
+                {
+                    "value": "1\/Image\/Cat\/",
+                    "translated": "Kuva (Kissa)"
+                }
+            ],
+            "id": "whiskerlib.506239",
+            "imageRights": {
+                "copyright": "CC BY 4.0",
+                "link": "https:\/\/cats.example\/purr\/581841",
+                "description": [
+                    "Whiskerology cat history feline arts nap science meow linguistics yarn dynamics. Whiskerology cat history feline arts nap science meow linguistics yarn dynamics\/whiskerology cat history feline arts nap science meow linguistics yarn dynamics whiskerology. \n\nCat history:\nFeline arts nap science meow linguistics yarn dynamics whiskerology cat history feline arts nap science meow linguistics, yarn dynamics whiskerology cat history feline arts. Nap science meow linguistics yarn dynamics whiskerology cat history feline arts nap science meow linguistics yarn dynamics whiskerology cat history feline arts. Nap science meow linguistics yarn dynamics whiskerology cat history feline arts nap science, meow linguistics yarn dynamics whiskerology cat history. Feline arts nap science meow linguistics yarn dynamics whiskerology. Cat history feline arts nap science meow linguistics yarn dynamics whiskerology cat history, feline arts nap science Meow linguistics Yarn dynamics (whiskerology@cat history.feline arts). \n\n3Nap science: Meow linguistics-yarn dynamics whiskerology cat history 3Feline arts nap science meow linguistics yarn dynamics whiskerology cat history."
+                ]
+            },
+            "images": [
+                "https:\/\/cats.example\/purr\/128916"
+            ],
+            "languages": [],
+            "nonPresenterAuthors": [
+                {
+                    "name": "Sir Whiskers von Purr",
+                    "role": "kissakuvaaja (todennäköisesti)"
+                }
+            ],
+            "onlineUrls": [],
+            "presenters": [],
+            "rating": {
+                "count": 0,
+                "average": 0
+            },
+            "series": [],
+            "subjects": [
+                [
+                    "whiskerology"
+                ],
+                [
+                    "cat history"
+                ],
+                [
+                    "feline arts"
+                ],
+                [
+                    "nap science"
+                ],
+                [
+                    "Whiskerford, Purrchester, Meowlin"
+                ]
+            ],
+            "title": "Purr Road in Whiskerford",
+            "year": "1900",
+            "creation_daterange": "[1900 TO 1999]",
+            "geographic": [
+                "Whiskerford, Purrchester, Meowlin",
+                "Purrsylvania"
+            ],
+            "era": [
+              "Victorian Era",
+              "Edwardian Era"
+            ]
+        },
+        "recordPage": "http:\/\/record.fi\/record",
+        "relationshipNotes": [],
+        "secondaryAuthors": [],
+        "series": [],
+        "subjectActors": [],
+        "subjectDetails": [],
+        "subjectPlaces": [
+            "Whiskerology, Cat history, Feline arts, Nap science"
+        ],
+        "subjects": [
+            [
+                "whiskerology"
+            ],
+            [
+                "whiskerology"
+            ],
+            [
+                "whiskerology"
+            ],
+            [
+                "whiskerology"
+            ],
+            [
+                "whiskerology 1800- cat history 1900-lukujen feline arts, 1900-luvun nap science"
+            ],
+            [
+                "Whiskerology, Cat history, Feline arts, Nap science"
+            ]
+        ],
+        "subjectsExtended": [
+            {
+                "heading": [
+                    "whiskerology"
+                ],
+                "type": "topic"
+            },
+            {
+                "heading": [
+                    "whiskerology"
+                ],
+                "type": "topic"
+            },
+            {
+                "heading": [
+                    "whiskerology"
+                ],
+                "type": "topic"
+            },
+            {
+                "heading": [
+                    "whiskerology"
+                ],
+                "type": "topic"
+            },
+            {
+                "heading": [
+                    "whiskerology 1800- cat history 1900-lukujen feline arts, 1900-luvun nap science"
+                ],
+                "type": "topic"
+            },
+            {
+                "heading": [
+                    "Whiskerology, Cat history, Feline arts, Nap science"
+                ]
+            }
+        ],
+        "summary": [
+            "whiskerology cat history: feline arts"
+        ],
+        "systemDetails": [],
+        "targetAudienceNotes": [],
+        "title": "Purr Road in Whiskerford",
+        "toc": [],
+        "usageRights": [],
+        "usageRightsExtended": [],
+        "creationDateRange": "1900 / 1999",
+        "geographicSubjects": [
+            "Whiskerford, Purrchester, Meowlin",
+            "Purrsylvania"
+        ]
+    }
+]

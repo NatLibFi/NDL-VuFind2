@@ -1,0 +1,75 @@
+{
+  "buildings": [
+    {
+      "value": "0/Whisker Library/",
+      "translated": "Whisker Library"
+    },
+    {
+      "value": "1/Whisker Library/Purr Collections/",
+      "translated": "Purr Collections"
+    }
+  ],
+  "formats": [
+    {
+      "value": "0/Image/",
+      "translated": "Kissa"
+    },
+    {
+      "value": "1/Image/Cat/",
+      "translated": "Kuva (Kissa)"
+    }
+  ],
+  "geographic": [
+    "Whiskerford, Purrchester, Meowlin",
+    "Purrsylvania"
+  ],
+  "era": [
+    "Victorian Era",
+    "Edwardian Era"
+  ],
+  "id": "whiskerlib.506239",
+  "imageRights": {
+    "copyright": "CC BY 4.0",
+    "link": "https://cats.example/purr/581841",
+    "description": [
+      "Whiskerology cat history feline arts nap science meow linguistics yarn dynamics. Whiskerology cat history feline arts nap science meow linguistics yarn dynamics/whiskerology cat history feline arts nap science meow linguistics yarn dynamics whiskerology. \n\nCat history:\nFeline arts nap science meow linguistics yarn dynamics whiskerology cat history feline arts nap science meow linguistics, yarn dynamics whiskerology cat history feline arts. Nap science meow linguistics yarn dynamics whiskerology cat history feline arts nap science meow linguistics yarn dynamics whiskerology cat history feline arts. Nap science meow linguistics yarn dynamics whiskerology cat history feline arts nap science, meow linguistics yarn dynamics whiskerology cat history. Feline arts nap science meow linguistics yarn dynamics whiskerology. Cat history feline arts nap science meow linguistics yarn dynamics whiskerology cat history, feline arts nap science Meow linguistics Yarn dynamics (whiskerology@cat history.feline arts). \n\n3Nap science: Meow linguistics-yarn dynamics whiskerology cat history 3Feline arts nap science meow linguistics yarn dynamics whiskerology cat history."
+    ]
+  },
+  "images": [
+    "https://cats.example/purr/128916"
+  ],
+  "languages": [],
+  "nonPresenterAuthors": [
+    {
+      "name": "Sir Whiskers von Purr",
+      "role": "kissakuvaaja (todennäköisesti)"
+    }
+  ],
+  "onlineUrls": [],
+  "presenters": [],
+  "rating": {
+    "count": 0,
+    "average": 0
+  },
+  "series": [],
+  "subjects": [
+    [
+      "whiskerology"
+    ],
+    [
+      "cat history"
+    ],
+    [
+      "feline arts"
+    ],
+    [
+      "nap science"
+    ],
+    [
+      "Whiskerford, Purrchester, Meowlin"
+    ]
+  ],
+  "title": "Purr Road in Whiskerford",
+  "year": "1900",
+  "creation_daterange": "[1900 TO 1999]"
+}
