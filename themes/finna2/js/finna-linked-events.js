@@ -113,7 +113,8 @@ finna.linkedEvents = (function finnaLinkedEvents() {
           if (value.photographer !== '') {
             $('.js-linked-event-image-photographer')
               .removeClass('hidden')
-              .append(value.photographer);
+              .find('span')
+              .text(value.photographer);
           }
         } if (field === 'keywords') {
           $.each(value, function initKeywords(key, val) {
