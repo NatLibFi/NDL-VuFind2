@@ -54,6 +54,7 @@ class RecordController extends \VuFind\Controller\RecordController
     use FinnaRecordControllerTrait;
     use \Finna\Statistics\ReporterTrait;
     use FinnaRecordPreviewSupportTrait;
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -912,15 +913,14 @@ class RecordController extends \VuFind\Controller\RecordController
             if ($manifestJson = json_encode($manifest)) {
                 $headers->addHeaderLine(
                     'Content-Type: application/json;' .
-                    'profile="http://iiif.io/api/presentation/3/context.json;"' .
-                    'charset=UTF-8'
+                    'profile="http://iiif.io/api/presentation/3/context.json"'
                 );
                 $response->setContent($manifestJson);
             } else {
                 $headers->addHeaderLine('Content-Type: text/plain');
                 $response->setStatusCode(500);
                 $response->setContent('Error encoding JSON');
-                error_log(
+                $this->logError(
                     'IIIFManifest: Error encoding JSON for ' .
                     $driver->getUniqueID() . ': ' .
                     json_last_error_msg()

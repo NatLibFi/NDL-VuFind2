@@ -125,7 +125,7 @@ class IIIFManifestGenerator implements
             $manifestItems[] = $canvasItem;
         }
 
-        if (empty($manifestItems)) {
+        if (!$manifestItems) {
             return null;
         }
 
