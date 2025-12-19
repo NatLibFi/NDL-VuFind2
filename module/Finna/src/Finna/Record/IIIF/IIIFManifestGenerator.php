@@ -76,15 +76,47 @@ class IIIFManifestGenerator implements
      */
     public function generate(RecordDriver $driver): array|null
     {
-        $images = $driver->tryMethod('getAllImages');
+        $images      = $driver->tryMethod('getAllImages');
+        $recordId    = $driver->getUniqueID();
+        $source      = $driver->getSourceIdentifier();
+        $manifestId  = $this->recordLinker->getGeneratedIiifManifestUrl($driver);
+        $recordTitle = $driver->getTitle();
+
+        return $this->createManifest(
+            $images,
+            $recordId,
+            $source,
+            $manifestId,
+            $recordTitle
+        );
+    }
+
+    /**
+     * Handle actual manifest generation
+     *
+     * @param ?array $images      Images
+     *                            Array, or null if driver did not have the
+     *                            getAllImages method.
+     * @param string $recordId    Unique ID of the record
+     * @param string $source      Driver source, e.g. 'Solr'
+     * @param string $manifestId  Manifest ID
+     *                            The fully qualified URL of the IIIFManifest
+     *                            action on RecordController. Must resolve
+     *                            correctly.
+     * @param string $recordTitle Title of the record
+     *
+     * @return array
+     */
+    protected function createManifest(
+        ?array $images,
+        string $recordId,
+        string $source,
+        string $manifestId,
+        string $recordTitle
+    ): ?array {
         if (!$images) {
             return null;
         }
-
-        $recordId = $driver->getUniqueID();
-        $source   = $driver->getSourceIdentifier();
-
-        $manifestId = $this->recordLinker->getGeneratedIiifManifestUrl($driver);
 
         $manifestItems = [];
 
@@ -128,8 +160,6 @@ class IIIFManifestGenerator implements
         if (!$manifestItems) {
             return null;
         }
-
-        $recordTitle = $driver->getTitle();
 
         $manifest = [
             '@context' => 'http://iiif.io/api/presentation/3/context.json',
