@@ -32,7 +32,7 @@ namespace Finna\Record\IIIF;
 use Laminas\View\Helper\ServerUrl;
 use Laminas\View\Helper\Url;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
-use VuFind\View\Helper\Root\RecordLinker;
+use Finna\View\Helper\Root\RecordLinker;
 
 /**
  * IIIF manifest generator service
@@ -84,13 +84,7 @@ class IIIFManifestGenerator implements
         $recordId = $driver->getUniqueID();
         $source   = $driver->getSourceIdentifier();
 
-        $manifestId = ($this->serverUrl)(
-            $this->recordLinker->getActionUrl(
-                $driver,
-                'IIIFManifest',
-                options: ['force_canonical' => true]
-            )
-        );
+        $manifestId = $this->recordLinker->getGeneratedIiifManifestUrl($driver);
 
         $manifestItems = [];
 

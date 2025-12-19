@@ -32,6 +32,7 @@
 namespace Finna\View\Helper\Root;
 
 use Finna\Search\UrlQueryHelper;
+use Laminas\View\Helper\ServerUrl;
 use VuFind\Search\Memory;
 
 use function sprintf;
@@ -64,15 +65,26 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     protected $searchMemory = null;
 
     /**
+     * ServerUrl helper
+     *
+     * @var ServerUrl
+     */
+    protected $serverUrl;
+
+    /**
      * Constructor
      *
-     * @param \VuFind\Record\Router $router   Record router
-     * @param array                 $dsConfig Data source configuration
+     * @param \VuFind\Record\Router $router    Record router
+     * @param array                 $dsConfig  Data source configuration
+     * @param ServerUrl             $serverUrl ServerUrl helper
      */
-    public function __construct(\VuFind\Record\Router $router, array $dsConfig)
-    {
+    public function __construct(
+        \VuFind\Record\Router $router,
+        array $dsConfig,
+        ServerUrl $serverUrl) {
         parent::__construct($router);
         $this->datasourceConfig = $dsConfig;
+        $this->serverUrl = $serverUrl;
     }
 
     /**
@@ -250,5 +262,20 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
             return str_replace('%%id%%', $id, $url);
         }
         return '';
+    }
+
+    /**
+     * Return fully qualified URL to a generated IIIF manifest of the record
+     *
+     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
+     *
+     * @return string
+     */
+    public function getGeneratedIiifManifestUrl($driver): string {
+        return ($this->serverUrl)($this->getActionUrl(
+            $driver,
+            'IIIFManifest',
+            options: ['force_canonical' => true]
+        ));
     }
 }

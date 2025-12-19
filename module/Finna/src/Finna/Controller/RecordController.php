@@ -891,13 +891,20 @@ class RecordController extends \VuFind\Controller\RecordController
     protected function iiifManifestAction()
     {
         $driver = $this->loadRecord();
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+
+        if ($datasourceManifests = $driver->tryMethod('getIiifManifests')) {
+            $headers->addHeaderLine('Location', $datasourceManifests[0]['url']);
+            $response->setStatusCode(302);
+            return $response;
+        }
+
         $generator = $this->serviceLocator->get(
             \Finna\Record\IIIF\IIIFManifestGenerator::class
         );
         $config = $this->getConfigArray();
         $corsAllow = $config['IIIF']['manifestCORS'] ?? [];
-        $response = $this->getResponse();
-        $headers = $response->getHeaders();
         foreach ($corsAllow as $allow) {
             $headers->addHeaderLine('Access-Control-Allow-Origin', $allow);
         }
