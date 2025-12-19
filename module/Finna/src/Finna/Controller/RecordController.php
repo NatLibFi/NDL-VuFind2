@@ -905,7 +905,8 @@ class RecordController extends \VuFind\Controller\RecordController
             if ($manifestJson = json_encode($manifest)) {
                 $headers->addHeaderLine(
                     'Content-Type: application/json;' .
-                    'profile="http://iiif.io/api/presentation/3/context.json"'
+                    'profile="http://iiif.io/api/presentation/3/context.json;"' .
+                    'charset=UTF-8'
                 );
                 $response->setContent($manifestJson);
             } else {
