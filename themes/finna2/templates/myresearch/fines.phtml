@@ -119,7 +119,11 @@
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
       <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
-        <h2><?=$this->transEsc('Your Fines') . ' (' . count($this->fines ?? []) . ')'?></h2>
+        <h2><?=$this->transEsc('Your Fines') . ' (' . count($this->fines ?? []) . ')'?>
+        <?php if (!$this->translationEmpty('tooltip_myaccount_fines_html')): ?>
+          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_fines_html') ?>"><?=$this->icon('help') ?></button>
+        <?php endif; ?>
+        </h2>
       </div>
     </div>
     <?=$this->flashmessages()?>

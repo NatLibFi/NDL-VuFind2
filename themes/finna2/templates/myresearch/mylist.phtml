@@ -52,7 +52,11 @@
     <div>
       <?php if ($list): ?>
         <div class="useraccount-header">
-          <h2><?=$this->transEsc('saved_items')?></h2>
+          <h2><?=$this->transEsc('saved_items')?>
+          <?php if (!$this->translationEmpty('tooltip_myaccount_mylist_favorites_html')): ?>
+            <span class="my-research-content"><button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_mylist_favorites_html') ?>"><?=$this->icon('help') ?></button></span>
+          <?php endif; ?>
+          </h2>
         </div>
         <div class="useraccount-header">
           <h3 class="list-title"><i class="list-title-edit fa fa-pen" aria-label="<?=$this->transEscAttr('edit')?>"></i><span><?=$this->escapeHtml($list->getTitle())?></span></h3>
@@ -104,7 +108,11 @@
         <?php endif ?>
       <?php else: ?>
         <div class="useraccount-header">
-          <h2 class="list-title no-edit"><span><?=$this->transEsc('default_list_title')?></span></h2>
+          <h2 class="list-title no-edit"><span><?=$this->transEsc('default_list_title')?>
+          <?php if (!$this->translationEmpty('tooltip_myaccount_mylist_all_favorites_html')): ?>
+            <span class="my-research-content"><button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_mylist_all_favorites_html') ?>"><?=$this->icon('help') ?></button></span>
+          <?php endif; ?></span>
+          </h2>
         </div>
       <?php endif; ?>
     </div>
@@ -163,6 +171,11 @@
         </div>
       </div>
     <?php endif;?>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/myresearch-favorites-post-list')): ?>
+      <div class="myresearch-favorites-post">
+        <?=$this->render($template)?>
+      </div>
+    <?php endif; ?>    
   </div>
   <?php if ($user && $list): ?>
     <form class="float-start delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">

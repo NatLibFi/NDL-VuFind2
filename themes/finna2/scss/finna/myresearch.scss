@@ -332,6 +332,11 @@
         }
       }
     }
+    // Content tooltip
+    .tooltip-myaccount {
+      background: initial;
+      border: none;
+    }
   }
   h1 {
     display: inline-block;
@@ -445,6 +450,9 @@
   }
   .list-title {
     font-size: $font-size-h2;
+    span {
+      display: inline;
+    }
   }
   a.dropdown-toggle {
     font-size: 0.9em;
