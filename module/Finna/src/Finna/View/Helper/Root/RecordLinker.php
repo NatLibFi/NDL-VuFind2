@@ -81,7 +81,8 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     public function __construct(
         \VuFind\Record\Router $router,
         array $dsConfig,
-        ServerUrl $serverUrl) {
+        ServerUrl $serverUrl
+    ) {
         parent::__construct($router);
         $this->datasourceConfig = $dsConfig;
         $this->serverUrl = $serverUrl;
@@ -271,7 +272,8 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
      *
      * @return string
      */
-    public function getGeneratedIiifManifestUrl($driver): string {
+    public function getGeneratedIiifManifestUrl($driver): string
+    {
         return ($this->serverUrl)($this->getActionUrl(
             $driver,
             'IIIFManifest',

@@ -29,10 +29,10 @@
 
 namespace Finna\Record\IIIF;
 
+use Finna\View\Helper\Root\RecordLinker;
 use Laminas\View\Helper\ServerUrl;
 use Laminas\View\Helper\Url;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
-use Finna\View\Helper\Root\RecordLinker;
 
 /**
  * IIIF manifest generator service
