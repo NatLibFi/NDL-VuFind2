@@ -120,6 +120,12 @@
       </div>
     <?php endif; ?>
   <?php endif; ?>
+  <?php if ($iiifManifests = $this->driver->tryMethod('getIiifManifests')):
+      echo $this->record($this->driver)->renderTemplate(
+          'record-iiif-viewer.phtml',
+          ['manifests' => $iiifManifests]
+      );
+  endif; ?>
   <div class="record-main <?= (!$fullWidthLayout && !$largeImageLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">
@@ -220,36 +226,18 @@
       <div class="clearfix hidden-lg hidden-md"></div>
     </div>
   </div>
-  <?php ob_start(); ?>
-      <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'sidebar'): ?>
-        <div class="organisation-menu">
-            <?=$this->render('record/record-organisation-menu.phtml') ?>
-        </div>
-      <?php endif; ?>
-      <?php foreach ($this->related()->getList($this->driver) as $current): ?>
-          <?=$this->related()->render($current)?>
-      <?php endforeach; ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-post-recommendations')): ?>
-        <div>
-            <?=$this->render($template)?>
-        </div>
-      <?php endif; ?>
-    <?php $sidebar = ob_get_contents(); ?>
-    <?php ob_end_clean(); ?>
-    <?php if ($sidebar && (!$fullWidthLayout && !$largeImageLayout)):?>
-      <?php // This sidebar is used for larger screens when not in full width or
-            // large image layout ?>
+    <?php if (!$fullWidthLayout && !$largeImageLayout):?>
+      <?php // This sidebar is used for larger screens when not in full width or large image layout ?>
       <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
-        <?=$sidebar ?>
+        <?= $this->render('record/sidebar-contents.phtml'); ?>
       </div>
     <?php endif; ?>
   </div>
 
-  <?php if ($sidebar && !$fullWidthLayout):?>
-    <?php // This sidebar is used for smaller screens and always in large image
-          // layout, but never in full width layout ?>
-    <div class="sidebar left large-image-sidebar<?=$largeImageLayout ? '' : ' visible-xs visible-sm'?>">
-      <?=$sidebar ?>
+  <?php if (!$fullWidthLayout): ?>
+    <?php // This sidebar is used for smaller screens and always in large image layout, but never in full width layout ?>
+    <div class="sidebar left large-image-sidebar visible-xs visible-sm">
+      <?= $this->render('record/sidebar-contents.phtml'); ?>
     </div>
   <?php endif; ?>
   <?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs' && $this->driver->getSourceIdentifier() === 'Solr'): ?>

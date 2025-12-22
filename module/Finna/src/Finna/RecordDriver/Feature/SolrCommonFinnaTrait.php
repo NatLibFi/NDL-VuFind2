@@ -272,6 +272,37 @@ trait SolrCommonFinnaTrait
     }
 
     /**
+     * Get record creation date range from index in ISO 8601 format.
+     *
+     * @return string
+     */
+    public function getCreationDateRange(): string
+    {
+        $filteredRange = str_replace(['[', ']'], ['', ''], $this->fields['creation_daterange'] ?? '');
+        return implode('/', explode(' TO ', $filteredRange));
+    }
+
+    /**
+     * Get geographic subject headings
+     *
+     * @return array
+     */
+    public function getGeographicSubjects(): array
+    {
+        return (array)($this->fields['geographic'] ?? []);
+    }
+
+    /**
+     * Get chronological subject headings
+     *
+     * @return array
+     */
+    public function getEraSubjects(): array
+    {
+        return (array)($this->fields['era'] ?? []);
+    }
+
+    /**
      * Get the VuFind configuration.
      *
      * @return \VuFind\Config\Config

@@ -65,6 +65,7 @@
 @import 'finna/wayfinder';
 @import 'finna/select-a11y';
 @import 'finna/reservationlist';
+@import 'finna/iiif';
 
 html {
   @if $font-size-root != null {
@@ -475,11 +476,7 @@ label.list-group-item {
     .hierarchy-tree__children, li:not(.hierarchy-tree__collection)  {
       padding-left: 0.7rem;
     }
-    li:not(.hierarchy-tree__collection) {
-      border-left: 1px solid $gray-mid-light;
-    }
     button {
-      font-size: 1.3rem;
       color: $primary;
       &:hover {
         background-color: $gray-lighter;

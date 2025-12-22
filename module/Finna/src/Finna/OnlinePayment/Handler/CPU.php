@@ -35,6 +35,7 @@ namespace Finna\OnlinePayment\Handler;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Client;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Payment;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Product;
+use Finna\OnlinePayment\Handler\Feature\OrganizationProductCodeMappingsTrait;
 use Laminas\Http\PhpEnvironment\Response;
 use VuFind\Db\Entity\PaymentEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -59,6 +60,8 @@ use function intval;
  */
 class CPU extends \VuFind\OnlinePayment\Handler\AbstractBase
 {
+    use OrganizationProductCodeMappingsTrait;
+
     public const CPU_STATUS_SUCCESS = 1;
     public const CPU_STATUS_CANCELLED = 0;
     public const CPU_STATUS_PENDING = 2;

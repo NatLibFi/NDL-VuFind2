@@ -150,16 +150,16 @@
 <div class="searchbox hidden-print">
   <div class="searchbox-flex <?=$mainPage ? 'searchbox-home' : '' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
     <?php if ($module == 'record' || $module == 'collection'): ?>
-      <div class="record-back hidden-print">
-          <?php
-            $html = $this->icon('record-back');
-            $html .= '<span class="back-to-search-text hidden-xs hidden-sm hidden-md">' . $this->transEsc('Back to search results') . '</span>';
-            $previousSearch = $this->searchMemory()->getLastSearchLink($html);
-            if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
-          ?>
-            <div class="back-to-search"><?=$previousSearch?></div>
-          <?php endif; ?>
-      </div>
+      <?php
+        $html = $this->icon('record-back');
+        $html .= '<span class="back-to-search-text hidden-xs hidden-sm hidden-md">' . $this->transEsc('Back to search results') . '</span>';
+        $previousSearch = $this->searchMemory()->getLastSearchLink($html);
+        if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
+      ?>
+        <div class="record-back hidden-print">
+          <div class="back-to-search"><?=$previousSearch?></div>
+        </div>
+      <?php endif; ?>
     <?php endif; ?>
     <div class="search">
       <div class="keyboard-box">

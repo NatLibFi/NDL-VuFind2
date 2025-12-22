@@ -592,6 +592,7 @@
         width: 100%;
         justify-content: center;
         aspect-ratio: 1/1;
+        max-height: 600px;
         .paginator-info {
             position: absolute;
             right: 10px;
@@ -639,8 +640,7 @@
     }
 }
 .result .image-popup-trigger .paginator-info {
-    right: initial;
-    left: 35px;
+    right: 0;
 }
 .result .recordcover-holder .next-image {
     display: none;

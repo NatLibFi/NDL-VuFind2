@@ -29,10 +29,7 @@
 
 namespace Finna\Db\Service;
 
-use Finna\Db\Entity\UserResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
-use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Entity\UserListEntityInterface;
 
 /**
  * Database service for resources.
@@ -69,78 +66,6 @@ class ResourceService extends \VuFind\Db\Service\ResourceService implements Reso
     }
 
     /**
-     * Get a set of resources from the requested favorite list.
-     *
-     * @param UserEntityInterface|int          $userOrId          ID of user owning favorite list
-     * @param UserListEntityInterface|int|null $listOrId          ID of list to retrieve (null for all favorites)
-     * @param string[]                         $tags              Tags to use for limiting results
-     * @param ?string                          $sort              Resource table field to use for sorting (null for no
-     * particular sort).
-     * @param int                              $offset            Offset for results
-     * @param ?int                             $limit             Limit for results (null for none)
-     * @param bool                             $caseSensitiveTags Treat tags as case-sensitive?
-     *
-     * @return ResourceEntityInterface[]
-     */
-    public function getFavoritesX(
-        UserEntityInterface|int $userOrId,
-        UserListEntityInterface|int|null $listOrId = null,
-        array $tags = [],
-        ?string $sort = null,
-        int $offset = 0,
-        ?int $limit = null,
-        bool $caseSensitiveTags = false
-    ): array {
-        $user = $this->getDoctrineReference(UserEntityInterface::class, $userOrId);
-        $list = $listOrId ? $this->getDoctrineReference(UserListEntityInterface::class, $listOrId) : null;
-        $orderByDetails = empty($sort) ? [] : $this->getResourceOrderByClause($sort);
-        $dql = 'SELECT DISTINCT r';
-        if (!empty($orderByDetails['extraSelect'])) {
-            $dql .= ', ' . $orderByDetails['extraSelect'];
-        }
-        $dql .= ' FROM ' . ResourceEntityInterface::class . ' r '
-            . 'JOIN ' . UserResourceEntityInterface::class . ' ur WITH r.id = ur.resource ';
-        $dqlWhere = [];
-        $dqlWhere[] = 'ur.user = :user';
-        $parameters = compact('user');
-        if (null !== $list) {
-            $dqlWhere[] = 'ur.list = :list';
-            $parameters['list'] = $list;
-        }
-
-        // Adjust for tags if necessary:
-        if (!empty($tags)) {
-            $matches = null;
-            foreach ($tags as $tag) {
-                $nextTagBatch = $this->getResourceIDsForTag($tag, $user->getId(), $list?->getId(), $caseSensitiveTags);
-                $matches = array_intersect(
-                    $matches ?? $nextTagBatch, // first time, use whole batch
-                    $nextTagBatch
-                );
-            }
-            $dqlWhere[] = 'r.id IN (:ids)';
-            $parameters['ids'] = $matches;
-        }
-        $dql .= ' WHERE ' . implode(' AND ', $dqlWhere);
-        if (!empty($orderByDetails['orderByClause'])) {
-            $dql .= $orderByDetails['orderByClause'];
-        }
-
-        $query = $this->entityManager->createQuery($dql);
-        $query->setParameters($parameters);
-
-        if ($offset > 0) {
-            $query->setFirstResult($offset);
-        }
-        if (null !== $limit) {
-            $query->setMaxResults($limit);
-        }
-
-        $result = $query->getResult();
-        return $result;
-    }
-
-    /**
      * Apply a sort parameter to a query on the resource table. Returns an
      * array with two keys: 'orderByClause' (the actual ORDER BY) and
      * 'extraSelect' (extra values to add to SELECT, if necessary)
@@ -156,6 +81,10 @@ class ResourceService extends \VuFind\Db\Service\ResourceService implements Reso
         if ('custom_order' === $sort) {
             $orderByClause = ' ORDER BY custom_order ASC';
             $extraSelect = 'ur.finnaCustomOrderIndex AS HIDDEN custom_order';
+            return compact('orderByClause', 'extraSelect');
+        } elseif ('id desc' === $sort || 'id asc' === $sort) {
+            $orderByClause = " ORDER BY ur.$sort";
+            $extraSelect = '';
             return compact('orderByClause', 'extraSelect');
         }
         return parent::getResourceOrderByClause($sort, $alias);

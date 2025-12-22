@@ -22,9 +22,9 @@
     }
     $reservationLists = $this->reservationList($user)->getReservationListsForUser();
     if ($this->active === 'reservationlist') {
-      $list = $this->results?->getListObject() ?? [];
+      $list = $this->results?->getListObject();
       $listParams = [
-        'activeId' => $list['id'] ?? false,
+        'activeId' => $list?->getId(),
         'lists' => $reservationLists,
         'results' => $this->results,
         'user' => $user,
@@ -119,7 +119,7 @@
         'show' => $this->reservationList()->isFunctionalityEnabled(),
         'partial' => [
           'url' => 'reservationlist/reservationlist-navi.phtml',
-          'wrapperClass' => 'reservationlist-bar',
+          'wrapperClass' => 'reservationlist-bar mobile-sidebar-container',
           'params' => $listParams ?? [],
         ],
       ],
@@ -135,7 +135,7 @@
         'show' => $this->userlist()->getMode() !== 'disabled',
         'partial' => [
           'url' => 'myresearch/mylist-navi.phtml',
-          'wrapperClass' => 'mylist-bar',
+          'wrapperClass' => 'mylist-bar mobile-sidebar-container',
           'params' => $listParams ?? [],
         ],
       ],

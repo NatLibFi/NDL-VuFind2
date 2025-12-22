@@ -111,6 +111,13 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     protected array $libraryCardSources = [];
 
     /**
+     * Use database account for reservations
+     *
+     * @var bool
+     */
+    protected bool $databaseAccountAllowed = false;
+
+    /**
      * Datasources
      *
      * @var array
@@ -218,6 +225,16 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     public function getRecipient(): array
     {
         return $this->recipient;
+    }
+
+    /**
+     * Can user reserve with database account?
+     *
+     * @return bool
+     */
+    public function databaseAccountAllowed(): bool
+    {
+        return $this->databaseAccountAllowed;
     }
 
     /**
@@ -386,8 +403,9 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
         $result['record_ids_text'] = '';
         $result['record_source_and_ids'] = [];
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
-            $result['record_ids_text'] .= $resource->getTitle() . ' (' . $resource->getRecordId() . ')' . PHP_EOL;
-            $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
+            $record = $resource->getResource();
+            $result['record_ids_text'] .= $record->getTitle() . ' (' . $record->getRecordId() . ')' . PHP_EOL;
+            $result['record_source_and_ids'][] = $record->getSource() . '|' . $record->getRecordId();
         }
         return $result;
     }
@@ -446,12 +464,25 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
      */
     protected function getPreferredCardInfo(UserEntityInterface $user): array
     {
+        if ($this->databaseAccountAllowed) {
+            $firstName = $user->getFirstname();
+            $lastName = $user->getLastname();
+            $fullName = trim("$firstName $lastName");
+            return [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'full_name' => $fullName,
+                'patron_id' => '-',
+                'email' => $user->getEmail(),
+                'card_name' => '-',
+            ];
+        }
         $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
         $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
         $cardName = $patron['__local_cat_username'] ?? $patron['cat_username'];
         if ($cards = $cardService->getLibraryCards($user, null, $patron['cat_username'])) {
             $dbCardName = reset($cards)->getCardName();
-            if ($dbCardName !== $patron['cat_username']) {
+            if ($dbCardName && $dbCardName !== $patron['cat_username']) {
                 $cardName = $dbCardName;
             }
         }
@@ -541,6 +572,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
         $this->addressInfo = $config['Information'] ?? [];
         $this->identifier = $config['Identifier'] ?? '';
         $this->libraryCardSources = $config['LibraryCardSources'] ?? [];
+        $this->databaseAccountAllowed = $config['DatabaseAccount'] ?? false;
         $this->datasources = $config['Datasources'] ?? [];
         $this->recipient = $config['Recipient'] ?? [];
         $this->connectionType = $config['Connection']['type'] ?? '';

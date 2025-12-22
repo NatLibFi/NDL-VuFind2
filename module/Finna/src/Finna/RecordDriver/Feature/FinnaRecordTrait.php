@@ -447,7 +447,11 @@ trait FinnaRecordTrait
             return $id;
         }
         if (preg_match('/^https?:/', $id)) {
-            // Never prefix http(s) url's
+            // Normalize ISNI URIs to match ISNI identifiers in authority sources
+            if (preg_match('/^(https:\/\/isni\.org\/isni\/)(.*)/', $id, $matches)) {
+                return '(isni)' . $matches[2];
+            }
+            // Never prefix other http(s) url's
             return $id;
         }
 

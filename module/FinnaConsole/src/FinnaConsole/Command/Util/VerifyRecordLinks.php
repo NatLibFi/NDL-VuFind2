@@ -38,6 +38,7 @@ use Finna\Db\Service\FinnaCommentsRecordServiceInterface;
 use Finna\Db\Service\RatingsServiceInterface;
 use Finna\Db\Service\RecordServiceInterface;
 use Finna\Db\Service\ResourceServiceInterface;
+use Finna\Record\ResourcePopulator;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -69,7 +70,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
      *
      * @var int
      */
-    protected $batchSize = 1000;
+    protected $batchSize = 100;
 
     /**
      * Constructor
@@ -80,6 +81,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
      * @param FinnaCommentsRecordServiceInterface $finnaCommentsRecordService Comments service
      * @param RatingsServiceInterface             $ratingsService             Ratings service
      * @param ResourceServiceInterface            $resourceService            Resource service
+     * @param ResourcePopulator                   $resourcePopulator          Resource populator
      * @param SolrBackend                         $solr                       Search backend
      * @param RecordLoader                        $recordLoader               Record loader
      * @param array                               $searchConfig               Search config
@@ -91,9 +93,10 @@ class VerifyRecordLinks extends AbstractUtilCommand
         protected FinnaCommentsRecordServiceInterface $finnaCommentsRecordService,
         protected RatingsServiceInterface $ratingsService,
         protected ResourceServiceInterface $resourceService,
+        protected ResourcePopulator $resourcePopulator,
         protected \VuFindSearch\Backend\Solr\Backend $solr,
         protected RecordLoader $recordLoader,
-        protected \VuFind\Config\Config $searchConfig
+        protected array $searchConfig
     ) {
         $recordLoader->setCacheContext(\VuFind\Record\Cache::CONTEXT_DISABLED);
 
@@ -108,13 +111,6 @@ class VerifyRecordLinks extends AbstractUtilCommand
     protected function configure()
     {
         $this->setDescription('Verify and update record links in the database')
-            ->addOption(
-                'resources',
-                null,
-                InputOption::VALUE_NEGATABLE,
-                'Whether to process saved resources (records) -- default is true',
-                true
-            )
             ->addOption(
                 'comments',
                 null,
@@ -152,9 +148,6 @@ class VerifyRecordLinks extends AbstractUtilCommand
         if ($input->getOption('ratings')) {
             $this->checkRatingLinks();
         }
-        if ($input->getOption('resources')) {
-            $this->checkResources();
-        }
 
         return 0;
     }
@@ -169,11 +162,11 @@ class VerifyRecordLinks extends AbstractUtilCommand
         $this->msg('Checking comments');
         $count = $fixed = 0;
         $lastId = null;
-        $batch = [];
         do {
             $comments = $this->commentsService->getEntityBatch($lastId, $this->batchSize);
             $lastId = null;
 
+            $batch = [];
             foreach ($comments as $comment) {
                 $lastId = $comment->getId();
                 $resource = $comment->getResource();
@@ -184,24 +177,14 @@ class VerifyRecordLinks extends AbstractUtilCommand
                     'comment' => $comment,
                     'recordId' => $resource->getRecordId(),
                 ];
-                if (count($batch) < 100) {
-                    continue;
-                }
+            }
+            if ($batch) {
                 $fixed += $this->verifyCommentLinkBatch($batch);
                 $count += count($batch);
-                $batch = [];
-                $msg = "$count comments checked, $fixed links fixed";
-                if ($count % 1000 == 0) {
-                    $this->msg($msg);
-                } else {
-                    $this->msg($msg, OutputInterface::VERBOSITY_VERY_VERBOSE);
-                }
+                $this->msg("$count comments checked, $fixed links fixed");
             }
+            $this->entityManager->clear();
         } while (null !== $lastId);
-        if ($batch) {
-            $fixed += $this->verifyCommentLinkBatch($batch);
-            $count += count($batch);
-        }
         $this->msg("Comment check completed with $count comments checked, $fixed links fixed");
     }
 
@@ -231,13 +214,14 @@ class VerifyRecordLinks extends AbstractUtilCommand
             $linkedRecordIds = [];
 
             // Remove any orphaned links
-            $links = $this->finnaCommentsRecordService->findByComment($current['comment']);
-            foreach ($links as $link) {
-                if (!in_array($link->getRecordId(), $recordIds)) {
+            $commentLinks = $this->finnaCommentsRecordService->findByComment($comment);
+            foreach ($commentLinks as $link) {
+                $linkRecordId = $link->getRecordId();
+                if (!in_array($linkRecordId, $recordIds)) {
                     $this->entityManager->remove($link);
                     ++$fixed;
                 } else {
-                    $linkedRecordIds[] = $link->record_id;
+                    $linkedRecordIds[] = $linkRecordId;
                 }
             }
 
@@ -271,8 +255,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
             $ratings = $this->ratingsService->getEntityBatch($lastId, $this->batchSize);
             $lastId = null;
 
-            foreach ($ratings as $current) {
-                $rating = $current['rating'];
+            foreach ($ratings as $rating) {
                 assert($rating instanceof RatingsEntityInterface);
                 // Re-read the record since since it may have changed:
                 $this->entityManager->refresh($rating);
@@ -289,24 +272,15 @@ class VerifyRecordLinks extends AbstractUtilCommand
                     'rating' => $rating,
                     'recordId' => $resource->getRecordId(),
                 ];
-                if (count($batch) < 100) {
-                    continue;
-                }
+            }
+            if ($batch) {
                 $fixed += $this->verifyRatingLinkBatch($batch);
                 $count += count($batch);
                 $batch = [];
-                $msg = "$count ratings checked, $fixed links fixed";
-                if ($count % 1000 == 0) {
-                    $this->msg($msg);
-                } else {
-                    $this->msg($msg, OutputInterface::VERBOSITY_VERY_VERBOSE);
-                }
+                $this->msg("$count ratings checked, $fixed links fixed");
             }
+            $this->entityManager->clear();
         } while (null !== $lastId);
-        if ($batch) {
-            $fixed += $this->verifyRatingLinkBatch($batch);
-            $count += count($batch);
-        }
         $this->msg("Rating check completed with $count ratings checked, $fixed links fixed");
     }
 
@@ -326,29 +300,31 @@ class VerifyRecordLinks extends AbstractUtilCommand
             $rating = $current['rating'];
             $recordId = $current['recordId'];
             $ids = $allIds[$recordId] ?? [];
-            if (!$allIds) {
+            if (!$allIds || !($user = $rating->getUser())) {
                 continue;
             }
             foreach ($ids as $id) {
                 if ($id === $recordId) {
                     continue;
                 }
+                // Avoid resourcePopulator's getOrCreateResourceForRecordId because it will call entity manager's
+                // flush():
                 $resource = $this->resourceService->getResourceByRecordId($id, 'Solr');
-                if (!$resource) {
-                    continue;
+                if (null === $resource) {
+                    $resource = $this->resourcePopulator->createResourceForRecordId($id, 'Solr');
+                    $this->entityManager->persist($resource);
                 }
-
-                $targetRating = $this->ratingsService->getByResourceAndUser($resource, $rating->getUser());
+                $targetRating = $this->ratingsService->getByResourceAndUser($resource, $user);
                 if ($targetRating) {
                     if ($targetRating->getRating() !== $rating->getRating()) {
-                        // Count as fixed (actual update below):
                         ++$fixed;
                     }
                 } else {
                     ++$fixed;
                     $targetRating = $this->ratingsService->createEntity();
-                    $targetRating->setUser($rating->getUser())
-                        ->setResource($rating->getResource());
+                    $targetRating
+                        ->setResource($resource)
+                        ->setUser($user);
                 }
                 $targetRating->setRating($rating->getRating());
                 // Don't set creation date to indicate that this is a generated entry
@@ -359,87 +335,6 @@ class VerifyRecordLinks extends AbstractUtilCommand
             $this->entityManager->persist($rating);
         }
         $this->entityManager->flush();
-        return $fixed;
-    }
-
-    /**
-     * Check resources (records)
-     *
-     * @return void
-     */
-    protected function checkResources(): void
-    {
-        $this->msg('Checking saved Solr resources for moved records');
-        $count = $fixed = 0;
-        $lastId = null;
-        $batch = [];
-        do {
-            $resources = $this->resourceService->getEntityBatch($lastId, $this->batchSize);
-            $lastId = null;
-
-            foreach ($resources as $resource) {
-                $lastId = $resource->getid();
-                $batch[] = $resource;
-                if (count($batch) < 100) {
-                    continue;
-                }
-                $fixed += $this->verifyResourceIds($batch);
-                $count += count($batch);
-                $batch = [];
-                $msg = "$count resources checked, $fixed id's updated";
-                if ($count % 1000 == 0) {
-                    $this->msg($msg);
-                } else {
-                    $this->msg($msg, OutputInterface::VERBOSITY_VERY_VERBOSE);
-                }
-            }
-        } while (null !== $lastId);
-        if ($batch) {
-            $fixed += $this->verifyResourceIds($batch);
-            $count += count($batch);
-        }
-        $this->msg("Resource checking completed with $count resources checked, $fixed id's fixed");
-    }
-
-    /**
-     * Verify resource ids
-     *
-     * @param array $resources Resources to verify
-     *
-     * @return int Number of fixed resources
-     */
-    protected function verifyResourceIds(array $resources): int
-    {
-        $ids = [];
-        foreach ($resources as $resource) {
-            $ids[] = [
-                'id' => $resource->getRecordId(),
-                'source' => $resource->getSource(),
-            ];
-        }
-        // Try to load the records. The resources for any changed records are updated automatically.
-        $records = $this->recordLoader->loadBatch($ids, true);
-
-        // Report results:
-        $fixed = 0;
-        foreach ($records as $idx => $record) {
-            $resource = $resources[$idx];
-            $resourceId = $resource->getId();
-            if ($record instanceof \VuFind\RecordDriver\Missing) {
-                $recId = $resource->getSource() . ':' . $resource->getRecordid();
-                $this->msg(
-                    "Record missing for resource $resourceId (record $recId)",
-                    OutputInterface::VERBOSITY_VERBOSE
-                );
-            }
-
-            $id = $record->getUniqueId();
-            if ($id != $resource->getRecordId()) {
-                $oldRecordId = $resource->getRecordId();
-                $this->msg("Resource $resourceId record ID updated from $oldRecordId to $id");
-                ++$fixed;
-            }
-        }
         return $fixed;
     }
 

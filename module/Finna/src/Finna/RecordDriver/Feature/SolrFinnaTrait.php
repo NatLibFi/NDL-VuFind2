@@ -848,16 +848,6 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Is social media sharing allowed
-     *
-     * @return boolean
-     */
-    public function socialMediaSharingAllowed()
-    {
-        return true;
-    }
-
-    /**
      * Returns true if the record supports real-time AJAX status lookups.
      *
      * @return bool

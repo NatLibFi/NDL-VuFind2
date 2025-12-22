@@ -10,6 +10,8 @@
 # List can contain same information as under institution information to be more specific
 # about where the order is being delivered
 # LibraryCardSources is used to check for active connection to ILS to be able to use lists
+# DatabaseAccount overrides LibraryCardSources setting and allows users with database account
+# to reserve. Default is false.
 #
 # Connection defines how the orders are handled with institutions:
 # Type:
@@ -63,6 +65,7 @@ Institutions:
           - PlaceOrder: default
         LibraryCardSources:
           - connection_established_to_use_lists
+        DatabaseAccount: false
         Translations:
           Title:
             fi: list title in finnish

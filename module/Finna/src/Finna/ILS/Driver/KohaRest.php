@@ -283,7 +283,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $type = $this->feeTypeMappings[$debitType] ?? $debitType;
             $description = trim($entry['description']);
             $fine = [
-                'fineId' => $entry['account_line_id'],
+                'fineId' => (string)$entry['account_line_id'],
                 'amount' => (int)round($entry['amount'] * 100),
                 'balance' => (int)round($entry['amount_outstanding'] * 100),
                 'fine' => $type,

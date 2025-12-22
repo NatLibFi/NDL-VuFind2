@@ -47,6 +47,28 @@
     $settings['modelTranslations'] = $this->partial('Helpers/modeljs-translations.phtml');
     $settings['viewerDebug'] = $modelSettings['debug'] ?? false;
   }
+  $inSearchContext = ($this->renderContext ?? false) === \Finna\RecordDriver\RenderContext::SEARCH;
+
+  $imageIndexAttrs = [
+    'class' => 'image-index',
+  ];
+  $leftButtonAttrs = [
+    'class' => 'left-button',
+    'type' => 'button',
+    'title' => $this->translate('previous_images'),
+  ];
+  $rightButtonAttrs = [
+    'class' => 'right-button',
+    'type' => 'button',
+    'title' => $this->translate('next_images'),
+  ];
+  if ($inSearchContext) {
+    $imageIndexAttrs['class'] .= ' visible-md visible-lg';
+    $leftButtonAttrs['class'] .= ' visible-md visible-lg';
+    $rightButtonAttrs['class'] .= ' visible-md visible-lg';
+  }
+  $manifests = $this->driver->tryMethod('getIiifManifests');
+  $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min');
 ?>
 
 <div class="recordcover-container">
@@ -54,17 +76,33 @@
   <a class="image-popup-trigger init" draggable="false" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver)) ?>" data-images="<?=htmlspecialchars(json_encode($images ?? []), ENT_QUOTES, 'UTF-8');?>" data-settings="<?=htmlspecialchars(json_encode($settings ?? []), ENT_QUOTES, 'UTF-8');?>" tabindex="-1">
     <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
     <div class="paginator-info d-flex align-items-center">
-      <span class="image-index"></span>
-      <?php if ($renderedImagesCount < $totalImagesCount): ?>
+      <span<?=$this->htmlAttributes($imageIndexAttrs)?>></span>
+      <?php if ($inSearchContext): ?>
+        <span class="visible-xs visible-sm"><?=$this->escapeHtml($totalImagesCount)?></span>
+      <?php endif; ?>
+      <?php if ($renderedImagesCount < $totalImagesCount && !$this->translationEmpty('showing_first_images_html')): ?>
         <?=$this->component('finna-toggletip', [
-          'icon' => 'help',
-          'contentHtml' => $this->translate('showing_results_of_html', ['%%start%%' => 1, '%%end%%' => $renderedImagesCount, '%%total%%' => $totalImagesCount]),
+          'icon' => 'info',
+          'contentHtml' => $this->translate('showing_first_images_html', ['%%start%%' => 1, '%%end%%' => $renderedImagesCount, '%%total%%' => $totalImagesCount]),
           'class' => 'partial-images',
         ]);?>
       <?php endif; ?>
     </div>
     <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>">
   </a>
+  <?php if ($manifests): ?>
+    <button type="button"
+            class="badge text-bg-light position-absolute bottom-0 end-0 icon-link iiif-menu-button-badge"
+            data-bs-toggle="dropdown"
+            aria-expanded="false">
+        <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
+            alt="IIIF"
+            class="bi">
+    </button>
+    <?=$this->component('finna-iiif-menu',
+                        ['manifestUrls' => $manifests,
+                        'uniqueID' => md5($settings['recordId'])]);?>
+  <?php endif ?>
   <span class="hidden-trigger" hidden></span>
   <button class="next-image right" type="button"><?=$this->icon('image-next') ?><span class="visually-hidden"><?= $this->transEsc('next_image') ?></span></button>
 </div>
@@ -74,11 +112,11 @@
 </div>
 
 <div class="recordcovers <?=$this->escapeHtmlAttr($type)?>">
-  <button class="left-button" type="button" title="<?= $this->transEsc('previous_images') ?>"><?=$this->icon('image-previous') ?><span class="visually-hidden"><?= $this->transEsc('previous_images') ?></span></button>
+  <button<?=$this->htmlAttributes($leftButtonAttrs)?>><?=$this->icon('image-previous') ?><span class="visually-hidden"><?= $this->transEsc('previous_images') ?></span></button>
   <div class="track-holder paginator-mask">
     <div class="finna-element-track"></div>
   </div>
-  <button class="right-button" type="button" title="<?= $this->transEsc('next_images') ?>"><?=$this->icon('image-next') ?><span class="visually-hidden"><?= $this->transEsc('next_images') ?></span></button>
+  <button<?=$this->htmlAttributes($rightButtonAttrs)?>><?=$this->icon('image-next') ?><span class="visually-hidden"><?= $this->transEsc('next_images') ?></span></button>
 </div>
 <div class="recordcovers-more more-area">
   <button type="button" class="show-more-images"><?= $this->transEsc('more') ?> <?=$this->icon('image-more') ?></button>

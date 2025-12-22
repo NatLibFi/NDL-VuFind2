@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2014-2020.
+ * Copyright (C) The National Library of Finland 2014-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -25,6 +25,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ronja Koistinen <ronja.koistinen@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
@@ -55,6 +56,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     use Feature\SolrFinnaTrait;
     use Feature\FinnaMarcReaderTrait;
     use Feature\FinnaUrlCheckTrait;
+    use Feature\FinnaIiifTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -163,6 +165,31 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         }
 
         return false;
+    }
+
+    /**
+     * Get all IIIF manifests.
+     *
+     * Finds all 'u' subfields in field 856 with 'q' matching a IIIF
+     * Presentation API content type.
+     *
+     * @return array
+     */
+    public function getIiifManifests(): array
+    {
+        $reader = $this->getMarcReader();
+        $field856 = $reader->getFields('856', ['q', 'u']);
+        $manifests = [];
+        foreach ($field856 as $field) {
+            $u = $reader->getSubfield($field, 'u');
+            if (
+                $u
+                && $this->isIiifPresentationManifest($reader->getSubfield($field, 'q'))
+            ) {
+                $manifests[] = ['url' => $u];
+            }
+        }
+        return $manifests;
     }
 
     /**

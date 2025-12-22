@@ -9,8 +9,8 @@
   $resultsTotal = $results->getResultTotal();
 ?>
 <?php if ($resultsTotal > 0): ?>
-  <div class="side-facets-container" aria-label="<?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?>">
-    <div class="side-facets-header-container">
+  <div class="mobile-sidebar-container">
+    <div class="mobile-navigation-header-container">
       <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
         <?=$this->component(
@@ -23,7 +23,7 @@
         );
         ?>
       <?php endif; ?>
-      <button role="button" class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+      <button class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
       <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
     </div>
 <?php endif; ?>
@@ -38,12 +38,12 @@
     }
   ?>
   <?php if ($checkboxesShown): ?>
-    <fieldset>
-      <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
-      <div class="checkbox-filters">
+    <div class="checkbox-filters">
+      <fieldset>
+        <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
         <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results]); ?>
-      </div>
-    </fieldset>
+      </fieldset>
+    </div>
   <?php endif; ?>
 <?php endif; ?>
 <?php
@@ -77,7 +77,8 @@
         <span class="facet-title"><?=$this->transEsc($cluster['label'])?></span>
         <?=$this->icon('collapse', 'facet-title-icon') ?>
       </button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' show' : '' ?>" data-facet="<?=$escTitle?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
+      <div id="facet-title-<?=$dataTarget?>" class="visually-hidden" aria-hidden="true"><?=$this->transEsc($cluster['label'])?></div>
+      <div id="<?=$dataTarget?>" aria-labelledby="facet-title-<?=$dataTarget?>" role="group" class="collapse<?= !$isCollapsed ? ' show' : '' ?>" data-facet="<?=$escTitle?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
         <?=
           $this->context($this)->renderInContext(
               'Recommend/SideFacets/facet.phtml',

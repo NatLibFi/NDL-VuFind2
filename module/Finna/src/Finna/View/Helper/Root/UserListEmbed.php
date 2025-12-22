@@ -159,7 +159,7 @@ class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
                     ? null : $list->getTitle(),
                 'description' =>
                     (isset($opt['description']) && $opt['description'] === false)
-                    ? null : $list->description,
+                    ? null : $list->getDescription(),
                 'date' =>
                     (isset($opt['date']) && $opt['date'] === false)
                     ? null : $list->getFinnaUpdated() ?? $list->getCreated(),

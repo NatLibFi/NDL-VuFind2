@@ -277,7 +277,7 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
         $scheduled = array_filter(
             $scheduled,
             function ($s) {
-                return strcasecmp($s['notification_base_url'], $this->scheduleBaseUrl) === 0;
+                return strcasecmp($s->getNotificationBaseUrl(), $this->scheduleBaseUrl) === 0;
             }
         );
         $this->msg(sprintf('Processing %d searches', count($scheduled)));

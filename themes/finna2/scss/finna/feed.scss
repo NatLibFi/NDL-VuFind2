@@ -520,10 +520,15 @@
         @include media-breakpoint-down(md) {
             width: 100%;
         }
-        .linked-event-image {
+        .linked-event-image-container {
             margin-top: 20px;
             margin-bottom: 20px;
+        }
+        .linked-event-image {
             max-height: 500px;
+        }
+        .js-linked-event-image-photographer {
+            color: $gray-light;
         }
         .linked-event-description {
             margin-top: 10px;
