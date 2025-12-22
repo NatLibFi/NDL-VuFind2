@@ -48,11 +48,10 @@
     <?=$this->flashmessages();?>
     <?php if ($saveSupported): ?>
       <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
-        <h2><?=$this->transEsc('history_saved_searches')?>
+        <h2><?=$this->transEsc('history_saved_searches')?></h2>
         <?php if (!$this->translationEmpty('tooltip_myaccount_search_history_saved_html')): ?>
-          <span class="my-research-content"><button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_saved_html') ?>"><?=$this->icon('help') ?></button></span>
+          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_saved_html') ?>"><?=$this->icon('help') ?></button>
         <?php endif; ?>
-        </h2>
       </div>
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-saved-pre-list')): ?>
       <div class="search-history-saved-pre"><?=$this->render($template)?></div>
@@ -69,11 +68,10 @@
     <?php endif; ?>
 
     <div class="useraccount-header" tabindex="0">
-      <h2><?=$this->transEsc('history_recent_searches')?>
+      <h2><?=$this->transEsc('history_recent_searches')?></h2>
       <?php if (!$this->translationEmpty('tooltip_myaccount_search_history_recent_html')): ?>
-        <span class="my-research-content"><button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_recent_html') ?>"><?=$this->icon('help') ?></button></span>
+        <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_recent_html') ?>"><?=$this->icon('help') ?></button>
       <?php endif; ?>
-      </h2>
     </div>
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-recent-pre-list')): ?>
       <div class="search-history-recent-pre"><?=$this->render($template)?></div>

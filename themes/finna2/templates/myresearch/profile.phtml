@@ -49,11 +49,10 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
-    <h2><?=$this->transEsc('Profile')?>
+    <h2><?=$this->transEsc('Profile')?></h2>
     <?php if (!$this->translationEmpty('tooltip_myaccount_profile_html')): ?>
-      <span class="my-research-content"><button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_profile_html') ?>"><?=$this->icon('help') ?></button></span>
+      <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_profile_html') ?>"><?=$this->icon('help') ?></button>
     <?php endif; ?>
-    </h2>
   </div>
   <div class="my-research-content">
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/profile-pre-list')): ?>
