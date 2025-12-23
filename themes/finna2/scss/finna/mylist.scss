@@ -6,7 +6,8 @@
   }
 }
 
-.main.template-dir-myresearch.template-name-mylist {
+.main.template-dir-myresearch.template-name-mylist,
+.main-template-dir-reservationlist.template-name-displaylist {
   .search-controls {
     margin-top: 10px;
     margin-bottom: 0px;
@@ -31,9 +32,11 @@
   }
 }
 
-.template-name-mylist .bulk-action-buttons-col {
-  padding: 10px;
-  padding-bottom: 0px;
+.template-name-mylist, .template-name-displaylist {
+  .bulk-action-buttons-col {
+    padding: 10px;
+    padding-bottom: 0px;
+  }
 }
 
 .mylist-bar, .reservationlist-bar {
@@ -199,12 +202,14 @@
 .list-title {
   margin-bottom: 0;
   margin-top: 0px;
-  i.list-title-edit {
+  .icon.list-title-edit {
     margin-bottom: -22px;
+    cursor: pointer;
   }
   &.no-edit {
     border: 0;
     margin-top: 5px;
+    padding-left: 0;
     &:hover {
       border: 0;
     }
@@ -215,13 +220,9 @@
   padding-left: 5px;
 }
 
-.resource-note i.fa-pen {
-  margin-bottom: -18px;
-}
-
 .list-title, .add-new-list {
   border: 1px solid transparent;
-  display: inline-block;
+  display: flex;
   padding: 5px;
   width: -webkit-calc(100% - 30px);
   width: -moz-calc(100% - 30px);
@@ -229,16 +230,16 @@
   width: 100%;
   &:hover, &:active, &:focus {
     border: 1px solid $gray-lighter;
-    i {
+    .icon {
       transition: all 0.2s linear;
       color: $gray;
     }
   }
-  i {
+  .icon {
     color: $gray-light;
-    float: right;
+    cursor: pointer;
   }
-  span {
+  .js-list-title {
     width: 100%;
     display: inline-block;
     word-wrap: break-word;
@@ -319,14 +320,14 @@
     .info {
       font-weight: bold;
       color: $danger;
-      i {
+      .icon {
        border-radius: 50%;
        border: 2px solid $danger;
        font-size: 1em;
        padding: 1px;
       }
     }
-    .fa {
+    .icon {
       cursor: inherit;
     }
     .toggle {
@@ -344,7 +345,7 @@
         white-space: inherit;
 
       }
-      i {
+      .icon {
         margin-left: 5px;
         transform: rotate(90deg);
       }
@@ -473,36 +474,17 @@ span.caret {
 }
 
 @include media-breakpoint-down(md) {
-  .mylist-mobile.mobile-navigation {
-    left: 0;
-    border-top: 1px solid $body-bg;
-    position: fixed;
-    height: 44px;
-    bottom: 0;
-    z-index: 2;
-    width: 100%;
-    background: $sidebar-background;
-    i {
-      font-size: 15px;
-    }
-    li.sidebar-navigation {
-      padding: 11px;
-      color: $sidebar-header-text-color;
-      font-size: 1.1em;
-      text-transform: uppercase;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    span.active-filters {
-      float: right;
-      max-width: 55%;
-    }
+  .sidebar.open {
+    margin-top: 0px;
+  }
+  .dropdown-menu {
+    border: none;
+    border-radius: none;
+    margin: 0;
   }
 }
 
 .mylist-header {
-  display: inline-block;
   width: 100%;
   .alert {
     margin-top: 1em;
@@ -526,12 +508,6 @@ span.caret {
       @include media-breakpoint-down(md) {
         a.dropdown-toggle {
           white-space: initial;
-          i.fa-arrow-down {
-            position: absolute;
-            top: 30%;
-            right: 0.7em;
-            margin-left: 0;
-          }
         }
       }
     }

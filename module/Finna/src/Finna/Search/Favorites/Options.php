@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Favorites
@@ -30,6 +30,7 @@
 namespace Finna\Search\Favorites;
 
 use Finna\Controller\MyResearchController;
+use VuFind\Config\ConfigManagerInterface;
 
 /**
  * Search Favorites Options
@@ -46,13 +47,14 @@ class Options extends \VuFind\Search\Favorites\Options
 
     /**
      * Constructor
+     *
      * Add the limit and views options to Favorites.
      *
-     * @param \VuFind\Config\PluginManager $configLoader Config loader
+     * @param ConfigManagerInterface $configManager Config manager
      */
-    public function __construct(\VuFind\Config\PluginManager $configLoader)
+    public function __construct(ConfigManagerInterface $configManager)
     {
-        parent::__construct($configLoader);
+        parent::__construct($configManager);
 
         if ($limit = $this->searchSettings['General']['default_limit'] ?? null) {
             $this->defaultLimit = $limit;
@@ -71,6 +73,7 @@ class Options extends \VuFind\Search\Favorites\Options
 
         $this->sortOptions = [];
         $this->defaultSort = '';
+        $this->rssSort = '';
         foreach (MyResearchController::getFavoritesSortList() as $key => $value) {
             if (empty($this->defaultSort)) {
                 $this->defaultSort = $key;

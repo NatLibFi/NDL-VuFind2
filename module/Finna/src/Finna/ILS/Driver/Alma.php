@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -29,9 +29,11 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\ILS\Logic\AvailabilityStatus;
+use VuFind\ILS\Logic\OnlinePaymentTrait;
 use VuFind\Marc\MarcReader;
 
 use function array_key_exists;
@@ -53,6 +55,10 @@ use function sprintf;
 class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
+    use FinnaCommonILSTrait;
+    use OnlinePaymentTrait {
+        fineIsPayable as fineIsPayableBase;
+    }
 
     /**
      * Simple cache to avoid repeated requests
@@ -189,7 +195,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     }
                     $finesGrouped[$key]['amount'] += $fine['amount'];
                     $finesGrouped[$key]['balance'] += $fine['balance'];
-                    $finesGrouped[$key]['fine_id'] .= '|' . $fine['fine_id'];
+                    $finesGrouped[$key]['fineId'] .= '|' . $fine['fineId'];
                 } else {
                     $finesGrouped[$key] = $fine;
                 }
@@ -324,69 +330,30 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Return details on fees payable online.
-     *
-     * @param array  $patron          Patron
-     * @param array  $fines           Patron's fines
-     * @param ?array $selectedFineIds Selected fines
-     *
-     * @throws ILSException
-     * @return array Associative array of payment details,
-     * false if an ILSException occurred.
-     */
-    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
-    {
-        $amount = 0;
-        $payableFines = [];
-        foreach ($fines as $fine) {
-            if (
-                null !== $selectedFineIds
-                && !in_array($fine['fine_id'], $selectedFineIds)
-            ) {
-                continue;
-            }
-            if ($fine['payableOnline']) {
-                $amount += $fine['balance'];
-                $payableFines[] = $fine;
-            }
-        }
-        $paymentConfig = $this->config['OnlinePayment'] ?? [];
-        if ($amount >= ($paymentConfig['minimumFee'] ?? 0)) {
-            return [
-                'payable' => true,
-                'amount' => $amount,
-                'fines' => $payableFines,
-            ];
-        }
-
-        return [
-            'payable' => false,
-            'amount' => 0,
-            'reason' => 'online_payment_minimum_fee',
-        ];
-    }
-
-    /**
-     * Mark fees as paid.
+     * Register a payment.
      *
      * This is called after a successful online payment.
      *
-     * @param array  $patron            Patron
-     * @param int    $amount            Amount to be registered as paid
-     * @param string $transactionId     Transaction ID
-     * @param int    $transactionNumber Internal transaction number
-     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
+     * @param array   $patron                  Patron
+     * @param int     $amount                  Amount to be registered as paid
+     * @param string  $localPaymentIdentifier  Local payment identifier
+     * @param ?string $remotePaymentIdentifier Remote payment identifier
+     * @param int     $paymentId               Internal payment id
+     * @param ?array  $fineIds                 Fine IDs to mark paid or null for bulk payment
      *
      * @throws ILSException
-     * @return true|string True on success, error description on error
+     * @return array Associative array with keys success (bool, always) and reason (string, on error)
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function markFeesAsPaid(
-        $patron,
-        $amount,
-        $transactionId,
-        $transactionNumber,
-        $fineIds = null
-    ) {
+    public function registerPayment(
+        array $patron,
+        int $amount,
+        string $localPaymentIdentifier,
+        ?string $remotePaymentIdentifier,
+        int $paymentId,
+        ?array $fineIds = null
+    ): array {
         // Unpack grouped fine_id's:
         if (null !== $fineIds) {
             $newIds = [];
@@ -411,8 +378,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     'op' => 'pay',
                     'amount' => sprintf('%0.02F', $fine['balance'] / 100),
                     'method' => 'ONLINE',
-                    'comment' => "Finna transaction $transactionNumber",
-                    'external_transaction_id' => $transactionId,
+                    'comment' => "Finna transaction $paymentId",
+                    'external_transaction_id' => $localPaymentIdentifier,
                 ];
                 $this->makeRequest(
                     '/users/' . rawurlencode($patron['id']) . '/fees/'
@@ -430,8 +397,8 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 'op' => 'pay',
                 'amount' => sprintf('%0.02F', $amountRemaining / 100),
                 'method' => 'ONLINE',
-                'comment' => "Finna transaction $transactionNumber",
-                'external_transaction_id' => $transactionId,
+                'comment' => "Finna transaction $paymentId",
+                'external_transaction_id' => $localPaymentIdentifier,
             ];
             $this->makeRequest(
                 '/users/' . rawurlencode($patron['id']) . '/fees/all',
@@ -441,7 +408,12 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
             );
         }
 
-        return true;
+        $cacheId = 'alma|user|' . $patron['id'] . '|blocks';
+        $this->removeCachedData($cacheId);
+
+        return [
+            'success' => true,
+        ];
     }
 
     /**
@@ -460,162 +432,170 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
         if (empty($xml)) {
             return [];
         }
-        $profile = [
-            'firstname'  => isset($xml->first_name)
-                                ? (string)$xml->first_name
-                                : null,
-            'lastname'   => isset($xml->last_name)
-                                ? (string)$xml->last_name
-                                : null,
-            'group'      => isset($xml->user_group['desc'])
-                                ? (string)$xml->user_group['desc']
-                                : null,
-            'group_code' => isset($xml->user_group)
-                                ? (string)$xml->user_group
-                                : null,
-            'account_type' => strtolower((string)$xml->account_type),
-            'language'   => isset($xml->preferred_language)
-                                ? (string)$xml->preferred_language
-                                : null,
-        ];
+        $firstName = isset($xml->first_name) ? (string)$xml->first_name : null;
+        $lastName = isset($xml->last_name) ? (string)$xml->last_name : null;
+        $group = isset($xml->user_group['desc']) ? (string)$xml->user_group['desc'] : null;
+        $group_code = isset($xml->user_group) ? (string)$xml->user_group : null;
+        $accountType = strtolower((string)$xml->account_type);
+        $language = isset($xml->preferred_language) ? (string)$xml->preferred_language : null;
+
         $contact = $xml->contact_info;
-        if ($contact) {
-            if ($contact->addresses) {
-                $profile['addresses'] = [];
-                foreach ($contact->addresses->address as $item) {
-                    $address = [
-                        'preferred' => 'true' === (string)$item['preferred'],
-                        'types' => [],
-                        'address1' => (string)($item->line1 ?? ''),
-                        'address2' => (string)($item->line2 ?? ''),
-                        'address3' => (string)($item->line3 ?? ''),
-                        'zip' => (string)($item->postal_code ?? ''),
-                        'city' => (string)($item->city ?? ''),
-                    ];
-                    foreach ($item->address_types->address_type as $type) {
-                        $address['types'][] = (string)$type;
-                    }
-                    if (!empty($item->country)) {
-                        $address['country'] = new \VuFind\I18n\TranslatableString(
-                            (string)$item->country,
-                            (string)$item->country->attributes()->desc
-                        );
-                    } else {
-                        $address['country'] = '';
-                    }
-                    $profile['addresses'][] = $address;
+        $addresses = [];
+        $address1 = null;
+        $address2 = null;
+        $address3 = null;
+        $zip = null;
+        $city = null;
+        $country = null;
+        $homeAddress = null;
+        $workAddress = null;
+        foreach ($contact->addresses->address ?? [] as $item) {
+            $address = [
+                'preferred' => 'true' === (string)$item['preferred'],
+                'types' => [],
+                'address1' => (string)($item->line1 ?? ''),
+                'address2' => (string)($item->line2 ?? ''),
+                'address3' => (string)($item->line3 ?? ''),
+                'zip' => (string)($item->postal_code ?? ''),
+                'city' => (string)($item->city ?? ''),
+                'country' => !empty($item->country) ? new \VuFind\I18n\TranslatableString(
+                    (string)$item->country,
+                    (string)$item->country->attributes()->desc
+                ) : '',
+            ];
+            if ($address['preferred']) {
+                $address1 = $address['address1'];
+                $address2 = $address['address2'];
+                $address3 = $address['address3'];
+                $zip = $address['zip'];
+                $city = $address['city'];
+                $country = $address['country'];
+            }
+            foreach ($item->address_types->address_type ?? [] as $type) {
+                $address['types'][] = $typeStr = (string)$type;
+                if (!in_array($typeStr, ['home', 'work'])) {
+                    continue;
                 }
-
-                // Copy preferred address to the basic fields
-                foreach ($profile['addresses'] as $address) {
-                    if (!empty($address['preferred'])) {
-                        foreach ($address as $key => $value) {
-                            $profile[$key] = $value;
-                        }
-                        break;
+                $addressLine = $address['address1'];
+                if ($address['zip'] || $address['city']) {
+                    if ($addressLine) {
+                        $addressLine .= ',';
+                    }
+                    if ($address['zip']) {
+                        $addressLine .= ' ' . $address['zip'];
+                    }
+                    if ($address['city']) {
+                        $addressLine .= ' ' . $address['city'];
                     }
                 }
-
-                // Check if the user has a work and/or home address for hold pickup
-                foreach ($contact->addresses->address as $item) {
-                    foreach ($item->address_types->address_type ?? [] as $type) {
-                        $parts = [
-                            (string)$item->line1 ?? '',
-                            ((string)$item->zip ?? '') . ' '
-                            . ((string)$item->city ?? ''),
-                        ];
-                        $parts = array_map('trim', $parts);
-                        $addressLine = implode(', ', array_filter($parts));
-                        if ('home' === (string)$type) {
-                            $profile['homeAddress'] = $addressLine;
-                        }
-                        if ('work' === (string)$type) {
-                            $profile['workAddress'] = $addressLine;
-                        }
-                    }
+                if ('home' === $typeStr) {
+                    $homeAddress = $addressLine;
+                }
+                if ('work' === $typeStr) {
+                    $workAddress = $addressLine;
                 }
             }
-            if ($contact->phones) {
-                $phone = null;
-                foreach ($contact->phones->phone as $item) {
-                    if ('true' === (string)$item['preferred']) {
-                        $phone = $item;
-                        break;
-                    }
-                }
-                if (null === $phone) {
-                    $phone = $contact->phones[0]->phone[0];
-                }
-                $profile['phone'] = isset($phone->phone_number)
-                                        ? (string)$phone->phone_number
-                                        : null;
-            }
-            if ($contact->emails) {
-                $email = null;
-                foreach ($contact->emails->email as $item) {
-                    if ('true' === (string)$item['preferred']) {
-                        $email = $item;
-                        break;
-                    }
-                }
-                if (null === $email) {
-                    $email = $contact->emails[0]->email[0];
-                }
-                $profile['email'] = isset($email->email_address)
-                                        ? (string)$email->email_address
-                                        : null;
-            }
+            $addresses[] = $address;
         }
 
-        if ($xml->user_identifiers && $xml->user_identifiers->user_identifier) {
-            foreach ($xml->user_identifiers->user_identifier as $identifier) {
-                if (
-                    'BARCODE' === (string)$identifier->id_type
-                    && 'ACTIVE' === (string)$identifier->status
-                ) {
-                    $profile['barcode'] = (string)$identifier->value;
-                    break;
+        $phone = $contact->phones[0]->phone[0]->phone_number ?? null;
+        foreach ($contact->phones->phone ?? [] as $item) {
+            if ('true' === (string)$item['preferred']) {
+                if ($number = $item->phone_number ?? null) {
+                    $phone = $number;
                 }
+                break;
+            }
+        }
+        if ($phone) {
+            $phone = (string)$phone;
+        }
+
+        $email = null;
+        foreach ($contact->emails->email ?? [] as $item) {
+            if ('true' === (string)$item['preferred']) {
+                $email = $item->email_address;
+                break;
+            }
+        }
+        if ($email ??= $contact->emails[0]->email[0]->email_address ?? null) {
+            $email = (string)$email;
+        }
+
+        $barcode = null;
+        foreach ($xml->user_identifiers->user_identifier ?? [] as $identifier) {
+            if (
+                'BARCODE' === (string)$identifier->id_type
+                && 'ACTIVE' === (string)$identifier->status
+            ) {
+                $barcode = (string)$identifier->value;
+                break;
             }
         }
 
         // Display '****' as a hint that the field is available to update..
         $fieldConfig = $this->getUpdateProfileFields();
+        $self_service_pin = null;
         foreach ($fieldConfig as $field) {
             $parts = explode(':', $field);
             if (($parts[1] ?? '') === 'self_service_pin') {
-                $profile['self_service_pin'] = '****';
+                $self_service_pin = '****';
             }
         }
-
-        if ($xml->proxy_for_users) {
-            foreach ($xml->proxy_for_users->proxy_for_user as $user) {
-                $profile['guarantees'][] = [
-                    'lastname' => (string)$user->full_name,
-                ];
-            }
+        $guarantees = [];
+        foreach ($xml->proxy_for_users->proxy_for_user ?? [] as $user) {
+            $guarantees[] = [
+                'lastname' => (string)$user->full_name,
+            ];
         }
-
-        if ($expiryDate = (string)$xml->expiry_date) {
-            $parsed = $this->parseDate($expiryDate);
-            $profile['expiration_date'] = $parsed;
+        $expiryDate = $xml->expiry_date ?? null;
+        $expired = null;
+        $expiration_soon = null;
+        if ($expiryDate) {
+            $expiryDate = $this->parseDate((string)$expiryDate);
             $date = \DateTime::createFromFormat(
                 'Y-m-d',
-                $this->dateConverter->convertFromDisplayDate('Y-m-d', $parsed)
+                $this->dateConverter->convertFromDisplayDate('Y-m-d', $expiryDate)
             );
-            $diff = $date->diff(new \Datetime());
+            $diff = $date->diff(new \DateTime());
             if (!$diff->invert && $diff->days > 0) {
-                $profile['expired'] = true;
+                $expired = true;
             } elseif (
                 $this->daysBeforeAccountExpirationNotification
                 && $diff->days === 0
                 || ($diff->invert
                 && $diff->days <= $this->daysBeforeAccountExpirationNotification)
             ) {
-                $profile['expiration_soon'] = true;
+                $expiration_soon = true;
             }
         }
-
+        $profile = $this->createProfileArray(
+            firstname: $firstName,
+            lastname: $lastName,
+            address1: $address1,
+            address2: $address2,
+            city: $city,
+            country: $country,
+            zip: $zip,
+            phone: $phone,
+            expiration_date: $expiryDate,
+            group: $group,
+            email: $email,
+            nonDefaultFields: [
+                'addresses' => $addresses,
+                'barcode' => $barcode,
+                'group_code' => $group_code,
+                'expired' => $expired,
+                'expiration_soon' => $expiration_soon,
+                'self_service_pin' => $self_service_pin,
+                'address3' => $address3,
+                'homeAddress' => $homeAddress,
+                'workAddress' => $workAddress,
+                'guarantees' => $guarantees,
+                'account_type' => $accountType,
+                'language' => $language,
+            ],
+        );
         // Cache the user group code
         $cacheId = 'alma|user|' . $patronId . '|group_code';
         $this->putCachedData($cacheId, $profile['group_code'] ?? null);
@@ -1177,13 +1157,6 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     public function getConfig($function, $params = null)
     {
-        if ('onlinePayment' === $function) {
-            $config = $this->config['OnlinePayment'] ?? [];
-            if (!empty($config) && !isset($config['exactBalanceRequired'])) {
-                $config['exactBalanceRequired'] = false;
-            }
-            return $config;
-        }
         if ('updateAddress' === $function) {
             $function = 'updateProfile';
         } elseif ('registerPatron' === $function) {
@@ -3173,39 +3146,50 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      */
     protected function getFineList($patron)
     {
-        $paymentConfig = $this->config['OnlinePayment'] ?? [];
-        $blockedTypes = $paymentConfig['nonPayable'] ?? [];
-        $payableStatuses = $paymentConfig['payableStatuses'] ?? ['ACTIVE'];
         $xml = $this->makeRequest(
             '/users/' . rawurlencode($patron['id']) . '/fees'
         );
         $fineList = [];
         foreach ($xml as $fee) {
             $created = (string)$fee->creation_time;
-            $payable = false;
-            if (!empty($paymentConfig['enabled'])) {
-                $type = (string)$fee->type;
-                $status = (string)($fee->status ?? '');
-                $payable = in_array($status, $payableStatuses)
-                    && !in_array($type, $blockedTypes)
-                    && floatval($fee->balance) > 0;
-            }
             $feeType = $this->feeTypeMappings[(string)$fee->type]
                 ?? (string)$fee->type['desc'];
-            $fineList[] = [
+            $fine = [
+                'fineId'   => (string)$fee->id,
                 'fine_id'  => (string)$fee->id,
                 'title'    => (string)($fee->title ?? ''),
-                'amount'   => round(floatval($fee->original_amount) * 100),
-                'balance'  => round(floatval($fee->balance) * 100),
+                'amount'   => (int)round(floatval($fee->original_amount) * 100),
+                'balance'  => (int)round(floatval($fee->balance) * 100),
                 'createdate' => $this->parseDate($created, true),
                 'fine'     => $feeType,
-                'payableOnline' => $payable,
                 '_create_time' => (string)$fee->creation_time,
                 '_status_time' => (string)$fee->status_time,
-                '_barcode'    => (string)($fee->barcode ?? ''),
+                '_barcode' => (string)($fee->barcode ?? ''),
                 '_status'  => (string)$fee->status ?? '',
+                '_type'    => (string)$fee->type,
             ];
+            $fine['payableOnline'] = $this->fineIsPayable($fine);
+            $fineList[] = $fine;
         }
         return $fineList;
+    }
+
+    /**
+     * Check if a fine is payable.
+     *
+     * @param array $fine Fine
+     *
+     * @return bool
+     */
+    protected function fineIsPayable(array $fine): bool
+    {
+        if (!$this->fineIsPayableBase($fine)) {
+            return false;
+        }
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
+        $blockedTypes = $paymentConfig['nonPayable'] ?? [];
+        $payableStatuses = $paymentConfig['payableStatuses'] ?? ['ACTIVE'];
+        return in_array($fine['_status'], $payableStatuses)
+            && !in_array($fine['_type'], $blockedTypes);
     }
 }

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -33,7 +33,8 @@ use Finna\View\Helper\Root\ProxyUrl;
 use Finna\View\Helper\Root\ProxyUrlFactory;
 use Generator;
 use VuFind\Config\Config;
-use VuFind\Config\PluginManager;
+use VuFind\Config\ConfigManager;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Net\IpAddressUtils;
 use VuFindTest\Feature\FixtureTrait;
 
@@ -96,9 +97,9 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
      * @param string $permissionIni Path to the test permissions.ini
      * @param string $configIni     Path to the test config.ini
      *
-     * @return       void
-     * @dataProvider getTestInvokeData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestInvokeData')]
     public function testInvoke(string $url, string $expected, string $permissionIni, string $configIni): void
     {
         $permissionsFixture = $this->getFixture('proxyurl/' . $permissionIni, 'Finna');
@@ -107,13 +108,13 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
         $permissions = new Config(parse_ini_string($permissionsFixture, true));
         $factory = new ProxyUrlFactory();
 
-        $configPluginManager = $this->container->createMock(PluginManager::class, ['get']);
-        $configPluginManager->expects($this->any())->method('get')->willReturnCallback(
+        $configManager = $this->container->createMock(ConfigManager::class, ['getConfigObject']);
+        $configManager->expects($this->any())->method('getConfigObject')->willReturnCallback(
             function ($param) use ($config, $permissions) {
                 return $param === 'config' ? $config : $permissions;
             }
         );
-        $this->container->set(\VuFind\Config\PluginManager::class, $configPluginManager);
+        $this->container->set(ConfigManagerInterface::class, $configManager);
 
         $ipAddressUtils = $this->container->createMock(IpAddressUtils::class, []);
         $this->container->set(IpAddressUtils::class, $ipAddressUtils);

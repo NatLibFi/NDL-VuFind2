@@ -30,10 +30,10 @@
 namespace Finna\ReservationList\Handler;
 
 use Exception;
-use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\ReservationList\Form\Form;
 use Psr\Container\ContainerInterface;
+use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Service\GetServiceTrait;
@@ -49,7 +49,7 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwareInterface
+abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInterface
 {
     use \VuFind\Log\LoggerAwareTrait;
     use GetServiceTrait;
@@ -109,6 +109,13 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      * @var array
      */
     protected array $libraryCardSources = [];
+
+    /**
+     * Use database account for reservations
+     *
+     * @var bool
+     */
+    protected bool $databaseAccountAllowed = false;
 
     /**
      * Datasources
@@ -218,6 +225,16 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
     public function getRecipient(): array
     {
         return $this->recipient;
+    }
+
+    /**
+     * Can user reserve with database account?
+     *
+     * @return bool
+     */
+    public function databaseAccountAllowed(): bool
+    {
+        return $this->databaseAccountAllowed;
     }
 
     /**
@@ -386,8 +403,9 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $result['record_ids_text'] = '';
         $result['record_source_and_ids'] = [];
         foreach ($reservationListService->getResourcesForList($list, $user) as $resource) {
-            $result['record_ids_text'] .= $resource->getTitle() . ' (' . $resource->getRecordId() . ')' . PHP_EOL;
-            $result['record_source_and_ids'][] = $resource->getSource() . '|' . $resource->getRecordId();
+            $record = $resource->getResource();
+            $result['record_ids_text'] .= $record->getTitle() . ' (' . $record->getRecordId() . ')' . PHP_EOL;
+            $result['record_source_and_ids'][] = $record->getSource() . '|' . $record->getRecordId();
         }
         return $result;
     }
@@ -412,7 +430,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
             'institution' => $list->getInstitution(),
             'listIdentifier' => $list->getListConfigIdentifier(),
             'full_name' => $requestValues['full_name'] ?? $cardInfo['full_name'],
-            'email' => $requestValues['email'] ?? $user->getEmail(),
+            'email' => $requestValues['email'] ?? $cardInfo['email'],
             'phone' => $requestValues['phone'] ?? null,
             'pickup_date' => $requestValues['pickup_date'] ?? null,
             'message' => $requestValues['message'] ?? null,
@@ -446,34 +464,39 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
      */
     protected function getPreferredCardInfo(UserEntityInterface $user): array
     {
-        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
-        $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
-        $catUsername = $patron['cat_username'] ?? '';
-        $cardName = $patron['__local_cat_username'] ?? $catUsername;
-        if ($cardEntity = $cardService->getLibraryCards($user, null, $user->getCatUsername())) {
-            $cardEntity = reset($cardEntity);
-            if ($dbCardName = $cardEntity->getCardName()) {
-                $cardName = $dbCardName === $catUsername ? $cardName : $dbCardName;
-            }
-        }
-        // Prioritize name from patron
-        $firstName = $patron['firstname'] ?? null;
-        $lastName = $patron['lastname'] ?? null;
-
-        // If either field from patron is empty, then use name from db
-        if (!$firstName || !$lastName) {
+        if ($this->databaseAccountAllowed) {
             $firstName = $user->getFirstname();
             $lastName = $user->getLastname();
+            $fullName = trim("$firstName $lastName");
+            return [
+                'first_name' => $firstName,
+                'last_name' => $lastName,
+                'full_name' => $fullName,
+                'patron_id' => '-',
+                'email' => $user->getEmail(),
+                'card_name' => '-',
+            ];
+        }
+        $patron = $this->getService(ILSAuthenticator::class)->storedCatalogLogin();
+        $cardService = $this->getService(\VuFind\Db\Service\PluginManager::class)->get(UserCardServiceInterface::class);
+        $cardName = $patron['__local_cat_username'] ?? $patron['cat_username'];
+        if ($cards = $cardService->getLibraryCards($user, null, $patron['cat_username'])) {
+            $dbCardName = reset($cards)->getCardName();
+            if ($dbCardName && $dbCardName !== $patron['cat_username']) {
+                $cardName = $dbCardName;
+            }
         }
 
-        // Form full name from the obtained data
+        $firstName = $patron['firstname'];
+        $lastName = $patron['lastname'];
         $fullName = trim("$firstName $lastName");
 
         return [
             'first_name' => $firstName,
             'last_name' => $lastName,
             'full_name' => $fullName,
-            'patron_id' => $patron['__local_id'] ?? $patron['id'] ?? '',
+            'patron_id' => $patron['__local_id'] ?? $patron['id'],
+            'email' => $patron['email'],
             'card_name' => $cardName,
         ];
     }
@@ -549,6 +572,7 @@ abstract class AbstractBase implements HandlerInterface, \Laminas\Log\LoggerAwar
         $this->addressInfo = $config['Information'] ?? [];
         $this->identifier = $config['Identifier'] ?? '';
         $this->libraryCardSources = $config['LibraryCardSources'] ?? [];
+        $this->databaseAccountAllowed = $config['DatabaseAccount'] ?? false;
         $this->datasources = $config['Datasources'] ?? [];
         $this->recipient = $config['Recipient'] ?? [];
         $this->connectionType = $config['Connection']['type'] ?? '';

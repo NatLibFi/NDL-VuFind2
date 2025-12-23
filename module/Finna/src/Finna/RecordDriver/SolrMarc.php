@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2014-2020.
+ * Copyright (C) The National Library of Finland 2014-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,16 +17,17 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Ronja Koistinen <ronja.koistinen@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -48,13 +49,14 @@ use function strlen;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\LoggerAwareInterface
+class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaMarcReaderTrait;
     use Feature\FinnaUrlCheckTrait;
+    use Feature\FinnaIiifTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -163,6 +165,31 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
         }
 
         return false;
+    }
+
+    /**
+     * Get all IIIF manifests.
+     *
+     * Finds all 'u' subfields in field 856 with 'q' matching a IIIF
+     * Presentation API content type.
+     *
+     * @return array
+     */
+    public function getIiifManifests(): array
+    {
+        $reader = $this->getMarcReader();
+        $field856 = $reader->getFields('856', ['q', 'u']);
+        $manifests = [];
+        foreach ($field856 as $field) {
+            $u = $reader->getSubfield($field, 'u');
+            if (
+                $u
+                && $this->isIiifPresentationManifest($reader->getSubfield($field, 'q'))
+            ) {
+                $manifests[] = ['url' => $u];
+            }
+        }
+        return $manifests;
     }
 
     /**
@@ -704,6 +731,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                 'arrangers' => $partArrangers,
                 'otherAuthors' => $partOtherAuthors,
             ];
+        }
+        // Return here if only collections were requested as the indicator 2 differs from 979
+        if ($onlyCollections) {
+            return $componentParts;
         }
 
         // Try fields 700 and 730 if 979 is empty
@@ -1761,6 +1792,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
      */
     public function getURLs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $retVal = [];
 
         // Which fields/subfields should we check for URLs?
@@ -1789,6 +1823,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                                 break;
                             }
                         }
+                        if (($note = $this->getSubfield($url, 'z')) === $desc) {
+                            $note = '';
+                        }
                         $part = '';
                         if ($desc) {
                             // Check for subfield 3 and include it as the part
@@ -1803,20 +1840,23 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Laminas\Log\Log
                         }
 
                         $data = [
-                            'url' => $address, 'desc' => $desc, 'part' => $part,
+                            'url' => $address, 'desc' => $desc, 'part' => $part, 'note' => $note,
                         ];
                         if (
                             !$this->urlBlocked($address, $desc)
                             && !in_array($data, $retVal)
                         ) {
-                            $retVal[] = $data;
+                            if (!$this->maxAmountOfURLs()) {
+                                $retVal[] = $data;
+                            }
+                            $this->urlsCount++;
                         }
                     }
                 }
             }
         }
-        $retVal = $this->resolveUrlTypes($retVal);
-        return $retVal;
+        $this->cache[__FUNCTION__] = $this->resolveUrlTypes($retVal);
+        return $this->cache[__FUNCTION__];
     }
 
     /**

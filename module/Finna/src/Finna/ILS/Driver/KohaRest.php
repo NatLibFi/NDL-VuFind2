@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -30,6 +30,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
 use VuFind\ILS\Logic\AvailabilityStatus;
@@ -52,6 +53,8 @@ use function is_array;
  */
 class KohaRest extends \VuFind\ILS\Driver\KohaRest
 {
+    use FinnaCommonILSTrait;
+
     /**
      * Mappings from Koha messaging preferences
      *
@@ -137,6 +140,11 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         parent::init();
 
+        // BC for online payment configuration:
+        if (empty($this->config['OnlinePayment']) && !empty($this->config['onlinePayment'])) {
+            $this->config['OnlinePayment'] = $this->config['onlinePayment'];
+        }
+
         $this->patronStatusMappings['Patron::DebarredWithReason']
             = 'patron_status_restricted_with_reason';
 
@@ -161,14 +169,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ? explode(':', $this->config['Holdings']['holdings_location_order'])
             : [];
         $this->holdingsLocationOrder = array_flip($this->holdingsLocationOrder);
-
-        $paymentConfig = $this->config['OnlinePayment']
-            ?? $this->config['onlinePayment']
-            ?? [];
-
-        $this->minimumPayableAmount = $paymentConfig['minimumFee'] ?? 0;
-        $this->nonPayableTypes = (array)($paymentConfig['nonPayableTypes'] ?? []);
-        $this->nonPayableStatuses = (array)($paymentConfig['nonPayableStatuses'] ?? []);
 
         if ($typeMappings = (array)($this->config['MessagingPrefTypeMappings'] ?? [])) {
             $this->messagingPrefTypeMap = array_merge($this->messagingPrefTypeMap, $typeMappings);
@@ -282,20 +282,19 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             $debitStatus = trim($entry['status'] ?? '');
             $type = $this->feeTypeMappings[$debitType] ?? $debitType;
             $description = trim($entry['description']);
-            $payableOnline = $entry['amount_outstanding'] > 0
-                && !in_array($debitType, $this->nonPayableTypes)
-                && !in_array($debitStatus, $this->nonPayableStatuses);
             $fine = [
-                'fine_id' => $entry['account_line_id'],
+                'fineId' => (string)$entry['account_line_id'],
                 'amount' => (int)round($entry['amount'] * 100),
                 'balance' => (int)round($entry['amount_outstanding'] * 100),
                 'fine' => $type,
                 'description' => $description,
                 'createdate' => $this->convertDate($entry['date'] ?? null),
                 'checkout' => '',
-                'payableOnline' => $payableOnline,
                 'organization' => $entry['library_id'] ?? '',
+                '__status' => trim($entry['status'] ?? ''),
             ];
+            $fine['payableOnline'] = $this->fineIsPayable($fine);
+            $fine['taxPercent'] = $this->getFineTaxRate($fine, $entry);
             if (null !== $bibId) {
                 $fine['id'] = $bibId;
             }
@@ -349,60 +348,9 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             ];
         }
 
-        $messagingSettings = [];
-        if ($this->config['Profile']['messagingSettings'] ?? true) {
-            foreach ($result['messaging_preferences'] as $type => $prefs) {
-                $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
-                if (!$typeName) {
-                    continue;
-                }
-                $settings = [
-                    'type' => $typeName,
-                ];
-                if (isset($prefs['transport_types'])) {
-                    $settings['settings']['transport_types'] = [
-                        'type' => 'multiselect',
-                    ];
-                    foreach ($prefs['transport_types'] as $key => $active) {
-                        $settings['settings']['transport_types']['options'][$key] = [
-                            'active' => $active,
-                        ];
-                    }
-                }
-                if (isset($prefs['digest'])) {
-                    $settings['settings']['digest'] = [
-                        'type' => 'boolean',
-                        'name' => '',
-                        'active' => $prefs['digest']['value'],
-                        'readonly' => !$prefs['digest']['configurable'],
-                    ];
-                }
-                if (
-                    isset($prefs['days_in_advance'])
-                    && ($prefs['days_in_advance']['configurable']
-                    || null !== $prefs['days_in_advance']['value'])
-                ) {
-                    $options = [];
-                    for ($i = 0; $i <= 30; $i++) {
-                        $options[$i] = [
-                            'name' => $this->translate(
-                                1 === $i ? 'messaging_settings_num_of_days'
-                                : 'messaging_settings_num_of_days_plural',
-                                ['%%days%%' => $i]
-                            ),
-                            'active' => $i == $prefs['days_in_advance']['value'],
-                        ];
-                    }
-                    $settings['settings']['days_in_advance'] = [
-                        'type' => 'select',
-                        'value' => $prefs['days_in_advance']['value'],
-                        'options' => $options,
-                        'readonly' => !$prefs['days_in_advance']['configurable'],
-                    ];
-                }
-                $messagingSettings[$type] = $settings;
-            }
-        }
+        $messagingSettings = $this->config['Profile']['messagingSettings'] ?? true
+            ? $this->createMessagingSettingsArray($result['messaging_preferences'])
+            : [];
 
         $messages = [];
         foreach ($result['messages'] ?? [] as $message) {
@@ -418,37 +366,36 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $holdIdentifierField = $this->config['Profile']['holdIdentifierField'] ?? 'other_name';
         $callingNameField = $this->config['Profile']['callingNameField'] ?? '';
 
-        $profile = [
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'calling_name' => $result[$callingNameField] ?? '',
-            'email' => $result['email'],
-            'address1' => $result['address'],
-            'address2' => $result['address2'],
-            'zip' => $result['postal_code'],
-            'city' => $result['city'],
-            'country' => $result['country'],
-            'category' => $result['category_id'] ?? '',
-            'expiration_date' => $expirationDate,
-            'expiration_soon' => !empty($result['expiry_date_near']),
-            'expired' => !empty($result['blocks']['Patron::CardExpired']),
-            'hold_identifier' => $result[$holdIdentifierField] ?? '',
-            'guarantors' => $guarantors,
-            'guarantees' => $guarantees,
-            'loan_history' => $result['privacy'],
-            'messagingServices' => $messagingSettings,
-            'notes' => $result['opac_notes'],
-            'messages' => $messages,
-            'full_data' => $result,
-        ];
-        if ($phoneField && !empty($result[$phoneField])) {
-            $profile['phone'] = $result[$phoneField];
-        }
-        if ($smsField && !empty($result[$smsField])) {
-            $profile['smsnumber'] = $result[$smsField];
-        }
+        $phone = $phoneField && !empty($result[$phoneField]) ? $result[$phoneField] : null;
+        $smsnumber = $smsField && !empty($result[$smsField]) ? $result[$smsField] : null;
 
-        return $profile;
+        return $this->createProfileArray(
+            firstname: $result['firstname'],
+            lastname: $result['surname'],
+            phone: $phone,
+            address1: $result['address'],
+            address2: $result['address2'],
+            zip: $result['postal_code'],
+            city: $result['city'],
+            country: $result['country'],
+            expiration_date: $expirationDate,
+            messagingServices: $messagingSettings,
+            loan_history: $result['privacy'],
+            email: $result['email'],
+            nonDefaultFields: [
+                'calling_name' => $result[$callingNameField] ?? '',
+                'category' => $result['category_id'] ?? '',
+                'expiration_soon' => !empty($result['expiry_date_near']),
+                'expired' => !empty($result['blocks']['Patron::CardExpired']),
+                'hold_identifier' => $result[$holdIdentifierField] ?? '',
+                'guarantors' => $guarantors,
+                'guarantees' => $guarantees,
+                'notes' => $result['opac_notes'],
+                'messages' => $messages,
+                'full_data' => $result,
+                'smsnumber' => $smsnumber,
+            ]
+        );
     }
 
     /**
@@ -650,99 +597,6 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Return details on fees payable online.
-     *
-     * @param array  $patron          Patron
-     * @param array  $fines           Patron's fines
-     * @param ?array $selectedFineIds Selected fines
-     *
-     * @throws ILSException
-     * @return array Associative array of payment details,
-     * false if an ILSException occurred.
-     */
-    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
-    {
-        $amount = 0;
-        $payableFines = [];
-        foreach ($fines as $fine) {
-            if (
-                null !== $selectedFineIds
-                && !in_array($fine['fine_id'], $selectedFineIds)
-            ) {
-                continue;
-            }
-            if ($fine['payableOnline']) {
-                $amount += $fine['balance'];
-                $payableFines[] = $fine;
-            }
-        }
-
-        if ($amount >= $this->minimumPayableAmount) {
-            return [
-                'payable' => true,
-                'amount' => $amount,
-                'fines' => $payableFines,
-            ];
-        }
-
-        return [
-            'payable' => false,
-            'amount' => 0,
-            'reason' => 'online_payment_minimum_fee',
-        ];
-    }
-
-    /**
-     * Mark fees as paid.
-     *
-     * This is called after a successful online payment.
-     *
-     * @param array  $patron            Patron
-     * @param int    $amount            Amount to be registered as paid
-     * @param string $transactionId     Transaction ID
-     * @param int    $transactionNumber Internal transaction number
-     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
-     *
-     * @throws ILSException
-     * @return true|string True on success, error description on error
-     */
-    public function markFeesAsPaid(
-        $patron,
-        $amount,
-        $transactionId,
-        $transactionNumber,
-        $fineIds = null
-    ) {
-        $request = [
-            'credit_type' => 'PAYMENT',
-            'amount' => $amount / 100,
-            'note' => "Online transaction $transactionId",
-        ];
-        if (null !== $fineIds) {
-            $request['account_lines_ids'] = $fineIds;
-        }
-
-        $result = $this->makeRequest(
-            [
-                'path' => ['v1', 'patrons', $patron['id'], 'account', 'credits'],
-                'json' => $request,
-                'method' => 'POST',
-                'errors' => true,
-            ]
-        );
-        if ($result['code'] >= 300) {
-            $error = "Failed to mark payment of $amount paid for patron"
-                . " {$patron['id']}: {$result['code']}: " . print_r($result, true);
-            $this->logError($error);
-            throw new ILSException($error);
-        }
-        // Clear patron's block cache
-        $cacheId = 'blocks|' . $patron['id'];
-        $this->removeCachedData($cacheId);
-        return true;
-    }
-
-    /**
      * Check if patron belongs to staff.
      *
      * @param array $patron The patron array from patronLogin
@@ -903,7 +757,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             return ['enabled' => true];
         }
         $functionConfig = parent::getConfig($function, $params);
-        if ($functionConfig && 'onlinePayment' === $function) {
+        if ($functionConfig && 'OnlinePayment' === $function) {
             if (!isset($functionConfig['exactBalanceRequired'])) {
                 $functionConfig['exactBalanceRequired'] = false;
             }
@@ -1107,18 +961,16 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         }
 
         // Add holdings that don't have items
-        if (!empty($holdings)) {
-            foreach ($holdings as $holding) {
-                if ($holding['suppressed'] || !empty($holding['_hasItems'])) {
-                    continue;
-                }
-                $holdingData = $this->getHoldingData($holding);
-                $i++;
-                $entry = $this->createHoldingsEntry($id, $holding, $i);
-                $entry += $holdingData;
-
-                $statuses[] = $entry;
+        foreach ($holdings as $holding) {
+            if ($holding['suppressed'] || !empty($holding['_hasItems'])) {
+                continue;
             }
+            $holdingData = $this->getHoldingData($holding);
+            $i++;
+            $entry = $this->createHoldingsEntry($id, $holding, $i);
+            $entry += $holdingData;
+
+            $statuses[] = $entry;
         }
 
         // Add serial purchase information
@@ -1216,51 +1068,49 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
 
         // See if there are links in holdings
         $electronic = [];
-        if (!empty($holdings)) {
-            foreach ($holdings as $holding) {
-                if ($holding['suppressed']) {
-                    continue;
-                }
-                $marc = $this->getHoldingMarc($holding);
-                if (null === $marc) {
-                    continue;
-                }
+        foreach ($holdings as $holding) {
+            if ($holding['suppressed']) {
+                continue;
+            }
+            $marc = $this->getHoldingMarc($holding);
+            if (null === $marc) {
+                continue;
+            }
 
-                $notes = [];
-                if ($fields = $marc->getFields('852')) {
-                    foreach ($fields as $field) {
-                        if ($subfield = $marc->getSubfield($field, 'z')) {
-                            $notes[] = $subfield;
-                        }
+            $notes = [];
+            if ($fields = $marc->getFields('852')) {
+                foreach ($fields as $field) {
+                    if ($subfield = $marc->getSubfield($field, 'z')) {
+                        $notes[] = $subfield;
                     }
                 }
-                if ($fields = $marc->getFields('856')) {
-                    foreach ($fields as $field) {
-                        if ($subfields = $field['subfields'] ?? []) {
-                            $urls = [];
-                            $desc = [];
-                            $parts = [];
-                            foreach ($subfields as $subfield) {
-                                if ('u' === $subfield['code']) {
-                                    $urls[] = $subfield['data'];
-                                } elseif ('3' === $subfield['code']) {
-                                    $parts[] = $subfield['data'];
-                                } elseif (in_array($subfield['code'], ['y', 'z'])) {
-                                    $desc[] = $subfield['data'];
-                                }
+            }
+            if ($fields = $marc->getFields('856')) {
+                foreach ($fields as $field) {
+                    if ($subfields = $field['subfields'] ?? []) {
+                        $urls = [];
+                        $desc = [];
+                        $parts = [];
+                        foreach ($subfields as $subfield) {
+                            if ('u' === $subfield['code']) {
+                                $urls[] = $subfield['data'];
+                            } elseif ('3' === $subfield['code']) {
+                                $parts[] = $subfield['data'];
+                            } elseif (in_array($subfield['code'], ['y', 'z'])) {
+                                $desc[] = $subfield['data'];
                             }
-                            foreach ($urls as $url) {
-                                ++$i;
-                                $entry
-                                    = $this->createHoldingsEntry($id, $holding, $i);
-                                $entry['availability'] = true;
-                                $entry['location'] = implode('. ', $desc);
-                                $entry['locationhref'] = $url;
-                                $entry['use_unknown_message'] = false;
-                                $entry['status']
-                                    = implode('. ', array_merge($parts, $notes));
-                                $electronic[] = $entry;
-                            }
+                        }
+                        foreach ($urls as $url) {
+                            ++$i;
+                            $entry
+                                = $this->createHoldingsEntry($id, $holding, $i);
+                            $entry['availability'] = true;
+                            $entry['location'] = implode('. ', $desc);
+                            $entry['locationhref'] = $url;
+                            $entry['use_unknown_message'] = false;
+                            $entry['status']
+                                = implode('. ', array_merge($parts, $notes));
+                            $electronic[] = $entry;
                         }
                     }
                 }

@@ -80,7 +80,7 @@
             if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1" tabindex="-1">
                 <?php foreach ($authors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+                  <?=($index > 0 ? '<span aria-hidden="true"> ; </span>' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -150,6 +150,10 @@
               <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
             <?php endif; ?>
           <?php endif; ?>
+        <?php endif; ?>
+
+        <?php if (($edition = $this->driver->tryMethod('getEdition'))): ?>
+          <div class="result-edition"><?=$this->escapeHtml($edition)?></div>
         <?php endif; ?>
 
         <?php if ($this->driver->tryMethod('getWorkKeys') && $this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>

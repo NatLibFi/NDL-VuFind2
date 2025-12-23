@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -28,6 +28,8 @@
  */
 
 namespace Finna\Search\SolrBrowse;
+
+use VuFind\Config\ConfigManagerInterface;
 
 /**
  * SolrBrowse Search Options
@@ -40,13 +42,6 @@ namespace Finna\Search\SolrBrowse;
  */
 class Options extends \Finna\Search\Solr\Options
 {
-    /**
-     * Overall default sort option
-     *
-     * @var string
-     */
-    protected $defaultSort = 'title,id asc';
-
     /**
      * Default search handler
      *
@@ -95,6 +90,19 @@ class Options extends \Finna\Search\Solr\Options
      * @var string
      */
     protected $browseType = '';
+
+    /**
+     * Constructor
+     *
+     * @param ConfigManagerInterface $configManager Config manager
+     */
+    public function __construct(ConfigManagerInterface $configManager)
+    {
+        parent::__construct($configManager);
+
+        // Override default sort to always be by title:
+        $this->defaultSort = 'title';
+    }
 
     /**
      * Return the route name for the search results action.

@@ -76,6 +76,7 @@
     margin-bottom: 0.5em;
   }
   svg {
+    color-scheme: light only;
     background-color: white;
     padding: .1em;
   }
@@ -312,7 +313,7 @@
   }
 }
 // Custom styles for user account functions
-.template-dir-myresearch, .template-dir-holds, .template-dir-checkouts.template-name-history, .template-dir-search.template-name-history, .template-dir-librarycards {
+.template-dir-myresearch, .template-dir-holds, .template-dir-checkouts.template-name-history, .template-dir-search.template-name-history, .template-dir-librarycards, .template-dir-comments.template-name-userlist, .template-dir-ratings.template-name-userlist, .template-dir-reservationlist {
   &.main {
     padding-bottom: 30px;
   }
@@ -416,10 +417,6 @@
     padding: 2em;
     padding-left: 2.5em;
     margin-bottom: 1em;
-  }
-
-  .profile-status i::before {
-    display: inline-block;
   }
 }
 
@@ -526,23 +523,27 @@
 
 .fines-info-area {
   margin-bottom: 15px;
-  div.card-holder {
-    display: flex;
-    align-items: center;
-    font-weight: bold;
-  }
   .amount {
     font-weight: bold;
   }
-  .online-payment-info {
+  .online-payment-payable-info {
     display: flex;
     align-items: baseline;
+    margin-bottom: 0.5rem;
+
+    .online-payment-payable {
+      padding: 0.25rem 0;
+    }
   }
-  #online_payment_minimum_payment {
-    margin: 0 0 0 1em;
-    padding: 6px;
+  .online-payment-minimum-payment {
+      @extend .alert-warning;
+      color: var(--bs-alert-color);
+      background-color: var(--bs-alert-bg);
+      border-color: var(--bs-alert-border-color);
+      margin-left: 1rem;
+      padding: 0.25rem;
   }
-  .last-transaction-information {
+  .last-payment-information {
     @extend .alert;
 
     background: $gray-ultralight;
@@ -553,6 +554,9 @@
       flex: 1 1;
     }
   }
+}
+.online-payment-status-note {
+  font-weight: bold;
 }
 
 .toolbar-sticky-container {
@@ -682,6 +686,9 @@ form#renewals, form#update_holds, form#purge_history {
       border-right: none;
     }
   }
+  th {
+    vertical-align: middle;
+  }
   td {
     border-right: 1px solid $body-bg;
     vertical-align: middle;
@@ -707,7 +714,7 @@ form#renewals, form#update_holds, form#purge_history {
     }
   }
   @media screen {
-    @include media-breakpoint-up(sm) {
+    @include media-breakpoint-up(xl) {
       .balance {
         text-align: right;
       }
@@ -799,12 +806,6 @@ form#renewals, form#update_holds, form#purge_history {
         margin-bottom: 0px;
         span {
           float: right;
-          > i {
-            color: $myresearch-menu-header-font-color;
-            font-size: 25px;
-            margin-top: -4px;
-            cursor: pointer;
-          }
         }
       }
     }
@@ -871,7 +872,7 @@ form#renewals, form#update_holds, form#purge_history {
     &:focus {
       background-color: $nav-link-hover-bg;
     }
-    &.user-list-link i {
+    &.user-list-link .icon {
       margin-left: 0.5rem;
     }
     &.active {
@@ -1063,5 +1064,39 @@ form#renewals, form#update_holds, form#purge_history {
   margin-bottom: 0px;
   tbody > tr > td {
     vertical-align: middle;
+  }
+}
+.usercontent-table {
+  tbody > tr > td {
+    vertical-align: middle;
+    .checkbox-container {
+      padding-top: 0rem;
+      border-bottom: 0px;
+      border-top: 0px;
+      .checkbox-select-item {
+        float: none;
+      }
+    }
+    @include media-breakpoint-up(md) {
+      &.user-comment {
+        width: 40%;
+      }
+    }
+    @include media-breakpoint-down(sm) {
+      .checkbox-container {
+        padding: 0px;
+        .checkbox {
+          padding-left: 0px;
+        }
+      }
+    }
+  }
+  .finna-tooltip-btn {
+    color: $red;
+  }
+}
+.template-dir-comments.template-name-userlist, .template-dir-ratings.template-name-userlist {
+  button#cancelSelected {
+    margin: 10px;
   }
 }

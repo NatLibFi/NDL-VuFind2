@@ -132,6 +132,8 @@ $similar-carousel-format-background: #f2f2f2 !default;
 
 //== Breakpoint for slider layout
 $slider-stacked-breakpoint: map.get($grid-breakpoints, "sm") !default;
+$slider-stacked-breakpoint-min: $slider-stacked-breakpoint;
+$slider-stacked-breakpoint-max: ($slider-stacked-breakpoint - 0.02);
 
 //== List feed styles
 $list-feed-background: $body-bg !default;
@@ -142,7 +144,7 @@ $list-feed-header-background: none !default;
 $list-feed-header-padding: none !default;
 $list-feed-header-color: $gray !default;
 
-//== Myreresearch custom styles
+//== Myresearch custom styles
 $myresearch-header-background:  $body-bg !default;
 $myresearch-tabs-color: $gray !default;
 $myresearch-menu-header-font-color: #fff !default;

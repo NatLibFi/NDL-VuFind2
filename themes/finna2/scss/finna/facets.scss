@@ -99,6 +99,9 @@ div.facet {
   .more-less-btn-wrapper {
     border-bottom: none;
     padding: 1px;
+    .icon + span {
+      margin-left: 3px;
+    }
   }
 
   .more-less-btn-wrapper .btn, a.more-narrow-toggle {
@@ -183,14 +186,15 @@ span.badge.cb-facet {
   .facet {
     padding: 3px 3px 2px 8px;
     display: flex;
-    .text {
+
+    .main-link, .text {
       flex-grow: 1;
       overflow: hidden;
+    }
 
-      .facet-value {
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
+    .text .facet-value {
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
   .title {
@@ -217,7 +221,7 @@ span.badge.cb-facet {
     flex-shrink: 0;
     align-items: center;
   }
-  .text, .hierarchical-facet-anchor {
+  .main-link, .text, .hierarchical-facet-anchor {
     display: flex;
     gap: 0.25rem;
     align-items: center;
@@ -227,7 +231,7 @@ span.badge.cb-facet {
     margin-left: 5px;
     flex-shrink: 0;
     text-align: center;
-    i  {
+    .icon  {
       font-size: 0.8em;
     }
   }
@@ -360,9 +364,6 @@ span.badge.cb-facet {
       float: left;
       padding: 10px 5px;
       font-size: 0.9em;
-      i {
-        color: #fff;
-      }
       &:last-child {
         border-left: 0;
       }
@@ -456,8 +457,9 @@ span.badge.cb-facet {
     border-bottom: none;
 
     .facet-tree__toggle-expanded {
-      color: $text-color;
+      color: $link-color;
       // Fix focus ring:
+      margin-top: 6px;
       margin-right: 3px;
     }
   }

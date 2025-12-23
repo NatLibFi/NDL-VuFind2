@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -253,6 +253,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                         'linkType' => 'external-link',
+                        'label' => '3D',
                     ],
                     1 => [
                         'description' => 'PDFTesti.pdf',
@@ -260,6 +261,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'format' => 'pdf',
                         'rights' => [],
                         'linkType' => 'proxy-link',
+                        'label' => '',
                     ],
                     2 => [
                         'description' => 'DocxTesti.docx',
@@ -272,6 +274,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ],
                         ],
                         'linkType' => 'proxy-link',
+                        'label' => '',
                     ],
                 ],
             ],
@@ -338,10 +341,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getRepresentationsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getRepresentationsData')]
     public function testRepresentations(
         string $function,
         array $expected
@@ -360,10 +362,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getFormatClassificationsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getFormatClassificationsData')]
     public function testGetFormatClassifications(
         string $function,
         array $expected
@@ -384,10 +385,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getOtherClassificationsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getOtherClassificationsData')]
     public function testGetOtherClassifications(
         string $function,
         array $expected
@@ -501,10 +501,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getMeasurementsByTypeData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getMeasurementsByTypeData')]
     public function testGetMeasurementsByType(
         string $function,
         string $language,
@@ -628,10 +627,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $xmlFile  Xml record to use for the test
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getAllSubjectHeadingsWithoutPlacesExtendedData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAllSubjectHeadingsWithoutPlacesExtendedData')]
     public function testGetAllSubjectHeadingsWithoutPlacesExtended(
         string $language,
         string $xmlFile,
@@ -693,6 +691,22 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             [
+                'heading' => ['Rakennus'],
+                'type' => 'prt',
+                'id' => 'PRT',
+                'ids' => [
+                    'PRT',
+                ],
+            ],
+            [
+                'heading' => ['Rakennus2'],
+                'type' => 'prt',
+                'id' => 'PRT2',
+                'ids' => [
+                    'PRT2',
+                ],
+            ],
+            [
                 'heading' => ['Lohja'],
                 'type' => 'mjr',
                 'id' => '123456',
@@ -713,6 +727,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ['juures'],
             ['Jussi, Jänö'],
             ['Etelä-Suomi'],
+            ['Rakennus'],
+            ['Rakennus2'],
             ['Lohja'],
             ['Kauppakatu 5, Lohja, Uusimaa, Suomi'],
         ];
@@ -736,6 +752,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     'lido_test2.xml' => [
                         'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                        'Suomi',
                     ],
                 ],
             ],
@@ -748,6 +765,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     'lido_test2.xml' => [
                         'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                        'Finland',
                     ],
                 ],
             ],
@@ -760,6 +778,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     'lido_test2.xml' => [
                         'Huonenumero 123, Auditorio, Mannerheimintie 999, Helsinki',
+                        'Suomi',
                     ],
                 ],
             ],
@@ -772,10 +791,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getPhysicalLocationsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getPhysicalLocationsData')]
     public function testGetPhysicalLocations(
         string $language,
         array $expected
@@ -810,17 +828,38 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 [
                     'name' => 'Puu, Teisto',
                     'role' => 'suunnittelija',
+                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000228701',
                 ],
                 [
                     'name' => 'Mattilainen, Meikä',
                     'role' => 'haaveilija',
+                    'id' => 'https://isni.org/isni/0000000109136025',
                 ],
                 [
                     'name' => 'Tiistai, Nietos',
                     'role' => 'Työntekijä',
+                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000016723',
                 ],
             ],
             $driver->getNonPresenterAuthors()
+        );
+    }
+
+    /**
+     * Test getLocalIdentifiers.
+     *
+     * @return void
+     */
+    public function testGetLocalIdentifiers(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertEquals(
+            [
+                '000001',
+                '000002 (inventaarionumero)',
+                '000003 (esinenumero)',
+            ],
+            $driver->getLocalIdentifiers()
         );
     }
 
@@ -873,10 +912,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
      *
-     * @dataProvider getDateRangeData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getDateRangeData')]
     public function testGetDateRange(
         string $indexValue,
         ?array $expected
@@ -950,10 +988,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param array  $rawData  The additional tested data
      * @param string $language Language
      *
-     * @dataProvider getSummaryData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getSummaryData')]
     public function testGetSummary(
         $xmlFile,
         $expected,
@@ -1026,14 +1063,16 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 [
                                     'name' => 'Mattilainen, Meikä',
                                     'role' => 'haaveilija',
-                                    'birth' => '',
-                                    'death' => '',
+                                    'birth' => '1951',
+                                    'death' => '2019',
+                                    'id' => 'https://isni.org/isni/0000000109136025',
                                 ],
                                 [
                                     'name' => 'Tiistai, Nietos',
                                     'role' => 'Työntekijä',
                                     'birth' => '',
                                     'death' => '',
+                                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000016723',
                                 ],
                             ],
                             'culture' => 'kulttuuri',
@@ -1057,6 +1096,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     'role' => 'suunnittelija',
                                     'birth' => '',
                                     'death' => '',
+                                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000228701',
                                 ],
                             ],
                             'culture' => '',
@@ -1110,14 +1150,16 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 [
                                     'name' => 'Mattilainen, Meikä',
                                     'role' => 'haaveilija',
-                                    'birth' => '',
-                                    'death' => '',
+                                    'birth' => '1951',
+                                    'death' => '2019',
+                                    'id' => 'https://isni.org/isni/0000000109136025',
                                 ],
                                 [
                                     'name' => 'Tiistai, Nietos',
                                     'role' => 'Työntekijä',
                                     'birth' => '',
                                     'death' => '',
+                                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000016723',
                                 ],
                             ],
                             'culture' => 'kulttuuri',
@@ -1141,6 +1183,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     'role' => 'suunnittelija',
                                     'birth' => '',
                                     'death' => '',
+                                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000228701',
                                 ],
                             ],
                             'culture' => '',
@@ -1159,10 +1202,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getEventsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getEventsData')]
     public function testGetEvents(
         string $language,
         array $expected
@@ -1239,10 +1281,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @param array $expected Result to be expected
      *
-     * @dataProvider getRelatedPublicationsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getRelatedPublicationsData')]
     public function testGetRelatedPublications(
         array $expected
     ): void {

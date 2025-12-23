@@ -321,6 +321,9 @@ loan_history_download_batch_limit = 1000
 ; Whether to display the item barcode for each loan. Default is false.
 display_checked_out_item_barcode = true
 
+; Online payment availability. Default is true.
+online_payment = true
+
 ; This section controls features related to user accounts
 [Account]
 ; Allow the user to set a home library through the Profile screen, which will
@@ -827,6 +830,22 @@ recordMap = openlayers
 ; A colon-separated list of formats that are enabled for image zoom function
 zoomFormats = qdc:forward:ead3:ead:lido
 
+; Sets the amount of images allowed to be returned in search context.
+; Default and hard limit is 20.
+;maxImagesInSearchContext = 10
+
+; Sets the amount of images allowed to be returned in record context.
+; Default and hard limit is 1000.
+;maxImagesInRecordContext = 500
+
+; Sets the amount of URLs allowed to be returned in search context.
+; Default and hard limit is 200.
+;maxUrlsInSearchContext = 20
+
+; Sets the amount of URLs allowed to be returned in record context.
+; Default and hard limit is 200.
+;maxUrlsInRecordContext = 200
+
 [QRCode]
 ; This setting controls the image to display when no qrcode is available.
 ; The path is relative to the base of your theme directory.
@@ -955,6 +974,23 @@ url             = http://www.refworks.com
 [EndNoteWeb]
 vendor          = Finna
 url             = https://www.myendnoteweb.com/EndNoteWeb.html
+
+; These settings affect Zotero record exports. You will need to register your
+; VuFind instance with Zotero at https://www.zotero.org/oauth/apps and enter the
+; credentials below for the user-facing OAuth authentication to work properly.
+; Note: Zotero requires user login in VuFind because the Zotero access token must
+; be persisted across sessions (it doesn't expire in Zotero automatically).
+; time.
+; Users using Zotero desktop application will need to enable sync in Zotero (see
+; https://www.zotero.org/support/sync) to get the exported records to the client.
+[Zotero]
+; Client key
+identifier = ""
+; Client secret
+secret = ""
+; Callback URI pointing to VuFind's /Zotero/Callback action. Normally left
+; blank (VuFind will automatically create it based on the used server address).
+;callback_uri = ""
 
 ; These settings affect your OAI server if you choose to use it.
 ;
@@ -1168,6 +1204,9 @@ MARC = false
 MARCXML = false
 RDF = false
 BibTeX = false
+; Note: ZoteroWebLibrary requires proper settings in [Zotero] section!
+;ZoteroWebLibrary = "record,bulk"
+
 
 [BulkExport]
 ; Export behavior to use when no bulkExportType setting is found in the matching
@@ -1918,3 +1957,9 @@ Summon = tabs_summon
 ; Possible values are: 'production', 'beta', 'test' and 'disabled'.
 ; Default value is 'production'.
 site_status = production
+
+[IIIF]
+; Pipe-separated tuple of viewer name and URL, the latter containing a
+; placeholder for a percent-encoded manifest URL
+externalViewers[] = "Mirador|https://projectmirador.org/embed/?iiif-content={manifest}"
+externalViewers[] = "Universal Viewer|https://uv-v4.netlify.app/#?manifest={manifest}"

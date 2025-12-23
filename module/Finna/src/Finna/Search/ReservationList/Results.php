@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_ReservationList
@@ -33,8 +33,8 @@ namespace Finna\Search\ReservationList;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
-use LmcRbacMvc\Service\AuthorizationServiceAwareInterface;
-use LmcRbacMvc\Service\AuthorizationServiceAwareTrait;
+use Lmc\Rbac\Mvc\Service\AuthorizationServiceAwareInterface;
+use Lmc\Rbac\Mvc\Service\AuthorizationServiceAwareTrait;
 use VuFind\Exception\ListPermission as ListPermissionException;
 use VuFind\Record\Cache;
 use VuFind\Record\Loader;
@@ -61,7 +61,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     /**
      * Object if user is logged in, false otherwise.
      *
-     * @var \VuFind\Db\Row\User|bool
+     * @var ?UserEntityInterface
      */
     protected $user = null;
 
@@ -73,14 +73,14 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     protected $list = false;
 
     /**
-     * Resource table
+     * Resource list service
      *
      * @var FinnaResourceListResourceServiceInterface
      */
     protected $resourceListResourceService;
 
     /**
-     * UserList table
+     * UserList service
      *
      * @var FinnaResourceListServiceInterface
      */
@@ -194,7 +194,8 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         );
         $this->resultTotal = count($rawResults);
         $this->allIds = array_map(function ($result) {
-            return $result['source'] . '|' . $result['record_id'];
+            $resource = $result->getResource();
+            return $resource->getSource() . '|' . $resource->getRecordId();
         }, $rawResults);
         // Apply offset and limit if necessary!
         $limit = $this->getParams()->getLimit();
@@ -205,10 +206,11 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
         // Retrieve record drivers for the selected items.
         $recordsToRequest = [];
         foreach ($rawResults as $row) {
+            $resource = $row->getResource();
             $recordsToRequest[] = [
-                'id' => $row->getRecordId(), 'source' => $row->getSource(),
+                'id' => $resource->getRecordId(), 'source' => $resource->getSource(),
                 'extra_fields' => [
-                    'title' => $row->getTitle(),
+                    'title' => $resource->getTitle(),
                 ],
             ];
         }

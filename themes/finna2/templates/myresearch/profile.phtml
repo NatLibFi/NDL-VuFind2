@@ -1,7 +1,5 @@
 <!-- START of: finna - myresearch/profile.phtml -->
 <?php
-    // Set up page title:
-    $this->headTitle($this->translate('My Profile'));
     $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
     // Set up breadcrumbs:
@@ -48,8 +46,8 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'profile']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
-    <h2><?=$this->transEsc('Profile')?></h2>
+  <div id="useraccount-content-heading" class="useraccount-header">
+    <?=$this->component('page-title', ['title' => $this->translate('My Profile')]);?>
     <?php if (!$this->translationEmpty('tooltip_myaccount_profile_html')): ?>
       <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_profile_html') ?>"><?=$this->icon('help') ?></button>
     <?php endif; ?>
@@ -76,11 +74,19 @@
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
       <div class="logged-in-as">
+        <?php
+          $authMethod = $user->getAuthMethod();
+          $loginMethod = '';
+          if ($authMethod === 'multiils') {
+            $loginConfig = $this->ils()->getConfig('patronLogin');
+            $loginMethod = $loginConfig['loginMethod'] ?? 'password';
+          }
+        ?>
         <div>
-          <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getDisplayableUsername())?></span></div>
-          <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $user->getAuthMethod())?></span></div>
-          <?php if ($user->email): ?>
-            <div><span class="profile-title"><?=$this->transEsc('account_email')?>: </span><span><?=$this->escapeHtml($user->email)?></span></div>
+          <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getDisplayableUsername($loginMethod))?></span></div>
+          <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $authMethod)?></span></div>
+          <?php if ($email = $user->getEmail()): ?>
+            <div><span class="profile-title"><?=$this->transEsc('account_email')?>: </span><span><?=$this->escapeHtml($email)?></span></div>
           <?php endif; ?>
           <div><span class="profile-title"><?=$this->transEsc('account_creation_date')?>: </span><span><?=$user->getCreated()->format($this->config()->dateFormat())?></span></div>
         </div>
@@ -132,13 +138,13 @@
                 }
             }
           ?>
-          <?php if ($selectedCard !== null && $this->ils()->checkFunction('changePassword', $selectedCard->toArray())): ?>
+          <?php if ($selectedCard !== null && $this->ils()->checkFunction('changePassword', ['cat_username' => $selectedCard->getCatUsername()])): ?>
             <div>
               <h4 class="myresearch-profile-middle-header"><?=$this->transEsc('change_password_heading') ?></h4>
             </div>
             <div>
               <span class="change-password-link">
-                <a href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($selectedCard['id']) ?>" class="btn btn-primary" data-lightbox title="<?=$this->transEsc('change_password_link')?>"><?=$this->transEsc('change_password_link') ?> &raquo;</a>
+                <a href="<?=$this->url('newLibraryCardPassword') ?>?id=<?=$this->escapeHtmlAttr($selectedCard->getId()) ?>" class="btn btn-primary" data-lightbox title="<?=$this->transEsc('change_password_link')?>"><?=$this->transEsc('change_password_link') ?> &raquo;</a>
               </span>
             </div>
           <?php endif; ?>
@@ -345,12 +351,12 @@
             <tbody>
               <?php foreach ($tokens as $i => $token): ?>
                 <tr>
-                  <td data-label="<?=$this->transEsc('saved_login_platform_and_browser')?>" id="login_platform_<?=$i?>"><?=$this->transEsc($token->platform)?> / <?=$this->transEsc($token->browser)?></td>
+                  <td data-label="<?=$this->transEsc('saved_login_platform_and_browser')?>" id="login_platform_<?=$i?>"><?=$this->transEsc($token->getPlatform())?> / <?=$this->transEsc($token->getBrowser())?></td>
                   <td data-label="<?=$this->transEsc('Last Login')?>" id="login_date_<?=$i?>"><?=$token->getLastLogin()->format($this->config()->dateTimeFormat())?></td>
                   <td>
                     <form id="delete-login-token" method="post" action="<?=$this->url('myresearch-deletelogintoken')?>">
                       <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
-                      <input type="hidden" name="series" value="<?=$this->escapeHtmlAttr($token->series)?>">
+                      <input type="hidden" name="series" value="<?=$this->escapeHtmlAttr($token->getSeries())?>">
                       <input id="delete-login-token-submit" class="btn btn-danger" type="submit" name="submitButton" value="<?=$this->transEscAttr('Forget Login'); ?>" aria-labelledby="delete-login-token-submit login_platform_<?=$i?> login_date_<?=$i?>">
                     </form>
                   </td>
@@ -409,6 +415,14 @@
 
     <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && $this->patronLoginView && !empty($this->patronLoginView->getTemplate())): ?>
       <?=$this->partial($this->patronLoginView);?>
+    <?php endif; ?>
+
+    <?php if ($this->developerSettings()->isEnabled()): ?>
+      <?php if ($this->permission()->allowDisplay('feature.Developer')): ?>
+        <a class="btn btn-link" href="<?=$this->url('developersettings-displaysettings');?>"><?=$this->icon('options') . ' ' . $this->transEsc('Developer::settings');?></a>
+      <?php elseif ($block = $this->permission()->getAlternateContent('feature.Developer')): ?>
+        <?=$block?>
+      <?php endif; ?>
     <?php endif; ?>
   </div>
   <?php if ($template = $this->content()->findTemplateForLng('content/Additions/profile-post-list')): ?>

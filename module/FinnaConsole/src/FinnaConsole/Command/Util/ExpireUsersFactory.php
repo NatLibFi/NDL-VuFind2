@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Service
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
@@ -36,6 +36,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 use VuFind\Account\UserAccountService;
+use VuFind\Db\Service\AuditEventServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 
 /**
@@ -46,7 +47,7 @@ use VuFind\Db\Service\UserServiceInterface;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class ExpireUsersFactory implements FactoryInterface
 {
@@ -72,8 +73,9 @@ class ExpireUsersFactory implements FactoryInterface
         $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
             $dbServiceManager->get(UserServiceInterface::class),
+            $dbServiceManager->get(AuditEventServiceInterface::class),
             $container->get(UserAccountService::class),
-            $container->get(\VuFind\Config\PluginManager::class)->get('config')
+            $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('config')
         );
     }
 }

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDataFormatter
@@ -70,7 +70,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
      * @var array
      */
     protected array $recordFieldOrder = [
-        'Contains collections',
         'Genre',
         'Age Limit',
         'Original Work',
@@ -91,6 +90,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         'Presenters Marc',
         'Other Titles',
         'Format',
+        'Format and Labels',
         'Parent Archive',
         'Parent Collection',
         'Parent Subcollection',
@@ -855,6 +855,16 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 [
                     'context' => [
                         'class' => 'recordFormat',
+                    ],
+                ],
+            ],
+            'Format and Labels' => [
+                'getFormats',
+                'format-and-labels-list.phtml',
+                [
+                    'context' => [
+                        'class' => 'recordFormat',
+                        'title' => 'Format',
                     ],
                 ],
             ],
@@ -1905,7 +1915,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ) use (
                 &$lines,
                 &$pos
-            ) {
+            ): void {
                 $pos += 100;
                 $dataMethod = $data[0];
                 $template = $data[1];
@@ -1921,7 +1931,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ) use (
                 &$lines,
                 &$pos
-            ) {
+            ): void {
                 $pos += 100;
                 $dataMethod = $data[0];
                 $callback = $data[1];

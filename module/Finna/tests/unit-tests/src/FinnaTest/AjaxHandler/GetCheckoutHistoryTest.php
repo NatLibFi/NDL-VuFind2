@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -34,6 +34,8 @@ use Finna\AjaxHandler\GetCheckoutHistoryFactory;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Auth\Manager;
 use VuFind\Config\Config;
+use VuFind\Config\ConfigManager;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\ILS\Connection;
 
@@ -62,9 +64,9 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     ): GetCheckoutHistory {
         // Set up auth manager with user:
         $this->container->set(Manager::class, $this->getMockAuthManager($user));
-        $mockConfigManager = $this->container->createMock(\VuFind\Config\PluginManager::class, ['get']);
-        $mockConfigManager->expects($this->once())->method('get')->with('config')->willReturn($testConfig);
-        $this->container->set(\VuFind\Config\PluginManager::class, $mockConfigManager);
+        $mockConfigManager = $this->container->createMock(ConfigManager::class, ['getConfigObject']);
+        $mockConfigManager->expects($this->once())->method('getConfigObject')->with('config')->willReturn($testConfig);
+        $this->container->set(ConfigManagerInterface::class, $mockConfigManager);
         // Build the handler:
         $factory = new GetCheckoutHistoryFactory();
         return $factory($this->container, GetCheckoutHistory::class);
@@ -191,9 +193,8 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
      * @param array $expected          What is the expected result
      *
      * @return void
-     *
-     * @dataProvider getSuccessfulData
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getSuccessfulData')]
     public function testSuccess(int $defaultPageSize, int $batchLimit, array $transactionResult, array $expected)
     {
         $this->assertEquals(
@@ -211,9 +212,8 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
      * @param array $expected          What is the expected result
      *
      * @return void
-     *
-     * @dataProvider getFailuresData
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getFailuresData')]
     public function testFailures(int $defaultPageSize, int $batchLimit, array $transactionResult, array $expected)
     {
         $this->assertEquals(

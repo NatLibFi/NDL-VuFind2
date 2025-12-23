@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2024.
+ * Copyright (C) The National Library of Finland 2015-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Service
@@ -26,18 +26,22 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
 
-use Finna\Db\Service\FinnaUserServiceInterface;
+use DateTime;
+use Finna\Db\Service\UserServiceInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use VuFind\Account\UserAccountService;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Service\AuditEventServiceInterface;
+use VuFind\Db\Type\AuditEventSubtype;
+use VuFind\Db\Type\AuditEventType;
 
 use function floatval;
 use function sprintf;
@@ -54,7 +58,7 @@ use function sprintf;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 #[AsCommand(
     name: 'util/expire_users'
@@ -83,18 +87,20 @@ class ExpireUsers extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param FinnaUserServiceInterface $userService        User database service
-     * @param UserAccountService        $userAccountService User account database service
-     * @param \VuFind\Config\Config     $config             Main configuration
+     * @param UserServiceInterface       $userService        User database service
+     * @param AuditEventServiceInterface $auditEventService  Audit event database service
+     * @param UserAccountService         $userAccountService User account service
+     * @param \VuFind\Config\Config      $config             Main configuration
      */
     public function __construct(
-        protected FinnaUserServiceInterface $userService,
+        protected UserServiceInterface $userService,
+        protected AuditEventServiceInterface $auditEventService,
         protected UserAccountService $userAccountService,
         \VuFind\Config\Config $config
     ) {
+        parent::__construct();
         $this->removeComments = $config->Authentication->delete_comments_with_user ?? true;
         $this->removeRatings = $config->Authentication->delete_ratings_with_user ?? true;
-        parent::__construct();
     }
 
     /**
@@ -158,6 +164,11 @@ class ExpireUsers extends AbstractUtilCommand
                     'Removing user: ' . $user->getUsername() . ' (' . $user->getId() . ')'
                 );
                 if (!$reportOnly) {
+                    $this->auditEventService->addEvent(
+                        AuditEventType::User,
+                        AuditEventSubtype::Delete,
+                        $user
+                    );
                     $this->userAccountService->purgeUserData($user, $this->removeComments, $this->removeRatings);
                 }
                 $count++;
@@ -195,7 +206,7 @@ class ExpireUsers extends AbstractUtilCommand
      */
     protected function getExpiredUsers($days): array
     {
-        $expireDate = date('Y-m-d', strtotime(sprintf('-%d days', (int)$days)));
+        $expireDate = new DateTime(sprintf('-%d days', (int)$days));
         return $this->userService->getExpiringUsers($expireDate);
     }
 }

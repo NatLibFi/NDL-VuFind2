@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -30,7 +30,7 @@
 
 namespace Finna\Controller;
 
-use Finna\Db\Service\FinnaCommentsServiceInterface;
+use Finna\Db\Service\CommentsServiceInterface;
 
 use function assert;
 
@@ -44,8 +44,21 @@ use function assert;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class CommentsController extends \VuFind\Controller\AbstractBase
+class CommentsController extends \VuFind\Controller\CommentsController
 {
+    use Feature\UserContentTrait;
+
+    /**
+     * Array of sort options for userListAction
+     *
+     * @var array
+     */
+    protected array $sortList = [
+        'created desc' => 'hold_sort_create_desc',
+        'created asc' => 'hold_sort_create_asc',
+        'title' => 'sort_title',
+    ];
+
     /**
      * Report inappropriate comment
      *
@@ -83,7 +96,7 @@ class CommentsController extends \VuFind\Controller\AbstractBase
         $user = $this->getUser();
         $sessionId = $this->serviceLocator->get(\Laminas\Session\SessionManager::class)->getId();
         $service = $this->getDbService(\VuFind\Db\Service\CommentsServiceInterface::class);
-        assert($service instanceof FinnaCommentsServiceInterface);
+        assert($service instanceof CommentsServiceInterface);
         $service->markCommentInappropriate($user, (int)$id, $reason, $message, $sessionId);
     }
 }

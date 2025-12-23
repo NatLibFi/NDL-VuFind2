@@ -33,7 +33,10 @@ $thumbnail-width-large:  200px !default;
   .template-dir-holds .container.main-content > .mainbody,
   .template-dir-librarycards .container.main-content > .mainbody,
   .template-name-mylist .container.main-content > .mainbody,
-  .template-name-history .container.main-content > .mainbody {
+  .template-name-history .container.main-content > .mainbody,
+  .template-dir-comments.template-name-userlist .container.main-content > .mainbody,
+  .template-dir-ratings.template-name-userlist .container.main-content > .mainbody,
+  .template-dir-reservationlist .container.main-content > .mainbody {
     width: 100%;
   }
 }
@@ -134,9 +137,6 @@ mark, .highlight {
     text-transform: uppercase;
     font-weight: 600;
     color: $action-link-color;
-    i {
-      color: mix(#ffffff, $action-link-color, 22%);
-    }
   }
 }
 .available-online-links {
@@ -545,4 +545,7 @@ table.search-history-table {
       }
     }
   }
+}
+.result-edition {
+  display: none;
 }

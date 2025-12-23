@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -31,10 +31,12 @@
 namespace Finna\Search\Solr;
 
 use VuFind\Config\Config;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Solr\Utils;
 
 use function in_array;
 use function is_array;
+use function is_callable;
 use function strlen;
 
 /**
@@ -98,21 +100,21 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Constructor
      *
-     * @param \VuFind\Search\Base\Options  $options         Options to use
-     * @param \VuFind\Config\PluginManager $configLoader    Config loader
-     * @param HierarchicalFacetHelper      $facetHelper     Hierarchical
-     * facet helper
-     * @param AuthorityHelper              $authorityHelper Authority helper
-     * @param \VuFind\Date\Converter       $dateConverter   Date converter
+     * @param \VuFind\Search\Base\Options $options         Options to use
+     * @param ConfigManagerInterface      $configManager   Config manager
+     * @param HierarchicalFacetHelper     $facetHelper     Hierarchical
+     *                                                     facet helper
+     * @param AuthorityHelper             $authorityHelper Authority helper
+     * @param \VuFind\Date\Converter      $dateConverter   Date converter
      */
     public function __construct(
         $options,
-        \VuFind\Config\PluginManager $configLoader,
+        ConfigManagerInterface $configManager,
         HierarchicalFacetHelper $facetHelper,
         AuthorityHelper $authorityHelper,
         \VuFind\Date\Converter $dateConverter
     ) {
-        parent::__construct($options, $configLoader, $facetHelper);
+        parent::__construct($options, $configManager, $facetHelper);
 
         $this->dateConverter = $dateConverter;
         $this->authorityHelper = $authorityHelper;
@@ -361,7 +363,7 @@ class Params extends \VuFind\Search\Solr\Params
     public function getAuthorIdFilter($includeRole = false)
     {
         $result = [];
-        foreach ($this->getFilterList() as $key => $val) {
+        foreach ($this->getFilterList() as $val) {
             foreach ($val as $filterItem) {
                 $filter = $filterItem['value'] ?? null;
                 if (!$filter) {
@@ -492,7 +494,7 @@ class Params extends \VuFind\Search\Solr\Params
      */
     public function hasAuthorIdFilter()
     {
-        foreach ($this->getFilterList() as $field => $facets) {
+        foreach ($this->getFilterList() as $facets) {
             foreach ($facets as $facet) {
                 if (
                     in_array(
@@ -591,7 +593,11 @@ class Params extends \VuFind\Search\Solr\Params
     {
         // We used to include the tie breaker in all sort options, so strip it out before doing anything else so that
         // any saved searches or links containing it still work properly and display the correct value:
-        if ($sort && ($tieBreaker = $this->getOptions()->getSortTieBreaker())) {
+        if (
+            $sort
+            && is_callable([$this->getOptions(), 'getSortTieBreaker'])
+            && ($tieBreaker = $this->getOptions()->getSortTieBreaker())
+        ) {
             if (str_ends_with($sort, ",$tieBreaker")) {
                 $sort = substr($sort, 0, -strlen($tieBreaker) - 1);
             }

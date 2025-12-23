@@ -25,8 +25,8 @@
     // of the suppressed query:
     $extraUrlFields = $results->getUrlQuery()->getParamsWithConfiguredDefaults();
   ?>
-  <div aria-label="<?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?>" class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
-    <div class="side-facets-header-container">
+  <div class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
+    <div class="mobile-navigation-header-container">
       <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
         <?=$this->component(
@@ -38,9 +38,10 @@
         ]
   );
         ?>
-        <?php endif; ?>
-        <button class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button><?php endif; ?>
+      <?php endif; ?>
+      <button class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
     </div>
+<?php endif; ?>
 <?php $checkboxFilters = $params->getCheckboxFacets(); ?>
 <?php $checkboxesShown = false; ?>
 <?php if (count($checkboxFilters) > 0):
@@ -52,12 +53,12 @@
     }
   ?>
   <?php if ($checkboxesShown): ?>
-    <fieldset>
-      <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
-      <div class="checkbox-filters">
+    <div class="checkbox-filters">
+      <fieldset>
+        <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
         <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results, 'counts' => false]); ?>
-      </div>
-    </fieldset>
+      </fieldset>
+    </div>
   <?php endif; ?>
 <?php endif; ?>
 <?php $extraFilters = $this->extraSideFacetFilters ?? []; ?>
@@ -105,7 +106,8 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
         <span class="facet-title"><?=$this->transEsc($facetName)?></span>
         <?=$this->icon('collapse', 'facet-title-icon') ?>
       </button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' show' : '';?>" data-facet="<?=$escAttrField ?>">
+      <div id="facet-title-<?=$escAttrField?>" class="visually-hidden" aria-hidden="true"><?=$this->transEsc($facetName)?></div>
+      <div id="<?=$dataTarget?>" aria-labelledby="facet-title-<?=$escAttrField?>" role="group" class="collapse<?= !$isCollapsed ? ' show' : '';?>" data-facet="<?=$escAttrField ?>">
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
         <div class="facet-load-indicator hidden">
           <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -98,7 +98,7 @@ class ReservationListController extends AbstractBase
      *
      * @return mixed The value of the specified parameter.
      */
-    protected function getParam(string $param, mixed $default = null): mixed
+    protected function getParamFromRequest(string $param, mixed $default = null): mixed
     {
         return $this->params()->fromRoute($param)
             ?? $this->params()->fromPost($param)
@@ -134,10 +134,10 @@ class ReservationListController extends AbstractBase
         }
         $view = $this->createViewModel(
             [
-                'institution' => $this->getParam('institution'),
-                'listIdentifier' => $this->getParam('listIdentifier'),
-                'recordId' => $this->getParam('recordId'),
-                'source' => $this->getParam('source'),
+                'institution' => $this->getParamFromRequest('institution'),
+                'listIdentifier' => $this->getParamFromRequest('listIdentifier'),
+                'recordId' => $this->getParamFromRequest('recordId'),
+                'source' => $this->getParamFromRequest('source'),
             ]
         );
         $driver = $this->getRecordLoader()->load(
@@ -153,7 +153,7 @@ class ReservationListController extends AbstractBase
         if (!$listHandler->isEnabled()) {
             throw new \VuFind\Exception\Forbidden('Record is not allowed in the list');
         }
-        $lists = $this->reservationListService->getListsNotContainingRecord(
+        $listEntities = $this->reservationListService->getListsNotContainingRecord(
             $user,
             $driver,
             $listHandler->getIdentifier(),
@@ -167,8 +167,8 @@ class ReservationListController extends AbstractBase
         );
         // Filter out already ordered lists
         $view->listEntities = array_filter(
-            $lists,
-            fn ($list) => !$list->getOrdered()
+            $listEntities,
+            fn ($listEntity) => !$listEntity->getOrdered()
         );
         $view->listHandler = $listHandler;
         if ($this->formWasSubmitted('list_selected')) {
@@ -183,7 +183,7 @@ class ReservationListController extends AbstractBase
                 $user,
                 $driver,
             );
-            $view->setTemplate('reservationlist/postadditem');
+            $view->setTemplate('reservationlist/post-action-template');
             $view->listEntity = $listEntity;
             return $view;
         }
@@ -207,10 +207,10 @@ class ReservationListController extends AbstractBase
 
         $view = $this->createViewModel(
             [
-                'source' => $this->getParam('source'),
-                'recordId' => $this->getParam('recordId'),
-                'institution' => $this->getParam('institution'),
-                'listIdentifier' => $this->getParam('listIdentifier'),
+                'source' => $this->getParamFromRequest('source'),
+                'recordId' => $this->getParamFromRequest('recordId'),
+                'institution' => $this->getParamFromRequest('institution'),
+                'listIdentifier' => $this->getParamFromRequest('listIdentifier'),
             ]
         );
         $listHandler = $this->reservationListService->getListHandler(
@@ -233,20 +233,20 @@ class ReservationListController extends AbstractBase
                 $this->flashMessenger()->addErrorMessage('csrf_validation_failed');
                 return $view;
             }
-            $title = $this->getParam('title');
+            $title = $this->getParamFromRequest('title');
             if (!$title) {
                 return $view;
             }
-            $list = $this->reservationListService->createListForUser($user);
+            $listEntity = $this->reservationListService->createListForUser($user);
             $newListValues = [
                 'title' => $title,
-                'desc' => $this->getParam('desc'),
+                'desc' => $this->getParamFromRequest('desc'),
                 'institution' => $listHandler->getInstitution(),
                 'listIdentifier' => $listHandler->getIdentifier(),
                 'connection' => $listHandler->getConnectionType(),
             ];
             $this->reservationListService->updateListFromRequest(
-                $list,
+                $listEntity,
                 $user,
                 $newListValues
             );
@@ -270,7 +270,7 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
         try {
-            $list = $this->reservationListService->getListById(
+            $listEntity = $this->reservationListService->getListById(
                 $this->getParam('listId'),
                 $user
             );
@@ -278,12 +278,12 @@ class ReservationListController extends AbstractBase
             return $this->redirect()->toRoute('reservationlist-displaylists');
         }
         $listHandler = $this->reservationListService->getListHandler(
-            $list->getInstitution(),
-            $list->getListConfigIdentifier()
+            $listEntity->getInstitution(),
+            $listEntity->getListConfigIdentifier()
         );
         $results = $this->getListAsResults();
         $viewParams = [
-            'listEntity' => $list,
+            'listEntity' => $listEntity,
             'listHandler' => $listHandler,
             'results' => $results,
             'params' => $results->getParams(),
@@ -339,14 +339,14 @@ class ReservationListController extends AbstractBase
         }
 
         $listId = $this->getParam('listId');
-        $list = $this->reservationListService->getListById($listId, $user);
-        if ($list->getOrdered()) {
+        $listEntity = $this->reservationListService->getListById($listId, $user);
+        if ($listEntity->getOrdered()) {
             throw new \VuFind\Exception\Forbidden('List already ordered');
         }
 
         $listHandler = $this->reservationListService->getListHandler(
-            $list->getInstitution(),
-            $list->getListConfigIdentifier()
+            $listEntity->getInstitution(),
+            $listEntity->getListConfigIdentifier()
         );
         if (!$listHandler->isEnabled()) {
             throw new \VuFind\Exception\Forbidden('ReservationList: No list properties found.');
@@ -360,7 +360,7 @@ class ReservationListController extends AbstractBase
         }
         $request = $this->getRequest();
         $orderSpecificValues = $listHandler->getValuesForListOrder(
-            $list,
+            $listEntity,
             $user,
             $request->isGet() ? $request->getQuery()->toArray() : $request->getPost()->toArray()
         );
@@ -380,7 +380,8 @@ class ReservationListController extends AbstractBase
         }
         $result = $listHandler->placeOrder($orderSpecificValues, $user);
         if ($result['success']) {
-            $this->reservationListService->setListOrdered($user, $list, $result);
+            $this->reservationListService->setListOrdered($user, $listEntity, $result);
+            $this->flashMessenger()->addInfoMessage('ReservationList::after_order_instructions');
             $this->flashMessenger()->addSuccessMessage($form->getSubmitResponse());
             return $this->getRefreshResponse();
         }
@@ -405,8 +406,8 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $institution = $this->getParam('institution');
-        $listIdentifier = $this->getParam('listIdentifier');
+        $institution = $this->getParamFromRequest('institution');
+        $listIdentifier = $this->getParamFromRequest('listIdentifier');
         $listHandler = $this->reservationListService->getListHandler(
             $institution,
             $listIdentifier
@@ -470,8 +471,9 @@ class ReservationListController extends AbstractBase
 
             $params = new Parameters(['list' => $listEntity->getId()]);
             $this->reservationListService->saveRecordToReservationList($params, $user, $driver);
-            $view->setTemplate('reservationlist/postadditem');
+            $view->setTemplate('reservationlist/post-action-template');
             $view->listEntity = $listEntity;
+            $view->listHandler = $listHandler;
             $view->driver = $driver;
             return $view;
         }
@@ -493,11 +495,11 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $listID = $this->getParam('listId');
-        if ($this->getParam('confirm')) {
+        $listID = $this->getParamFromRequest('listId');
+        if ($this->getParamFromRequest('confirm')) {
             try {
-                $list = $this->reservationListService->getListById((int)$listID, $user);
-                $this->reservationListService->destroyList($list, $user);
+                $listEntity = $this->reservationListService->getListById((int)$listID, $user);
+                $this->reservationListService->destroyList($listEntity, $user);
                 $this->flashMessenger()->addSuccessMessage('ReservationList::List deleted');
             } catch (LoginRequiredException | ListPermissionException $e) {
                 if ($user == false) {
@@ -534,16 +536,16 @@ class ReservationListController extends AbstractBase
             return $this->forceLogin();
         }
 
-        $listID = $this->getParam('listID', false);
+        $listID = $this->getParamFromRequest('listID', false);
         if (false === $listID) {
             throw new \Exception('List ID not defined in deleteBulkAction');
         }
         $ids = $this->getSelectedIds();
-        $list = $this->reservationListService->getListById($listID, $user);
+        $listEntity = $this->reservationListService->getListById($listID, $user);
         $viewParams = [
             'resource_ids' => $ids,
             'resources' => $this->getRecordLoader()->loadBatch($ids),
-            'list' => $list,
+            'list' => $listEntity,
         ];
         if ($this->formWasSubmitted()) {
             if (!$this->validateCsrf()) {
@@ -552,7 +554,7 @@ class ReservationListController extends AbstractBase
             }
             $this->reservationListService->deleteResourcesFromList(
                 $this->getSelectedIds(),
-                $list,
+                $listEntity,
                 $user
             );
             // Redirect to MyResearch home
@@ -578,9 +580,9 @@ class ReservationListController extends AbstractBase
         if (!$user) {
             return $this->forceLogin();
         }
-        $lists = $this->reservationListService->getReservationListsForUser($user);
+        $listEntities = $this->reservationListService->getReservationListsForUser($user);
         $view = $this->createViewModel(
-            ['listEntities' => $lists]
+            ['listEntities' => $listEntities]
         );
         return $view;
     }
@@ -612,7 +614,7 @@ class ReservationListController extends AbstractBase
         $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);
         // Set up listener for recommendations:
         $rManager = $this->getService(\VuFind\Recommend\PluginManager::class);
-        $setupCallback = function ($runner, $params, $searchId) use ($rManager) {
+        $setupCallback = function ($runner, $params, $searchId) use ($rManager): void {
             $listener = new \VuFind\Search\RecommendListener($rManager, $searchId);
             $listener->setConfig(
                 $params->getOptions()->getRecommendationSettings()
@@ -621,5 +623,23 @@ class ReservationListController extends AbstractBase
         };
 
         return $runner->run($request, 'ReservationList', $setupCallback);
+    }
+
+    /**
+     * Get the url parameters
+     *
+     * @param string $param          A key to check the url params for.
+     * @param bool   $prioritizePost If true, check the POST params first
+     * @param mixed  $default        Value to return if no param found. Default is null.
+     *
+     * @return mixed
+     */
+    protected function getParam($param, $prioritizePost = true, $default = null)
+    {
+        $result = parent::getParam($param, $prioritizePost, $default);
+        if ($default === $result) {
+            return $this->params()->fromRoute($param) ?? $default;
+        }
+        return $result;
     }
 }

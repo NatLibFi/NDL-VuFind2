@@ -3,7 +3,7 @@
 /**
  * Model for EAD3 records in Solr.
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
  * Copyright (C) The National Library of Finland 2012-2020.
@@ -28,7 +28,7 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -50,7 +50,7 @@ use function in_array;
  * @author   Luke O'Sullivan <l.osullivan@swansea.ac.uk>
  * @author   Lutz Biedinger <lutz.Biedinger@gmail.com>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 class SolrEad3 extends SolrEad
 {
@@ -238,14 +238,16 @@ class SolrEad3 extends SolrEad
         if (!isset($record->did)) {
             return [];
         }
-
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $preferredLangCodes = $this->mapLanguageCode($this->preferredLanguage);
 
         $isExternalUrl = function ($node) {
             $localtype = (string)$node->attributes()->localtype;
             return $localtype && in_array($localtype, self::EXTERNAL_DATA_URLS);
         };
-        $processURL = function ($node) use ($preferredLangCodes, $isExternalUrl, &$urls) {
+        $processURL = function ($node) use ($preferredLangCodes, $isExternalUrl, &$urls): void {
             $attr = $node->attributes();
             $role = (string)($attr->linkrole ?? '');
             if (
@@ -274,17 +276,20 @@ class SolrEad3 extends SolrEad
             $desc = $attr->linktitle ?? $node->descriptivenote->p ?? $url;
 
             if (!$this->urlBlocked($url, $desc)) {
-                $urlData = [
-                    'url' => $url,
-                    'desc' => (string)$desc,
-                    'linkType' => $linkType,
-                    'embed' => $embed,
-                ];
-                if ($preferredLang) {
-                    $urls['localeurls'][] = $urlData;
-                } else {
-                    $urls['urls'][] = $urlData;
+                if (!$this->maxAmountOfURLs()) {
+                    $urlData = [
+                        'url' => $url,
+                        'desc' => (string)$desc,
+                        'linkType' => $linkType,
+                        'embed' => $embed,
+                    ];
+                    if ($preferredLang) {
+                        $urls['localeurls'][] = $urlData;
+                    } else {
+                        $urls['urls'][] = $urlData;
+                    }
                 }
+                $this->urlsCount++;
             }
         };
 
@@ -300,11 +305,8 @@ class SolrEad3 extends SolrEad
             $processURL($dao);
         }
 
-        if (empty($urls)) {
-            return [];
-        }
-
-        return $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls']);
+        $this->cache[__FUNCTION__] = $this->resolveUrlTypes($urls['localeurls'] ?? $urls['urls'] ?? []);
+        return $this->cache[__FUNCTION__];
     }
 
     /**
@@ -960,20 +962,25 @@ class SolrEad3 extends SolrEad
             'fullres' => [],
         ];
         $xml = $this->getXmlRecord();
-        $addToResults = function ($imageData) use (&$result) {
-            $imageData = $this->ensureImageSizes($imageData);
-            $sizes = ['small', 'medium', 'large'];
-            $formatted = $imageData;
-            if (!empty($imageData['urls'])) {
-                foreach ($sizes as $size) {
-                    $from = $imageData['cacheSizes'][$size] ?? null;
-                    if ($from) {
-                        $formatted['pdf'][$size] = $imageData['pdf'][$from];
+        $addToResults = function ($imageData) use (&$result): void {
+            if (!$this->maxAmountOfImages()) {
+                $imageData = $this->ensureImageSizes($imageData);
+                $sizes = ['small', 'medium', 'large'];
+                $formatted = $imageData;
+                if (!empty($imageData['urls'])) {
+                    foreach ($sizes as $size) {
+                        $from = $imageData['cacheSizes'][$size] ?? null;
+                        if ($from) {
+                            $formatted['pdf'][$size] = $imageData['pdf'][$from];
+                        }
                     }
                 }
+                $formatted['downloadable'] = $this->allowRecordImageDownload($formatted);
+                $result['displayImages'][] = $formatted;
             }
-            $formatted['downloadable'] = $this->allowRecordImageDownload($formatted);
-            $result['displayImages'][] = $formatted;
+            if (!empty($imageData['urls'])) {
+                $this->imagesCount++;
+            }
         };
         $isExcludedFromOCR = function ($title) {
             foreach (self::EXCLUDE_OCR_TITLE_PARTS as $part) {
@@ -1019,8 +1026,14 @@ class SolrEad3 extends SolrEad
                         continue;
                     }
                     $show = (string)($attr->show ?? '');
+                    if ($show === 'none') {
+                        continue;
+                    }
+                    // If linkrole is set and has no implication of being an image or pdf file, skip it.
                     $role = (string)($attr->linkrole ?? '');
-                    if ($show === 'none' || $role === 'text/html') {
+                    $roleCheck = strtolower($role);
+                    $isPDF = $roleCheck === 'application/pdf';
+                    if ($roleCheck && !$isPDF && !str_starts_with($roleCheck, 'image/')) {
                         continue;
                     }
                     $type = (string)($attr->localtype ?? $parentType ?: 'none');
@@ -1045,11 +1058,13 @@ class SolrEad3 extends SolrEad
                     [,$format] = explode('/', $role . '/jpg');
                     // Image might be original, can not be displayed in browser.
                     if ($this->isUndisplayableFormat($format)) {
-                        $highResolution['original'][] = [
-                            'data' => [],
-                            'url' => $url,
-                            'format' => $format,
-                        ];
+                        if ($this->allowRecordImageDownload(compact('rights'))) {
+                            $highResolution['original'][] = [
+                                'data' => [],
+                                'url' => $url,
+                                'format' => $format,
+                            ];
+                        }
                         continue;
                     }
                     if (empty($displayImage)) {
@@ -1082,7 +1097,7 @@ class SolrEad3 extends SolrEad
                             ];
                         }
                         $displayImage['urls'][$size] = $url;
-                        $displayImage['pdf'][$size] = $role === 'application/pdf';
+                        $displayImage['pdf'][$size] = $isPDF;
                     }
                 }
                 if (!empty($displayImage)) {
@@ -1094,16 +1109,14 @@ class SolrEad3 extends SolrEad
             }
         }
 
-        if (!empty($images)) {
-            foreach ($images as $image) {
-                // If there is any leftover highresolution images,
-                // save them just in case
-                if (!empty($highResolution)) {
-                    $image['highResolution'] = $highResolution;
-                    $highResolution = [];
-                }
-                $addToResults($image);
+        foreach ($images as $image) {
+            // If there is any leftover highresolution images,
+            // save them just in case
+            if (!empty($highResolution)) {
+                $image['highResolution'] = $highResolution;
+                $highResolution = [];
             }
+            $addToResults($image);
         }
         if (!empty($ocrImages['items'])) {
             $this->sortImageUrls($ocrImages['items']);
@@ -1112,7 +1125,9 @@ class SolrEad3 extends SolrEad
         if (!empty($fullResImages['items'])) {
             $result['fullres'] = $fullResImages;
         }
-
+        $images = [];
+        $fullResImages = [];
+        $ocrImages = [];
         return $this->cache[$cacheKey] = $result;
     }
 
@@ -1288,7 +1303,7 @@ class SolrEad3 extends SolrEad
             $restrictions[$type] = [];
         }
 
-        $processNode = function ($access) use (&$restrictions) {
+        $processNode = function ($access) use (&$restrictions): void {
             $attr = $access->attributes();
             if (! isset($attr->encodinganalog)) {
                 $restrictions['general'] = array_merge(

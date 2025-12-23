@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2024.
+ * Copyright (C) The National Library of Finland 2016-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -27,21 +27,24 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OnlinePayment\Handler;
 
-use Finna\Db\Entity\FinnaTransactionEntityInterface;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Client;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Payment;
 use Finna\OnlinePayment\Handler\Connector\Cpu\Product;
+use Finna\OnlinePayment\Handler\Feature\OrganizationProductCodeMappingsTrait;
+use Laminas\Http\PhpEnvironment\Response;
+use VuFind\Db\Entity\PaymentEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\Type\AuditEventSubtype;
+use VuFind\Exception\PaymentException;
 
 use function count;
 use function in_array;
 use function intval;
-use function strlen;
 
 /**
  * CPU payment handler module.
@@ -53,10 +56,12 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
-class CPU extends AbstractBase
+class CPU extends \VuFind\OnlinePayment\Handler\AbstractBase
 {
+    use OrganizationProductCodeMappingsTrait;
+
     public const CPU_STATUS_SUCCESS = 1;
     public const CPU_STATUS_CANCELLED = 0;
     public const CPU_STATUS_PENDING = 2;
@@ -65,53 +70,50 @@ class CPU extends AbstractBase
     public const CPU_STATUS_INVALID_REQUEST = 99;
 
     /**
-     * Start transaction.
+     * Start payment.
      *
-     * @param string              $returnBaseUrl  Return URL
-     * @param string              $notifyBaseUrl  Notify URL
-     * @param UserEntityInterface $user           User
-     * @param array               $patron         Patron information
-     * @param string              $driver         Patron MultiBackend ILS source
-     * @param int                 $amount         Amount (excluding transaction fee)
-     * @param int                 $transactionFee Transaction fee
-     * @param array               $fines          Fines data
-     * @param string              $currency       Currency
-     * @param string              $paymentParam   Payment status URL parameter
+     * Starts payment with the payment service and redirects the user to the service.
      *
-     * @return string Error message on error, otherwise redirects to payment handler.
+     * @param string              $returnBaseUrl Return URL
+     * @param string              $notifyBaseUrl Notify URL
+     * @param UserEntityInterface $user          User
+     * @param array               $patron        Patron information
+     * @param int                 $amount        Amount (excluding service fee)
+     * @param array               $fines         Fines data
+     * @param string              $paymentParam  Payment status URL parameter
+     *
+     * @return Response
+     *
+     * @throws PaymentException
      */
     public function startPayment(
         string $returnBaseUrl,
         string $notifyBaseUrl,
         UserEntityInterface $user,
         array $patron,
-        string $driver,
         int $amount,
-        int $transactionFee,
         array $fines,
-        string $currency,
         string $paymentParam
-    ) {
-        $patronId = $patron['cat_username'];
-        $transactionId = $this->generateTransactionId($patronId);
+    ): Response {
+        $localIdentifier = $this->generateLocalIdentifier($patron);
 
         $returnUrl = $this->addQueryParams(
             $returnBaseUrl,
-            [$paymentParam => $transactionId]
+            [$paymentParam => $localIdentifier]
         );
         $notifyUrl = $this->addQueryParams(
             $notifyBaseUrl,
-            [$paymentParam => $transactionId]
+            [$paymentParam => $localIdentifier]
         );
 
-        $payment = new Payment($transactionId);
+        $paymentRequest = new Payment($localIdentifier);
         $email = trim($user->getEmail());
         if ($email) {
-            $payment->Email = $email;
+            $paymentRequest->Email = $email;
         }
         $lastname = $user->getLastname();
         if (!empty($user->getFirstname())) {
-            $payment->FirstName = $user->getFirstname();
+            $paymentRequest->FirstName = $user->getFirstname();
         } else {
             // We don't have both names separately, try to extract first name from
             // last name.
@@ -129,14 +131,14 @@ class CPU extends AbstractBase
             }
             $lastname = trim($lastname);
             $firstname = trim($firstname);
-            $payment->FirstName = empty($firstname) ? 'ei tietoa' : $firstname;
+            $paymentRequest->FirstName = empty($firstname) ? 'ei tietoa' : $firstname;
         }
-        $payment->LastName = empty($lastname) ? 'ei tietoa' : $lastname;
+        $paymentRequest->LastName = empty($lastname) ? 'ei tietoa' : $lastname;
 
         $lang = $this->getCurrentLanguageCode();
-        if (!empty($this->config->supportedLanguages)) {
+        if (!empty($this->paymentConfig['supportedLanguages'])) {
             $languageMappings = [];
-            foreach (explode(':', $this->config->supportedLanguages) as $item) {
+            foreach (explode(':', $this->paymentConfig['supportedLanguages']) as $item) {
                 $parts = explode('=', $item, 2);
                 if (count($parts) != 2) {
                     continue;
@@ -144,49 +146,19 @@ class CPU extends AbstractBase
                 $languageMappings[trim($parts[0])] = trim($parts[1]);
             }
             if (isset($languageMappings[$lang])) {
-                $payment->Language = $languageMappings[$lang];
+                $paymentRequest->Language = $languageMappings[$lang];
             }
         }
 
-        $payment->Description = $this->config->paymentDescription ?? '';
+        $paymentRequest->Description = $this->paymentConfig['paymentDescription'] ?? '';
 
-        $payment->ReturnAddress = $returnUrl;
-        $payment->NotificationAddress = $notifyUrl;
-
-        if (!isset($this->config->productCode)) {
-            $this->logPaymentError(
-                'missing productCode configuration option',
-                compact('user', 'patron', 'fines')
-            );
-            return '';
-        }
-        $productCode = $this->config->productCode;
-        $productCodeMappings = $this->getProductCodeMappings();
-        $organizationProductCodeMappings
-            = $this->getOrganizationProductCodeMappings();
+        $paymentRequest->ReturnAddress = $returnUrl;
+        $paymentRequest->NotificationAddress = $notifyUrl;
 
         foreach ($fines as $fine) {
             $fineType = $fine['fine'] ?? '';
             $fineOrg = $fine['organization'] ?? '';
-            $fineDesc = '';
-            if (!empty($fineType)) {
-                $fineDesc = $this->translator->translate("fine_status_$fineType");
-                if ("fine_status_$fineType" === $fineDesc) {
-                    $fineDesc = $this->translator->translate("status_$fineType");
-                    if ("status_$fineType" === $fineDesc) {
-                        $fineDesc = $fineType;
-                    }
-                }
-            }
-            if (!empty($fine['title'])) {
-                $fineDesc .= ' ('
-                    . mb_substr(
-                        $fine['title'],
-                        0,
-                        100 - 4 - strlen($fineDesc),
-                        'UTF-8'
-                    ) . ')';
-            }
+            $fineDesc = $this->getFineDescription($fine, 100);
             if ($fineDesc) {
                 // Get rid of characters that cannot be converted to ISO-8859-1 since
                 // CPU apparently can't handle them properly.
@@ -205,10 +177,9 @@ class CPU extends AbstractBase
                 $fineDesc = mb_substr($fineDesc, 0, 100, 'UTF-8');
             }
 
-            $code = $productCodeMappings[$fineType] ?? $productCode;
-            if (isset($organizationProductCodeMappings[$fineOrg])) {
-                $code = $organizationProductCodeMappings[$fineOrg]
-                    . ($productCodeMappings[$fineType] ?? '');
+            if (null === $code = $this->getFineProductCode($fine)) {
+                // Skip item if there's no product code
+                continue;
             }
             $code = mb_substr($code, 0, 25, 'UTF-8');
             $product = new Product(
@@ -217,17 +188,16 @@ class CPU extends AbstractBase
                 round($fine['balance']),
                 $fineDesc ?: null
             );
-            $payment = $payment->addProduct($product);
+            $paymentRequest = $paymentRequest->addProduct($product);
         }
-        if ($transactionFee) {
-            $code = $this->config->transactionFeeProductCode ?? $productCode;
+        if ($serviceFee = $this->getServiceFee()) {
             $product = new Product(
-                $code,
+                $this->getServiceFeeProductCode(),
                 1,
-                $transactionFee,
-                'Palvelumaksu / Serviceavgift / Transaction fee'
+                $serviceFee,
+                $this->translator->translate('Payment::Service Fee')
             );
-            $payment = $payment->addProduct($product);
+            $paymentRequest = $paymentRequest->addProduct($product);
         }
 
         if (!($module = $this->initCpu())) {
@@ -235,35 +205,35 @@ class CPU extends AbstractBase
                 'error initializing CPU online payment',
                 compact('user', 'patron', 'fines')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         try {
-            $response = $module->sendPayment($payment);
+            $response = $module->sendPayment($paymentRequest);
         } catch (\Exception $e) {
             $this->logPaymentError(
-                'exception sending payment: ' . $e->getMessage(),
-                compact('user', 'patron', 'fines', 'payment')
+                'Exception sending payment: ' . $e->getMessage(),
+                compact('user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
         if (isset($response['error']) || !$response) {
             $errorMessage = $response['error'] ?? 'sendPayment returned false';
             $this->logPaymentError(
-                'error sending payment: ' . $errorMessage,
-                compact('user', 'patron', 'fines', 'payment')
+                'Error sending payment: ' . $errorMessage,
+                compact('user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         $response = json_decode($response);
 
         if (empty($response->Id) || empty($response->Status)) {
             $this->logPaymentError(
-                'error starting payment, no response',
-                compact('user', 'patron', 'fines', 'payment')
+                'Error starting payment, no response',
+                compact('user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         $status = intval($response->Status);
@@ -274,112 +244,107 @@ class CPU extends AbstractBase
         if ($error) {
             // System error or Request failed.
             $this->logPaymentError(
-                'error starting transaction',
-                compact('response', 'user', 'patron', 'fines', 'payment')
+                'Error starting transaction',
+                compact('response', 'user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         $params = [
-            $transactionId, $status,
-            $response->Reference, $response->PaymentAddress,
+            $localIdentifier,
+            $status,
+            $response->Reference,
+            $response->PaymentAddress,
         ];
         if (!$this->verifyHash($params, $response->Hash)) {
             $this->logPaymentError(
-                'error starting transaction, invalid checksum',
-                compact('response', 'user', 'patron', 'fines', 'payment')
+                'Error starting transaction, invalid checksum',
+                compact('response', 'user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         if ($status === self::CPU_STATUS_SUCCESS) {
             // Already processed
             $this->logPaymentError(
-                'error starting transaction, transaction already processed',
-                compact('response', 'user', 'patron', 'fines', 'payment')
+                'Error starting transaction, transaction already processed',
+                compact('response', 'user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         if ($status === self::CPU_STATUS_ID_EXISTS) {
             // Order exists
             $this->logPaymentError(
-                'error starting transaction, order exists',
-                compact('response', 'user', 'patron', 'fines', 'payment')
+                'Error starting transaction, order exists',
+                compact('response', 'user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         if ($status === self::CPU_STATUS_CANCELLED) {
             // Cancelled
             $this->logPaymentError(
-                'error starting transaction, order cancelled',
-                compact('response', 'user', 'patron', 'fines', 'payment')
+                'Error starting transaction, order cancelled',
+                compact('response', 'user', 'patron', 'fines', 'paymentRequest')
             );
-            return '';
+            throw new PaymentException('Payment::error_payment_request_failed');
         }
 
         if ($status === self::CPU_STATUS_PENDING) {
             // Pending
-
-            $transaction = $this->createTransactionEntity(
-                $transactionId,
-                $driver,
-                $user,
-                $patronId,
-                $amount,
-                $transactionFee,
-                $currency,
-                $fines
-            );
-            if (!$transaction) {
-                return 'Could not create transaction';
-            }
-            $this->redirectToPayment($response->PaymentAddress, $transaction);
+            $payment = $this->createPaymentEntity($localIdentifier, null, $user, $patron, $amount, $fines);
+            return $this->redirectToPayment($response->PaymentAddress, $payment);
         }
-        return '';
+
+        $this->logPaymentError(
+            'Error starting transaction, order cancelled',
+            compact('response', 'user', 'patron', 'fines', 'paymentRequest')
+        );
+        throw new PaymentException('Payment::error_payment_request_failed');
     }
 
     /**
      * Process the response from payment service.
      *
-     * @param FinnaTransactionEntityInterface $transaction Transaction
-     * @param \Laminas\Http\Request           $request     Request
+     * Validates the response from the payment service and marks the payment as paid as appropriate.
+     * Registration with ILS happens elsewhere.
      *
-     * @return array One of the result codes defined in AbstractBase and bool
-     * indicating whether the transaction was just now marked as paid
+     * @param PaymentEntityInterface $payment Payment
+     * @param \Laminas\Http\Request  $request Request
+     *
+     * @return int One of the result codes defined in AbstractBase
+     *
+     * @throws PaymentException
      */
     public function processPaymentResponse(
-        FinnaTransactionEntityInterface $transaction,
+        PaymentEntityInterface $payment,
         \Laminas\Http\Request $request
-    ): array {
+    ): int {
         if (!($params = $this->getPaymentResponseParams($request))) {
-            return [self::PAYMENT_FAILURE, false];
+            throw new PaymentException('Could not get payment response params');
         }
 
         // Make sure the transaction IDs match:
-        if ($transaction->getTransactionIdentifier() !== $params['Id']) {
-            return [self::PAYMENT_FAILURE, false];
+        if ($payment->getLocalIdentifier() !== $params['Id']) {
+            throw new PaymentException('Payment Id mismatch');
         }
 
         $status = intval($params['Status']);
         if ($status === self::CPU_STATUS_SUCCESS) {
-            if ($marked = $transaction->isInProgress()) {
-                $transaction->setPaid();
-                $this->transactionService->persistEntity($transaction);
-            }
-            $this->addTransactionEvent($transaction, 'Transaction marked as paid');
-            return [self::PAYMENT_SUCCESS, $marked];
+            return self::PAYMENT_SUCCESS;
         } elseif ($status === self::CPU_STATUS_CANCELLED) {
-            $transaction->setCanceled();
-            $this->transactionService->persistEntity($transaction);
-            $this->addTransactionEvent($transaction, 'Transaction marked as canceled');
-            return [self::PAYMENT_CANCEL, false];
+            return self::PAYMENT_CANCEL;
         }
 
-        $this->logPaymentError("unknown status $status");
-        $this->addTransactionEvent($transaction, 'Received unknown status', ['status' => $status]);
-        return [self::PAYMENT_FAILURE, false];
+        $this->logPaymentError("Unknown status $status");
+        $this->addPaymentEvent(
+            $payment,
+            AuditEventSubtype::PaymentResponseHandler,
+            'Received unknown status',
+            ['status' => $status]
+        );
+        return self::PAYMENT_FAILURE;
     }
 
     /**
@@ -411,7 +376,7 @@ class CPU extends AbstractBase
             }
 
             $this->logPaymentError(
-                "missing parameter $name in payment response",
+                "Missing parameter $name in payment response",
                 compact('request', 'params', 'payload')
             );
 
@@ -425,7 +390,7 @@ class CPU extends AbstractBase
         ];
         if (!$this->verifyHash($hashParams, $response['Hash'])) {
             $this->logPaymentError(
-                'error processing response: invalid checksum',
+                'Error processing response: invalid checksum',
                 compact('request', 'params')
             );
             return false;
@@ -439,21 +404,21 @@ class CPU extends AbstractBase
      *
      * @return Client
      */
-    protected function initCpu()
+    protected function initCpu(): Client
     {
         foreach (['merchantId', 'secret', 'url'] as $req) {
-            if (!isset($this->config[$req])) {
-                $this->logger->err("missing parameter $req");
-                return false;
+            if (!isset($this->paymentConfig[$req])) {
+                $this->logPaymentError("Missing payment configuration $req");
+                throw new \Exception('Missing payment configuration');
             }
         }
 
         $module = new Client(
-            $this->config['url'],
-            $this->config['merchantId'],
-            $this->config['secret']
+            $this->paymentConfig['url'],
+            $this->paymentConfig['merchantId'],
+            $this->paymentConfig['secret']
         );
-        $module->setHttpService($this->http);
+        $module->setHttpService($this->httpService);
         $module->setLogger($this->logger);
         return $module;
     }
@@ -468,7 +433,7 @@ class CPU extends AbstractBase
      */
     protected function verifyHash($params, $hash)
     {
-        $params[] = $this->config['secret'];
+        $params[] = $this->paymentConfig['secret'];
         return hash('sha256', implode('&', $params)) === $hash;
     }
 }

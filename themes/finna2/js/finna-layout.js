@@ -89,7 +89,6 @@ finna.layout = (function finnaLayout() {
 
     var truncation = [];
     var rowHeight = [];
-    $(holder).find('.truncate-field').parent().attr('tabindex', '-1');
     $(holder).find('.truncate-field').not('.truncate-done').each(function handleTruncate(index) {
       var self = $(this);
       self.addClass('truncate-done');
@@ -177,18 +176,34 @@ finna.layout = (function finnaLayout() {
     }
   }
 
+  /**
+   * Return the container for side facets
+   * @returns {Element} The side facet container
+   */
+  function getSideFacetsContainer() {
+    if (document.body.classList.contains('template-name-mylist')) {
+      return document.querySelector('.mylist-bar.mobile-sidebar-container');
+    } else if (document.body.classList.contains('template-name-displaylist')) {
+      return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
+    }
+    return document.querySelector('.side-facets-container-ajax, .mobile-sidebar-container');
+  }
 
   /**
    * Check and keep focus within the search facet list
    * @param {object} e Event object
    */
   function onFocusOutOfFacetContainer(e) {
-    const container = document.querySelector('.side-facets-container-ajax');
-    if (!container.contains(e.relatedTarget)) {
+    const container = getSideFacetsContainer();
+    if (e.relatedTarget && !container.contains(e.relatedTarget)) {
       e.stopImmediatePropagation();
       e.preventDefault();
-      document.activeElement.blur();
-      container.focus();
+      setTimeout(() => {
+        document.activeElement.blur();
+        container.focus();
+      },
+      200
+      );
     }
   }
 
@@ -198,29 +213,28 @@ finna.layout = (function finnaLayout() {
    */
   function toggleMobileSidebar(e) {
     e.stopImmediatePropagation();
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
     if (sidebar) {
       sidebar.classList.toggle('open');
-      const container = document.querySelector('.side-facets-container-ajax');
-      document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
-        el.classList.toggle('hidden');
-      });
+      const container = getSideFacetsContainer();
       document.querySelector('body').classList.toggle('prevent-scroll');
       if (container) {
         if (sidebar.classList.contains('open')) {
           container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
+          container.role = 'dialog';
           container.ariaModal = true;
-          container.tabIndex = '0';
+          container.tabIndex = '-1';
           container.querySelector('h1').tabIndex = '0';
           document.activeElement.blur();
           container.querySelector('h1').focus();
         } else {
           container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
-          document.activeElement.blur();
-          document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
+          container.removeAttribute('role');
           container.removeAttribute('aria-modal');
           container.removeAttribute('tabindex');
           container.querySelector('h1').removeAttribute('tabindex');
+          document.activeElement.blur();
+          document.querySelector('.mobile-nav-toggle .btn-mobile-nav').focus();
         }
       }
     }
@@ -241,28 +255,17 @@ finna.layout = (function finnaLayout() {
    * Initialize mobile narrow search
    */
   function initMobileNarrowSearch() {
-    document.querySelectorAll('.mobile-navigation .sidebar-navigation, .js-mobile-list-navigation').forEach(el => {
-      el.addEventListener('click', toggleMobileSidebar);
-    });
-    const container = document.querySelector(".side-facets-container-ajax");
+    const container = getSideFacetsContainer();
     if (container) {
-      document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
+      document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('click', toggleMobileSidebar);
-      });
-      document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
         el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
           onKeyPressMobileSidebar(e);
         });
       });
     }
-    const filters = document.querySelector('.mobile-navigation .sidebar-navigation .active-filters');
-    if (filters) {
-      filters.addEventListener('click', function onClickMobileActiveFilters() {
-        document.querySelector('.sidebar').scrollTop(0);
-      });
-    }
-    const narrowSearchMobileTrigger = document.querySelector('.finna-search-filter-toggle-trigger');
-    const narrowSearchMobile = document.querySelector('.finna-search-filter-toggle');
+    const narrowSearchMobileTrigger = document.querySelector('.mobile-nav-toggle-trigger');
+    const narrowSearchMobile = document.querySelector('.mobile-nav-toggle');
     if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
       const narrowSearchMobileObserver = new IntersectionObserver(
         ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
@@ -273,6 +276,35 @@ finna.layout = (function finnaLayout() {
       );
       narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
     }
+  }
+
+  /**
+   * Focus to skip to content link after a facet is chosen
+   */
+  function initFocusAfterReload() {
+    const facetLinkElements = ['a.main-link', 'a.exclude', 'input.checkbox-filter', 'button.submit'];
+    if (window.sessionStorage.getItem('facetWasSelected')) {
+      setTimeout(() => {
+        if (document.activeElement) {
+          document.activeElement.blur();
+        }
+        const skipToButton = document.getElementById('skip-to-content');
+        if (skipToButton) {
+          skipToButton.focus();
+        }
+        window.sessionStorage.removeItem('facetWasSelected');
+      },
+      200);
+    }
+    document.querySelectorAll('.side-facets-container-ajax').forEach((facetContainer) => {
+      facetContainer.addEventListener('click', function saveFocusState(e) {
+        facetLinkElements.some((element => {
+          if (e.target.closest(element)) {
+            window.sessionStorage.setItem('facetWasSelected', true);
+          }
+        }));
+      });
+    });
   }
 
   /**
@@ -873,21 +905,25 @@ finna.layout = (function finnaLayout() {
       var play = self.find('.play');
       var source = self.find('source');
       play.one('click', function onPlay() {
-        finna.scriptLoader.loadInOrder(
+        finna.scriptLoader.load(
           scripts,
-          subScripts,
-          function onVideoJsLoaded() {
-            self.find('.audio-player-wrapper').removeClass('hide');
-            var audio = self.find('audio');
-            audio.removeClass('hide').addClass('video-js');
-            source.attr('src', source.data('src'));
-            videojs(
-              audio.attr('id'),
-              { controlBar: { volumePanel: false, muteToggle: false } },
-              function onVideoJsInited() {}
+          () => {
+            finna.scriptLoader.load(
+              subScripts,
+              function onVideoJsLoaded() {
+                self.find('.audio-player-wrapper').removeClass('hide');
+                var audio = self.find('audio');
+                audio.removeClass('hide').addClass('video-js');
+                source.attr('src', source.data('src'));
+                videojs(
+                  audio.attr('id'),
+                  { controlBar: { volumePanel: false, muteToggle: false } },
+                  function onVideoJsInited() {}
+                );
+                play.remove();
+                self.find('.vjs-play-control').focus();
+              }
             );
-            play.remove();
-            self.find('.vjs-play-control').focus();
           }
         );
       });
@@ -1207,6 +1243,7 @@ finna.layout = (function finnaLayout() {
       initHelpTabs();
       initPrintTriggers();
       initSelectAllButtonListeners();
+      initFocusAfterReload();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

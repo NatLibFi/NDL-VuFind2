@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Finna
@@ -277,7 +277,7 @@ $config = [
             'Finna\Controller\HoldsController' => 'VuFind\Controller\HoldsControllerFactory',
             'Finna\Controller\LibraryCardsController' => 'Finna\Controller\LibraryCardsControllerFactory',
             'Finna\Controller\L1Controller' => 'VuFind\Controller\AbstractBaseFactory',
-            'Finna\Controller\L1recordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
+            'Finna\Controller\L1RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             'Finna\Controller\ListController' => 'Finna\Controller\ListControllerFactory',
             'Finna\Controller\LocationServiceController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\MetaLibController' => 'VuFind\Controller\AbstractBaseFactory',
@@ -289,6 +289,7 @@ $config = [
             \Finna\Controller\RecordPreviewController::class => \VuFind\Controller\AbstractBaseFactory::class,
             'Finna\Controller\PrimoController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\PrimorecordController' => 'Finna\Controller\AbstractBaseFactory',
+            'Finna\Controller\RatingsController' => 'VuFind\Controller\AbstractBaseFactory',
             'Finna\Controller\RecordController' => 'Finna\Controller\AbstractBaseWithConfigFactory',
             \Finna\Controller\ReservationListController::class => \Finna\Controller\ReservationListControllerFactory::class,
             'Finna\Controller\RobotsController' => 'VuFind\Controller\AbstractBaseWithConfigFactory',
@@ -304,14 +305,12 @@ $config = [
             // Alias for the browse record route (that must not clash with normal
             // record route for getMatchedRouteName to return correct value):
             'BrowseRecord' => 'Record',
-            'Comments' => 'Finna\Controller\CommentsController',
-            'comments' => 'Finna\Controller\CommentsController',
             'FeedContent' => 'Finna\Controller\FeedContentController',
             'feedcontent' => 'Finna\Controller\FeedContentController',
             'L1' => 'Finna\Controller\L1Controller',
             'l1' => 'Finna\Controller\L1Controller',
-            'L1Record' => 'Finna\Controller\L1recordController',
-            'l1record' => 'Finna\Controller\L1recordController',
+            'L1Record' => 'Finna\Controller\L1RecordController',
+            'l1record' => 'Finna\Controller\L1RecordController',
             'ListPage' => 'Finna\Controller\ListController',
             'listpage' => 'Finna\Controller\ListController',
             'LocationService' => 'Finna\Controller\LocationServiceController',
@@ -334,6 +333,7 @@ $config = [
             'VuFind\Controller\CartController' => 'Finna\Controller\CartController',
             'VuFind\Controller\CombinedController' => 'Finna\Controller\CombinedController',
             'VuFind\Controller\CollectionController' => 'Finna\Controller\CollectionController',
+            'VuFind\Controller\CommentsController' => 'Finna\Controller\CommentsController',
             'VuFind\Controller\ContentController' => 'Finna\Controller\ContentController',
             'VuFind\Controller\CoverController' => 'Finna\Controller\CoverController',
             'VuFind\Controller\EdsController' => 'Finna\Controller\EdsController',
@@ -347,6 +347,7 @@ $config = [
             \VuFind\Controller\OAuth2Controller::class => \Finna\Controller\OAuth2Controller::class,
             'VuFind\Controller\PrimoController' => 'Finna\Controller\PrimoController',
             'VuFind\Controller\PrimorecordController' => 'Finna\Controller\PrimorecordController',
+            'VuFind\Controller\RatingsController' => 'Finna\Controller\RatingsController',
             'VuFind\Controller\RecordController' => 'Finna\Controller\RecordController',
             'VuFind\Controller\SearchController' => 'Finna\Controller\SearchController',
 
@@ -369,7 +370,6 @@ $config = [
         'factories' => [
             'Finna\AppBootstrapListener' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\Autocomplete\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
-            'Finna\Auth\ILSAuthenticator' => 'VuFind\Auth\ILSAuthenticatorFactory',
             'Finna\Auth\Manager' => 'VuFind\Auth\ManagerFactory',
             \Finna\Cart::class => \VuFind\CartFactory::class,
             'Finna\Cache\Manager' => 'VuFind\Cache\ManagerFactory',
@@ -390,14 +390,12 @@ $config = [
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
             'Finna\Mailer\Mailer' => 'VuFind\Mailer\Factory',
             'Finna\OAI\Server' => 'VuFind\OAI\ServerFactory',
-            'Finna\OnlinePayment\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
-            'Finna\OnlinePayment\OnlinePayment' => 'Finna\OnlinePayment\OnlinePaymentFactory',
-            'Finna\OnlinePayment\Receipt' => 'Finna\OnlinePayment\ReceiptFactory',
-            'Finna\OnlinePayment\Session' => 'Finna\OnlinePayment\OnlinePaymentSessionFactory',
             'Finna\OrganisationInfo\OrganisationInfo' => 'Finna\OrganisationInfo\OrganisationInfoFactory',
             'Finna\OrganisationInfo\Provider\Kirkanta' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
             'Finna\OrganisationInfo\Provider\MuseotFi' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
+            \Finna\Ratings\RatingsService::class => \VuFind\Ratings\RatingsServiceFactory::class,
             'Finna\Record\Loader' => 'Finna\Record\LoaderFactory',
+            \Finna\Record\ResourcePopulator::class => \VuFind\Record\ResourcePopulatorFactory::class,
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
@@ -427,7 +425,6 @@ $config = [
         'aliases' => [
             'VuFind\Autocomplete\PluginManager' => 'Finna\Autocomplete\PluginManager',
             'VuFind\Auth\Manager' => 'Finna\Auth\Manager',
-            'VuFind\Auth\ILSAuthenticator' => 'Finna\Auth\ILSAuthenticator',
             'VuFind\Cache\Manager' => 'Finna\Cache\Manager',
             \VuFind\Cart::class => \Finna\Cart::class,
             'VuFind\Config\SearchSpecsReader' => 'Finna\Config\SearchSpecsReader',
@@ -440,7 +437,9 @@ $config = [
             'VuFind\ILS\Connection' => 'Finna\ILS\Connection',
             'VuFind\Mailer\Mailer' => 'Finna\Mailer\Mailer',
             'VuFind\OAI\Server' => 'Finna\OAI\Server',
+            \VuFind\Ratings\RatingsService::class => \Finna\Ratings\RatingsService::class,
             'VuFind\Record\Loader' => 'Finna\Record\Loader',
+            \VuFind\Record\ResourcePopulator::class => \Finna\Record\ResourcePopulator::class,
             'VuFind\RecordTab\TabManager' => 'Finna\RecordTab\TabManager',
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
@@ -530,10 +529,6 @@ $config = [
                         'Finna\AjaxHandler\ReservationListFactory',
                     'Finna\AjaxHandler\ImportFavorites' =>
                         'Finna\AjaxHandler\ImportFavoritesFactory',
-                    'Finna\AjaxHandler\OnlinePaymentNotify' =>
-                        'Finna\AjaxHandler\AbstractOnlinePaymentActionFactory',
-                    'Finna\AjaxHandler\RegisterOnlinePayment' =>
-                        'Finna\AjaxHandler\AbstractOnlinePaymentActionFactory',
                     'Finna\AjaxHandler\SystemStatus' =>
                         'VuFind\AjaxHandler\SystemStatusFactory',
                     'Finna\AjaxHandler\WayfinderPlacementLinkLookup' =>
@@ -572,8 +567,6 @@ $config = [
                     'getUserList' => 'Finna\AjaxHandler\GetUserList',
                     'reservationList' => 'Finna\AjaxHandler\ReservationList',
                     'importFavorites' => 'Finna\AjaxHandler\ImportFavorites',
-                    'onlinePaymentNotify' => 'Finna\AjaxHandler\OnlinePaymentNotify',
-                    'registerOnlinePayment' => 'Finna\AjaxHandler\RegisterOnlinePayment',
                     'wayfinderPlacementLinkLookup' => 'Finna\AjaxHandler\WayfinderPlacementLinkLookup',
 
                     // Overrides:
@@ -609,158 +602,158 @@ $config = [
                 ],
             ],
             'content_description' => [],
-            'db_row' => [
-                'factories' => [
-                    'Finna\Db\Row\Comments' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\CommentsInappropriate' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\CommentsRecord' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\DueDateReminder' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\Fee' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaCache' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaFeedback' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaPageViewStats' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaRecordStats' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaRecordStatsLog' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaRecordView' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaRecordViewInstView' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaRecordViewRecord' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaRecordViewRecordFormat' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaRecordViewRecordRights' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\FinnaSessionStats' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\PrivateUser' => 'Finna\Db\Row\UserFactory',
-                    'Finna\Db\Row\Resource' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\Search' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\Session' => 'Finna\Db\Row\SessionFactory',
-                    'Finna\Db\Row\Transaction' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\TransactionEventLog' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\User' => 'Finna\Db\Row\UserFactory',
-                    'Finna\Db\Row\UserCard' => 'VuFind\Db\Row\RowGatewayFactory',
-                    'Finna\Db\Row\UserList' => 'VuFind\Db\Row\UserListFactory',
-                    \Finna\Db\Row\FinnaResourceList::class => \VuFind\Db\Row\RowGatewayFactory::class,
-                    \Finna\Db\Row\FinnaResourceListResource::class => \VuFind\Db\Row\RowGatewayFactory::class,
-                    'Finna\Db\Row\UserResource' => 'VuFind\Db\Row\RowGatewayFactory',
-                ],
+            'db_entity' => [
                 'aliases' => [
-                    'VuFind\Db\Row\Comments' => 'Finna\Db\Row\Comments',
-                    'VuFind\Db\Row\PrivateUser' => 'Finna\Db\Row\PrivateUser',
-                    'VuFind\Db\Row\Resource' => 'Finna\Db\Row\Resource',
-                    'VuFind\Db\Row\Search' => 'Finna\Db\Row\Search',
-                    'VuFind\Db\Row\Session' => 'Finna\Db\Row\Session',
-                    'VuFind\Db\Row\Transaction' => 'Finna\Db\Row\Transaction',
-                    'VuFind\Db\Row\User' => 'Finna\Db\Row\User',
-                    'VuFind\Db\Row\UserCard' => 'Finna\Db\Row\UserCard',
-                    'VuFind\Db\Row\UserList' => 'Finna\Db\Row\UserList',
-                    'VuFind\Db\Row\UserResource' => 'Finna\Db\Row\UserResource',
+                    \Finna\Db\Entity\CommentsEntityInterface::class
+                        => \Finna\Db\Entity\Comments::class,
+                    \Finna\Db\Entity\FinnaCacheEntityInterface::class
+                        => \Finna\Db\Entity\FinnaCache::class,
+                    \Finna\Db\Entity\FinnaCommentsInappropriateEntityInterface::class
+                        => \Finna\Db\Entity\FinnaCommentsInappropriate::class,
+                    \Finna\Db\Entity\FinnaCommentsRecordEntityInterface::class
+                        => \Finna\Db\Entity\FinnaCommentsRecord::class,
+                    \Finna\Db\Entity\FinnaDueDateReminderEntityInterface::class
+                        => \Finna\Db\Entity\FinnaDueDateReminder::class,
+                    \Finna\Db\Entity\FinnaFeedbackEntityInterface::class
+                        => \Finna\Db\Entity\FinnaFeedback::class,
+                    \Finna\Db\Entity\FinnaPageViewStatsEntityInterface::class
+                        => \Finna\Db\Entity\FinnaPageViewStats::class,
+                    \Finna\Db\Entity\FinnaRecordStatsLogEntityInterface::class
+                        => \Finna\Db\Entity\FinnaRecordStatsLog::class,
+                    \Finna\Db\Entity\FinnaRecordViewEntityInterface::class
+                        => \Finna\Db\Entity\FinnaRecordView::class,
+                    \Finna\Db\Entity\FinnaRecordViewInstitutionViewEntityInterface::class
+                        => \Finna\Db\Entity\FinnaRecordViewInstitutionView::class,
+                    \Finna\Db\Entity\FinnaRecordViewRecordEntityInterface::class
+                        => \Finna\Db\Entity\FinnaRecordViewRecord::class,
+                    \Finna\Db\Entity\FinnaRecordViewRecordFormatEntityInterface::class
+                        => \Finna\Db\Entity\FinnaRecordViewRecordFormat::class,
+                    \Finna\Db\Entity\FinnaRecordViewRecordRightsEntityInterface::class
+                        => \Finna\Db\Entity\FinnaRecordViewRecordRights::class,
+                    \Finna\Db\Entity\FinnaResourceListEntityInterface::class
+                        => \Finna\Db\Entity\FinnaResourceList::class,
+                    \Finna\Db\Entity\FinnaResourceListResourceEntityInterface::class
+                        => \Finna\Db\Entity\FinnaResourceListResource::class,
+                    \Finna\Db\Entity\FinnaSessionStatsEntityInterface::class
+                        => \Finna\Db\Entity\FinnaSessionStats::class,
+                    \Finna\Db\Entity\RatingsEntityInterface::class => \Finna\Db\Entity\Ratings::class,
+                    \Finna\Db\Entity\UserEntityInterface::class
+                        => \Finna\Db\Entity\User::class,
+                    \Finna\Db\Entity\UserCardEntityInterface::class
+                        => \Finna\Db\Entity\UserCard::class,
+                    \Finna\Db\Entity\UserListEntityInterface::class
+                        => \Finna\Db\Entity\UserList::class,
+                    \Finna\Db\Entity\UserResourceEntityInterface::class
+                        => \Finna\Db\Entity\UserResource::class,
 
-                    'commentsinappropriate' => 'Finna\Db\Row\CommentsInappropriate',
-                    'commentsrecord' => 'Finna\Db\Row\CommentsRecord',
-                    'duedatereminder' => 'Finna\Db\Row\DueDateReminder',
-                    'fee' => 'Finna\Db\Row\Fee',
-                    'finnacache' => 'Finna\Db\Row\FinnaCache',
-                    'transaction' => 'Finna\Db\Row\Transaction',
+                    // Overrides:
+                    \VuFind\Db\Entity\Comments::class => \Finna\Db\Entity\Comments::class,
+                    \VuFind\Db\Entity\Ratings::class => \Finna\Db\Entity\Ratings::class,
+                    \VuFind\Db\Entity\User::class => \Finna\Db\Entity\User::class,
+                    \VuFind\Db\Entity\UserCard::class => \Finna\Db\Entity\UserCard::class,
+                    \VuFind\Db\Entity\UserList::class => \Finna\Db\Entity\UserList::class,
+                    \VuFind\Db\Entity\UserResource::class => \Finna\Db\Entity\UserResource::class,
+                    \VuFind\Db\Entity\UserResourceEntityInterface::class => \Finna\Db\Entity\UserResource::class,
+                ],
+                'factories' => [
+                    \Finna\Db\Entity\Comments::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaCache::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaCommentsInappropriate::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaCommentsRecord::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaDueDateReminder::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaFeedback::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaPageViewStats::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaRecordStatsLog::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaRecordView::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaRecordViewInstitutionView::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaRecordViewRecord::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaRecordViewRecordFormat::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaRecordViewRecordRights::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaSessionStats::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\Ratings::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaResourceList::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\FinnaResourceListResource::class
+                        => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\User::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\UserCard::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\UserList::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
+                    \Finna\Db\Entity\UserResource::class => \Laminas\ServiceManager\Factory\InvokableFactory::class,
                 ],
             ],
             'db_service' => [
                 'factories' => [
-                    \Finna\Db\Service\CommentsService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
-                    \Finna\Db\Service\AccessTokenService::class => \VuFind\Db\Service\AccessTokenServiceFactory::class,
+                    \Finna\Db\Service\AccessTokenService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\CommentsService::class => \Finna\Db\Service\CommentsServiceFactory::class,
                     \Finna\Db\Service\FinnaCacheService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\FinnaCommentsRecordService::class
+                        => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaDueDateReminderService::class
                         => \VuFind\Db\Service\AbstractDbServiceFactory::class,
-                    \Finna\Db\Service\FinnaFeeService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaFeedbackService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\FinnaResourceListService::class
+                        => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\FinnaResourceListResourceService::class
+                        => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\FinnaStatisticsService::class
-                        => \VuFind\Db\Service\AbstractDbServiceFactory::class,
-                    \Finna\Db\Service\FinnaTransactionService::class
-                        => \VuFind\Db\Service\AbstractDbServiceFactory::class,
-                    \Finna\Db\Service\FinnaTransactionEventLogService::class
                         => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\RatingsService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\RecordService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
-                    \Finna\Db\Service\FinnaResourceListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
-                    \Finna\Db\Service\FinnaResourceListResourceService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\ResourceService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\SearchService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
+                    \Finna\Db\Service\SessionService::class => \Finna\Db\Service\SessionServiceFactory::class,
+                    \Finna\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardServiceFactory::class,
                     \Finna\Db\Service\UserListService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserResourceService::class => \VuFind\Db\Service\AbstractDbServiceFactory::class,
                     \Finna\Db\Service\UserService::class => \Finna\Db\Service\UserServiceFactory::class,
-                    \Finna\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardServiceFactory::class,
                 ],
                 'aliases' => [
+                    \Finna\Db\Service\AccessTokenServiceInterface::class => \Finna\Db\Service\AccessTokenService::class,
+                    \Finna\Db\Service\CommentsServiceInterface::class => \Finna\Db\Service\CommentsService::class,
+                    \Finna\Db\Service\FinnaCacheServiceInterface::class => \Finna\Db\Service\FinnaCacheService::class,
+                    \Finna\Db\Service\FinnaCommentsRecordServiceInterface::class
+                        => \Finna\Db\Service\FinnaCommentsRecordService::class,
+                    \Finna\Db\Service\FinnaDueDateReminderServiceInterface::class
+                        => \Finna\Db\Service\FinnaDueDateReminderService::class,
+                    \Finna\Db\Service\FinnaFeedbackServiceInterface::class
+                        => \Finna\Db\Service\FinnaFeedbackService::class,
+                    \Finna\Db\Service\FinnaResourceListServiceInterface::class
+                        => \Finna\Db\Service\FinnaResourceListService::class,
+                    \Finna\Db\Service\FinnaResourceListResourceServiceInterface::class
+                        => \Finna\Db\Service\FinnaResourceListResourceService::class,
+                    \Finna\Db\Service\FinnaStatisticsServiceInterface::class
+                        => \Finna\Db\Service\FinnaStatisticsService::class,
+                    \Finna\Db\Service\RatingsServiceInterface::class => \Finna\Db\Service\RatingsService::class,
+                    \Finna\Db\Service\RecordServiceInterface::class => \Finna\Db\Service\RecordService::class,
+                    \Finna\Db\Service\ResourceServiceInterface::class => \Finna\Db\Service\ResourceService::class,
+                    \Finna\Db\Service\SearchServiceInterface::class => \Finna\Db\Service\SearchService::class,
+                    \Finna\Db\Service\UserListServiceInterface::class => \Finna\Db\Service\UserListService::class,
+                    \Finna\Db\Service\UserResourceServiceInterface::class => \Finna\Db\Service\UserResourceService::class,
+                    \Finna\Db\Service\UserServiceInterface::class => \Finna\Db\Service\UserService::class,
+
+                    // Overrides:
+                    \VuFind\Db\Service\AccessTokenService::class => \Finna\Db\Service\AccessTokenService::class,
                     \VuFind\Db\Service\CommentsService::class => \Finna\Db\Service\CommentsService::class,
                     \VuFind\Db\Service\RatingsService::class => \Finna\Db\Service\RatingsService::class,
                     \VuFind\Db\Service\RecordService::class => \Finna\Db\Service\RecordService::class,
+                    \VuFind\Db\Service\ResourceService::class => \Finna\Db\Service\ResourceService::class,
                     \VuFind\Db\Service\SearchService::class => \Finna\Db\Service\SearchService::class,
+                    \VuFind\Db\Service\SessionService::class => \Finna\Db\Service\SessionService::class,
+                    \VuFind\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardService::class,
                     \VuFind\Db\Service\UserListService::class => \Finna\Db\Service\UserListService::class,
                     \VuFind\Db\Service\UserResourceService::class => \Finna\Db\Service\UserResourceService::class,
                     \VuFind\Db\Service\UserService::class => \Finna\Db\Service\UserService::class,
-                    \VuFind\Db\Service\UserCardService::class => \Finna\Db\Service\UserCardService::class,
-                    \VuFind\Db\Service\AccessTokenService::class => \Finna\Db\Service\AccessTokenService::class,
-
-                    \Finna\Db\Service\FinnaCacheServiceInterface::class => \Finna\Db\Service\FinnaCacheService::class,
-                    \Finna\Db\Service\FinnaDueDateReminderServiceInterface::class
-                        => \Finna\Db\Service\FinnaDueDateReminderService::class,
-                    \Finna\Db\Service\FinnaFeeServiceInterface::class => \Finna\Db\Service\FinnaFeeService::class,
-                    \Finna\Db\Service\FinnaFeedbackServiceInterface::class
-                        => \Finna\Db\Service\FinnaFeedbackService::class,
-                    \Finna\Db\Service\FinnaRecordServiceInterface::class
-                        => \Finna\Db\Service\RecordService::class,
-                    \Finna\Db\Service\FinnaResourceListServiceInterface::class => \Finna\Db\Service\FinnaResourceListService::class,
-                    \Finna\Db\Service\FinnaResourceListResourceServiceInterface::class => \Finna\Db\Service\FinnaResourceListResourceService::class,
-                    \Finna\Db\Service\FinnaStatisticsServiceInterface::class
-                        => \Finna\Db\Service\FinnaStatisticsService::class,
-                    \Finna\Db\Service\FinnaTransactionServiceInterface::class
-                        => \Finna\Db\Service\FinnaTransactionService::class,
-                    \Finna\Db\Service\FinnaTransactionEventLogServiceInterface::class
-                        => \Finna\Db\Service\FinnaTransactionEventLogService::class,
-                ],
-            ],
-            'db_table' => [
-                'factories' => [
-                    'Finna\Db\Table\Comments' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\CommentsInappropriate' => 'Finna\Db\Table\CommentsInappropriateFactory',
-                    'Finna\Db\Table\CommentsRecord' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\DueDateReminder' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\Fee' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaCache' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaFeedback' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaPageViewStats' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaRecordStats' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaRecordStatsLog' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaRecordView' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaRecordViewInstView' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaRecordViewRecord' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaRecordViewRecordFormat' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaRecordViewRecordRights' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\FinnaSessionStats' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\Resource' => 'VuFind\Db\Table\ResourceFactory',
-                    'Finna\Db\Table\Search' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\Transaction' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\TransactionEventLog' => 'VuFind\Db\Table\GatewayFactory',
-                    'Finna\Db\Table\User' => 'VuFind\Db\Table\UserFactory',
-                    'Finna\Db\Table\UserList' => 'VuFind\Db\Table\GatewayFactory',
-                    \Finna\Db\Table\FinnaResourceList::class => \VuFind\Db\Table\GatewayFactory::class,
-                    \Finna\Db\Table\FinnaResourceListResource::class => \VuFind\Db\Table\GatewayFactory::class,
-                    'Finna\Db\Table\UserResource' => 'VuFind\Db\Table\GatewayFactory',
-                ],
-                'aliases' => [
-                    'VuFind\Db\Table\Comments' => 'Finna\Db\Table\Comments',
-                    'VuFind\Db\Table\Resource' => 'Finna\Db\Table\Resource',
-                    'VuFind\Db\Table\Search' => 'Finna\Db\Table\Search',
-                    'VuFind\Db\Table\User' => 'Finna\Db\Table\User',
-                    'VuFind\Db\Table\UserList' => 'Finna\Db\Table\UserList',
-                    'VuFind\Db\Table\UserResource' => 'Finna\Db\Table\UserResource',
-
-                    'commentsinappropriate' => 'Finna\Db\Table\CommentsInappropriate',
-                    'commentsrecord' => 'Finna\Db\Table\CommentsRecord',
-                    'duedatereminder' => 'Finna\Db\Table\DueDateReminder',
-                    'fee' => 'Finna\Db\Table\Fee',
-                    'finnafeedback' => 'Finna\Db\Table\FinnaFeedback',
-                    'finnacache' => 'Finna\Db\Table\FinnaCache',
-                    'finnapageviewstats' => 'Finna\Db\Table\FinnaPageViewStats',
-                    'finnarecordstats' => 'Finna\Db\Table\FinnaRecordStats',
-                    'finnarecordstatslog' => 'Finna\Db\Table\FinnaRecordStatsLog',
-                    'finnasessionstats' => 'Finna\Db\Table\FinnaSessionStats',
-                    'transaction' => 'Finna\Db\Table\Transaction',
                 ],
             ],
             'form_handler' => [
@@ -803,7 +796,21 @@ $config = [
                     'VuFind\ILS\Driver\SierraRest' => 'Finna\ILS\Driver\SierraRest',
                 ],
             ],
-            'onlinepayment_handler' => [ /* see Finna\OnlinePayment\Handler\PluginManager for defaults */ ],
+            'onlinepayment_handler' => [
+                'factories' => [
+                    \Finna\OnlinePayment\Handler\CPU::class => \VuFind\OnlinePayment\Handler\AbstractBaseFactory::class,
+                    \Finna\OnlinePayment\Handler\Paytrail::class
+                        => \VuFind\OnlinePayment\Handler\AbstractBaseFactory::class,
+                    \Finna\OnlinePayment\Handler\TurkuPaymentAPI::class
+                        => \VuFind\OnlinePayment\Handler\AbstractBaseFactory::class,
+                ],
+                'aliases' => [
+                    'CPU' => \Finna\OnlinePayment\Handler\CPU::class,
+                    'Paytrail' => \Finna\OnlinePayment\Handler\Paytrail::class,
+                    'PaytrailPaymentAPI' => \Finna\OnlinePayment\Handler\Paytrail::class,
+                    'TurkuPaymentAPI' => \Finna\OnlinePayment\Handler\TurkuPaymentAPI::class,
+                ],
+            ],
             'video_handler' => [ /* see Finna\Video\Handler\PluginManager for defaults */ ],
             'reservationlist_handler' => [ /* see Finna\ReservationList\Handler\PluginManager for defaults */ ],
             'recommend' => [
@@ -1132,6 +1139,17 @@ $config = [
                 'authenticationStrategy' => 'Finna\Role\PermissionProvider\AuthenticationStrategy',
 
                 'VuFind\Role\PermissionProvider\IpRange' => 'Finna\Role\PermissionProvider\IpRange',
+            ],
+        ],
+    ],
+
+    // Doctrine configuration:
+    'doctrine' => [
+        'driver' => [
+            'orm_default' => [
+                'drivers' => [
+                    'Finna\Db\Entity' => 'vufind_attribute_driver',
+                ],
             ],
         ],
     ],

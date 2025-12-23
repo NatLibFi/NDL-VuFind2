@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Database
@@ -30,12 +30,17 @@
 namespace Finna\Db\Service;
 
 use Closure;
+use Doctrine\ORM\EntityManager;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Config\AccountCapabilities;
+use VuFind\Db\Entity\PluginManager as EntityPluginManager;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Db\PersistenceManager;
 
+use function assert;
 use function in_array;
+use function is_int;
 
 /**
  * Database service for UserCard.
@@ -46,25 +51,39 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
-class UserCardService extends \VuFind\Db\Service\UserCardService
+class UserCardService extends \VuFind\Db\Service\UserCardService implements UserCardServiceInterface
 {
     /**
      * Constructor
      *
+     * @param EntityManager       $entityManager          Doctrine ORM entity manager
+     * @param EntityPluginManager $entityPluginManager    VuFind entity plugin manager
+     * @param PersistenceManager  $persistenceManager     Entity persistence manager
      * @param ILSAuthenticator    $ilsAuthenticator       ILS authenticator
      * @param AccountCapabilities $capabilities           Account capabilities configuration
      * @param Closure             $getLoginTargetPrefixes Callback for getting a list of active login target prefixes
      */
     public function __construct(
+        EntityManager $entityManager,
+        EntityPluginManager $entityPluginManager,
+        PersistenceManager $persistenceManager,
         ILSAuthenticator $ilsAuthenticator,
         AccountCapabilities $capabilities,
         protected Closure $getLoginTargetPrefixes
     ) {
-        parent::__construct($ilsAuthenticator, $capabilities);
+        parent::__construct(
+            $entityManager,
+            $entityPluginManager,
+            $persistenceManager,
+            $ilsAuthenticator,
+            $capabilities
+        );
     }
 
     /**
      * Get all library cards associated with the user.
+     *
+     * Finna: filters out cards for inactive login targets.
      *
      * @param UserEntityInterface|int $userOrId    User object or identifier
      * @param ?int                    $id          Optional card ID filter
@@ -90,5 +109,57 @@ class UserCardService extends \VuFind\Db\Service\UserCardService
             );
         }
         return $cards;
+    }
+
+    /**
+     * Get all library cards associated with the user.
+     *
+     * @param UserEntityInterface|int $userOrId    User object or identifier
+     * @param ?int                    $id          Optional card ID filter
+     * @param ?string                 $catUsername Optional catalog username filter
+     *
+     * @return UserCardEntityInterface[]
+     */
+    public function getAllLibraryCards(
+        UserEntityInterface|int $userOrId,
+        ?int $id = null,
+        ?string $catUsername = null
+    ): array {
+        return parent::getLibraryCards($userOrId, $id, $catUsername);
+    }
+
+    /**
+     * Verify that the user's current ILS settings exist in their library card data
+     * (if enabled) and are up to date. Designed to be called after updating the
+     * user row; will create or modify library card rows as needed.
+     *
+     * @param UserEntityInterface|int $userOrId User object or identifier
+     *
+     * @return bool
+     * @throws \VuFind\Exception\PasswordSecurity
+     */
+    public function synchronizeUserLibraryCardData(UserEntityInterface|int $userOrId): bool
+    {
+        parent::synchronizeUserLibraryCardData($userOrId);
+
+        // Synchronize due date reminder setting
+        if (!$this->capabilities->libraryCardsEnabled()) {
+            return true; // success, because there's nothing to do
+        }
+        $user = is_int($userOrId)
+            ? $this->getDbService(UserServiceInterface::class)->getUserById($userOrId) : $userOrId;
+        assert($user instanceof \Finna\Db\Entity\UserEntityInterface);
+        if (!$user->getCatUsername()) {
+            return true; // success, because there's nothing to do
+        }
+        $cards = $this->getLibraryCards($user, catUsername: $user->getCatUsername());
+        if (!($card = reset($cards))) {
+            // This should never happen!
+            return true;
+        }
+        $card->setFinnaDueDateReminder($user->getFinnaDueDateReminder());
+
+        $this->persistEntity($card);
+        return true;
     }
 }

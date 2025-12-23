@@ -11,7 +11,10 @@
          <span class="linked-event-field hidden"> <span class="linked-event-price"></span></span>
          <span class="linked-event-field hidden"><?=$this->icon('linked-event-audience') ?> <span class="linked-event-audience"></span></span>
       </span>
-      <img class="linked-event-image" alt="">
+      <div class="linked-event-image-container">
+         <img class="linked-event-image" alt="">
+         <div class="hidden js-linked-event-image-photographer"><?=$this->transEsc('Source')?>: <span class="js-linked-event-photographer-name"></span></div>
+      </div>
       <b><div class="linked-event-short_description"></div></b>
       <div class="linked-event-description"></div>
       <div class="linked-event-keywords"></div>

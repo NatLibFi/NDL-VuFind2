@@ -1,7 +1,5 @@
 <!-- START of: finna - myresearch/checkedout.phtml -->
 <?php
-  // Set up page title:
-  $this->headTitle($this->translate('Checked Out Items'));
   $this->layout()->finnaUserAccountHeading = 'useraccount-content-heading';
 
   // Set up breadcrumbs:
@@ -29,8 +27,8 @@
     <div class="useraccount-row">
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
-    <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
-      <h2><?=$this->transEsc('Your Checked Out Items')?> (<?=$totalCount?>)</h2>
+    <div id="useraccount-content-heading" class="useraccount-header">
+      <?=$this->component('page-title', ['title' => $this->translate('Your Checked Out Items') . " ($totalCount)", 'headTitle' => $this->translate('Checked Out Items')]);?>
       <?php if (!$this->translationEmpty('tooltip_myaccount_checked_out_html')): ?>
         <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_checked_out_html') ?>"><?=$this->icon('help') ?></button>
       <?php endif; ?>
@@ -42,6 +40,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
+      <?=$this->methodTimedBlocks('Renewals')?>
       <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkedout-pre-list')): ?>
         <div class="checkedout-pre-list"><?=$this->render($template)?></div>
       <?php endif; ?>

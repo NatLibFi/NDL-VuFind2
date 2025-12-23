@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -309,7 +309,7 @@ class AuthorityHelper
         $results = $this->searchRunner->run(
             [],
             'Solr',
-            function ($runner, $params, $searchId) use ($onlyCount, $query) {
+            function ($runner, $params, $searchId) use ($onlyCount, $query): void {
                 $params->setLimit($onlyCount ? 0 : 100);
                 $params->setPage(1);
                 $params->addFilter($query);

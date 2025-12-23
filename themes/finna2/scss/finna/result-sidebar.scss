@@ -1,7 +1,7 @@
 //== Styling Finna sidebar checkbox filters
 #sidebar .checkbox-filters {
   padding: 0px;
-  margin: 10px 0 15px;
+  margin: 5px 0 10px;
 
   @extend .checkbox-container;
 
@@ -14,22 +14,34 @@
     &.blender-backend-secondary {
       margin-bottom: 1.5em;
     }
-  }
-  label {
-    margin-left: 0px;
-    line-height: 1em;
-  }
-  label:before {
-    margin-right: 5px;
-    margin-left: -22px;
+    display: flex;
+    gap: 10px;
+    > div {
+      margin-left: 0px;
+      display: flex;
+      width: 100%;
+      justify-content: space-between;
+      &:before {
+        margin-right: 5px;
+        margin-left: -22px;
+      }
+    }
   }
   .badge {
     margin-top: 4px;
-    @include media-breakpoint-between(sm, md) {
-      max-width: 56px;
+  }
+  input[type="checkbox"] {
+    min-width: 16px;
+  }
+  @include media-breakpoint-between(sm, md) {
+    .badge {
+      max-width: 100px;
       overflow: hidden;
       text-overflow: ellipsis;
       margin-right: 6px;
+    }
+    .checkbox > div {
+      flex-wrap: wrap;
     }
   }
 }
@@ -59,7 +71,7 @@
   }
 }
 
-.sidebar :not(.recordProvidedBy) .side-facets-header-container,
+.sidebar :not(.recordProvidedBy) .mobile-navigation-header-container,
 .sidebar > h1,
 .sidebar > h2 {
   margin-bottom: 5px;
@@ -77,7 +89,7 @@
     }
   }
 }
-.sidebar .side-facets-header-container {
+.sidebar .mobile-navigation-header-container {
   width: 100%;
   display: flex;
   justify-content: space-between;
@@ -93,6 +105,11 @@
     color: $sidebar-header-text-color;
     border: none;
     font-size: 1.2rem;
+  }
+}
+.mylist-bar, .reservationlist-bar {
+  h1.mobile-navigation-header {
+    text-transform: none;
   }
 }
 
@@ -162,15 +179,6 @@ button.list-group-item {
     a {
       line-height: 1em;
     }
-    .open-link a {
-      line-height: normal;
-      i {
-        color: mix(#ffffff, $action-link-color, 22%);
-        :before {
-          vertical-align: middle;
-        }
-      }
-    }
     .more-link, .less-link, .less-link-top {
       padding-left: 10px;
     }
@@ -182,7 +190,7 @@ button.list-group-item {
 
 .similar-records,
 .related-records,
-.similar-records, .work-expressions {
+.work-expressions {
   .list-group-item {
     border: $sidebar-border;
   }

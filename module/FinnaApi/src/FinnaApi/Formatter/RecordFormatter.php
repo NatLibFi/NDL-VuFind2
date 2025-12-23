@@ -30,9 +30,11 @@
 
 namespace FinnaApi\Formatter;
 
+use Finna\RecordDriver\RenderContext;
 use Laminas\View\HelperPluginManager;
 
 use function count;
+use function in_array;
 use function is_array;
 
 /**
@@ -55,6 +57,13 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     protected $locale;
 
     /**
+     * Current record render context
+     *
+     * @var RenderContext
+     */
+    protected RenderContext $renderContext = RenderContext::RECORD;
+
+    /**
      * Constructor
      *
      * @param array               $recordFields  Record field definitions
@@ -71,6 +80,18 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
+     * Set current record render context
+     *
+     * @param string $context Render context
+     *
+     * @return void
+     */
+    public function setRecordRenderContext(string $context): void
+    {
+        $this->renderContext = RenderContext::tryFrom($context);
+    }
+
+    /**
      * Get extended image information
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
@@ -80,9 +101,8 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     protected function getExtendedImages($record)
     {
         $imageHelper = $this->helperManager->get('recordImage');
-        $recordHelper = $this->helperManager->get('record');
         $translate = $this->helperManager->get('translate');
-        $images = $imageHelper($recordHelper($record))->getAllImagesAsCoverLinks(
+        $images = $imageHelper(($this->helperManager->get('record'))($record))->getAllImagesAsCoverLinks(
             $this->locale,
             [],
             false,
@@ -115,6 +135,36 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
+     * Get amount of current images rendered if result does not contain all the results.
+     * This result will be added to the search result if any field related to images is being
+     * requested in search context.
+     *
+     * @param \VuFind\RecordDriver\SolrDefault $record Record driver
+     *
+     * @return string
+     */
+    public function getRecordImagesCountNotice($record): string
+    {
+        $imageRenderLimit = $record->tryMethod('getImagesRenderLimit');
+        $translate = $this->helperManager->get('translate');
+        $totalAmountOfImages = $record->tryMethod('getTotalAmountOfImages');
+        if (in_array($imageRenderLimit, [null, -1])) {
+            return '';
+        }
+        if ($imageRenderLimit < $totalAmountOfImages) {
+            return $translate(
+                'component_parts_entries_on_page',
+                [
+                        '_START_' => 1,
+                        '_END_' => $imageRenderLimit,
+                        '_TOTAL_' => $totalAmountOfImages,
+                    ]
+            );
+        }
+        return '';
+    }
+
+    /**
      * Get image rights
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
@@ -136,32 +186,11 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
      */
     protected function getImages($record)
     {
-        $images = [];
-        $imageHelper = $this->helperManager->get('recordImage');
-        $recordHelper = $this->helperManager->get('record');
-        $serverUrlHelper = $this->helperManager->get('serverUrl');
-        for (
-            $i = 0;
-            $i < $recordHelper($record)->getNumOfRecordImages('large', false);
-            $i++
-        ) {
-            $images[] = $serverUrlHelper()
-                . $imageHelper($recordHelper($record))
-                    ->getLargeImage($i, [], false, false);
-        }
-        if (empty($images) && $record->getCleanISBN()) {
-            $url = $imageHelper($recordHelper($record))
-                ->getLargeImage(0, [], true, false);
-            if ($url) {
-                $images[] = $url;
-            }
-        }
-        // Output relative Cover generator urls
-        foreach ($images as &$image) {
-            $parts = parse_url($image);
-            $image = $parts['path'] . '?' . $parts['query'];
-        }
-        return $images;
+        $images = $this->getExtendedImages($record);
+        return array_map(
+            fn ($url) => $url['urls']['large'],
+            $images
+        );
     }
 
     /**
@@ -403,5 +432,32 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
             $backend = '__primary__';
         }
         return $backend;
+    }
+
+    /**
+     * Format the results.
+     *
+     * @param array $results         Results to process (array of record drivers)
+     * @param array $requestedFields Fields to include in response
+     *
+     * @return array
+     */
+    public function format($results, $requestedFields)
+    {
+        if (
+            isset($this->recordFields['recordImagesCountNotice'])
+            && array_intersect($requestedFields, ['images', 'imagesExtended', 'imageRights'])
+            && !in_array('recordImagesCountNotice', $requestedFields)
+        ) {
+            $requestedFields[] = 'recordImagesCountNotice';
+        }
+        $results = array_map(
+            function ($record) {
+                $record->tryMethod('setRenderContext', [$this->renderContext->value]);
+                return $record;
+            },
+            $results
+        );
+        return parent::format($results, $requestedFields);
     }
 }

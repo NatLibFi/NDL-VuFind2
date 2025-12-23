@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Service
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command;
@@ -37,8 +37,6 @@ use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Service\UserListServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 
-use function get_class;
-
 /**
  * Abstract base class for a command that updates records.
  *
@@ -46,7 +44,7 @@ use function get_class;
  * @package  Service
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 abstract class AbstractRecordUpdateCommand extends Command
 {
@@ -77,20 +75,7 @@ abstract class AbstractRecordUpdateCommand extends Command
         if (null === $this->description) {
             throw new \Exception('description empty');
         }
-        $name = null;
-        if (empty($this->defaultName)) {
-            $className = get_class($this);
-            $parts = explode('\\', $className);
-            $name = strtolower(
-                preg_replace(
-                    '/(?<=[a-z])([A-Z])/',
-                    '-$1',
-                    array_pop($parts)
-                )
-            );
-            $name = strtolower(array_pop($parts)) . "/$name";
-        }
-        parent::__construct($name);
+        parent::__construct();
     }
 
     /**

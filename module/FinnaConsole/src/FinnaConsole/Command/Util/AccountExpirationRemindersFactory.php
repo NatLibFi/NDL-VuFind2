@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2024.
+ * Copyright (C) The National Library of Finland 2015-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Service
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
@@ -35,6 +35,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\AuditEventServiceInterface;
 use VuFind\Db\Service\ResourceServiceInterface;
 use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Db\Service\TagServiceInterface;
@@ -50,7 +51,7 @@ use VuFind\Mailer\Mailer;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class AccountExpirationRemindersFactory implements FactoryInterface
 {
@@ -73,7 +74,7 @@ class AccountExpirationRemindersFactory implements FactoryInterface
         $requestedName,
         ?array $options = null
     ) {
-        $configManager = $container->get(\VuFind\Config\PluginManager::class);
+        $configManager = $container->get(\VuFind\Config\ConfigManagerInterface::class);
 
         // We need to initialize the theme so that the view renderer works:
         $mainConfig = $configManager->get('config');
@@ -87,10 +88,11 @@ class AccountExpirationRemindersFactory implements FactoryInterface
             $dbServiceManager->get(ResourceServiceInterface::class),
             $dbServiceManager->get(UserListServiceInterface::class),
             $dbServiceManager->get(TagServiceInterface::class),
+            $dbServiceManager->get(AuditEventServiceInterface::class),
             $container->get('ViewRenderer'),
-            $configManager->get('datasources'),
+            $configManager->getConfigObject('datasources'),
             $container->get(Mailer::class),
-            $container->get(\Laminas\I18n\Translator\TranslatorInterface::class),
+            $container->get(\Laminas\Mvc\I18n\Translator::class),
             $configManager,
             ...($options ?? [])
         );

@@ -165,9 +165,6 @@
         display: block;
         padding: 10px 15px;
     }
-    .holdings-url-link {
-        display: block;
-    }
     .holdings-url-title {
         @extend .h4;
         font-weight: 500;
@@ -502,7 +499,11 @@
     }
     .header {
         margin-bottom: 6px;
-        span.icon {
+        font-weight: 600;
+        span:not(.icon) {
+            font-weight: 400;
+        }
+        .icon {
             vertical-align: baseline;
         }
         .info {
@@ -550,15 +551,6 @@
             .branch {
                 font-weight: 500;
             }
-            .groupLocation i {
-                margin-top: -2px
-            }
-        }
-    }
-    .header {
-        font-weight: 600;
-        span {
-            font-weight: 400;
         }
     }
     .actions {
