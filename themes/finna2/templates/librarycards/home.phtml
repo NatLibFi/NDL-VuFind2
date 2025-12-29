@@ -119,6 +119,9 @@
             <?php endforeach; ?>
           </tbody>
         </table>
+        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/librarycards-post-list')): ?>
+          <div class="librarycards-post-list"><?=$this->render($template)?></div>
+        <?php endif; ?>
       <?php endif; ?>
 
       <div>
@@ -127,9 +130,6 @@
         <?php endif; ?>
         <br>
         <br>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/librarycards-post-list')): ?>
-          <div class="librarycards-post-list"><?=$this->render($template)?></div>
-        <?php endif; ?>
       </div>
   </div>
 </div>

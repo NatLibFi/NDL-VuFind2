@@ -1,3 +1,4 @@
+<!-- START of: finna - ratings/userlist.phtml -->
 <?php
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
@@ -12,12 +13,20 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'usercontent']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <?=$this->component('page-title', ['title' => $this->translate('Ratings')]);?>
+  <div class="useraccount-header">
+    <?=$this->component('page-title', ['title' => $this->translate('Ratings')]);?>
+    <?php if (!$this->translationEmpty('tooltip_myaccount_ratings_html')): ?>
+      <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_ratings_html') ?>"><?=$this->icon('help') ?></button>
+    <?php endif; ?>
+  </div>
   <ul class="nav nav-tabs" role="tablist">
     <?php foreach ($tabs as $tab => $title): ?>
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='ratings' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
     <?php endforeach; ?>
   </ul>
+  <?php if ($template = $this->content()->findTemplateForLng('content/Additions/ratings-pre-list')): ?>
+    <div class="ratings-pre"><?=$this->render($template)?></div>
+  <?php endif; ?>
   <?php if (count($this->ratings) !== 0): ?>  
     <div><?=$this->transEsc('finna_nickname')?>: <?=$this->userPublicName($user);?></div>
     <nav class="search-header hidden-print">
@@ -124,8 +133,12 @@
         </tbody>
       </table>
     </form>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/ratings-post-list')): ?>
+      <div class="ratings-post"><?=$this->render($template)?></div>
+    <?php endif; ?>
   <?php else: ?>
     <?=$this->transEsc('No Ratings')?>
   <?php endif; ?>
   <?=$this->paginationControl($this->ratings, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params])?>
 </div>
+<!-- END of: finna - ratings/userlist.phtml -->

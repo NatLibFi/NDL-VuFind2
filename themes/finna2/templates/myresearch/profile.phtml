@@ -389,6 +389,9 @@
         <?php endif; ?>
       </div>
     </div>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/profile-post-list')): ?>
+      <div class="profile-post-list"><?=$this->render($template)?></div>
+    <?php endif; ?>
 
     <?php
       $proxyValues = [];
@@ -425,9 +428,6 @@
       <?php endif; ?>
     <?php endif; ?>
   </div>
-  <?php if ($template = $this->content()->findTemplateForLng('content/Additions/profile-post-list')): ?>
-    <div class="profile-post-list"><?=$this->render($template)?></div>
-  <?php endif; ?>
 </div>
 <?php if (isset($this->parent)): ?>
 <div>

@@ -58,6 +58,9 @@
     <?php endif; ?>
       <?php if (!empty($this->saved)): ?>
         <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => true]);?>
+        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-saved-post-list')): ?>
+          <div class="search-history-saved-post"><?=$this->render($template)?></div>
+        <?php endif; ?>
       <?php else: ?>
         <?=
           $loggedInUser
@@ -80,12 +83,12 @@
       <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => false]);?>
       <p class="text-right"><a href="?purge=true"><?=$this->icon('remove') ?> <?=$this->transEsc('history_purge')?></a></p>
       <br>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-recent-post-list')): ?>
+        <div class="search-history-recent-post"><?=$this->render($template)?></div>
+      <?php endif; ?>
     <?php else: ?>
       <h4><?=$this->transEsc('history_no_searches')?></h4>
       <br>
-    <?php endif; ?>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-post-list')): ?>
-      <div class="search-history-post"><?=$this->render($template)?></div>
     <?php endif; ?>
   </div>
 </div>

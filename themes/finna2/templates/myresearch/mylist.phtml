@@ -49,9 +49,6 @@
     </div>
     <div id="useraccount-content-heading" class="useraccount-header visually-hidden">
       <?=$this->component('page-title', ['title' => $this->translate('saved_items'), 'headTitle' => $this->translate('saved_items')])?>
-      <?php if (!$this->translationEmpty('tooltip_myaccount_mylist_favorites_html')): ?>
-        <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_mylist_favorites_html') ?>"><?=$this->icon('help') ?></button>
-      <?php endif; ?>
     </div>
   </div>
   <div class="useraccount-content">
@@ -64,8 +61,8 @@
       </div>
       <div class="useraccount-header">
         <h3 class="list-title"><span class="js-list-title"><?=$this->escapeHtml($list->getTitle())?></span><?=$this->icon('list-edit', ['class' => 'list-title-edit', 'aria-hidden' => 'false', 'aria-label' => $this->transEscAttr('edit')])?></h3>
-        <?php if (!$this->translationEmpty('tooltip_myaccount_mylist_all_favorites_html')): ?>
-          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_mylist_all_favorites_html') ?>"><?=$this->icon('help') ?></button></span>
+        <?php if (!$this->translationEmpty('tooltip_myaccount_mylist_favorites_html')): ?>
+          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_mylist_favorites_html') ?>"><?=$this->icon('help') ?></button></span>
         <?php endif; ?>
       </div>
       <?php if ($list && $user && $list->getUser()->getId() === $user->getId() && $list->isPublic()): ?>
@@ -169,12 +166,12 @@
           <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
         </div>
       </div>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/myresearch-favorites-post-list')): ?>
+        <div class="myresearch-favorites-post">
+          <?=$this->render($template)?>
+        </div>
+      <?php endif; ?>
     <?php endif;?>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/myresearch-favorites-post-list')): ?>
-      <div class="myresearch-favorites-post">
-        <?=$this->render($template)?>
-      </div>
-    <?php endif; ?>    
   </div>
   <?php if ($user && $list): ?>
     <form class="float-start delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
