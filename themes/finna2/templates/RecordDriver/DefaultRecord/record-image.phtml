@@ -4,22 +4,26 @@
   $formats = $this->driver->tryMethod('getFormats');
 ?>
 <div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>" aria-hidden="true">
-  <div class="recordcover-holder paginate"  data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
-    <?=
-      $this->record($this->driver)->renderTemplate(
-          'record-image-paginator.phtml',
-          [
-              'images' => $images,
-              'type' => $type,
-              'formats' => $formats,
-              'numOfImages' => $numOfImages ?? null,
-              'displayIcon' => $displayIcon ?? false,
-              'models' => $models ?? [],
-              'renderContext' => $this->renderContext ?? \Finna\RecordDriver\RenderContext::RECORD,
-          ]
-      )
-    ?>
-  </div>
+  <?php if ($this->leafletViewer): ?>
+    
+  <?php else: ?>
+    <div class="recordcover-holder paginate"  data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
+      <?=
+        $this->record($this->driver)->renderTemplate(
+            'record-image-paginator.phtml',
+            [
+                'images' => $images,
+                'type' => $type,
+                'formats' => $formats,
+                'numOfImages' => $numOfImages ?? null,
+                'displayIcon' => $displayIcon ?? false,
+                'models' => $models ?? [],
+                'renderContext' => $this->renderContext ?? \Finna\RecordDriver\RenderContext::RECORD,
+            ]
+        )
+      ?>
+    </div>
+  <?php endif; ?>
   <?php if (!$isList): ?>
     <?php $ind = 0; ?>
     <?php foreach ($images as $image): ?>

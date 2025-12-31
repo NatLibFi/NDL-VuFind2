@@ -917,4 +917,27 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         }
         return $response;
     }
+
+    /**
+     * Display record as modal content
+     *
+     * @return mixed
+     */
+    public function modalAction(): mixed
+    {
+        $index = $this->params()->fromQuery('index', 0);
+        $format = $this->params()->fromQuery('format');
+        $type = $this->params()->fromQuery('type');
+                // Set up next/previous record links (if appropriate)
+        if ($this->getSearchMemory()->getCurrentSearch()?->getOptions()?->resultScrollerActive()) {
+            $scrollData = $this->resultScroller()->getScrollData(
+                $this->loadRecord()
+            );
+        }
+
+        if (!$this->inLightbox()) {
+            return $this->redirect()->toRoute('record', [], ['force_canonical' => true]);
+        }
+        return $this->createViewModel(compact('index', 'format', 'scrollData'))->setTemplate('record/modal');
+    }
 }
