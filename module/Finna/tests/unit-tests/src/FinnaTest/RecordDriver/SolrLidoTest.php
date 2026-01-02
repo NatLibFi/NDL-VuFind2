@@ -57,7 +57,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 'getModels',
                 [
-                    2 => [
+                    [
                         'models' => [
                             [
                                 'url' => 'https://gltfmalli.gltf',

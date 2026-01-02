@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018-2019.
+ * Copyright (C) The National Library of Finland 2018-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use Finna\Record\XML\XmlReader;
+
 /**
  * Functions for reading XML records.
  *
@@ -36,7 +38,6 @@ namespace Finna\RecordDriver\Feature;
  *
  * @category VuFind
  * @package  RecordDrivers
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
@@ -44,11 +45,18 @@ namespace Finna\RecordDriver\Feature;
 trait FinnaXmlReaderTrait
 {
     /**
-     * XML record. Access only via getXMLRecord() as this is initialized lazily.
+     * XML record. Access only via getXmlRecord() as this is initialized lazily.
      *
      * @var \SimpleXMLElement
      */
     protected $lazyXmlRecord = null;
+
+    /**
+     * XML Reader. Access only via getXmlReader() as this is initialized lazily.
+     *
+     * @var XmlReader
+     */
+    protected ?XmlReader $lazyXmlReader = null;
 
     /**
      * Get access to the raw SimpleXMLElement object.
@@ -65,5 +73,18 @@ trait FinnaXmlReaderTrait
             }
         }
         return $this->lazyXmlRecord;
+    }
+
+    /**
+     * Get XmlReader.
+     *
+     * @return XmlReader
+     */
+    public function getXmlReader(): XmlReader
+    {
+        if (null === $this->lazyXmlReader) {
+            $this->lazyXmlReader = (new XmlReader())->parse($this->fields['fullrecord']);
+        }
+        return $this->lazyXmlReader;
     }
 }
