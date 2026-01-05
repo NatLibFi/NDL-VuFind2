@@ -33,7 +33,7 @@
 
 namespace Finna\RecordDriver;
 
-use Finna\Record\XML\XmlReader;
+use Finna\Record\XML\XMLReader;
 use VuFind\I18n\TranslatableString;
 
 use function boolval;
@@ -42,7 +42,6 @@ use function count;
 use function in_array;
 use function intval;
 use function is_array;
-use function is_string;
 use function strlen;
 
 /**
@@ -757,16 +756,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
                     $imageResult = array_merge($imageResult, $extraDetails);
                 }
-
-                // Trim resulting strings
-                array_walk_recursive(
-                    $imageResult,
-                    function (&$current): void {
-                        if (is_string($current)) {
-                            $current = trim($current);
-                        }
-                    }
-                );
             }
             $modelResult = [];
             if ($modelUrls) {
@@ -1459,7 +1448,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                     $source = $values['source'];
                 }
                 foreach ($reader->all($eventMethod, 'term') as $term) {
-                    $termStr = trim($reader->value($term));
+                    $termStr = $reader->value($term);
                     if ($termStr === '') {
                         continue;
                     }
@@ -1469,7 +1458,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                         'id' => $id,
                         'source' => $source,
                     ];
-                    $lang = trim($reader->attr($term, 'lang') ?? '');
+                    $lang = $reader->attr($term, 'lang') ?? null;
                     if ($lang === $language) {
                         $langMethodsExtended[] = [
                             'data' => $termStr,
@@ -1541,7 +1530,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 if (!$place) {
                     $eventPlace = [];
                     foreach ($reader->all($placenode, 'place/namePlaceSet') as $nameSet) {
-                        $value = trim($reader->firstValue($nameSet, 'appellationValue') ?? '');
+                        $value = $reader->firstValue($nameSet, 'appellationValue') ?? '';
                         if ('' !== $value) {
                             $eventPlace[] = $value;
                         }
@@ -1552,10 +1541,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                     foreach ($reader->all($placenode, 'place/partOfPlace') as $part) {
                         $partOfPlaceName = [];
                         while ($part) {
-                            $appellationValue = trim(
-                                $reader->firstValue($part, 'namePlaceSet/appellationValue') ?? ''
-                            );
-                            if ($appellationValue) {
+                            $appellationValue = $reader->firstValue($part, 'namePlaceSet/appellationValue') ?? '';
+                            if ('' !== $appellationValue) {
                                 $partOfPlaceName[] = $appellationValue;
                             }
                             $part = $reader->first($part, 'partOfPlace');
@@ -1594,10 +1581,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 
             $actors = [];
             foreach ($reader->all($node, 'eventActor') as $actor) {
-                $appellationValue = trim(
-                    $reader->firstValue($actor, 'actorInRole/actor/nameActorSet/appellationValue') ?? ''
-                );
-                if ($appellationValue !== '') {
+                $appellationValue
+                    = $reader->firstValue($actor, 'actorInRole/actor/nameActorSet/appellationValue') ?? '';
+                if ('' !== $appellationValue) {
                     $role = '';
                     $langRoles = $reader->all($actor, 'actorInRole/roleActor/term');
                     if ($langRoles) {
@@ -2241,7 +2227,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                         }
                     } else {
                         foreach (explode(',', $reader->value($term) ?? '') as $explodedTerm) {
-                            if ($str = trim($explodedTerm)) {
+                            if ('' !== ($str = trim($explodedTerm))) {
                                 $topics[] = ['data' => $str];
                                 if ($langAttr === $language) {
                                     $langTopics[] = ['data' => $str];
@@ -2286,7 +2272,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $results = [];
         $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace';
         foreach ($reader->all(path: $path) as $subjectPlace) {
-            if (!($displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ', \n\r\t\v\0'))) {
+            $displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ', \n\r\t\v\0');
+            if ('' === $displayPlace) {
                 $placeNames = $reader->allValues($subjectPlace, 'place/namePlaceSet/appellationValue');
                 foreach ($reader->all($subjectPlace, 'place/partOfPlace') as $part) {
                     while ($part) {
@@ -2602,12 +2589,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      * @param array  $nodeList Nodes to look in
      * @param string $language Language to look for
      *
-     * @return ?string
+     * @return string
      */
-    protected function getLanguageSpecificValue(array $nodeList, string $language): ?string
+    protected function getLanguageSpecificValue(array $nodeList, string $language): string
     {
         $node = $this->getLanguageSpecificNode($nodeList, $language);
-        return trim($node ? $this->getXmlReader()->value($node) : '');
+        return $node ? $this->getXmlReader()->value($node) : '';
     }
 
     /**
@@ -2636,7 +2623,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $first = '';
         $reader = $this->getXmlReader();
         foreach ($nodeList as $node) {
-            if ('' !== (trim($reader->value($node)))) {
+            if ('' !== ($reader->value($node))) {
                 $lang = $reader->attr($node, 'lang') ?? 'no_locale';
                 $first = $first ?: $lang;
                 if (in_array($lang, $languages)) {
@@ -2801,7 +2788,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $reader = $this->getXmlReader();
         foreach ($reader->all(path: $path) as $node) {
             if (in_array($reader->attr($node, 'lang'), $preferredLanguages)) {
-                if ($term = trim((string)$node)) {
+                if ('' !== ($term = $reader->value($node))) {
                     $results[] = $term;
                 }
             }
