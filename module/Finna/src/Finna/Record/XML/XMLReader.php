@@ -67,7 +67,7 @@ class XMLReader
      */
     public function parse(string $xml): static
     {
-        $this->parsed = (new XmlParser())->parse($xml);
+        $this->parsed = (new XMLParser())->parse($xml);
         return $this;
     }
 
