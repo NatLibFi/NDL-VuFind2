@@ -34,7 +34,8 @@ namespace Finna\Record\XML;
 /**
  * XML parser
  *
- * This is a light-weight XML parser inspired by sabre-xml, but does not produce compatible results.
+ * This is a light-weight XML parser inspired by sabre-xml. The deserialization format is slightly different, though.
+ * And feature set is limited.
  *
  * @category VuFind
  * @package  Record
@@ -42,7 +43,7 @@ namespace Finna\Record\XML;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class XmlParser extends \XMLReader
+class XMLParser extends \XMLReader
 {
     /**
      * Parse XML into an associative array.
@@ -114,27 +115,24 @@ class XmlParser extends \XMLReader
         if (self::ELEMENT === $this->nodeType && $this->isEmptyElement) {
             $this->next();
             return $result;
-        } else {
+        }
+
+        while (true) {
             $this->read();
-            while (true) {
-                switch ($this->nodeType) {
-                    case self::ELEMENT:
-                        $result['sub'][] = $this->processElement();
-                        break;
-                    case self::TEXT:
-                    case self::CDATA:
-                        $result['val'] .= $this->value;
-                        $this->read();
-                        break;
-                    case self::END_ELEMENT:
-                        $this->read();
-                        return $result;
-                    case self::NONE:
-                        throw new \Exception('Unexpected XML parsing state');
-                    default:
-                        $this->read();
-                        break;
-                }
+            switch ($this->nodeType) {
+                case self::ELEMENT:
+                    $result['sub'][] = $this->processElement();
+                    break;
+                case self::TEXT:
+                case self::CDATA:
+                    $result['val'] .= $this->value;
+                    break;
+                case self::END_ELEMENT:
+                    return $result;
+                case self::NONE:
+                    throw new \Exception('Unexpected XML parsing state');
+                default:
+                    break;
             }
         }
     }

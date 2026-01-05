@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018-2025.
+ * Copyright (C) The National Library of Finland 2018-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,7 +29,7 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use Finna\Record\XML\XmlReader;
+use Finna\Record\XML\XMLReader;
 
 /**
  * Functions for reading XML records.
@@ -54,9 +54,9 @@ trait FinnaXmlReaderTrait
     /**
      * XML Reader. Access only via getXmlReader() as this is initialized lazily.
      *
-     * @var XmlReader
+     * @var XMLReader
      */
-    protected ?XmlReader $lazyXmlReader = null;
+    protected ?XMLReader $lazyXMLReader = null;
 
     /**
      * Get access to the raw SimpleXMLElement object.
@@ -76,15 +76,15 @@ trait FinnaXmlReaderTrait
     }
 
     /**
-     * Get XmlReader.
+     * Get XMLReader.
      *
-     * @return XmlReader
+     * @return XMLReader
      */
-    public function getXmlReader(): XmlReader
+    public function getXMLReader(): XMLReader
     {
-        if (null === $this->lazyXmlReader) {
-            $this->lazyXmlReader = (new XmlReader())->parse($this->fields['fullrecord']);
+        if (null === $this->lazyXMLReader) {
+            $this->lazyXMLReader = (new XMLReader())->parse($this->fields['fullrecord']);
         }
-        return $this->lazyXmlReader;
+        return $this->lazyXMLReader;
     }
 }

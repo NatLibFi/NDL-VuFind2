@@ -62,7 +62,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait {
-        getXmlReader as getXmlReaderTraitVersion;
+        getXMLReader as getXMLReaderTraitVersion;
     }
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
@@ -2955,11 +2955,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     /**
      * Get XmlReader.
      *
-     * @return XmlReader
+     * @return XMLReader
      */
-    protected function getXmlReader(): XmlReader
+    protected function getXMLReader(): XMLReader
     {
-        $reader = $this->getXmlReaderTraitVersion();
+        $reader = $this->getXMLReaderTraitVersion();
         $reader->setDefaultNamespace(static::LIDO_NAMESPACE);
         return $reader;
     }
