@@ -123,13 +123,11 @@ class Product
     /**
      * Checks mandatory properties of Product.
      *
-     * @return boolean All mandatory properties are set
+     * @return bool All mandatory properties are set
      */
     public function isValid()
     {
-        return ($this->Code != null)
-            ? true
-            : false;
+        return $this->Code != null;
     }
 }
 // @codingStandardsIgnoreEnd

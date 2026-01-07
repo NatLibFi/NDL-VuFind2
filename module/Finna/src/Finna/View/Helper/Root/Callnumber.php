@@ -134,7 +134,7 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
     /**
      * Check if QR-code option is enabled.
      *
-     * @return boolean
+     * @return bool
      */
     public function useQrCode()
     {

@@ -197,7 +197,7 @@ class Params extends \VuFind\Search\Blender\Params
      *
      * @param string $field Filter field
      *
-     * @return boolean
+     * @return bool
      */
     protected function isDateRangeFilter($field)
     {

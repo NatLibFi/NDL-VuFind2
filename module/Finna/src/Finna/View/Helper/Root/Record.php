@@ -216,7 +216,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Deprecated method. Return false for legacy template code.
      *
-     * @return boolean
+     * @return bool
      *
      * @deprecated
      */
@@ -230,7 +230,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *
      * @param object $user Current user
      *
-     * @return boolean
+     * @return bool
      *
      * @deprecated Not needed anymore since commenting is always allowed when enabled
      */
@@ -242,7 +242,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Is commenting enabled.
      *
-     * @return boolean
+     * @return bool
      */
     public function commentingEnabled()
     {
@@ -764,38 +764,9 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Render an HTML checkbox control for the current record.
-     *
-     * @param string $idPrefix Prefix for checkbox HTML ids
-     * @param string $formAttr ID of form for [form] attribute
-     * @param bool   $label    Whether to enclose the actual checkbox in a label
-     *
-     * @return string
-     */
-    public function getCheckbox($idPrefix = '', $formAttr = false, $label = false)
-    {
-        static $checkboxCount = 0;
-        $id = $this->driver->getSourceIdentifier() . '|'
-            . $this->driver->getUniqueId();
-        $context = [
-            'id' => $id,
-            'count' => $checkboxCount++,
-            'prefix' => $idPrefix,
-            'label' => $label,
-        ];
-        if ($formAttr) {
-            $context['formAttr'] = $formAttr;
-        }
-        return $this->contextHelper->renderInContext(
-            'record/checkbox.phtml',
-            $context
-        );
-    }
-
-    /**
      * Return if image popup zoom has been enabled in config
      *
-     * @return boolean
+     * @return bool
      */
     public function getImagePopupZoom()
     {
@@ -1027,7 +998,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      *                         getURLs and getOnlineURLs.
      * @param array $imageURLs Array of record image URLs as keys.
      *
-     * @return boolean
+     * @return bool
      */
     public function containsNonImageURL($urls, $imageURLs)
     {
@@ -1064,7 +1035,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      * @param array $urls Array of urls in the format returned by
      *                    getUrls and getOnlineUrls
      *
-     * @return boolean
+     * @return bool
      */
     public function containsPdfUrl($urls)
     {
@@ -1320,10 +1291,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function hasFullWidthLayout(): bool
     {
-        if ($this->driver instanceof SolrAipa) {
-            return true;
-        }
-        return false;
+        return $this->driver instanceof SolrAipa;
     }
 
     /**
@@ -1372,11 +1340,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 '0/Video/',
             ];
         $formats = $this->driver->tryMethod('getFormats');
-        if (array_intersect($formats, $largeImageFormats)) {
-            return true;
-        }
-
-        return false;
+        return (bool)array_intersect($formats, $largeImageFormats);
     }
 
     /**
@@ -1437,11 +1401,23 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Get Similar Items Carousel tab
      *
-     * @return \VuFind\RecordTab\SimilarItemsCarousel
+     * @return \VuFind\RecordTab\Channels
+     *
+     * @deprecated Use getChannelsTab
      */
-    public function getSimilarItemsCarousel(): \VuFind\RecordTab\SimilarItemsCarousel
+    public function getSimilarItemsCarousel(): \VuFind\RecordTab\Channels
     {
-        return $this->tabManager->getSimilarItemsCarouselTab($this->driver);
+        return $this->getChannelsTab();
+    }
+
+    /**
+     * Get Channels tab
+     *
+     * @return \VuFind\RecordTab\Channels
+     */
+    public function getChannelsTab(): \VuFind\RecordTab\Channels
+    {
+        return $this->tabManager->getChannelsTab($this->driver);
     }
 
     /**

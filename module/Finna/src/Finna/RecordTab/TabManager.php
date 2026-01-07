@@ -101,16 +101,16 @@ class TabManager extends \VuFind\RecordTab\TabManager
     }
 
     /**
-     * Get Similar Items Carousel tab
+     * Get channels tab
      *
      * @param AbstractRecordDriver $driver Record driver
      *
-     * @return \VuFind\RecordTab\SimilarItemsCarousel
+     * @return \VuFind\RecordTab\Channels
      */
-    public function getSimilarItemsCarouselTab(
+    public function getChannelsTab(
         AbstractRecordDriver $driver
-    ): \VuFind\RecordTab\SimilarItemsCarousel {
-        $tab = $this->recordTabPluginManager->get('SimilarItemsCarousel');
+    ): \VuFind\RecordTab\Channels {
+        $tab = $this->recordTabPluginManager->get('Channels');
         $tab->setRecordDriver($driver);
         return $tab;
     }

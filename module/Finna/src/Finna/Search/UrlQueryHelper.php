@@ -116,10 +116,10 @@ class UrlQueryHelper extends \VuFind\Search\UrlQueryHelper
     /**
      * Sets search id in the params.
      *
-     * @param string  $class  Search class.
-     * @param int     $id     Search id or NULL if the current id for this
-     *                        search class should be removed.
-     * @param boolean $output Output query string?
+     * @param string $class  Search class.
+     * @param int    $id     Search id or NULL if the current id for this
+     *                       search class should be removed.
+     * @param bool   $output Output query string?
      *
      * @return string
      */

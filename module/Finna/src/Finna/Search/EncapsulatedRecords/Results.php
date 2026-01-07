@@ -120,11 +120,7 @@ class Results extends \VuFind\Search\Base\Results
         ) {
             // Check the filters for a record ID, and load the corresponding object
             // if one is found:
-            if (null === $id) {
-                $this->containerRecord = false;
-            } else {
-                $this->containerRecord = $this->recordLoader->load($id);
-            }
+            $this->containerRecord = null === $id ? false : $this->recordLoader->load($id);
         }
         return $this->containerRecord;
     }

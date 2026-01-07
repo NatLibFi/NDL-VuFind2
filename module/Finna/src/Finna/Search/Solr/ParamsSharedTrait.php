@@ -122,7 +122,7 @@ trait ParamsSharedTrait
      *
      * @param string|array $filter Facet
      *
-     * @return boolean
+     * @return bool
      */
     public function isGeographicFilter($filter)
     {

@@ -133,7 +133,7 @@ class RecommendationMemory
      * Returns data about a recommendation followed by the user.
      *
      * @param Parameters $request Parameter object representing user request.
-     * @param boolean    $clear   Whether to clear the data cookie (optional,
+     * @param bool       $clear   Whether to clear the data cookie (optional,
      *                            defaults to true).
      *
      * @return array|null Recommendation data or null if there is none.

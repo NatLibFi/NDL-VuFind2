@@ -8,7 +8,7 @@
 
   .media-left,
   .media-right {
-    max-width: 25%;
+    width: 25%;
     @include media-breakpoint-down(sm) {
       display: block;
       width: 100%;
@@ -610,6 +610,10 @@ a.authority {
           display: inline-block;
         }
       }
+    }
+
+    .dropdown-toggle {
+      display: initial;
     }
   }
 }

@@ -190,7 +190,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subject Date',
             'Subject Detail',
             'Subject Place',
-            'SubjectsWithoutPlaces',
+            'SubjectDisplayTerms',
         ];
         return $this->filterFields($coreFields, $include);
     }

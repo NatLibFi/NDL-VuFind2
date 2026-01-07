@@ -169,11 +169,9 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
 
         $urlHelper = $this->getViewHelper('url');
         try {
-            if (isset($action['routeParams'])) {
-                $url = $urlHelper($action['url'], $action['routeParams']);
-            } else {
-                $url = $urlHelper($action['url']);
-            }
+            $url = isset($action['routeParams'])
+                ? $urlHelper($action['url'], $action['routeParams'])
+                : $urlHelper($action['url']);
             return ['url' => $url, 'target' => $target];
         } catch (\Exception $e) {
         }
@@ -349,7 +347,7 @@ class Navibar extends \Laminas\View\Helper\AbstractHelper
      *
      * @param array $item Menu item configuration
      *
-     * @return boolean
+     * @return bool
      */
     protected function menuItemEnabled($item)
     {

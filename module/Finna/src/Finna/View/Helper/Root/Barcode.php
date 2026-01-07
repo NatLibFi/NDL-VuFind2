@@ -96,8 +96,8 @@ class Barcode extends \Laminas\View\Helper\AbstractHelper
 
         $svg = '<svg width="' . $width . '" height="' . $height . '" viewBox="0 0 ' . $width . ' '
         . $height . '" version="1.1" xmlns="http://www.w3.org/2000/svg">' . PHP_EOL;
-        $svg .= "\t" . '<desc>' . strtr($barcodeData->getBarcode(), $repstr) . '</desc>' . PHP_EOL;
-        $svg .= "\t" . '<g id="bars" fill="' . $foregroundColor . '" stroke="none">' . PHP_EOL;
+        $svg .= '	<desc>' . strtr($barcodeData->getBarcode(), $repstr) . '</desc>' . PHP_EOL;
+        $svg .= '	<g id="bars" fill="' . $foregroundColor . '" stroke="none">' . PHP_EOL;
 
         // print bars
         $positionHorizontal = 0;
@@ -108,7 +108,7 @@ class Barcode extends \Laminas\View\Helper\AbstractHelper
             if ($bar->isBar() && $barWidth > 0) {
                 $positionVertical = round(($bar->getPositionVertical() * $height / $barcodeData->getHeight()), 3);
                 // draw a vertical bar
-                $svg .= "\t\t" . '<rect x="' . $positionHorizontal . '" y="' . $positionVertical . '" '
+                $svg .= '		<rect x="' . $positionHorizontal . '" y="' . $positionVertical . '" '
                 . 'width="' . $barWidth . '" height="' . $barHeight . '" />' . PHP_EOL;
             }
 

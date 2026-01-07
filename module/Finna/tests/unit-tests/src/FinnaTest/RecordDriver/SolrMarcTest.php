@@ -50,27 +50,25 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider for testTitlePunctuation
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getTestTitlePunctuationData(): array
+    public static function getTestTitlePunctuationData(): \Iterator
     {
-        return [
-            [
-                'Title',
-                'Title /:',
-            ],
-            [
-                'Title',
-                'Title /  ',
-            ],
-            [
-                'Title',
-                'Title (((',
-            ],
-            [
-                '(((',
-                '(((',
-            ],
+        yield [
+            'Title',
+            'Title /:',
+        ];
+        yield [
+            'Title',
+            'Title /  ',
+        ];
+        yield [
+            'Title',
+            'Title (((',
+        ];
+        yield [
+            '(((',
+            '(((',
         ];
     }
 

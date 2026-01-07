@@ -196,7 +196,7 @@ class Finto implements LoggerAwareInterface
      * @param string      $vocid A Skosmos vocabulary identifier e.g. "stw" or "yso"
      * @param string      $uri   URI of the concept whose narrower concept to return
      * @param string|null $lang  Label language, e.g. "en" or "fi"
-     * @param boolean     $sort  Whether to sort results alphabetically or not
+     * @param bool        $sort  Whether to sort results alphabetically or not
      *
      * @return array Results
      * @throws \Exception

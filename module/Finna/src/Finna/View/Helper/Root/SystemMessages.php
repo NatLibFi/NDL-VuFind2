@@ -128,8 +128,7 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper implements
         $scheduleStart = $scheduleStart ? new \DateTime($scheduleStart) : false;
         $scheduleEnd = $scheduleEnd ? new \DateTime($scheduleEnd) : false;
         $now = new \DateTime();
-        $scheduleOk = !(($scheduleStart && $now < $scheduleStart)
-            || ($scheduleEnd && $now > $scheduleEnd));
+        $scheduleOk = !($scheduleStart && $now < $scheduleStart) && !($scheduleEnd && $now > $scheduleEnd);
 
         if ($scheduleOk && !empty($this->coreConfig->Site->systemMessages)) {
             $messages = $getMessageFn(

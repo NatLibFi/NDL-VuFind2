@@ -142,7 +142,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Are request groups enabled
      *
-     * @var boolean
+     * @var bool
      */
     protected $requestGroupsEnabled = false;
 
@@ -635,7 +635,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     {
         $result = $this->makeRequest(
             ['odata', 'BorrowerLoans'],
-            ['$filter' => 'BorrowerId eq' . ' ' . $patron['id']]
+            ['$filter' => 'BorrowerId eq ' . $patron['id']]
         );
         if (empty($result)) {
             return [];
@@ -2076,7 +2076,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
                 'SuppliedReturnNotRequired', 'MissingOverDue', 'Withdrawn',
                 'Discarded', 'Other',
             ];
-        return in_array($item['ItemStatus'], $notAllowedForHold) ? false : true;
+        return !in_array($item['ItemStatus'], $notAllowedForHold);
     }
 
     /**
@@ -2239,11 +2239,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
             }
 
             $resultData = $decodedResult['value'] ?? $decodedResult;
-            if ($page === 0) {
-                $data = $resultData;
-            } else {
-                $data = array_merge($data, $resultData);
-            }
+            $data = $page === 0 ? $resultData : array_merge($data, $resultData);
 
             // More results available?
             $nextLink = $decodedResult['@odata.nextLink'] ?? '';

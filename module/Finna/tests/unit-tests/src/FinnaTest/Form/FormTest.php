@@ -239,7 +239,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     public function getForm(array $formConfig): MockObject&Form
     {
         $yamlReader = $this->createMock(YamlReader::class);
-        $yamlReader->expects($this->any())->method('getFinna')->willReturn($formConfig);
+        $yamlReader->method('getFinna')->willReturn($formConfig);
         $form = $this->getMockBuilder(Form::class)->setConstructorArgs([
             $yamlReader,
             $this->createMock(HelperPluginManager::class),
@@ -268,16 +268,16 @@ class FormTest extends \PHPUnit\Framework\TestCase
     ): MockObject&\VuFind\Db\Entity\UserEntityInterface {
         $mockUserEntityInterface = $this->createMock(\VuFind\Db\Entity\UserEntityInterface::class);
         if (isset($getIdReturn)) {
-            $mockUserEntityInterface->expects($this->any())->method('getId')->willReturn($getIdReturn);
+            $mockUserEntityInterface->method('getId')->willReturn($getIdReturn);
         }
         if (isset($getFirstnameReturn)) {
-            $mockUserEntityInterface->expects($this->any())->method('getFirstname')->willReturn($getFirstnameReturn);
+            $mockUserEntityInterface->method('getFirstname')->willReturn($getFirstnameReturn);
         }
         if (isset($getLastnameReturn)) {
-            $mockUserEntityInterface->expects($this->any())->method('getLastname')->willReturn($getLastnameReturn);
+            $mockUserEntityInterface->method('getLastname')->willReturn($getLastnameReturn);
         }
         if (isset($getEmailReturn)) {
-            $mockUserEntityInterface->expects($this->any())->method('getEmail')->willReturn($getEmailReturn);
+            $mockUserEntityInterface->method('getEmail')->willReturn($getEmailReturn);
         }
         return $mockUserEntityInterface;
     }

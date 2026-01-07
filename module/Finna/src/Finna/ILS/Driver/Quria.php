@@ -389,11 +389,7 @@ class Quria extends AxiellWebServices
                         $year = $journalInfo['year'] ?? '';
                         $edition = $journalInfo['edition'] ?? '';
                         if ($year !== '' && $edition !== '') {
-                            if (strncmp($year, $edition, strlen($year)) == 0) {
-                                $group = $edition;
-                            } else {
-                                $group = "$year, $edition";
-                            }
+                            $group = strncmp($year, $edition, strlen($year)) == 0 ? $edition : "$year, $edition";
                         } else {
                             $group = $year . $edition;
                         }

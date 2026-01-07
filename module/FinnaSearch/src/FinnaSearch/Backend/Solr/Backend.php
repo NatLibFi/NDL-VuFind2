@@ -104,7 +104,7 @@ class Backend extends \VuFindSearch\Backend\Solr\Backend
         } else {
             $params = $defaultParams ? clone $defaultParams : new ParamBag();
             $this->injectResponseWriter($params);
-            $params->mergeWith($this->getSimilarBuilder()->build($id, $params));
+            $params->mergeWith($this->getSimilarBuilder()->build($id));
             $response = $this->connector->similar($id, $params);
         }
         $collection = $this->createRecordCollection($response);

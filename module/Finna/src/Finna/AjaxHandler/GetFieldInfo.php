@@ -155,7 +155,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             )
         );
 
-        $isAuthority = $authority ? true : false;
+        $isAuthority = (bool)$authority;
         return $this->formatResponse(compact('html', 'isAuthority'));
     }
 

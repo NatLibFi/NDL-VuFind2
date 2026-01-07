@@ -63,6 +63,9 @@
     <name relator="Aihe">
       <part localtype="Ensisijainen nimi" lang="fin">Anssi Aihe</part>
     </name>
+    <name relator="Aihe" identifier="EAC_123456">
+      <part localtype="Ensisijainen nimi" lang="fin">Aku Aihe</part>
+    </name>
     <subject relator="aihe" identifier="EAC_102486375">
       <part localtype="Ensisijainen nimi" lang="fin">Manner, Eeva-Liisa</part>
       <part localtype="Varianttinimi" lang="fin">September, Anna</part>

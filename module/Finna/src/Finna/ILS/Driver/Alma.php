@@ -288,9 +288,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                 //$loan['volume'] = ;
                 $loan['publication_year'] = (string)$itemLoan->publication_year;
                 $loan['renewable']
-                    = (strtolower((string)$itemLoan->renewable) == 'true')
-                    ? true
-                    : false;
+                    = strtolower((string)$itemLoan->renewable) == 'true';
                 //$loan['message'] = ;
                 $loan['title'] = (string)$itemLoan->title;
                 if ($description = (string)$itemLoan->description) {
@@ -608,8 +606,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      *
      * @param array $patron The patron array with username and password
      *
-     * @return array|boolean    An array of block messages or false if there are no
-     *                          blocks
+     * @return array|bool   An array of block messages or false if there are no blocks
      * @author Michael Birkner
      */
     public function getRequestBlocks($patron)
@@ -642,8 +639,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
      *
      * @param array $patron The patron array with username and password
      *
-     * @return array|boolean    An array of block messages or false if there are no
-     *                          blocks
+     * @return array|bool   An array of block messages or false if there are no blocks
      * @author Michael Birkner
      */
     public function getAccountBlocks($patron)
@@ -1172,7 +1168,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
                     $fields = [];
                     foreach ($config['fields'] as &$field) {
                         [$label, $fieldId] = explode(':', $field);
-                        if (in_array($fieldId, ['self_service_pin'])) {
+                        if ($fieldId == 'self_service_pin') {
                             $fields[] = $field;
                         }
                     }

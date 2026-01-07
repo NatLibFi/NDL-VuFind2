@@ -43,9 +43,9 @@ class YamlReader extends \VuFind\Config\YamlReader
     /**
      * Return a Finna configuration (Finna default or view specific)
      *
-     * @param string  $filename        Config file name
-     * @param boolean $localDir        Config directory (local/finna or local/vufind)
-     * @param boolean $ignoreFileCache Read from file even if config has been cached.
+     * @param string $filename        Config file name
+     * @param bool   $localDir        Config directory (local/finna or local/vufind)
+     * @param bool   $ignoreFileCache Read from file even if config has been cached.
      *
      * @return array
      */

@@ -84,7 +84,7 @@ class Content extends \Laminas\View\Helper\AbstractHelper
      *
      * @param string $templateName Template name without .phtml suffix
      *
-     * @return string|boolean Template name or false if not available
+     * @return string|bool Template name or false if not available
      */
     public function findTemplateForLng($templateName)
     {

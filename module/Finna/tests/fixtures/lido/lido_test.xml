@@ -129,6 +129,21 @@
           </subjectSet>
           <subjectSet>
             <subject>
+              <subjectActor>
+                <actor>
+                  <actorID type="URI" source="KANTO">http://urn.fi/URN:NBN:fi:au:finaf:000229728</actorID>
+                  <nameActorSet>
+                    <appellationValue>Pukki, Joulu</appellationValue>
+                  </nameActorSet>
+                </actor>
+              </subjectActor>
+              <subjectActor>
+                <actor>
+                  <nameActorSet>
+                    <appellationValue>Punakuono, Petteri</appellationValue>
+                  </nameActorSet>
+                </actor>
+              </subjectActor>
               <subjectConcept>
                 <conceptID source="sanaston nimi">Yleinen suomalainen asiasanasto</conceptID>
                 <term label="asiasana">sohvat</term>

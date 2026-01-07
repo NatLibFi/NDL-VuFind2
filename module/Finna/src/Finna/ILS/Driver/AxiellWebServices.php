@@ -114,7 +114,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Regional hold
      *
-     * @var Boolean
+     * @var bool
      */
     protected $regionalHold = false;
 
@@ -198,7 +198,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Verbose debug-mode
      *
-     * @var Boolean
+     * @var bool
      */
     protected $verbose = false;
 
@@ -219,7 +219,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Institution settings for single reservation queue
      *
-     * @var Boolean
+     * @var bool
      */
     protected $singleReservationQueue = false;
 
@@ -1175,11 +1175,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
                             $year = $journalInfo['year'] ?? '';
                             $edition = $journalInfo['edition'] ?? '';
                             if ($year !== '' && $edition !== '') {
-                                if (strncmp($year, $edition, strlen($year)) == 0) {
-                                    $group = $edition;
-                                } else {
-                                    $group = "$year, $edition";
-                                }
+                                $group = strncmp($year, $edition, strlen($year)) == 0 ? $edition : "$year, $edition";
                             } else {
                                 $group = $year . $edition;
                             }
@@ -3386,7 +3382,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getCacheKey($suffix = null)
     {
-        return 'AxiellWebServices' . '-' . md5($this->arenaMember . "|$suffix");
+        return 'AxiellWebServices-' . md5($this->arenaMember . "|$suffix");
     }
 
     /**

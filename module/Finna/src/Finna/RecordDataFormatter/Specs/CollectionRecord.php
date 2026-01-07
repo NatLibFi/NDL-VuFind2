@@ -114,7 +114,7 @@ class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
         'Subject Date',
         'Subject Actor',
         'Subjects',
-        'SubjectsWithoutPlaces',
+        'SubjectDisplayTerms',
         'subjects_extended',
         'Methodology',
         'Publications',

@@ -87,40 +87,38 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     /**
      * Function to get expected other related material data
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getOtherRelatedMaterialData(): array
+    public static function getOtherRelatedMaterialData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'fi',
                 [
-                    [
-                        'text' => 'Wikipedia-artikkeli',
-                        'url' => 'https://fi.wikipedia.org/',
-                    ],
-                    [
-                        'text' => 'Joku muu liittyvä aineisto',
-                        'url' => '',
-                    ],
+                    'text' => 'Wikipedia-artikkeli',
+                    'url' => 'https://fi.wikipedia.org/',
+                ],
+                [
+                    'text' => 'Joku muu liittyvä aineisto',
+                    'url' => '',
                 ],
             ],
+        ];
+        yield [
+            'en-gb',
             [
-                'en-gb',
                 [
-                    [
-                        'text' => 'Some related material',
-                        'url' => '',
-                    ],
+                    'text' => 'Some related material',
+                    'url' => '',
                 ],
             ],
+        ];
+        yield [
+            'sv',
             [
-                'sv',
                 [
-                    [
-                        'text' => 'https://sv.wikipedia.org/',
-                        'url' => 'https://sv.wikipedia.org/',
-                    ],
+                    'text' => 'https://sv.wikipedia.org/',
+                    'url' => 'https://sv.wikipedia.org/',
                 ],
             ],
         ];
@@ -150,123 +148,147 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     /**
      * Function to get expected author data
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getAuthorData(): array
+    public static function getAuthorData(): \Iterator
     {
-        return [
+        yield [
+            'getNonPresenterAuthors',
             [
-                'getNonPresenterAuthors',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102476374',
-                            'role' => 'rda:collector',
-                            'name' => 'Suomalaisen Kirjallisuuden Seura ry',
-                        ],
-                        [
-                            'id' => 'EAC_123456',
-                            'role' => 'ive',
-                            'name' => 'Harri Haastateltava',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Rolle Rooliton',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuovi Tuntematon',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'rda:former-owner',
-                            'name' => 'Lucifer Luovuttaja',
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102476374',
+                        'role' => 'rda:collector',
+                        'name' => 'Suomalaisen Kirjallisuuden Seura ry',
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'EAC_76543',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuukka Tuntematon',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Roope Rooliton',
-                        ],
+                    [
+                        'id' => 'EAC_123456',
+                        'role' => 'ive',
+                        'name' => 'Harri Haastateltava',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Rolle Rooliton',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuovi Tuntematon',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'rda:former-owner',
+                        'name' => 'Lucifer Luovuttaja',
+                    ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'EAC_76543',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuukka Tuntematon',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Roope Rooliton',
                     ],
                 ],
             ],
+        ];
+        yield [
+            'getAuthorsWithoutRoleHeadings',
             [
-                'getAuthorsWithoutRoleHeadings',
-                [
-                    'ead3_test.xml' => [],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'EAC_76543',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuukka Tuntematon',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Roope Rooliton',
-                        ],
+                'ead3_test.xml' => [],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'EAC_76543',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuukka Tuntematon',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Roope Rooliton',
                     ],
                 ],
             ],
+        ];
+        yield [
+            'getAuthorsWithRoleHeadings',
             [
-                'getAuthorsWithRoleHeadings',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102476374',
-                            'role' => 'rda:collector',
-                            'name' => 'Suomalaisen Kirjallisuuden Seura ry',
-                        ],
-                        [
-                            'id' => 'EAC_123456',
-                            'role' => 'ive',
-                            'name' => 'Harri Haastateltava',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'rda:former-owner',
-                            'name' => 'Lucifer Luovuttaja',
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102476374',
+                        'role' => 'rda:collector',
+                        'name' => 'Suomalaisen Kirjallisuuden Seura ry',
                     ],
-                    'ead3_test2.xml' => [],
+                    [
+                        'id' => 'EAC_123456',
+                        'role' => 'ive',
+                        'name' => 'Harri Haastateltava',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'rda:former-owner',
+                        'name' => 'Lucifer Luovuttaja',
+                    ],
+                ],
+                'ead3_test2.xml' => [],
+            ],
+        ];
+        yield [
+            'getOtherAuthors',
+            [
+                'ead3_test.xml' => [
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Rolle Rooliton',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuovi Tuntematon',
+                    ],
+                ],
+                'ead3_test2.xml' => [],
+            ],
+        ];
+        yield [
+            'getSubjectActors',
+            [
+                'ead3_test.xml' => [
+                    'Anssi Aihe',
+                    'Aku Aihe',
+                    'Aino Aihe',
+                ],
+                'ead3_test2.xml' => [
+                    'Aino Aihe',
                 ],
             ],
+        ];
+        yield [
+            'getSubjectActorsExtended',
             [
-                'getOtherAuthors',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Rolle Rooliton',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuovi Tuntematon',
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'name' => 'Anssi Aihe',
+                        'id' => '',
                     ],
-                    'ead3_test2.xml' => [],
+                    [
+                        'name' => 'Aku Aihe',
+                        'id' => 'EAC_123456',
+                    ],
+                    [
+                        'name' => 'Aino Aihe',
+                        'id' => '',
+                    ],
                 ],
-            ],
-            [
-                'getSubjectActors',
-                [
-                    'ead3_test.xml' => [
-                        'Anssi Aihe',
-                        'Aino Aihe',
-                    ],
-                    'ead3_test2.xml' => [
-                        'Aino Aihe',
+                'ead3_test2.xml' => [
+                    [
+                        'name' => 'Aino Aihe',
+                        'id' => '',
                     ],
                 ],
             ],
@@ -298,113 +320,111 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     /**
      * Function to get expected subject headings data
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getAllSubjectHeadingsExtendedData(): array
+    public static function getAllSubjectHeadingsExtendedData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'fi',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102486375',
-                            'source' => '',
-                            'detail' => 'aihe',
-                            'heading' => ['Manner, Eeva-Liisa'],
-                            'type' => 'topic',
-                            'authType' => 'Unknown Name',
-                        ],
-                        [
-                            'id' => 'http://www.yso.fi/onto/yso/p900',
-                            'source' => 'YSO',
-                            'detail' => 'aihe',
-                            'heading' => ['fysiikka'],
-                            'type' => 'topic',
-                            'authType' => null,
-
-                        ],
-                        [
-                            'source' => '',
-                            'detail' => '',
-                            'type' => 'topic',
-                            'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102486375',
+                        'source' => '',
+                        'detail' => 'aihe',
+                        'heading' => ['Manner, Eeva-Liisa'],
+                        'type' => 'topic',
+                        'authType' => 'Unknown Name',
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['kirjoituskilpailut'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                    [
+                        'id' => 'http://www.yso.fi/onto/yso/p900',
+                        'source' => 'YSO',
+                        'detail' => 'aihe',
+                        'heading' => ['fysiikka'],
+                        'type' => 'topic',
+                        'authType' => null,
+
+                    ],
+                    [
+                        'source' => '',
+                        'detail' => '',
+                        'type' => 'topic',
+                        'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
+                    ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['kirjoituskilpailut'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
                 ],
             ],
+        ];
+        yield [
+            'sv',
             [
-                'sv',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102486375',
-                            'source' => '',
-                            'detail' => 'aihe',
-                            'heading' => ['Manner, Eeva-Liisa'],
-                            'type' => 'topic',
-                            'authType' => 'Unknown Name',
-                        ],
-                        [
-                            'id' => 'http://www.yso.fi/onto/yso/p900',
-                            'source' => 'YSO',
-                            'detail' => 'aihe',
-                            'heading' => ['fysiikka'],
-                            'type' => 'topic',
-                            'authType' => null,
-
-                        ],
-                        [
-                            'source' => '',
-                            'detail' => '',
-                            'type' => 'topic',
-                            'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102486375',
+                        'source' => '',
+                        'detail' => 'aihe',
+                        'heading' => ['Manner, Eeva-Liisa'],
+                        'type' => 'topic',
+                        'authType' => 'Unknown Name',
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['skrivartävlingar'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                    [
+                        'id' => 'http://www.yso.fi/onto/yso/p900',
+                        'source' => 'YSO',
+                        'detail' => 'aihe',
+                        'heading' => ['fysiikka'],
+                        'type' => 'topic',
+                        'authType' => null,
+
+                    ],
+                    [
+                        'source' => '',
+                        'detail' => '',
+                        'type' => 'topic',
+                        'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
+                    ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['skrivartävlingar'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
                 ],
             ],
+        ];
+        yield [
+            'en-gb',
             [
-                'en-gb',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['writing contests'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['writing contests'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['writing contests'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['writing contests'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
                 ],
             ],
@@ -437,44 +457,42 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     /**
      * Function to get expected physical descriptions data
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getPhysicalDescriptionsData(): array
+    public static function getPhysicalDescriptionsData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'fi',
-                [
-                    'ead3_test.xml' => [
-                        'Hyllymetriä järjestetty 0.96 hm',
-                        'Koteloita 5',
-                    ],
-                    'ead3_test2.xml' => [
-                        '9 koteloa (kuva, luetteloitu ja kuvailtu)',
-                    ],
+                'ead3_test.xml' => [
+                    'Hyllymetriä järjestetty 0.96 hm',
+                    'Koteloita 5',
+                ],
+                'ead3_test2.xml' => [
+                    '9 koteloa (kuva, luetteloitu ja kuvailtu)',
                 ],
             ],
+        ];
+        yield [
+            'sv',
             [
-                'sv',
-                [
-                    'ead3_test.xml' => [
-                        'Hyllmeter ordnat 0.96 hm',
-                    ],
-                    'ead3_test2.xml' => [
-                        '9 mappar (bild, listad och beskriven)',
-                    ],
+                'ead3_test.xml' => [
+                    'Hyllmeter ordnat 0.96 hm',
+                ],
+                'ead3_test2.xml' => [
+                    '9 mappar (bild, listad och beskriven)',
                 ],
             ],
+        ];
+        yield [
+            'en-gb',
             [
-                'en-gb',
-                [
-                    'ead3_test.xml' => [
-                        'Hyllymetriä järjestetty 0.96 hm',
-                        'Koteloita 5',
-                    ],
-                    'ead3_test2.xml' => [
-                        '9 koteloa (kuva, luetteloitu ja kuvailtu)',
-                    ],
+                'ead3_test.xml' => [
+                    'Hyllymetriä järjestetty 0.96 hm',
+                    'Koteloita 5',
+                ],
+                'ead3_test2.xml' => [
+                    '9 koteloa (kuva, luetteloitu ja kuvailtu)',
                 ],
             ],
         ];
@@ -578,30 +596,28 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     /**
      * Function to get expected general notes data
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getGeneralNotesData(): array
+    public static function getGeneralNotesData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'fi',
-                [
-                    'Aineisto on digitoitu',
-                    'Aineisto on osa Unescon maailmanperintöä',
-                ],
+                'Aineisto on digitoitu',
+                'Aineisto on osa Unescon maailmanperintöä',
             ],
+        ];
+        yield [
+            'en-gb',
             [
-                'en-gb',
-                [
-                    'Aineisto on digitoitu',
-                    'Aineisto on osa Unescon maailmanperintöä',
-                ],
+                'Aineisto on digitoitu',
+                'Aineisto on osa Unescon maailmanperintöä',
             ],
+        ];
+        yield [
+            'sv',
             [
-                'sv',
-                [
-                    'Samlingen är digitaliserad',
-                ],
+                'Samlingen är digitaliserad',
             ],
         ];
     }

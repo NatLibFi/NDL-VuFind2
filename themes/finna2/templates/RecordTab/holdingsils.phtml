@@ -223,7 +223,11 @@
     <?php endif; ?>
   </div>
 
-<?php if ($containerLinksHtml = trim($this->record($this->driver)->renderTemplate('container-links.phtml'))): ?>
+<?php
+  $containerLinksHtml = $this->record($this->driver)->renderTemplate('container-links.phtml');
+  $containerLinksHtmlNoComments = trim(preg_replace('/<!-- .*? -->/', '', $containerLinksHtml));
+?>
+<?php if ($containerLinksHtmlNoComments): ?>
   <div class="holdings-group">
     <div class="copy-details">
       <?=$containerLinksHtml?>

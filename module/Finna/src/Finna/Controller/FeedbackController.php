@@ -99,6 +99,6 @@ class FeedbackController extends \VuFind\Controller\FeedbackController implement
     protected function prefillUserInfo(Form $form, ?UserEntityInterface $user)
     {
         assert($form instanceof \Finna\Form\Form);
-        return $form->setContactInformation($user);
+        return $form->setContactInformation();
     }
 }

@@ -240,7 +240,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
      */
     public function getOnline(): bool
     {
-        return $this->online ? true : false;
+        return $this->online;
     }
 
     /**

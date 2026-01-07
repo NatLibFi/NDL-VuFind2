@@ -149,12 +149,9 @@ class CartController extends \VuFind\Controller\CartController
         if (empty($view->message)) {
             $listName = $this->params()->fromPost('listName', '');
             $listDescription = $this->params()->fromPost('listDescription', '');
-
-            if ($listName && $listDescription) {
-                $view->message = "$listName\n\n$listDescription";
-            } else {
-                $view->message = "$listName$listDescription";
-            }
+            $view->message = $listName && $listDescription
+                ? "$listName\n\n$listDescription"
+                : "$listName$listDescription";
         }
         return $view;
     }
