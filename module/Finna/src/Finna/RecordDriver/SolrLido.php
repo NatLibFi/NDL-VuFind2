@@ -2017,20 +2017,36 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     /**
      * Get subject actors
      *
+     * @param bool $extended Whether to return a keyed array with the following keys:
+     * - name: name of the actor
+     * - id: primary authority id (if defined)
+     *
      * @return array
      */
-    public function getSubjectActors()
+    public function getSubjectActors(bool $extended = false): array
     {
         $reader = $this->getXmlReader();
         $results = [];
-        $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectActor/actor'
-            . '/nameActorSet/appellationValue';
-        foreach ($reader->all(path: $path) as $node) {
-            if ($actor = $reader->value($node)) {
-                $results[] = $actor;
+        $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectActor';
+        foreach ($reader->all(path: $path) as $subjectActor) {
+            if ($name = $reader->firstValue($subjectActor, 'actor/nameActorSet/appellationValue')) {
+                $results[] = $extended ? [
+                    'name' => $name,
+                    'id' => $this->getPrimaryActorId($subjectActor),
+                ] : $name;
             }
         }
         return $results;
+    }
+
+    /**
+     * Get extended subject actors
+     *
+     * @return array
+     */
+    public function getSubjectActorsExtended(): array
+    {
+        return $this->getSubjectActors(true);
     }
 
     /**
@@ -2085,7 +2101,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      */
     public function getAllSubjectHeadings($extended = false)
     {
-        $headings = $this->getAllSubjectHeadingsWithoutPlaces($extended);
+        $headings = $this->getAllSubjectHeadingsForDisplay($extended);
+        foreach ($this->getSubjectActors($extended) as $actor) {
+            $headings[] = $extended ? [
+                'heading' => [$actor['name']],
+                'type' => 'topic',
+                'id' => $actor['id'],
+            ] : [$actor];
+        }
         if ($places = $this->getSubjectPlaces($extended, false)) {
             $headings = [...$headings, ...$places];
         }
@@ -2103,7 +2126,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 
     /**
      * Get all subject headings associated with this record apart from geographic
-     * places. Each heading is returned as an array of chunks, increasing from least
+     * places and subject actors. Each heading is returned as an array of chunks, increasing from least
      * specific to most specific.
      *
      * @param bool $extended Whether to return a keyed array with the following
@@ -2117,7 +2140,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      *
      * @return array
      */
-    public function getAllSubjectHeadingsWithoutPlaces(bool $extended = false): array
+    public function getAllSubjectHeadingsForDisplay(bool $extended = false): array
     {
         $headings = [];
         $headings = $this->getTopics();
@@ -2176,9 +2199,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      *
      * @return array
      */
-    public function getAllSubjectHeadingsWithoutPlacesExtended(): array
+    public function getAllSubjectHeadingsForDisplayExtended(): array
     {
-        return $this->getAllSubjectHeadingsWithoutPlaces(true);
+        return $this->getAllSubjectHeadingsForDisplay(true);
     }
 
     /**
@@ -2189,10 +2212,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     public function getTopics(): array
     {
         $reader = $this->getXmlReader();
-        $results = [];
         $topics = [];
         $langTopics = [];
-        $subjectActors = [];
         $language = $this->getLocale();
         foreach (
             $reader->all(path: 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject') as $subject
@@ -2237,17 +2258,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                     }
                 }
             }
-            // Add subject actors
-            foreach ($reader->all($subject, 'subjectActor/actor/nameActorSet/appellationValue') as $actor) {
-                if ('' !== ($str = $reader->value($actor) ?? '')) {
-                    $subjectActors[] = ['data' => $str];
-                }
-            }
         }
-        $results = $langTopics ? $langTopics : $topics;
-        $results = array_merge($results, $subjectActors);
-
-        return $results;
+        return $langTopics ? $langTopics : $topics;
     }
 
     /**
@@ -2926,7 +2938,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $reader = $this->getXmlReader();
         $id = '';
-        foreach ($reader->all($actor, 'actorInRole/actor/actorID') as $actorId) {
+        $actorIds = $reader->all($actor, 'actorInRole/actor/actorID') ?: $reader->all($actor, 'actor/actorID');
+        foreach ($actorIds as $actorId) {
             if ($actorIdValue = $reader->value($actorId)) {
                 if (preg_match('/^(http:\/\/urn\.fi\/URN:NBN:fi:au:finaf:)(.*)/', $actorIdValue)) {
                     return $actorIdValue;

@@ -531,7 +531,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public static function getAllSubjectHeadingsWithoutPlacesExtendedData(): array
+    public static function getAllSubjectHeadingsForDisplayExtendedData(): array
     {
         return [
                     [
@@ -580,11 +580,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'id' => 'http://www.yso.fi/onto/yso/p5066',
                                 'authType' => null,
                             ],
-                            [
-                                'heading' => ['Jussi, Jänö'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
                         ],
                     ],
                     [
@@ -610,18 +605,13 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'topic',
                                 'source' => '',
                             ],
-                            [
-                                'heading' => ['Jussi, Jänö'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
                         ],
                     ],
         ];
     }
 
     /**
-     * Test getAllSubjectHeadingsWithoutPlacesExtended
+     * Test getAllSubjectHeadingsForDisplayExtended
      *
      * @param string $language Language
      * @param string $xmlFile  Xml record to use for the test
@@ -629,8 +619,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('getAllSubjectHeadingsWithoutPlacesExtendedData')]
-    public function testGetAllSubjectHeadingsWithoutPlacesExtended(
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAllSubjectHeadingsForDisplayExtendedData')]
+    public function testGetAllSubjectHeadingsForDisplayExtended(
         string $language,
         string $xmlFile,
         array $expected
@@ -645,7 +635,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $driver->setTranslator($translator);
         $this->assertEquals(
             $expected,
-            $driver->getAllSubjectHeadingsWithoutPlacesExtended()
+            $driver->getAllSubjectHeadingsForDisplayExtended()
         );
     }
 
@@ -680,7 +670,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 'heading' => ['Jussi, Jänö'],
                 'type' => 'topic',
-                'source' => '',
+                'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000211029',
             ],
             [
                 'heading' => ['Etelä-Suomi'],
@@ -842,6 +832,29 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             $driver->getNonPresenterAuthors()
+        );
+    }
+
+    /**
+     * Test getSubjectActorsExtended.
+     *
+     * @return void
+     */
+    public function testGetSubjectActorsExtended(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                [
+                    'name' => 'Pukki, Joulu',
+                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000229728',
+                ],
+                [
+                    'name' => 'Punakuono, Petteri',
+                    'id' => '',
+                ],
+            ],
+            $driver->getSubjectActorsExtended()
         );
     }
 
