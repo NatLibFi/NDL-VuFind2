@@ -326,7 +326,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 'volume' => $volume,
                 'cancel_details' => $cancelDetails,
                 'updateDetails' => $updateDetails,
-                'holdShelf' => $entry['hold_pickup_shelf'] ?? null,
+                'holdShelf' => $entry['hold_pickup_shelf']['shelf_name'] ?? null,
             ];
         }
 
