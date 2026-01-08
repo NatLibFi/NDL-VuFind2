@@ -2586,7 +2586,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 if (null === $firstNode && '' !== $contents) {
                     $firstNode = $node;
                 }
-                if ($reader->attr($node, 'lang') === $lng && '' !== $contents) {
+                $langAttr = $reader->attr($node, "{{$this->xmlNs}}lang") ?? $reader->attr($node, 'lang');
+                if ($langAttr === $lng && '' !== $contents) {
                     return $node;
                 }
             }

@@ -45,6 +45,13 @@ use FinnaXml\XmlDoc;
 trait FinnaXmlReaderTrait
 {
     /**
+     * The XML namespace.
+     *
+     * @var string
+     */
+    protected $xmlNs = 'http://www.w3.org/2000/xmlns/';
+
+    /**
      * XML record. Access only via getXmlRecord() as this is initialized lazily.
      *
      * @var \SimpleXMLElement
