@@ -43,9 +43,9 @@ $tifyConfig = json_encode([
 ]);
 
 $js = <<<JS
-  import Tify from $tifyJsPath;
-  new Tify($tifyConfig);
-  JS;
+    import Tify from $tifyJsPath;
+    new Tify($tifyConfig);
+    JS;
 
 echo $this->assetManager()->outputInlineScriptString($js, ['type' => 'module']);
 ?>
