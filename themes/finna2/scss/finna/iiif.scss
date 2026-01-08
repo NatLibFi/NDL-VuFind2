@@ -86,8 +86,6 @@
 }
 
 .iiif-menu-button-badge {
-    @extend .btn, .btn-secondary;
-
     min-width: 22pt;
     min-height: 22pt;
     max-height: 33%;

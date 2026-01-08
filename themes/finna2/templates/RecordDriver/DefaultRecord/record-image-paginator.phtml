@@ -91,17 +91,9 @@
     <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>">
   </a>
   <?php if ($manifests): ?>
-    <button type="button"
-            class="badge text-bg-light position-absolute bottom-0 end-0 icon-link iiif-menu-button-badge"
-            data-bs-toggle="dropdown"
-            aria-expanded="false">
-        <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
-            alt="IIIF"
-            class="bi">
-    </button>
-    <?=$this->component('finna-iiif-menu',
-                        ['manifestUrls' => $manifests,
-                        'uniqueID' => md5($settings['recordId'])]);?>
+    <span class="badge text-bg-light position-absolute bottom-0 end-0 iiif-menu-button-badge">
+        <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>" alt="IIIF" class="bi">
+    </span>
   <?php endif ?>
   <span class="hidden-trigger" hidden></span>
   <button class="next-image right" type="button"><?=$this->icon('image-next') ?><span class="visually-hidden"><?= $this->transEsc('next_image') ?></span></button>
