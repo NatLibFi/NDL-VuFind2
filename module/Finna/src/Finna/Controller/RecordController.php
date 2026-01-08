@@ -33,6 +33,7 @@ namespace Finna\Controller;
 use Finna\Controller\Feature\FinnaRecordPreviewSupportTrait;
 use Finna\Controller\Plugin\Preview;
 use Finna\Form\Form;
+use Psr\Log\LoggerAwareInterface;
 
 use function count;
 use function in_array;
@@ -49,7 +50,7 @@ use function is_string;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class RecordController extends \VuFind\Controller\RecordController
+class RecordController extends \VuFind\Controller\RecordController implements LoggerAwareInterface
 {
     use FinnaRecordControllerTrait;
     use \Finna\Statistics\ReporterTrait;
@@ -901,9 +902,7 @@ class RecordController extends \VuFind\Controller\RecordController
             return $response;
         }
 
-        $generator = $this->serviceLocator->get(
-            \Finna\Record\IIIF\IIIFManifestGenerator::class
-        );
+        $generator = $this->serviceLocator->get(\Finna\Record\IIIF\IIIFManifestGenerator::class);
         $config = $this->getConfigArray();
         $corsAllow = $config['IIIF']['manifestCORS'] ?? [];
         foreach ($corsAllow as $allow) {
