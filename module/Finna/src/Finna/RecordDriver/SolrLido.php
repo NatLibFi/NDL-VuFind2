@@ -33,7 +33,7 @@
 
 namespace Finna\RecordDriver;
 
-use Finna\Record\XML\XMLReader;
+use FinnaXml\XmlDoc;
 use VuFind\I18n\TranslatableString;
 
 use function boolval;
@@ -61,7 +61,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 {
     use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait {
-        getXMLReader as getXMLReaderTraitVersion;
+        getXmlDoc as getXmlDocTraitVersion;
     }
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
@@ -2940,15 +2940,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get XmlReader.
+     * Get XmlDoc.
      *
-     * @return XMLReader
+     * @return XmlDoc
      */
-    protected function getXMLReader(): XMLReader
+    protected function getXMLReader(): XmlDoc
     {
-        $reader = $this->getXMLReaderTraitVersion();
-        $reader->setDefaultNamespace(static::LIDO_NAMESPACE);
-        return $reader;
+        $xmlDoc = $this->getXmlDocTraitVersion();
+        $xmlDoc->setDefaultNamespace(static::LIDO_NAMESPACE);
+        return $xmlDoc;
     }
 
     /**

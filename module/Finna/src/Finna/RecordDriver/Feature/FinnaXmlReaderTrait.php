@@ -29,7 +29,7 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use Finna\Record\XML\XMLReader;
+use FinnaXml\XmlDoc;
 
 /**
  * Functions for reading XML records.
@@ -52,11 +52,11 @@ trait FinnaXmlReaderTrait
     protected $lazyXmlRecord = null;
 
     /**
-     * XML Reader. Access only via getXmlReader() as this is initialized lazily.
+     * XmlDoc. Access only via getXmlDoc() as this is initialized lazily.
      *
-     * @var XMLReader
+     * @var XmlDoc
      */
-    protected ?XMLReader $lazyXMLReader = null;
+    protected ?XmlDoc $lazyXmlDoc = null;
 
     /**
      * Get access to the raw SimpleXMLElement object.
@@ -76,15 +76,15 @@ trait FinnaXmlReaderTrait
     }
 
     /**
-     * Get XMLReader.
+     * Get XmlDoc.
      *
-     * @return XMLReader
+     * @return XmlDoc
      */
-    public function getXMLReader(): XMLReader
+    public function getXmlDoc(): XmlDoc
     {
-        if (null === $this->lazyXMLReader) {
-            $this->lazyXMLReader = (new XMLReader())->parse($this->fields['fullrecord']);
+        if (null === $this->lazyXmlDoc) {
+            $this->lazyXmlDoc = (new XmlDoc())->parse($this->fields['fullrecord']);
         }
-        return $this->lazyXMLReader;
+        return $this->lazyXmlDoc;
     }
 }

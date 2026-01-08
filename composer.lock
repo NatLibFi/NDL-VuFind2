@@ -7896,6 +7896,60 @@
             "time": "2024-05-21T08:17:48+00:00"
         },
         {
+            "name": "natlibfi/finna-xml",
+            "version": "1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/NatLibFi/finna-xml.git",
+                "reference": "7b64645bcd2d38eecb19b51800978d73baff21d6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/NatLibFi/finna-xml/zipball/7b64645bcd2d38eecb19b51800978d73baff21d6",
+                "reference": "7b64645bcd2d38eecb19b51800978d73baff21d6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.2"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "3.89.2",
+                "phing/phing": "3.1.1",
+                "phpstan/phpstan": "2.1.32",
+                "phpunit/php-code-coverage": "^11",
+                "phpunit/phpunit": "11.5.43",
+                "rector/rector": "2.2.7",
+                "squizlabs/php_codesniffer": "4.0.1"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "FinnaXml\\": "src/FinnaXml"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ere Maijala",
+                    "email": "ere.maijala@helsinki.fi"
+                }
+            ],
+            "description": "Yet another XML parser, reader and writer for diverse records with and without namespaces.",
+            "keywords": [
+                "dom",
+                "parser",
+                "xml"
+            ],
+            "support": {
+                "issues": "https://github.com/NatLibFi/finna-xml/issues",
+                "source": "https://github.com/NatLibFi/finna-xml/tree/v1.0.0"
+            },
+            "time": "2026-01-08T11:59:45+00:00"
+        },
+        {
             "name": "natlibfi/php-html-parser",
             "version": "v4.0.1",
             "source": {
