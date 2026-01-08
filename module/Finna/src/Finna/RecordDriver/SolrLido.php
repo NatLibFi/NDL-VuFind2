@@ -829,11 +829,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             $result['identifier'] = $reader->value($resourceID);
         }
         if ($term = $reader->first($resourceSet, 'resourceType/term')) {
-            $result['type'] = $this->getLanguageSpecificValue($term, $language);
+            $result['type'] = $this->getLanguageSpecificValue([$term], $language);
         }
         foreach ($reader->all($resourceSet, 'resourceRelType') as $relType) {
             if ($term = $reader->first($relType, 'term')) {
-                $result['relationTypes'][] = $this->getLanguageSpecificValue($term, $language);
+                $result['relationTypes'][] = $this->getLanguageSpecificValue([$term], $language);
             }
         }
         if ($resourceDescription = $reader->all($resourceSet, 'resourceDescription')) {
@@ -851,8 +851,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             $result['dateTaken'] = $date;
         }
         foreach ($reader->all($resourceSet, 'resourcePerspective') as $perspective) {
-            if ($term = $reader->all($perspective, 'term')) {
-                $result['perspectives'][] = $this->getLanguageSpecificValue($term, $language);
+            if ($terms = $reader->all($perspective, 'term')) {
+                $result['perspectives'][] = $this->getLanguageSpecificValue($terms, $language);
             }
         }
         return $result;
@@ -1120,8 +1120,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 $rights['rightsHolders'][] = $rightsHolder;
             }
 
-            if ($creditLine = $reader->all($rightsResource, 'creditLine')) {
-                $rights['creditLine'] = $this->getLanguageSpecificValue($creditLine, $language);
+            if ($creditLines = $reader->all($rightsResource, 'creditLine')) {
+                $rights['creditLine'] = $this->getLanguageSpecificValue($creditLines, $language);
             }
         }
 
@@ -1472,8 +1472,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             $materialsExtended = [];
             $langMaterialsExtended = [];
             foreach ($reader->all($node, 'eventMaterialsTech') as $eventMaterialsTech) {
-                $displayMaterialsTech = $reader->all($eventMaterialsTech, 'displayMaterialsTech');
-                if ($display = $this->getLanguageSpecificValue($displayMaterialsTech, $language)) {
+                $displayMaterialsTechs = $reader->all($eventMaterialsTech, 'displayMaterialsTech');
+                if ($display = $this->getLanguageSpecificValue($displayMaterialsTechs, $language)) {
                     $materials[] = $display;
                     $langMaterialsExtended[] = [
                         'data' => $display,
@@ -2061,7 +2061,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $language = $this->getLocale();
         $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectDate/displayDate';
         foreach ($reader->all(path: $path) as $node) {
-            if ($term = $this->getLanguageSpecificValue($node, $language)) {
+            if ($term = $this->getLanguageSpecificValue([$node], $language)) {
                 $results[] = $term;
             }
         }
@@ -2160,8 +2160,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         foreach ($reader->all(path: 'lido/descriptiveMetadata/eventWrap/eventSet/event') as $event) {
             $type = $this->toLower($reader->firstValue($event, 'eventType/term'));
             if (!in_array($type, $this->nonPlaceEvents)) {
-                if ($displayDate = $reader->all($event, 'eventDate/displayDate')) {
-                    if ($date = $this->getLanguageSpecificValue($displayDate, $language)) {
+                if ($displayDates = $reader->all($event, 'eventDate/displayDate')) {
+                    if ($date = $this->getLanguageSpecificValue($displayDates, $language)) {
                         $headings[] = ['data' => $date];
                     }
                 }
