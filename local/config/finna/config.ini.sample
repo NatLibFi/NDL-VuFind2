@@ -1949,6 +1949,6 @@ externalViewers[] = "Mirador|https://projectmirador.org/embed/?iiif-content={man
 externalViewers[] = "Universal Viewer|https://uv-v4.netlify.app/#?manifest={manifest}"
 
 ; Origins to be listed in Access-Control-Allow-Origin headers in the
-; RecordController IIIFManifest action. Recommended to allow all origins for
-; general IIIF use
-;manifestCORS[] = "*"
+; RecordController IIIFManifest action. Use "*" for general use, or site URL
+; to restrict to local
+manifestCORS[] = "*"

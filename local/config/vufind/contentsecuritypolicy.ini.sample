@@ -35,6 +35,9 @@ merge_array_settings = true
 ;script-src[] = "'unsafe-inline'"
 ;script-src[] = "'unsafe-eval'"
 
+; IIIF
+;connect-src[] = "https://digi.kansalliskirjasto.fi/"
+
 ; Kirjastokartta:
 ;connect-src[] = "https://kirjastokartta.kansalliskirjasto.fi"
 ;frame-src[] = "https://kirjastokartta.kansalliskirjasto.fi"
