@@ -16,9 +16,13 @@
           <classification type="language">
             <term>sv</term>
           </classification>
-          <classification lang="en">
-            <term type="testimittari">näkyy</term>
-            <term type="testimittari">ei näy</term>
+          <classification type="muu luokitus">
+            <term lang="en">buildings</term>
+            <term lang="en">department stores</term>
+            <term lang="fi">rakennukset</term>
+          </classification>
+          <classification>
+            <term lang="sv">byggnader</term>
           </classification>
         </classificationWrap>
       </objectClassificationWrap>

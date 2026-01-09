@@ -118,7 +118,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         'Events',
         'Measurements',
         'Inscriptions',
-        'Other Classification',
         'Unit ID',
         'Unit IDs',
         'Authors',
@@ -1236,15 +1235,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 [
                     'context' => [
                         'class' => 'originalLanguage',
-                    ],
-                ],
-            ],
-            'Other Classification' => [
-                'getFormatClassifications',
-                'data-escapeHtml.phtml',
-                [
-                    'context' => [
-                        'class' => 'recordClassifications',
                     ],
                 ],
             ],

@@ -1320,31 +1320,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      */
     public function getOtherClassifications()
     {
-        $preferredLanguages = $this->getPreferredLanguageCodes();
-        $preferredLangResults = $allResults = [];
-        $xpath = 'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
-            . 'classification';
-        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
-            $type = trim((string)$node->attributes()->type);
-            if (in_array($type, $this->excludedClassifications)) {
-                continue;
-            }
-            if (isset($node->term)) {
-                $term = trim((string)$node->term);
-                if ('' !== $term) {
-                    $attributes = $node->term->attributes();
-                    $label = (string)($attributes->label ?? '');
-                    $data = $label ? compact('term', 'label') : $term;
-                    $allResults[] = $data;
-                    $termLanguage = trim((string)$attributes->lang)
-                        ?: trim((string)$node->attributes()->lang);
-                    if (in_array($termLanguage, $preferredLanguages)) {
-                        $preferredLangResults[] = $data;
-                    }
+        $results = $langNodes = [];
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata->objectClassificationWrap
+            ->classificationWrap->classification ?? [] as $node
+        ) {
+            if (!in_array(trim((string)($node->attributes()->type ?? '')), $this->excludedClassifications)) {
+                foreach ($node->term as $termNode) {
+                    $langNodes[] = $termNode;
                 }
             }
         }
-        return $preferredLangResults ?: $allResults;
+        $langNodes = $this->getAllLanguageSpecificItems($langNodes, $this->getLocale(), true);
+        foreach ($langNodes as $langNode) {
+            if ($term = trim((string)$langNode)) {
+                $label = trim((string)($langNode->attributes()->label ?? ''));
+                $results[] = $label ? compact('term', 'label') : $term;
+            }
+        }
+        return $results;
     }
 
     /**
@@ -1686,48 +1680,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             }
         }
         return $events;
-    }
-
-    /**
-     * Get an array of format classifications for the record.
-     *
-     * @return array
-     */
-    public function getFormatClassifications()
-    {
-        $results = [];
-        foreach (
-            $this->getXmlRecord()->lido->descriptiveMetadata
-            ->objectClassificationWrap ?? [] as $node
-        ) {
-            $workTypeTerm = trim(
-                (string)($node->objectWorkTypeWrap->objectWorkType->term ?? '')
-            );
-            foreach ($node->classificationWrap->classification ?? [] as $classification) {
-                $type = trim((string)$classification->attributes()->type);
-                if (in_array($type, $this->excludedClassifications)) {
-                    continue;
-                }
-                $getDisplayString = function (string $term, string $extra) {
-                    return $extra ? "$term ($extra)" : $term;
-                };
-                foreach ($classification->term as $term) {
-                    $termString = trim((string)$term);
-                    $termType = trim((string)$term->attributes()->type);
-                    $termLabel = trim((string)$term->attributes()->label);
-
-                    switch ($workTypeTerm) {
-                        case 'rakennetun ympäristön kohde':
-                            $results[] = $getDisplayString($termString, $termType);
-                            break 2;
-                        case 'arkeologinen kohde':
-                            $results[] = $getDisplayString($termString, $termLabel);
-                            break;
-                    }
-                }
-            }
-        }
-        return $results;
     }
 
     /**

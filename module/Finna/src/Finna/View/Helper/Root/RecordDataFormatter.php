@@ -176,7 +176,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Measurements',
             'Organisation',
             'original_work_language',
-            'Other Classification',
             'Other Classifications',
             'Other ID',
             'Parent Archive',
