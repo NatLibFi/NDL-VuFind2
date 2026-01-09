@@ -1,0 +1,58 @@
+<?php
+    // Set up breadcrumbs:
+    $this->breadcrumbs()->reset();
+    if ($url = $this->searchMemory()->getLastSearchUrl()) {
+      $this->breadcrumbs()->add($this->translate('Search'), $url);
+    }
+    $this->breadcrumbs()->add($this->translate('Valitse list'), active: true);
+?>
+<?=$this->component('page-title', ['title' => $this->translate('Valitse list')]);?>
+
+<?=$this->flashmessages()?>
+
+<?php if (count($this->recordIds) > 0): ?>
+  <form class="form-cart-save" method="post" action="<?=$this->url('selectList')?>" name="selectList">
+    <?=$this->context($this)->renderInContext('cart/form-record-hidden-inputs.phtml', []); ?>
+    <div class="form-group">
+      <label class="form-label"><?=$this->transEsc('Title')?>:</label>
+      <?php if (count($this->recordIds) > 1): ?>
+          <?=count($this->recordIds) . ' ' . $this->transEsc('items') ?>
+      <?php endif; ?>
+    </div>
+
+    <?php if (!$this->selectedList): ?>
+      <div class="form-group">
+        <label class="form-label" for="save_list"><?=$this->transEsc('Choose a List') ?></label>
+        <select id="save_list" name="list" class="form-select">
+          <?php if (count($this->lists) > 0): ?>
+            <?php foreach ($this->lists as $list): ?>
+              <option value="<?=$this->escapeHtmlAttr($list->getId()) ?>"<?php if ($list->getId() == $this->userlist()->lastUsed()): ?> selected="selected"<?php endif; ?>>
+                <?=$this->escapeHtml($list->getTitle())?><?php if ($list->isPublic()):?> (<?=$this->transEsc('public_list_indicator')?>)<?php endif; ?>
+              </option>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <option value=""><?=$this->transEsc('default_list_title') ?></option>
+          <?php endif; ?>
+        </select>
+        <a class="btn btn-link" href="<?=$this->url('editList', ['id' => 'NEW'], ['query' => ['selectList' => 1]]) ?>"><?=$this->transEsc('or create a new list'); ?></a>
+      </div>
+    <?php else: ?>
+      <input type="hidden" name="list" value="<?=$this->escapeHtmlAttr($this->list->getId())?>">
+      <div class="form-group">
+        <label class="form-label"><?=$this->transEsc('Saving to List')?>:</label>
+        <p class="form-control-static"><?=$this->escapeHtml($this->list->getTitle()) ?></p>
+      </div>
+    <?php endif; ?>
+
+    <?php if ($this->usertags()->getMode() !== 'disabled'): ?>
+      <div class="form-group">
+        <label class="form-label" for="add_mytags"><?=$this->transEsc('Add Tags') ?></label>
+        <input id="add_mytags" type="text" name="mytags" value="" class="form-control">
+        <span class="help-block"><?=$this->transEsc('add_tag_note') ?></span>
+      </div>
+    <?php endif; ?>
+    <div class="form-group">
+      <input class="btn btn-primary" type="submit" name="saveBatch" value="<?=$this->transEscAttr('Valitse') ?>">
+    </div>
+  </form>
+<?php endif; ?>

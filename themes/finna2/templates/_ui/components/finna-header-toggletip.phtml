@@ -1,0 +1,12 @@
+<?php
+  $headerAttrs = [
+    'class' => trim(($this->class ?? '') . " $this->_componentClass"),
+  ];
+  $toggleTip = $this->toggleTip ?? '';
+  $toggleTip = $toggleTip ? $this->component('finna-toggletip', [
+    'icon' => 'help',
+    'ariaLabel' => $this->translate('Help'),
+    'contentHtml' => $toggleTip,
+  ]) : '';
+?>
+<h1<?= $this->htmlAttributes($headerAttrs); ?>><?= $this->escapeHtml($this->title ?? '') ?><?= $toggleTip ?></h1>

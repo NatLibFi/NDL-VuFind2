@@ -1,0 +1,34 @@
+<?php
+  $recordTotal = $this->results?->getResultTotal() ?? 0;
+  $recommendations = $this->results?->getRecommendations('side');
+  $divAttrs = [
+    'id' => 'sidebar',
+    'class' => $recordTotal < 1 ? 'empty-list' : $this->layoutClass('sidebar'),
+  ];
+  if (!$recommendations || $recordTotal < 1) {
+    return;
+  }
+?>
+
+
+<?php if ($recommendations): ?>
+  <div<?=$this->htmlAttributes($divAttrs)?>>
+    <?php $messageAdded = false; ?>
+    <?php foreach ($recommendations as $index => $current): ?>
+      <?=$this->recommend($current, 'side', $index)?>
+      <?php if (!$messageAdded) {
+        if (!isset($this->layout()->skiplink)) {
+          $this->layout()->skiplink = '';
+        }
+        $this->layout()->skiplink .= ' <a class="skip-link hidden-xs" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
+        $this->layout()->skiplink .= ' <a class="skip-link visible-xs" href="#narrow-search-filter-toggle">' . $this->transEsc('Skip to narrowing options') . '</a>';
+        $messageAdded = true;
+      }?>
+    <?php endforeach; ?>
+    <?php if (($template = $this->content()->findTemplateForLng('content/Additions/search-post-facets')) && ($recordTotal > 0)): ?>
+      <div>
+          <?=$this->render($template)?>
+      </div>
+    <?php endif; ?>
+  </div>
+<?php endif; ?>

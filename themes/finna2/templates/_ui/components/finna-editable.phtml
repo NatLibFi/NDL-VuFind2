@@ -8,6 +8,8 @@
    * @param ?string   editable            Rendered HTML of the editable component
    * @param ?string   editLabel           Label for the edit button. Defaults to
    *                                      'Edit'.
+   * @param ?string   name                Name of the hidden input that will hold the
+   *                                      edited value.
    *
    * Supported variations using CSS classes:
    * - finna-editable-open
@@ -23,6 +25,9 @@
       'icon' => 'ui-edit',
       'iconClass' => 'finna-editable-btn-icon',
     ]); ?>
+  <?php if ($inputName = $this->name ?? ''): ?>
+    <input class="js-editable-hidden-input" type="hidden" name="<?= $this->escapeHtmlAttr($name) ?>" value="<?= $this->escapeHtmlAttr($editable ?? '') ?>">
+  <?php endif; ?>
   <?=$this->icon('spinner', 'finna-editable-spinner')?>
   <div<?= $this->htmlAttributes($containerAttributes ?? [])->add('class', 'finna-editable-container') ?>>
     <?= $editable ?? '' ?>

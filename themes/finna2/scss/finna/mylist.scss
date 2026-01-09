@@ -202,62 +202,10 @@
 .list-title {
   margin-bottom: 0;
   margin-top: 0px;
-  .icon.list-title-edit {
-    margin-bottom: -22px;
-    cursor: pointer;
-  }
-  &.no-edit {
-    border: 0;
-    margin-top: 5px;
-    padding-left: 0;
-    &:hover {
-      border: 0;
-    }
-  }
 }
 
 .list-public-indicator {
   padding-left: 5px;
-}
-
-.list-title, .add-new-list {
-  border: 1px solid transparent;
-  display: flex;
-  padding: 5px;
-  width: -webkit-calc(100% - 30px);
-  width: -moz-calc(100% - 30px);
-  width: calc(100% - 30px);
-  width: 100%;
-  &:hover, &:active, &:focus {
-    border: 1px solid $gray-lighter;
-    .icon {
-      transition: all 0.2s linear;
-      color: $gray;
-    }
-  }
-  .icon {
-    color: $gray-light;
-    cursor: pointer;
-  }
-  .js-list-title {
-    width: 100%;
-    display: inline-block;
-    word-wrap: break-word;
-    padding-right: 25px;
-    input, textarea {
-      &:focus, &:active {
-        border: none;
-        box-shadow: none;
-        outline: none;
-      }
-    }
-  }
-}
-.list-title.disable {
-  &:hover, &:active, &:focus {
-    border: 1px solid transparent;
-    cursor: initial;
-  }
 }
 
 @mixin list-tag(){

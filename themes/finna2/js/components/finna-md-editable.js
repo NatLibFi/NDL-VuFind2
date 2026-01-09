@@ -8,6 +8,7 @@
 function FinnaMdEditable(element) {
   this.element = element;
   this.container = this.element.find('.finna-editable-container');
+  this.hiddenInput = this.element.find('input.js-editable-hidden-input');
   this.preview = true === this.container.data('preview');
   this.emptyHtml = this.container.data('empty-html');
   this.editor = null;
@@ -248,6 +249,9 @@ FinnaMdEditable.prototype.closeEditable = function closeEditable() {
     if (this.preview) {
       this.element.find('.markdown-preview').remove();
     }
+    if (this.hiddenInput) {
+      this.hiddenInput.val(markdown !== this.emptyHtml ? markdown : '');
+    }
   }
 
   var editableEvent = $.Event(this.eventEditableClosed, { editable: this });
@@ -286,6 +290,7 @@ FinnaMdEditable.prototype._insertTruncate = function _insertTruncate() {
 
 finna.mdEditable = (function finnaMdEditable() {
   var editables = [];
+  let initialized = false;
 
   var my = {
     editables: editables,
@@ -293,6 +298,16 @@ finna.mdEditable = (function finnaMdEditable() {
       $('.finna-md-editable:not(.inited)').each(function initFinnaMdEditable() {
         editables.push(new FinnaMdEditable($(this)));
       });
+      if (!initialized) {
+        document.addEventListener('click', function closeOpenEditables(event) {
+          editables.forEach(function checkCloseEditable(editable) {
+            if (editable.isOpen() && !editable.element[0].contains(event.target)) {
+              editable.closeEditable();
+            }
+          });
+        });
+        initialized = true;
+      }
     }
   };
 

@@ -1,12 +1,12 @@
 <!-- START of: finna - myresearch/list-visibility.phtml -->
-<div class="list-visibility">
-  <?= $this->translate('Public List Visibility'); ?>
-  <div>
+<div class="list-visibility d-flex flex-column">
+  <strong><?= $this->translate('Public List Visibility'); ?></strong>
+  <div class="d-flex gap-3 mb-2">
     <span><input id="visibility-public" type="radio" name="visibility" value="1"<?= $public ? ' checked="checked"' : '' ?>> <label for="visibility-public"><?= $this->translate('Public'); ?></label></span>
     <span class="list-visibility-hidden"><input id="visibility-hidden" type="radio" name="visibility" value="0"<?= !$public ? ' checked="checked"' : '' ?>> <label for="visibility-hidden"><?= $this->translate('Private'); ?></label></span>
   </div>
   <?php if ($public): ?>
-  <div class="list-url">
+  <div class="list-url d-flex gap-3 mb-2">
     <a href="<?= $this->listUrl; ?>?view=rss" class="feed"><?=$this->icon('rss') ?></a>
     <a href="<?= $this->listUrl; ?>"><?= $this->translate('Public List URL'); ?></a>
    </div>

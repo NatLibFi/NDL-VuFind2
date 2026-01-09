@@ -268,7 +268,6 @@ return [
         [ 'file' => 'finna-datepicker.js' ],
         [ 'file' => 'finna-reservation-list.js' ],
         [ 'file' => 'components/finna-bazaar-browse-bar.js' ],
-        [ 'file' => 'components/finna-md-editable.js' ],
         [ 'file' => 'components/finna-tabs-nav.js' ],
         [ 'file' => 'components/finna-truncate.js' ],
     ],

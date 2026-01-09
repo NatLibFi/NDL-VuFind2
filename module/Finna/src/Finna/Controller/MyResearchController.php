@@ -543,6 +543,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public function editlistAction()
     {
         $view = parent::editlistAction();
+        if ($view instanceof \Laminas\View\Model\ViewModel && $this->params()->fromQuery('ignoreLightbox', false)) {
+            $view->setVariable('ignoreLightbox', true);
+        }
         // If the user is in the process of saving a public list, send them back
         // to the save screen
         if ($view instanceof \Laminas\Http\PhpEnvironment\Response) {
@@ -568,6 +571,33 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         return $view;
     }
 
+    public function selectListAction()
+    {
+        $user = $this->getUser();
+        $selectedIds = $this->getSelectedIds();
+        $selectedList = null;
+        $lists = [];
+        $allIdsGlobal = $this->params()->fromPost('all_ids_global')
+            ?? $this->params()->fromQuery('all_ids_global', '[]');
+        if (!$selectedIds && $allIdsGlobal) {
+            $allIdsGlobal = json_decode($allIdsGlobal, true);
+            if (is_array($allIdsGlobal)) {
+                $selectedIds = $allIdsGlobal;
+            }
+        }
+
+        $lists = $this->getDbService(UserListServiceInterface::class)->getUserListsByUser($user);
+        if ($this->formWasSubmitted('newList')) {
+            $result = $this->forwardTo('MyResearch', 'editlist', ['id' => 'NEW']);
+        }
+        $view = $this->createViewModel([
+            'recordIds' => $this->getSelectedIds(),
+            'lists' => $lists,
+        ]);
+        $view->setTemplate('myresearch/save-batch.phtml');
+        return $view;
+    }
+
     /**
      * Send user's saved favorites from a particular list to the view
      *
@@ -576,41 +606,17 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     public function mylistAction()
     {
         $view = parent::mylistAction();
-        $user = $this->getUser();
-
         if ($results = $view->results) {
             $list = $results->getListObject();
-
-            // Redirect anonymous users and list visitors to public list URL
-            if (
-                $list && $list->isPublic()
-                && (!$user || $user->getId() != $list->getUser()?->getId())
-            ) {
-                return $this->redirect()->toRoute('list-page', ['lid' => $list->getId()]);
-            }
             if ($list) {
                 $this->rememberCurrentSearchUrl();
-                // Find out the total favorite count:
-                $runner = $this->getService(\VuFind\Search\SearchRunner::class);
-                $favoritesResults = $runner->run([], 'Favorites');
-                $view->totalResourceCount = $this->getDbService(UserResourceService::class)
-                    ->getTotalResourceCount($user);
             } else {
                 $memory  = $this->serviceLocator->get(\VuFind\Search\Memory::class);
                 $memory->rememberSearch(
                     $this->url()->fromRoute('myresearch-favorites')
                 );
-                // The results represent all favorites, so get the total count directly:
-                $view->totalResourceCount = $results->getResultTotal();
             }
         }
-
-        if (!$user) {
-            return $view;
-        }
-
-        $view->sortList = $this->createSortList($results->getListObject());
-
         return $view;
     }
 

@@ -71,6 +71,7 @@
 // Loading spinner
 #modal .loading-overlay {
   @include loading-overlay();
+  z-index: 3;
 }
 
 // Utility classes

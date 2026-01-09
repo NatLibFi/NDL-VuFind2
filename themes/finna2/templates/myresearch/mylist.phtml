@@ -33,9 +33,6 @@
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => $list ? ('list' . $list->getId()) : 'favorites']); ?>
 
-<?php foreach ($this->results->getRecommendations('side') as $current): ?>
-  <?=$this->recommend($current)?>
-<?php endforeach; ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="mylist-error hidden"><?=$this->translate('An error has occurred'); ?></div>
@@ -52,70 +49,46 @@
     </div>
   </div>
   <div class="useraccount-content">
-    <?php if ($list): ?>
-      <div class="mobile-nav-toggle-trigger visible-xs visible-sm hidden-print"></div>
-      <div class="mobile-nav-toggle visible-xs visible-sm hidden-print">
-        <div id="mobile-navigation" class="btn btn-primary btn-mobile-nav" role="button" tabindex="0">
-          <?=$this->transEsc('Favourite lists')?> <?=$this->icon('collapse-open', 'expand-icon') ?>
-        </div>
+    <?= $this->component('finna-mobile-navigation-btn', ['label' => $this->translate('Favourite lists'), 'target' => '.mylist-bar.mobile-sidebar-container']) ?>
+    <?php if ($list && $this->userlist()->userCanEditList($user, $list)): ?>
+      <?php $listUrl = $this->url('list-page', ['lid' => $list->getId()], ['force_canonical' => true]) ?>
+      <div>
+        <h3><?=$this->escapeHtml($list->getTitle())?></h3>
       </div>
-      <div class="useraccount-header">
-        <h3 class="list-title"><span class="js-list-title"><?=$this->escapeHtml($list->getTitle())?></span><?=$this->icon('list-edit', ['class' => 'list-title-edit', 'aria-hidden' => 'false', 'aria-label' => $this->transEscAttr('edit')])?></h3>
-      </div>
-      <?php if ($list && $user && $list->getUser()->getId() === $user->getId() && $list->isPublic()): ?>
-        <div class="list-public-indicator">
-          <strong><?=$this->icon('list-public') ?> <?=$this->transEsc('public_list_indicator') ?></strong>
-        </div>
-      <?php endif; ?>
       <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($list->getDescription() ?? '') : ''; ?>
-      <?= $this->component('finna-md-editable', [
-        'attributes' => ['class' => 'list-description'],
-        'markdown' => $markdown,
-        'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
-        'emptyHtml' => $this->translate('Add list description'),
-        'preview' => true,
-      ]); ?>
-      <?php if ($this->usertags()->getListMode() === 'enabled'): ?>
-        <?php $listTags = $this->tags()->getListTags($list, $user); ?>
-        <div class="list-tags">
-          <div class="tags view-tags">
-            <?= $this->partial('mylist-tags.phtml', ['tags' => $listTags, 'editable' => false])?>
-          </div>
-          <div class="edit-tags">
-            <div class="toggle" title="<?=$this->transEscAttr('edit-list-tags')?>">
-              <span><?=$this->transEsc('edit-list-tags')?> </span><?=$this->icon('list-tag-edit') ?>
-            </div>
-            <div class="ui">
-              <p class="info"><?=$this->icon('info') ?> <?=$this->transEsc('add-list-tag-note')?></p>
-              <form>
-                <fieldset>
-                  <legend></legend>
-                  <div class="add-new">
-                    <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->transEscAttr('list-tags-info')?>" placeholder="<?= $this->transEscAttr('list-tags-info')?>">
-                    <button type="submit" class="btn btn-primary "><?=$this->transEsc('Save')?></button>
-                    <div><?=$this->icon('spinner', 'hide') ?></div>
-                  </div>
-                  <div class="tags editable">
-                    <div class="tag-list">
-                      <?= $this->partial('mylist-tags.phtml', ['tags' => $listTags, 'editable' => true])?>
-                    </div>
-                  </div>
-                </fieldset>
-              </form>
-            </div>
+      <?=$this->markdown()->toHtml($markdown, false);?>
+      <?php $listTags = $this->tags()->getListTags($list, $user); ?>
+      <?php if ($this->usertags()->getListMode() === 'enabled' && $listTags): ?>
+        <?= $this->component('finna-tag-list', ['items' => array_map(fn ($tag) => $tag['tag'], $listTags), 'title' => $this->transEsc('Tags'), 'translateItems' => false]) ?>
+      <?php endif; ?>
+      <?php if ($list->isPublic()): ?>
+        <div class="d-flex flex-column">
+          <strong><?=$this->icon('list-public') ?> <?=$this->transEsc('public_list_indicator') ?></strong>
+          <div class="list-url d-flex flex-column">
+            <a href="<?= $this->url('list-page', ['lid' => $list->getId()], ['force_canonical' => true], ['query' => ['view' => 'rss']]) ?>" class="feed"><?= $this->transEsc('Get RSS Feed') ?></a>
+            <a href="<?= $this->url('list-page', ['lid' => $list->getId()], ['force_canonical' => true]) ?>"><?= $this->translate('Public List URL'); ?></a>
           </div>
         </div>
       <?php endif; ?>
-    <?php else: ?>
-      <?php if ($recordTotal > 0): ?>
-        <div class="mobile-nav-toggle-trigger visible-xs visible-sm hidden-print"></div>
-        <div class="mobile-nav-toggle visible-xs visible-sm hidden-print">
-          <div id="mobile-navigation" class="btn btn-primary btn-mobile-nav" role="button" tabindex="0">
-            <?=$this->transEsc('Favourite lists')?> <?=$this->icon('collapse-open', 'expand-icon') ?>
-          </div>
-        </div>
-      <?php endif; ?>
-      <?=$this->component('page-title', ['class' => 'list-title no-edit', 'title' => $this->translate('default_list_title'), 'headTitle' => $this->translate('saved_items')])?>
+      <div class="d-flex justify-content-end mt-4 mb-2 flex-row">
+        <a href="<?=$this->url('editList', ['id' => $list->getId()], ['query' => ['ignoreLightbox' => true]]) ?>" class="btn btn-link btn-sm" aria-haspopup="true" data-lightbox="">
+          <?=$this->icon('user-list-edit', 'icon-link__icon') ?>
+          <span class="icon-link__label"><?=$this->transEsc('edit_list')?></span>
+        </a>
+        <?=
+          $this->component(
+              'confirm-button',
+              [
+                'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+                'buttonLabel' => 'delete_list',
+                'buttonClass' => 'btn btn-link btn-sm',
+                'buttonIcon' => 'user-list-delete',
+                'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+                'header' => 'confirm_delete_list_text',
+              ]
+          );
+        ?>
+      </div>
     <?php endif; ?>
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/myresearch-favorites')): ?>
       <div class="myresearch-favorites">
@@ -165,17 +138,6 @@
       </div>
     <?php endif;?>
   </div>
-  <?php if ($user && $list): ?>
-    <form class="float-start delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
-      <ul class="dropdown-menu useraccount-confirm">
-        <li class="disabled"><?=$this->transEsc('confirm_delete_list_text')?></li>
-        <li>
-          <a class="dropdown-item confirm" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-          <a class="dropdown-item cancel" href="#"><?=$this->transEsc('confirm_dialog_no')?></a>
-        </li>
-      </ul>
-    </form>
-  <?php endif; ?>
   </div>
 
 <!-- END of: finna - myresearch/mylist.phtml -->
