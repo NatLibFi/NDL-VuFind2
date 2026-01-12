@@ -10,7 +10,7 @@ $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThem
 <div class="record-viewer-container container">
   <div class="tify" id="tify"></div>
 
-  <footer class="record-iiif-toolbar container">
+  <div class="record-iiif-toolbar container">
     <span class="record-iiif-functions dropdown hstack gap-3">
       <button type="button"
         class="btn btn-outline-primary p-2 ms-auto icon-link"
@@ -27,7 +27,7 @@ $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThem
       ['manifestUrls' => $this->manifestUrls, 'alignRight' => true]
       );?>
     </span>
-  </footer>
+  </div>
 </div>
 
 <?php
