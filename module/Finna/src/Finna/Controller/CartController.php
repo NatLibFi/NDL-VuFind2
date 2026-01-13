@@ -35,8 +35,10 @@ use VuFind\Controller\Feature\ListItemSelectionTrait;
 use VuFind\Exception\Forbidden as ForbiddenException;
 use VuFind\Exception\Mail as MailException;
 
+use function array_slice;
 use function count;
 use function is_array;
+use function strlen;
 
 /**
  * Book Bag / Bulk Action Controller
@@ -154,5 +156,49 @@ class CartController extends \VuFind\Controller\CartController
                 : "$listName$listDescription";
         }
         return $view;
+    }
+
+    /**
+     * Save action
+     *
+     * @return mixed
+     */
+    public function saveBatchAction()
+    {
+        $selectedIds = $this->getSelectedIds();
+        $idsBatch = array_slice($selectedIds, 0, 10);
+        $allIdsGlobal = array_slice($selectedIds, 10);
+        $this->getRequest()->getPost()->set('ids', $idsBatch);
+        $results = parent::saveAction();
+        if ($this->formWasSubmitted('newList')) {
+            // Remove submit now from parameters
+            $this->getRequest()->getPost()->set('newList', null)->set('submitButton', null);
+            return $this->forwardTo('MyResearch', 'editlist', ['id' => 'NEW']);
+        }
+        $selectedList = $this->params()->fromPost('list');
+        if ($this->formWasSubmitted() && $selectedList) {
+            parent::saveAction();
+        }
+        $viewModel = $this->createViewModel([
+            'records' => $results['records'],
+            'list' => $results['list'],
+            'leftOverIds' => $allIdsGlobal,
+        ]);
+        return $viewModel;
+    }
+
+    /**
+     * Figure out an action from the request....
+     *
+     * @param string $default Default action if none can be determined.
+     *
+     * @return string
+     */
+    protected function getCartActionFromRequest($default = 'Home')
+    {
+        if (strlen($this->params()->fromPost('saveBatch', '')) > 0) {
+            return 'SaveBatch';
+        }
+        return parent::getCartActionFromRequest($default);
     }
 }

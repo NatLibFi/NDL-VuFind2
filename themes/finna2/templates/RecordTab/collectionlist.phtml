@@ -63,15 +63,11 @@
   <?php endif; ?>
 
   <?php if (($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-    <div class="mobile-nav-toggle-trigger visible-xs hidden-print"></div>
-    <div class="mobile-nav-toggle visible-xs hidden-print">
-      <div role="button" class="btn btn-primary btn-mobile-nav" tabindex="0">
-        <?=$this->transEsc('Filter Collection')?>
-        <?php if ($filterCount > 0): ?>
-          <span class="active-filter-count">(<?=$filterCount?>)</span>
-        <?php endif; ?>
-      </div>
-    </div>
+    <?php
+      $activeFilterCountSpan = $filterCount > 0 ? ' <span class="active-filter-count">(' . $filterCount . ')</span>' : '';
+      $navigationTitle = $this->translate('Filter Collection') . $activeFilterCountSpan;
+    ?>
+    <?= $this->component('finna-mobile-navigation-btn', ['label' => $navigationTitle]) ?>
     <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $results])?>
 
     <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" id="search-cart-form">

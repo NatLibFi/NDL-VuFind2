@@ -12,10 +12,6 @@
   }
 ?>
 <ul class="dropdown-menu subtabs collapse show" role="presentation">
-  <li class="mobile-navigation-header-container visible-xs visible-sm">
-    <h1 class="mobile-navigation-header"><?=$this->transEsc('Favourite lists')?></h1>
-    <button class="sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
-  </li>
   <?php foreach ($lists as $current): ?>
     <?php
       // Back-compatibility:
@@ -23,7 +19,7 @@
     ?>
     <?php $active = ($list && $list->getId() === $activeId); ?>
     <li role="none" class="favorites-menulist-item">
-      <a role="menuitem" href="<?= $active ? '#' : $this->url('userList', ['id' => $list->getId()])?>?limit=<?=$currentLimit;?>" class="dropdown-item<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
+      <a role="menuitem" data-lightbox-ignore href="<?= $active ? '#' : $this->url('userList', ['id' => $list->getId()])?>?limit=<?=$currentLimit;?>" class="dropdown-item<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
         <div class="favorite-list-holder">
           <div class="float-start favorite-list-title"><?=$this->escapeHtml($list->getTitle())?></div>
           <?php if ($list->isPublic()): ?>
@@ -32,29 +28,14 @@
           <div class="float-end">(<?=$current['count']?>)</div>
         </div>
       </a>
-      <?php if ($active): ?>
-        <?php $url = $this->url('list-page', ['lid' => $list->getId()], ['force_canonical' => true]) ?>
-        <?= $this->partial('myresearch/list-visibility.phtml', ['listUrl' => $url, 'public' => $list->isPublic()]); ?>
-        <?=
-          $this->component(
-              'confirm-button',
-              [
-                'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
-                'buttonLabel' => 'delete_list',
-                'buttonClass' => 'btn btn-link',
-                'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
-                'header' => 'confirm_delete_list_text',
-              ]
-          )
-        ?>
-      <?php endif; ?>
     </li>
   <?php endforeach; ?>
   <li class="add-new-list-holder favorites-menulist-item">
-    <div class="list-group-item add-new-list">
-      <input type="text" class="new-list-input" placeholder="<?=$this->transEsc('Create a List') ?>">
-      <button id="add-new-list-item-btn" aria-label="<?=$this->transEsc('Create a List') ?>"><?=$this->icon('list-add', 'list-add-icon') ?></button>
-    </div>
+    <form method="POST" action="<?=$this->url('editList') ?>" data-lightbox-ignore class="d-flex align-items-center flex-wrap">
+      <input type="hidden" name="id" value="NEW">
+      <input type="text" name="title" class="form-control mt-2" placeholder="<?=$this->transEscAttr('Create a new list') ?>">
+      <input type="submit" name="submitButton" class="btn btn-primary btn-sm mt-2" value="<?=$this->transEscAttr('Create a List') ?>">
+    </form>
   </li>
 </ul>
 <!-- END of: finna - myresearch/mylist-navi.phtml -->

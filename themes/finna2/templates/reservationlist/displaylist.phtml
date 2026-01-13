@@ -16,12 +16,7 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <div class="my-research-content">
-    <div class="mobile-nav-toggle-trigger visible-xs visible-sm hidden-print"></div>
-    <div class="mobile-nav-toggle visible-xs visible-sm hidden-print">
-      <div id="mobile-navigation" class="btn btn-primary btn-mobile-nav" role="button" tabindex="0">
-        <?=$this->transEsc('ReservationList::All hold requests')?> <?=$this->icon('collapse-open', 'expand-icon') ?>
-      </div>
-    </div>
+    <?= $this->component('finna-mobile-navigation-btn', ['label' => $this->translate('ReservationList::All hold requests'),]) ?>
     <div id="useraccount-content-heading" class="useraccount-header">
       <?=$this->component('page-title', ['title' => $pageTitle]);?>
     </div>

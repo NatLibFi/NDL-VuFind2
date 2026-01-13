@@ -177,108 +177,6 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Return the container for side facets
-   * @returns {Element} The side facet container
-   */
-  function getSideFacetsContainer() {
-    if (document.body.classList.contains('template-name-mylist')) {
-      return document.querySelector('.mylist-bar.mobile-sidebar-container');
-    } else if (document.body.classList.contains('template-name-displaylist')) {
-      return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
-    }
-    return document.querySelector('.side-facets-container-ajax, .mobile-sidebar-container');
-  }
-
-  /**
-   * Check and keep focus within the search facet list
-   * @param {object} e Event object
-   */
-  function onFocusOutOfFacetContainer(e) {
-    const container = getSideFacetsContainer();
-    if (e.relatedTarget && !container.contains(e.relatedTarget)) {
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      setTimeout(() => {
-        document.activeElement.blur();
-        container.focus();
-      },
-      200
-      );
-    }
-  }
-
-  /**
-   * Toggle visibility of sidebar on mobile
-   * @param {object} e Event object
-   */
-  function toggleMobileSidebar(e) {
-    e.stopImmediatePropagation();
-    const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
-    if (sidebar) {
-      sidebar.classList.toggle('open');
-      const container = getSideFacetsContainer();
-      document.querySelector('body').classList.toggle('prevent-scroll');
-      if (container) {
-        if (sidebar.classList.contains('open')) {
-          container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
-          container.role = 'dialog';
-          container.ariaModal = true;
-          container.tabIndex = '-1';
-          container.querySelector('h1').tabIndex = '0';
-          document.activeElement.blur();
-          container.querySelector('h1').focus();
-        } else {
-          container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
-          container.removeAttribute('role');
-          container.removeAttribute('aria-modal');
-          container.removeAttribute('tabindex');
-          container.querySelector('h1').removeAttribute('tabindex');
-          document.activeElement.blur();
-          document.querySelector('.mobile-nav-toggle .btn-mobile-nav').focus();
-        }
-      }
-    }
-  }
-
-  /**
-   * On keypress of mobile sidebar
-   * @param {object} e Event object
-   */
-  function onKeyPressMobileSidebar(e) {
-    if (e.which === 32 || e.which === 13) {
-      e.preventDefault();
-      toggleMobileSidebar(e);
-    }
-  }
-
-  /**
-   * Initialize mobile narrow search
-   */
-  function initMobileNarrowSearch() {
-    const container = getSideFacetsContainer();
-    if (container) {
-      document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
-        el.addEventListener('click', toggleMobileSidebar);
-        el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
-          onKeyPressMobileSidebar(e);
-        });
-      });
-    }
-    const narrowSearchMobileTrigger = document.querySelector('.mobile-nav-toggle-trigger');
-    const narrowSearchMobile = document.querySelector('.mobile-nav-toggle');
-    if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
-      const narrowSearchMobileObserver = new IntersectionObserver(
-        ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
-        {
-          threshold: [1],
-          rootMargin: '-' + narrowSearchMobile.offsetHeight + 'px',
-        }
-      );
-      narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
-    }
-  }
-
-  /**
    * Focus to skip to content link after a facet is chosen
    */
   function initFocusAfterReload() {
@@ -714,7 +612,6 @@ finna.layout = (function finnaLayout() {
     VuFind.listen('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
       finna.dateRangeVis.init();
       initToolTips($('.sidebar'));
-      initMobileNarrowSearch();
       VuFind.lightbox.bind($('.sidebar'));
     }, {once: true});
   }
@@ -1203,7 +1100,6 @@ finna.layout = (function finnaLayout() {
     initLocationService: initLocationService,
     initBuildingFilter: initBuildingFilter,
     initJumpMenus: initJumpMenus,
-    initMobileNarrowSearch: initMobileNarrowSearch,
     initOrganisationPageLinks: initOrganisationPageLinks,
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
@@ -1218,7 +1114,6 @@ finna.layout = (function finnaLayout() {
       initAnchorNavigationLinks();
       initTruncate();
       initContentNavigation();
-      initMobileNarrowSearch();
       setStickyMyaccountHeader();
       initMobileCartIndicator();
       initToolTips();

@@ -1,0 +1,20 @@
+#modal .modal-body .vc-finna-header-toggletip {
+  display: block;
+  margin-bottom: 0;
+}
+.vc-finna-header-toggletip {
+  display: block;
+  margin-bottom: 0;
+  padding: 15px;
+  background: $sidebar-background;
+  color: $sidebar-header-text-color;
+  font-size: 1.2em;
+  font-weight: 500;
+  text-transform: uppercase;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  word-wrap: break-word;
+  .icon {
+    color: $sidebar-header-icon-color;
+  }
+}

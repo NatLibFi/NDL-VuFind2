@@ -112,15 +112,7 @@
 
 <h1 tabindex="-1" id="results-heading" class="visually-hidden"><?= $this->transEsc('Search Results'); ?></h1>
 <?php if ($recordTotal > 0): ?>
-  <div class="mobile-nav-toggle-trigger visible-xs hidden-print"></div>
-  <div class="mobile-nav-toggle visible-xs hidden-print">
-    <div role="button" id="narrow-search-filter-toggle" class="btn btn-primary btn-mobile-nav" tabindex="0">
-      <?=$this->transEsc('Narrow Search')?>
-      <?php if ($filterCount > 0): ?>
-        <span class="active-filter-count">(<?=$filterCount?>)</span>
-      <?php endif; ?>
-    </div>
-  </div>
+  <?= $this->component('finna-mobile-navigation-btn', ['label' => $this->translate('Narrow Search'), 'onopen' => 'VuFind.sideFacets.init()']) ?>
 <?php endif; ?>
 
 <?php $urlQuery = $results->getUrlQuery(); ?>
@@ -266,25 +258,11 @@
 
   <?php /* Narrow Search Options */ ?>
   <?php if ($recommendations): ?>
-    <div id="sidebar" class="<?=$recordTotal < 1 ? 'empty-list' : $this->layoutClass('sidebar')?>">
-      <?php $messageAdded = false; ?>
-      <?php foreach ($recommendations as $index => $current): ?>
-        <?=$this->recommend($current, 'side', $index)?>
-        <?php if (!$messageAdded) {
-          if (!isset($this->layout()->skiplink)) {
-            $this->layout()->skiplink = '';
-          }
-          $this->layout()->skiplink .= ' <a class="skip-link hidden-xs" href="#sidebar">' . $this->transEsc('Skip to narrowing options') . '</a>';
-          $this->layout()->skiplink .= ' <a class="skip-link visible-xs" href="#narrow-search-filter-toggle">' . $this->transEsc('Skip to narrowing options') . '</a>';
-          $messageAdded = true;
-        }?>
-      <?php endforeach; ?>
-      <?php if (($template = $this->content()->findTemplateForLng('content/Additions/search-post-facets')) && ($recordTotal > 0)): ?>
-        <div>
-            <?=$this->render($template)?>
-        </div>
-      <?php endif; ?>
-    </div>
+    <?php
+      $title = $this->transEsc('Narrow Search');
+      $tooltipKey = 'narrow_search_tooltip';
+    ?>
+    <?= $this->context($this)->renderInContext('search/side-recommendations.phtml', compact('recommendations', 'recordTotal', 'title', 'tooltipKey')) ?>
   <?php endif; ?>
   <?php /* End Narrow Search Options */ ?>
 </div>

@@ -5,30 +5,55 @@
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
     ->add($this->translate($pageTitle), active: true);
+  $ignoreLightbox = $this->ignoreLightbox ?? false;
+
+  $formAttrs = [
+    'id' => 'editListForm',
+    'method' => 'post',
+    'name' => empty($this->list->getId()) ? 'newList' : 'editListForm',
+    'action' => $this->url('editList'),
+  ];
+  if ($this->ignoreLightbox ?? false) {
+    $formAttrs['data-lightbox-ignore'] = '';
+  }
 ?>
 
 <?=$this->flashmessages()?>
 
 <?=$this->component('page-title', ['title' => $pageTitle, 'tabindex' => '0']);?>
 
-<form class="form-edit-list" method="post" name="<?=empty($this->list->getId()) ? 'newList' : 'editListForm'?>" action="<?=$this->url('editList'); ?>">
+<form <?= $this->htmlAttributes($formAttrs); ?>>
   <input type="hidden" name="id" value="<?=empty($this->list->getId()) ? 'NEW' : $this->escapeHtmlAttr($this->list->getId()) ?>">
   <?=$this->context($this)->renderInContext('cart/form-record-hidden-inputs.phtml', []); ?>
-  <input type="hidden" name="followup" value="<?=$this->escapeHtmlAttr($this->followup) ?>">
-  <div class="form-group">
-    <label class="form-label" for="list_title"><?=$this->transEsc('List'); ?>:</label>
+  <div class="mb-3">
+    <label class="form-label" for="list_title"><?=$this->transEsc('Title'); ?>:</label>
     <input id="list_title" class="form-control" type="text" name="title" value="<?=$this->escapeHtmlAttr($this->list->getTitle() ?? '')?>">
   </div>
-  <div class="form-group">
-    <label class="form-label" for="list_desc"><?=$this->transEsc('Description') ?>:</label>
-    <textarea id="list_desc" class="form-control" name="desc" rows="3"><?=$this->escapeHtml($this->list->getDescription() ?? '')?></textarea>
+  <div class="mb-3">
+      <label class="form-label" for="list_desc"><?=$this->transEsc('Description') ?>:</label>
+      <?php $markdown = $list ? $this->markdown()->replaceDeprecatedTags($this->list->getDescription() ?? '') : ''; ?>
+      <?= $this->component('finna-md-editable', [
+        'attributes' => ['class' => 'list-description', 'id' => 'list_desc'],
+        'markdown' => $markdown,
+        'html' => $markdown ? $this->markdown()->toHtml($markdown, false) : '',
+        'emptyHtml' => $this->translate('Add list description'),
+        'preview' => true,
+        'name' => 'desc',
+      ]); ?>
   </div>
+  <?php if ($this->usertags()->getListMode() === 'enabled'): ?>
+    <div class="form-group">
+      <label class="form-label" for="list_tags"><?=$this->transEsc('Tags') ?>:</label>
+      <input type="text" name="tags" id="list_tags" class="form-control" value="<?=$this->escapeHtmlAttr($this->listTags)?>">
+      <span class="help-block"><?=$this->transEsc('add_tag_note') ?></span>
+    </div>
+  <?php endif; ?>
   <?php if ($this->userlist()->getMode() === 'public_only'): ?>
     <input type="hidden" name="public" value="1">
   <?php elseif ($this->userlist()->getMode() === 'private_only'): ?>
     <input type="hidden" name="public" value="0">
   <?php else: ?>
-    <div class="form-group" role="radiogroup" aria-label="<?=$this->transEsc('Access') ?>">
+    <div class="mb-3" role="radiogroup" aria-label="<?=$this->transEsc('Access') ?>">
       <label class="form-label" aria-hidden="true"><?=$this->transEsc('Access') ?>:</label>
       <div class="radiobutton">
         <input id="list_public_1" type="radio" name="public" aria-label="<?=$this->transEsc('Public') ?>" value="1"<?php if ($this->list->isPublic()): ?> checked="checked"<?php endif; ?>>
@@ -40,7 +65,7 @@
       </div>
     </div>
   <?php endif; ?>
-  <div class="form-group">
+  <div class="mb-3">
     <input class="btn btn-primary" type="submit" name="submitButton" value="<?=$this->transEscAttr('Save') ?>">
   </div>
 </form>

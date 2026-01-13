@@ -1,0 +1,37 @@
+<?php
+  $divAttrs = [
+    'class' => trim(($this->class ?? '') . " mobile-nav-toggle visible-xs visible-sm hidden-print $this->_componentClass"),
+  ];
+  $linkAttrs = [
+    'class' => 'btn btn-primary btn-mobile-nav',
+    'id' => 'mobile-sidebar-btn',
+    'aria-haspopup' => 'true',
+    'data-target' => $this->target ?? '#sidebar',
+  ];
+  $linkLabel = $this->label ?? '';
+  $onopen = $this->onopen ?? '';
+?>
+<div class="mobile-nav-toggle-trigger visible-xs hidden-print"></div>
+<div<?= $this->htmlAttributes($divAttrs) ?>>
+  <button<?= $this->htmlAttributes($linkAttrs) ?>>
+    <?=$this->escapeHtml($linkLabel)?> <?=$this->icon('collapse-open', 'expand-icon') ?>
+  </button>
+</div>
+
+<?php
+  $js = <<<JS
+      finna.scriptLoader.load(
+        {'finna-mobile-navigation-btn': 'finna-mobile-navigation-btn.js'},
+        () => {
+          finna.mobileNavigationBtn.init();
+          if ('{$onopen}') {
+            VuFind.listen('finna.mobileNavigation.opened', () => {
+              {$onopen}
+            });
+          }
+        }
+      );
+      JS;
+
+?>
+<?=$this->assetManager()->outputInlineScriptString($js); ?>

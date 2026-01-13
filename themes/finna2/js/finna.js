@@ -32,7 +32,6 @@ var finna = (function finnaModule() {
         'itemStatus',
         'layout',
         'menu',
-        'myList',
         'openUrl',
         'primoAdvSearch',
         'record',
