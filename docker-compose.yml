@@ -16,7 +16,7 @@ services:
         read_only: false
       - type: volume
         source: finna-cache
-        target: $FINNA_DOCUMENT_ROOT/local/cache
+        target: ${VUFIND_CACHE_DIR:-${FINNA_DOCUMENT_ROOT?document root not set}/local/cache}
         read_only: false
     configs:
       - source: site_config
