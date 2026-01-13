@@ -220,7 +220,7 @@ class SolrLrmi extends SolrQdc
      * Return url to external LRMI record page based on the record ID
      * or false if an external link template is not provided.
      *
-     * @return string|boolean
+     * @return string|bool
      */
     public function getExternalLink()
     {
@@ -244,7 +244,7 @@ class SolrLrmi extends SolrQdc
      * or false if an external link template is not provided or there is no
      * external rating page.
      *
-     * @return array|boolean
+     * @return array|bool
      */
     public function getExternalRatingLink()
     {
@@ -313,7 +313,7 @@ class SolrLrmi extends SolrQdc
      *
      * @param string $format file format
      *
-     * @return boolean
+     * @return bool
      */
     protected function isDownloadableFileFormat($format)
     {

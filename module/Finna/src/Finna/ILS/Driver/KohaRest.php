@@ -254,6 +254,145 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
+     * Get Patron Holds
+     *
+     * This is responsible for retrieving all holds by a specific patron.
+     *
+     * Finna: Adds hold shelf support
+     *
+     * @param array $patron The patron array from patronLogin
+     *
+     * @throws DateException
+     * @throws ILSException
+     * @return array        Array of the patron's holds on success.
+     */
+    public function getMyHolds($patron)
+    {
+        $request = [
+            'path' => 'v1/holds',
+            'query' => [
+                'patron_id' => $patron['id'],
+                '_match' => 'exact',
+                '_per_page' => -1,
+            ],
+        ];
+        if ($this->config['Holds']['displayHoldShelf'] ?? false) {
+            $request['headers']['x-koha-embed'] = 'hold_pickup_shelf';
+        }
+        $result = $this->makeRequest($request);
+
+        $holds = [];
+        foreach ($result['data'] as $entry) {
+            $biblio = $this->getBiblio($entry['biblio_id']);
+            $frozen = !empty($entry['suspended']);
+            $volume = '';
+            if ($entry['item_id'] ?? null) {
+                $item = $this->getItem($entry['item_id']);
+                $volume = $item['serial_issue_number'];
+            }
+            $available = !empty($entry['waiting_date']);
+            $inTransit = !empty($entry['status']) && $entry['status'] == 'T';
+            $requestId = $entry['hold_id'];
+            $cancelDetails
+                = ($available || ($inTransit && !$this->allowCancelInTransit))
+                ? ''
+                : $requestId;
+            $updateDetails = ($available || $inTransit) ? '' : $requestId;
+            // Note: Expiration date is the last interest date until the hold becomes
+            // available for pickup. Then it becomes the last pickup date.
+            $expirationDate = $this->convertDate($entry['expiration_date']);
+            $holds[] = [
+                'id' => $entry['biblio_id'],
+                'item_id' => $entry['hold_id'],
+                'reqnum' => $requestId,
+                'location' => $this->getLibraryName(
+                    $entry['pickup_library_id'] ?? null
+                ),
+                'create' => $this->convertDate($entry['hold_date'] ?? null),
+                '__create' => $entry['hold_date'] ?? null,
+                'expire' => $available ? null : $expirationDate,
+                'position' => $entry['priority'],
+                'available' => $available,
+                'last_pickup_date' => $available ? $expirationDate : null,
+                'frozen' => $frozen,
+                'frozenThrough' => $frozen
+                    ? $this->convertDate($entry['suspended_until'] ?? null) : null,
+                'in_transit' => $inTransit,
+                'title' => $this->getBiblioTitle($biblio),
+                'isbn' => $biblio['isbn'] ?? '',
+                'issn' => $biblio['issn'] ?? '',
+                'publication_year' => $biblio['copyright_date']
+                    ?? $biblio['publication_year'] ?? '',
+                'volume' => $volume,
+                'cancel_details' => $cancelDetails,
+                'updateDetails' => $updateDetails,
+                'holdShelf' => $entry['hold_pickup_shelf']['shelf_name'] ?? null,
+            ];
+        }
+
+        if ($this->config['Holds']['enableRecalls'] ?? false) {
+            $result = $this->makeRequest(
+                [
+                    'path' => 'v1/recalls',
+                    'query' => [
+                        'patron_id' => $patron['id'],
+                        'completed' => 'false',
+                        '_match' => 'exact',
+                        '_per_page' => -1,
+                    ],
+                ]
+            );
+
+            foreach ($result['data'] as $entry) {
+                $biblio = $this->getBiblio($entry['biblio_id']);
+                $volume = '';
+                if ($entry['item_id'] ?? null) {
+                    $item = $this->getItem($entry['item_id']);
+                    $volume = $item['serial_issue_number'];
+                }
+                $available = !empty($entry['waiting_date']);
+                $inTransit = !empty($entry['status']) && $entry['status'] == 'in_transit';
+                $requestId = $entry['recall_id'];
+                $cancelDetails = '';
+                $updateDetails = ($available || $inTransit) ? '' : $requestId;
+                // Note: Expiration date is the last interest date until the hold becomes
+                // available for pickup. Then it becomes the last pickup date.
+                $expirationDate = $this->convertDate($entry['expiration_date']);
+                $holds[] = [
+                    'id' => $entry['biblio_id'],
+                    'item_id' => $entry['recall_id'],
+                    'reqnum' => $requestId,
+                    'location' => $this->getLibraryName(
+                        $entry['pickup_library_id'] ?? null
+                    ),
+                    'create' => $this->convertDate($entry['hold_date'] ?? null),
+                    '__create' => $entry['hold_date'] ?? null,
+                    'expire' => $available ? null : $expirationDate,
+                    'position' => $entry['priority'],
+                    'available' => $available,
+                    'last_pickup_date' => $available ? $expirationDate : null,
+                    'in_transit' => $inTransit,
+                    'title' => $this->getBiblioTitle($biblio),
+                    'isbn' => $biblio['isbn'] ?? '',
+                    'issn' => $biblio['issn'] ?? '',
+                    'publication_year' => $biblio['copyright_date']
+                        ?? $biblio['publication_year'] ?? '',
+                    'volume' => $volume,
+                    'cancel_details' => $cancelDetails,
+                    'updateDetails' => $updateDetails,
+                ];
+            }
+        }
+        $callback = function ($a, $b) {
+            return $a['__create'] === $b['__create']
+                ? $a['item_id'] <=> $b['item_id']
+                : $a['__create'] <=> $b['__create'];
+        };
+        usort($holds, $callback);
+        return $holds;
+    }
+
+    /**
      * Get Patron Fines
      *
      * This is responsible for retrieving all fines by a specific patron.

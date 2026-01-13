@@ -52,6 +52,22 @@ use VuFind\Exception\ILS as ILSException;
 class Connection extends \VuFind\ILS\Connection
 {
     /**
+     * Set cache lifetime settings
+     *
+     * @param array $settings Lifetime settings
+     *
+     * @return void
+     */
+    public function setCacheLifeTime(array $settings): void
+    {
+        parent::setCacheLifeTime($settings);
+        $this->cacheStorage['getAccountBlocks'] = 'session';
+        $this->cacheStorage['getRequestBlocks'] = 'session';
+        $this->sessionCacheInvalidatingMethods[] = 'registerPayment';
+        $this->sessionCacheInvalidatingMethods[] = 'renewMyItems';
+    }
+
+    /**
      * Check driver capability -- return true if the driver supports the specified
      * method; false otherwise.
      *
@@ -475,7 +491,7 @@ class Connection extends \VuFind\ILS\Connection
      * @param array  $functionConfig Function configuration values
      * @param ?array $params         An array of function-specific params (or null)
      *
-     * @return boolean
+     * @return bool
      */
     protected function checkMethodregisterPatron($functionConfig, $params)
     {

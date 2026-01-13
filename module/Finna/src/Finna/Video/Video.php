@@ -121,7 +121,7 @@ class Video
      */
     public function isEnabled(string $source): bool
     {
-        return $this->getConfig($source) ? true : false;
+        return (bool)$this->getConfig($source);
     }
 
     /**

@@ -749,35 +749,23 @@ feedcachetime = 10
 ; Host is the same as from parse_url
 ;feedHostToNameMappings[] = 'www.instagram.com:instagram'
 
-; You can select from Syndetics, SyndeticsPlus, Amazon Editorial, Amazon, Booksite
-; and/or the Guardian
-;   Note: Guardian reviews contain embedded advertisements. If the API key is not
-;         supplied, e.g. "Guardian:", only the review title, byline, Guardian logo
-;         and a link to the full Guardian page will be displayed
-;reviews         = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsID,AmazonEditorial:MyAccessKeyId,Amazon:MyAccessKeyId,Booksite,Guardian:MyGuardianKeyId
+; You can select from Syndetics and/or the Guardian
+;   Note: If the API key is omitted, e.g. "Guardian:", only the review title, byline,
+;         Guardian logo and a link to the full Guardian page will be displayed
+;   Note: The Guardian API changed in 2014; if you signed up before that date, you
+;         may need to obtain a new API key for continued access.
+;reviews         = Syndetics:MySyndeticsId,Guardian:MyGuardianKeyId
 
-; You can select from Syndetics or SyndeticsPlus
-;excerpts        = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsId
+; You can only select Syndetics
+;excerpts        = Syndetics:MySyndeticsId
 
-; You can select from Syndetics or SyndeticsPlus
-;authorNotes = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsId
-
-; You can select from Syndetics or SyndeticsPlus
-;videoClips = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsId
+; You can only select Syndetics
+;authorNotes = Syndetics:MySyndeticsId
 
 ; You can select from Wikipedia
 ; Note for Windows users: If using Wikipedia, you may need to increase your Apache
 ; heap size settings.  For details, see: http://vufind.org/jira/browse/VUFIND-630
 ;authors         = Wikipedia
-
-; You can look up your secret key by logging into http://aws.amazon.com and clicking
-; "Access Identifiers" under "Your Account".
-;amazonsecret    = MyAmazonSecretKey
-
-; You can sign up for an associate ID by logging into
-; https://affiliate-program.amazon.com .  Please make sure your instance of VuFind
-; complies with Amazon's agreements before enabling this feature.
-;amazonassociate = MyAmazonAssociateID
 
 ; You can select from Google, OpenLibrary, HathiTrust.  You should consult
 ; https://developers.google.com/books/branding before using Google Book Search.
@@ -857,19 +845,15 @@ zoomFormats = qdc:forward:ead3:ead:lido
 ; Should we show QR codes on record pages?
 showInCore = true
 
-; If you are using Syndetics Plus for *any* content, set plus = true
-; and set plus_id to your syndetics ID.  This loads the javascript file.
-; Syndetics vs. SyndeticsPlus: SyndeticsPlus has nice formatting, but loads slower
-; and requires javascript to be enabled in users' browsers.
-; You can change the base Syndetics URL used by the content services here.
-; Most users will not need to change this setting.  It does not affect
-; Syndetics Plus at all.  (FYI: Syndetics Plus is currently not available
-; through SSL.)
 [Syndetics]
-plus = false
-;plus_id = "MySyndeticsId"
-;url = "https://secure.syndetics.com"
-url = "http://syndetics.com"
+; When the Syndetics cover image fallback is enabled, it will return generic covers based
+; on information Syndetics has related to the ISBN number or other number given. This
+; will prevent other fallbacks in VuFind from being tried, such as other cover image sources.
+; If the Syndetics cover image fallback is disabled, VuFind will query for the metadata first,
+; and only return an image if the Syndetics metadata returns a real cover image.
+use_syndetics_cover_image_fallback = false
+; timeout value (in seconds) for API calls:
+timeout = 10
 
 ; Booksite CATS Enhanced Content - cover images, reviews, description, etc.
 [Booksite]
@@ -1957,3 +1941,14 @@ Summon = tabs_summon
 ; Possible values are: 'production', 'beta', 'test' and 'disabled'.
 ; Default value is 'production'.
 site_status = production
+
+[IIIF]
+; Pipe-separated tuple of viewer name and URL, the latter containing a
+; placeholder for a percent-encoded manifest URL
+externalViewers[] = "Mirador|https://projectmirador.org/embed/?iiif-content={manifest}"
+externalViewers[] = "Universal Viewer|https://uv-v4.netlify.app/#?manifest={manifest}"
+
+; Origins to be listed in Access-Control-Allow-Origin headers in the
+; RecordController IIIFManifest action. Recommended to allow all origins for
+; general IIIF use
+;manifestCORS[] = "*"

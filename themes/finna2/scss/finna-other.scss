@@ -65,6 +65,7 @@
 @import 'finna/wayfinder';
 @import 'finna/select-a11y';
 @import 'finna/reservationlist';
+@import 'finna/iiif';
 
 html {
   @if $font-size-root != null {

@@ -4,12 +4,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Finna\\": "module/Finna/src/Finna",
-            "FinnaApi\\": "module/FinnaApi/src/FinnaApi",
-            "FinnaConsole\\": "module/FinnaConsole/src/FinnaConsole",
-            "FinnaCustom\\": "module/FinnaCustom/src/FinnaCustom",
-            "FinnaSearch\\": "module/FinnaSearch/src/FinnaSearch",
-            "FinnaTheme\\": "module/FinnaTheme/src/FinnaTheme"
+            "Finna\\": ["module/Finna/src/Finna", "module/Finna"],
+            "FinnaApi\\": ["module/FinnaApi/src/FinnaApi", "module/FinnaApi"],
+            "FinnaConsole\\": ["module/FinnaConsole/src/FinnaConsole", "module/FinnaConsole"],
+            "FinnaCustom\\": ["module/FinnaCustom/src/FinnaCustom", "module/FinnaCustom"],
+            "FinnaSearch\\": ["module/FinnaSearch/src/FinnaSearch", "module/FinnaSearch"],
+            "FinnaTheme\\": ["module/FinnaTheme/src/FinnaTheme", "module/FinnaTheme"]
         }
     },
     "autoload-dev": {
@@ -29,6 +29,12 @@
     "scripts": {
         "create-translation-files": "touch local/languages/finna/fi-datasources.ini; touch local/languages/finna/sv-datasources.ini; touch local/languages/finna/en-gb-datasources.ini; touch local/languages/finna/se-datasources.ini;",
         "post-install-cmd": ["@phing-install-dependencies", "@create-translation-files"],
-        "post-update-cmd": ["@phing-install-dependencies", "@create-translation-files"]
+        "post-update-cmd": ["@phing-install-dependencies", "@create-translation-files"],
+        "update-npm-deps": [
+            "cd themes/finna2 && npm run updateDeps"
+        ],
+        "install-build-deps": [
+            "cd themes/finna2 && npm run installBuildDeps"
+        ]
     }
 }

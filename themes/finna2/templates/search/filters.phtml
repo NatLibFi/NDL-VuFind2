@@ -32,44 +32,57 @@
 <?php ob_start(); ?>
   <?php foreach ($checkboxFilters as $filter): ?>
     <?php if ($filter['selected']): ?>
-      <span class="filter-value">
-        <?php
-          $removeLink = isset($urlQuery) && !$fromSearchMemory
-            ? $urlQuery->removeFilter($filter['filter'])
-            : $this->searchMemory()->getEditLink(
-                $this->searchClassId,
-                'removeFilter',
-                $filter['filter']
-            );
-          $desc = $this->translate($filter['desc']);
-          $ariaLabel = $this->escapeHtmlAttr($this->translate('Remove filter') . ' ' . $desc);
-        ?>
-        <?=$desc // HTML ?>
-        <?php if ($removeLink): ?>
-          <a class="search-filter-remove" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>">
-            <?=$this->icon('search-filter-remove') ?>
-          </a>
-        <?php endif; ?>
-      </span>
+      <?php
+        $removeLink = isset($urlQuery) && !$fromSearchMemory
+          ? $urlQuery->removeFilter($filter['filter'])
+          : null;
+        $desc = $this->translate($filter['desc']);
+        $ariaLabel = $this->escapeHtmlAttr($this->translate('Remove filter') . ' ' . $desc);
+      ?>
+      <?php if ($removeLink): ?>
+        <a class="filter-value" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>" data-filter="<?=$this->escapeHtmlAttr($filter['filter'])?>">
+          <span class="visually-hidden">
+            <?=$this->translate('Remove filter') ?>
+          </span>
+          <span class="text"><?=$desc // HTML ?></span>
+          <?=$this->icon('search-filter-remove') ?>
+        </a>
+      <?php else: ?>
+        <span class="filter-value" data-filter="<?=$this->escapeHtmlAttr($filter['filter'])?>">
+          <span class="text"><?=$desc // HTML ?></span>
+        </span>
+      <?php endif; ?>
     <?php endif ?>
   <?php endforeach; ?>
 
   <?php foreach ($filterList as $field => $data): ?>
     <div class="title-value-pair">
       <?php if (is_callable([$params, 'isGeographicFilter']) && $params->isGeographicFilter($data)): ?>
-        <span class="filter-value">
-          <?php
-            $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($data[0]['field'], $data[0]['value'], $data[0]['operator']) : '';
-            $desc = $this->transEsc($field);
-            $ariaLabel = $this->translate('Remove filter') . ' ' . $desc;
-          ?>
-          <?=$this->transEsc($field)?>
-          <?php if ($removeLink): ?>
-            <a aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>">
-              <?=$this->icon('search-filter-remove') ?>
-            </a>
-          <?php endif; ?>
-        </span>
+        <?php
+          $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($data[0]['field'], $data[0]['value'], $data[0]['operator']) : null;
+          $desc = $this->transEsc($field);
+          $ariaLabel = $this->escapeHtmlAttr($this->translate('Remove filter') . ' ' . $desc);
+        ?>
+        <?php if ($removeLink): ?>
+          <a
+            class="filter-value"
+            aria-label="<?=$ariaLabel?>"
+            href="<?=$removeLink?>"
+            <?php if (isset($urlQuery)): ?>
+              data-filter="<?=$this->escapeHtmlAttr($urlQuery->formatFilterString($value['field'], $value['value'], $value['operator']))?>"
+            <?php endif; ?>
+          >
+            <span class="visually-hidden">
+              <?=$this->translate('Remove filter') ?>
+            </span>
+            <span class="text"><?=$this->transEsc($field)?></span>
+            <?=$this->icon('search-filter-remove') ?>
+          </a>
+        <?php else: ?>
+          <a class="filter-value" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>">
+            <span class="text"><?=$this->transEsc($field)?></span>
+          </a>
+        <?php endif; ?>
       <?php else: ?>
         <div class="filter-title-group">
           <span class="filters-title"><?=$this->transEsc($field)?>:</span>
@@ -108,23 +121,51 @@
               $isOnlineFacet = ('unrecognized_facet_label' === $field && in_array($value['field'], ['online_boolean', 'free_online_boolean']));
               $desc = $this->escapeHtml($value['displayText']);
             ?>
-            <span class="filters-term filters-<?=$operatorClass?>">
-              <?=($index > 0 || 'NOT' === $value['operator']) ? $join : '' ?>
-            </span>
-            <span class="filter-value filters-<?=$operatorClass?>">
-              <span class="filter-text">
-                <?php // Always handle online_boolean and free_online_boolean even if not configured ?>
-                <?php if ($isOnlineFacet): ?>
-                  <?=$this->translate('online_boolean' === $value['field'] ? 'online_material_facet_html' : 'free_online_material_facet_html') ?>
-                <?php else: ?>
-                  <?=$desc // HTML ?>
-                <?php endif; ?>
+            <span class="operator-and-term">
+              <span class="filters-term filters-<?=$operatorClass?>">
+                <?=($index > 0 || 'NOT' === $value['operator']) ? $join : '' ?>
               </span>
-              <?php if (isset($this->urlQuery)): ?>
-                <?php $removeLink = $urlQuery->removeFacet($value['field'], $value['value'], $value['operator'])?>
-                <a class="search-filter-remove" aria-label="<?=$this->translate('Remove filter') ?>" href="<?=$removeLink?>">
-                  <?=$this->icon('search-filter-remove') ?>
+              <?php
+                $removeLink = isset($this->urlQuery) && !$fromSearchMemory
+                  ? $urlQuery->removeFacet($value['field'], $value['value'], $value['operator'])
+                  : null;
+              ?>
+              <?php if ($removeLink): ?>
+                <a
+                  class="<?=$dropdown ? 'dropdown-item ' : ''?>filter-value filters-<?=$operatorClass?>"
+                  href="<?=$removeLink?>"
+                  <?php if (isset($urlQuery)): ?>
+                    data-filter="<?=$this->escapeHtmlAttr($urlQuery->formatFilterString($value['field'], $value['value'], $value['operator']))?>"
+                  <?php endif; ?>
+                >
+                  <span class="text">
+                    <?php // Always handle online_boolean and free_online_boolean even if not configured ?>
+                    <?php if ($isOnlineFacet): ?>
+                      <?=$this->translate('online_boolean' === $value['field'] ? 'online_material_facet_html' : 'free_online_material_facet_html') ?>
+                    <?php else: ?>
+                      <?=$desc // HTML ?>
+                    <?php endif; ?>
+                  </span>
+                  <?php if ($removeLink): ?>
+                    <?=$this->icon('search-filter-remove') ?>
+                  <?php endif; ?>
                 </a>
+              <?php else: ?>
+                <span
+                  class="filter-value filters-<?=$operatorClass?>
+                  <?php if (isset($urlQuery)): ?>
+                    data-filter="<?=$this->escapeHtmlAttr($urlQuery->formatFilterString($value['field'], $value['value'], $value['operator']))?>"
+                  <?php endif; ?>
+                >
+                  <span class="text">
+                    <?php // Always handle online_boolean and free_online_boolean even if not configured ?>
+                    <?php if ($isOnlineFacet): ?>
+                      <?=$this->translate('online_boolean' === $value['field'] ? 'online_material_facet_html' : 'free_online_material_facet_html') ?>
+                    <?php else: ?>
+                      <?=$desc // HTML ?>
+                    <?php endif; ?>
+                  </span>
+                </span>
               <?php endif; ?>
             </span>
             <?php if ($dropdown): ?>

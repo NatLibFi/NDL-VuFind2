@@ -499,7 +499,11 @@
     }
     .header {
         margin-bottom: 6px;
-        span.icon {
+        font-weight: 600;
+        span:not(.icon) {
+            font-weight: 400;
+        }
+        .icon {
             vertical-align: baseline;
         }
         .info {
@@ -547,12 +551,6 @@
             .branch {
                 font-weight: 500;
             }
-        }
-    }
-    .header {
-        font-weight: 600;
-        span {
-            font-weight: 400;
         }
     }
     .actions {

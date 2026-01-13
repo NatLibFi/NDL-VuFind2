@@ -41,13 +41,13 @@
             <?php if ($advSearch): ?>
               <a href="<?=$this->url($advSearch)?>?edit=<?=$this->escapeHtmlAttr($searchId)?>"><?=$this->icon('search-edit') ?> <?=$this->transEsc('Edit this search')?></a>
             <?php endif; ?>
+            <button class="visible-xs btn adv-search-menu-toggle"><?=$this->transEsc('adv_search_menu')?> <?=$this->icon('menu-open') ?></button>
             <div class="adv-search-menu hidden-xs">
               <?php if ($advSearch): ?>
                 <a href="<?=$this->url($advSearch)?>"><?=$this->icon('search-advanced') ?> <?=$this->transEsc('Start a new Advanced Search')?></a>
               <?php endif; ?>
               <a href="<?=$this->url($searchHome)?>"><?=$this->icon('search-basic') ?> <?=$this->transEsc('Start a new Basic Search')?></a>
             </div>
-            <span class="visible-xs adv-search-menu-toggle"><?=$this->transEsc('adv_search_menu')?> <?=$this->icon('menu-open') ?></span>
           </div>
         </div>
         <?php if ($this->layout()->templateDir === 'record'): ?>

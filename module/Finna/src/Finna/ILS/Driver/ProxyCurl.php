@@ -189,7 +189,7 @@ class ProxyCurl extends Curl
             $this->lastErrorMessage = $e->getMessage();
         }
 
-        return (false === $this->response) ? false : true;
+        return false !== $this->response;
     }
 
     /**

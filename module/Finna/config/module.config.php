@@ -388,13 +388,14 @@ $config = [
             'Finna\Form\Form' => 'Finna\Form\FormFactory',
             'Finna\ILS\Connection' => 'VuFind\ILS\ConnectionFactory',
             'Finna\LocationService\LocationService' => 'Finna\LocationService\LocationServiceFactory',
-            'Finna\Mailer\Mailer' => 'VuFind\Mailer\Factory',
+            'Finna\Mailer\Mailer' => 'VuFind\Mailer\MailerFactory',
             'Finna\OAI\Server' => 'VuFind\OAI\ServerFactory',
             'Finna\OrganisationInfo\OrganisationInfo' => 'Finna\OrganisationInfo\OrganisationInfoFactory',
             'Finna\OrganisationInfo\Provider\Kirkanta' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
             'Finna\OrganisationInfo\Provider\MuseotFi' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
             \Finna\Ratings\RatingsService::class => \VuFind\Ratings\RatingsServiceFactory::class,
             'Finna\Record\Loader' => 'Finna\Record\LoaderFactory',
+            \Finna\Record\IIIF\IIIFManifestGenerator::class => \Finna\Record\IIIF\IIIFManifestGeneratorFactory::class,
             \Finna\Record\ResourcePopulator::class => \VuFind\Record\ResourcePopulatorFactory::class,
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
@@ -1167,6 +1168,7 @@ $recordRoutes = [
 // Define non tab record actions
 $nonTabRecordActions = [
     'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest', 'ValidationReport',
+    'IIIFManifest',
 ];
 
 // Define dynamic routes -- controller => [route name => action]

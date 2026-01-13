@@ -208,11 +208,7 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
         $config = $this->config;
         $feedConfig = ['url' => $url];
 
-        if (isset($config[$id])) {
-            $feedConfig['result'] = $config[$id]->toArray();
-        } else {
-            $feedConfig['result'] = ['items' => 5];
-        }
+        $feedConfig['result'] = isset($config[$id]) ? $config[$id]->toArray() : ['items' => 5];
         $feedConfig['result']['type'] = 'list';
         $feedConfig['result']['active'] = 1;
         return $feedConfig;

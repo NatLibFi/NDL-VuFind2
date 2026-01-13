@@ -139,6 +139,7 @@
             <subject>
               <subjectActor>
                 <actor>
+                  <actorID type="URI">http://urn.fi/URN:NBN:fi:au:finaf:000211029</actorID>
                   <nameActorSet>
                     <appellationValue>Jussi, J&#xE4;n&#xF6;</appellationValue>
                   </nameActorSet>

@@ -75,7 +75,7 @@ trait FinnaOptions
     public function getViewOptionListType()
     {
         $viewOptionsIcons = $this->searchSettings['General']['view_options_icons'] ?? false;
-        return $viewOptionsIcons ? true : false;
+        return $viewOptionsIcons;
     }
 
     /**

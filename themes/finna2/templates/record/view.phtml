@@ -4,10 +4,6 @@
   $this->assetManager()->appendScriptLink('record.js');
   $this->assetManager()->appendScriptLink('check_save_statuses.js');
   $this->assetManager()->appendScriptLink('finna-comments.js');
-  // Activate Syndetics Plus if necessary:
-  if ($this->syndeticsPlus()->isActive()) {
-    $this->assetManager()->appendScriptLink($this->syndeticsPlus()->getScript());
-  }
   // Add any extra scripts the tabs require:
   foreach ($this->tabsExtraScripts as $script) {
     $this->assetManager()->appendScriptLink($script);
@@ -120,6 +116,12 @@
       </div>
     <?php endif; ?>
   <?php endif; ?>
+  <?php if ($iiifManifests = $this->driver->tryMethod('getIiifManifests')):
+      echo $this->record($this->driver)->renderTemplate(
+          'record-iiif-viewer.phtml',
+          ['manifests' => $iiifManifests]
+      );
+  endif; ?>
   <div class="record-main <?= (!$fullWidthLayout && !$largeImageLayout) ? 'mainbody left' : ''?>">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" class="hiddenId">
     <input type="hidden" value="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier()) ?>" class="hiddenSource">
@@ -236,7 +238,7 @@
   <?php endif; ?>
   <?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs' && $this->driver->getSourceIdentifier() === 'Solr'): ?>
     <div class="similar-bottom container">
-      <?=$this->render('RecordTab/similaritemscarousel.phtml', ['tab' => $this->record($this->driver)->getSimilarItemsCarousel()])?>
+      <?=$this->render('RecordTab/channels.phtml', ['tab' => $this->record($this->driver)->getChannelsTab()])?>
     </div>
   <?php endif; ?>
 

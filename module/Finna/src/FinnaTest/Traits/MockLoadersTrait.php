@@ -130,10 +130,10 @@ trait MockLoadersTrait
     {
         $configManager = $this->getMockBuilder(\VuFind\Config\ConfigManager::class)->onlyMethods(['getConfigObject'])
             ->disableOriginalConstructor()->getMock();
-        $configMap = [
-            ['config', null, new Config($config)],
-        ];
-        $configManager->expects($this->any())->method('getConfigObject')->willReturnMap($configMap);
+        $configManager->expects($this->any())->method('getConfigObject')
+            ->willReturnCallback(function ($configName) use ($config) {
+                return new Config('config' === $configName ? $config : []);
+            });
 
         $dbServicePluginManager = $this->getMockBuilder(\VuFind\Db\Service\PluginManager::class)->onlyMethods([])
             ->disableOriginalConstructor()->getMock();

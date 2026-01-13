@@ -21,7 +21,6 @@
       <li><a href="<?=$this->url('primo-home')?>"><?=$this->transEsc('Primo Search')?></a></li>
       <li><a href="<?=$this->url('primo-advanced')?>"><?=$this->transEsc('Advanced Search from Primo')?></a></li>
       <?php endif; ?>
-      <li><a href="<?=$this->url('browse-home')?>"><?=$this->transEsc('Browse the Catalog')?></a></li>
       <?php if ($this->browse()->isAvailable('Database')): ?>
       <li><a href="<?=$this->url('browse-database')?>"><?=$this->transEsc('browse_extended_Database')?></a></li>
       <?php endif; ?>

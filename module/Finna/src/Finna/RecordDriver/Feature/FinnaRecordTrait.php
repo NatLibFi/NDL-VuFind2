@@ -394,7 +394,7 @@ trait FinnaRecordTrait
         // PDF key can be either boolean or an array containing booleans
         $pdf = $image['pdf'] ?? false;
         if (!is_bool($pdf)) {
-            $pdf = is_array($pdf) && array_search(true, $image['pdf']) !== false;
+            $pdf = is_array($pdf) && in_array(true, $image['pdf']);
         }
         if (
             $pdf
@@ -447,7 +447,11 @@ trait FinnaRecordTrait
             return $id;
         }
         if (preg_match('/^https?:/', $id)) {
-            // Never prefix http(s) url's
+            // Normalize ISNI URIs to match ISNI identifiers in authority sources
+            if (preg_match('/^(https:\/\/isni\.org\/isni\/)(.*)/', $id, $matches)) {
+                return '(isni)' . $matches[2];
+            }
+            // Never prefix other http(s) url's
             return $id;
         }
 
@@ -523,7 +527,7 @@ trait FinnaRecordTrait
     /**
      * Whether to show record labels for this record.
      *
-     * @return boolean
+     * @return bool
      */
     public function getRecordLabelsEnabled()
     {

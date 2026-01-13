@@ -136,7 +136,7 @@ class ExtendedIniNormalizerTest extends \PHPUnit\Framework\TestCase
         foreach ($actual as $current) {
             [$current] = explode(';', $current);
             $current = trim($current);
-            $this->assertEquals('', $current, "Unexpected line in translation file $filename");
+            $this->assertSame('', $current, "Unexpected line in translation file $filename");
         }
     }
 }

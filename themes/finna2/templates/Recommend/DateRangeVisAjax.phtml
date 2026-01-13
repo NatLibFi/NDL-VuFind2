@@ -3,11 +3,9 @@
   <form action="<?= $this->formAction; ?>" class="year-form">
     <div class="form-ui">
 	  <div class="year-range">
-      <label for="year-from" class="visually-hidden"><?=$this->transEsc('year_from');?></label>
-	    <input id="year-from" class="form-control form-inline input-year year-from" type="number" value="<?=$this->escapeHtmlAttr($this->from) ?>">
+	    <input id="year-from" class="form-control form-inline input-year year-from" type="number" aria-label="<?=$this->transEsc('year_from')?>" value="<?=$this->escapeHtmlAttr($this->from) ?>">
 	    <span class="year-separator" aria-hidden="true">&ndash;</span>
-      <label for="year-to" class="visually-hidden"><?=$this->transEsc('year_to');?></label>
-	    <input id="year-to" class="form-control form-inline input-year year-to" type="number" value="<?=$this->escapeHtmlAttr($this->to) ?>">
+	    <input id="year-to" class="form-control form-inline input-year year-to" type="number" aria-label="<?=$this->transEsc('year_to')?>" value="<?=$this->escapeHtmlAttr($this->to) ?>">
 	  </div>
 	  <button class="btn btn-primary submit" type="submit">
       <?=$this->icon('search') ?><span><?= $this->transEsc($this->submitLabel); ?></span>

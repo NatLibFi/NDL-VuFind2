@@ -171,7 +171,7 @@
           $contentElementId = 'content-main-tabs';
         }
       ?>
-      <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
+      <a id="skip-to-content" class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
     <header class="hidden-print">
       <?php if (($siteStatus = $this->siteStatus()) !== \Finna\Site\SiteStatus::PRODUCTION): ?>
         <div class="container-fluid site-status-bar <?= $siteStatus->getCssClass() ?>">

@@ -75,11 +75,11 @@ class SierraRestTest extends \PHPUnit\Framework\TestCase
             [
                 new \VuFind\Date\Converter(),
                 fn ($namespace) => null,
-                $this->getMockBuilder(CurrencyFormatter::class)->disableOriginalConstructor()->getMock(),
+                $this->createMock(CurrencyFormatter::class),
             ]
         )->onlyMethods(['makeRequest', 'debug'])
             ->getMock();
-        $connector->expects($this->any())->method('makeRequest')->willReturnMap($requestMap);
+        $connector->method('makeRequest')->willReturnMap($requestMap);
         $connector->setConfig($config);
         return $connector;
     }

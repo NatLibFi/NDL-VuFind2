@@ -255,9 +255,10 @@ class AuthorityHelper
     /**
      * Format facet value (display text).
      *
-     * @param string  $value        Facet value
-     * @param boolean $extendedInfo Wheter to return an array with
-     * 'id', 'displayText' and 'role' fields.
+     * @param string $value        Facet value
+     * @param bool   $extendedInfo Wheter to return an array with
+     *                             'id', 'displayText' and 'role'
+     *                             fields.
      *
      * @return mixed string|array
      */

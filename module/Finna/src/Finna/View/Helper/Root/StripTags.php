@@ -43,10 +43,10 @@ class StripTags extends \Laminas\View\Helper\AbstractHelper
     /**
      * Strip HTML tags from a string.
      *
-     * @param string  $string            A string that may or may not contain
-     *                                   HTML tags.
-     * @param boolean $remove_whitespace Whether to also remove line breaks and
-     *                                   extra white space chars (optional).
+     * @param string $string            A string that may or may not contain
+     *                                  HTML tags.
+     * @param bool   $remove_whitespace Whether to also remove line breaks and
+     *                                  extra white space chars (optional).
      *
      * @return string
      */

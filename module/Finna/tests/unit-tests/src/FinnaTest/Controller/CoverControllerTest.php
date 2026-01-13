@@ -259,9 +259,9 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
 
         $coverControllerMock = $this->getMockBuilder(CoverController::class)
           ->onlyMethods(['getRequest'])->setConstructorArgs([
-            $this->getMockBuilder(Loader::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(CachingProxy::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(Settings::class)->disableOriginalConstructor()->getMock(),
+            $this->createMock(Loader::class),
+            $this->createMock(CachingProxy::class),
+            $this->createMock(Settings::class),
             new Config($datasourceConfig),
             $recordLoader,
             $config['Content'] ?? [],
@@ -275,7 +275,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         $testRequest->setHeaders($headers);
         $query = new Parameters($params['query'] ?? []);
         $testRequest->setQuery($query);
-        $coverControllerMock->expects($this->any())->method('getRequest')->willReturn($testRequest);
+        $coverControllerMock->method('getRequest')->willReturn($testRequest);
         return $coverControllerMock;
     }
 }

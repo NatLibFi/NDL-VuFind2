@@ -364,7 +364,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     {
         $driver = $this->getMockBuilder(Alma::class)->onlyMethods(['makeRequest'])
           ->disableOriginalConstructor()->getMock();
-        $driver->expects($this->any())->method('makeRequest')->willReturnCallback(
+        $driver->method('makeRequest')->willReturnCallback(
             function (
                 $url,
                 $getP = [],

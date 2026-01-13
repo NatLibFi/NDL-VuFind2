@@ -236,7 +236,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getCacheKey($suffix = null)
     {
-        return 'KohaRest' . '-' . md5($this->config['Catalog']['host'] . $suffix);
+        return 'KohaRest-' . md5($this->config['Catalog']['host'] . $suffix);
     }
 
     /**
@@ -2114,10 +2114,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     protected function itemHoldAllowed($item)
     {
         $unavail = $item['availability']['unavailabilities'] ?? [];
-        if (!isset($unavail['Hold::NotHoldable'])) {
-            return true;
-        }
-        return false;
+        return !isset($unavail['Hold::NotHoldable']);
     }
 
     /**
@@ -2133,13 +2130,8 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
         if (isset($unavail['ArticleRequest::NotAllowed'])) {
             return false;
         }
-        if (
-            empty($this->config['StorageRetrievalRequests']['allow_checked_out'])
-            && isset($unavail['Item::CheckedOut'])
-        ) {
-            return false;
-        }
-        return true;
+        return !(empty($this->config['StorageRetrievalRequests']['allow_checked_out'])
+            && isset($unavail['Item::CheckedOut']));
     }
 
     /**

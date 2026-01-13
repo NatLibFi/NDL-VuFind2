@@ -44,7 +44,7 @@ class Config extends \VuFind\View\Helper\Root\Config
     /**
      * Is video embedding on record page enabled
      *
-     * @return boolean
+     * @return bool
      */
     public function inlineVideoEnabled()
     {
