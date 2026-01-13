@@ -1418,7 +1418,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
         foreach ($this->objectToArray($info->emailAddresses->emailAddress ?? []) as $emailAddress) {
             if ($emailAddress->isActive === 'yes') {
-                $email = $emailAddress->address ?? '';
+                if (!($email = trim($emailAddress->address ?? '') ?: null)) {
+                    continue;
+                }
                 $emailId = $emailAddress->id ?? '';
                 break;
             }

@@ -644,8 +644,9 @@ class Quria extends AxiellWebServices
             $activeFound = false;
             foreach ($emailAddresses as $i => $emailAddress) {
                 if (!$email || !$activeFound) {
-                    $email = $emailAddress->address;
-                    $activeFound = $emailAddress->isActive == 'yes';
+                    if ($email = trim($emailAddress->address) ?: null) {
+                        $activeFound = $emailAddress->isActive == 'yes';
+                    }
                 }
                 $emails['email_' . $i] = $emailAddress->address ?? null;
                 $emails['email_' . $i . '_id'] = $emailAddress->id ?? null;
