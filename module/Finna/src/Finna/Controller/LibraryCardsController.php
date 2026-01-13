@@ -793,8 +793,8 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         }
 
         $catUsername = $card->getCatUsername();
-        $users = $userCardService->getConnectedAccountInfoForLibraryCard($catUsername);
-        return $this->createViewModel(['users' => $users]);
+        $accounts = $userCardService->getConnectedAccountInfoForLibraryCard($catUsername);
+        return $this->createViewModel(compact('accounts'));
     }
 
     /**

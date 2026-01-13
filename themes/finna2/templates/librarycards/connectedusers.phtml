@@ -9,12 +9,12 @@
     </tr>
   </thead>
   <tbody>
-    <?php foreach ($this->users as $user): ?>
+    <?php foreach ($this->accounts as $account): ?>
       <tr>
-        <td data-label="<?=$this->transEsc('library_card_date_of_connection')?>"><?=$this->escapeHtml($user['created']->format($this->config()->dateTimeFormat()))?></td>
-        <td data-label="<?=$this->transEsc('Last Login')?>"><?=$this->escapeHtml($user['lastLogin']->format($this->config()->dateTimeFormat()))?></td>
-        <td data-label="<?=$this->transEsc('account_username')?>"><?=$this->escapeHtml($user['username'])?></td>
-        <td data-label="<?=$this->transEsc('account_login_method')?>"><?=$this->transEscWithPrefix('login_method_', $user['authMethod']) ?></td>
+        <td data-label="<?=$this->transEsc('library_card_date_of_connection')?>"><?=$this->escapeHtml($account['created']->format($this->config()->dateTimeFormat()))?></td>
+        <td data-label="<?=$this->transEsc('Last Login')?>"><?=$this->escapeHtml($account['lastLogin']->format($this->config()->dateTimeFormat()))?></td>
+        <td data-label="<?=$this->transEsc('account_username')?>"><span><?=$this->escapeHtml($account['username'])?><?php if ($account['userId'] === $this->auth()->getUserObject()->getId()): ?><br><span class="library-card-this-session">(<?=$this->transEsc('library_card_this_session')?>)</span><?php endif;?></td></span>
+        <td data-label="<?=$this->transEsc('account_login_method')?>"><?=$this->transEscWithPrefix('login_method_', $account['authMethod']) ?></td>
       </tr>
     <?php endforeach; ?>
   </tbody>
