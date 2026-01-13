@@ -53,9 +53,9 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider for testSort
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function sortDataProvider(): array
+    public static function sortDataProvider(): \Iterator
     {
         $searchConfigLegacy = [
             'Sorting' => [
@@ -81,34 +81,26 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
                 'title_sort' => 'Title',
             ],
         ];
-        return [
-            'legacy config, relevance and id'
-                => [$searchConfigLegacy, 'relevance,id asc', 'score desc,id asc'],
-            'legacy config, relevance only'
-                => [$searchConfigLegacy, 'relevance', 'score desc,id asc'],
-            'legacy config, title and id'
-                => [$searchConfigLegacy, 'title,id asc', 'title_sort asc,id asc'],
-            'legacy config, title only'
-                => [$searchConfigLegacy, 'title', 'title_sort asc,id asc'],
-
-            'mixed config, relevance and id'
-                => [$searchConfigLegacyWithTieBreaker, 'relevance,id asc', 'score desc,id asc'],
-            'mixed config, relevance only'
-                => [$searchConfigLegacyWithTieBreaker, 'relevance', 'score desc,id asc'],
-            'mixed config, title and id'
-                => [$searchConfigLegacyWithTieBreaker, 'title,id asc', 'title_sort asc,id asc'],
-            'mixed config, title only'
-                => [$searchConfigLegacyWithTieBreaker, 'title', 'title_sort asc,id asc'],
-
-            'current config, relevance and id'
-                => [$searchConfigCurrent, 'relevance,id asc', 'score desc,id asc'],
-            'current config, relevance only'
-                => [$searchConfigCurrent, 'relevance', 'score desc,id asc'],
-            'current config, title and id'
-                => [$searchConfigCurrent, 'title,id asc', 'title_sort asc,id asc'],
-            'current config, title only'
-                => [$searchConfigCurrent, 'title', 'title_sort asc,id asc'],
+        yield 'legacy config, relevance and id' => [$searchConfigLegacy, 'relevance,id asc', 'score desc,id asc'];
+        yield 'legacy config, relevance only' => [$searchConfigLegacy, 'relevance', 'score desc,id asc'];
+        yield 'legacy config, title and id' => [$searchConfigLegacy, 'title,id asc', 'title_sort asc,id asc'];
+        yield 'legacy config, title only' => [$searchConfigLegacy, 'title', 'title_sort asc,id asc'];
+        yield 'mixed config, relevance and id' => [
+            $searchConfigLegacyWithTieBreaker,
+            'relevance,id asc',
+            'score desc,id asc',
         ];
+        yield 'mixed config, relevance only' => [$searchConfigLegacyWithTieBreaker, 'relevance', 'score desc,id asc'];
+        yield 'mixed config, title and id' => [
+            $searchConfigLegacyWithTieBreaker,
+            'title,id asc',
+            'title_sort asc,id asc',
+        ];
+        yield 'mixed config, title only' => [$searchConfigLegacyWithTieBreaker, 'title', 'title_sort asc,id asc'];
+        yield 'current config, relevance and id' => [$searchConfigCurrent, 'relevance,id asc', 'score desc,id asc'];
+        yield 'current config, relevance only' => [$searchConfigCurrent, 'relevance', 'score desc,id asc'];
+        yield 'current config, title and id' => [$searchConfigCurrent, 'title,id asc', 'title_sort asc,id asc'];
+        yield 'current config, title only' => [$searchConfigCurrent, 'title', 'title_sort asc,id asc'];
     }
 
     /**

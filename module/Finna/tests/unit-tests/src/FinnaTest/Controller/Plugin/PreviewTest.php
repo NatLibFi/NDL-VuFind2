@@ -59,38 +59,36 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     /**
      * Data provider for testPreview
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function previewProvider(): array
+    public static function previewProvider(): \Iterator
     {
-        return [
-            'LIDO non-validated' => [
-                'lido',
-                'lido_test.xml',
-                '',
-                '',
-                [],
-                [],
-                [],
-            ],
-            'LIDO invalid' => [
-                'lido',
-                'lido_test.xml',
-                'lido-v1.1-profile-FINNA-v0.1.xsd',
-                'lido-v1.1-profile-FINNA-v0.1.sch',
-                [],
-                [],
-                [],
-            ],
-            'LIDO valid' => [
-                'lido',
-                'lido_valid.xml',
-                'lido-v1.1-profile-FINNA-v0.1.xsd',
-                'lido-v1.1-profile-FINNA-v0.1.sch',
-                [],
-                [],
-                [],
-            ],
+        yield 'LIDO non-validated' => [
+            'lido',
+            'lido_test.xml',
+            '',
+            '',
+            [],
+            [],
+            [],
+        ];
+        yield 'LIDO invalid' => [
+            'lido',
+            'lido_test.xml',
+            'lido-v1.1-profile-FINNA-v0.1.xsd',
+            'lido-v1.1-profile-FINNA-v0.1.sch',
+            [],
+            [],
+            [],
+        ];
+        yield 'LIDO valid' => [
+            'lido',
+            'lido_valid.xml',
+            'lido-v1.1-profile-FINNA-v0.1.xsd',
+            'lido-v1.1-profile-FINNA-v0.1.sch',
+            [],
+            [],
+            [],
         ];
     }
 
@@ -152,9 +150,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     ): MockObject&Preview {
         $metadata = $this->getFixture("$format/$record", 'Finna');
 
-        $recordPluginManager = $this->getMockBuilder(RecordPluginManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $recordPluginManager = $this->createMock(RecordPluginManager::class);
         $recordPluginManager->expects($this->once())
             ->method('getSolrRecord')
             ->with(['record_format' => $format])
@@ -167,9 +163,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $pathResolver = $this->getMockBuilder(PathResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $pathResolver = $this->createMock(PathResolver::class);
         $pathResolver->expects($this->exactly(($xsd ? 1 : 0) + ($schematron ? 1 : 0)))
             ->method('getConfigPath')
             ->willReturnCallback(
@@ -208,9 +202,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $controller = $this->getMockBuilder(RecordPreviewController::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $controller = $this->createMock(RecordPreviewController::class);
         $controller->expects($this->once())
             ->method('plugin')
             ->with('params', null)

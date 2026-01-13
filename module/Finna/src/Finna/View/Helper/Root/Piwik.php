@@ -298,7 +298,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     /**
      * Check if the view helper was called from image popup template.
      *
-     * @return boolean
+     * @return bool
      */
     protected function calledFromImagePopup()
     {

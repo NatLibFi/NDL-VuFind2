@@ -117,7 +117,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     /**
      * Return birth date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return string
      */
@@ -134,7 +134,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     /**
      * Return death date.
      *
-     * @param boolean $force Return terminated date for corporations?
+     * @param bool $force Return terminated date for corporations?
      *
      * @return string
      */

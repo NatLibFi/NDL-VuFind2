@@ -467,15 +467,11 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
         $results = [];
         foreach ($this->getRecordXML()->SubjectTerms as $subjectTerms) {
             foreach ($subjectTerms->Term as $term) {
-                if (!$extended) {
-                    $results[] = [$term];
-                } else {
-                    $results[] = [
-                        'heading' => [$term],
-                        'type' => '',
-                        'source' => '',
-                    ];
-                }
+                $results[] = !$extended ? [$term] : [
+                    'heading' => [$term],
+                    'type' => '',
+                    'source' => '',
+                ];
             }
         }
         return $results;

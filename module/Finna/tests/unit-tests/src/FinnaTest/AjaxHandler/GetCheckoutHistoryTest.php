@@ -75,112 +75,108 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     /**
      * Data provider for testSuccess
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getSuccessfulData(): array
+    public static function getSuccessfulData(): \Iterator
     {
-        return [
-            'batch limit is higher' => [
-                50,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['parts' => 10],
+        yield 'batch limit is higher' => [
+            50,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
-            'batch limit is same' => [
-                50,
-                50,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['parts' => 200],
+            ['parts' => 10],
+        ];
+        yield 'batch limit is same' => [
+            50,
+            50,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
-            'batch limit is lower' => [
-                50,
-                10,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['parts' => 200],
+            ['parts' => 200],
+        ];
+        yield 'batch limit is lower' => [
+            50,
+            10,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
-            'results lower than batch limit' => [
-                50,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 21,
-                ],
-                ['parts' => 1],
+            ['parts' => 200],
+        ];
+        yield 'results lower than batch limit' => [
+            50,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 21,
             ],
-            'no history' => [
-                50,
-                10,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 0,
-                ],
-                ['parts' => 0],
+            ['parts' => 1],
+        ];
+        yield 'no history' => [
+            50,
+            10,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 0,
             ],
-            'different default than usual' => [
-                15,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 10000,
-                ],
-                ['parts' => 10],
+            ['parts' => 0],
+        ];
+        yield 'different default than usual' => [
+            15,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 10000,
             ],
-            'test with very small limits' => [
-                3,
-                2,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 7,
-                ],
-                ['parts' => 3],
+            ['parts' => 10],
+        ];
+        yield 'test with very small limits' => [
+            3,
+            2,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 7,
             ],
-            'test with nothing set as limits' => [
-                0,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 10000,
-                ],
-                ['parts' => 10],
+            ['parts' => 3],
+        ];
+        yield 'test with nothing set as limits' => [
+            0,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 10000,
             ],
+            ['parts' => 10],
         ];
     }
 
     /**
      * Data provider for testSuccess
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getFailuresData(): array
+    public static function getFailuresData(): \Iterator
     {
-        return [
-            'failure from getMyTransactions' => [
-                50,
-                1000,
-                [
-                    'success' => false,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['An error has occurred',  500],
+        yield 'failure from getMyTransactions' => [
+            50,
+            1000,
+            [
+                'success' => false,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
+            ['An error has occurred',  500],
         ];
     }
 
@@ -296,7 +292,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
         };
         $ilsAuth = $this->container
             ->createMock(ILSAuthenticator::class, ['storedCatalogLogin']);
-        $ilsAuth->expects($this->any())->method('storedCatalogLogin')->willReturn([3]);
+        $ilsAuth->method('storedCatalogLogin')->willReturn([3]);
         $this->container->set(Connection::class, $wrapperClass);
         $this->container->set(ILSAuthenticator::class, $ilsAuth);
         $config = new Config([

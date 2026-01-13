@@ -162,15 +162,8 @@ trait FinnaParams
     {
         // Extract field and value from URL string:
         [$field, $value] = $this->parseFilter($filter);
-
-        if (
-            isset($this->hiddenFilters[$field])
-            && in_array($value, $this->hiddenFilters[$field])
-        ) {
-            return true;
-        }
-
-        return false;
+        return isset($this->hiddenFilters[$field])
+        && in_array($value, $this->hiddenFilters[$field]);
     }
 
     /**
@@ -367,7 +360,7 @@ trait FinnaParams
      *
      * @param string $field Filter field
      *
-     * @return boolean
+     * @return bool
      */
     protected function isDateRangeFilter($field)
     {

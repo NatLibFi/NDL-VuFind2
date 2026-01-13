@@ -1,0 +1,54 @@
+<?php
+/**
+ * Viewer for IIIF manifests and collections.
+ *
+ * @param array    manifestUrls   URLs of IIIF manifests to load
+ */
+$iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThemes: true);
+?>
+
+<div class="record-viewer-container container">
+  <div class="tify" id="tify"></div>
+
+  <div class="record-iiif-toolbar container">
+    <span class="record-iiif-functions dropdown hstack gap-3">
+      <button type="button"
+        class="btn btn-outline-primary p-2 ms-auto icon-link"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+      >
+        <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
+             alt="IIIF"
+             class="bi icon-link__icon"
+        >
+        <span class="icon-link__label"><?=$this->transEsc('iiif_tools')?></span>
+        <?=$this->icon('dropdown-open')?>
+      </button>
+      <?=$this->component(
+        'finna-iiif-menu',
+        ['manifestUrls' => $this->manifestUrls, 'alignRight' => true]
+      );?>
+    </span>
+  </div>
+</div>
+
+<?php
+$tifyJsPath = json_encode($this->scriptSrc('vendor/tify/tify.min.js'));
+$tifyConfig = json_encode([
+  'container' => '#tify',
+  'manifestUrl' => $this->manifestUrls[0]['url'],
+  'language' => substr($this->layout()->userLang, 0, 2) ?? 'fi',
+  // Default colorMode is "auto" which autodetects the browser preference.
+  // Finna does not currently support dark modes, so we must force "light" to
+  // prevent mismatching colors.
+  'colorMode' => 'light',
+]);
+
+$js = <<<JS
+    import Tify from $tifyJsPath;
+    new Tify($tifyConfig);
+    JS;
+
+echo $this->assetManager()->outputInlineScriptString($js, ['type' => 'module']);
+?>
+

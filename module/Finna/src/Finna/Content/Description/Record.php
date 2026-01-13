@@ -78,7 +78,7 @@ class Record extends AbstractDescriptionProvider implements TranslatorAwareInter
             return '';
         }
         $language = $this->translator->getLocale();
-        if (!($summary = $record->getSummary($language))) {
+        if (!($summary = $record->getSummary())) {
             return '';
         }
         $summary = implode("\n\n", $summary);

@@ -195,7 +195,7 @@ class Bootstrapper
                     }
                     $method = $request->getPost('method')
                         ?? $request->getQuery('method');
-                    if (!in_array($method, ['getImageInformation'])) {
+                    if ($method != 'getImageInformation') {
                         return;
                     }
                     $action .= "/$method";

@@ -114,7 +114,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Regional hold
      *
-     * @var Boolean
+     * @var bool
      */
     protected $regionalHold = false;
 
@@ -198,7 +198,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Verbose debug-mode
      *
-     * @var Boolean
+     * @var bool
      */
     protected $verbose = false;
 
@@ -219,7 +219,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     /**
      * Institution settings for single reservation queue
      *
-     * @var Boolean
+     * @var bool
      */
     protected $singleReservationQueue = false;
 
@@ -1175,11 +1175,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
                             $year = $journalInfo['year'] ?? '';
                             $edition = $journalInfo['edition'] ?? '';
                             if ($year !== '' && $edition !== '') {
-                                if (strncmp($year, $edition, strlen($year)) == 0) {
-                                    $group = $edition;
-                                } else {
-                                    $group = "$year, $edition";
-                                }
+                                $group = strncmp($year, $edition, strlen($year)) == 0 ? $edition : "$year, $edition";
                             } else {
                                 $group = $year . $edition;
                             }
@@ -1422,7 +1418,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
         foreach ($this->objectToArray($info->emailAddresses->emailAddress ?? []) as $emailAddress) {
             if ($emailAddress->isActive === 'yes') {
-                $email = $emailAddress->address ?? '';
+                if (!($email = trim($emailAddress->address ?? '') ?: null)) {
+                    continue;
+                }
                 $emailId = $emailAddress->id ?? '';
                 break;
             }
@@ -3023,10 +3021,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             $result = $client->$function($params);
         } catch (\SoapFault | \ErrorException $e) {
             $this->error(
-                "$function Request for '$this->arenaMember'.'$id' failed: "
-                . $e->getMessage()
+                "$function Request for '$this->arenaMember'.'$id' failed: " . (string)$e
             );
-            throw new ILSException($e->getMessage());
+            throw new ILSException('ils_connection_failed');
         }
 
         if ($this->durationLogPrefix) {
@@ -3386,7 +3383,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getCacheKey($suffix = null)
     {
-        return 'AxiellWebServices' . '-' . md5($this->arenaMember . "|$suffix");
+        return 'AxiellWebServices-' . md5($this->arenaMember . "|$suffix");
     }
 
     /**

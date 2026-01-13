@@ -5,7 +5,7 @@
  *
  * PHP version 8.1
  *
- * Copyright (C) The National Library of Finland 2024.
+ * Copyright (C) The National Library of Finland 2024-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -389,11 +389,7 @@ class Quria extends AxiellWebServices
                         $year = $journalInfo['year'] ?? '';
                         $edition = $journalInfo['edition'] ?? '';
                         if ($year !== '' && $edition !== '') {
-                            if (strncmp($year, $edition, strlen($year)) == 0) {
-                                $group = $edition;
-                            } else {
-                                $group = "$year, $edition";
-                            }
+                            $group = strncmp($year, $edition, strlen($year)) == 0 ? $edition : "$year, $edition";
                         } else {
                             $group = $year . $edition;
                         }
@@ -648,8 +644,9 @@ class Quria extends AxiellWebServices
             $activeFound = false;
             foreach ($emailAddresses as $i => $emailAddress) {
                 if (!$email || !$activeFound) {
-                    $email = $emailAddress->address;
-                    $activeFound = $emailAddress->isActive == 'yes';
+                    if ($email = trim($emailAddress->address) ?: null) {
+                        $activeFound = $emailAddress->isActive == 'yes';
+                    }
                 }
                 $emails['email_' . $i] = $emailAddress->address ?? null;
                 $emails['email_' . $i . '_id'] = $emailAddress->id ?? null;
@@ -1407,6 +1404,7 @@ class Quria extends AxiellWebServices
                 'payableOnline' => $payable,
                 'organization' => trim($debt->organisation ?? ''),
             ];
+            $fine['payableOnline'] = $this->fineIsPayable($fine);
             $finesList[] = $fine;
         }
 
@@ -1424,6 +1422,183 @@ class Quria extends AxiellWebServices
         }
 
         return $finesList;
+    }
+
+    /**
+     * Register a payment.
+     *
+     * This is called after a successful online payment.
+     *
+     * @param array   $patron                  Patron
+     * @param int     $amount                  Amount to be registered as paid
+     * @param string  $localPaymentIdentifier  Local payment identifier
+     * @param ?string $remotePaymentIdentifier Remote payment identifier
+     * @param int     $paymentId               Internal payment id
+     * @param ?array  $fineIds                 Fine IDs to mark paid or null for bulk payment
+     *
+     * @throws ILSException
+     * @return array Associative array with keys success (bool, always) and reason (string, on error)
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function registerPayment(
+        array $patron,
+        int $amount,
+        string $localPaymentIdentifier,
+        ?string $remotePaymentIdentifier,
+        int $paymentId,
+        ?array $fineIds = null
+    ): array {
+        if (empty($fineIds)) {
+            $this->logError('Bulk payment not supported');
+            throw new ILSException('Bulk payment not supported');
+        }
+
+        $fines = $this->getMyFines($patron);
+        if (!$fines) {
+            $this->logError('No fines to pay found');
+            return [
+                'success' => false,
+                'reason' => 'Payment::error_fines_changed',
+            ];
+        }
+
+        $amountRemaining = $amount;
+        $debts = [];
+        foreach ($fines as $fine) {
+            if (
+                in_array($fine['fineId'], $fineIds)
+                && $fine['payableOnline'] && $fine['balance'] > 0
+            ) {
+                $pay = (int)round(min($fine['balance'], $amountRemaining));
+                $debts[] = $fine['fineId'];
+                $amountRemaining -= $pay;
+            }
+        }
+        if (!$debts) {
+            $this->logError('Fine IDs do not match any of the payable fines');
+            return [
+                'success' => false,
+                'reason' => 'Payment::error_fines_changed',
+            ];
+        }
+        if ($amountRemaining) {
+            $this->logError('Amount to pay does not match the selected fines');
+            return [
+                'success' => false,
+                'reason' => 'Payment::error_fines_changed',
+            ];
+        }
+
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+
+        $function = 'GetPaymentServiceInformation';
+        $functionResult = 'paymentServiceInformationResponse';
+        $amountDec = substr((string)$amount, 0, -2) . ',' . substr((string)$amount, -2);
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'amount' => $amountDec,
+            'debts' => $debts,
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
+            $username,
+            ['paymentServiceInformationRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [];
+        }
+        if (null === ($orderId = $result->$functionResult->orderId ?? null)) {
+            $this->logError('Did not receive orderId from ILS');
+            return [
+                'success' => false,
+                'reason' => 'ils_connection_failed',
+            ];
+        }
+
+        // Clear patron cache regardless of result, just incase:
+        $cacheKey = $this->getPatronCacheKey($patron['cat_username']);
+        $this->putCachedData($cacheKey, null);
+
+        // Make the payment:
+        $function = 'AddPayment';
+        $functionResult = 'addPaymentResponse';
+        $transactionNumber = $localPaymentIdentifier;
+        if ($remotePaymentIdentifier) {
+            $transactionNumber .= " / $remotePaymentIdentifier";
+        }
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'transactionNumber' => $transactionNumber,
+            'orderId' => $orderId,
+            'paymentAmount' => $amountDec,
+            'debts' => $debts,
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
+            $username,
+            ['addPaymentRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [
+                'success' => false,
+                'reason' => $message,
+            ];
+        }
+
+        // Verify the payment registraion:
+        $function = 'GetPaymentConfirmation';
+        $functionResult = 'paymentConfirmationResponse';
+        $transactionNumber = $localPaymentIdentifier;
+        unset($conf['debts']);
+
+        $result = $this->doSOAPRequest(
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
+            $username,
+            ['paymentConfirmationRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [
+                'success' => false,
+                'reason' => $message,
+            ];
+        }
+
+        return [
+            'success' => true,
+        ];
     }
 
     /**
@@ -1784,10 +1959,10 @@ class Quria extends AxiellWebServices
         $this->putCachedData($cacheKey, null);
 
         return [
-                'success' => true,
-                'status' => 'Phone number changed',
-                'sys_message' => '',
-            ];
+            'success' => true,
+            'status' => 'Phone number changed',
+            'sys_message' => '',
+        ];
     }
 
     /**

@@ -44,9 +44,9 @@ trait FinnaUnsupportedFunctionViewTrait
      * Check if current library card supports a function. If not supported, show
      * a message and a notice about the possibility to change library card.
      *
-     * @param string  $function      Function to check
-     * @param boolean $checkFunction Use checkFunction() if true,
-     * checkCapability() otherwise
+     * @param string $function      Function to check
+     * @param bool   $checkFunction Use checkFunction() if true,
+     *                              checkCapability() otherwise
      *
      * @return mixed \Laminas\View if the function is not supported, false otherwise
      */

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2024.
+ * Copyright (C) The National Library of Finland 2015-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -35,6 +35,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Db\Service\AuditEventServiceInterface;
 use VuFind\Db\Service\ResourceServiceInterface;
 use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Db\Service\TagServiceInterface;
@@ -87,6 +88,7 @@ class AccountExpirationRemindersFactory implements FactoryInterface
             $dbServiceManager->get(ResourceServiceInterface::class),
             $dbServiceManager->get(UserListServiceInterface::class),
             $dbServiceManager->get(TagServiceInterface::class),
+            $dbServiceManager->get(AuditEventServiceInterface::class),
             $container->get('ViewRenderer'),
             $configManager->getConfigObject('datasources'),
             $container->get(Mailer::class),

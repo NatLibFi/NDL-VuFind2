@@ -429,7 +429,7 @@ class CPU extends \VuFind\OnlinePayment\Handler\AbstractBase
      * @param array  $params Parameters
      * @param string $hash   Hash
      *
-     * @return boolean
+     * @return bool
      */
     protected function verifyHash($params, $hash)
     {

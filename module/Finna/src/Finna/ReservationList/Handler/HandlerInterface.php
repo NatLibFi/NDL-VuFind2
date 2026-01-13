@@ -84,6 +84,13 @@ interface HandlerInterface
     public function getRecipient(): array;
 
     /**
+     * Can user reserve with database account?
+     *
+     * @return bool
+     */
+    public function databaseAccountAllowed(): bool;
+
+    /**
      * Check if library card matches to allowed sources
      *
      * @param string $libraryCardSource Library card source

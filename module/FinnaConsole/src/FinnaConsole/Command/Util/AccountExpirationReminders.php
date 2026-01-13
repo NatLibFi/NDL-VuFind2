@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -47,10 +47,12 @@ use VuFind\Config\ConfigManagerInterface;
 use VuFind\Config\Feature\EmailSettingsTrait;
 use VuFind\Config\Feature\ExplodeSettingTrait;
 use VuFind\Config\Location\ConfigFile;
+use VuFind\Db\Service\AuditEventServiceInterface;
 use VuFind\Db\Service\ResourceServiceInterface;
 use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Db\Service\TagServiceInterface;
 use VuFind\Db\Service\UserListServiceInterface;
+use VuFind\Db\Type\AuditEventType;
 use VuFind\Mailer\Mailer;
 
 use function assert;
@@ -159,16 +161,17 @@ class AccountExpirationReminders extends AbstractUtilCommand
     /**
      * Constructor
      *
-     * @param UserServiceInterface               $userService      User database service
-     * @param SearchServiceInterface             $searchService    Search database service
-     * @param ResourceServiceInterface           $resourceService  Resource database service
-     * @param UserListServiceInterface           $userListService  User list database service
-     * @param TagServiceInterface                $tagService       Tag database service
-     * @param \Laminas\View\Renderer\PhpRenderer $renderer         View renderer
-     * @param \VuFind\Config\Config              $datasourceConfig Data source config
-     * @param Mailer                             $mailer           Mailer
-     * @param TranslatorInterface                $translator       Translator
-     * @param ConfigManagerInterface             $configManager    Config manager
+     * @param UserServiceInterface               $userService       User database service
+     * @param SearchServiceInterface             $searchService     Search database service
+     * @param ResourceServiceInterface           $resourceService   Resource database service
+     * @param UserListServiceInterface           $userListService   User list database service
+     * @param TagServiceInterface                $tagService        Tag database service
+     * @param AuditEventServiceInterface         $auditEventService Audit event database service
+     * @param \Laminas\View\Renderer\PhpRenderer $renderer          View renderer
+     * @param \VuFind\Config\Config              $datasourceConfig  Data source config
+     * @param Mailer                             $mailer            Mailer
+     * @param TranslatorInterface                $translator        Translator
+     * @param ConfigManagerInterface             $configManager     Config manager
      */
     public function __construct(
         protected UserServiceInterface $userService,
@@ -176,6 +179,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
         protected ResourceServiceInterface $resourceService,
         protected UserListServiceInterface $userListService,
         protected TagServiceInterface $tagService,
+        protected AuditEventServiceInterface $auditEventService,
         protected \Laminas\View\Renderer\PhpRenderer $renderer,
         protected \VuFind\Config\Config $datasourceConfig,
         Mailer $mailer,
@@ -606,6 +610,10 @@ class AccountExpirationReminders extends AbstractUtilCommand
         );
 
         $to = $user->getEmail();
+        $eventData = [
+            'last_login' => $user->getLastLogin()->format(VUFIND_DATABASE_DATETIME_FORMAT),
+            'expiration' => $expirationDatetime->format(VUFIND_DATABASE_DATETIME_FORMAT),
+        ];
         try {
             $from = $this->getEmailSenderAddress($this->currentSiteConfig);
 
@@ -624,6 +632,12 @@ class AccountExpirationReminders extends AbstractUtilCommand
                 $this->sendEmailWithRetry($to, $from, $subject, $message);
                 $user->setFinnaLastExpirationReminderDate(new DateTime());
                 $this->userService->persistEntity($user);
+                $this->auditEventService->addEvent(
+                    AuditEventType::User,
+                    'send_expiration_reminder_email',
+                    $user,
+                    data: $eventData
+                );
             }
         } catch (\Exception $e) {
             $this->err(
@@ -631,6 +645,12 @@ class AccountExpirationReminders extends AbstractUtilCommand
                 'Failed to send an expiration reminder to a user'
             );
             $this->err('   ' . $e->getMessage());
+            $this->auditEventService->addEvent(
+                AuditEventType::User,
+                'send_expiration_reminder_email_fail',
+                $user,
+                data: $eventData + ['error' => $e->getMessage()]
+            );
             return false;
         }
         return true;

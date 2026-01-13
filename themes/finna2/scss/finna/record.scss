@@ -23,6 +23,7 @@
       justify-content: center;
     }
   }
+
   @include media-breakpoint-up(xs) {
     .media-left { padding-right: 20px; }
     .media-right { padding-left: 20px; }
@@ -609,6 +610,10 @@ a.authority {
           display: inline-block;
         }
       }
+    }
+
+    .dropdown-toggle {
+      display: initial;
     }
   }
 }

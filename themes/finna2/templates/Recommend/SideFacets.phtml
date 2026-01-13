@@ -38,12 +38,12 @@
     }
   ?>
   <?php if ($checkboxesShown): ?>
-    <fieldset>
-      <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
-      <div class="checkbox-filters">
+    <div class="checkbox-filters">
+      <fieldset>
+        <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
         <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results]); ?>
-      </div>
-    </fieldset>
+      </fieldset>
+    </div>
   <?php endif; ?>
 <?php endif; ?>
 <?php
@@ -77,7 +77,8 @@
         <span class="facet-title"><?=$this->transEsc($cluster['label'])?></span>
         <?=$this->icon('collapse', 'facet-title-icon') ?>
       </button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' show' : '' ?>" data-facet="<?=$escTitle?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
+      <div id="facet-title-<?=$dataTarget?>" class="visually-hidden" aria-hidden="true"><?=$this->transEsc($cluster['label'])?></div>
+      <div id="<?=$dataTarget?>" aria-labelledby="facet-title-<?=$dataTarget?>" role="group" class="collapse<?= !$isCollapsed ? ' show' : '' ?>" data-facet="<?=$escTitle?>" aria-expanded="<?= !$isCollapsed ? 'true' : 'false';?>">
         <?=
           $this->context($this)->renderInContext(
               'Recommend/SideFacets/facet.phtml',

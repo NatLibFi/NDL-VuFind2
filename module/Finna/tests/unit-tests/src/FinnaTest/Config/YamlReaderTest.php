@@ -96,7 +96,7 @@ class YamlReaderTest extends \PHPUnit\Framework\TestCase
     public function getReader(array $pathResolverMap): MockObject&YamlReader
     {
         $pathResolver = $this->createMock(PathResolver::class);
-        $pathResolver->expects($this->any())->method('getLocalConfigPath')->willReturnMap($pathResolverMap);
+        $pathResolver->method('getLocalConfigPath')->willReturnMap($pathResolverMap);
         $reader = $this->getMockBuilder(YamlReader::class)
             ->onlyMethods([])
             ->setConstructorArgs([

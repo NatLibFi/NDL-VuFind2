@@ -194,7 +194,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      * Check if Primo online URLs (local links from record metadata) should be
      * displayed for this record.
      *
-     * @return boolean
+     * @return bool
      */
     protected function showOnlineURLs()
     {

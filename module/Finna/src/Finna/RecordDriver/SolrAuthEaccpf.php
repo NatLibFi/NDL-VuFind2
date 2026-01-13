@@ -162,7 +162,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     /**
      * Return birth date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return string
      */
@@ -179,7 +179,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     /**
      * Return death date.
      *
-     * @param boolean $force Return terminated date for corporations?
+     * @param bool $force Return terminated date for corporations?
      *
      * @return string
      */

@@ -36,6 +36,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 use VuFind\Account\UserAccountService;
+use VuFind\Db\Service\AuditEventServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 
 /**
@@ -72,6 +73,7 @@ class ExpireUsersFactory implements FactoryInterface
         $dbServiceManager = $container->get(\VuFind\Db\Service\PluginManager::class);
         return new $requestedName(
             $dbServiceManager->get(UserServiceInterface::class),
+            $dbServiceManager->get(AuditEventServiceInterface::class),
             $container->get(UserAccountService::class),
             $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('config')
         );

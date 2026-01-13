@@ -187,11 +187,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     ?? $urls['small'];
             }
 
-            if (isset($daogrp->dapdesc->p) && $daogrp->dapdesc->p != 'Fotografi') {
-                $description = $daogrp->dapdesc->p;
-            } else {
-                $description = '';
-            }
+            $description = isset($daogrp->dapdesc->p) && $daogrp->dapdesc->p != 'Fotografi' ? $daogrp->dapdesc->p : '';
             if (!$this->maxAmountOfImages()) {
                 $image = [
                     'urls' => $urls,
@@ -535,11 +531,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 
             $desc = '';
             if ($node->daodesc) {
-                if ($node->daodesc->p) {
-                    $desc = (string)$node->daodesc->p;
-                } else {
-                    $desc = (string)$node->daodesc;
-                }
+                $desc = $node->daodesc->p ? (string)$node->daodesc->p : (string)$node->daodesc;
             } else {
                 if ($p = $node->xpath('parent::*/daodesc/p')) {
                     $desc = (string)$p[0];
@@ -616,12 +608,12 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Check if record is digitized.
      *
-     * @return boolean True if the record is digitized
+     * @return bool True if the record is digitized
      */
     public function isDigitized()
     {
         $record = $this->getXmlRecord();
-        return $record->did->daogrp ? true : false;
+        return (bool)$record->did->daogrp;
     }
 
     /**

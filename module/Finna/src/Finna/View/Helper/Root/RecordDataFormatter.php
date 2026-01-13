@@ -176,7 +176,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Measurements',
             'Organisation',
             'original_work_language',
-            'Other Classification',
             'Other Classifications',
             'Other ID',
             'Parent Archive',
@@ -190,7 +189,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subject Date',
             'Subject Detail',
             'Subject Place',
-            'SubjectsWithoutPlaces',
+            'SubjectDisplayTerms',
         ];
         return $this->filterFields($coreFields, $include);
     }

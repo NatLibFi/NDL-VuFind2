@@ -116,9 +116,9 @@ trait SolrCommonFinnaTrait
      * If validation is enabled and the stripped HTML is invalid,
      * all tags are stripped.
      *
-     * @param string  $html      HTML
-     * @param string  $allowTags Allowed tags
-     * @param boolean $validate  Validate output?
+     * @param string $html      HTML
+     * @param string $allowTags Allowed tags
+     * @param bool   $validate  Validate output?
      *
      * @return array
      */
@@ -269,6 +269,37 @@ trait SolrCommonFinnaTrait
             return '0';
         }
         return parent::getUniqueID();
+    }
+
+    /**
+     * Get record creation date range from index in ISO 8601 format.
+     *
+     * @return string
+     */
+    public function getCreationDateRange(): string
+    {
+        $filteredRange = str_replace(['[', ']'], ['', ''], $this->fields['creation_daterange'] ?? '');
+        return implode('/', explode(' TO ', $filteredRange));
+    }
+
+    /**
+     * Get geographic subject headings
+     *
+     * @return array
+     */
+    public function getGeographicSubjects(): array
+    {
+        return (array)($this->fields['geographic'] ?? []);
+    }
+
+    /**
+     * Get chronological subject headings
+     *
+     * @return array
+     */
+    public function getEraSubjects(): array
+    {
+        return (array)($this->fields['era'] ?? []);
     }
 
     /**

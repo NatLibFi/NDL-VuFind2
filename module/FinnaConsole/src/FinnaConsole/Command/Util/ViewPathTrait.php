@@ -74,7 +74,7 @@ trait ViewPathTrait
      * @param string $institution Institution
      * @param string $view        View
      *
-     * @return string|boolean view path or false on error
+     * @return string|false view path or false on error
      */
     protected function resolveViewPath($institution, $view = false)
     {

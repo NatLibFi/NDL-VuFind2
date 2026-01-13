@@ -387,11 +387,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             if (null !== $lon && null !== $lat) {
                 $locLat = $location['address']['coordinates']['lat'] ?? null;
                 $locLon = $location['address']['coordinates']['lon'] ?? null;
-                if (null !== $locLat && null !== $locLon) {
-                    $location['distance'] = $this->getDistance($lat, $lon, $locLat, $locLon);
-                } else {
-                    $location['distance'] = null;
-                }
+                $location['distance'] = null !== $locLat && null !== $locLon
+                    ? $this->getDistance($lat, $lon, $locLat, $locLon)
+                    : null;
             }
             $results[] = $location;
         }

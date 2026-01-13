@@ -46,8 +46,9 @@ class OrganisationDisplayName extends \Laminas\View\Helper\AbstractHelper
      * Get translated organisation display name.
      *
      * @param \VuFind\RecordDriver\AbstractBase $record   Record
-     * @param boolean                           $fullName Return full
-     * name with datasource
+     * @param bool                              $fullName Return full
+     *                                                    name with
+     *                                                    datasource
      *
      * @return string
      */

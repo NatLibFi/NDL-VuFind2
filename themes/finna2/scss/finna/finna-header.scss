@@ -1,6 +1,6 @@
 section.main.template-dir-content.template-name-content .container-fluid.finna-main-header > .container,
 section.main.template-dir-feedcontent.template-name-content .container-fluid.finna-main-header > .container {
-  padding-bottom: 0;
+  padding-bottom: 0px;
 }
 
 .finna-main-header-wrapper {
@@ -11,149 +11,42 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
 }
 
 .finna-main-header {
+  padding: 15px 0px;
   background: transparent;
-  padding: 15px 0 15px 0;
-  & .search-result-header, .content-header {
+  .search-result-header,
+  .content-header {
+    margin: 0px;
     font-size: $finna-header-font-size;
-    margin: 0;
   }
   .adv_search_terms {
-    font-weight: normal;
     display: block;
+    font-weight: normal;
     strong {
       font-weight: $headings-font-weight;
     }
   }
 }
+
 .template-name-content .finna-main-header {
   background: $body-bg;
 }
 
 .main.template-dir-feedcontent.template-name-content,
 .main.template-dir-content.template-name-content {
-  & .finna-main-header {
+  .finna-main-header {
     margin-bottom: 25px;
   }
 }
 
-.template-name-results, .template-name-search {
-  @include media-breakpoint-down(sm) {
-    & .finna-main-header {
-      & .search-result-header {
-        font-size: 1.3em;
-      }
-      .adv_search_links {
-        margin-bottom: 15px;
-      }
-    }
-  }
-}
-
-.adv-search-header {
-  padding: 15px 0;
-  background-color: $well-bg;
-  border-bottom: 1px solid $filterContent-border-color;
-  @include media-breakpoint-down(md) {
-    border-top: 1px solid white;
-  }
-  .container {
-    @include media-breakpoint-down(md) {
-      padding-left: 0;
-    }
-  }
-  #searchForm {
-    flex: 1;
-    position: relative;
-    @include media-breakpoint-down(sm) {
-      width: 55%;
-    }
-  }
-  .searchbox-flex {
-    margin: 0;
-    .pager {
-      @include media-breakpoint-down(sm) {
-        margin-left: 0px;
-      }
-    }
-  }
-  .adv-search-menu {
-    display: inline-block;
-    @include media-breakpoint-down(sm) {
-      position: absolute;
-      top: 30px;
-      right: 0;
-      background-color: white;
-      padding: 10px;
-      border-radius: 10px;
-      border: 1px solid $gray-lighter;
-      z-index: 1;
-      &.active {
-        display: block !important;
-        a {
-          display: block;
-          color: $text-color;
-          margin: 0 -10px;
-          padding: 10px 10px;
-          border-bottom: 1px solid $gray-lighter;
-          text-align: left;
-          font-weight: normal;
-          &:first-child {
-            padding-top: 0;
-          }
-          &:last-child {
-            border-bottom: 0;
-            padding-bottom: 0;
-          }
-        }
-      }
-    }
-  }
-}
-.adv-search-header .adv_search_links {
-  line-height: 1em;
-  @include media-breakpoint-down(sm) {
-    position: relative;
-  }
-  a {
-    white-space: nowrap;
-    margin-right: 15px;
-    color: $gray;
-    font-weight: 600;
-    .icon {
-      font-size: 1.2em;
-    }
-    @include media-breakpoint-down(sm) {
-      margin-left: 15px;
-      margin-right: 0;
-    }
-  }
-  .adv-search-menu-toggle {
-    margin-left: 15px;
-    color: $gray;
-    cursor: pointer;
-    font-size: $font-size-small;
-    @include media-breakpoint-down(sm) {
-      display: inline-block !important;
-    }
-  }
-}
-.adv-search-header {
-  padding: 20px 0;
-  border-bottom: none;
-  @include media-breakpoint-down(sm) {
-    a {
-      display: block;
-      margin-bottom: 5px;
-    }
-  }
-}
-
-.template-dir-myresearch, .template-dir-holds, .template-dir-search.template-name-history, .template-dir-librarycards {
+.template-dir-myresearch,
+.template-dir-holds,
+.template-dir-search.template-name-history,
+.template-dir-librarycards {
   .finna-main-header {
     background: $myresearch-header-background;
-    & h1 {
+    h1 {
+      margin: 0px;
       font-size: $finna-header-font-size;
-      margin: 0;
       line-height: 1.5em;
     }
     i {
@@ -164,13 +57,117 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
         color: #fff;
       }
     }
-    & .form-inline {
+    .form-inline {
       margin-left: 20px;
     }
   }
 }
-.template-dir-list.template-name-list {
-  & .finna-main-header {
-    background: $myresearch-header-background;
+
+.template-dir-list.template-name-list .finna-main-header {
+  background: $myresearch-header-background;
+}
+
+@include media-breakpoint-down(sm) {
+  .template-name-results,
+  .template-name-search {
+    .finna-main-header {
+      .search-result-header {
+        font-size: 1.3em;
+      }
+      .adv_search_links {
+        margin-bottom: 15px;
+      }
+    }
+  }
+}
+
+.adv-search-header {
+  padding: 20px 0px;
+  background-color: $well-bg;
+  border-bottom: none;
+  #searchForm {
+    position: relative;
+    flex: 1;
+  }
+  .searchbox-flex {
+    margin: 0px;
+  }
+  .adv-search-menu {
+    display: inline-block;
+  }
+  .adv_search_links {
+    line-height: 1em;
+    a {
+      margin-right: 15px;
+      font-weight: 600;
+      color: $gray;
+      white-space: nowrap;
+      .icon {
+        font-size: 1.2em;
+      }
+    }
+    .adv-search-menu-toggle {
+      padding: 5px 15px;
+      font-size: $font-size-small;
+      color: $gray;
+    }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .adv-search-header {
+    a {
+      display: block;
+      margin-bottom: 5px;
+    }
+    #searchForm {
+      width: 55%;
+    }
+    .searchbox-flex .pager {
+      margin-left: 0px;
+    }
+    .adv-search-menu {
+      position: absolute;
+      z-index: 1;
+      padding: 10px;
+      background-color: #fff;
+      border: 1px solid $gray-lighter;
+      border-radius: $border-radius-lg;
+      &.active {
+        display: block !important;
+        a {
+          display: block;
+          padding: 10px 10px;
+          margin: 0px -10px;
+          font-weight: normal;
+          color: $text-color;
+          text-align: left;
+          border-bottom: 1px solid $gray-lighter;
+          &:first-child {
+            padding-top: 0px;
+          }
+          &:last-child {
+            padding-bottom: 0px;
+            border-bottom: 0px;
+          }
+        }
+      }
+    }
+    .adv_search_links {
+      position: relative;
+      a {
+        margin-left: 15px;
+      }
+      .adv-search-menu {
+        margin-left: 10px;
+      }
+    }
+  }
+}
+@include media-breakpoint-down(md) {
+  .adv-search-header {
+    border-top: 1px solid #fff;
+    .container {
+      padding-left: 0px;
+    }
   }
 }
