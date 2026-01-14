@@ -14,6 +14,9 @@ $encodedManifest = urlencode($manifest);
 $r = $this->alignRight ? 'dropdown-menu-end' : '';
 $urlContainerId = 'iiif-manifest-url__' . ($this->uniqueID ?? 'container');
 $viewers = $this->config()->get('config')->IIIF->externalViewers ?? [];
+if ($iiifHelp = $this->content()->findTemplateForLng('content/iiif')) {
+  $dropHeaderExtraClasses = ' hstack gap-2';
+}
 ?>
 <span class="iiif-manifest-url-container hidden"
       id="<?=$this->escapeHtmlAttr($urlContainerId)?>"
@@ -22,8 +25,17 @@ $viewers = $this->config()->get('config')->IIIF->externalViewers ?? [];
 </span>
 <ul class="dropdown-menu <?=$r?>">
   <li>
-    <span class="dropdown-header fs-5">
+    <span class="dropdown-header fs-5<?=$dropHeaderExtraClasses ?? ''?>">
       <?=$this->transEsc('iiif_manifest')?>
+      <?php if ($iiifHelp): ?>
+        <a class="icon-link ms-auto"
+          href="<?=$this->url('content-page', ['page' => 'iiif']) ?>"
+          aria-label="<?=$this->transEsc('what does iiif mean')?>"
+          title="<?=$this->transEsc('what does iiif mean')?>"
+        >
+          <?=$this->icon('help', 'icon-link__icon')?>
+        </a>
+      <?php endif; ?>
     </span>
   </li>
   <li>
