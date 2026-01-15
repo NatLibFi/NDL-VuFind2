@@ -68,7 +68,7 @@
     $rightButtonAttrs['class'] .= ' visible-md visible-lg';
   }
   $manifests = $this->driver->tryMethod('getIiifManifests');
-  $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min');
+  $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThemes: true);
 ?>
 
 <div class="recordcover-container">
