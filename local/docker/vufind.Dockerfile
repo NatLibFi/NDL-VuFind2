@@ -16,23 +16,16 @@ RUN set -e; \
         libfreetype-dev libjpeg62-turbo-dev libpng-dev libzip-dev libicu-dev \
         libxslt1-dev nodejs npm parallel; \
     rm -rf /var/lib/apt/lists/*; \
-    docker-php-ext-configure intl; \
-        docker-php-ext-install intl; \
-    docker-php-ext-configure gd --with-freetype --with-jpeg; \
-        docker-php-ext-install -j$(nproc) gd; \
-    docker-php-ext-configure exif; \
-        docker-php-ext-install -j$(nproc) exif; \
-    docker-php-ext-configure pdo_mysql; \
-        docker-php-ext-install -j$(nproc) pdo_mysql; \
-    docker-php-ext-configure mysqli; \
-        docker-php-ext-install -j$(nproc) mysqli; \
-    docker-php-ext-configure zip; \
-        docker-php-ext-install -j$(nproc) zip; \
-    docker-php-ext-configure sockets; \
-        docker-php-ext-install -j$(nproc) sockets; \
-    docker-php-ext-configure xsl; \
-        docker-php-ext-install -j$(nproc) xsl
-
+    install_ext() { docker-php-ext-configure $@; docker-php-ext-install $1; }; \
+    install_ext intl; \
+    install_ext gd --with-freetype --with-jpeg; \
+    install_ext exif; \
+    install_ext pdo_mysql; \
+    install_ext mysqli; \
+    install_ext zip; \
+    install_ext sockets; \
+    install_ext xsl; \
+    install_ext soap;
 RUN set -e; \
     pecl install xdebug; \
     docker-php-ext-enable xdebug;
