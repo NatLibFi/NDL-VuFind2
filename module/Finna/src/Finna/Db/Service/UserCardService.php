@@ -122,25 +122,13 @@ class UserCardService extends \VuFind\Db\Service\UserCardService implements User
     public function getConnectedAccountInfoForLibraryCard(string $catUsername): array
     {
         $qb = $this->entityManager->createQueryBuilder();
-        $qb->select('uc', 'u')
+        $qb->select('uc')
             ->from(UserCard::class, 'uc')
-            ->join('uc.user', 'u')
             ->where('uc.catUsername = :catUsername')
             ->setParameter('catUsername', $catUsername);
 
         $result = $qb->getQuery()->getResult();
-
-        return array_map(function (UserCard $uc) {
-            $user = $uc->getUser();
-
-            return [
-                'userId' => $user->getId(),
-                'created' => $uc->getCreated(),
-                'username' => $user->getDisplayableUsername(),
-                'authMethod' => $user->getAuthMethod(),
-                'lastLogin' => $user->getLastLogin(),
-            ];
-        }, $result);
+        return $result;
     }
 
     /**
