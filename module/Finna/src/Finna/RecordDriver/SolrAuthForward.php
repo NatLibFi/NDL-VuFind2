@@ -207,7 +207,7 @@ class SolrAuthForward extends SolrAuthDefault implements \Psr\Log\LoggerAwareInt
      *
      * @param array $image Image to check
      *
-     * @return boolean
+     * @return bool
      */
     public function allowRecordImageDownload(array $image = []): bool
     {

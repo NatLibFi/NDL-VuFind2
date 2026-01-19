@@ -87,6 +87,9 @@ updateFields = frozen:frozenThrough:pickUpLocation
 ; This setting can be used to exclude locations from the pickup location list
 ;excludePickupLocations = "BRANCH:MOBILE"
 
+; Enable display of hold shelf (disabled by default, only supported with a Koha-Suomi version)
+;displayHoldShelf = true
+
 [Holdings]
 ; Whether item-specific hold counts are displayed
 display_item_hold_counts = false

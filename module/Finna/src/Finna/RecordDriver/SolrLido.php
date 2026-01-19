@@ -1320,31 +1320,25 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      */
     public function getOtherClassifications()
     {
-        $preferredLanguages = $this->getPreferredLanguageCodes();
-        $preferredLangResults = $allResults = [];
-        $xpath = 'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/'
-            . 'classification';
-        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
-            $type = trim((string)$node->attributes()->type);
-            if (in_array($type, $this->excludedClassifications)) {
-                continue;
-            }
-            if (isset($node->term)) {
-                $term = trim((string)$node->term);
-                if ('' !== $term) {
-                    $attributes = $node->term->attributes();
-                    $label = (string)($attributes->label ?? '');
-                    $data = $label ? compact('term', 'label') : $term;
-                    $allResults[] = $data;
-                    $termLanguage = trim((string)$attributes->lang)
-                        ?: trim((string)$node->attributes()->lang);
-                    if (in_array($termLanguage, $preferredLanguages)) {
-                        $preferredLangResults[] = $data;
-                    }
+        $results = $langNodes = [];
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata->objectClassificationWrap
+            ->classificationWrap->classification ?? [] as $node
+        ) {
+            if (!in_array(trim((string)($node->attributes()->type ?? '')), $this->excludedClassifications)) {
+                foreach ($node->term as $termNode) {
+                    $langNodes[] = $termNode;
                 }
             }
         }
-        return $preferredLangResults ?: $allResults;
+        $langNodes = $this->getAllLanguageSpecificItems($langNodes, $this->getLocale(), true);
+        foreach ($langNodes as $langNode) {
+            if ($term = trim((string)$langNode)) {
+                $label = trim((string)($langNode->attributes()->label ?? ''));
+                $results[] = $label ? compact('term', 'label') : $term;
+            }
+        }
+        return $results;
     }
 
     /**
@@ -1465,11 +1459,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 $confParam = 'lido_augment_display_date_with_period';
                 if ($this->getDataSourceConfigurationValue($confParam)) {
                     if ($period = ($node->periodName->term ?? '')) {
-                        if ($date) {
-                            $date = $period . ', ' . $date;
-                        } else {
-                            $date = $period;
-                        }
+                        $date = $date ? $period . ', ' . $date : $period;
                     }
                 }
             }
@@ -1690,48 +1680,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             }
         }
         return $events;
-    }
-
-    /**
-     * Get an array of format classifications for the record.
-     *
-     * @return array
-     */
-    public function getFormatClassifications()
-    {
-        $results = [];
-        foreach (
-            $this->getXmlRecord()->lido->descriptiveMetadata
-            ->objectClassificationWrap ?? [] as $node
-        ) {
-            $workTypeTerm = trim(
-                (string)($node->objectWorkTypeWrap->objectWorkType->term ?? '')
-            );
-            foreach ($node->classificationWrap->classification ?? [] as $classification) {
-                $type = trim((string)$classification->attributes()->type);
-                if (in_array($type, $this->excludedClassifications)) {
-                    continue;
-                }
-                $getDisplayString = function (string $term, string $extra) {
-                    return $extra ? "$term ($extra)" : $term;
-                };
-                foreach ($classification->term as $term) {
-                    $termString = trim((string)$term);
-                    $termType = trim((string)$term->attributes()->type);
-                    $termLabel = trim((string)$term->attributes()->label);
-
-                    switch ($workTypeTerm) {
-                        case 'rakennetun ympäristön kohde':
-                            $results[] = $getDisplayString($termString, $termType);
-                            break 2;
-                        case 'arkeologinen kohde':
-                            $results[] = $getDisplayString($termString, $termLabel);
-                            break;
-                    }
-                }
-            }
-        }
-        return $results;
     }
 
     /**
@@ -2091,19 +2039,38 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     /**
      * Get subject actors
      *
+     * @param bool $extended Whether to return a keyed array with the following keys:
+     * - name: name of the actor
+     * - id: primary authority id (if defined)
+     *
      * @return array
      */
-    public function getSubjectActors()
+    public function getSubjectActors(bool $extended = false): array
     {
         $results = [];
-        $xpath = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/'
-            . 'subjectSet/subject/subjectActor/actor/nameActorSet/appellationValue';
-        foreach ($this->getXmlRecord()->xpath($xpath) as $node) {
-            if ($actor = trim((string)$node)) {
-                $results[] = $actor;
+        foreach (
+            $this->getXmlRecord()->lido->descriptiveMetadata->objectRelationWrap->subjectWrap->subjectSet ?? [] as $set
+        ) {
+            foreach ($set->subject->subjectActor ?? [] as $subjectActor) {
+                if ($name = trim((string)($subjectActor->actor->nameActorSet->appellationValue ?? ''))) {
+                    $results[] = $extended ? [
+                        'name' => $name,
+                        'id' => $this->getPrimaryActorId($subjectActor),
+                    ] : $name;
+                }
             }
         }
         return $results;
+    }
+
+    /**
+     * Get extended subject actors
+     *
+     * @return array
+     */
+    public function getSubjectActorsExtended(): array
+    {
+        return $this->getSubjectActors(true);
     }
 
     /**
@@ -2163,7 +2130,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      */
     public function getAllSubjectHeadings($extended = false)
     {
-        $headings = $this->getAllSubjectHeadingsWithoutPlaces($extended);
+        $headings = $this->getAllSubjectHeadingsForDisplay($extended);
+        foreach ($this->getSubjectActors($extended) as $actor) {
+            $headings[] = $extended ? [
+                'heading' => [$actor['name']],
+                'type' => 'topic',
+                'id' => $actor['id'],
+            ] : [$actor];
+        }
         if ($places = $this->getSubjectPlaces($extended, false)) {
             $headings = [...$headings, ...$places];
         }
@@ -2181,7 +2155,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 
     /**
      * Get all subject headings associated with this record apart from geographic
-     * places. Each heading is returned as an array of chunks, increasing from least
+     * places and subject actors. Each heading is returned as an array of chunks, increasing from least
      * specific to most specific.
      *
      * @param bool $extended Whether to return a keyed array with the following
@@ -2195,7 +2169,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      *
      * @return array
      */
-    public function getAllSubjectHeadingsWithoutPlaces(bool $extended = false): array
+    public function getAllSubjectHeadingsForDisplay(bool $extended = false): array
     {
         $headings = [];
         $headings = $this->getTopics();
@@ -2256,9 +2230,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      *
      * @return array
      */
-    public function getAllSubjectHeadingsWithoutPlacesExtended(): array
+    public function getAllSubjectHeadingsForDisplayExtended(): array
     {
-        return $this->getAllSubjectHeadingsWithoutPlaces(true);
+        return $this->getAllSubjectHeadingsForDisplay(true);
     }
 
     /**
@@ -2268,10 +2242,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      */
     public function getTopics(): array
     {
-        $results = [];
         $topics = [];
         $langTopics = [];
-        $subjectActors = [];
         $language = $this->getLocale();
         foreach (
             $this->getXmlRecord()->lido->descriptiveMetadata->objectRelationWrap
@@ -2327,22 +2299,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                         }
                     }
                 }
-                // Add subject actors
-                foreach ($subject->subjectActor as $actor) {
-                    foreach ($actor->actor->nameActorSet ?? [] as $name) {
-                        foreach ($name->appellationValue as $value) {
-                            if ($str = trim((string)$value)) {
-                                $subjectActors[] = ['data' => $str];
-                            }
-                        }
-                    }
-                }
             }
         }
-        $results = $langTopics ? $langTopics : $topics;
-        $results = array_merge($results, $subjectActors);
-
-        return $results;
+        return $langTopics ? $langTopics : $topics;
     }
 
     /**
@@ -3026,7 +2985,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     protected function getPrimaryActorId(\SimpleXMLElement $actor): string
     {
         $id = '';
-        foreach ($actor->actorInRole->actor->actorID ?? [] as $actorId) {
+        foreach ($actor->actorInRole->actor->actorID ?? $actor->actor->actorID ?? [] as $actorId) {
             if ($trimmed = trim((string)$actorId)) {
                 if (preg_match('/^(http:\/\/urn\.fi\/URN:NBN:fi:au:finaf:)(.*)/', $trimmed)) {
                     return $trimmed;

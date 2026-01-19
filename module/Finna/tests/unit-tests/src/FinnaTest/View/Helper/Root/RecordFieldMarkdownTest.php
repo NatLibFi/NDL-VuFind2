@@ -78,7 +78,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
             <p>Another markdown paragraph<br>containing a line break</p>
 
             EOT;
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -98,7 +98,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
             containing a line break</p>
 
             EOT;
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**

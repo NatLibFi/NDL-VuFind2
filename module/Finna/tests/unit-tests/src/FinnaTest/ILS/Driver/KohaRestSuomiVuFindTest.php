@@ -75,11 +75,11 @@ class KohaRestSuomiVuFindTest extends \PHPUnit\Framework\TestCase
             [
                 new \VuFind\Date\Converter(),
                 fn ($namespace) => null,
-                $this->getMockBuilder(CurrencyFormatter::class)->disableOriginalConstructor()->getMock(),
+                $this->createMock(CurrencyFormatter::class),
             ]
         )->onlyMethods(['makeRequest', 'debug'])
             ->getMock();
-        $connector->expects($this->any())->method('makeRequest')->willReturnMap($requestMap);
+        $connector->method('makeRequest')->willReturnMap($requestMap);
         $connector->setConfig($config);
         return $connector;
     }
@@ -232,9 +232,8 @@ class KohaRestSuomiVuFindTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         $connector = $this->createConnector(requestMap: $requestMap);
-        $mockSessionCache = $this->getMockBuilder(\Laminas\Session\Container::class)
-            ->disableOriginalConstructor()->getMock();
-        $mockSessionCache->expects($this->any())->method('__get')->willReturnMap(
+        $mockSessionCache = $this->createMock(\Laminas\Session\Container::class);
+        $mockSessionCache->method('__get')->willReturnMap(
             [
                 ['patron', '1111'],
                 ['patronId', '5'],

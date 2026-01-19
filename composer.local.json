@@ -4,12 +4,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Finna\\": "module/Finna/src/Finna",
-            "FinnaApi\\": "module/FinnaApi/src/FinnaApi",
-            "FinnaConsole\\": "module/FinnaConsole/src/FinnaConsole",
-            "FinnaCustom\\": "module/FinnaCustom/src/FinnaCustom",
-            "FinnaSearch\\": "module/FinnaSearch/src/FinnaSearch",
-            "FinnaTheme\\": "module/FinnaTheme/src/FinnaTheme"
+            "Finna\\": ["module/Finna/src/Finna", "module/Finna"],
+            "FinnaApi\\": ["module/FinnaApi/src/FinnaApi", "module/FinnaApi"],
+            "FinnaConsole\\": ["module/FinnaConsole/src/FinnaConsole", "module/FinnaConsole"],
+            "FinnaCustom\\": ["module/FinnaCustom/src/FinnaCustom", "module/FinnaCustom"],
+            "FinnaSearch\\": ["module/FinnaSearch/src/FinnaSearch", "module/FinnaSearch"],
+            "FinnaTheme\\": ["module/FinnaTheme/src/FinnaTheme", "module/FinnaTheme"]
         }
     },
     "autoload-dev": {

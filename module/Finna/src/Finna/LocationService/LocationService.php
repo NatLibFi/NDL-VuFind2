@@ -100,11 +100,7 @@ class LocationService
         }
 
         if (is_array($url)) {
-            if (isset($url[$language])) {
-                $url = $url[$language];
-            } else {
-                $url = reset($url);
-            }
+            $url = $url[$language] ?? reset($url);
         }
 
         $callnum = $fields['callnumber'] ?? '';
@@ -140,7 +136,7 @@ class LocationService
     /**
      * Check if QR-code option is enabled.
      *
-     * @return boolean
+     * @return bool
      */
     public function useQrCode()
     {

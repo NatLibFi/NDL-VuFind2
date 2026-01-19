@@ -116,9 +116,9 @@ trait SolrCommonFinnaTrait
      * If validation is enabled and the stripped HTML is invalid,
      * all tags are stripped.
      *
-     * @param string  $html      HTML
-     * @param string  $allowTags Allowed tags
-     * @param boolean $validate  Validate output?
+     * @param string $html      HTML
+     * @param string $allowTags Allowed tags
+     * @param bool   $validate  Validate output?
      *
      * @return array
      */

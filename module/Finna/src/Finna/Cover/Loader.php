@@ -104,7 +104,7 @@ class Loader extends \VuFind\Cover\Loader
     /**
      * Image size to use
      *
-     * @var boolean
+     * @var bool
      */
     protected $size = 'medium';
 

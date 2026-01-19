@@ -74,15 +74,15 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
         $connector = $this->getMockBuilder(Quria::class)->setConstructorArgs(
             [
                 new \VuFind\Date\Converter(),
-                $this->getMockBuilder(PathResolver::class)->disableOriginalConstructor()->getMock(),
+                $this->createMock(PathResolver::class),
             ]
         )->onlyMethods(['doSOAPRequest', 'authenticatePatron', 'debug', 'putCachedData', 'getCachedData'])
             ->getMock();
-        $connector->expects($this->any())->method('doSOAPRequest')->willReturnMap($requestMap);
-        $connector->expects($this->any())->method('putCachedData')->willReturnCallback(
+        $connector->method('doSOAPRequest')->willReturnMap($requestMap);
+        $connector->method('putCachedData')->willReturnCallback(
             fn ($key, $entry) => $this->cache[$key] = $entry
         );
-        $connector->expects($this->any())->method('getCachedData')->willReturnCallback(
+        $connector->method('getCachedData')->willReturnCallback(
             fn ($key) => $this->cache[$key] ?? null
         );
         $connector->setConfig($config);
@@ -215,7 +215,7 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
         ];
 
         $connector = $this->createConnector(requestMap: $requestMap, config: $config);
-        $connector->expects($this->any())->method('authenticatePatron')->willReturn('010101');
+        $connector->method('authenticatePatron')->willReturn('010101');
         $this->setProperty($connector, 'patronaurora_wsdl', 'aurora.url');
         $profile = $connector->getMyProfile(['cat_username' => '1111', 'cat_password' => '2222']);
         $this->assertEquals($expected, $profile);
@@ -295,7 +295,7 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         $connector = $this->createConnector(requestMap: $requestMap);
-        $connector->expects($this->any())->method('authenticatePatron')->willReturn('010101');
+        $connector->method('authenticatePatron')->willReturn('010101');
         $patron = $connector->patronLogin('1111', '2222');
         $this->assertEquals($expected, $patron);
     }

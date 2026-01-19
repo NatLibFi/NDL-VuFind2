@@ -147,7 +147,7 @@
             'canDelete' => (null !== $this->list && $this->list->editAllowed($user)) || (null === $this->list && $user),
           ])?>
           <?php foreach ($this->results->getResults() as $i => $current): ?>
-            <?=$this->record($current)->getListEntry($list, $user)?>
+            <?=$this->record($current)->getListEntry($list, $user, $this->results->getStartRecord() + $i)?>
           <?php endforeach; ?>
         </form>
       <?php else: ?>

@@ -466,10 +466,7 @@ class SolrEad3 extends SolrEad
             }
         }
         // Check if required filing unit exists
-        if (($datasourceSettings['archiveRequestRequireFilingUnit'] ?? false) && empty($this->getFilingUnit())) {
-            return false;
-        }
-        return true;
+        return !(($datasourceSettings['archiveRequestRequireFilingUnit'] ?? false) && empty($this->getFilingUnit()));
     }
 
     /**
@@ -2206,17 +2203,34 @@ class SolrEad3 extends SolrEad
     /**
      * Get subject actors
      *
+     * @param bool $extended Whether to return a keyed array with the following keys:
+     * - name: name of the actor
+     * - id: primary authority id (if defined)
+     *
      * @return array
      */
-    public function getSubjectActors()
+    public function getSubjectActors(bool $extended = false): array
     {
         $results = [];
         foreach ($this->getAuthors([], self::SUBJECT_ACTOR_ROLES) as $actor) {
             if ($name = $actor['name'] ?? '') {
-                $results[] = $name;
+                $results[] = $extended ? [
+                    'name' => $name,
+                    'id' => $actor['id'] ?? '',
+                ] : $name;
             }
         }
         return $results;
+    }
+
+    /**
+     * Get extended subject actors
+     *
+     * @return array
+     */
+    public function getSubjectActorsExtended(): array
+    {
+        return $this->getSubjectActors(true);
     }
 
     /**
@@ -2298,7 +2312,7 @@ class SolrEad3 extends SolrEad
      * - 'url'
      *     URL from a ref element or null
      *
-     * @param boolean $returnItems Return summary items? Optional, defaults to false.
+     * @param bool $returnItems Return summary items? Optional, defaults to false.
      *
      * @return array
      */

@@ -16,9 +16,13 @@
           <classification type="language">
             <term>sv</term>
           </classification>
-          <classification lang="en">
-            <term type="testimittari">näkyy</term>
-            <term type="testimittari">ei näy</term>
+          <classification type="muu luokitus">
+            <term lang="en">buildings</term>
+            <term lang="en">department stores</term>
+            <term lang="fi">rakennukset</term>
+          </classification>
+          <classification>
+            <term lang="sv">byggnader</term>
           </classification>
         </classificationWrap>
       </objectClassificationWrap>
@@ -129,6 +133,21 @@
           </subjectSet>
           <subjectSet>
             <subject>
+              <subjectActor>
+                <actor>
+                  <actorID type="URI" source="KANTO">http://urn.fi/URN:NBN:fi:au:finaf:000229728</actorID>
+                  <nameActorSet>
+                    <appellationValue>Pukki, Joulu</appellationValue>
+                  </nameActorSet>
+                </actor>
+              </subjectActor>
+              <subjectActor>
+                <actor>
+                  <nameActorSet>
+                    <appellationValue>Punakuono, Petteri</appellationValue>
+                  </nameActorSet>
+                </actor>
+              </subjectActor>
               <subjectConcept>
                 <conceptID source="sanaston nimi">Yleinen suomalainen asiasanasto</conceptID>
                 <term label="asiasana">sohvat</term>

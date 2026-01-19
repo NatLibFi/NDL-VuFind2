@@ -790,6 +790,14 @@ class Manager implements IdentityProviderInterface, LoggerAwareInterface
     public function resetPassword(array $recoveryData, array $params)
     {
         $this->getAuth()->resetPassword($recoveryData, $params);
+        $this->auditEventService->addEvent(
+            AuditEventType::User,
+            AuditEventSubType::PasswordReset,
+            data: [
+                'recoveryData' => $recoveryData,
+                'params' => $params,
+            ]
+        );
     }
 
     /**
@@ -823,7 +831,7 @@ class Manager implements IdentityProviderInterface, LoggerAwareInterface
             $user,
             data: [
                 'email' => $email,
-                'pending' => $user->getPendingEmail() ? true : false,
+                'pending' => (bool)$user->getPendingEmail(),
             ]
         );
     }

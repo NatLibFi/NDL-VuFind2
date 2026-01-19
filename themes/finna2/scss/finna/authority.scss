@@ -6,276 +6,206 @@ $iconFontSize: 1.3em !default;
     display: block;
   }
   .format {
-      font-weight: bold;
+    font-weight: 700;
   }
 }
 
-.result.condensed-list-view .condensed-collapse-toggle .condensed-body.authority {
-  width: 100%;
+.record-accordions .authority-records {
+  .pagination-container {
+    margin-bottom: 20px;
+  }
+  .search-btn-container {
+    margin-top: 25px;
+    text-align: center;
+  }
 }
+
 .result {
+  &.condensed-list-view {
+    .condensed-collapse-toggle .condensed-body.authority {
+      width: 100%;
+    }
+    .title-container {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
   .authority-record-info .authority-record-summary-container {
     display: flex;
-    align-items: baseline;
-    .author {
-      margin-right: 20px;
-    }
+    gap: 20px;
   }
 }
-.result.condensed-list-view {
-  .title-container {
-    display: flex;
-    flex-wrap: wrap;
-    .title {
-      margin-right: 10px;
-    }
-  }
-}
+
 a.authority-link {
   display: inline-block;
-  &::after {
-    margin-left: 5px;
-  }
   .icon {
-    margin-right: 0.1em;
     font-size: $iconFontSize;
   }
 }
-.record-information .record-core-metadata .recordAuthors .authority {
-    display: inline-block;
-}
-.record-main {
-  .authority-records-summary {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    > div {
-      .info-row {
-        display: flex;
-        align-items: baseline;
-      }
-      .text {
-        font-weight: 700;
-        width: 30%;
-      }
-      .count {
-        font-size: 1.4em;
-      }
-    }
-  }
-  .table-finna-record.record-details {
-    .info {
-      color: $gray;
-      font-size: 0.9em;
-    }
-    .record-origination {
-      .author-description {
-        display: inline-block;
-      }
-    }
-  }
-}
-.authority {
-  + br {
-    display: none;
-  }
-  .authority-info {
-    display: none;
-    margin: 10px 0;
-    table.record-details {
-      th {
-        min-width: 40%;
-      }
-      td {
-        max-width: 60%;
-      }
-    }
-  }
-  .authority-info {
-    table {
-      margin: 10px 0;
-    }
-  }
-   &.open {
-    .authority-info {
-      display: block;
-    }
-   }
-  .no-info {
-    display: inline-block;
-  }
-  .show-info {
-    display: inline-block;
-    .link-text {
-      font-size: 0.9em;
-    }
-    .icon {
-      margin-right: 0.1em;
-      font-size: $iconFontSize;
-    }
-  }
-  .hide-info .link-text {
-    font-size: 0.9em;
-  }
-  .role {
-    color: $gray;
-  }
-}
-.main-content .authority-recommend {
-  .authoritybox {
-    border: 1px solid $gray-lighter;
-    background-color: $gray-ultralight;
-    margin-bottom: 20px;
-    padding: 10px;
-    overflow: hidden;
-    display: flex;
-    flex-wrap: wrap;
-    flex-direction: row;
 
-    @include media-breakpoint-up(md) {
-      .media-left {
-        width: initial;
-      }
+.record-main .authority-records-summary {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  > div {
+    .info-row {
+      display: flex;
+      align-items: baseline;
+    }
+    .text {
+      width: 30%;
+      font-weight: 700;
+    }
+    .count {
+      font-size: 1.4em;
+    }
+  }
+}
+
+.authority-recommend {
+  .authoritybox {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+    margin-bottom: 20px;
+    overflow: hidden;
+    background-color: $gray-ultralight;
+    border: 1px solid $gray-lighter;
+    div:first-child {
+      padding-right: 0.3em;
+    }
+    .media-left,
+    .media-right {
+      flex: 1 1 100%;
+      flex-direction: column;
     }
     .media-left {
-      flex-direction: column;
       width: initial;
-      flex: 1 1 100%;
     }
     .media-right {
-      flex-direction: column;
-      flex: 1 1 100%;
-      font-size: 12px;
-      .access-rights {
-        .cc-rights {
-          padding: 0;
-          margin: 0;
-        }
-      }
-    }
-    @include media-breakpoint-up(sm) {
-      .media-left {
-        flex-basis: 60%;
-      }
-      .media-right {
-        flex-basis: 40%;
+      font-size: $font-size-small;
+      .access-rights .cc-rights {
+        padding: 0px;
+        margin: 0px;
       }
     }
     &.filtered {
       border-top: none;
     }
-    .roles {
-      margin-top: 1em;
-      margin-bottom: 1em;
-    }
-    .record-details th {
-      width: 20%;
-    }
-    .resultItemFormat {
-      margin-bottom: 0.3em;
-    }
     h3 {
       margin-top: 0.3em;
       margin-bottom: 0.3em;
     }
-    div:first-child {
-      margin-right: 0.3em;
+    .roles {
+      margin-top: 1em;
+    }
+    .record-details th {
+      width: 20%;
     }
   }
-  .tabs-table {
-    ul.nav-tabs {
-      margin-top: 0;
-      margin-bottom: 0;
-      border-bottom: none;
-      position: relative;
+  .table.table-finna-record tbody tr > * {
+    background-color: transparent;
+  }
+  .tabs-table .nav-tabs {
+    position: relative;
+    display: flex;
+    margin-top: 0px;
+    margin-bottom: 0px;
+    border-bottom: 1px solid $gray-lighter;
+    > li {
       display: flex;
-      border-bottom: 1px solid $gray-lighter;
-      @include media-breakpoint-down(sm) {
-        padding-top: 10px;
-      }
-      @media (max-width: 390px) {
-        &.many-tabs > li {
-          max-width: 64px;
-          a {
-            min-height: 70px;
-            padding: 4px 4px;
-            font-size: .8em;
-          }
-        }
-      }
-      > li {
-        color: $body-bg;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        cursor: pointer;
-        //margin-bottom: 4px;
+      align-items: center;
+      justify-content: center;
+      color: $body-bg;
+      cursor: pointer;
+      border: none;
+      &.active {
+        margin-top: 4px;
         border: none;
-        @include media-breakpoint-down(md) {
-          &:not(.many-tabs) {
-            flex-basis: 50%;
-          }
+        border-bottom: 4px solid $main-tabs-active-color;
+      }
+      &.spinner {
+        position: absolute;
+        right: 40px;
+        bottom: 12px;
+        margin-left: 0px;
+      }
+      &.toggle {
+        position: absolute;
+        right: 8px;
+        bottom: 5px;
+        float: right;
+        font-family: finnaicons;
+        font-size: 24px;
+        color: $action-link-color;
+        background-color: transparent;
+        &:before {
+          content: "\e916";
         }
-        &.active {
-          border-bottom: 4px solid $main-tabs-active-color;
-          border-top: none;
-          border-left: none;
-          border-right: none;
-          margin-top: 4px;
-          a:hover {
-            border: none;
-          }
+        &.collapsed:before {
+          content: "\e91a";
         }
-        &.spinner {
-          margin-left: 0;
-          position: absolute;
-          right: 40px;
-          bottom: 12px;
-        }
-        &.toggle {
-          font-family: finnaicons;
-          font-size: 24px;
-          float: right;
-          position: absolute;
-          right: 8px;
-          bottom: 5px;
-          color: #007c90;
-          &:before {
-            content: "\e916";
-          }
-          &.collapsed {
-            &:before {
-              content: "\e91a";
-            }
-          }
-        }
-        > a {
-          background-color: $main-tabs-background-color;
-          padding: 5px 10px;
-          //margin-bottom: 0;
-          border: 0;
-          font-size: 1em;
-          font-weight: 600;
-          color: $main-tabs-text-color;
-          transition: none;
-          @include media-breakpoint-only(sm) {
-            word-break: break-word;
-          }
-          .icon {
-            color: $link-color;
-            font-size: 1.8em;
-            vertical-align: middle;
-          }
+      }
+      > a {
+        padding: 5px 10px;
+        color: $main-tabs-text-color;
+        background-color: $main-tabs-background-color;
+        border: 0px;
+        transition: none;
+        .icon {
+          vertical-align: middle;
+          font-size: 1.8em;
+          color: $link-color;
         }
       }
     }
   }
 }
-.record-accordions .authority-records {
-    .pagination-container {
-        margin-bottom: 20px;
+@media (max-width: 390px) {
+  .authority-recommend .tabs-table {
+    ul.nav-tabs.many-tabs > li {
+      max-width: 64px;
+      a {
+        min-height: 70px;
+        padding: 4px;
+        font-size: $font-size-small;
+      }
     }
-    .search-btn-container {
-        margin-top: 25px;
-        text-align: center;
+  }
+}
+@include media-breakpoint-up(xs) {
+  .authoritybox .media-right {
+    padding-left: 20px;
+  }
+}
+@include media-breakpoint-only(sm) {
+  .authority-recommend .tabs-table {
+    ul.nav-tabs > li > a {
+      word-break: break-word;
     }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .authority-recommend .tabs-table {
+    ul.nav-tabs {
+      padding-top: 10px;
+    }
+  }
+}
+@include media-breakpoint-up(sm) {
+  .authority-recommend .authoritybox {
+    .media-left {
+      flex-basis: 60%;
+    }
+    .media-right {
+      flex-basis: 40%;
+    }
+  }
+}
+@include media-breakpoint-down(md) {
+  .authority-recommend .tabs-table {
+    ul.nav-tabs > li:not(.many-tabs) {
+      flex-basis: 50%;
+    }
+  }
 }

@@ -109,7 +109,7 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
         $factory = new ProxyUrlFactory();
 
         $configManager = $this->container->createMock(ConfigManager::class, ['getConfigObject']);
-        $configManager->expects($this->any())->method('getConfigObject')->willReturnCallback(
+        $configManager->method('getConfigObject')->willReturnCallback(
             function ($param) use ($config, $permissions) {
                 return $param === 'config' ? $config : $permissions;
             }
@@ -121,7 +121,7 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
 
         $cacheManager = $this->container->createMock(\VuFind\Cache\Manager::class, ['getCache']);
         $cache = $this->container->createMock(\Laminas\Cache\Storage\StorageInterface::class, []);
-        $cacheManager->expects($this->any())->method('getCache')->willReturn($cache);
+        $cacheManager->method('getCache')->willReturn($cache);
         $this->container->set(\VuFind\Cache\Manager::class, $cacheManager);
 
         $proxyUrlHelper = $factory($this->container, ProxyUrl::class);

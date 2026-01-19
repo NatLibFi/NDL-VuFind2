@@ -590,9 +590,9 @@
     .image-popup-trigger {
         display: flex;
         width: 100%;
+        max-height: 600px;
         justify-content: center;
         aspect-ratio: 1/1;
-        max-height: 600px;
         .paginator-info {
             position: absolute;
             right: 10px;
@@ -610,8 +610,7 @@
         }
         img {
             object-fit: contain;
-            padding:5px;
-            max-height: 600px;
+            padding: 5px;
         }
         &.no-image {
             ::before {
@@ -644,9 +643,6 @@
 }
 .result .recordcover-holder .next-image {
     display: none;
-}
-.recordcover-holder {
-    position: relative;
 }
 .grid-image .image-popup-trigger.no-image .iconlabel {
     box-shadow: initial;

@@ -1,16 +1,19 @@
 <!-- START of: finna - record/checkbox.phtml -->
-<?php // autocomplete="off" is needed to uncheck the checkbox after copying to another list ?>
-<?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $this->id); ?>
+<?php
+  // Set a flag for whether we have a record number.
+  // If we do, we'll use it as a label; if not, we'll assume that higher-level code will provide labeling.
+  $hasNumber = strlen($this->number ?? '') > 0;
+?>
+<input type="hidden" name="idsAll[]" value="<?=$this->escapeHtmlAttr($this->id) ?>"<?php if (isset($this->formAttr)): ?> form="<?=$this->formAttr ?>"<?php endif; ?>>
 <fieldset>
   <legend class="visually-hidden"><?=$this->transEsc('Select');?></legend>
-  <?php if ($this->label): ?>
-    <label for="<?=$this->escapeHtmlAttr($safeId) ?>" class="record-checkbox">
+  <?php if ($hasNumber): ?>
+    <label class="checkbox-select" aria-label="<?=$this->transEscAttr('result_checkbox_label', ['%%number%%' => $this->number]) ?>">
     <span class="visually-hidden"><?=$this->transEsc('Select');?></span>
+  <?php else: ?>
+    <span class="checkbox-select">
   <?php endif; ?>
-    <input id="<?=$this->escapeHtmlAttr($safeId) ?>" class="checkbox-select-item" type="checkbox" name="ids[]" value="<?=$this->escapeHtmlAttr($this->id) ?>"<?php if (isset($this->formAttr)): ?> form="<?=$this->formAttr ?>"<?php endif; ?> aria-label="<?=$this->transEsc('Select')?>">
-  <?php if ($this->label): ?>
-    </label>
-  <?php endif; ?>
-  <input type="hidden" name="idsAll[]" value="<?=$this->escapeHtmlAttr($this->id) ?>"<?php if (isset($this->formAttr)): ?> form="<?=$this->formAttr ?>"<?php endif; ?>>
+    <input class="checkbox-select-item" type="checkbox" name="ids[]" value="<?=$this->escapeHtmlAttr($this->id) ?>"<?php if (isset($this->formAttr)): ?> form="<?=$this->formAttr ?>"<?php endif; ?>>
+  <?=$hasNumber ? '</label>' : '</span>'?>
 </fieldset>
 <!-- END of: finna - record/checkbox.phtml -->

@@ -33,6 +33,7 @@ namespace Finna\Controller;
 use Finna\Controller\Feature\FinnaRecordPreviewSupportTrait;
 use Finna\Controller\Plugin\Preview;
 use Finna\Form\Form;
+use Psr\Log\LoggerAwareInterface;
 
 use function count;
 use function in_array;
@@ -49,11 +50,12 @@ use function is_string;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class RecordController extends \VuFind\Controller\RecordController
+class RecordController extends \VuFind\Controller\RecordController implements LoggerAwareInterface
 {
     use FinnaRecordControllerTrait;
     use \Finna\Statistics\ReporterTrait;
     use FinnaRecordPreviewSupportTrait;
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -881,5 +883,51 @@ class RecordController extends \VuFind\Controller\RecordController
         }
 
         return parent::showTab($tab, $ajax);
+    }
+
+    /**
+     * Call IIIF manifest generator and encode body in JSON
+     *
+     * @return \Laminas\Http\Response
+     */
+    protected function iiifManifestAction()
+    {
+        $driver = $this->loadRecord();
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+
+        if ($datasourceManifests = $driver->tryMethod('getIiifManifests')) {
+            $headers->addHeaderLine('Location', $datasourceManifests[0]['url']);
+            $response->setStatusCode(302);
+            return $response;
+        }
+
+        $generator = $this->serviceLocator->get(\Finna\Record\IIIF\IIIFManifestGenerator::class);
+        $config = $this->getConfigArray();
+        $corsAllow = $config['IIIF']['manifestCORS'] ?? [];
+        foreach ($corsAllow as $allow) {
+            $headers->addHeaderLine('Access-Control-Allow-Origin', $allow);
+        }
+        if ($manifest = $generator->generate($driver)) {
+            if ($manifestJson = json_encode($manifest)) {
+                $headers->addHeaderLine(
+                    'Content-Type: application/json;' .
+                    'profile="http://iiif.io/api/presentation/3/context.json"'
+                );
+                $response->setContent($manifestJson);
+            } else {
+                $headers->addHeaderLine('Content-Type: text/plain');
+                $response->setStatusCode(500);
+                $response->setContent('Error encoding JSON');
+                $this->logError(
+                    'IIIFManifest: Error encoding JSON for ' .
+                    $driver->getUniqueID() . ': ' .
+                    json_last_error_msg()
+                );
+            }
+        } else {
+            $response->setStatusCode(404);
+        }
+        return $response;
     }
 }

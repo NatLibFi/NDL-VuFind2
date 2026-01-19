@@ -145,7 +145,7 @@ trait SolrAuthFinnaTrait
     /**
      * Return birth place and date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return array
      */
@@ -160,7 +160,7 @@ trait SolrAuthFinnaTrait
     /**
      * Return death place and date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return array
      */
@@ -365,7 +365,7 @@ trait SolrAuthFinnaTrait
     /**
      * Is this a Person authority record?
      *
-     * @return boolean
+     * @return bool
      */
     public function isPerson()
     {

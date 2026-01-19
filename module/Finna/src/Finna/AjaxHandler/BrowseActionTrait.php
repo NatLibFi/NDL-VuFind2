@@ -50,9 +50,8 @@ trait BrowseActionTrait
     protected function getBrowseAction($request)
     {
         $referer = $request->getServer()->get('HTTP_REFERER');
-        $match = null;
         $regex = '/^http[s]?:.*\/Browse\/(Database|Journal)[\/.*]?/';
-        if (preg_match($regex, $referer, $match)) {
+        if ($referer && preg_match($regex, $referer, $match)) {
             return $match[1];
         }
         return null;

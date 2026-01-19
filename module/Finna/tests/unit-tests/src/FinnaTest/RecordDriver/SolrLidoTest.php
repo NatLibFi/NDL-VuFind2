@@ -282,60 +282,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected format classifications data
-     *
-     * @return array
-     */
-    public static function getFormatClassificationsData(): array
-    {
-        return [
-            [
-                'getFormatClassifications',
-                [
-                    'lido_test.xml' => [
-                        'näkyy (testimittari)',
-                    ],
-                    'lido_test2.xml' => [
-                        'uno (testimittari)',
-                        'dos',
-                        'one (testimittari)',
-                        'two',
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
-     * Function to get expected other classifications data
-     *
-     * @return array
-     */
-    public static function getOtherClassificationsData(): array
-    {
-        return [
-            [
-                'getOtherClassifications',
-                [
-                    'lido_test.xml' => [
-                        'näkyy',
-                    ],
-                    'lido_test2.xml' => [
-                        [
-                            'term' => 'uno',
-                            'label' => 'testimittari',
-                        ],
-                        [
-                            'term' => 'one',
-                            'label' => 'testimittari',
-                        ],
-                    ],
-                ],
-            ],
-        ];
-    }
-
-    /**
      * Test representations
      *
      * @param string $function Function of the driver to test
@@ -357,32 +303,74 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getFormatClassifications
+     * Function to get expected other classifications data
      *
-     * @param string $function Function of the driver to test
-     * @param array  $expected Result to be expected
-     *
-     * @return void
+     * @return array
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('getFormatClassificationsData')]
-    public function testGetFormatClassifications(
-        string $function,
-        array $expected
-    ): void {
-        foreach ($expected as $file => $result) {
-            $driver = $this->getDriver($file);
-            $this->assertTrue(is_callable([$driver, $function], true));
-            $this->assertEquals(
-                $result,
-                $driver->$function()
-            );
-        }
+    public static function getOtherClassificationsData(): array
+    {
+        return [
+            [
+                'getOtherClassifications',
+                'en',
+                [
+                    'lido_test.xml' => [
+                        'buildings',
+                        'department stores',
+                    ],
+                    'lido_test2.xml' => [
+                        [
+                            'term' => 'uno',
+                            'label' => 'testimittari',
+                        ],
+                        [
+                            'term' => 'one',
+                            'label' => 'testimittari',
+                        ],
+                        'two',
+                    ],
+                ],
+            ],
+            [
+                'getOtherClassifications',
+                'fi',
+                [
+                    'lido_test.xml' => [
+                        'rakennukset',
+                    ],
+                    'lido_test2.xml' => [
+                        'dos',
+                    ],
+                ],
+            ],
+            [
+                'getOtherClassifications',
+                'sv',
+                [
+                    'lido_test.xml' => [
+                        'byggnader',
+                    ],
+                    'lido_test2.xml' => [
+                        [
+                            'term' => 'uno',
+                            'label' => 'testimittari',
+                        ],
+                        [
+                            'term' => 'one',
+                            'label' => 'testimittari',
+                        ],
+                        'two',
+                    ],
+                ],
+            ],
+        ];
     }
 
     /**
      * Test getOtherClassifications
      *
      * @param string $function Function of the driver to test
+     * @param string $language Language
      * @param array  $expected Result to be expected
      *
      * @return void
@@ -390,10 +378,18 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('getOtherClassificationsData')]
     public function testGetOtherClassifications(
         string $function,
+        string $language,
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
+            $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+            $translator->setLocale($language);
             $driver = $this->getDriver($file);
+            $driver->setTranslator($translator);
             $this->assertTrue(is_callable([$driver, $function], true));
             $this->assertEquals(
                 $result,
@@ -531,7 +527,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return array
      */
-    public static function getAllSubjectHeadingsWithoutPlacesExtendedData(): array
+    public static function getAllSubjectHeadingsForDisplayExtendedData(): array
     {
         return [
                     [
@@ -580,11 +576,6 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'id' => 'http://www.yso.fi/onto/yso/p5066',
                                 'authType' => null,
                             ],
-                            [
-                                'heading' => ['Jussi, Jänö'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
                         ],
                     ],
                     [
@@ -610,18 +601,13 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 'type' => 'topic',
                                 'source' => '',
                             ],
-                            [
-                                'heading' => ['Jussi, Jänö'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
                         ],
                     ],
         ];
     }
 
     /**
-     * Test getAllSubjectHeadingsWithoutPlacesExtended
+     * Test getAllSubjectHeadingsForDisplayExtended
      *
      * @param string $language Language
      * @param string $xmlFile  Xml record to use for the test
@@ -629,8 +615,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('getAllSubjectHeadingsWithoutPlacesExtendedData')]
-    public function testGetAllSubjectHeadingsWithoutPlacesExtended(
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAllSubjectHeadingsForDisplayExtendedData')]
+    public function testGetAllSubjectHeadingsForDisplayExtended(
         string $language,
         string $xmlFile,
         array $expected
@@ -645,7 +631,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $driver->setTranslator($translator);
         $this->assertEquals(
             $expected,
-            $driver->getAllSubjectHeadingsWithoutPlacesExtended()
+            $driver->getAllSubjectHeadingsForDisplayExtended()
         );
     }
 
@@ -680,7 +666,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             [
                 'heading' => ['Jussi, Jänö'],
                 'type' => 'topic',
-                'source' => '',
+                'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000211029',
             ],
             [
                 'heading' => ['Etelä-Suomi'],
@@ -842,6 +828,29 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             $driver->getNonPresenterAuthors()
+        );
+    }
+
+    /**
+     * Test getSubjectActorsExtended.
+     *
+     * @return void
+     */
+    public function testGetSubjectActorsExtended(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                [
+                    'name' => 'Pukki, Joulu',
+                    'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000229728',
+                ],
+                [
+                    'name' => 'Punakuono, Petteri',
+                    'id' => '',
+                ],
+            ],
+            $driver->getSubjectActorsExtended()
         );
     }
 

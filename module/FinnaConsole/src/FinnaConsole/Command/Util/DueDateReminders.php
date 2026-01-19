@@ -409,7 +409,7 @@ class DueDateReminders extends AbstractUtilCommand
      * @param array               $remindLoans Loans to be reminded.
      * @param array               $errors      Errors in due date checking.
      *
-     * @return boolean success.
+     * @return bool
      */
     protected function sendReminder(UserEntityInterface $user, $remindLoans, $errors)
     {

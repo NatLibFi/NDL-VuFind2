@@ -53,9 +53,9 @@ class SearchSpecsReader extends \VuFind\Config\SearchSpecsReader
     /**
      * Return search specs
      *
-     * @param string  $filename        Config file name
-     * @param boolean $useLocalConfig  Use local configuration if available
-     * @param boolean $ignoreFileCache Read from file even if config has been cached.
+     * @param string $filename        Config file name
+     * @param bool   $useLocalConfig  Use local configuration if available
+     * @param bool   $ignoreFileCache Read from file even if config has been cached.
      *
      * @return array
      */

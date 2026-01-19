@@ -73,11 +73,11 @@ class MikroMarcTest extends \PHPUnit\Framework\TestCase
         $connector = $this->getMockBuilder(Mikromarc::class)->setConstructorArgs(
             [
                 new \VuFind\Date\Converter(),
-                $this->getMockBuilder(\VuFind\I18n\Sorter::class)->disableOriginalConstructor()->getMock(),
+                $this->createMock(\VuFind\I18n\Sorter::class),
             ]
         )->onlyMethods(['makeRequest', 'debug'])
             ->getMock();
-        $connector->expects($this->any())->method('makeRequest')->willReturnMap($requestMap);
+        $connector->method('makeRequest')->willReturnMap($requestMap);
         $connector->setConfig($config);
         return $connector;
     }

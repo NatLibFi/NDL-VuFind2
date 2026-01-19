@@ -120,7 +120,7 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
      *
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // Base directory for all views.
         $this->viewBaseDir = $input->getArgument('view_base');

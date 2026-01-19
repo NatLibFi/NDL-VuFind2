@@ -14,6 +14,10 @@ services:
         source: finna-log
         target: /var/log/finna
         read_only: false
+      - type: volume
+        source: finna-cache
+        target: ${VUFIND_CACHE_DIR:-${FINNA_DOCUMENT_ROOT?document root not set}/local/cache}
+        read_only: false
     configs:
       - source: site_config
         target: /etc/apache2/sites-available/vufind2.conf
@@ -100,8 +104,9 @@ secrets:
     file: local/db_root_passwd.secret
 
 volumes:
-  finna-mariadb:
+  finna-cache:
   finna-log:
+  finna-mariadb:
 
 networks:
   finnadev:

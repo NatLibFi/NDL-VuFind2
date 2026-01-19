@@ -1,20 +1,25 @@
+.template-dir-collection {
+  &.template-name-view {
+    .collection-title {
+      margin-top: 0px;
+    }
+  }
+  .mobile-navigation {
+    bottom: 44px;
+  }
+  .record-accordions.record-tabs {
+    padding: 0px;
+    width: 100%;
+  }
+}
+.collectionlist-tab .finna-filters {
+  margin-bottom: 0.5em;
+  border-top: 1px solid $gray-lighter;
+  border-bottom: 1px solid $gray-lighter;
+}
 .collection-list-controls {
   display: flex;
   margin-bottom: 0.5em;
-
-  @include media-breakpoint-down(xs) {
-    flex-direction: column;
-    .sort-and-view-buttons {
-      margin-top: 10px;
-    }
-  }
-  @include media-breakpoint-up(xs) {
-    .dropdown-menu {
-      right: 0;
-      left: auto;
-    }
-  }
-
   .sort-and-view-buttons {
     display: flex;
     flex-direction: row;
@@ -23,43 +28,37 @@
     flex-grow: 1;
     white-space: nowrap;
     .input-group {
-      width: 250px;
       display: flex;
       align-items: normal;
+      width: 250px;
+      height: 40px;
       #keywordFilter_lookfor {
-        height: 40px;
+        height: auto;
         border-right: none;
-        border-radius: 4px 0 0 4px;
+        border-radius: 4px 0px 0px 4px;
+      }
+      button.btn-primary {
+        display: flex;
+        align-items: center;
+        font-weight: $btn-font-weight;
       }
     }
   }
-  button.btn-primary {
-    width: auto;
-    height: 40px;
-    padding: 0 10px;
-    font-size: $font-size-base;
-    font-weight: $btn-font-weight;
-    border-radius: 0 4px 4px 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
   .view-option-container, .sort-option-container {
-    margin: auto 0 auto 5px;
+    margin: auto 0px auto 5px;
   }
 }
-
-.template-dir-collection .mobile-navigation {
-  bottom: 44px;
+@include media-breakpoint-down(xs) {
+  .collection-list-controls {
+    flex-direction: column;
+    .sort-and-view-buttons {
+      margin-top: 10px;
+    }
+  }
 }
-
-.collectionlist-tab .finna-filters {
-  border-top: 1px solid $gray-lighter;
-  border-bottom: 1px solid $gray-lighter;
-  margin-bottom: 0.5em;
-}
-
-.template-dir-collection .record-accordions.record-tabs {
-  width: 100%;
-  padding: 0;
+@include media-breakpoint-up(xs) {
+  .collection-list-controls .dropdown-menu {
+    right: 0;
+    left: auto;
+  }
 }

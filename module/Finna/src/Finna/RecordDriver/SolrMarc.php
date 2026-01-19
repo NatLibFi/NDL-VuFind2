@@ -646,7 +646,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get an array of embedded component parts
      *
-     * @param boolean $onlyCollections Only get component parts that are collections
+     * @param bool $onlyCollections Only get component parts that are collections
      *
      * @return array Component parts
      */
@@ -975,7 +975,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Return whether holds are allowed.
      *
-     * @return boolean
+     * @return bool
      */
     public function getHoldsAllowed()
     {
@@ -1559,11 +1559,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         foreach ($record->getFields('090') as $field090) {
             $objectId = $this->getSubfield($field090, 'a');
             if ($objectId) {
-                if (strncmp($objectId, '(Alma)', 6) === 0) {
-                    $objectId = substr($objectId, 6);
-                } else {
-                    $objectId = '';
-                }
+                $objectId = strncmp($objectId, '(Alma)', 6) === 0 ? substr($objectId, 6) : '';
             }
             if ($id === $objectId) {
                 return $objectId;
@@ -2237,11 +2233,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                 if (in_array($currentSubfield['code'], $matches)) {
                     $data = trim($currentSubfield['data']);
                     if ('' !== $data) {
-                        if ($currentSubfield['code'] === 'n') {
-                            $subfields[] = "($data)";
-                        } else {
-                            $subfields[] = $data;
-                        }
+                        $subfields[] = $currentSubfield['code'] === 'n' ? "($data)" : $data;
                     }
                 }
             }

@@ -115,10 +115,9 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         'Item History',
         'Inventory ID',
         'Other ID',
+        'Events',
         'Measurements',
         'Inscriptions',
-        'Other Classification',
-        'Events',
         'Unit ID',
         'Unit IDs',
         'Authors',
@@ -135,7 +134,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         'Subject Date',
         'Subject Actor',
         'Subjects',
-        'SubjectsWithoutPlaces',
+        'SubjectDisplayTerms',
         'subjects_extended',
         'Methodology',
         'Publications',
@@ -1239,15 +1238,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                     ],
                 ],
             ],
-            'Other Classification' => [
-                'getFormatClassifications',
-                'data-escapeHtml.phtml',
-                [
-                    'context' => [
-                        'class' => 'recordClassifications',
-                    ],
-                ],
-            ],
             'Other Classifications' => [
                 'getOtherClassifications',
                 'data-keywords.phtml',
@@ -1715,8 +1705,8 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 ],
             ],
             'Subject Actor' => [
-                'getSubjectActors',
-                'data-escapeHtml.phtml',
+                'getSubjectActorsExtended',
+                'data-authors.phtml',
                 [
                     'context' => [
                         'class' => 'recordSubjects',
@@ -1769,8 +1759,8 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                     ],
                 ],
             ],
-            'SubjectsWithoutPlaces' => [
-                'getAllSubjectHeadingsWithoutPlacesExtended',
+            'SubjectDisplayTerms' => [
+                'getAllSubjectHeadingsForDisplayExtended',
                 'data-allSubjectHeadingsExtended.phtml',
                 [
                     'context' => [

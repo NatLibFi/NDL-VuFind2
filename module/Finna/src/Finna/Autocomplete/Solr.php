@@ -399,9 +399,9 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
     /**
      * Collect facet data for output.
      *
-     * @param string  $facet             Facet field.
-     * @param array   $values            Facet values.
-     * @param boolean $hierarchicalFacet Is this a hierarchical facet?
+     * @param string $facet             Facet field.
+     * @param array  $values            Facet values.
+     * @param bool   $hierarchicalFacet Is this a hierarchical facet?
      *
      * @return array Filtered values
      */
@@ -486,7 +486,7 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
      *
      * @param string $facet Facet
      *
-     * @return boolean
+     * @return bool
      */
     protected function useOrFacet($facet)
     {
@@ -502,7 +502,7 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
      *
      * @param string $facet Facet
      *
-     * @return boolean
+     * @return bool
      */
     protected function isCheckboxFacet($facet)
     {

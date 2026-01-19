@@ -356,7 +356,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Return active author id filters.
      *
-     * @param boolean $includeRole Return role with author id
+     * @param bool $includeRole Return role with author id
      *
      * @return mixed null|array
      */
@@ -490,7 +490,7 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Is author id filter active?
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAuthorIdFilter()
     {

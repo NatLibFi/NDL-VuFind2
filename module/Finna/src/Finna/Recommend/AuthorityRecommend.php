@@ -171,7 +171,7 @@ class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
     /**
      * Should authority info be rendered as collapsed?
      *
-     * @return boolean
+     * @return bool
      */
     public function collapseAuthorityInfo()
     {

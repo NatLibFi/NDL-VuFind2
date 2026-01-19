@@ -944,7 +944,7 @@ class Form extends \VuFind\Form\Form
      * Is this form allowed to send user's library card barcode
      * along with the form data?
      *
-     * @return boolean
+     * @return bool
      */
     protected function isRecordRequestFormWithBarcode(): bool
     {

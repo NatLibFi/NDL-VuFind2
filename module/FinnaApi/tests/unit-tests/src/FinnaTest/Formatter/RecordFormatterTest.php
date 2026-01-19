@@ -67,7 +67,7 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['plugin'])
             ->getMock();
-        $viewMock->expects($this->any())->method('plugin')->willReturnCallback(
+        $viewMock->method('plugin')->willReturnCallback(
             function ($name) use ($hm) {
                 return $hm->get($name);
             }
@@ -76,13 +76,13 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getView'])
             ->getMock();
-        $recordHelper->expects($this->any())->method('getView')->willReturn($viewMock);
+        $recordHelper->method('getView')->willReturn($viewMock);
         $translationEmpty = $this->createMock(\VuFind\View\Helper\Root\TranslationEmpty::class);
-        $translationEmpty->expects($this->any())
+        $translationEmpty
             ->method('__invoke')
             ->willReturn(true);
         $recordLinker = $this->createMock(\VuFind\View\Helper\Root\RecordLinker::class);
-        $recordLinker->expects($this->any())
+        $recordLinker
             ->method('getUrl')
             ->willReturn('http://record.fi/record');
 
@@ -90,14 +90,14 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['__invoke'])
             ->getMock();
-        $urlHelper->expects($this->any())
+        $urlHelper
             ->method('__invoke')
             ->willReturn('/Cover/Show');
         $recordImage = $this->getMockBuilder(\Finna\View\Helper\Root\RecordImage::class)
             ->setConstructorArgs([$urlHelper])
             ->onlyMethods([])
             ->getMock();
-        $hm->expects($this->any())
+        $hm
             ->method('get')
             ->willReturnMap(
                 [
@@ -204,13 +204,13 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             ->disableOriginalConstructor()
             ->onlyMethods(['getRecordRatings'])
             ->getMock();
-        $ratingsService->expects($this->any())
+        $ratingsService
             ->method('getRecordRatings')
             ->willReturn([
                 'count' => 5000,
                 'rating' => 10,
             ]);
-        $driver->expects($this->any())
+        $driver
             ->method('getDbService')
             ->willReturnMap(
                 [

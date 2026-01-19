@@ -24,15 +24,18 @@
 <?php endif; ?>
 <!-- start list-entry -->
 <div class="result record-container<?php if ($this->driver->supportsAjaxStatus()): ?> ajaxItem<?php endif ?> myresearch-row">
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId">
+  <input type="hidden" value="<?=$this->escapeHtmlAttr($source) ?>" class="hiddenSource">
+  <?php if (isset($this->overrideId)): // hiddenOverrideId is used for availability checking for non SOLR records?>
+    <input type="hidden" value="<?=$this->escapeHtmlAttr($this->overrideId) ?>" class="hiddenOverrideId">
+  <?php endif; ?>
+  <?php if ($recordNumber): ?>
     <div class="checkbox-container">
       <div class="checkbox">
-        <?php // Request a checkbox with a label (can't add the label here as checkbox template contains more than one field): ?>
-        <?=$this->record($this->driver)->getCheckbox('', false, true) ?>
+      <?=$this->record($this->driver)->getCheckbox(number: $recordNumber)?>
       </div>
     </div>
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId">
-    <input type="hidden" value="<?=$this->escapeHtmlAttr($source) ?>" class="hiddenSource">
-
+  <?php endif; ?>
   <div class="media">
     <div class="media-left">
       <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>

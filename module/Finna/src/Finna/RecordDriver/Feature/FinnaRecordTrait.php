@@ -394,7 +394,7 @@ trait FinnaRecordTrait
         // PDF key can be either boolean or an array containing booleans
         $pdf = $image['pdf'] ?? false;
         if (!is_bool($pdf)) {
-            $pdf = is_array($pdf) && array_search(true, $image['pdf']) !== false;
+            $pdf = is_array($pdf) && in_array(true, $image['pdf']);
         }
         if (
             $pdf
@@ -527,7 +527,7 @@ trait FinnaRecordTrait
     /**
      * Whether to show record labels for this record.
      *
-     * @return boolean
+     * @return bool
      */
     public function getRecordLabelsEnabled()
     {

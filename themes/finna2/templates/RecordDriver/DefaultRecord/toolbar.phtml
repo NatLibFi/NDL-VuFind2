@@ -15,7 +15,7 @@
   <?php $exportFormats = $this->export()->getFormatsForRecord($this->driver); ?>
   <?php if (count($exportFormats) > 0): ?>
     <li class="dropdown">
-      <a class="nav-link export-toggle toolbar-btn dropdown-toggle" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
+      <a class="nav-link export-toggle dropdown-toggle" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
         <?=$this->icon('export') ?>
         <?=$this->transEsc('Export Record') ?>
       </a>

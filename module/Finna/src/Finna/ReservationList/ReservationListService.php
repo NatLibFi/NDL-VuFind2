@@ -367,13 +367,13 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         array $listValues
     ): FinnaResourceListEntityInterface {
         try {
-            $list->setTitle($listValues['title'])
-                ->setDescription($listValues['desc'])
-                ->setInstitution($listValues['institution'])
-                ->setListConfigIdentifier($listValues['listIdentifier'])
+            $list->setTitle($listValues['title'] ?? null)
+                ->setDescription($listValues['desc'] ?? null)
+                ->setInstitution($listValues['institution'] ?? null)
+                ->setListConfigIdentifier($listValues['listIdentifier'] ?? null)
                 ->setUser($user)
                 ->setListType(self::RESOURCE_LIST_TYPE)
-                ->setConnection($listValues['connection']);
+                ->setConnection($listValues['connection'] ?? null);
         } catch (TypeError $e) {
             throw new Exception('Missing values to populate list');
         }

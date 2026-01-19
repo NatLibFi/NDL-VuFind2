@@ -133,7 +133,7 @@ class Autocomplete extends \Laminas\View\Helper\AbstractHelper
     /**
      * Is phrase search option enabled?
      *
-     * @return boolean
+     * @return bool
      */
     public function getPhraseSearch()
     {

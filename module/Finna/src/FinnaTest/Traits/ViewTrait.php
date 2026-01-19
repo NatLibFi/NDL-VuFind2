@@ -30,8 +30,9 @@
 namespace FinnaTest\Traits;
 
 use Finna\View\Helper\Root\CleanHtmlFactory;
+use FinnaTest\Cache\TestHarness\FilesystemOptions;
 use FinnaTest\Container\MockContainer;
-use stdClass;
+use Laminas\Cache\Storage\Adapter\Filesystem;
 use VuFind\Cache\Manager as CacheManager;
 use VuFind\Config\ConfigManagerInterface;
 use VuFind\View\Helper\Root\CleanHtml;
@@ -76,18 +77,7 @@ trait ViewTrait
         $configManager = $this->getMockConfigManager(['config' => []]);
         $container->add(ConfigManagerInterface::class, $configManager);
 
-        $cacheOptions = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['getCacheDir'])
-            ->getMock();
-        $cacheOptions->expects($this->any())
-            ->method('getCacheDir')
-            ->willReturn('');
-        $cache = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['getOptions'])
-            ->getMock();
-        $cache->expects($this->any())
-            ->method('getOptions')
-            ->willReturn($cacheOptions);
+        $cache = new Filesystem(new FilesystemOptions());
         $cacheManager = $this->createMock(CacheManager::class);
         $cacheManager->expects($this->any())
             ->method('getCache')

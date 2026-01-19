@@ -491,7 +491,7 @@ class Connection extends \VuFind\ILS\Connection
      * @param array  $functionConfig Function configuration values
      * @param ?array $params         An array of function-specific params (or null)
      *
-     * @return boolean
+     * @return bool
      */
     protected function checkMethodregisterPatron($functionConfig, $params)
     {
