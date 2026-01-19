@@ -353,8 +353,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             if (!$reader->first($right, 'conceptID')) {
                 continue;
             }
-            $term = $this->getLanguageSpecificValue($reader->all($right, 'term'), $language);
-            if ($term) {
+            if ($term = $this->getLanguageSpecificValueByPath($right, 'term', $language)) {
                 $restrictions[] = $term;
             }
         }
@@ -825,15 +824,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ): array {
         $result = [];
         $reader = $this->getXmlReader();
-        if (null !== ($resourceID = $reader->first($resourceSet, 'resourceID'))) {
-            $result['identifier'] = $reader->value($resourceID);
+        if ($resourceID = $reader->firstValue($resourceSet, 'resourceID')) {
+            $result['identifier'] = $resourceID;
         }
-        if ($term = $this->getLanguageSpecificValue($reader->all($resourceSet, 'resourceType/term'), $language)) {
+        if ($term = $this->getLanguageSpecificValueByPath($resourceSet, 'resourceType/term', $language)) {
             $result['type'] = $term;
         }
         foreach ($reader->all($resourceSet, 'resourceRelType') as $relType) {
-            if ($term = $reader->first($relType, 'term')) {
-                $result['relationTypes'][] = $this->getLanguageSpecificValue([$term], $language);
+            if ($term = $this->getLanguageSpecificValueByPath($relType, 'term', $language)) {
+                $result['relationTypes'][] = $term;
             }
         }
         if ($resourceDescription = $reader->all($resourceSet, 'resourceDescription')) {
@@ -851,8 +850,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             $result['dateTaken'] = $date;
         }
         foreach ($reader->all($resourceSet, 'resourcePerspective') as $perspective) {
-            if ($terms = $reader->all($perspective, 'term')) {
-                $result['perspectives'][] = $this->getLanguageSpecificValue($terms, $language);
+            if ($term = $this->getLanguageSpecificValueByPath($perspective, 'term', $language)) {
+                $result['perspectives'][] = $term;
             }
         }
         return $result;
@@ -1097,7 +1096,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         string $language,
         bool $useDefault = true
     ): array {
-        $defaultRights = $useDefault ? $this->getImageRights($language, true) : [];
         $rights = [];
         $reader = $this->getXmlReader();
         foreach ($reader->all($resourceSet, 'rightsResource') as $rightsResource) {
@@ -1120,23 +1118,21 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 $rights['rightsHolders'][] = $rightsHolder;
             }
 
-            if ($creditLines = $reader->all($rightsResource, 'creditLine')) {
-                $rights['creditLine'] = $this->getLanguageSpecificValue($creditLines, $language);
+            if ($creditLine = $this->getLanguageSpecificValueByPath($rightsResource, 'creditLine', $language)) {
+                $rights['creditLine'] = $creditLine;
             }
         }
 
-        if ($termNodes = $reader->all($resourceSet, 'rightsResource/rightsType/term')) {
-            $term = $this->getLanguageSpecificValue($termNodes, $language);
-            if (!isset($rights['copyright']) || $rights['copyright'] !== $term) {
+        if ($term = $this->getLanguageSpecificValueByPath($resourceSet, 'rightsResource/rightsType/term', $language)) {
+            if (($rights['copyright'] ?? null) !== $term) {
                 $rights['description'][] = $term;
             }
         }
 
-        if (!is_array($defaultRights)) {
-            $defaultRights = [];
+        if ($rights) {
+            return $rights;
         }
-
-        return $rights ?: $defaultRights;
+        return $useDefault ? ($this->getImageRights($language, true) ?: []) : [];
     }
 
     /**
@@ -1394,10 +1390,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         foreach ($reader->all(path: 'lido/descriptiveMetadata/eventWrap/eventSet/event') as $node) {
             $name = $reader->firstValue($node, 'eventName/appellationValue') ?? '';
             $type = $this->toLower($reader->firstValue($node, 'eventType/term') ?? '');
-            $date = $this->getLanguageSpecificValue(
-                $reader->all($node, 'eventDate/displayDate'),
-                $language
-            );
+            $date = $this->getLanguageSpecificValueByPath($node, 'eventDate/displayDate', $language);
             if (!$date && $dateNode = $reader->first($node, 'eventDate/date')) {
                 $startDate = $reader->firstValue($dateNode, 'earliestDate');
                 $endDate = $reader->firstValue($dateNode, 'latestDate');
@@ -1472,8 +1465,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             $materialsExtended = [];
             $langMaterialsExtended = [];
             foreach ($reader->all($node, 'eventMaterialsTech') as $eventMaterialsTech) {
-                $displayMaterialsTechs = $reader->all($eventMaterialsTech, 'displayMaterialsTech');
-                if ($display = $this->getLanguageSpecificValue($displayMaterialsTechs, $language)) {
+                $display
+                    = $this->getLanguageSpecificValueByPath($eventMaterialsTech, 'displayMaterialsTech', $language);
+                if ($display) {
                     $materials[] = $display;
                     $langMaterialsExtended[] = [
                         'data' => $display,
@@ -1606,8 +1600,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             }
             $culture = $reader->firstValue($node, 'culture/term') ?? '';
             $descriptions = [];
-            $noteValues = $reader->all($node, 'eventDescriptionSet/descriptiveNoteValue');
-            if ($desc = $this->getLanguageSpecificValue($noteValues, $language)) {
+            $desc = $this->getLanguageSpecificValueByPath($node, 'eventDescriptionSet/descriptiveNoteValue', $language);
+            if ($desc) {
                 $descriptions[] = $desc;
             }
             $event = [
@@ -1846,7 +1840,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         );
         foreach ($objectMeasurementsSets as $set) {
             // Get set extents to be displayed
-            $extentMeasurements = [];
             $extentNodes = $reader->all($set, 'objectMeasurements/extentMeasurements');
             $extentMeasurements = $this->getAllLanguageSpecificValues($extentNodes, $language, true);
             $displayExtents = implode(', ', $extentMeasurements);
@@ -1867,19 +1860,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                     continue;
                 }
                 $parts = [];
-                if (
-                    $type = $this->getLanguageSpecificValue($reader->all($measurements, 'measurementType'), $language)
-                ) {
+                if ($type = $this->getLanguageSpecificValueByPath($measurements, 'measurementType', $language)) {
                     $parts[] = $type;
                 }
-                if (
-                    $val = $this->getLanguageSpecificValue($reader->all($measurements, 'measurementValue'), $language)
-                ) {
+                if ($val = $this->getLanguageSpecificValueByPath($measurements, 'measurementValue', $language)) {
                     $parts[] = $val;
                 }
-                if (
-                    $unit = $this->getLanguageSpecificValue($reader->all($measurements, 'measurementUnit'), $language)
-                ) {
+                if ($unit = $this->getLanguageSpecificValueByPath($measurements, 'measurementUnit', $language)) {
                     $parts[] = $unit;
                 }
                 if ($combined = implode(' ', $parts)) {
@@ -2077,10 +2064,11 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $reader = $this->getXmlReader();
         $results = [];
-        $path = 'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/'
-            . "appellationValue[@label='aiheen tarkenne']";
+        $path = 'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/appellationValue';
         foreach ($reader->all(path: $path) as $node) {
-            $results[] = $reader->value($node);
+            if ($reader->attr($node, 'label') === 'aiheen tarkenne') {
+                $results[] = $reader->value($node);
+            }
         }
         return $results;
     }
@@ -2160,10 +2148,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         foreach ($reader->all(path: 'lido/descriptiveMetadata/eventWrap/eventSet/event') as $event) {
             $type = $this->toLower($reader->firstValue($event, 'eventType/term'));
             if (!in_array($type, $this->nonPlaceEvents)) {
-                if ($displayDates = $reader->all($event, 'eventDate/displayDate')) {
-                    if ($date = $this->getLanguageSpecificValue($displayDates, $language)) {
-                        $headings[] = ['data' => $date];
-                    }
+                if ($date = $this->getLanguageSpecificValueByPath($event, 'eventDate/displayDate', $language)) {
+                    $headings[] = ['data' => $date];
                 }
             }
         }
@@ -2387,17 +2373,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $results = [];
         $language = $this->getLocale();
         foreach ($reader->all(path: $path) as $work) {
-            if (!($objectWebResources = $reader->all($work, 'object/objectWebResource'))) {
+            $url = $this->getLanguageSpecificValueByPath($work, 'object/objectWebResource', $language);
+            if (!$url || $this->urlBlocked($url)) {
                 continue;
             }
-            $result = [];
-            $url = $this->getLanguageSpecificValue($objectWebResources, $language);
-            if ($this->urlBlocked($url)) {
-                continue;
-            }
-            $result['url'] = $url;
-            if ($displayObjects = $reader->all($work, 'displayObject')) {
-                $result['desc'] = $this->getLanguageSpecificValue($displayObjects, $language);
+            $result = [
+                'url' => $url,
+            ];
+            if ('' !== ($desc = $this->getLanguageSpecificValue($work, 'displayObject'))) {
+                $result['desc'] = $desc;
             }
             if ($objectID = $reader->all($work, 'object/objectID')) {
                 $objectID = $this->getLanguageSpecificNode($objectID, $language);
@@ -2547,7 +2531,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 ];
             }
             $lang = $this->getLocale();
-            if ($display = $this->getLanguageSpecificValue($reader->all($repository, 'displayRepository'), $lang)) {
+            if ($display = $this->getLanguageSpecificValueByPath($repository, 'displayRepository', $lang)) {
                 $results[] = [
                     'location' => $display,
                     'locationInfo' => [],
@@ -2608,6 +2592,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $node = $this->getLanguageSpecificNode($nodeList, $language);
         return $node ? $this->getXmlReader()->value($node) : '';
+    }
+
+    /**
+     * Get a language-specific value from an array of nodes
+     *
+     * @param ?array $node     Parent node
+     * @param string $path     Element path
+     * @param string $language Language to look for
+     *
+     * @return string
+     */
+    protected function getLanguageSpecificValueByPath(?array $node, string $path, string $language): string
+    {
+        $reader = $this->getXmlReader();
+        if (!($nodes = $reader->all($node, $path))) {
+            return '';
+        }
+        return $this->getLanguageSpecificValue($nodes, $language);
     }
 
     /**
@@ -2738,7 +2740,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $titleNodes = [];
         $titlesNotInDesc = [];
         $displayTitle = $this->getTitle();
-        $reader = $this->getXmlReader();
         $path = 'lido/descriptiveMetadata/objectIdentificationWrap/titleWrap/titleSet/appellationValue';
         foreach ($reader->all(path: $path) as $title) {
             $pref = $reader->attr($title, 'pref');
@@ -2799,10 +2800,15 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $path = 'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
             . '/objectDescriptionSet[@type="introduction"]/descriptiveNoteValue';
         $reader = $this->getXmlReader();
-        foreach ($reader->all(path: $path) as $node) {
-            if (in_array($reader->attr($node, 'lang'), $preferredLanguages)) {
-                if ('' !== ($term = $reader->value($node))) {
-                    $results[] = $term;
+        foreach ($reader->all(path: $path) as $objectDescriptionSet) {
+            if ($reader->attr($objectDescriptionSet, 'type') !== 'introduction') {
+                continue;
+            }
+            foreach ($reader->all($objectDescriptionSet, 'descriptiveNoteValue') as $node) {
+                if (in_array($reader->attr($node, 'lang'), $preferredLanguages)) {
+                    if ('' !== ($term = $reader->value($node))) {
+                        $results[] = $term;
+                    }
                 }
             }
         }
@@ -2891,10 +2897,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             ) {
                 continue;
             }
-            if ($id = (string)($set->relatedWork->object->objectID ?? '')) {
+            if ($id = $reader->firstValue($set, 'relatedWork/object/objectID')) {
                 $id = "$sourceId.$id";
             }
-            $title = (string)($set->relatedWork->displayObject ?? '');
+            $title = $reader->firstValue($set, 'relatedWork/displayObject');
             if (
                 $id
                 && $title
@@ -2942,10 +2948,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $actorIds = $reader->all($actor, 'actorInRole/actor/actorID') ?: $reader->all($actor, 'actor/actorID');
         foreach ($actorIds as $actorId) {
             if ($actorIdValue = $reader->value($actorId)) {
-                if (preg_match('/^(http:\/\/urn\.fi\/URN:NBN:fi:au:finaf:)(.*)/', $actorIdValue)) {
+                if (str_starts_with($actorIdValue, 'http://urn.fi/URN:NBN:fi:au:finaf:')) {
                     return $actorIdValue;
-                } elseif (preg_match('/^(https:\/\/isni\.org\/isni\/)(.*)/', $actorIdValue)) {
-                    // TODO: Why do we continue iteration here?
+                } elseif (str_starts_with($actorIdValue, 'https://isni.org/isni/')) {
+                    // Grab ISNI to return as the fallback value if we can't find a KANTO (finaf) URI:
                     $id = $actorIdValue;
                 }
             }
