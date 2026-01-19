@@ -828,8 +828,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         if (null !== ($resourceID = $reader->first($resourceSet, 'resourceID'))) {
             $result['identifier'] = $reader->value($resourceID);
         }
-        if ($term = $reader->first($resourceSet, 'resourceType/term')) {
-            $result['type'] = $this->getLanguageSpecificValue([$term], $language);
+        if ($term = $this->getLanguageSpecificValue($reader->all($resourceSet, 'resourceType/term'), $language)) {
+            $result['type'] = $term;
         }
         foreach ($reader->all($resourceSet, 'resourceRelType') as $relType) {
             if ($term = $reader->first($relType, 'term')) {
