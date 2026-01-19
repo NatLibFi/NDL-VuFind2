@@ -2797,8 +2797,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $results = [];
         $preferredLanguages = $this->getPreferredLanguageCodes();
-        $path = 'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap'
-            . '/objectDescriptionSet[@type="introduction"]/descriptiveNoteValue';
+        $path = 'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap/objectDescriptionSet';
         $reader = $this->getXmlReader();
         foreach ($reader->all(path: $path) as $objectDescriptionSet) {
             if ($reader->attr($objectDescriptionSet, 'type') !== 'introduction') {
