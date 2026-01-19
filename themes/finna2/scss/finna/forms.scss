@@ -25,11 +25,11 @@ input, input.form-control {
   }
 
   &:invalid {
-    box-shadow: 0 0 2px 1px rgba(255, 0, 0, .9);
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
   }
   // This is for IE. Keep separate from :invalid so that IE does not drop it
   &.invalid {
-    box-shadow: 0 0 2px 1px rgba(255, 0, 0, .9);
+    box-shadow: 0 0 2px 1px rgba(255, 0, 0, 0.9);
   }
 }
 
@@ -66,9 +66,9 @@ input, input.form-control {
   background: $btn-primary-bg;
   border: none;
   border-radius: 0px;
-  transition: background .1s ease-in-out;
+  transition: background 0.1s ease-in-out;
   &:not(:focus-visible) {
-    box-shadow: 0px 0px 5px rgba(100, 100, 100, .3);
+    box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
   }
   &:hover {
     background: darken($btn-primary-bg, 5%);
@@ -95,7 +95,7 @@ input, input.form-control {
   border-top: 0px;
   border-bottom: 0px;
   border-radius: 0px;
-  box-shadow: 0px 0px 3px rgba(100, 100, 100, .5);
+  box-shadow: 0px 0px 3px rgba(100, 100, 100, 0.5);
   .form-control.search-query {
     display: inline-block !important;
     flex: 1 1 auto;
@@ -131,7 +131,7 @@ input, input.form-control {
   .navbar-form,
   .searchForm {
     .form-control.search-query {
-      width: percentage(($finna-search-input-width - .06));
+      width: percentage(($finna-search-input-width - 0.06));
       font-size: 1.1em;
     }
     &.input-field-only .form-control.search-query {
