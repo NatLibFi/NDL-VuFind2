@@ -49,236 +49,259 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     /**
      * Function to get expected representations data
      *
-     * @return array
+     * @return \Iterator
      */
-    public static function getRepresentationsData(): array
+    public static function getRepresentationsData(): \Iterator
     {
-        return [
+        yield 'getModels method' => [
+            'getModels',
             [
-                'getModels',
-                [
-                    2 => [
-                        'models' => [
-                            [
-                                'url' => 'https://gltfmalli.gltf',
-                                'format' => 'gltf',
-                                'type' => 'preview',
-                                'data' => [
-                                    'size' => [
-                                        'unit' => 'byte',
-                                        'value' => '60840000',
-                                    ],
-                                ],
-                            ],
-                            [
-                                'url' => 'https://glbmalli.glb',
-                                'format' => 'glb',
-                                'type' => 'preview',
-                            ],
-                        ],
-                        'rights' => [
-                            'copyright' => 'InC',
-                            'description' => [
-                                'Tässä on mallien copyright.',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'getAllImages',
-                [
-                    [
-                        'urls' => [
-                            'large' => 'https://largekuvanlinkki.com',
-                            'small' => 'https://largekuvanlinkki.com',
-                            'medium' => 'https://largekuvanlinkki.com',
-                        ],
-                        'description' => '',
-                        'rights' => [
-                            'copyright' => 'CC BY 4.0',
-                            'description' => [
-                                0 => 'Tässä on kuvien copyright.',
-                            ],
-                        ],
-                        'highResolution' => [
-                            'original' => [
-                                0 => [
-                                    'data' => [
-                                        'size' => [
-                                            'unit' => 'byte',
-                                            'value' => '123',
-                                        ],
-                                        'width' => [
-                                            'unit' => 'pixel',
-                                            'value' => '123',
-                                        ],
-                                        'height' => [
-                                            'unit' => 'pixel',
-                                            'value' => '123',
-                                        ],
-                                    ],
-                                    'url' => 'https://originalKuvanLinkkiTif.com',
-                                    'format' => 'tif',
-                                    'resourceID' => '607642',
+                2 => [
+                    'models' => [
+                        [
+                            'url' => 'https://gltfmalli.gltf',
+                            'format' => 'gltf',
+                            'type' => 'preview',
+                            'data' => [
+                                'size' => [
+                                    'unit' => 'byte',
+                                    'value' => '60840000',
                                 ],
                             ],
                         ],
-                        'identifier' => '607642',
-                        'downloadable' => true,
-                        'resourceDescription' => 'Kuvan selitys',
-                        'cacheSizes' => [
-                            'small' => 'large',
-                            'medium' => 'large',
+                        [
+                            'url' => 'https://glbmalli.glb',
+                            'format' => 'glb',
+                            'type' => 'preview',
                         ],
                     ],
-                    [
-                        'urls' => [
-                            'large' => 'https://largekuvanlinkki2.com',
-                            'small' => 'https://thumbkuvanlinkki2.com',
-                            'medium' => 'https://thumbkuvanlinkki2.com',
-                            'master' => 'https://masterkuvanlinkki2.com',
+                    'rights' => [
+                        'copyright' => 'InC',
+                        'description' => [
+                            'Tässä on mallien copyright.',
                         ],
-                        'description' => '',
-                        'rights' => [
-                            'copyright' => 'InC',
-                            'description' => [
-                                0 => 'Tässä on kuvien copyright.',
-                            ],
-                        ],
-                        'highResolution' => [
-                            'original' => [
-                                0 => [
-                                    'data' => [
-                                        'size' => [
-                                            'unit' => 'byte',
-                                            'value' => '5',
-                                        ],
-                                        'width' => [
-                                            'unit' => 'pixel',
-                                            'value' => '5',
-                                        ],
-                                        'height' => [
-                                            'unit' => 'pixel',
-                                            'value' => '5',
-                                        ],
-                                    ],
-                                    'url' => 'https://originalKuvanLinkkiTif.com',
-                                    'format' => 'tif',
-                                    'resourceID' => '607643',
-                                ],
-                            ],
-                            'master' => [
-                                [
-                                    'url' => 'https://masterkuvanlinkki2.com',
-                                    'data' => [],
-                                    'format' => 'jpg',
-                                    'resourceID' => '607643',
-                                ],
-                            ],
-                        ],
-                        'identifier' => '607643',
-                        'downloadable' => false,
-                        'resourceName' => 'Kuvan nimi',
-                        'cacheSizes' => [
-                            'medium' => 'small',
-                        ],
-                    ],
-                    2 => [
-                        'urls' => [
-                            'large' => 'https://kaikkilinkit.com',
-                            'small' => 'https://kaikkilinkit.com',
-                            'medium' => 'https://kaikkilinkit.com',
-                        ],
-                        'description' => '',
-                        'rights' => [
-                            'copyright' => 'CC BY 4.0',
-                            'description' => [
-                                0 => 'Tässä on kuvien copyright.',
-                                1 => 'Tässä on mallien copyright.',
-                                2 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
-                            ],
-                        ],
-                        'highResolution' => [],
-                        'identifier' => '607644',
-                        'downloadable' => true,
-                        'cacheSizes' => [
-                            'small' => 'large',
-                            'medium' => 'large',
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'getURLs',
-                [
-                    [
-                        'desc' => 'AudioTesti.mp3',
-                        'url' => 'https://linkkiaudioon.fi',
-                        'codec' => 'mp3',
-                        'type' => 'audio',
-                        'embed' => 'audio',
-                        'resourceName' => 'AudioTesti.mp3',
-                    ],
-                    [
-                        'desc' => 'VideoTesti.mp4',
-                        'url' => 'https://linkkivideoon.fi',
-                        'embed' => 'video',
-                        'format' => 'mp4',
-                        'videoSources' => [
-                            'src' => 'https://linkkivideoon.fi',
-                            'type' => 'video/mp4',
-                        ],
-                        'resourceName' => 'VideoTesti.mp4',
-                        'data' => [
-                            'size' => [
-                                'unit' => 'byte',
-                                'value' => '74576596',
-                            ],
-                        ],
-                    ],
-                ],
-            ],
-            [
-                'getDocuments',
-                [
-                    0 => [
-                        'description' => 'external_sketchfab.com',
-                        'url' => 'https://sketchfab.com/test',
-                        'format' => '',
-                        'rights' => [
-                            'copyright' => 'InC',
-                            'description' => [
-                                0 => 'Tässä on mallien copyright.',
-                            ],
-                        ],
-                        'linkType' => 'external-link',
-                        'label' => '3D',
-                    ],
-                    1 => [
-                        'description' => 'PDFTesti.pdf',
-                        'url' => 'https://linkkiPDF.fi',
-                        'format' => 'pdf',
-                        'rights' => [],
-                        'linkType' => 'proxy-link',
-                        'label' => '',
-                    ],
-                    2 => [
-                        'description' => 'DocxTesti.docx',
-                        'url' => 'https://linkkiDocx.fi',
-                        'format' => 'docx',
-                        'rights' => [
-                            'copyright' => 'CC BY 4.0',
-                            'description' => [
-                                0 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
-                            ],
-                        ],
-                        'linkType' => 'proxy-link',
-                        'label' => '',
                     ],
                 ],
             ],
         ];
+
+        yield 'getAllImages method' => [
+            'getAllImages',
+            [
+                [
+                    'urls' => [
+                        'large' => 'https://largekuvanlinkki.com',
+                        'small' => 'https://largekuvanlinkki.com',
+                        'medium' => 'https://largekuvanlinkki.com',
+                    ],
+                    'description' => '',
+                    'rights' => [
+                        'copyright' => 'CC BY 4.0',
+                        'description' => [
+                            'Tässä on kuvien copyright.',
+                        ],
+                        'rightsHolders' => [
+                            [
+                                'name' => 'Holder, Rights',
+                                'link' => 'http://localhost/rightsholder',
+                            ],
+                        ],
+                        'creditLine' => 'Credit: Holder, Rights',
+                    ],
+                    'highResolution' => [
+                        'original' => [
+                            [
+                                'data' => [
+                                    'size' => [
+                                        'unit' => 'byte',
+                                        'value' => '123',
+                                    ],
+                                    'width' => [
+                                        'unit' => 'pixel',
+                                        'value' => '123',
+                                    ],
+                                    'height' => [
+                                        'unit' => 'pixel',
+                                        'value' => '123',
+                                    ],
+                                ],
+                                'url' => 'https://originalKuvanLinkkiTif.com',
+                                'format' => 'tif',
+                                'resourceID' => '607642',
+                            ],
+                        ],
+                    ],
+                    'identifier' => '607642',
+                    'downloadable' => true,
+                    'resourceDescription' => 'Kuvan selitys',
+                    'cacheSizes' => [
+                        'small' => 'large',
+                        'medium' => 'large',
+                    ],
+                ],
+                [
+                    'urls' => [
+                        'large' => 'https://largekuvanlinkki2.com',
+                        'small' => 'https://thumbkuvanlinkki2.com',
+                        'medium' => 'https://thumbkuvanlinkki2.com',
+                        'master' => 'https://masterkuvanlinkki2.com',
+                    ],
+                    'description' => '',
+                    'rights' => [
+                        'copyright' => 'InC',
+                        'description' => [
+                            0 => 'Tässä on kuvien copyright.',
+                        ],
+                    ],
+                    'highResolution' => [
+                        'original' => [
+                            0 => [
+                                'data' => [
+                                    'size' => [
+                                        'unit' => 'byte',
+                                        'value' => '5',
+                                    ],
+                                    'width' => [
+                                        'unit' => 'pixel',
+                                        'value' => '5',
+                                    ],
+                                    'height' => [
+                                        'unit' => 'pixel',
+                                        'value' => '5',
+                                    ],
+                                ],
+                                'url' => 'https://originalKuvanLinkkiTif.com',
+                                'format' => 'tif',
+                                'resourceID' => '607643',
+                            ],
+                        ],
+                        'master' => [
+                            [
+                                'url' => 'https://masterkuvanlinkki2.com',
+                                'data' => [],
+                                'format' => 'jpg',
+                                'resourceID' => '607643',
+                            ],
+                        ],
+                    ],
+                    'identifier' => '607643',
+                    'downloadable' => false,
+                    'resourceName' => 'Kuvan nimi',
+                    'cacheSizes' => [
+                        'medium' => 'small',
+                    ],
+                    'type' => 'Type Term',
+                    'relationTypes' => [
+                        'Relation Type',
+                    ],
+                    'dateTaken' => '20.1.2026',
+                    'perspectives' => [
+                        'Vääristynyt',
+                        'Suoristettu',
+                    ],
+                ],
+                2 => [
+                    'urls' => [
+                        'large' => 'https://kaikkilinkit.com',
+                        'small' => 'https://kaikkilinkit.com',
+                        'medium' => 'https://kaikkilinkit.com',
+                    ],
+                    'description' => '',
+                    'rights' => [
+                        'copyright' => 'CC BY 4.0',
+                        'description' => [
+                            0 => 'Tässä on kuvien copyright.',
+                            1 => 'Tässä on mallien copyright.',
+                            2 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
+                        ],
+                    ],
+                    'highResolution' => [],
+                    'identifier' => '607644',
+                    'downloadable' => true,
+                    'cacheSizes' => [
+                        'small' => 'large',
+                        'medium' => 'large',
+                    ],
+                ],
+            ],
+        ];
+
+        yield 'getURLs method' => [
+            'getURLs',
+            [
+                [
+                    'desc' => 'AudioTesti.mp3',
+                    'url' => 'https://linkkiaudioon.fi',
+                    'codec' => 'mp3',
+                    'type' => 'audio',
+                    'embed' => 'audio',
+                    'resourceName' => 'AudioTesti.mp3',
+                ],
+                [
+                    'desc' => 'VideoTesti.mp4',
+                    'url' => 'https://linkkivideoon.fi',
+                    'embed' => 'video',
+                    'format' => 'mp4',
+                    'videoSources' => [
+                        'src' => 'https://linkkivideoon.fi',
+                        'type' => 'video/mp4',
+                    ],
+                    'resourceName' => 'VideoTesti.mp4',
+                    'data' => [
+                        'size' => [
+                            'unit' => 'byte',
+                            'value' => '74576596',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $getDocumentsData = [
+            'getDocuments',
+            [
+                0 => [
+                    'description' => 'external_sketchfab.com',
+                    'url' => 'https://sketchfab.com/test',
+                    'format' => '',
+                    'rights' => [
+                        'copyright' => 'InC',
+                        'description' => [
+                            0 => 'Tässä on mallien copyright.',
+                        ],
+                    ],
+                    'linkType' => 'external-link',
+                    'label' => '3D',
+                ],
+                1 => [
+                    'description' => 'PDFTesti.pdf',
+                    'url' => 'https://linkkiPDF.fi',
+                    'format' => 'pdf',
+                    'rights' => [],
+                    'linkType' => 'proxy-link',
+                    'label' => '',
+                ],
+                2 => [
+                    'description' => 'DocxTesti.docx',
+                    'url' => 'https://linkkiDocx.fi',
+                    'format' => 'docx',
+                    'rights' => [
+                        'copyright' => 'CC BY 4.0',
+                        'description' => [
+                            0 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
+                        ],
+                    ],
+                    'linkType' => 'proxy-link',
+                    'label' => '',
+                ],
+            ],
+        ];
+
+        yield 'getDocuments method' => $getDocumentsData;
+
+        $getOnlineURLsData = $getDocumentsData;
+        $getOnlineURLsData[0] = 'getOnlineURLs';
+        yield 'getOnlineURLs method' => $getOnlineURLsData;
     }
 
     /**
@@ -294,7 +317,14 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $function,
         array $expected
     ): void {
-        $driver = $this->getDriver('lido_test.xml');
+        $driver = $this->getDriver('lido_test.xml', language: 'fi');
+        $this->assertTrue(is_callable([$driver, $function], true));
+        $this->assertEquals(
+            $expected,
+            $driver->$function()
+        );
+
+        $driver = $this->getDriver('lido_test.xml', language: 'fi-FI');
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertEquals(
             $expected,
@@ -382,14 +412,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
-            $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-            $translator->setLocale($language);
-            $driver = $this->getDriver($file);
-            $driver->setTranslator($translator);
+            $driver = $this->getDriver($file, language: $language);
             $this->assertTrue(is_callable([$driver, $function], true));
             $this->assertEquals(
                 $result,
@@ -506,14 +529,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
-            $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-            $translator->setLocale($language);
-            $driver = $this->getDriver($file);
-            $driver->setTranslator($translator);
+            $driver = $this->getDriver($file, language: $language);
             $this->assertTrue(is_callable([$driver, $function], true));
             $this->assertEquals(
                 $result,
@@ -530,79 +546,84 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     public static function getAllSubjectHeadingsForDisplayExtendedData(): array
     {
         return [
+            [
+                'fi',
+                'lido_test.xml',
+                [
                     [
-                        'fi',
-                        'lido_test.xml',
-                        [
-                            [
-                                'heading' => ['sohvat'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
-                            [
-                                'heading' => ['maalaukset'],
-                                'type' => 'topic',
-                                'source' => '',
-                                'id' => 'http://www.yso.fi/onto/koko/p31096',
-                                'authType' => null,
-                            ],
-                            [
-                                'heading' => ['maalaukset, ei pilkottu'],
-                                'type' => 'topic',
-                                'source' => '',
-                                'id' => 'http://www.yso.fi/onto/koko/p31096',
-                                'authType' => null,
-                            ],
-                            [
-                                'heading' => ['maalaukset'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
-                            [
-                                'heading' => ['pilkottuna'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
-                        ],
+                        'heading' => ['sohvat'],
+                        'type' => 'topic',
+                        'source' => '',
                     ],
                     [
-                        'sv',
-                        'lido_test2.xml',
-                        [
-                            [
-                                'heading' => ['morot'],
-                                'type' => 'topic',
-                                'source' => 'yso',
-                                'id' => 'http://www.yso.fi/onto/yso/p5066',
-                                'authType' => null,
-                            ],
-                        ],
+                        'heading' => ['maalaukset'],
+                        'type' => 'topic',
+                        'source' => '',
+                        'id' => 'http://www.yso.fi/onto/koko/p31096',
+                        'authType' => null,
                     ],
                     [
-                        'xy',
-                        'lido_test2.xml',
-                        [
-                            [
-                                'heading' => ['porkkana'],
-                                'type' => 'topic',
-                                'source' => 'yso',
-                                'id' => 'http://www.yso.fi/onto/yso/p5066',
-                                'authType' => null,
-                            ],
-                            [
-                                'heading' => ['morot'],
-                                'type' => 'topic',
-                                'source' => 'yso',
-                                'id' => 'http://www.yso.fi/onto/yso/p5066',
-                                'authType' => null,
-                            ],
-                            [
-                                'heading' => ['juures'],
-                                'type' => 'topic',
-                                'source' => '',
-                            ],
-                        ],
+                        'heading' => ['maalaukset, ei pilkottu'],
+                        'type' => 'topic',
+                        'source' => '',
+                        'id' => 'http://www.yso.fi/onto/koko/p31096',
+                        'authType' => null,
                     ],
+                    [
+                        'heading' => ['maalaukset'],
+                        'type' => 'topic',
+                        'source' => '',
+                    ],
+                    [
+                        'heading' => ['pilkottuna'],
+                        'type' => 'topic',
+                        'source' => '',
+                    ],
+                    [
+                        'heading' => ['suunnittelu noin 1910'],
+                        'type' => 'topic',
+                        'source' => '',
+                    ],
+                ],
+            ],
+            [
+                'sv',
+                'lido_test2.xml',
+                [
+                    [
+                        'heading' => ['morot'],
+                        'type' => 'topic',
+                        'source' => 'yso',
+                        'id' => 'http://www.yso.fi/onto/yso/p5066',
+                        'authType' => null,
+                    ],
+                ],
+            ],
+            [
+                'xy',
+                'lido_test2.xml',
+                [
+                    [
+                        'heading' => ['porkkana'],
+                        'type' => 'topic',
+                        'source' => 'yso',
+                        'id' => 'http://www.yso.fi/onto/yso/p5066',
+                        'authType' => null,
+                    ],
+                    [
+                        'heading' => ['morot'],
+                        'type' => 'topic',
+                        'source' => 'yso',
+                        'id' => 'http://www.yso.fi/onto/yso/p5066',
+                        'authType' => null,
+                    ],
+                    [
+                        'heading' => ['juures'],
+                        'type' => 'topic',
+                        'source' => '',
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -621,14 +642,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $xmlFile,
         array $expected
     ): void {
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $driver = $this->getDriver($xmlFile);
-        $driver->setTranslator($translator);
+        $driver = $this->getDriver($xmlFile, language: $language);
         $this->assertEquals(
             $expected,
             $driver->getAllSubjectHeadingsForDisplayExtended()
@@ -785,14 +799,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
-            $translator = $this
-                ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-                ->disableOriginalConstructor()
-                ->onlyMethods([])
-                ->getMock();
-            $translator->setLocale($language);
-            $driver = $this->getDriver($file);
-            $driver->setTranslator($translator);
+            $driver = $this->getDriver($file, language: $language);
             $this->assertEquals(
                 $result,
                 $driver->getPhysicalLocations()
@@ -1006,14 +1013,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $rawData,
         $language
     ): void {
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $driver = $this->getDriver($xmlFile, [], [], $rawData);
-        $driver->setTranslator($translator);
+        $driver = $this->getDriver($xmlFile, rawData: $rawData, language: $language);
         $this->assertEquals(
             $expected,
             $driver->getSummary()
@@ -1093,7 +1093,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         0 => [
                             'type' => 'suunnittelu',
                             'name' => '',
-                            'date' => '',
+                            'date' => 'suunnittelu noin 1910',
                             'methods' => [],
                             'methodsExtended' => [],
                             'materials' => [],
@@ -1108,6 +1108,38 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000228701',
                                 ],
                             ],
+                            'culture' => '',
+                            'descriptions' => [],
+                            'description' => '',
+                        ],
+                    ],
+                    'outo tapahtuma' => [
+                        [
+                            'type' => 'outo tapahtuma',
+                            'name' => '',
+                            'date' => '1900-1909',
+                            'methods' => [],
+                            'methodsExtended' => [],
+                            'materials' => [],
+                            'materialsExtended' => [],
+                            'places' => [],
+                            'actors' => [],
+                            'culture' => '',
+                            'descriptions' => [],
+                            'description' => '',
+                        ],
+                    ],
+                    'toinen outo tapahtuma' => [
+                        [
+                            'type' => 'toinen outo tapahtuma',
+                            'name' => '',
+                            'date' => '02-10-1900 - 13-11-1909',
+                            'methods' => [],
+                            'methodsExtended' => [],
+                            'materials' => [],
+                            'materialsExtended' => [],
+                            'places' => [],
+                            'actors' => [],
                             'culture' => '',
                             'descriptions' => [],
                             'description' => '',
@@ -1180,7 +1212,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         0 => [
                             'type' => 'suunnittelu',
                             'name' => '',
-                            'date' => '',
+                            'date' => 'design ca 1910',
                             'methods' => [],
                             'methodsExtended' => [],
                             'materials' => [],
@@ -1195,6 +1227,38 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000228701',
                                 ],
                             ],
+                            'culture' => '',
+                            'descriptions' => [],
+                            'description' => '',
+                        ],
+                    ],
+                    'outo tapahtuma' => [
+                        [
+                            'type' => 'outo tapahtuma',
+                            'name' => '',
+                            'date' => '1900-1909',
+                            'methods' => [],
+                            'methodsExtended' => [],
+                            'materials' => [],
+                            'materialsExtended' => [],
+                            'places' => [],
+                            'actors' => [],
+                            'culture' => '',
+                            'descriptions' => [],
+                            'description' => '',
+                        ],
+                    ],
+                    'toinen outo tapahtuma' => [
+                        [
+                            'type' => 'toinen outo tapahtuma',
+                            'name' => '',
+                            'date' => '02-10-1900 - 13-11-1909',
+                            'methods' => [],
+                            'methodsExtended' => [],
+                            'materials' => [],
+                            'materialsExtended' => [],
+                            'places' => [],
+                            'actors' => [],
                             'culture' => '',
                             'descriptions' => [],
                             'description' => '',
@@ -1218,14 +1282,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $language,
         array $expected
     ): void {
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $driver = $this->getDriver('lido_test.xml');
-        $driver->setTranslator($translator);
+        $driver = $this->getDriver('lido_test.xml', language: $language);
         $this->assertEquals(
             $expected,
             $driver->getEvents()
@@ -1296,15 +1353,348 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     public function testGetRelatedPublications(
         array $expected
     ): void {
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
         $driver = $this->getDriver('lido_test.xml');
         $this->assertEquals(
             $expected,
             $driver->getRelatedPublications()
+        );
+    }
+
+    /**
+     * Test getCollections.
+     *
+     * @return void
+     */
+    public function testGetCollections(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml');
+        $this->assertSame(
+            [
+                'Onnellisen tietueen seikkailut',
+            ],
+            $driver->getCollections()
+        );
+    }
+
+    /**
+     * Test getWebResources.
+     *
+     * @return void
+     */
+    public function testGetWebResources(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml');
+        $this->assertSame(
+            [
+                [
+                    'url' => 'https://www.finna.fi/Record/eepos.3289017',
+                    'desc' => 'Onnellisen tietueen seikkailut',
+                    'info' => 'URN:ISBN:978-952-65-1357-7',
+                    'label' => 'URN',
+                ],
+            ],
+            $driver->getWebResources()
+        );
+    }
+
+    /**
+     * Test getSubjectDates.
+     *
+     * @return void
+     */
+    public function testGetSubjectDates(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml');
+        $this->assertSame(
+            [
+                '21st Century',
+            ],
+            $driver->getSubjectDates()
+        );
+    }
+
+    /**
+     * Test getSubjectDetails.
+     *
+     * @return void
+     */
+    public function testGetSubjectDetails(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml');
+        $this->assertSame(
+            [
+                'Aiheen tarkenne',
+            ],
+            $driver->getSubjectDetails()
+        );
+    }
+
+    /**
+     * Test getPhysicalLocationsExtended.
+     *
+     * @return void
+     */
+    public function testGetPhysicalLocationsExtended(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                [
+                    'location' => 'Kansalliskirjaston kupolisali, Unioninkatu 36, Helsinki',
+                    'locationInfo' => [
+                        'ids' => ['http://urn.fi/URN:NBN:fi:au:finaf:000034269'],
+                    ],
+                    'locationAsLink' => true,
+                ],
+                [
+                    'location' => 'The object can be accessed when the library is open.',
+                    'locationInfo' => [],
+                    'locationAsLink' => false,
+                ],
+            ],
+            $driver->getPhysicalLocationsExtended()
+        );
+    }
+
+    /**
+     * Test getIntroduction.
+     *
+     * @return void
+     */
+    public function testGetIntroduction(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                'Vain introductionissa!',
+            ],
+            $driver->getIntroduction()
+        );
+    }
+
+    /**
+     * Test getEditions.
+     *
+     * @return void
+     */
+    public function testGetEditions(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                '1.',
+            ],
+            $driver->getEditions()
+        );
+    }
+
+    /**
+     * Test parent links.
+     *
+     * @return void
+     */
+    public function testParentLinks(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                [
+                   'id' => 'test.12345678',
+                    'title' => 'Parent Archive',
+                ],
+            ],
+            $driver->getParentArchives()
+        );
+
+        $this->assertSame(
+            [
+                [
+                   'id' => 'test.23456789',
+                    'title' => 'Parent Collection',
+                ],
+            ],
+            $driver->getParentCollections()
+        );
+
+        $this->assertSame(
+            [
+                [
+                   'id' => 'test.s1',
+                    'title' => 'Parent Subcollection 1',
+                ],
+                [
+                   'id' => 'test.s2',
+                    'title' => 'Parent Subcollection 2',
+                ],
+            ],
+            $driver->getParentSubcollections()
+        );
+
+        $this->assertSame(
+            [
+                [
+                   'id' => 'test.series',
+                    'title' => 'Parent Series',
+                ],
+            ],
+            $driver->getParentSeries()
+        );
+    }
+
+    /**
+     * Test alternative title/summary handling.
+     *
+     * @return void
+     */
+    public function testAlternativeTitleAndSummary(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml');
+        $this->assertSame(
+            [
+                'Otsikko näkyy partial.',
+                'Näkyy kokonaan.',
+                'Otsikko',
+                'Näkyy description untyped.',
+                'Synas description untyped.',
+                'Näkyy subject unlabeled.',
+            ],
+            $driver->getSummary()
+        );
+
+        $driver = $this->getDriver('lido_test2.xml', rawData: ['title_alt' => ['Otsikko näkyy partial.']]);
+        $this->assertSame(
+            [
+                'Näkyy kokonaan.',
+                'Otsikko',
+                'Näkyy description untyped.',
+                'Synas description untyped.',
+                'Näkyy subject unlabeled.',
+            ],
+            $driver->getSummary()
+        );
+    }
+
+    /**
+     * Test getISBNs.
+     *
+     * @return void
+     */
+    public function testGetISBNs(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                '978-3-16-148410-0',
+            ],
+            $driver->getISBNs()
+        );
+    }
+
+    /**
+     * Test getISSNs.
+     *
+     * @return void
+     */
+    public function testGetISSNs(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                '2049-3630',
+            ],
+            $driver->getISSNs()
+        );
+    }
+
+    /**
+     * Test getMainFormat.
+     *
+     * @return void
+     */
+    public function testGeMainFormat(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml');
+        $this->assertSame(
+            'Other',
+            $driver->getMainFormat()
+        );
+
+        $driver = $this->getDriver('lido_test2.xml', rawData: ['format' => ['0/Taide/Teos/']]);
+        $this->assertSame(
+            'Taide',
+            $driver->getMainFormat()
+        );
+    }
+
+    /**
+     * Test getInscriptions.
+     *
+     * @return void
+     */
+    public function testGetInscriptions(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                [
+                    [
+                        'type' => 'annotated',
+                        'label' => 'Annotation',
+                        'content' => 'No huhhuh',
+                    ],
+                ],
+            ],
+            $driver->getInscriptions()
+        );
+    }
+
+    /**
+     * Test getLabels.
+     *
+     * @return void
+     */
+    public function testGetLabels(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                [
+                    'label' => '3D',
+                    'class' => 'resource-type',
+                ],
+            ],
+            $driver->getLabels()
+        );
+    }
+
+    /**
+     * Test getModelSettings.
+     *
+     * @return void
+     */
+    public function testGetModelSettings(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertSame(
+            [
+                'debug' => false,
+                'previewImages' => false,
+            ],
+            $driver->getModelSettings()
+        );
+    }
+
+    /**
+     * Test getXML.
+     *
+     * @return void
+     */
+    public function testGetXML(): void
+    {
+        $driver = $this->getDriver('lido_test.xml');
+        $this->assertXmlStringEqualsXmlString(
+            $this->getFixture('lido/lido_test.xml', 'Finna'),
+            $driver->getXML('oai_lido')
         );
     }
 
@@ -1315,6 +1705,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      * @param array  $overrides    Fixture fields to override
      * @param array  $searchConfig Search configuration
      * @param array  $rawData      Raw data for the record
+     * @param string $language     Language
      *
      * @return SolrLido
      */
@@ -1322,7 +1713,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $recordXml,
         $overrides = [],
         $searchConfig = [],
-        $rawData = []
+        $rawData = [],
+        $language = 'en',
     ): SolrLido {
         $fixture = $this->getFixture("lido/$recordXml", 'Finna');
         $config = [
@@ -1334,15 +1726,23 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     'INC',
                 ],
             ],
+            'Models' => [
+                'previewImages' => [
+                    'test' => true,
+                ],
+            ],
         ];
         $config = new \VuFind\Config\Config($config);
         $record = new SolrLido(
             $config,
             $config,
-            new \VuFind\Config\Config($searchConfig)
+            new \VuFind\Config\Config($searchConfig),
         );
         $defaultData = [
             'id' => 'knp-247394',
+            'source_str_mv' => [
+                'test',
+            ],
             'fullrecord' => $fixture,
             'usage_rights_str_mv' => [
                 'usage_A',
@@ -1351,6 +1751,19 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $record->setRawData(
             array_merge($defaultData, $rawData)
         );
+
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $record->setTranslator($translator);
+
+        $dateConverter = new \VuFind\Date\Converter([
+            'displayDateFormat' => 'd-m-Y',
+        ]);
+        $record->attachDateConverter($dateConverter);
         return $record;
     }
 }

@@ -33,6 +33,8 @@
             <workID type="http://terminology.lido-schema.org/lido00113">000001</workID>
             <workID type="http://terminology.lido-schema.org/lido00113" label="inventaarionumero">000002</workID>
             <workID type="esinenumero">000003</workID>
+            <workID type="isbn">978-3-16-148410-0</workID>
+            <workID type="issn">2049-3630</workID>
           </repositorySet>
           <repositorySet>
             <displayRepository lang="fi">Tätä paikkaa ei näytetä</displayRepository>
@@ -69,12 +71,13 @@
                   </namePlaceSet>
                 </partOfPlace>
               </partOfPlace>
+              <placeID type="URI">http://urn.fi/URN:NBN:fi:au:finaf:000034269</placeID>
             </repositoryLocation>
           </repositorySet>
         </repositoryWrap>
         <objectDescriptionWrap>
           <objectDescriptionSet type="introduction">
-            <descriptiveNoteValue lang="fi" label="esittely">Ei saa näkyä.</descriptiveNoteValue>
+            <descriptiveNoteValue lang="fi" label="esittely">Vain introductionissa!</descriptiveNoteValue>
           </objectDescriptionSet>
           <objectDescriptionSet type="description">
             <descriptiveNoteValue lang="fi" label="kuvaus">Näkyy description typed.</descriptiveNoteValue>
@@ -121,6 +124,18 @@
             </objectMeasurements>
           </objectMeasurementsSet>
         </objectMeasurementsWrap>
+        <displayStateEditionWrap>
+          <displayEdition>1.</displayEdition>
+        </displayStateEditionWrap>
+        <inscriptionsWrap>
+          <inscriptions>
+            <inscriptionDescription type="annotated">
+              <descriptiveNoteValue label="Annotation">
+                No huhhuh
+              </descriptiveNoteValue>
+            </inscriptionDescription>
+          </inscriptions>
+        </inscriptionsWrap>
       </objectIdentificationWrap>
        <objectRelationWrap>
         <subjectWrap>
@@ -236,6 +251,71 @@
             </relatedWork>
             <relatedWorkRelType>
               <term>kirjallisuus</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Archive</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">12345678</objectID>
+                <objectNote type="objectWorkType">archive</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Collection</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">23456789</objectID>
+                <objectNote type="objectWorkType">collection</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Subcollection 1</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">s1</objectID>
+                <objectNote type="objectWorkType">subcollection</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Subcollection 2</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">s2</objectID>
+                <objectNote type="objectWorkType">subcollection</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Series</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">series</objectID>
+                <objectNote type="objectWorkType">series</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
             </relatedWorkRelType>
           </relatedWorkSet>
         </relatedWorksWrap>
@@ -358,6 +438,38 @@
                 </roleActor>
               </actorInRole>
             </eventActor>
+            <eventDate>
+              <displayDate lang="fi">suunnittelu noin 1910</displayDate>
+              <displayDate lang="en">design ca 1910</displayDate>
+              <date>
+                <earliestDate>1910</earliestDate>
+                <latestDate>1910</latestDate>
+              </date>
+            </eventDate>
+          </event>
+        </eventSet>
+         <eventSet>
+          <event>
+            <eventType>
+              <term>outo tapahtuma</term>
+            </eventType>
+            <eventDate>
+              <date>
+                <earliestDate>1900</earliestDate>
+                <latestDate>1909</latestDate>
+              </date>
+            </eventDate>
+          </event>
+          <event>
+            <eventType>
+              <term>toinen outo tapahtuma</term>
+            </eventType>
+            <eventDate>
+              <date>
+                <earliestDate>1900-10-02</earliestDate>
+                <latestDate>1909-11-13</latestDate>
+              </date>
+            </eventDate>
           </event>
         </eventSet>
       </eventWrap>
@@ -399,11 +511,19 @@
               <conceptID>CC BY 4.0</conceptID>
               <term lang="fi">Tässä on kuvien copyright.</term>
             </rightsType>
+            <rightsHolder>
+              <legalBodyName>
+                <appellationValue>Holder, Rights</appellationValue>
+              </legalBodyName>
+              <legalBodyWeblink>http://localhost/rightsholder</legalBodyWeblink>
+            </rightsHolder>
+            <creditLine>Credit: Holder, Rights</creditLine>
           </rightsResource>
         </resourceSet>
         <resourceSet>
           <resourceID type="ID">607643</resourceID>
-          <resourceDescription type="displayLink">Kuvan nimi</resourceDescription>
+          <resourceDescription type="displayLink" lang="en">Image name</resourceDescription>
+          <resourceDescription type="displayLink" lang="fi">Kuvan nimi</resourceDescription>
           <resourceRepresentation type="image_thumb">
             <linkResource>https://thumbkuvanlinkki2.com</linkResource>
           </resourceRepresentation>
@@ -443,6 +563,21 @@
               <term lang="fi">Tässä on kuvien copyright.</term>
             </rightsType>
           </rightsResource>
+          <resourceType>
+            <term>Type Term</term>
+          </resourceType>
+          <resourceRelType>
+            <term>Relation Type</term>
+          </resourceRelType>
+          <resourceDateTaken>
+            <displayDate>20.1.2026</displayDate>
+          </resourceDateTaken>
+          <resourcePerspective>
+            <term>Vääristynyt</term>
+          </resourcePerspective>
+          <resourcePerspective>
+            <term>Suoristettu</term>
+          </resourcePerspective>
         </resourceSet>
         <resourceSet>
           <resourceRepresentation type="preview_3D">

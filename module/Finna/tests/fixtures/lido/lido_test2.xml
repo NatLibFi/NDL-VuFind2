@@ -33,6 +33,7 @@
             <appellationValue>Näkyy kokonaan.</appellationValue>
             <appellationValue pref="http://terminology.lido-schema.org/lido00169">Ei näy preferred.</appellationValue>
             <appellationValue pref="alternate">Ei näy alternate.</appellationValue>
+            <appellationValue pref="alternate" label="aiheen tarkenne">Aiheen tarkenne</appellationValue>
           </titleSet>
         </titleWrap>
         <repositoryWrap>
@@ -126,7 +127,7 @@
               </measurementsSet>
             </objectMeasurements>
               <extentMeasurements>  </extentMeasurements>
-          </objectMeasurementsSet>                  
+          </objectMeasurementsSet>
         </objectMeasurementsWrap>
       </objectIdentificationWrap>
       <objectRelationWrap>
@@ -212,6 +213,10 @@
                   </partOfPlace>
                 </place>
               </subjectPlace>
+              <subjectDate>
+                <displayDate lang="en">21st Century</displayDate>
+                <displayDate lang="fi">2000-luku</displayDate>
+              </subjectDate>
             </subject>
           </subjectSet>
           <subjectSet>
@@ -234,6 +239,20 @@
             </subject>
           </subjectSet>
         </subjectWrap>
+        <relatedWorksWrap>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject label="kuuluu kokoelmaan">Onnellisen tietueen seikkailut</displayObject>
+              <object>
+                <objectWebResource>https://www.finna.fi/Record/eepos.3289017</objectWebResource>
+                <objectID type="URI" label="URN">URN:ISBN:978-952-65-1357-7</objectID>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>kuuluu kokoelmaan</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+        </relatedWorksWrap>
       </objectRelationWrap>
     </descriptiveMetadata>
   </lido>

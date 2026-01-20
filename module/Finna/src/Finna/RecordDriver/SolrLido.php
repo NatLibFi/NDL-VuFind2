@@ -1386,7 +1386,10 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 }
             }
         }
-        return $this->getAllLanguageSpecificItems($results, $this->getLocale());
+        return array_map(
+            fn ($s) => (string)$s,
+            $this->getAllLanguageSpecificItems($results, $this->getLocale())
+        );
     }
 
     /**
@@ -1446,7 +1449,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                         : $startDate;
 
                     if ($endDate && $startDate != $endDate) {
-                        $date .= '-' . ($this->dateConverter
+                        $date .= ' - ' . ($this->dateConverter
                             ? $this->dateConverter->convertToDisplayDate(
                                 $endDateType,
                                 $endDate
@@ -1753,8 +1756,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             foreach ($inscriptions->inscriptionDescription as $node) {
                 $content = trim((string)$node->descriptiveNoteValue ?? '');
                 $type = mb_strtolower((string)($node->attributes()->type ?? ''), 'UTF-8');
-                $type = $this->inscriptionTypeMappings[$type] ?? $type;
-                $label = $node->descriptiveNoteValue->attributes()->label ?? '';
+                $type = (string)($this->inscriptionTypeMappings[$type] ?? $type);
+                $label = (string)($node->descriptiveNoteValue->attributes()->label ?? '');
                 if ($content) {
                     $group[] = compact('type', 'label', 'content');
                 }
