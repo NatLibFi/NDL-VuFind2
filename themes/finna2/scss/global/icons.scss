@@ -348,9 +348,9 @@ table .iconlabel {
 
 /* Rotate 360 degrees */
 .icon--spin {
-    animation: spin 1s linear infinite;
+    animation: spinner 1s linear infinite;
 }
-@keyframes spin {
+@keyframes spinner {
   from {
     transform: rotate(0deg);
   }
