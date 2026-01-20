@@ -158,9 +158,6 @@
     <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
       <span class="visually-hidden"><?=$this->layout()->srmessage ?></span>
     <?php endif; ?>
-      <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
-        <?=$this->layout()->skiplink ?>
-      <?php endif; ?>
       <?php
         $contentElementId = 'main';
         if (!empty($this->layout()->finnaUserAccountHeading)) {
@@ -171,7 +168,10 @@
           $contentElementId = 'content-main-tabs';
         }
       ?>
-      <a id="skip-to-content" class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
+      <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
+      <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
+        <?=$this->layout()->skiplink ?>
+      <?php endif; ?>
     <header class="hidden-print">
       <?php if (($siteStatus = $this->siteStatus()) !== \Finna\Site\SiteStatus::PRODUCTION): ?>
         <div class="container-fluid site-status-bar <?= $siteStatus->getCssClass() ?>">
