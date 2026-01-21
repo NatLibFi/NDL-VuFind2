@@ -1,4 +1,4 @@
-<?=$this->component('page-title', ['title' => $this->transEsc('library_card_connected_users')]);?>
+<?=$this->component('page-title', ['title' => $this->translate('library_card_connected_users')]);?>
 <table class="table table-striped table-responsive">
   <thead>
     <tr>
@@ -21,7 +21,7 @@
       ?>
       <tr>
         <td data-label="<?=$this->transEsc('library_card_date_of_connection')?>"><?=$this->escapeHtml($account->getCreated()->format($this->config()->dateTimeFormat()))?></td>
-        <td data-label="<?=$this->transEsc('Last Login')?>"><?=$this->escapeHtml($user->getLastLogin()->format($this->config()->dateTimeFormat()))?></td>
+        <td data-label="<?=$this->transEsc('Last Login')?>"><?=$this->escapeHtml($user->getLastLogin()?->format($this->config()->dateTimeFormat()))?></td>
         <td data-label="<?=$this->transEsc('account_username')?>"><span><?=$this->escapeHtml($user->getDisplayableUsername($loginMethod))?><?php if ($user->getId() === $this->auth()->getUserObject()->getId()): ?><br><span class="library-card-this-session">(<?=$this->transEsc('library_card_this_session')?>)</span><?php endif;?></td></span>
         <td data-label="<?=$this->transEsc('account_login_method')?>"><?=$this->transEscWithPrefix('login_method_', $user->getAuthMethod()) ?></td>
       </tr>
