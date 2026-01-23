@@ -182,8 +182,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         if (in_array('1/Other/Collection/', $this->getFormats())) {
             return [];
         }
-
-
         $reader = $this->getMarcReader();
         $field856 = $reader->getFields('856', ['q', 'u']);
         $manifests = [];
