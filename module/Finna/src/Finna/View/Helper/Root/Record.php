@@ -1561,4 +1561,22 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return parent::getListNotes($list_id, $user_id);
     }
+
+    /**
+     * Returns true if this record is a collection record
+     *
+     * NOTE: This would be cleaner with array_any(), but it is not available
+     * before PHP 8.4.
+     *
+     * @return bool
+     */
+    public function isCollectionRecord(): bool
+    {
+        foreach ($this->getDriver()->getFormats() as $fmt) {
+            if ($fmt->__toString() == '1/Other/Collection/') {
+                return true;
+            }
+        }
+        return false;
+    }
 }

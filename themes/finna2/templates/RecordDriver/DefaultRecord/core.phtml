@@ -57,7 +57,7 @@
   $img = $this->recordImage($this->record($this->driver));
 
   $thumbnail = false;
-  if (!$iiifManifests):
+  if (!$iiifManifests || $this->record($this->driver)->isCollectionRecord()):
     $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
     ob_start(); ?>
     <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">

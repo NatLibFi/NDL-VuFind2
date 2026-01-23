@@ -114,9 +114,13 @@
         <div class="inline-video" id="inline-video"></div>
         <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'inlineVideo' => true]);?>
       </div>
-    <?php endif; ?>
-  <?php endif; ?>
-  <?php if ($iiifManifests = $this->driver->tryMethod('getIiifManifests')):
+    <?php endif;
+  endif;
+
+  if (
+      $iiifManifests = $this->driver->tryMethod('getIiifManifests') &&
+      !$this->record($this->driver)->isCollectionRecord()
+    ):
       echo $this->record($this->driver)->renderTemplate(
           'record-iiif-viewer.phtml',
           ['manifests' => $iiifManifests]
