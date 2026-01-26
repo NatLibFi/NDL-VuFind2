@@ -1282,7 +1282,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             if (!in_array($reader->attr($node, 'type'), $this->excludedClassifications)) {
                 $langNodes = [
                     ...$langNodes,
-                    ...$reader->all($node, 'term')
+                    ...$reader->all($node, 'term'),
                 ];
             }
         }
@@ -1516,22 +1516,19 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             }
 
             $places = [];
-            foreach ($reader->all($node, 'eventPlace') as $placenode) {
-                $place = trim($reader->firstValue($placenode, 'displayPlace') ?? '', ', \n\r\t\v\0');
-                $placeId = $reader->first($placenode, 'place/placeID');
-                if (!$place) {
-                    $eventPlace = [];
-                    foreach ($reader->all($placenode, 'place/namePlaceSet') as $nameSet) {
+            foreach ($reader->all($node, 'eventPlace') as $eventPlace) {
+                $displayPlace = trim($reader->firstValue($eventPlace, 'displayPlace') ?? '', ', \n\r\t\v\0');
+                $placeId = $reader->first($eventPlace, 'place/placeID');
+                if (!$displayPlace) {
+                    // Gather display name from placeNameSet:
+                    $partOfPlaceName = [];
+                    foreach ($reader->all($eventPlace, 'place/namePlaceSet') as $nameSet) {
                         $value = $reader->firstValue($nameSet, 'appellationValue') ?? '';
                         if ('' !== $value) {
-                            $eventPlace[] = $value;
+                            $partOfPlaceName[] = $value;
                         }
                     }
-                    if ($eventPlace) {
-                        $places[] = implode(', ', $eventPlace);
-                    }
-                    foreach ($reader->all($placenode, 'place/partOfPlace') as $part) {
-                        $partOfPlaceName = [];
+                    foreach ($reader->all($eventPlace, 'place/partOfPlace') as $part) {
                         while ($part) {
                             $appellationValue = $reader->firstValue($part, 'namePlaceSet/appellationValue') ?? '';
                             if ('' !== $appellationValue) {
@@ -1539,35 +1536,37 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                             }
                             $part = $reader->first($part, 'partOfPlace');
                         }
-                        if ($partOfPlaceName) {
-                            $places[] = implode(', ', $partOfPlaceName);
-                        }
                     }
-                } elseif ($place && $placeId) {
-                    $displayPlace = [
-                        'placeName' => $place,
+                    if (!$partOfPlaceName) {
+                        continue;
+                    }
+                    $displayPlace = implode(', ', $partOfPlaceName);
+                }
+                if ($placeId) {
+                    $placeData = [
+                        'placeName' => $displayPlace,
                     ];
                     $idTypeFirst = $this->getPlaceIDType($placeId);
                     $prependType = $idTypeFirst !== ''
                         && !in_array(strtolower($idTypeFirst), $this->uniquePlaceIDTypes);
-                    $displayPlace['type'] = $idTypeFirst;
+                    $placeData['type'] = $idTypeFirst;
                     $placeIdStr = $reader->value($placeId);
-                    $displayPlace['id'] = $prependType ? "($idTypeFirst)$placeIdStr" : $placeIdStr;
-                    foreach ($reader->all($placenode, 'place/placeID') as $item) {
+                    $placeData['id'] = $prependType ? "($idTypeFirst)$placeIdStr" : $placeIdStr;
+                    foreach ($reader->all($eventPlace, 'place/placeID') as $item) {
                         $details = [];
                         $id = $reader->value($item);
                         $idType = $this->getPlaceIDType($item);
                         $prependType = $idType !== '' && !in_array(strtolower($idType), $this->uniquePlaceIDTypes);
-                        $displayPlace['ids'][] = $prependType ? "($idType)$id" : $id;
+                        $placeData['ids'][] = $prependType ? "($idType)$id" : $id;
                         $typeDesc = $idType ? 'place_id_type_' . $idType : '';
                         $details[] = $typeDesc;
                         if ($typeDesc) {
-                            $displayPlace['details'] = $details;
+                            $placeData['details'] = $details;
                         }
                     }
-                    $places[] = $displayPlace;
+                    $places[] = $placeData;
                 } else {
-                    $places[] = $place;
+                    $places[] = $displayPlace;
                 }
             }
 

@@ -1027,6 +1027,52 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      */
     public static function getEventsData(): array
     {
+        $outoTapahtuma = [
+            [
+                'type' => 'outo tapahtuma',
+                'name' => '',
+                'date' => '1900-1909',
+                'methods' => [],
+                'methodsExtended' => [],
+                'materials' => [],
+                'materialsExtended' => [],
+                'places' => [
+                    [
+                        'placeName' => 'Outo kumpu, Outo kaupunki, Outo maa',
+                        'ids' => [
+                            '(lähde)outo',
+                            'http://localhost/outo_id',
+                        ],
+                        'type' => 'lähde',
+                        'id' => '(lähde)outo',
+                        'details' => [
+                            'place_id_type_URI',
+                        ],
+                    ],
+                ],
+                'actors' => [],
+                'culture' => '',
+                'descriptions' => [],
+                'description' => '',
+            ],
+        ];
+        $toinenOutoTapahtuma = [
+            [
+                'type' => 'toinen outo tapahtuma',
+                'name' => '',
+                'date' => '02-10-1900 - 13-11-1909',
+                'methods' => [],
+                'methodsExtended' => [],
+                'materials' => [],
+                'materialsExtended' => [],
+                'places' => [],
+                'actors' => [],
+                'culture' => '',
+                'descriptions' => [],
+                'description' => '',
+            ],
+        ];
+
         return [
             [
                 'fi',
@@ -1113,38 +1159,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'description' => '',
                         ],
                     ],
-                    'outo tapahtuma' => [
-                        [
-                            'type' => 'outo tapahtuma',
-                            'name' => '',
-                            'date' => '1900-1909',
-                            'methods' => [],
-                            'methodsExtended' => [],
-                            'materials' => [],
-                            'materialsExtended' => [],
-                            'places' => [],
-                            'actors' => [],
-                            'culture' => '',
-                            'descriptions' => [],
-                            'description' => '',
-                        ],
-                    ],
-                    'toinen outo tapahtuma' => [
-                        [
-                            'type' => 'toinen outo tapahtuma',
-                            'name' => '',
-                            'date' => '02-10-1900 - 13-11-1909',
-                            'methods' => [],
-                            'methodsExtended' => [],
-                            'materials' => [],
-                            'materialsExtended' => [],
-                            'places' => [],
-                            'actors' => [],
-                            'culture' => '',
-                            'descriptions' => [],
-                            'description' => '',
-                        ],
-                    ],
+                    'outo tapahtuma' => $outoTapahtuma,
+                    'toinen outo tapahtuma' => $toinenOutoTapahtuma,
                 ],
             ],
             [
@@ -1232,38 +1248,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'description' => '',
                         ],
                     ],
-                    'outo tapahtuma' => [
-                        [
-                            'type' => 'outo tapahtuma',
-                            'name' => '',
-                            'date' => '1900-1909',
-                            'methods' => [],
-                            'methodsExtended' => [],
-                            'materials' => [],
-                            'materialsExtended' => [],
-                            'places' => [],
-                            'actors' => [],
-                            'culture' => '',
-                            'descriptions' => [],
-                            'description' => '',
-                        ],
-                    ],
-                    'toinen outo tapahtuma' => [
-                        [
-                            'type' => 'toinen outo tapahtuma',
-                            'name' => '',
-                            'date' => '02-10-1900 - 13-11-1909',
-                            'methods' => [],
-                            'methodsExtended' => [],
-                            'materials' => [],
-                            'materialsExtended' => [],
-                            'places' => [],
-                            'actors' => [],
-                            'culture' => '',
-                            'descriptions' => [],
-                            'description' => '',
-                        ],
-                    ],
+                    'outo tapahtuma' => $outoTapahtuma,
+                    'toinen outo tapahtuma' => $toinenOutoTapahtuma,
                 ],
             ],
         ];

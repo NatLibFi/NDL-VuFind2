@@ -459,6 +459,25 @@
                 <latestDate>1909</latestDate>
               </date>
             </eventDate>
+            <eventPlace>
+              <place>
+                <placeID type="local" source="lähde">outo</placeID>
+                <placeID type="URI">http://localhost/outo_id</placeID>
+                <namePlaceSet>
+                  <appellationValue>Outo kumpu</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue>Outo kaupunki</appellationValue>
+                  </namePlaceSet>
+                  <partOfPlace>
+                    <namePlaceSet>
+                      <appellationValue>Outo maa</appellationValue>
+                    </namePlaceSet>
+                  </partOfPlace>
+                </partOfPlace>
+              </place>
+            </eventPlace>
           </event>
           <event>
             <eventType>
