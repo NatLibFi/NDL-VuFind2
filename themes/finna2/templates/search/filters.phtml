@@ -69,7 +69,7 @@
             aria-label="<?=$ariaLabel?>"
             href="<?=$removeLink?>"
             <?php if (isset($urlQuery)): ?>
-              data-filter="<?=$this->escapeHtmlAttr($urlQuery->formatFilterString($value['field'], $value['value'], $value['operator']))?>"
+              data-filter="<?=$this->escapeHtmlAttr($urlQuery->formatFilterString($data[0]['field'], $data[0]['value'], $data[0]['operator']))?>"
             <?php endif; ?>
           >
             <span class="visually-hidden">

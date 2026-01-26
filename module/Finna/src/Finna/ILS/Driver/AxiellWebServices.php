@@ -1418,7 +1418,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
         foreach ($this->objectToArray($info->emailAddresses->emailAddress ?? []) as $emailAddress) {
             if ($emailAddress->isActive === 'yes') {
-                $email = $emailAddress->address ?? '';
+                if (!($email = trim($emailAddress->address ?? '') ?: null)) {
+                    continue;
+                }
                 $emailId = $emailAddress->id ?? '';
                 break;
             }
@@ -3019,10 +3021,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             $result = $client->$function($params);
         } catch (\SoapFault | \ErrorException $e) {
             $this->error(
-                "$function Request for '$this->arenaMember'.'$id' failed: "
-                . $e->getMessage()
+                "$function Request for '$this->arenaMember'.'$id' failed: " . (string)$e
             );
-            throw new ILSException($e->getMessage());
+            throw new ILSException('ils_connection_failed');
         }
 
         if ($this->durationLogPrefix) {

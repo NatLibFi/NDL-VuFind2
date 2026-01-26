@@ -1276,26 +1276,24 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     public function getOtherClassifications()
     {
         $reader = $this->getXmlReader();
-        $preferredLanguages = $this->getPreferredLanguageCodes();
-        $preferredLangResults = $allResults = [];
+        $results = $langNodes = [];
         $path = 'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/classification';
         foreach ($reader->all(path: $path) as $node) {
-            $type = $reader->attr($node, 'type');
-            if (in_array($type, $this->excludedClassifications)) {
-                continue;
-            }
-            if ($termNode = $reader->first($node, 'term')) {
-                $term = $reader->value($termNode);
-                $label = $reader->attr($termNode, 'label');
-                $data = $label ? compact('term', 'label') : $term;
-                $allResults[] = $data;
-                $termLanguage = $reader->attr($termNode, 'lang');
-                if (in_array($termLanguage, $preferredLanguages)) {
-                    $preferredLangResults[] = $data;
-                }
+            if (!in_array($reader->attr($node, 'type'), $this->excludedClassifications)) {
+                $langNodes = [
+                    ...$langNodes,
+                    ...$reader->all($node, 'term')
+                ];
             }
         }
-        return $preferredLangResults ?: $allResults;
+        $langNodes = $this->getAllLanguageSpecificNodes($langNodes, $this->getLocale(), true);
+        foreach ($langNodes as $langNode) {
+            if ($term = $reader->value($langNode)) {
+                $label = $reader->attr($langNode, 'label');
+                $results[] = $label ? compact('term', 'label') : $term;
+            }
+        }
+        return $results;
     }
 
     /**
@@ -1414,7 +1412,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                         : $startDate;
 
                     if ($endDate && $startDate != $endDate) {
-                        $date .= '-' . ($this->dateConverter
+                        $date .= ' - ' . ($this->dateConverter
                             ? $this->dateConverter->convertToDisplayDate(
                                 $endDateType,
                                 $endDate
@@ -1631,46 +1629,6 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get an array of format classifications for the record.
-     *
-     * @return array
-     */
-    public function getFormatClassifications()
-    {
-        $reader = $this->getXmlReader();
-        $results = [];
-        foreach ($reader->all(path: 'lido/descriptiveMetadata/objectClassificationWrap') as $node) {
-            if (!($workTypeTerm = $reader->firstValue($node, 'objectWorkTypeWrap/objectWorkType/term'))) {
-                continue;
-            }
-            foreach ($reader->all($node, 'classificationWrap/classification') as $classification) {
-                $type = $reader->attr($classification, 'type');
-                if (in_array($type, $this->excludedClassifications)) {
-                    continue;
-                }
-                $getDisplayString = function (string $term, string $extra) {
-                    return $extra ? "$term ($extra)" : $term;
-                };
-                foreach ($reader->all($classification, 'term') as $term) {
-                    $termString = $reader->value($term);
-                    $termType = $reader->attr($term, 'type') ?? '';
-                    $termLabel = $reader->attr($term, 'label') ?? '';
-
-                    switch ($workTypeTerm) {
-                        case 'rakennetun ympäristön kohde':
-                            $results[] = $getDisplayString($termString, $termType);
-                            break 2;
-                        case 'arkeologinen kohde':
-                            $results[] = $getDisplayString($termString, $termLabel);
-                            break;
-                    }
-                }
-            }
-        }
-        return $results;
-    }
-
-    /**
      * Get identifier
      *
      * @return array
@@ -1731,7 +1689,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         foreach ($reader->all(path: $path) as $inscriptions) {
             $group = [];
             foreach ($reader->all($inscriptions, 'inscriptionDescription') as $node) {
-                $descriptiveNoteValue = $reader->first($node, 'descriptiveNoteValue');
+                if (!($descriptiveNoteValue = $reader->first($node, 'descriptiveNoteValue'))) {
+                    continue;
+                }
                 if ('' === ($content = $reader->value($descriptiveNoteValue) ?? '')) {
                     continue;
                 }

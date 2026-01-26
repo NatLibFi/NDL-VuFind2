@@ -177,6 +177,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      */
     public function getIiifManifests(): array
     {
+        // FINNA-4295: Temporarily disable all collection manifests until such
+        // time that we have resolved some UX issues
+        if (in_array('1/Other/Collection/', $this->getFormats())) {
+            return [];
+        }
+
         $reader = $this->getMarcReader();
         $field856 = $reader->getFields('856', ['q', 'u']);
         $manifests = [];

@@ -395,6 +395,7 @@ $config = [
             'Finna\OrganisationInfo\Provider\MuseotFi' => 'Finna\OrganisationInfo\Provider\AbstractProviderFactory',
             \Finna\Ratings\RatingsService::class => \VuFind\Ratings\RatingsServiceFactory::class,
             'Finna\Record\Loader' => 'Finna\Record\LoaderFactory',
+            \Finna\Record\IIIF\IIIFManifestGenerator::class => \Finna\Record\IIIF\IIIFManifestGeneratorFactory::class,
             \Finna\Record\ResourcePopulator::class => \VuFind\Record\ResourcePopulatorFactory::class,
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
@@ -738,6 +739,7 @@ $config = [
                     \Finna\Db\Service\RecordServiceInterface::class => \Finna\Db\Service\RecordService::class,
                     \Finna\Db\Service\ResourceServiceInterface::class => \Finna\Db\Service\ResourceService::class,
                     \Finna\Db\Service\SearchServiceInterface::class => \Finna\Db\Service\SearchService::class,
+                    \Finna\Db\Service\UserCardServiceInterface::class => \Finna\Db\Service\UserCardService::class,
                     \Finna\Db\Service\UserListServiceInterface::class => \Finna\Db\Service\UserListService::class,
                     \Finna\Db\Service\UserResourceServiceInterface::class => \Finna\Db\Service\UserResourceService::class,
                     \Finna\Db\Service\UserServiceInterface::class => \Finna\Db\Service\UserService::class,
@@ -1167,6 +1169,7 @@ $recordRoutes = [
 // Define non tab record actions
 $nonTabRecordActions = [
     'Feedback', 'RepositoryLibraryRequest', 'ArchiveRequest', 'ValidationReport',
+    'IIIFManifest',
 ];
 
 // Define dynamic routes -- controller => [route name => action]
@@ -1175,6 +1178,7 @@ $dynamicRoutes = [
     'LibraryCards' => [
         'newLibraryCardPassword' => 'newPassword/[:id]',
         'librarycards-displaybarcode' => 'displayBarcode/[:id]',
+        'librarycards-connectedusers' => 'connectedUsers/:id',
     ],
     'MyResearch' => ['sortList' => 'SortList/[:id]'],
     'ReservationList' => [

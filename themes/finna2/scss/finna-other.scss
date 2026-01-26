@@ -178,25 +178,6 @@ label.list-group-item {
   padding: 4px 0px;
 }
 
-/* --- Collection view --- */
-.template-dir-collection.template-name-view {
-  & .collection-title {
-    margin-top: 0;
-  }
-  & .list-group.filters {
-    & input {
-      max-width: 100%;
-      @include media-breakpoint-between(sm, md) {
-        width: 100%;
-        margin-bottom: 5px;
-      }
-      @include media-breakpoint-down(sm) {
-        display: inline-block;
-      }
-    }
-  }
-}
-
 /* --- Badges - blend the links in --- */
 .badge a {
   color: #fff;
@@ -316,6 +297,12 @@ label.list-group-item {
   &.summary,
   & > :last-child {
     margin-bottom: 0;
+  }
+}
+.more-link,
+.less-link {
+  .icon {
+    padding-left: 3px;
   }
 }
 .more-link, .less-link, .less-link-top {

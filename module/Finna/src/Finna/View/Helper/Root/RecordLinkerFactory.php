@@ -70,7 +70,8 @@ class RecordLinkerFactory implements FactoryInterface
         }
         $helper = new $requestedName(
             $container->get(\VuFind\Record\Router::class),
-            $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigArray('datasources')
+            $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigArray('datasources'),
+            $container->get('ViewRenderer')->plugin('serverUrl')
         );
         $helper->setSearchMemory($container->get(\VuFind\Search\Memory::class));
         return $helper;

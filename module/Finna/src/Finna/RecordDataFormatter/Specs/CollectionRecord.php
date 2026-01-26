@@ -97,7 +97,6 @@ class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
         'Events',
         'Measurements',
         'Inscriptions',
-        'Other Classification',
         'Unit ID',
         'Unit IDs',
         'Authors',

@@ -7,7 +7,7 @@
             "Finna\\": ["module/Finna/src/Finna", "module/Finna"],
             "FinnaApi\\": ["module/FinnaApi/src/FinnaApi", "module/FinnaApi"],
             "FinnaConsole\\": ["module/FinnaConsole/src/FinnaConsole", "module/FinnaConsole"],
-            "FinnaCustom\\": ["module/FinnaCustom/src/FinnaCustom", "module/FinnaCustom"],
+            "FinnaCustom\\": "module/FinnaCustom/src/FinnaCustom",
             "FinnaSearch\\": ["module/FinnaSearch/src/FinnaSearch", "module/FinnaSearch"],
             "FinnaTheme\\": ["module/FinnaTheme/src/FinnaTheme", "module/FinnaTheme"]
         }
@@ -35,6 +35,7 @@
             "cd themes/finna2 && npm run updateDeps"
         ],
         "install-build-deps": [
+            "cd themes/bootstrap5 && npm run installBuildDeps",
             "cd themes/finna2 && npm run installBuildDeps"
         ]
     }
