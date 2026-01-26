@@ -2006,9 +2006,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $reader = $this->getXmlReader();
         $results = [];
         $language = $this->getLocale();
-        $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectDate/displayDate';
+        $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject';
         foreach ($reader->all(path: $path) as $node) {
-            if ($term = $this->getLanguageSpecificValue([$node], $language)) {
+            if ($term = $this->getLanguageSpecificValueByPath($node, 'subjectDate/displayDate', $language)) {
                 $results[] = $term;
             }
         }
@@ -2340,11 +2340,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             $result = [
                 'url' => $url,
             ];
-            if ('' !== ($desc = $this->getLanguageSpecificValue($work, 'displayObject'))) {
+            if ('' !== ($desc = $this->getLanguageSpecificValueByPath($work, 'displayObject', $language))) {
                 $result['desc'] = $desc;
             }
-            if ($objectID = $reader->all($work, 'object/objectID')) {
-                $objectID = $this->getLanguageSpecificNode($objectID, $language);
+            if ($objectIDs = $reader->all($work, 'object/objectID')) {
+                if (!($objectID = $this->getLanguageSpecificNode($objectIDs, $language))) {
+                    continue;
+                }
                 $result['info'] = $reader->value($objectID) ?? '';
                 if ($label = $reader->attr($objectID, 'label')) {
                     $result['label'] = $label;
