@@ -1388,8 +1388,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
             $type = $this->toLower($reader->firstValue($node, 'eventType/term') ?? '');
             $date = $this->getLanguageSpecificValueByPath($node, 'eventDate/displayDate', $language);
             if (!$date && $dateNode = $reader->first($node, 'eventDate/date')) {
-                $startDate = $reader->firstValue($dateNode, 'earliestDate');
-                $endDate = $reader->firstValue($dateNode, 'latestDate');
+                $startDate = $reader->firstValue($dateNode, 'earliestDate') ?? '';
+                $endDate = $reader->firstValue($dateNode, 'latestDate') ?? '';
                 if (strlen($startDate) == 4 && strlen($endDate) == 4) {
                     $date = "$startDate-$endDate";
                 } else {
@@ -1447,7 +1447,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                         'id' => $id,
                         'source' => $source,
                     ];
-                    $lang = $reader->attr($term, 'lang') ?? null;
+                    $lang = $reader->attr($term, 'lang');
                     if ($lang === $language) {
                         $langMethodsExtended[] = [
                             'data' => $termStr,
