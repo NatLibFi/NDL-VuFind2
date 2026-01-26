@@ -83,7 +83,7 @@ trait FinnaXmlReaderTrait
     }
 
     /**
-     * Get XmlDoc.
+     * Get XmlDoc from fullrecord.
      *
      * @return XmlDoc
      */

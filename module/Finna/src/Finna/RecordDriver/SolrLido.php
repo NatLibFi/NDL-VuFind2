@@ -60,9 +60,7 @@ use function strlen;
 class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait;
-    use Feature\FinnaXmlReaderTrait {
-        getXmlDoc as getXmlDocTraitVersion;
-    }
+    use Feature\FinnaXmlReaderTrait;
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
@@ -2920,13 +2918,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get XmlDoc.
+     * Get XmlDoc from fullrecord.
      *
      * @return XmlDoc
      */
     protected function getXMLReader(): XmlDoc
     {
-        $xmlDoc = $this->getXmlDocTraitVersion();
+        $xmlDoc = $this->getXmlDoc();
         $xmlDoc->setDefaultNamespace(static::LIDO_NAMESPACE);
         return $xmlDoc;
     }
