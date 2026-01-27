@@ -619,7 +619,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
                     (string)$identifier['type'] === 'isbn'
                     || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
                 ) {
-                    $result[] = $identifier;
+                    $result[] = (string)$identifier;
                 }
             }
         }
