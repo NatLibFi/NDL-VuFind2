@@ -2681,7 +2681,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     public function getAccessibilityFeatures(): array
     {
         $results = [];
-        $results = $this->getFieldArray('341', ['a', 'b', 'c', 'd', 'e'], true, ': ');
+        $results = $this->getFieldArray('341', ['b', 'c', 'd', 'e'], false, '');
         foreach ($this->getMarcReader()->getFields('532') as $field) {
             if (
                 in_array($field['i1'], ['0', '1'])

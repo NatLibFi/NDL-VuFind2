@@ -292,7 +292,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ],
             'Accessibility Feature' => [
                 'getAccessibilityFeatures',
-                'data-escapeHtml.phtml',
+                'data-transEsc.phtml',
                 [
                     'context' => [
                         'class' => 'record-accessibility-features',
