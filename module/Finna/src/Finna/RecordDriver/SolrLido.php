@@ -2307,14 +2307,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         if (isset($this->cache[__FUNCTION__])) {
             return $this->cache[__FUNCTION__];
         }
-        $urls = [];
-        foreach (parent::getURLs() as $url) {
-            if (!$this->urlBlocked($url['url'] ?? '', $url['desc'] ?? '')) {
-                $urls[] = $url;
-            }
-        }
-        $urls = $this->resolveUrlTypes($urls);
-        $this->cache[__FUNCTION__] = array_merge($urls, $this->getAudios(), $this->getVideos());
+        $this->cache[__FUNCTION__] = array_merge($this->getAudios(), $this->getVideos());
         return $this->cache[__FUNCTION__];
     }
 
