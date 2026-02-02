@@ -1010,6 +1010,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     {
         parent::setRawData($data);
         $this->lazyRecordXML = null;
+        $this->lazyRecordXmlDoc = null;
     }
 
     /**
