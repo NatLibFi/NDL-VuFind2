@@ -94,4 +94,29 @@ trait FinnaXmlReaderTrait
         }
         return $this->lazyXmlDoc;
     }
+
+    /**
+     * Get XmlDoc from fullrecord.
+     *
+     * This is a default implementation that can be overridden in classes using this trait.
+     *
+     * @return XmlDoc
+     */
+    public function getXmlReader(): XmlDoc
+    {
+        return $this->getXmlDoc();
+    }
+
+    /**
+     * Get lang attribute from xml namespace with fallback to default namespace.
+     *
+     * @param array $node XmlDoc node
+     *
+     * @return ?string
+     */
+    protected function getLangAttr(array $node): ?string
+    {
+        $xml = $this->getXmlReader();
+        return $xml->attr($node, '{{$this->xmlNs}}lang') ?? $xml->attr($node, 'lang');
+    }
 }
