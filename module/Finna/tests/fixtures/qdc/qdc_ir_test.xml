@@ -5,27 +5,48 @@
   <contributor type="illustrator">Piia Piirtäjä</contributor>
   <contributor type="organisation" lang="fi">Helsingin yliopisto</contributor>
   <contributor type="organisation" lang="sv">Helsingfors universitet</contributor>
+  <contributor type="school" lang="-">School</contributor>
   <subject lang="-">Duck</subject>
   <subject lang="-">Tasmanian Devil</subject>
   <description lang="fi">Kuvausteksti</description>
   <description lang="en">Description text</description>
   <description lang="en">Additional description</description>
+  <description lang="en" format="image/jpeg">Photo</description>
   <description type="notification" lang="fi">Huomautusteksti</description>
   <description type="notification" lang="en">Notification text</description>
   <available>2017-06-27T09:23:48Z</available>
   <issued>1992</issued>
   <type lang="-">julkaisu</type>
   <identifier>123-4-245-6</identifier>
+  <identifier type="isbn">978-3-16-148410-0</identifier>
+  <identifier>978-3-16-148410-1</identifier>
+  <identifier>issn:0000-0019</identifier>
   <identifier>https://www.this.is.identifier.com/animals</identifier>
   <language type="iso" lang="-">fi</language>
   <relation type="ispartof" lang="-">Animals of Earth</relation>
   <relation type="numberofseries" lang="-">11/2022</relation>
+  <relation type="ispartofseries" lang="en">Animals of Earth - The Series</relation>
+  <relation type="numberinseries" lang="en">11-2022</relation>
   <relation type="issn" lang="-">1234-5678</relation>
   <rights>CC BY 4.0</rights>
   <rights type="copyright">This is a copyright description</rights>
   <rights type="notdisplayable">This is a copyright which should not be displayed</rights>
   <rights type="copyright">This is a copyright which should also be displayed as description</rights>
+  <rights type="accessrights" lang="en">Restricted Access</rights>
+  <rights type="accessrights" lang="fi">Rajattu käyttö</rights>
   <publisher lang="-">Tielaitos</publisher>
+  <file bundle="ORIGINAL" href="https://localhost/thumb.odd" name="thumb.odd" type="image/other" length="123" sequence="1"/>
+  <file bundle="NONORIGINAL" href="https://localhost/copy" name="copy.pdf" type="application/pdf" length="456" sequence="1"/>
   <file bundle="ORIGINAL" href="https://www.animals.of.earth.fi/duck.pdf" name="duck.pdf" type="application/pdf" length="41070954" sequence="1"/>
+  <file bundle="ORIGINAL" href="https://www.animals.of.moon.fi/duck.png" name="duck.png" type="image/png" length="2323" sequence="1"/>
   <recordID>10024_138404</recordID>
+  <abstract lang="fi">Tosi abstraktia</abstract>
+  <abstract lang="en">So abstract</abstract>
+  <medium>No physical carrier</medium>
+  <format>Format</format>
+  <format>Another Format</format>
+  <extent>Extent</extent>
+  <programme>Duck Education</programme>
+  <keyword>keyword1</keyword>
+  <keyword>keyword2</keyword>
 </qualifieddc>

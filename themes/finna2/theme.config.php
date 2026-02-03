@@ -342,6 +342,7 @@ return [
             'feed-play' => 'FontAwesome:play-circle',
             'filter-collapse' => 'FontAwesome:chevron-up',
             'filter-expand' => 'FontAwesome:chevron-down',
+            'connected-accounts' => 'FinnaIcons:finna',
             'finna-suggestions-link' => 'FinnaIcons:arrow-right',
             'full-results-link' => 'FinnaIcons:right',
             'google-plus' => 'FinnaIcons:google+',

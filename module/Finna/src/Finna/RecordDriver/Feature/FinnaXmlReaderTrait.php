@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018-2019.
+ * Copyright (C) The National Library of Finland 2018-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -29,6 +29,8 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use FinnaXml\XmlDoc;
+
 /**
  * Functions for reading XML records.
  *
@@ -36,7 +38,6 @@ namespace Finna\RecordDriver\Feature;
  *
  * @category VuFind
  * @package  RecordDrivers
- * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
@@ -44,11 +45,25 @@ namespace Finna\RecordDriver\Feature;
 trait FinnaXmlReaderTrait
 {
     /**
-     * XML record. Access only via getXMLRecord() as this is initialized lazily.
+     * The XML namespace.
+     *
+     * @var string
+     */
+    protected $xmlNs = 'http://www.w3.org/2000/xmlns/';
+
+    /**
+     * XML record. Access only via getXmlRecord() as this is initialized lazily.
      *
      * @var \SimpleXMLElement
      */
     protected $lazyXmlRecord = null;
+
+    /**
+     * XmlDoc. Access only via getXmlDoc() as this is initialized lazily.
+     *
+     * @var XmlDoc
+     */
+    protected ?XmlDoc $lazyXmlDoc = null;
 
     /**
      * Get access to the raw SimpleXMLElement object.
@@ -65,5 +80,18 @@ trait FinnaXmlReaderTrait
             }
         }
         return $this->lazyXmlRecord;
+    }
+
+    /**
+     * Get XmlDoc from fullrecord.
+     *
+     * @return XmlDoc
+     */
+    public function getXmlDoc(): XmlDoc
+    {
+        if (null === $this->lazyXmlDoc) {
+            $this->lazyXmlDoc = (new XmlDoc())->parse($this->fields['fullrecord']);
+        }
+        return $this->lazyXmlDoc;
     }
 }
