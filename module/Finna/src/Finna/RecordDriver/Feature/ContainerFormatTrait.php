@@ -33,7 +33,6 @@ use Finna\Record\Loader;
 use Finna\RecordDriver\CuratedRecord;
 use Finna\RecordDriver\CuratedRecordList;
 use Finna\RecordDriver\PluginManager;
-use FinnaXml\Notation;
 use FinnaXml\XmlDoc;
 use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\ParamBag;

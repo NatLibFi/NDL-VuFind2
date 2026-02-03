@@ -33,7 +33,6 @@ use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
-use FinnaXml\Notation;
 use FinnaXml\XmlDoc;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 
