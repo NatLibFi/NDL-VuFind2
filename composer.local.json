@@ -18,6 +18,7 @@
         }
     },
     "require": {
+        "defuse/php-encryption": "^2.4",
         "league/mime-type-detection": "1.9.0",
         "natlibfi/besimple-soap": "3.0.1",
         "natlibfi/finna-code-sets": "0.5.2",
