@@ -1,7 +1,8 @@
 <?xml version="1.0"?>
 <dcterms:qualifieddc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:kk="http://kk/1.0"
   xsi:schemaLocation="http://kk/1.0/qdckk.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns:dcterms="http://purl.org/dc/terms/">
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:qdc_extended="http://www.kansalliskirjasto.fi/qdc_extended">
   <dc:title lang="-">SolrQdc Institutional Repository test</dc:title>
   <dc:creator>Kiira Kirjoittaja</dc:creator>
   <dc:contributor type="illustrator">Piia Piirtäjä</dc:contributor>
@@ -52,7 +53,7 @@
   <dc:format>Format</dc:format>
   <dc:format>Another Format</dc:format>
   <dcterms:extent>Extent</dcterms:extent>
-  <dcterms:programme>Duck Education</dcterms:programme>
-  <dcterms:keyword>keyword1</dcterms:keyword>
-  <dcterms:keyword>keyword2</dcterms:keyword>
+  <qdc_extended:programme>Duck Education</qdc_extended:programme>
+  <qdc_extended:keyword>keyword1</qdc_extended:keyword>
+  <qdc_extended:keyword>keyword2</qdc_extended:keyword>
 </dcterms:qualifieddc>

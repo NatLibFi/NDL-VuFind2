@@ -71,6 +71,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     protected string $dcTermsNs = 'http://purl.org/dc/terms/';
 
     /**
+     * Extended Dublic Core namespace
+     *
+     * @var string
+     */
+    protected string $qdcExtendedNs = 'http://www.kansalliskirjasto.fi/qdc_extended';
+
+    /**
      * KK namespace
      *
      * @var string
@@ -496,7 +503,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     public function getEducationPrograms()
     {
         $xml = $this->getXmlReader();
-        return $xml->allValues(path: "{{$this->dcTermsNs}}programme") ?: $xml->allValues(path: 'programme');
+        return $xml->allValues(path: "{{$this->qdcExtendedNs}}programme") ?: $xml->allValues(path: 'programme');
     }
 
     /**
@@ -695,7 +702,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     {
         $xml = $this->getXmlReader();
         $result = [];
-        foreach ($this->getDcTermsElements('keyword') as $keyword) {
+        foreach ($this->getQdcExtendedElements('keyword') as $keyword) {
             $result[] = $xml->value($keyword);
         }
         return $result;
@@ -990,6 +997,19 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     {
         $xml = $this->getXmlReader();
         return $xml->all(path: "{{$this->dcTermsNs}}$nodeName") ?: $xml->all(path: $nodeName);
+    }
+
+    /**
+     * Get elements from the QdcExtended namespace with fallback to default namespace.
+     *
+     * @param string $nodeName Node name
+     *
+     * @return array
+     */
+    protected function getQdcExtendedElements(string $nodeName): array
+    {
+        $xml = $this->getXmlReader();
+        return $xml->all(path: "{{$this->qdcExtendedNs}}$nodeName") ?: $xml->all(path: $nodeName);
     }
 
     /**
