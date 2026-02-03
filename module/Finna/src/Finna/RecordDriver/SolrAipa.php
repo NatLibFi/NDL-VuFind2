@@ -448,6 +448,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
                 . $this->getItemId($item),
             'title' => $item->firstValue(path: "{{$this->dcNs}}title"),
             'fullrecord' => $item->toXML(),
+            // TODO: position does not seem to be read from correct place. Also the result seems to be unused. FIXME?
             'position' => (int)$item->firstValue(path: "{{$this->aipaNs}}position"),
             'record_format' => 'lrmi',
             'datasource_str_mv' => $this->getDataSource(),
