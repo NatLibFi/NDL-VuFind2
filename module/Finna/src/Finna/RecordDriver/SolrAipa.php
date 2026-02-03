@@ -387,9 +387,9 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected function getEncapsulatedRecordElementTagName(): string
     {
         return match ($this->getType()) {
-            'aipa:education' => 'item', // For BC, to be removed later.
-            self::AIPA_TYPE_EDUCATION => 'item',
-            default => 'curatedRecords',
+            'aipa:education' => "{{$this->aipaNs}}item", // For BC, to be removed later.
+            self::AIPA_TYPE_EDUCATION => "{{$this->aipaNs}}item",
+            default => "{{$this->aipaNs}}curatedRecords",
         };
     }
 

@@ -287,7 +287,7 @@ class AipaLrmi extends SolrLrmi implements
      */
     protected function getEncapsulatedRecordElementTagName(): string
     {
-        return 'material';
+        return "{{$this->lrmiNs}}material";
     }
 
     /**

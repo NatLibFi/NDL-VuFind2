@@ -33,6 +33,7 @@ use Finna\Record\Loader;
 use Finna\RecordDriver\CuratedRecord;
 use Finna\RecordDriver\CuratedRecordList;
 use Finna\RecordDriver\PluginManager;
+use FinnaXml\Notation;
 use FinnaXml\XmlDoc;
 use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\ParamBag;
@@ -191,7 +192,7 @@ trait ContainerFormatTrait
      */
     protected function getEncapsulatedRecordElementTagName(): string
     {
-        return 'item';
+        return "{{$this->aipaNs}}item";
     }
 
     /**
@@ -205,7 +206,7 @@ trait ContainerFormatTrait
         $items = [];
         $xml = $this->getXmlReader();
         $tagName = $this->getEncapsulatedRecordElementTagName();
-        foreach ($xml->all(path: "{{$this->aipaNs}}$tagName") as $node) {
+        foreach ($xml->all(path: $tagName) as $node) {
             $item = new XmlDoc();
             $item->import($xml->export($node));
             $items[] = $item;
@@ -406,10 +407,10 @@ trait ContainerFormatTrait
     protected function filterEncapsulatedRecords(XmlDoc $record): XmlDoc
     {
         // Update encapsulated record data with their filtered documents:
-        $encapsulatedTagName = $this->getEncapsulatedRecordElementTagName();
+        [, $encapsulatedTagLocalName] = Notation::parse($this->getEncapsulatedRecordElementTagName());
         $record->modify(
-            function (&$node) use ($record, $encapsulatedTagName): void {
-                if ($record->localName($node) === $encapsulatedTagName) {
+            function (&$node) use ($record, $encapsulatedTagLocalName): void {
+                if ($record->localName($node) === $encapsulatedTagLocalName) {
                     $childDoc = new XmlDoc();
                     $childDoc->import($record->export($node));
                     $encapsulatedRecord = $this->getEncapsulatedRecord(
