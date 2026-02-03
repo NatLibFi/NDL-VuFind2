@@ -311,14 +311,11 @@ class AipaLrmi extends SolrLrmi implements
     {
         $record = parent::getFilteredXmlElement();
         $record->filter(
-            function (array $node, string $path): bool {
+            function (array $node, string $path) use ($record): bool {
                 $path = implode(
                     '/',
                     array_map(
-                        function ($pathPart) {
-                            [, $localName] = Notation::parse($pathPart);
-                            return $localName;
-                        },
+                        [$record, 'localName'],
                         explode('/', $path)
                     )
                 );

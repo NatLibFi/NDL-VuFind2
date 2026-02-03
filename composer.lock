@@ -7897,16 +7897,16 @@
         },
         {
             "name": "natlibfi/finna-xml",
-            "version": "1.5.0",
+            "version": "1.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/NatLibFi/finna-xml.git",
-                "reference": "fa0af1385ca3470ffa1aecca5adc55235a1b6a81"
+                "reference": "1213fce9d4690029d17bbfde9f71bdc50c357db4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/NatLibFi/finna-xml/zipball/fa0af1385ca3470ffa1aecca5adc55235a1b6a81",
-                "reference": "fa0af1385ca3470ffa1aecca5adc55235a1b6a81",
+                "url": "https://api.github.com/repos/NatLibFi/finna-xml/zipball/1213fce9d4690029d17bbfde9f71bdc50c357db4",
+                "reference": "1213fce9d4690029d17bbfde9f71bdc50c357db4",
                 "shasum": ""
             },
             "require": {
@@ -7945,9 +7945,9 @@
             ],
             "support": {
                 "issues": "https://github.com/NatLibFi/finna-xml/issues",
-                "source": "https://github.com/NatLibFi/finna-xml/tree/v1.5.0"
+                "source": "https://github.com/NatLibFi/finna-xml/tree/v1.6.0"
             },
-            "time": "2026-02-02T14:28:28+00:00"
+            "time": "2026-02-03T13:15:21+00:00"
         },
         {
             "name": "natlibfi/php-html-parser",

@@ -156,8 +156,7 @@ class CuratedRecord extends SolrDefault implements
         $record = clone $this->getXmlDoc();
         $record->filter(
             function (array $node) use ($record): bool {
-                [, $localName] = Notation::parse($record->name($node));
-                return 'comment' === $localName;
+                return 'comment' === $record->localName($node);
             }
         );
         // Only the URL of the single encapsulated record is in the XML record, so

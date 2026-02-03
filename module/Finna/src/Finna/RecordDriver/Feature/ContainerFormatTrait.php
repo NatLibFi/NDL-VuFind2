@@ -407,7 +407,7 @@ trait ContainerFormatTrait
     protected function filterEncapsulatedRecords(XmlDoc $record): XmlDoc
     {
         // Update encapsulated record data with their filtered documents:
-        [, $encapsulatedTagLocalName] = Notation::parse($this->getEncapsulatedRecordElementTagName());
+        $encapsulatedTagLocalName = $record->localName($this->getEncapsulatedRecordElementTagName());
         $record->modify(
             function (&$node) use ($record, $encapsulatedTagLocalName): void {
                 if ($record->localName($node) === $encapsulatedTagLocalName) {
