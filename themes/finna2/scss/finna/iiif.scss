@@ -7,7 +7,7 @@
 
 #tify {
     height: 65vh;
-    @include media-breakpoint-up(lg) {
+    @include media-breakpoint-down(lg) {
         height: 60vh;
     }
     color-scheme: inherit;
