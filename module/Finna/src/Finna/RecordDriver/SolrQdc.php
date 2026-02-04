@@ -274,7 +274,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
             }
         }
         foreach ($this->getElements('contributor') as $contributor) {
-            $role = $xml->attr($contributor, "{{$this->dcTermsNs}}type") ?? $xml->attr($contributor, 'type');
+            $role = $this->getTypeAttr($contributor);
             if (($name = $xml->value($contributor)) && $role !== 'orcid') {
                 // For organization fields, include only the name in preferred language
                 if (in_array($role, $organizationTypes)) {
@@ -408,7 +408,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
         $thumbnails = [];
         $otherSizes = [];
         // Add any PDF if we don't have images:
-        if (!$results && $pdfUrl) {
+        if (!$results && $includePdf && $pdfUrl) {
             $addToResults(
                 [
                     'urls' => [

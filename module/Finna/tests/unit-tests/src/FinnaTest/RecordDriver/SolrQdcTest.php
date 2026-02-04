@@ -368,6 +368,43 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getAllImages with PDF only.
+     *
+     * @return void
+     */
+    public function testGetAllImagesPdf(): void
+    {
+        $driver = $this->getInstitutionalRepositoryDriver(fixture: 'qdc/qdc_kk_pdf.xml');
+        $this->assertSame(
+            [
+                [
+                    'urls' => [
+                        'large' => 'https://www.animals.of.earth.fi/duck.pdf',
+                        'small' => 'https://www.animals.of.earth.fi/duck.pdf',
+                        'medium' => 'https://www.animals.of.earth.fi/duck.pdf',
+                    ],
+                    'description' => '',
+                    'rights' => [
+                        'copyright' => '',
+                        'link' => '',
+                        'description' => [],
+                    ],
+                    'pdf' => true,
+                    'cacheSizes' => [
+                        'medium' => 'small',
+                    ],
+                    'downloadable' => true,
+                ],
+            ],
+            $driver->getAllImages()
+        );
+        $this->assertSame(
+            [],
+            $driver->getAllImages(includePdf: false)
+        );
+    }
+
+    /**
      * Function to get expected function data
      *
      * @return array
@@ -599,6 +636,12 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         $driver = $this->getInstitutionalRepositoryDriver(fixture: 'qdc/qdc_kk.xml');
         $this->assertXmlStringEqualsXmlString(
             $this->getFixture('qdc/qdc_kk_filtered.xml', 'Finna'),
+            $driver->getFilteredXML()
+        );
+
+        $driver = $this->getInstitutionalRepositoryDriver(fixture: 'qdc/qdc_museum_test.xml');
+        $this->assertXmlStringEqualsXmlString(
+            $this->getFixture('qdc/qdc_museum_test_filtered.xml', 'Finna'),
             $driver->getFilteredXML()
         );
     }
