@@ -211,12 +211,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getPhysicalMediums(): array
     {
-        $xml = $this->getXmlReader();
-        $results = [];
-        foreach ($this->getDcTermsElements('medium') as $medium) {
-            $results[] = $xml->value($medium);
-        }
-        return $results;
+        return $this->getDcTermsElements('medium', true);
     }
 
     /**
@@ -226,12 +221,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getPhysicalDescriptions(): array
     {
-        $xml = $this->getXmlReader();
-        $results = [];
-        foreach ([...$this->getElements('format'), ...$this->getDcTermsElements('extent')] as $node) {
-            $results[] = $xml->value($node);
-        }
-        return $results;
+        return [...$this->getElements('format', true), ...$this->getDcTermsElements('extent', true)];
     }
 
     /**
@@ -502,8 +492,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getEducationPrograms()
     {
-        $xml = $this->getXmlReader();
-        return $xml->allValues(path: "{{$this->qdcExtendedNs}}programme") ?: $xml->allValues(path: 'programme');
+        return $this->getQdcExtendedElements('programme', true);
     }
 
     /**
@@ -668,12 +657,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     {
         $xml = $this->getXmlReader();
         $relations = [];
-        foreach ($this->getDcTermsElements('isPartOf') as $isPartOf) {
-            $value = $xml->value($isPartOf);
+        foreach ($this->getDcTermsElements('isPartOf', true) as $isPartOf) {
             $relations[] = [
-                'value' => $value,
+                'value' => $isPartOf,
                 'link' => [
-                    'value' => $value,
+                    'value' => $isPartOf,
                     'type' => 'allFields',
                 ],
             ];
@@ -700,12 +688,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getKeywords()
     {
-        $xml = $this->getXmlReader();
-        $result = [];
-        foreach ($this->getQdcExtendedElements('keyword') as $keyword) {
-            $result[] = $xml->value($keyword);
-        }
-        return $result;
+        return $this->getQdcExtendedElements('keyword', true);
     }
 
     /**
@@ -974,42 +957,48 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     /**
      * Get elements from the terms or elements namespaces with fallback to default namespace.
      *
-     * @param string $nodeName Node name
+     * @param string $nodeName   Node name
+     * @param bool   $valuesOnly Return only values?
      *
      * @return array
      */
-    protected function getElements(string $nodeName): array
+    protected function getElements(string $nodeName, bool $valuesOnly = false): array
     {
         $xml = $this->getXmlReader();
         // Prefer elements in the terms namespace:
-        return $this->getDcTermsElements($nodeName)
-            ?: $xml->all(path: "{{$this->dcNs}}$nodeName");
+        $method = $valuesOnly ? 'allValues' : 'all';
+        return $this->getDcTermsElements($nodeName, $valuesOnly)
+            ?: $xml->$method(path: "{{$this->dcNs}}$nodeName");
     }
 
     /**
      * Get elements from the DcTerms namespace with fallback to default namespace.
      *
-     * @param string $nodeName Node name
+     * @param string $nodeName   Node name
+     * @param bool   $valuesOnly Return only values?
      *
      * @return array
      */
-    protected function getDcTermsElements(string $nodeName): array
+    protected function getDcTermsElements(string $nodeName, bool $valuesOnly = false): array
     {
         $xml = $this->getXmlReader();
-        return $xml->all(path: "{{$this->dcTermsNs}}$nodeName") ?: $xml->all(path: $nodeName);
+        $method = $valuesOnly ? 'allValues' : 'all';
+        return $xml->$method(path: "{{$this->dcTermsNs}}$nodeName") ?: $xml->$method(path: $nodeName);
     }
 
     /**
      * Get elements from the QdcExtended namespace with fallback to default namespace.
      *
-     * @param string $nodeName Node name
+     * @param string $nodeName   Node name
+     * @param bool   $valuesOnly Return only values?
      *
      * @return array
      */
-    protected function getQdcExtendedElements(string $nodeName): array
+    protected function getQdcExtendedElements(string $nodeName, bool $valuesOnly = false): array
     {
         $xml = $this->getXmlReader();
-        return $xml->all(path: "{{$this->qdcExtendedNs}}$nodeName") ?: $xml->all(path: $nodeName);
+        $method = $valuesOnly ? 'allValues' : 'all';
+        return $xml->$method(path: "{{$this->qdcExtendedNs}}$nodeName") ?: $xml->$method(path: $nodeName);
     }
 
     /**
