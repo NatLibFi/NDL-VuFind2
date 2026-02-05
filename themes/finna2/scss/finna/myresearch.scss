@@ -846,7 +846,8 @@ form#renewals, form#update_holds, form#purge_history {
 }
 
 // Menu style
-.myresearch-menu, #my-info-dropdown-menu {
+.myresearch-menu,
+#my-info-dropdown-menu {
   a {
     display: flex;
     justify-content: space-between;
@@ -854,7 +855,7 @@ form#renewals, form#update_holds, form#purge_history {
       display: flex;
     }
     &:hover {
-      background-color: $gray-lighter;
+      background-color: $dropdown-link-hover-bg;
       text-decoration: none;
     }
     &:focus {
@@ -871,7 +872,8 @@ form#renewals, form#update_holds, form#purge_history {
 }
 
 // Status badges
-.myresearch-menu, #my-info-dropdown-menu {
+.myresearch-menu,
+#my-info-dropdown-menu {
   .status {
     float: right;
     .badge {

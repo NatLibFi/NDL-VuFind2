@@ -4,11 +4,11 @@
   if (count($cards) > ($this->limit ?? 1)): ?>
     <?php $targetCount = $this->ils()->checkCapability('getLoginDrivers') ? count($this->ils()->getLoginDrivers()) : 1; ?>
     <?php if (isset($loginMenu) && $loginMenu): ?>
-      <li class="logoutOptions card-selection" role="none">
+      <li class="card-selection" role="none">
         <a class="card-header<?=$loginMenu ? ' nav-link' : ''?>" href="<?=$this->url('librarycards-home')?>">
           <?=$this->transEsc($this->label ?? 'Kirjastokortti') ?>
         </a>
-        <label id="select-card-label-dropdown"><?= $this->transEsc('Library Card') ?></label>
+        <label id="select-card-label-dropdown" class="visually-hidden"><?= $this->transEsc('Library Card') ?></label>
         <?php foreach ($cards as $card): ?>
           <?php
             $target = '';
