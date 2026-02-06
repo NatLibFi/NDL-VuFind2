@@ -7,7 +7,9 @@
 }
 .browsebar .nav>li .iconlabel:before,
 .browsebar .nav-dropdown-label.iconlabel:before,
-.browsebar .dropdown-menu a.iconlabel:before{
+.browsebar .dropdown-menu a.iconlabel:before {
+  vertical-align: center;
+  font-size: 1.3em;
   margin-right: 0.5em;
 }
 .browsebar .navbar {
