@@ -207,6 +207,9 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
             if ($paymentConfig = $datasourceConfig[$source]['onlinePayment'] ?? null) {
                 $config['OnlinePayment']
                     = array_merge($this->remapPaymentConfig($paymentConfig), $config['OnlinePayment']);
+                if (empty($config['OnlinePayment']['errorEmail'])) {
+                    $config['OnlinePayment']['errorEmail'] = $datasourceConfig[$source]['feedbackEmail'] ?? null;
+                }
             }
         }
 

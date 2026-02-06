@@ -7,6 +7,9 @@
 
   .checkbox {
     margin: 8px 0px;
+    display: flex;
+    gap: 10px;
+
     &.disabled label > span {
       @include opacity(0.5);
       cursor: $cursor-disabled;
@@ -14,8 +17,6 @@
     &.blender-backend-secondary {
       margin-bottom: 1.5em;
     }
-    display: flex;
-    gap: 10px;
     > div {
       margin-left: 0px;
       display: flex;
