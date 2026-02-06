@@ -118,16 +118,6 @@ header {
     .login-icon {
       font-size: 1.2em;
     }
-    .login-text {
-      @include media-breakpoint-down(xs) {
-        display: none;
-      }
-    }
-  }
-  .login-text {
-    @include media-breakpoint-down(xs) {
-      display: inherit;
-    }
   }
   // fix navbar for .logoutOptions
   .logoutOptions {
@@ -151,12 +141,21 @@ header {
   }
 }
 @include media-breakpoint-down(xs) {
-  .finna-navbar .navbar-nav .logoutOptions {
-    .dropdown-menu {
-      right: -30px;
+  .finna-navbar .navbar-nav {
+    .login-text {
+      display: inherit;
     }
-    .username {
-      @include visually-hidden();
+    #loginOptions .login-text,
+    .logoutOptions .login-text {
+      display: none;
+    }
+    .logoutOptions {
+      .dropdown-menu {
+        right: -30px;
+      }
+      .username {
+        @include visually-hidden();
+      }
     }
   }
 }

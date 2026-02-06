@@ -67,14 +67,16 @@
   }
 }
 @media (max-width: $grid-float-breakpoint-max) {
-.navbar .navbar-main .dropdown-menu {
+  .navbar .navbar-main .dropdown-menu {
     border: none;
   }
 }
 
 .navbar-collapse {
   border-top: 3px solid $primary;
-  @media (min-width: $grid-float-breakpoint) {
+}
+@media (min-width: $grid-float-breakpoint) {
+  .navbar-collapse {
     border-top: none;
     box-shadow: none;
   }
@@ -121,7 +123,7 @@
   }
 }
 
-// Login button in mobile menu - customization option
+// Login button in mobile menu
 .navbar-nav {
   .nav-login {
     line-height: 64px;
