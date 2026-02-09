@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2014-2025.
+ * Copyright (C) The National Library of Finland 2014-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,6 +31,8 @@
  */
 
 namespace Finna\RecordDriver;
+
+use FinnaXml\XmlDoc;
 
 use function array_slice;
 use function count;
@@ -58,6 +60,13 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     use Feature\FinnaUrlCheckTrait;
     use Feature\FinnaIiifTrait;
     use \VuFind\Log\LoggerAwareTrait;
+
+    /**
+     * MARC XML namespace.
+     *
+     * @var string
+     */
+    protected string $marcNs = 'http://www.loc.gov/MARC21/slim';
 
     /**
      * Fields that may contain subject headings, and their descriptions
@@ -910,62 +919,46 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Return full record as a filtered XmlDoc for public APIs.
      *
      * This is not particularly beautiful, but the aim is to do the work with the
      * least effort.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXMLElement(): XmlDoc
     {
-        $collection = new \DOMDocument();
-        $collection->preserveWhiteSpace = false;
-        $collection->loadXML($this->getMarcReader()->toFormat('MARCXML'));
-        $record = $collection->getElementsByTagName('record')->item(0);
-        $fieldsToRemove = [];
-        $componentPartIds = [];
-        foreach ($record->getElementsByTagName('datafield') as $field) {
-            $tag = $field->getAttribute('tag');
-            // Delete 520 (summary etc. may contain material under copyright) and
-            // 979 (we will add a new one with just component part ids):
-            if ('520' === $tag) {
-                $fieldsToRemove[] = $field;
-            } elseif ('979' === $tag) {
-                foreach ($field->getElementsByTagName('subfield') as $subfield) {
-                    if ('a' === $subfield->getAttribute('code')) {
-                        $componentPartIds[] = $subfield->textContent;
+        $marcReader = $this->getMarcReader();
+        $componentPartIds = $marcReader->getFieldsSubfields('979', ['a']);
+        $doc = new XmlDoc();
+        $doc->parse($marcReader->toFormat('MARCXML'));
+        $doc->addNamespacePrefix($this->marcNs, 'marc');
+        $doc->filter(
+            function (&$node) use ($doc): bool {
+                // Delete 520 (summary etc. may contain material under copyright):
+                return $doc->attr($node, 'tag') === '520';
+            }
+        );
+        // Replace first 979 and delete the rest:
+        $added = false;
+        $doc->modify(
+            function (&$node) use ($doc, $componentPartIds, &$added): bool {
+                if ($doc->attr($node, 'tag') === '979') {
+                    if ($added) {
+                        return false;
                     }
+                    $doc->removeChildren($node);
+                    foreach ($componentPartIds as $id) {
+                        $doc->addChild($node, "{{$this->marcNs}}subfield", $id, ['code' => 'a']);
+                    }
+                    $doc->setAttr($node, 'ind1', ' ');
+                    $added = true;
                 }
-                $fieldsToRemove[] = $field;
+                return true;
             }
-        }
-        foreach ($fieldsToRemove as $field) {
-            $record->removeChild($field);
-        }
-        if ($componentPartIds) {
-            $field = $collection->createElement('datafield');
-            $tag = $collection->createAttribute('tag');
-            $tag->value = '979';
-            $field->appendChild($tag);
-            $ind1 = $collection->createAttribute('ind1');
-            $ind1->value = ' ';
-            $field->appendChild($ind1);
-            $ind2 = $collection->createAttribute('ind2');
-            $ind2->value = ' ';
-            $field->appendChild($ind2);
-            foreach ($componentPartIds as $id) {
-                $subfield = $collection->createElement('subfield');
-                $code = $collection->createAttribute('code');
-                $code->value = 'a';
-                $subfield->appendChild($code);
-                $subfield->appendChild($collection->createTextNode($id));
-                $field->appendChild($subfield);
-            }
-            $record->appendChild($field);
-        }
+        );
 
-        return simplexml_import_dom($collection);
+        return $doc;
     }
 
     /**
@@ -975,7 +968,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      */
     public function getFilteredXML()
     {
-        return $this->getFilteredXMLElement()->asXML();
+        return $this->getFilteredXMLElement()->toXML();
     }
 
     /**

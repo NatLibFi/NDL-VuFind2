@@ -7,6 +7,9 @@
 
 #tify {
     height: 65vh;
+    @include media-breakpoint-down(lg) {
+        height: 60vh;
+    }
     color-scheme: inherit;
 
     --tify-body-bg: #{$gray-ultralight};

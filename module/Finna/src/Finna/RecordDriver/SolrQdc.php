@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2013-2020.
+ * Copyright (C) The National Library of Finland 2013-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -32,8 +32,9 @@
 
 namespace Finna\RecordDriver;
 
+use FinnaXml\XmlDoc;
+
 use function array_slice;
-use function count;
 use function in_array;
 
 /**
@@ -54,6 +55,34 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     use Feature\FinnaXmlReaderTrait;
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
+
+    /**
+     * Dublin Core XML namespace
+     *
+     * @var string
+     */
+    protected string $dcNs = 'http://purl.org/dc/elements/1.1/';
+
+    /**
+     * Dublin Core Terms vocabulary namespace
+     *
+     * @var string
+     */
+    protected string $dcTermsNs = 'http://purl.org/dc/terms/';
+
+    /**
+     * Extended Dublic Core namespace
+     *
+     * @var string
+     */
+    protected string $qdcExtendedNs = 'http://www.kansalliskirjasto.fi/qdc_extended';
+
+    /**
+     * KK namespace
+     *
+     * @var string
+     */
+    protected string $kkNs = 'http://kk/1.0';
 
     /**
      * Image size mappings
@@ -132,10 +161,10 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
         $abstracts = [];
         $abstract = '';
         $lang = '';
-        $xml = $this->getXmlRecord();
-        foreach ($xml->abstract ?? [] as $node) {
-            $abstract = (string)$node;
-            $lang = (string)$node['lang'];
+        $xml = $this->getXmlReader();
+        foreach ($this->getDcTermsElements('abstract') as $node) {
+            $abstract = $xml->value($node);
+            $lang = $this->getLangAttr($node);
             if ($lang == 'en') {
                 $lang = 'en-gb';
             }
@@ -182,12 +211,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getPhysicalMediums(): array
     {
-        $xml = $this->getXmlRecord();
-        $results = [];
-        foreach ($xml->medium as $medium) {
-            $results[] = trim((string)$medium);
-        }
-        return $results;
+        return $this->getDcTermsElements('medium', true);
     }
 
     /**
@@ -197,14 +221,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getPhysicalDescriptions(): array
     {
-        $xml = $this->getXmlRecord();
-        $results = [];
-        foreach ([$xml->format, $xml->extent] as $nodes) {
-            foreach ($nodes as $node) {
-                $results[] = trim((string)$node);
-            }
-        }
-        return $results;
+        return [...$this->getElements('format', true), ...$this->getDcTermsElements('extent', true)];
     }
 
     /**
@@ -214,7 +231,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getNonPresenterAuthors(): array
     {
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $authors = [];
         foreach ($this->getPrimaryAuthors() as $author) {
             $authors[] = [
@@ -225,14 +242,17 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
         // Collect oganization names in preferred language
         $organizationTypes = ['organization', 'organisation', 'school', 'faculty', 'department'];
         $organization = [];
-        foreach ($xml->contributor as $contributor) {
-            $role = trim((string)($contributor->attributes()->type ?? ''));
-            $lang = trim((string)$contributor->attributes()->lang ?? self::NO_LOCALE);
+        foreach ($this->getElements('contributor') as $contributor) {
+            if (!($name = $xml->value($contributor))) {
+                continue;
+            }
+            $role = $this->getTypeAttr($contributor);
+            $lang = $this->getLangAttr($contributor) ?? self::NO_LOCALE;
             if ($lang === '-') {
                 $lang = self::NO_LOCALE;
             }
             if (in_array($role, $organizationTypes)) {
-                $organization[$role][$lang] = trim((string)$contributor);
+                $organization[$role][$lang] = $name;
             }
         }
         foreach ($organizationTypes as $orgtype) {
@@ -243,9 +263,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
                 }
             }
         }
-        foreach ($xml->contributor as $contributor) {
-            $role = trim((string)($contributor->attributes()->type ?? ''));
-            if (($name = trim((string)$contributor)) && ($role !== 'orcid')) {
+        foreach ($this->getElements('contributor') as $contributor) {
+            $role = $this->getTypeAttr($contributor);
+            if (($name = $xml->value($contributor)) && $role !== 'orcid') {
                 // For organization fields, include only the name in preferred language
                 if (in_array($role, $organizationTypes)) {
                     if ($organization[$role]['preferred'] ?? '') {
@@ -263,6 +283,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
                 ];
             }
         }
+
         return $authors;
     }
 
@@ -290,7 +311,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
 
         $results = [];
         $rights = [];
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $thumbnails = [];
         $otherSizes = [];
         $highResolution = [];
@@ -309,10 +330,20 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
             $this->imagesCount++;
         };
 
-        foreach ($xml->file as $node) {
-            $attributes = $node->attributes();
-            $type = (string)($attributes->type ?? '');
-            $url = (string)($attributes->href ?? $node);
+        $pdfUrl = null;
+        foreach ($this->getKkElements('file') as $node) {
+            $type = $xml->attr($node, 'type');
+            $url = $xml->attr($node, 'href') ?? $xml->value($node);
+            $bundle = strtolower($xml->attr($node, 'bundle') ?? '');
+            // Store PDFs for use later if images are not found:
+            if (null === $pdfUrl && 'original' === $bundle) {
+                if (
+                    (!$type || 'application/pdf' === $type)
+                    || (!$type && preg_match('/\.pdf$/i', $url))
+                ) {
+                    $pdfUrl = $url;
+                }
+            }
             if (
                 ($type && !in_array($type, array_keys($this->imageMediaTypes)))
                 || (!$type && !preg_match('/\.(jpg|png)$/i', $url))
@@ -323,7 +354,6 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
                 continue;
             }
 
-            $bundle = strtolower((string)$attributes->bundle);
             if ($bundle === 'thumbnail' && !$otherSizes) {
                 // Lets see if the record contains only thumbnails
                 $thumbnails[] = $url;
@@ -367,34 +397,19 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
         }
         $thumbnails = [];
         $otherSizes = [];
-        // Attempt to find a PDF file to be converted to a coverimage
-        if ($includePdf && empty($results)) {
-            $urls = [];
-            foreach ($xml->file as $node) {
-                $attributes = $node->attributes();
-                if ((string)$attributes->bundle !== 'ORIGINAL') {
-                    continue;
-                }
-                $url = isset($attributes->href)
-                    ? (string)$attributes->href : (string)$node;
-                $type = trim((string)$attributes->type);
-                if (
-                    ($type && $type !== 'application/pdf')
-                    || (!$type && !preg_match('/\.pdf$/i', $url))
-                ) {
-                    continue;
-                }
-                $urls['small'] = $urls['large'] = $url;
-                $addToResults(
-                    [
-                        'urls' => $urls,
-                        'description' => '',
-                        'rights' => $rights,
-                        'pdf' => true,
-                    ]
-                );
-                break;
-            }
+        // Add any PDF if we don't have images:
+        if (!$results && $includePdf && $pdfUrl) {
+            $addToResults(
+                [
+                    'urls' => [
+                        'large' => $pdfUrl,
+                        'small' => $pdfUrl,
+                    ],
+                    'description' => '',
+                    'rights' => $rights,
+                    'pdf' => true,
+                ]
+            );
         }
         return $this->cache[$cacheKey] = $results;
     }
@@ -408,7 +423,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     protected function getRights(string $language): array
     {
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $result = [
             'copyright' => '',
             'link' => '',
@@ -417,10 +432,9 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
         $firstElementPriority = null;
         $cache = [];
         // Get all the copyrights and save them in an array identified by language.
-        foreach ($xml->rights as $right) {
-            $strRight = trim((string)$right);
-            $type = trim((string)$right->attributes()->type);
-            $rightLanguage = trim((string)$right->attributes()->lang);
+        foreach ($this->getElements('rights') as $right) {
+            $type = $this->getTypeAttr($right) ?? '';
+            $rightLanguage = $this->getLangAttr($right);
             // QDC sometimes marks languageless elements with a dash
             if (!$rightLanguage || '-' === $rightLanguage) {
                 $rightLanguage = self::NO_LOCALE;
@@ -431,7 +445,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
                 $firstElementPriority = !$type && self::NO_LOCALE === $rightLanguage;
             }
             $cache[$rightLanguage][] = [
-                'txt' => $strRight,
+                'txt' => $xml->value($right),
                 'type' => $type,
             ];
         }
@@ -478,11 +492,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getEducationPrograms()
     {
-        $result = [];
-        foreach ($this->getXmlRecord()->programme as $programme) {
-            $result[] = (string)$programme;
-        }
-        return $result;
+        return $this->getQdcExtendedElements('programme', true);
     }
 
     /**
@@ -511,31 +521,37 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Return full record as a filtered XmlDoc for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
+     *
+     * @todo Return XML as string or XmlDoc when all classes support it
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXmlElement(): XmlDoc
     {
-        $record = clone $this->getXmlRecord();
-        while ($record->abstract) {
-            unset($record->abstract[0]);
-        }
         // Try to filter out any summary or abstract fields
         $filterTerms = [
             'tiivistelmä', 'abstract', 'abstracts', 'abstrakt', 'sammandrag',
             'sommario', 'summary', 'аннотация',
         ];
-        for ($i = count($record->description) - 1; $i >= 0; $i--) {
-            $node = $record->description[$i];
-            $description = mb_strtolower((string)$node, 'UTF-8');
-            $firstWords = array_slice(preg_split('/\s/', $description), 0, 5);
-            if (array_intersect($firstWords, $filterTerms)) {
-                unset($record->description[$i]);
+        // Create new doc directly to avoid default namespace handling:
+        $xml = (new XmlDoc())->parse($this->fields['fullrecord']);
+        $xml->filter(
+            function ($node, $path) use ($xml, $filterTerms) {
+                if (in_array($path, ['{}abstract', "{{$this->dcNs}}abstract", "{{$this->dcTermsNs}}abstract"])) {
+                    return true;
+                }
+                if (
+                    in_array($path, ['{}description', "{{$this->dcNs}}description", "{{$this->dcTermsNs}}description"])
+                ) {
+                    $description = mb_strtolower($xml->value($node), 'UTF-8');
+                    $firstWords = array_slice(preg_split('/\s/', $description), 0, 5);
+                    return (bool)array_intersect($firstWords, $filterTerms);
+                }
+                return false;
             }
-        }
-
-        return $record;
+        );
+        return $xml;
     }
 
     /**
@@ -545,7 +561,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getFilteredXML()
     {
-        return $this->getFilteredXMLElement()->asXML();
+        return $this->getFilteredXmlElement()->toXML();
     }
 
     /**
@@ -555,11 +571,11 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getIdentifier()
     {
-        $xml = $this->getXmlRecord();
-        foreach ($xml->identifier ?? [] as $identifier) {
+        $xml = $this->getXmlReader();
+        foreach ($this->getElements('identifier') as $identifier) {
             // Inventory number
-            if ((string)$identifier['type'] === 'wikidata:P217') {
-                return [trim((string)$identifier)];
+            if ($this->getTypeAttr($identifier) === 'wikidata:P217') {
+                return [$xml->value($identifier)];
             }
         }
         return [];
@@ -573,31 +589,28 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     public function getOtherIdentifiers(): array
     {
         $results = [];
-        $xml = $this->getXmlRecord();
-        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
-            foreach ($field as $identifier) {
-                $type = (string)$identifier['type'];
-                $identifierTrimmed = trim((string)$identifier);
-                if (in_array($type, ['issn', 'isbn'])) {
-                    continue;
-                }
-                $trimmed = str_replace('-', '', $identifierTrimmed);
-                // ISBN
-                if (preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)) {
-                    continue;
-                }
-                $trimmed = $identifierTrimmed;
-                // ISSN
-                if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $trimmed)) {
-                    continue;
-                }
+        $xml = $this->getXmlReader();
+        foreach ([...$this->getElements('identifier'), ...$this->getDcTermsElements('isFormatOf')] as $identifier) {
+            $type = $this->getTypeAttr($identifier) ?? '';
+            if (in_array($type, ['issn', 'isbn'])) {
+                continue;
+            }
+            $identifierTrimmed = $xml->value($identifier);
+            $dashless = str_replace('-', '', $identifierTrimmed);
+            // ISBN
+            if (preg_match('{^[0-9]{9,12}[0-9xX]}', $dashless)) {
+                continue;
+            }
+            // ISSN
+            if (preg_match('{(issn:)[\S]{4}\-[\S]{4}}', $identifierTrimmed)) {
+                continue;
+            }
 
-                // Leave out some obvious matches like urls or urns
-                if (!preg_match('{(^urn:|^https?)}i', $trimmed)) {
-                    $detail = $type;
-                    $data = $identifierTrimmed;
-                    $results[] = compact('data', 'detail');
-                }
+            // Leave out some obvious matches like urls or urns
+            if (!preg_match('{(^urn:|^https?)}i', $identifierTrimmed)) {
+                $detail = $type;
+                $data = $identifierTrimmed;
+                $results[] = compact('data', 'detail');
             }
         }
         return $results;
@@ -611,16 +624,15 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     public function getISBNs()
     {
         $result = [];
-        $xml = $this->getXmlRecord();
-        foreach ([$xml->identifier, $xml->isFormatOf] as $field) {
-            foreach ($field as $identifier) {
-                $trimmed = str_replace('-', '', trim($identifier));
-                if (
-                    (string)$identifier['type'] === 'isbn'
-                    || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
-                ) {
-                    $result[] = (string)$identifier;
-                }
+        $xml = $this->getXmlReader();
+        foreach ([...$this->getElements('identifier'), ...$this->getDcTermsElements('isFormatOf')] as $identifier) {
+            $identifierStr = $xml->value($identifier);
+            $trimmed = str_replace('-', '', $identifierStr);
+            if (
+                $this->getTypeAttr($identifier) === 'isbn'
+                || preg_match('{^[0-9]{9,12}[0-9xX]}', $trimmed)
+            ) {
+                $result[] = $identifierStr;
             }
         }
         return array_values(array_unique($result));
@@ -643,24 +655,24 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getAllRecordLinks()
     {
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $relations = [];
-        foreach ($xml->isPartOf ?? [] as $isPartOf) {
+        foreach ($this->getDcTermsElements('isPartOf', true) as $isPartOf) {
             $relations[] = [
-                'value' => (string)$isPartOf,
+                'value' => $isPartOf,
                 'link' => [
-                    'value' => (string)$isPartOf,
+                    'value' => $isPartOf,
                     'type' => 'allFields',
                 ],
             ];
         }
-        foreach ($xml->relation ?? [] as $relation) {
-            $attrs = $relation->attributes();
-            if ('ispartof' === (string)($attrs->type ?? '')) {
+        foreach ($this->getElements('relation') as $relation) {
+            if ('ispartof' === $this->getTypeAttr($relation)) {
+                $value = $xml->value($relation);
                 $relations[] = [
-                    'value' => (string)$relation,
+                    'value' => $value,
                     'link' => [
-                        'value' => (string)$relation,
+                        'value' => $value,
                         'type' => 'allFields',
                     ],
                 ];
@@ -676,11 +688,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getKeywords()
     {
-        $result = [];
-        foreach ($this->getXmlRecord()->keyword as $keyword) {
-            $result[] = (string)$keyword;
-        }
-        return $result;
+        return $this->getQdcExtendedElements('keyword', true);
     }
 
     /**
@@ -756,15 +764,13 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getSeries(): array
     {
+        $xml = $this->getXmlReader();
         $locale = $this->getLocale();
-        $xml = $this->getXmlRecord();
         $results = [];
-        foreach ($xml->relation ?? [] as $relation) {
-            $type = (string)$relation->attributes()->{'type'};
-            $lang = (string)$relation->attributes()->{'lang'} ?: 'nolocale';
-            $trimmed = trim((string)$relation);
-
+        foreach ($this->getElements('relation') as $relation) {
+            $type = $this->getTypeAttr($relation);
             if ($key = $this->seriesInfoMappings[$type] ?? false) {
+                $lang = $this->getLangAttr($relation) ?: 'nolocale';
                 // Initialize the result so that it contains the required elements:
                 if (!isset($results[$lang])) {
                     $results[$lang] = [
@@ -772,7 +778,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
                     ];
                 }
                 if (empty($results[$lang][$key])) {
-                    $results[$lang][$key] = $trimmed;
+                    $results[$lang][$key] = $xml->value($relation);
                 }
             }
         }
@@ -789,18 +795,17 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     public function getAccessRestrictions(): array
     {
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $locale = $this->getLocale();
         $primary = [];
         $all = [];
-        foreach ($xml->rights as $right) {
-            $strRight = trim((string)$right);
-            $type = trim((string)$right->attributes()->type);
-            $rightLanguage = trim((string)$right->attributes()->lang);
-            if ('accessrights' === $type) {
-                $all[] = $strRight;
-                if ((!$rightLanguage || $rightLanguage === $locale)) {
-                    $primary[] = $strRight;
+        foreach ($this->getElements('rights') as $right) {
+            if ('accessrights' === $this->getTypeAttr($right)) {
+                $value = $xml->value($right);
+                $all[] = $value;
+                $rightLanguage = $this->getLangAttr($right);
+                if (!$rightLanguage || $rightLanguage === $locale) {
+                    $primary[] = $value;
                 }
             }
         }
@@ -816,20 +821,20 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      */
     protected function getDescriptionsByType(array $include = []): array
     {
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $descriptions = [];
         $first = '';
         $exclude = $include ? [] : $this->excludedDescriptions;
-        foreach ($xml->description ?? [] as $description) {
-            $type = (string)$description['type'];
+        foreach ($this->getElements('description') as $description) {
+            $type = $this->getTypeAttr($description);
             if (($include && !in_array($type, $include)) || ($exclude && in_array($type, $exclude))) {
                 continue;
             }
-            if (($format = (string)$description['format']) && str_starts_with($format, 'image/')) {
+            if (($format = $xml->attr($description, 'format')) && str_starts_with($format, 'image/')) {
                 continue;
             }
-            if ($trimmed = trim((string)$description)) {
-                $lang = trim((string)$description['lang']) ?? self::NO_LOCALE;
+            if ($trimmed = $xml->value($description)) {
+                $lang = $this->getLangAttr($description) ?? self::NO_LOCALE;
                 $first = $first ?: $lang;
                 $descriptions[$lang][] = $trimmed;
             }
@@ -935,5 +940,89 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
             'writer' => 'rda:writer',
         ];
         return $roleMap[$role] ?? $fallback;
+    }
+
+    /**
+     * Get XmlDoc from fullrecord.
+     *
+     * @return XmlDoc
+     */
+    protected function getXMLReader(): XmlDoc
+    {
+        $xmlDoc = $this->getXmlDoc();
+        $xmlDoc->setDefaultNamespace($this->dcNs, 'dc');
+        return $xmlDoc;
+    }
+
+    /**
+     * Get elements from the terms or elements namespaces with fallback to default namespace.
+     *
+     * @param string $nodeName   Node name
+     * @param bool   $valuesOnly Return only values?
+     *
+     * @return array
+     */
+    protected function getElements(string $nodeName, bool $valuesOnly = false): array
+    {
+        $xml = $this->getXmlReader();
+        // Prefer elements in the terms namespace:
+        $method = $valuesOnly ? 'allValues' : 'all';
+        return $this->getDcTermsElements($nodeName, $valuesOnly)
+            ?: $xml->$method(path: "{{$this->dcNs}}$nodeName");
+    }
+
+    /**
+     * Get elements from the DcTerms namespace with fallback to default namespace.
+     *
+     * @param string $nodeName   Node name
+     * @param bool   $valuesOnly Return only values?
+     *
+     * @return array
+     */
+    protected function getDcTermsElements(string $nodeName, bool $valuesOnly = false): array
+    {
+        $xml = $this->getXmlReader();
+        $method = $valuesOnly ? 'allValues' : 'all';
+        return $xml->$method(path: "{{$this->dcTermsNs}}$nodeName") ?: $xml->$method(path: $nodeName);
+    }
+
+    /**
+     * Get elements from the QdcExtended namespace with fallback to default namespace.
+     *
+     * @param string $nodeName   Node name
+     * @param bool   $valuesOnly Return only values?
+     *
+     * @return array
+     */
+    protected function getQdcExtendedElements(string $nodeName, bool $valuesOnly = false): array
+    {
+        $xml = $this->getXmlReader();
+        $method = $valuesOnly ? 'allValues' : 'all';
+        return $xml->$method(path: "{{$this->qdcExtendedNs}}$nodeName") ?: $xml->$method(path: $nodeName);
+    }
+
+    /**
+     * Get elements from the KK namespace with fallback to default namespace.
+     *
+     * @param string $nodeName Node name
+     *
+     * @return array
+     */
+    protected function getKkElements(string $nodeName): array
+    {
+        $xml = $this->getXmlReader();
+        return $xml->all(path: "{{$this->kkNs}}$nodeName");
+    }
+
+    /**
+     * Get type attribute.
+     *
+     * @param array $node Node
+     *
+     * @return ?string
+     */
+    protected function getTypeAttr(array $node): ?string
+    {
+        return $this->getXmlReader()->attr($node, 'type');
     }
 }

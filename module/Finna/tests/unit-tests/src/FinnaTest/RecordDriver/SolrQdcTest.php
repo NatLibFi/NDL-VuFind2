@@ -51,11 +51,11 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     /**
      * Function to get expected function data for institutional repository record.
      *
-     * @return array
+     * @return \Iterator
      */
-    public static function getTestInstitutionalRepositoryRecordData(): array
+    public static function getTestInstitutionalRepositoryRecordData(): \Iterator
     {
-        return [
+        $allTests = [
             [
                 'getAbstracts',
                 [
@@ -198,6 +198,14 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        foreach ($allTests as $test) {
+            $test[] = 'qdc/qdc_ir_test.xml';
+            yield $test;
+        }
+        foreach ($allTests as $test) {
+            $test[] = 'qdc/qdc_kk.xml';
+            yield $test;
+        }
     }
 
     /**
@@ -205,15 +213,17 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
      *
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
+     * @param string $fixture  Fixture file
      *
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('getTestInstitutionalRepositoryRecordData')]
-    public function testInstitutionalRepositoryRecordF(
+    public function testInstitutionalRepositoryRecordFunctions(
         string $function,
-        $expected
+        $expected,
+        string $fixture,
     ): void {
-        $driver = $this->getInstitutionalRepositoryDriver();
+        $driver = $this->getInstitutionalRepositoryDriver(fixture: $fixture);
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertSame(
             $expected,
@@ -354,6 +364,43 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             $driver->getAllImages()
+        );
+    }
+
+    /**
+     * Test getAllImages with PDF only.
+     *
+     * @return void
+     */
+    public function testGetAllImagesPdf(): void
+    {
+        $driver = $this->getInstitutionalRepositoryDriver(fixture: 'qdc/qdc_kk_pdf.xml');
+        $this->assertSame(
+            [
+                [
+                    'urls' => [
+                        'large' => 'https://www.animals.of.earth.fi/duck.pdf',
+                        'small' => 'https://www.animals.of.earth.fi/duck.pdf',
+                        'medium' => 'https://www.animals.of.earth.fi/duck.pdf',
+                    ],
+                    'description' => '',
+                    'rights' => [
+                        'copyright' => '',
+                        'link' => '',
+                        'description' => [],
+                    ],
+                    'pdf' => true,
+                    'cacheSizes' => [
+                        'medium' => 'small',
+                    ],
+                    'downloadable' => true,
+                ],
+            ],
+            $driver->getAllImages()
+        );
+        $this->assertSame(
+            [],
+            $driver->getAllImages(includePdf: false)
         );
     }
 
@@ -586,9 +633,17 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
      */
     public function testXmlElementFilter(): void
     {
-        $driver = $this->getMuseumDriver();
-        $filtered = $this->getFixture('qdc/qdc_museum_test_filtered.xml', 'Finna');
-        $this->assertXmlStringEqualsXmlString($filtered, $driver->getFilteredXML());
+        $driver = $this->getInstitutionalRepositoryDriver(fixture: 'qdc/qdc_kk.xml');
+        $this->assertXmlStringEqualsXmlString(
+            $this->getFixture('qdc/qdc_kk_filtered.xml', 'Finna'),
+            $driver->getFilteredXML()
+        );
+
+        $driver = $this->getInstitutionalRepositoryDriver(fixture: 'qdc/qdc_museum_test.xml');
+        $this->assertXmlStringEqualsXmlString(
+            $this->getFixture('qdc/qdc_museum_test_filtered.xml', 'Finna'),
+            $driver->getFilteredXML()
+        );
     }
 
     /**
@@ -671,14 +726,18 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     /**
      * Get a record driver with fake data
      *
-     * @param array $overrides    Fixture fields to override
-     * @param array $searchConfig Search configuration
+     * @param array  $overrides    Fixture fields to override
+     * @param array  $searchConfig Search configuration
+     * @param string $fixture      Fixture file name
      *
      * @return SolrQdc
      */
-    protected function getInstitutionalRepositoryDriver($overrides = [], $searchConfig = []): SolrQdc
-    {
-        $fixture = $this->getFixture('qdc/qdc_ir_test.xml', 'Finna');
+    protected function getInstitutionalRepositoryDriver(
+        $overrides = [],
+        $searchConfig = [],
+        string $fixture = 'qdc/qdc_ir_test.xml'
+    ): SolrQdc {
+        $fullRecord = $this->getFixture($fixture, 'Finna');
         $config = [
             'Content' => [
                 'pdfCoverImageDownload' => '0/Painting',
@@ -731,7 +790,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         $record->setRawData(
             [
                 'id' => 'knp-247394',
-                'fullrecord' => $fixture,
+                'fullrecord' => $fullRecord,
                 'usage_rights_str_mv' => [
                     'usage_A',
                 ],
