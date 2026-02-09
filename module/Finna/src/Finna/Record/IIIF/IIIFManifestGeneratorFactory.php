@@ -67,6 +67,7 @@ class IIIFManifestGeneratorFactory implements FactoryInterface
             $viewRenderer->plugin('url'),
             $viewRenderer->plugin('serverUrl'),
             $viewRenderer->plugin('recordLinker'),
+            $container->get(\VuFind\I18n\Locale\LocaleSettings::class),
         );
         return $generator;
     }

@@ -32,7 +32,10 @@ namespace Finna\Record\IIIF;
 use Finna\View\Helper\Root\RecordLinker;
 use Laminas\View\Helper\ServerUrl;
 use Laminas\View\Helper\Url;
+use VuFind\I18n\Locale\LocaleSettings;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
+use VuFindHttp\HttpServiceAwareInterface;
 
 /**
  * IIIF manifest generator service
@@ -46,24 +49,37 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
+class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
+    use \VuFind\I18n\Translator\TranslatorAwareTrait;
+
+    protected array $locales;
+
+    protected array $metadataLangKeys;
 
     /**
      * Constructor.
      *
-     * @param Url          $url          URL helper
-     * @param ServerUrl    $serverUrl    Server URL helper
-     * @param RecordLinker $recordLinker RecordLinker helper
-     *                                   For getting the URL of the record
-     *                                   action constructing this class
+     * @param Url            $url            URL helper
+     * @param ServerUrl      $serverUrl      Server URL helper
+     * @param RecordLinker   $recordLinker   RecordLinker helper
+     *                                       For getting the URL of the record
+     *                                       action constructing this class
+     * @param LocaleSettings $localeSettings LocaleSettings
+     *                                       For getting enabled locales
      */
     public function __construct(
         protected Url $url,
         protected ServerUrl $serverUrl,
         protected RecordLinker $recordLinker,
+        protected LocaleSettings $localeSettings,
     ) {
+        $this->locales = array_keys($this->localeSettings->getEnabledLocales());
+        $this->metadataLangKeys = array_map(
+            fn ($l) => explode('-', $l)[0],
+            $this->locales
+        );
     }
 
     /**
@@ -165,12 +181,7 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
             'id' => $manifestId,
             'type' => 'Manifest',
             'thumbnail' => [],
-            'label' => [
-                'fi' => $recordTitle,
-                'sv' => $recordTitle,
-                'en' => $recordTitle,
-                'se' => $recordTitle,
-            ],
+            'label' => array_fill_keys($this->metadataLangKeys, $recordTitle),
             'metadata' => [],
             'items' => $manifestItems,
         ];
@@ -190,21 +201,41 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
         $metadata = [];
         if (isset($image['description'])) {
             $metadata[] = [
-                'label' => [
-                    'en' => 'Description',
-                    'fi' => 'Kuvaus',
-                    'sv' => 'Beskrivning',
-                    'se' => 'Govvádus',
-                ],
-                'value' => [
-                    'en' => $image['description'],
-                    'fi' => $image['description'],
-                    'sv' => $image['description'],
-                    'se' => $image['description'],
-                ],
+                'label' => $this->getTranslations('image_description'),
+                'value' => array_fill_keys($this->metadataLangKeys, $image['description']),
+            ];
+        }
+
+        if (isset($image['identifier'])) {
+            $metadata[] = [
+                'label' => $this->getTranslations('image_identifier'),
+                'value' => array_fill_keys($this->metadataLangKeys, $image['identifier']),
             ];
         }
         return $metadata;
+    }
+
+    /**
+     * Translate a message for all provided locales at once
+     *
+     * Uses Laminas\Translator\TranslatorInterface directly, because VuFind's
+     * interface does not expose the $locale parameter.
+     *
+     * @param string $message Message to be translated
+     *
+     * @return array Associative array of $language => $translatedMessage
+     */
+    protected function getTranslations(string $message): array
+    {
+        $translator = $this->getTranslator();
+
+        return array_combine(
+            $this->metadataLangKeys,
+            array_map(
+                fn ($l) => $translator->translate($message, locale: $l),
+                $this->locales
+            )
+        );
     }
 
     /**
