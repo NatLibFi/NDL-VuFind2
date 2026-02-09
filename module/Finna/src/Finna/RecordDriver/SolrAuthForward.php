@@ -196,10 +196,8 @@ class SolrAuthForward extends SolrAuthDefault implements \Psr\Log\LoggerAwareInt
      */
     public function getAwards()
     {
-        return explode(
-            PHP_EOL,
-            $this->getBiographicalNote('henkilo-biografia-tyyppi', 'palkinnot')
-        );
+        $awards = trim($this->getBiographicalNote('henkilo-biografia-tyyppi', 'palkinnot'));
+        return $awards ? array_map('trim', explode(PHP_EOL, $awards)) : [];
     }
 
     /**

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2022.
+ * Copyright (C) The National Library of Finland 2016-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -31,8 +31,9 @@
 
 namespace Finna\RecordDriver;
 
+use FinnaXml\XmlDoc;
+
 use function in_array;
-use function is_array;
 
 /**
  * Model for FORWARD records in Solr.
@@ -389,13 +390,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     ];
 
     /**
-     * Record metadata
-     *
-     * @var array
-     */
-    protected $lazyRecordXML;
-
-    /**
      * Constructor
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
@@ -465,14 +459,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     public function getAllSubjectHeadings($extended = false)
     {
         $results = [];
-        foreach ($this->getRecordXML()->SubjectTerms as $subjectTerms) {
-            foreach ($subjectTerms->Term as $term) {
-                $results[] = !$extended ? [$term] : [
-                    'heading' => [$term],
-                    'type' => '',
-                    'source' => '',
-                ];
-            }
+        $xml = $this->getAllRecordsXmlDoc();
+        foreach ($xml->allValues($this->getRecordXmlDocNode(), 'SubjectTerms/Term') as $term) {
+            $results[] = !$extended ? [$term] : [
+                'heading' => [$term],
+                'type' => '',
+                'source' => '',
+            ];
         }
         return $results;
     }
@@ -503,26 +496,29 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getAlternativeTitles()
     {
-        $xml = $this->getRecordXML();
-        $identifyingTitle = (string)$xml->IdentifyingTitle;
+        $xml = $this->getAllRecordsXmlDoc();
+        $recordNode = $this->getRecordXmlDocNode();
+        $identifyingTitle = $xml->firstValue($recordNode, 'IdentifyingTitle');
         $result = [];
-        foreach ($xml->Title as $title) {
-            $titleText = $title->TitleText;
-            $titleTextStr = (string)$title->TitleText;
-            if ($titleTextStr == $identifyingTitle) {
+        foreach ($xml->all($recordNode, 'Title') as $titleNode) {
+            if (!($titleTextNode = $xml->first($titleNode, 'TitleText'))) {
                 continue;
             }
-            if ($rel = $title->TitleRelationship) {
-                if ($type = $rel->attributes()->{'elokuva-elonimi-tyyppi'}) {
+            $titleTextStr = $xml->value($titleTextNode);
+            if ('' === $titleTextStr || $titleTextStr == $identifyingTitle) {
+                continue;
+            }
+            if ($relationship = $xml->first($titleNode, 'TitleRelationship')) {
+                if ($type = $xml->attr($relationship, 'elokuva-elonimi-tyyppi')) {
                     $titleTextStr .= " ($type)";
                 } else {
-                    switch ((string)$rel) {
+                    switch ($xml->value($relationship)) {
                         case 'working':
                             $titleTextStr
                                 .= " ({$this->translate('working title')})";
                             break;
                         case 'translated':
-                            if ($lang = $titleText->attributes()->lang) {
+                            if ($lang = $xml->attr($titleTextNode, 'lang')) {
                                 $titleTextStr .= " ({$this->translate($lang)})";
                             }
                             break;
@@ -542,8 +538,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     public function getAwards()
     {
         $results = [];
-        foreach ($this->getRecordXML()->Award as $award) {
-            $results[] = (string)$award;
+        $xml = $this->getAllRecordsXmlDoc();
+        $recordNode = $this->getRecordXmlDocNode();
+        foreach ($xml->all($recordNode, 'Award') as $award) {
+            $results[] = $xml->value($award);
         }
         return $results;
     }
@@ -599,8 +597,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getCountry()
     {
-        $xml = $this->getRecordXML();
-        return (string)($xml->CountryOfReference->Country->RegionName ?? '');
+        $xml = $this->getAllRecordsXmlDoc();
+        $recordNode = $this->getRecordXmlDocNode();
+        return $xml->firstValue($recordNode, 'CountryOfReference/Country/RegionName') ?? '';
     }
 
     /**
@@ -751,7 +750,8 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
-        $xml = $this->getRecordXML();
+        $xml = $this->getAllRecordsXmlDoc();
+        $recordNode = $this->getRecordXmlDocNode();
         $idx = 0;
         $results = [
             'primaryAuthors' => [],
@@ -759,9 +759,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             'nonPresenters' => [],
         ];
 
-        foreach ($xml->HasAgent as $agent) {
+        foreach ($xml->all($recordNode, 'HasAgent') as $agent) {
             $result = [
-                'tag' => ((string)$agent['elonet-tag'] ?? ''),
+                'tag' => $xml->attr($agent, 'elonet-tag') ?? '',
                 'name' => '',
                 'role' => '',
                 'id' => '',
@@ -773,23 +773,20 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             ];
 
             $primary = false;
-            if (!empty($agent->Activity)) {
-                $activity = $agent->Activity;
-                $relator = (string)$activity;
+            if ($activity = $xml->first($agent, 'Activity')) {
+                $relator = $xml->value($activity);
                 $primary = $relator === 'D02';
                 if (null === ($role = $this->getAuthorRole($agent, $relator))) {
                     continue;
                 }
                 $result['role'] = $this->roleConversion[$role] ?? $role;
-                foreach ($activity->attributes() as $key => $value) {
-                    $result[$key] = (string)$value;
-                }
-                $result['relator'] = (string)$activity;
+                $result = [...$result, ...$xml->attrs($activity)];
+                $result['relator'] = $relator;
             }
-            if ($agentName = $agent->AgentName ?? false) {
-                $result['name'] = (string)$agentName;
-                foreach ($agentName->attributes() as $key => $value) {
-                    $result[$key] = $valueString = (string)$value;
+            if ($agentName = $xml->first($agent, 'AgentName')) {
+                $result['name'] = $xml->value($agentName);
+                foreach ($xml->attrs($agentName) as $key => $value) {
+                    $result[$key] = $value;
                     foreach ($this->authorNameConfig as $credited => $attrs) {
                         if ($fieldType = $attrs[$key] ?? false) {
                             if ('uncredited' === $credited) {
@@ -798,15 +795,15 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
                             if ('name' === $fieldType && !empty($result['name'])) {
                                 break;
                             }
-                            $result[$fieldType] = $valueString;
+                            $result[$fieldType] = $value;
                             break;
                         }
                     }
                 }
             }
-            if (!empty($agent->AgentIdentifier)) {
-                $authType = (string)$agent->AgentIdentifier->IDTypeName;
-                $idValue = (string)$agent->AgentIdentifier->IDValue;
+            if ($agentIdentifier = $xml->first($agent, 'AgentIdentifier')) {
+                $authType = $xml->firstValue($agentIdentifier, 'IDTypeName');
+                $idValue = $xml->firstValue($agentIdentifier, 'IDValue');
                 $result['id'] = "{$authType}_{$idValue}";
                 $result['type'] = $authType;
             }
@@ -850,15 +847,12 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
                     break;
                 case 'fds':
                     $result['date'] = $result['elokuva-elolevittaja-vuosi'] ?? '';
-                    $result['method']
-                        = $result['elokuva-elolevittaja-levitystapa'] ?? '';
+                    $result['method'] = $result['elokuva-elolevittaja-levitystapa'] ?? '';
                     $results['distributors'][] = $result;
                     break;
                 case 'fnd':
-                    $result['amount']
-                        = $result['elokuva-elorahoitusyhtio-summa'] ?? '';
-                    $result['fundingType']
-                        = $result['elokuva-elorahoitusyhtio-rahoitustapa'] ?? '';
+                    $result['amount'] = $result['elokuva-elorahoitusyhtio-summa'] ?? '';
+                    $result['fundingType'] = $result['elokuva-elorahoitusyhtio-rahoitustapa'] ?? '';
                     $results['funders'][] = $result;
                     break;
                 default:
@@ -987,44 +981,23 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Set raw data to initialize the object.
-     *
-     * @param mixed $data Raw data representing the record; Record Model
-     * objects are normally constructed by Record Driver objects using data
-     * passed in from a Search Results object. The exact nature of the data may
-     * vary depending on the data source -- the important thing is that the
-     * Record Driver + Search Results objects work together correctly.
-     *
-     * @return void
-     */
-    public function setRawData($data)
-    {
-        parent::setRawData($data);
-        $this->lazyRecordXML = null;
-    }
-
-    /**
      * Return full record as a filtered SimpleXMLElement for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXMLElement(): XmlDoc
     {
-        $record = clone $this->getRecordXML();
-        $remove = [];
-        foreach ($record->ProductionEvent as $event) {
-            $attributes = $event->attributes();
-            if (
-                isset($attributes->{'elonet-tag'})
-                && 'lehdistoarvio' === (string)$attributes->{'elonet-tag'}
-            ) {
-                $remove[] = $event;
+        $container = new XmlDoc();
+        $container->parse($this->fields['fullrecord']);
+        $container->filter(
+            function ($node, $path) use ($container): bool {
+                return $container->attr($node, 'elonet-tag') === 'lehdistoarvio';
             }
-        }
-        foreach ($remove as $node) {
-            unset($node[0]);
-        }
-        return $record;
+        );
+        // Return only the main document:
+        $main = new XmlDoc();
+        $main->import($container->export($container->first()));
+        return $main;
     }
 
     /**
@@ -1034,23 +1007,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getFilteredXML()
     {
-        return $this->getFilteredXMLElement()->asXML();
-    }
-
-    /**
-     * Get all original records as a SimpleXML object
-     *
-     * @return \SimpleXMLElement The record as SimpleXML
-     */
-    protected function getAllRecordsXML()
-    {
-        if ($this->lazyRecordXML === null) {
-            $xml = new \SimpleXMLElement($this->fields['fullrecord']);
-            $records = (array)$xml->children();
-            $records = reset($records);
-            $this->lazyRecordXML = is_array($records) ? $records : [$records];
-        }
-        return $this->lazyRecordXML;
+        return $this->getFilteredXMLElement()->toXML();
     }
 
     /**
@@ -1065,12 +1022,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             return $this->cache[$cacheKey];
         }
         $results = [];
-        foreach ($this->getRecordXML()->ContentDescription as $description) {
-            if (!($text = (string)($description->DescriptionText ?? ''))) {
+        $xml = $this->getAllRecordsXmlDoc();
+        $recordNode = $this->getRecordXmlDocNode();
+        foreach ($xml->all($recordNode, 'ContentDescription') as $description) {
+            if (!($text = $xml->firstValue($description, 'DescriptionText'))) {
                 continue;
             }
-            $type = (string)($description->DescriptionType ?? '');
-            $lang = (string)($description->Language ?? 'no_lang');
+            $type = $xml->firstValue($description, 'DescriptionType') ?? '';
+            $lang = $xml->firstValue($description, 'Language') ?? 'no_lang';
             if ($storage = $this->descriptionTypeMappings[$type] ?? false) {
                 $results[$storage][$lang][] = $text;
                 $results[$storage]['all'][] = $text;
@@ -1099,20 +1058,22 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             'inspectionDetails' => [],
             'accessRestrictions' => [],
         ];
-        $xml = $this->getRecordXML();
+        $xml = $this->getAllRecordsXmlDoc();
+        $recordNode = $this->getRecordXmlDocNode();
         $config = $this->productionConfig;
-        foreach ($xml->ProductionEvent as $event) {
-            $type = (string)($event->ProductionEventType ?? '');
-            $regionName = (string)($event->Region->RegionName ?? '');
-            $dateText = (string)($event->DateText ?? '');
+        foreach ($xml->all($recordNode, 'ProductionEvent') as $event) {
+            $typeNode = $xml->first($event, 'ProductionEventType');
+            $type = $typeNode ? $xml->value($typeNode) : '';
+            $regionName = $xml->firstValue($event, 'Region/RegionName') ?? '';
+            $dateText = $xml->firstValue($event, 'DateText') ?? '';
 
-            $attributes = $event->ProductionEventType->attributes();
+            $attributes = $xml->attrs($typeNode);
             $broadcastingResult = [];
             $inspectionResult = [];
 
             switch ($type) {
                 case 'PRL':
-                    $distributorName = trim((string)$attributes->{'elokuva-eloulkomaanmyynti-levittaja'});
+                    $distributorName = $attributes['elokuva-eloulkomaanmyynti-levittaja'] ?? '';
                     $results['foreignDistribution'][] = [
                         'name' => $distributorName ?: $regionName,
                         'region' => $distributorName ? $regionName : '',
@@ -1128,19 +1089,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
                     break;
             }
             foreach ($attributes as $key => $value) {
-                $stringValue = (string)$value;
                 // Get production attribute
                 if ($storage = $config['productionAttributeMappings'][$key] ?? '') {
-                    $results[$storage] = $stringValue;
+                    $results[$storage] = $value;
                 }
                 // Get broadcasting information
                 if ($info = $config['broadcastingInfoMappings'][$key] ?? '') {
-                    $broadcastingResult[$info] = $stringValue;
+                    $broadcastingResult[$info] = $value;
                 }
                 // Get festival info
                 if ($festival = $config['festivalSubjectMappings'][$key] ?? '') {
                     $results[$festival][] = [
-                        'name' => $stringValue,
+                        'name' => $value,
                         'region' => $regionName,
                         'date' => $dateText,
                     ];
@@ -1149,20 +1109,20 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
                 // Get other screening info
                 if ($screening = $config['otherScreeningMappings'][$key] ?? '') {
                     $results[$screening][] = [
-                        'name' => $stringValue,
+                        'name' => $value,
                         'region' => $regionName,
                         'date' => $dateText,
                     ];
                 }
                 // Get inspection detail
                 if ($inspection = $config['inspectionAttributes'][$key] ?? '') {
-                    $inspectionResult[$inspection] = $stringValue;
+                    $inspectionResult[$inspection] = $value;
                 }
                 // Get access restriction details
                 if (
                     $restriction = $config['accessRestrictionMappings'][$key] ?? ''
                 ) {
-                    $results[$restriction][] = $stringValue;
+                    $results[$restriction][] = $value;
                 }
             }
             // Check if we have found something to save
@@ -1175,27 +1135,16 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
                 }
                 $results['inspectionDetails'][] = $inspectionResult;
             }
-            $children = $event->children();
-            foreach ($children as $childKey => $childValue) {
+            foreach ($xml->all($event) as $child) {
+                $childKey = $xml->localName($child);
                 if (
                     $storage = $config['productionEventMappings'][$childKey] ?? []
                 ) {
-                    $results[$storage][] = (string)$childValue;
+                    $results[$storage][] = $xml->value($child);
                 }
             }
         }
         return $this->cache[$cacheKey] = $results;
-    }
-
-    /**
-     * Get the original main record as a SimpleXML object
-     *
-     * @return \SimpleXMLElement The record as SimpleXML
-     */
-    protected function getRecordXML()
-    {
-        $records = $this->getAllRecordsXML();
-        return reset($records);
     }
 
     /**
@@ -1217,28 +1166,25 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             return $this->cache[$cacheKey] = [];
         }
         $videos = [];
-        foreach ($this->getAllRecordsXML() as $xml) {
-            if (empty($xml->ProductionEvent->ProductionEventType)) {
+        $xmlDoc = $this->getAllRecordsXmlDoc();
+        foreach ($xmlDoc->all() as $xml) {
+            if (!$xmlDoc->first($xml, 'ProductionEvent/ProductionEventType')) {
                 continue;
             }
-            foreach ($xml->Title as $title) {
-                if (!isset($title->TitleText)) {
+            foreach ($xmlDoc->all($xml, 'Title') as $title) {
+                if (!($videoID = $xmlDoc->firstValue($title, 'TitleText'))) {
                     continue;
                 }
-                $videoID = trim((string)$title->TitleText);
-                $titleValue = $title->PartDesignation->Value ?? '';
-                if (!$titleValue) {
+                if (!($titleValue = $xmlDoc->first($title, 'PartDesignation/Value'))) {
                     continue;
                 }
-                $attributes = $titleValue->attributes();
-                $videoType = (string)($attributes->{'video-tyyppi'} ?? '');
-                if (!$videoType) {
+                if (!($videoType = $xmlDoc->attr($titleValue, 'video-tyyppi'))) {
                     continue;
                 }
                 $warnings = [];
                 // Check for warnings
-                if (!empty($attributes->{'video-rating'})) {
-                    $tmpWarnings = explode(', ', (string)$attributes->{'video-rating'});
+                if ($rating = $xmlDoc->attr($titleValue, 'video-rating')) {
+                    $tmpWarnings = explode(', ', $rating);
                     foreach ($tmpWarnings as $warning) {
                         if ($warn = $this->contentDescriptors[$warning] ?? '') {
                             $warnings[] = $warn;
@@ -1252,7 +1198,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
                     $videos[] = [
                         'id' => $videoID,
                         'url' => '',
-                        'posterName' => (string)$titleValue,
+                        'posterName' => $xmlDoc->value($titleValue),
                         'type' => $videoType,
                         'description' => $videoType,
                         'text' => $videoType,
@@ -1506,17 +1452,18 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     /**
      * Convert author relator to role.
      *
-     * @param SimpleXMLNode $agent   Agent
-     * @param string        $relator Agent relator
+     * @param array  $agent   Agent
+     * @param string $relator Agent relator
      *
-     * @return string
+     * @return ?string
      */
-    protected function getAuthorRole($agent, $relator)
+    protected function getAuthorRole(array $agent, string $relator): ?string
     {
+        $xml = $this->getAllRecordsXmlDoc();
         $normalizedRelator = mb_strtoupper($relator, 'UTF-8');
         $role = $this->roleMap[$normalizedRelator] ?? $relator;
 
-        $attributes = $agent->Activity->attributes();
+        $attributes = $xml->attrs($xml->first($agent, 'Activity'));
         if (
             in_array(
                 $normalizedRelator,
@@ -1524,22 +1471,19 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             )
         ) {
             if (
-                !empty($attributes->{'elokuva-elolevittaja'})
+                !empty($attributes['elokuva-elolevittaja'])
             ) {
                 return null;
             }
             if (
-                !empty($attributes->{'elokuva-elotuotantoyhtio'})
-                || !empty($attributes->{'elokuva-elorahoitusyhtio'})
-                || !empty($attributes->{'elokuva-elolaboratorio'})
+                !empty($attributes['elokuva-elotuotantoyhtio'])
+                || !empty($attributes['elokuva-elorahoitusyhtio'])
+                || !empty($attributes['elokuva-elolaboratorio'])
             ) {
                 return null;
             }
-            if (!empty($attributes->{'finna-activity-text'})) {
-                $role = (string)$attributes->{'finna-activity-text'};
-                if (isset($this->elonetRoleMap[$role])) {
-                    $role = $this->elonetRoleMap[$role];
-                }
+            if ($activityText = $attributes['finna-activity-text'] ?? null) {
+                $role = $this->elonetRoleMap[$activityText] ?? $activityText;
             }
         }
 
