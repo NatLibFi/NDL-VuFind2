@@ -460,7 +460,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     {
         $results = [];
         $xml = $this->getAllRecordsXmlDoc();
-        foreach ($xml->allValues($this->getRecordXmlDocNode(), 'SubjectTerms/Term') as $term) {
+        foreach ($xml->allValues($this->getMainRecordNode($xml), 'SubjectTerms/Term') as $term) {
             $results[] = !$extended ? [$term] : [
                 'heading' => [$term],
                 'type' => '',
@@ -497,7 +497,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     public function getAlternativeTitles()
     {
         $xml = $this->getAllRecordsXmlDoc();
-        $recordNode = $this->getRecordXmlDocNode();
+        $recordNode = $this->getMainRecordNode($xml);
         $identifyingTitle = $xml->firstValue($recordNode, 'IdentifyingTitle');
         $result = [];
         foreach ($xml->all($recordNode, 'Title') as $titleNode) {
@@ -539,7 +539,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     {
         $results = [];
         $xml = $this->getAllRecordsXmlDoc();
-        $recordNode = $this->getRecordXmlDocNode();
+        $recordNode = $this->getMainRecordNode($xml);
         foreach ($xml->all($recordNode, 'Award') as $award) {
             $results[] = $xml->value($award);
         }
@@ -598,7 +598,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     public function getCountry()
     {
         $xml = $this->getAllRecordsXmlDoc();
-        $recordNode = $this->getRecordXmlDocNode();
+        $recordNode = $this->getMainRecordNode($xml);
         return $xml->firstValue($recordNode, 'CountryOfReference/Country/RegionName') ?? '';
     }
 
@@ -751,7 +751,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             return $this->cache[$cacheKey];
         }
         $xml = $this->getAllRecordsXmlDoc();
-        $recordNode = $this->getRecordXmlDocNode();
+        $recordNode = $this->getMainRecordNode($xml);
         $idx = 0;
         $results = [
             'primaryAuthors' => [],
@@ -1023,7 +1023,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
         }
         $results = [];
         $xml = $this->getAllRecordsXmlDoc();
-        $recordNode = $this->getRecordXmlDocNode();
+        $recordNode = $this->getMainRecordNode($xml);
         foreach ($xml->all($recordNode, 'ContentDescription') as $description) {
             if (!($text = $xml->firstValue($description, 'DescriptionText'))) {
                 continue;
@@ -1059,7 +1059,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             'accessRestrictions' => [],
         ];
         $xml = $this->getAllRecordsXmlDoc();
-        $recordNode = $this->getRecordXmlDocNode();
+        $recordNode = $this->getMainRecordNode($xml);
         $config = $this->productionConfig;
         foreach ($xml->all($recordNode, 'ProductionEvent') as $event) {
             $typeNode = $xml->first($event, 'ProductionEventType');

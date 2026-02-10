@@ -159,13 +159,16 @@ trait SolrForwardTrait
     }
 
     /**
-     * Get the original main record as an XmlDoc node
+     * Get the original main record as an XmlDoc node.
+     *
+     * This is just a very simple wrapper to account for any future needs.
+     *
+     * @param XmlDoc $xml Document
      *
      * @return array
      */
-    protected function getRecordXmlDocNode(): array
+    protected function getMainRecordNode(XmlDoc $xml): array
     {
-        $container = $this->getAllRecordsXmlDoc();
-        return $container->first();
+        return $xml->first();
     }
 }
