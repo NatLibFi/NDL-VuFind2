@@ -14,15 +14,15 @@
     </RecordSource>
     <CAgentName>
       <AgentNameType>04</AgentNameType>
-      <PersonName>Mare Eijala</PersonName>
-      <PersonNameInverted>Eijala, Mare</PersonNameInverted>
+      <PersonName>Mare Jala</PersonName>
+      <PersonNameInverted>Jala, Mare</PersonNameInverted>
       <NamesBeforeKey>Mare</NamesBeforeKey>
       <AgentNameId type="ISNI">0000000123123</AgentNameId>
     </CAgentName>
     <CAgentName>
       <AgentNameType henkilo-muu_nimi-tyyppi="oikea nimi">00</AgentNameType>
-      <PersonName>Mariskooli Eijala</PersonName>
-      <PersonNameInverted>Eijala, Mariskooli</PersonNameInverted>
+      <PersonName>Markka Jala</PersonName>
+      <PersonNameInverted>Jala, Markka</PersonNameInverted>
     </CAgentName>
     <AgentDate>
       <AgentDateEventType>51</AgentDateEventType>

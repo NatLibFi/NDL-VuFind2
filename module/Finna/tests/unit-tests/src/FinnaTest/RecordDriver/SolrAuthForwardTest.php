@@ -58,7 +58,7 @@ class SolrAuthForwardTest extends \PHPUnit\Framework\TestCase
         yield [
             'getAlternativeTitles',
             [
-                'Mariskooli Eijala (oikea nimi)',
+                'Markka Jala (oikea nimi)',
             ],
         ];
         yield [
