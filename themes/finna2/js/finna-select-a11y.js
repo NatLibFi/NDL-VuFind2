@@ -20,6 +20,7 @@ class finnaSelectA11y extends SelectA11y.Select {
     }, passedOptions);
     super(el, mergedOptions);
     this.setSelectA11yIcons();
+    this.removeAriaLabelledby();
   }
   setSelectA11yIcons() {
     const buttonSelect = this.button;
@@ -27,6 +28,10 @@ class finnaSelectA11y extends SelectA11y.Select {
     if (iconButtonContainer) {
       iconButtonContainer.innerHTML = ' ' + VuFind.icon('filter-expand', 'select-expand') + VuFind.icon('filter-collapse', 'select-collapse');
     }
+  }
+  removeAriaLabelledby() {
+    const buttonSelect = this.button;
+    buttonSelect.removeAttribute("aria-labelledby")
   }
 }
 // Add to global namespace.
