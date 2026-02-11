@@ -4,9 +4,9 @@
   $audioUrls = array_values($audioUrls);
   $hasMultipleAudios = is_array($audioUrls) && count(array_filter($audioUrls)) > 1;
 ?>
-<div class="audio-player-container">
+<div class="audio-player">
   <!-- Audio content -->
-  <div class="tab-content" id="audioTabContent">
+  <div class="tab-content audio-content container" id="audioTabContent">
     <?php foreach ($audioUrls as $ind => $url):
         $format = $this->driver->tryMethod('getRecordFormat', [], '');
         $showDetails = $showFormat = false;
@@ -16,55 +16,215 @@
       $showFormat = $url['desc'] === $url['url'];
     }
     ?>
-    <div class="tab-pane fade <?= $ind === 0 ? 'show active' : '' ?>" id="tab-<?= $ind ?>" role="tabpanel" aria-labelledby="tab-<?= $ind ?>-tab">
-    <div class="audio-item-wrapper">
-      <div class="audio-title-wrapper">
-        <div class="audio-title">
-        <?php if (!empty($desc)): ?>
-          <?= $desc ?>
-        <?php else: ?>
-          <?=$this->transEsc('format_Sound')?>
-        <?php endif ?>
+    <div class="tab-pane <?= $ind === 0 ? 'show active' : '' ?>" id="tab-<?= $ind ?>" role="tabpanel" aria-labelledby="tab-<?= $ind ?>-tab">
+      <div class="audio-item-wrapper">
+        <div class="audio-title-wrapper">
+          <div class="audio-title">
+            <?php if (!empty($desc)): ?>
+              <?= $desc ?>
+            <?php else: ?>
+              <?=$this->transEsc('format_Sound')?>
+            <?php endif ?>
+          </div>
         </div>
-      </div>
-      <div class="audio-player-wrapper">
-        <button class="play" tabindex="0" aria-label="<?=$this->transEsc('Play recording')?>">
-          <?=$this->icon('audio-play') ?>
-        </button>
-        <div class="audio-player-wrapper hide">
-          <audio id="audio-<?=$ind?>" class="vjs-default-skin hide" autoplay controls preload="auto">
-            <source data-src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>">
+        <div class="audio-play-wrapper">
+          <audio id="audio-<?=$ind?>" class="video-js vjs-default-skin js-vjs-audio" preload="metadata">
+            <source src="<?=$url['url']?>" type="audio/<?= $url['codec'] ?>">
           </audio>
         </div>
-        <?php if (!$showDetails): ?>
-          <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?></a></div>
-        <?php else: ?>
-          <?=$this->record($this->driver)->renderTemplate('audio-information.phtml', ['ind' => $ind, 'url' => $url]);?>
-        <?php endif; ?>
+        <?=$this->record($this->driver)->renderTemplate('audio-information.phtml', ['ind' => $ind, 'url' => $url]);?>
       </div>
-      </div>
-      </div>
+    </div>
     <?php endforeach; ?>
   </div>
-    <!-- Audio tabs -->
+  <!-- Audio nav -->
   <?php if ($hasMultipleAudios): ?>
-    <ul class="nav nav-pills" id="audioTab" role="tablist">
-      <?php foreach ($audioUrls as $ind => $url):
-        $desc = isset($url['desc']) ? $url['desc'] : ($url['text'] ?? '');
-        ?>
-        <li class="nav-item" role="presentation">
-          <a class="nav-link <?= $ind === 0 ? 'active' : '' ?>" id="tab-<?= $ind ?>-tab" data-bs-toggle="tab" href="#tab-<?= $ind ?>" role="tab" aria-controls="tab-<?= $ind ?>" aria-selected="<?= $ind === 0 ? 'true' : 'false' ?>">
-            <?php if (!empty($desc)): ?>
-              <?=$this->icon('video-play', 'video-play-icon') ?> <?= $desc ?>
-            <?php else: ?>
-              <?=$this->icon('video-play', 'video-play-icon') ?> <?= $this->transEsc('format_Sound') ?>
-            <?php endif ?>
-          </a>
-        </li>
-      <?php endforeach; ?>
-    </ul>
+    <nav class="audio-nav" aria-label="<?= $this->transEsc('audio_navigation') ?>">
+      <button id="prevBtn" class="arrow-btn hidden" aria-label="<?= $this->transEsc('scroll_left') ?>""><?=$this->icon('scroll-nav-left') ?></button>
+      <ul id="audioNav" class="nav nav-scroll" role="tablist" tabindex="-1">
+        <?php foreach ($audioUrls as $ind => $url):
+          $desc = isset($url['desc']) ? $url['desc'] : ($url['text'] ?? '');
+          ?>
+          <li class="nav-item" role="presentation">
+            <button tabindex="<?= $ind === 0 ? '0' : '-1' ?>" class="nav-link <?= $ind === 0 ? 'active' : '' ?> border border-dark-subtle text-body bg-body" id="tab-<?= $ind ?>-tab" data-bs-toggle="tab" data-bs-target="#tab-<?= $ind ?>" type="button" role="tab" aria-controls="tab-<?= $ind ?>" aria-selected="<?= $ind === 0 ? 'true' : 'false' ?>">
+              <?php if (!empty($desc)): ?>
+                <?=$this->icon('video-play', 'audio-play-icon') ?> <?= $desc ?>
+              <?php else: ?>
+                <?=$this->icon('video-play', 'audio-play-icon') ?> <?= $this->transEsc('format_Sound') ?>
+              <?php endif ?>
+              </button>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+      <button id="nextBtn" class="arrow-btn" aria-label="<?= $this->transEsc('scroll_right') ?>""><?=$this->icon('scroll-nav-right') ?></button>
+    </nav>
   <?php endif; ?>
 </div>
+<script>
+  finna.scriptLoader.load(
+    {
+      videojs: 'vendor/video.min.js'
+    },
+    function () {
 
+      const audioPlayers = [];
+      const audioPlayersById = {};
+
+      const audioPlayerOptions = {
+        controls: true,
+        preload: 'metadata',
+        controlBar: {
+          volumePanel: { inline: false },
+          currentTimeDisplay: true,
+          durationDisplay: true,
+          remainingTimeDisplay: true,
+          progressControl: true,
+          playbackRateMenuButton: true,
+          subsCapsButton: false,
+          audioTrackButton: false,
+          pictureInPictureToggle: false,
+          fullscreenToggle: false
+        }
+      };
+
+      function initAllAudioPlayers() {
+        if (typeof window.videojs !== 'function') {
+          console.error('Video.js is not available.');
+          return;
+        }
+
+        document.querySelectorAll('.js-vjs-audio').forEach((el) => {
+          // Avoid double init
+          const player = videojs.getPlayers?.()[el.id] || videojs(el, audioPlayerOptions);
+
+          // Pause other players when one starts
+          player.on('play', () => {
+            audioPlayers.forEach(p => { if (p !== player && !p.paused()) p.pause(); });
+          });
+          audioPlayers.push(player);
+          audioPlayersById[el.id] = player;
+        });
+
+        const audioNav = document.getElementById('audioNav');
+        if (audioNav) {
+          // Force Scroll to Start on Page Refresh
+          if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+
+          const list = audioNav;
+          const links = list.querySelectorAll('.nav-link');
+          const prevBtn = list.parentElement.querySelector('#prevBtn');
+          const nextBtn = list.parentElement.querySelector('#nextBtn');
+
+          // Tracks the first and last child to hide/show arrows
+          const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+              if (entry.target === list.firstElementChild) prevBtn.classList.toggle('hidden', entry.isIntersecting);
+              if (entry.target === list.lastElementChild) nextBtn.classList.toggle('hidden', entry.isIntersecting);
+            });
+          }, { root: list, threshold: 0.9 });
+
+        observer.observe(list.firstElementChild);
+        observer.observe(list.lastElementChild);
+
+        //  Navigation Logic
+        function navigate(el) {
+          if (!el) return;
+
+          el.scrollIntoView({
+              behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+              inline: 'center',
+              block: 'nearest'
+          });
+
+          // Focus without browser jump
+          el.focus({ preventScroll: true });
+        }
+
+        // Event Listeners
+        links.forEach((link, idx) => {
+          link.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigate(link);
+          });
+
+          link.addEventListener('keydown', (e) => {
+          // Prevent BS5 tab wrap-around on keyboard
+          if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
+            e.stopImmediatePropagation();
+          }
+            if (e.key === 'ArrowRight') {
+            // STOP: Only move if we aren't at the very last item
+            if (idx < links.length - 1) {
+              e.preventDefault();
+              navigate(links[idx + 1]);
+            }
+            } else if (e.key === 'ArrowLeft') {
+            // STOP: Only move if we aren't at the very first item
+            if (idx > 0) {
+              e.preventDefault();
+              navigate(links[idx - 1]);
+            }
+          }
+        });
+      });
+
+      // Arrow Button Scroll
+      prevBtn.addEventListener('click', () => list.scrollBy({ left: -200, behavior: 'smooth' }));
+      nextBtn.addEventListener('click', () => list.scrollBy({ left: 200, behavior: 'smooth' }));
+
+      // Hard reset to start
+      list.scrollTo({ left: 0, behavior: 'instant' });
+
+      // When a tab becomes active, play audio and pause others
+      audioNav.addEventListener('shown.bs.tab', (e) => {
+        const targetSelector = e.target.getAttribute('data-bs-target');
+        const pane = targetSelector ? document.querySelector(targetSelector) : null;
+        const audioEl = pane?.querySelector('.js-vjs-audio');
+
+        if (!audioEl) return;
+
+        const player = audioPlayersById[audioEl.id] || videojs(audioEl);
+
+        // Pause all others
+        audioPlayers.forEach(p => { if (p !== player && !p.paused()) p.pause(); });
+
+        // Ensure player is ready, then try to play
+        player.ready(() => {
+          // Restart from the beginning
+          // player.currentTime(0);
+          const playPromise = player.play();
+          if (playPromise && typeof playPromise.catch === 'function') {
+            playPromise.catch(err => {
+              // Autoplay policy or other play errors
+              console.debug('Play was blocked or failed:', err);
+            });
+          }
+        });
+      });
+
+      // Pause the audio of the tab being hidden
+      audioNav.addEventListener('hide.bs.tab', (e) => {
+        const targetSelector = e.target.getAttribute('data-bs-target');
+        const pane = targetSelector ? document.querySelector(targetSelector) : null;
+        const audioEl = pane?.querySelector('.js-vjs-audio');
+        if (!audioEl) return;
+        const player = audioPlayersById[audioEl.id];
+        if (player && !player.paused())
+          player.pause();
+        });
+        } else {
+          console.warn('Nav element #audioNav not found.');
+        }
+      }
+
+      // Initialize after DOM is ready
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initAllAudioPlayers);
+      } else {
+        initAllAudioPlayers();
+      }
+    }
+  );
+</script>
 
 <!-- END of: finna - RecordDriver/DefaultRecord/record-audio-player.phtml -->
