@@ -31,7 +31,7 @@ class finnaSelectA11y extends SelectA11y.Select {
   }
   removeAriaLabelledby() {
     const buttonSelect = this.button;
-    buttonSelect.removeAttribute("aria-labelledby")
+    buttonSelect.removeAttribute("aria-labelledby");
   }
 }
 // Add to global namespace.
