@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -37,7 +37,6 @@ use Psr\Log\LoggerAwareInterface;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Auth\Manager as AuthManager;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\ILS\Connection as ILSConnection;
 use VuFind\Log\LoggerAwareTrait;
 use VuFind\Session\Settings as SessionSettings;
@@ -68,7 +67,6 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
      * @param ILSAuthenticator         $ilsAuthenticator  ILS authenticator
      * @param ILSConnection            $ils               ILS connection
      * @param array                    $biblioworksConfig Biblioworks configuration
-     * @param UserCardServiceInterface $userCardService   User card service
      */
     public function __construct(
         SessionSettings $sessionSettings,
@@ -76,8 +74,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
         protected AuthManager $authManager,
         protected ILSAuthenticator $ilsAuthenticator,
         protected ILSConnection $ils,
-        protected array $biblioworksConfig,
-        protected UserCardServiceInterface $userCardService
+        protected array $biblioworksConfig
     ) {
         $this->sessionSettings = $sessionSettings;
     }
@@ -95,15 +92,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
 
         $settings = $this->getIntegrationSettings();
 
-        $enabledRaw = $settings['enabled'] ?? false;
-        $enabled = filter_var(
-            $enabledRaw,
-            FILTER_VALIDATE_BOOLEAN,
-            FILTER_NULL_ON_FAILURE
-        );
-        if ($enabled === null) {
-            $enabled = (bool)$enabledRaw;
-        }
+        $enabled = (bool)($settings['enabled'] ?? false);
         if (!$enabled) {
             return $this->formatResponse(['logged_in' => false]);
         }
@@ -116,10 +105,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
 
         // 2. Resolve current catalog session
         $patron = $this->ilsAuthenticator->storedCatalogLogin();
-        if (!is_array($patron)) {
-            $patron = $this->attemptLibraryCardLogin($user);
-        }
-        if (!is_array($patron) && $this->allowMockPatron($settings)) {
+        if (!is_array($patron) && $this->allowMockPatron()) {
             $patron = $this->createMockPatronFromUser($user);
         }
         if (!is_array($patron)) {
@@ -137,6 +123,12 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
             return $this->formatResponse(['logged_in' => false]);
         }
 
+        $issuer = (string)($settings['ust_issuer'] ?? '');
+        if ($issuer === '') {
+            $this->logError('ust_issuer not configured; refusing to mint UST.');
+            return $this->formatResponse(['logged_in' => false]);
+        }
+
         // 3. Build UST payload
         $now = time();
         // Default TTL aligns with the config template (2 days) but can be overridden
@@ -148,7 +140,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
             'sub' => (string)$patronId,       // Patron/borrower ID
             'iat' => $now,
             'exp' => $now + $ttl,
-            'iss' => (string)($settings['ust_issuer'] ?? 'example.finna.fi'),
+            'iss' => $issuer,
             'aud' => (string)($settings['ust_audience'] ?? 'biblioworks-adapter'),
             'sid' => $sessionId,
         ];
@@ -221,18 +213,18 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
      */
     protected function extractPatronId(array $patron): ?string
     {
-        if (!empty($patron['id'])) {
-            return (string)$patron['id'];
+        if ($id = $patron['id'] ?? null) {
+            return (string)$id;
         }
 
         if ($this->ils->checkCapability('getMyProfile', compact('patron'))) {
             try {
                 $profile = $this->ils->getMyProfile($patron);
-                if (!empty($profile['id'])) {
-                    return (string)$profile['id'];
+                if ($id = $profile['id'] ?? null) {
+                    return (string)$id;
                 }
-                if (!empty($profile['full_data']['borrowernumber'])) {
-                    return (string)$profile['full_data']['borrowernumber'];
+                if ($id = $profile['full_data']['borrowernumber'] ?? null) {
+                    return (string)$id;
                 }
             } catch (\Throwable $e) {
                 $this->logError('getMyProfile failed - ' . $e->getMessage());
@@ -243,68 +235,14 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
     }
 
     /**
-     * Attempt to initialize catalog login via stored library cards.
-     *
-     * @param UserEntityInterface $user Logged in user
-     *
-     * @return ?array
-     */
-    protected function attemptLibraryCardLogin(UserEntityInterface $user): ?array
-    {
-        try {
-            $currentCatUsername = $user->getCatUsername();
-            $cards = $this->userCardService->getLibraryCards($user);
-            if (!$cards) {
-                return null;
-            }
-
-            // Only auto-activate when no active card is set or the active card is missing.
-            $needsActivation = empty($currentCatUsername)
-                || !array_filter(
-                    $cards,
-                    function ($card) use ($currentCatUsername) {
-                        return $card->getCatUsername() === $currentCatUsername;
-                    }
-                );
-
-            if (!$needsActivation) {
-                return null;
-            }
-
-            if (count($cards) > 1) {
-                // Ambiguous which card to activate automatically. Multiple cards for an account is not in current use?!
-                return null;
-            }
-
-            $card = current($cards);
-            if (!$card || $card->getId() === null) {
-                return null;
-            }
-
-            $this->userCardService->activateLibraryCard($user, $card->getId());
-            $this->authManager->updateSession($user);
-            return $this->ilsAuthenticator->storedCatalogLogin() ?: null;
-        } catch (\Throwable $e) {
-            $this->logError('Library card activation failed - ' . $e->getMessage());
-            return null;
-        }
-    }
-
-    /**
      * Determine if mock patron mode is allowed.
-     *
-     * @param array $settings Integration settings
      *
      * @return bool
      */
-    protected function allowMockPatron(array $settings): bool
+    protected function allowMockPatron(): bool
     {
-        $flag = $settings['allow_mock_patron'] ?? false;
-        $bool = filter_var($flag, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
-        if ($bool === null) {
-            $bool = (bool)$flag;
-        }
-        return $bool;
+        $settings = $this->getIntegrationSettings();
+        return (bool)($settings['allow_mock_patron'] ?? false);
     }
 
     /**
@@ -340,23 +278,6 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
      */
     protected function resolveSessionId(): ?string
     {
-        $sid = session_id();
-        if (is_string($sid) && $sid !== '') {
-            return $sid;
-        }
-
-        try {
-            $sidFromManager = $this->sessionManager->getId();
-            if (is_string($sidFromManager) && $sidFromManager !== '') {
-                return $sidFromManager;
-            }
-        } catch (\Throwable $e) {
-            $this->logError(
-                'Failed to resolve session id via manager - '
-                . $e->getMessage()
-            );
-        }
-
-        return null;
+        return $this->sessionManager->getId() ?: null;
     }
 }

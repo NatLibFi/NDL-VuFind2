@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -33,7 +33,6 @@ use Finna\AjaxHandler\BiblioworksHelpdeskContext;
 use Laminas\Session\SessionManager;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\ILS\Connection as ILSConnection;
 use VuFind\Session\Settings as SessionSettings;
 
@@ -66,10 +65,10 @@ class BiblioworksHelpdeskContextTest extends \VuFindTest\Unit\AjaxHandlerTestCas
         );
         $sessionSettings->expects($this->once())->method('disableWrite');
         $sessionManager = $this->container->createMock(SessionManager::class, ['getId']);
+        $sessionManager->method('getId')->willReturn('testsid');
         $authManager = $this->getMockAuthManager($user);
         $ilsAuthenticator = $this->container->createMock(ILSAuthenticator::class);
         $ils = $this->container->createMock(ILSConnection::class);
-        $userCardService = $this->container->createMock(UserCardServiceInterface::class);
 
         return new BiblioworksHelpdeskContext(
             $sessionSettings,
@@ -77,8 +76,7 @@ class BiblioworksHelpdeskContextTest extends \VuFindTest\Unit\AjaxHandlerTestCas
             $authManager,
             $ilsAuthenticator,
             $ils,
-            $config,
-            $userCardService
+            $config
         );
     }
 
@@ -135,6 +133,7 @@ class BiblioworksHelpdeskContextTest extends \VuFindTest\Unit\AjaxHandlerTestCas
                 'enabled' => true,
                 'allow_mock_patron' => true,
                 'ust_encryption_key' => $key,
+                'ust_issuer' => 'example.finna.fi',
             ],
         ];
 
@@ -146,17 +145,7 @@ class BiblioworksHelpdeskContextTest extends \VuFindTest\Unit\AjaxHandlerTestCas
         $handler = $this->getHandler($config, $user);
         $params = $this->getParamsHelper();
 
-        $originalSid = session_id();
-        $sessionActive = session_status() === PHP_SESSION_ACTIVE;
-        $changedSid = false;
-        if (!$sessionActive && $originalSid === '') {
-            session_id('testsid');
-            $changedSid = true;
-        }
         $result = $handler->handleRequest($params);
-        if ($changedSid) {
-            session_id($originalSid);
-        }
 
         $this->assertIsArray($result);
         $this->assertSame(1, count($result));

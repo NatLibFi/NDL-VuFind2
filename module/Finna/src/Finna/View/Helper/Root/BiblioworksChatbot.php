@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -84,8 +84,10 @@ class BiblioworksChatbot extends AbstractHelper
         // Escape values for safe output
         $escapeAttr = $this->getView()->plugin('escapeHtmlAttr');
 
-        $tokenJson = json_encode($token);
-        $baseUrlJson = json_encode($baseUrl);
+        $dynamicScript = true;
+        $helpdeskChatbotConfig = json_encode(
+            compact('token', 'baseUrl', 'dynamicScript')
+        );
         $baseUrlAttr = $escapeAttr($baseUrl);
 
         // Get CSP nonce for inline scripts
@@ -93,11 +95,7 @@ class BiblioworksChatbot extends AbstractHelper
 
         return <<<HTML
 <script nonce="{$cspNonce}">
-  window.helpdeskChatbotConfig = {
-    token: {$tokenJson},
-    baseUrl: {$baseUrlJson},
-    dynamicScript: true,
-  };
+  window.helpdeskChatbotConfig = {$helpdeskChatbotConfig};
 </script>
 <script src="{$baseUrlAttr}/helpdesk-chatbot.min.js" nonce="{$cspNonce}"></script>
 HTML;

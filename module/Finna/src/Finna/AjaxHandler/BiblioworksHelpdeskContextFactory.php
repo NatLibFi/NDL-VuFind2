@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -50,7 +50,7 @@ class BiblioworksHelpdeskContextFactory implements \Laminas\ServiceManager\Facto
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
-     * @param null|array         $options       Extra options (optional)
+     * @param ?array             $options       Extra options (optional)
      *
      * @return object
      *
@@ -74,16 +74,13 @@ class BiblioworksHelpdeskContextFactory implements \Laminas\ServiceManager\Facto
         $configManager = $container->get(\VuFind\Config\ConfigManager::class);
         $biblioworksConfig = $configManager->getConfigArray('biblioworks');
 
-        $dbServices = $container->get(\VuFind\Db\Service\PluginManager::class);
-
         return new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\Laminas\Session\SessionManager::class),
             $container->get(\VuFind\Auth\Manager::class),
             $container->get(\VuFind\Auth\ILSAuthenticator::class),
             $container->get(\VuFind\ILS\Connection::class),
-            $biblioworksConfig,
-            $dbServices->get(\VuFind\Db\Service\UserCardServiceInterface::class)
+            $biblioworksConfig
         );
     }
 }
