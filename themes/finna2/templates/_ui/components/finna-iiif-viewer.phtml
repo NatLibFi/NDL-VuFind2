@@ -42,6 +42,18 @@ $tifyConfig = json_encode([
   // Finna does not currently support dark modes, so we must force "light" to
   // prevent mismatching colors.
   'colorMode' => 'light',
+  'optionsResetOnPageChange' => ['pan', 'rotation', 'zoom'],
+  'urlQueryKey' => 'view',
+  'urlQueryParams' => [
+    'annotationId',
+    'annotationsVisible',
+    'layers',
+    'filters',
+    'pages',
+    'pan',
+    'rotation',
+    'zoom',
+  ],
 ]);
 
 $js = <<<JS

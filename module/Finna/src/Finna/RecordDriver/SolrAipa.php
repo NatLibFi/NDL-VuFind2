@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2025.
+ * Copyright (C) The National Library of Finland 2022-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  RecordDrivers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
@@ -32,6 +33,7 @@ namespace Finna\RecordDriver;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\LrmiDriverTrait;
+use FinnaXml\XmlDoc;
 
 use function in_array;
 
@@ -41,6 +43,7 @@ use function in_array;
  * @category VuFind
  * @package  RecordDrivers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
@@ -384,9 +387,9 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected function getEncapsulatedRecordElementTagName(): string
     {
         return match ($this->getType()) {
-            'aipa:education' => 'item', // For BC, to be removed later.
-            self::AIPA_TYPE_EDUCATION => 'item',
-            default => 'curatedRecords',
+            'aipa:education' => "{{$this->aipaNs}}item", // For BC, to be removed later.
+            self::AIPA_TYPE_EDUCATION => "{{$this->aipaNs}}item",
+            default => "{{$this->aipaNs}}curatedRecords",
         };
     }
 
@@ -407,32 +410,32 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Return full record as a filtered XmlDoc for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXMLElement(): XmlDoc
     {
         $record = parent::getFilteredXMLElement();
         $filterFields = ['abstract', 'description'];
-        foreach ($filterFields as $filterField) {
-            while ($record->{$filterField}) {
-                unset($record->{$filterField}[0]);
+        $record->filter(
+            function ($node, $path) use ($record, $filterFields) {
+                return in_array($record->localName($node), $filterFields);
             }
-        }
+        );
         return $this->filterEncapsulatedRecords($record);
     }
 
     /**
      * Return record driver instance for an encapsulated LRMI record.
      *
-     * @param \SimpleXMLElement $item AIPA item XML
+     * @param XmlDoc $item AIPA item XML
      *
      * @return AipaLrmi
      *
      * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
      */
-    protected function getLrmiDriver(\SimpleXMLElement $item): AipaLrmi
+    protected function getLrmiDriver(XmlDoc $item): AipaLrmi
     {
         /* @var AipaLrmi $driver */
         $driver = $this->recordDriverManager->get('AipaLrmi');
@@ -442,39 +445,44 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         $data = [
             'id' => $this->getUniqueID()
                 . ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR
-                . (string)$item->id,
-            'title' => (string)$item->title,
-            'fullrecord' => $item->asXML(),
-            'position' => (int)$item->position,
+                . $this->getItemId($item),
+            'title' => $item->firstValue(path: "{{$this->dcNs}}title"),
+            'fullrecord' => $item->toXML(),
+            // TODO: position does not seem to be read from correct place. Also the result seems to be unused. FIXME?
+            'position' => (int)$item->firstValue(path: "{{$this->aipaNs}}position"),
             'record_format' => 'lrmi',
             'datasource_str_mv' => $this->getDataSource(),
         ];
 
         // Facets
-        foreach ($item->educationalAudience as $audience) {
-            $data['educational_audience_str_mv'][]
-                = (string)$audience->educationalRole;
-        }
-        $data['educational_level_str_mv'] = array_map(
-            'strval',
-            (array)($item->learningResource->educationalLevel ?? [])
-        );
-        $data['educational_aim_str_mv'] = array_map(
-            'strval',
-            (array)($item->learningResource->teaches ?? [])
-        );
-        foreach ($item->learningResource->educationalAlignment ?? [] as $alignment) {
-            if ($subject = $alignment->educationalSubject ?? null) {
-                $data['educational_subject_str_mv'][] = (string)$subject;
-            }
-        }
-
-        foreach ($item->type as $type) {
-            $data['educational_material_type_str_mv'][] = (string)$type;
-        }
+        $data['educational_audience_str_mv']
+            = $item->allValues(path: "{{$this->lrmiNs}}educationalAudience/{{$this->lrmiNs}}educationalRole");
+        $data['educational_level_str_mv']
+            = $item->allValues(path: "{{$this->lrmiNs}}learningResource/{{$this->lrmiNs}}educationalLevel");
+        $data['educational_aim_str_mv']
+            = $item->allValues(path: "{{$this->lrmiNs}}learningResource/{{$this->lrmiNs}}teaches");
+        $data['educational_subject_str_mv']
+            = $item->allValues(
+                path: "{{$this->lrmiNs}}learningResource/{{$this->lrmiNs}}educationalAlignment"
+                . "/{{$this->lrmiNs}}educationalSubject"
+            );
+        $data['educational_material_type_str_mv'] = $item->allValues(path: "{{$this->dcNs}}type");
 
         $driver->setRawData($data);
 
         return $driver;
+    }
+
+    /**
+     * Get item identifier.
+     *
+     * @param XmlDoc $item Item
+     *
+     * @return string
+     */
+    protected function getItemId(XmlDoc $item): string
+    {
+        // The identifier should be in dc:identifier but could be in dc:id due to legacy/bad documentation:
+        return $item->firstValue(path: "{{$this->dcNs}}identifier") ?? $item->firstValue(path: "{{$this->dcNs}}id");
     }
 }

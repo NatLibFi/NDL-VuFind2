@@ -28,4 +28,6 @@
   <medium href="http://www.wikidata.org/entity/Q1397443" type="wikidata:P186" comment="P12345 (made from material)">Kangas</medium>
   <format width="2.1 cm" height="2.3 cm" comment="P2049, P2048">2.1 cm x 2.3 cm</format>
   <recordID>Q123456789</recordID>
+  <abstract>Not in filtered</abstract>
+  <abstract>Ei suodatetussa</abstract>
 </dcterms>

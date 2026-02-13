@@ -1,7 +1,7 @@
 <?php
 echo $this->record($this->driver)->getExportFormat('endnote');
 
-$format = $this->driver->getRecordFormat();
+$format = $this->driver->tryMethod('getRecordFormat');
 if ($this->driver->getHierarchyType()) {
     if ($format === 'ead3') {
         if ($archiveAuthors = $this->driver->tryMethod('getAuthorsWithoutRoleHeadings')) {

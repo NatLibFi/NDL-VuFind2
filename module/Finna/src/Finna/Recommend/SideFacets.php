@@ -108,7 +108,7 @@ class SideFacets extends \VuFind\Recommend\SideFacets implements TranslatorAware
                 = in_array('geographic_facet:location_geo', $finnaGeographic);
         }
 
-        if (null !== ($mapSelection = $config->Geographical->map_selection ?? null)) {
+        if (null !== ($mapSelection = $config['Geographical']['map_selection'] ?? null)) {
             $this->geographicFacet['map_selection'] = (bool)$mapSelection;
         }
     }

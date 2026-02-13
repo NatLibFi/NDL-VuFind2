@@ -31,11 +31,11 @@
 
 namespace Finna\Controller;
 
+use Finna\Db\Service\UserCardServiceInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container as SessionContainer;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Db\Type\AuditEventSubtype;
 use VuFind\Db\Type\AuditEventType;
@@ -771,6 +771,30 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $this->flashMessenger()->addErrorMessage('An error has occurred');
             return $this->redirect()->toRoute('librarycards-home');
         }
+    }
+
+    /**
+     * Return a list of users connected to this library card
+     *
+     * @return mixed
+     */
+    public function connectedUsersAction()
+    {
+        if (!($user = $this->getUser())) {
+            return $this->forceLogin();
+        }
+        if (!($id = $this->params()->fromRoute('id'))) {
+            return $this->redirect()->toRoute('librarycards-home');
+        }
+        $userCardService = $this->getDbService(UserCardServiceInterface::class);
+        $card = $userCardService->getOrCreateLibraryCard($user, $id) ?? null;
+        if (!$card) {
+            throw new \Exception('Library card not found');
+        }
+
+        $catUsername = $card->getCatUsername();
+        $accounts = $userCardService->getConnectedAccountInfoForLibraryCard($catUsername);
+        return $this->createViewModel(compact('accounts'));
     }
 
     /**

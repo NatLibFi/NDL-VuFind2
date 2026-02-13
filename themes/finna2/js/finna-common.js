@@ -55,7 +55,7 @@ finna.common = (function finnaCommon() {
     finna.itemStatus.initDedupRecordSelection(container);
     $.fn.finnaPopup.reIndex();
     if (typeof includeVuFind === 'undefined' || includeVuFind) {
-      VuFind.initResultScripts(unwrapJQuery(container));
+      VuFind.initResultScripts(typeof container === 'string' ? container : unwrapJQuery(container));
     }
   }
 
