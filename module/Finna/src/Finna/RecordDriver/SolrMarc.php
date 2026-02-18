@@ -966,6 +966,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      *
      * This is not particularly beautiful, but the aim is to do the work with the
      * least effort.
+     * Legacy method, use getFilteredXMLElement instead.
      *
      * @return \SimpleXMLElement
      */

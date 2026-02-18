@@ -468,7 +468,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
      *
      * @return string|null
      */
-    protected function getFullRecord($record)
+    protected function getFullRecordLegacy($record)
     {
         if ($legacy = $record->tryMethod('getFilteredXMLLegacy')) {
             return $legacy;

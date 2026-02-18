@@ -557,6 +557,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
 
     /**
      * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Legacy method, use getFilteredXmlElement instead.
      *
      * @return \SimpleXMLElement
      */

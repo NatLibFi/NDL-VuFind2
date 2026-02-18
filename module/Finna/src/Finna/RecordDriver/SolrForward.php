@@ -1034,6 +1034,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
 
     /**
      * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Legacy method, use getFilteredXMLElement instead.
      *
      * @return \SimpleXMLElement
      */
