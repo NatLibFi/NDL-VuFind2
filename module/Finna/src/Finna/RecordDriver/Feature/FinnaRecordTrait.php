@@ -560,4 +560,19 @@ trait FinnaRecordTrait
         }
         return $defaultSpecsClass;
     }
+
+    /**
+     * Return filtered Xml as string for legacy use.
+     * Used for api responses.
+     *
+     * @return string
+     */
+    public function getFilteredXMLLegacy()
+    {
+        $filteredXml = $this->tryMethod('getFilteredXMLElementLegacy');
+        if ($filteredXml) {
+            return $filteredXml->asXML();
+        }
+        return '';
+    }
 }

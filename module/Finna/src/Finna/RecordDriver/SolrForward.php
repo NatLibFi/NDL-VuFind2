@@ -1033,6 +1033,30 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     *
+     * @return \SimpleXMLElement
+     */
+    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
+    {
+        $record = clone $this->getRecordXML();
+        $remove = [];
+        foreach ($record->ProductionEvent as $event) {
+            $attributes = $event->attributes();
+            if (
+                isset($attributes->{'elonet-tag'})
+                && 'lehdistoarvio' === (string)$attributes->{'elonet-tag'}
+            ) {
+                $remove[] = $event;
+            }
+        }
+        foreach ($remove as $node) {
+            unset($node[0]);
+        }
+        return $record;
+    }
+
+    /**
      * Return full record as filtered XML for public APIs.
      *
      * @return string
