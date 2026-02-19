@@ -269,7 +269,13 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             $resultFixture,
             'FinnaApi'
         );
+        // Compare fullrecord separately:
+        $expectedFullRecord = $expected[0]['fullRecord'];
+        $resultFullRecord = $results[0]['fullRecord'];
+        unset($expected[0]['fullRecord']);
+        unset($results[0]['fullRecord']);
         $this->assertEquals($expected, $results);
+        $this->assertXmlStringEqualsXmlString($expectedFullRecord, $resultFullRecord);
     }
 
     /**

@@ -34,6 +34,7 @@ use Finna\RecordDriver\CuratedRecordList;
 use Finna\RecordDriver\SolrAipa;
 use Laminas\View\Helper\AbstractHelper;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
+use NatLibFi\FinnaCodeSets\Model\DataObjectInterface;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
 use NatLibFi\FinnaCodeSets\Model\HierarchicalProxyDataObjectInterface as HPDOInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
@@ -444,7 +445,7 @@ class Aipa extends AbstractHelper
             $subjectLevelItems = [];
             foreach ($educationalData[$key] ?? [] as $item) {
                 $subjectLevelItems[] = [
-                    'title' => $item->getProxiedObject()->getPrefLabel($langcode),
+                    'title' => $this->getPrefLabel($item, $langcode),
                     'items' => $this->getComponentDataForSubject(
                         $item,
                         $langcode,
@@ -471,7 +472,7 @@ class Aipa extends AbstractHelper
                     $levelItems = [];
                     foreach ($data as $studyData) {
                         $levelItems[] = [
-                            'title' => $studyData->getPrefLabel($langcode),
+                            'title' => $this->getPrefLabel($studyData, $langcode),
                         ];
                     }
                     if ($dataLevelCodeValue !== $levelCodeValue) {
@@ -512,7 +513,7 @@ class Aipa extends AbstractHelper
         $items = [];
         foreach ($educationalData[$type] ?? [] as $data) {
             $items[] = [
-                'title' => $data->getPrefLabel($langcode),
+                'title' => $this->getPrefLabel($data, $langcode),
             ];
         }
         if (!empty($items)) {
@@ -523,5 +524,21 @@ class Aipa extends AbstractHelper
             ];
         }
         return $componentData;
+    }
+
+    /**
+     * Get first available label if one does not exist in the requested language.
+     *
+     * @param DataObjectInterface|HPDOInterface $item     Data object
+     * @param string                            $langcode Language code for the label
+     *
+     * @return string
+     */
+    protected function getPrefLabel(
+        DataObjectInterface|HPDOInterface $item,
+        string $langcode
+    ): string {
+        $prefLabels = $item->getPrefLabels();
+        return $prefLabels[$langcode] ?? reset($prefLabels);
     }
 }

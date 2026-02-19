@@ -81,8 +81,9 @@ mark, .highlight {
 
   // Loading spinner
   .loading-overlay {
-    @include loading-overlay();
     align-items: flex-start;
+
+    @include loading-overlay();
   }
 }
 

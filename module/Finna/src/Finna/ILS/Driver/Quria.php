@@ -1377,7 +1377,7 @@ class Quria extends AxiellWebServices
                 'U',
                 $this->formatDate($debt->debtDate)
             );
-            $payable = $amount > 0 && $debtDate >= $payableMinDate;
+            $payable = $amount > 0 && $debtDate >= $payableMinDate && ($debt->isOnlinePaymentAllowed ?? true);
             if ($payable) {
                 foreach ($blockedTypes as $blockedType) {
                     if (
@@ -1556,32 +1556,6 @@ class Quria extends AxiellWebServices
             $functionResult,
             $username,
             ['addPaymentRequest' => $conf]
-        );
-
-        $statusAWS = $result->$functionResult->status;
-        if ($statusAWS->type != 'ok') {
-            $message = $this->handleError($function, $statusAWS, $username);
-            if ($message == 'ils_connection_failed') {
-                throw new ILSException($message);
-            }
-            return [
-                'success' => false,
-                'reason' => $message,
-            ];
-        }
-
-        // Verify the payment registraion:
-        $function = 'GetPaymentConfirmation';
-        $functionResult = 'paymentConfirmationResponse';
-        $transactionNumber = $localPaymentIdentifier;
-        unset($conf['debts']);
-
-        $result = $this->doSOAPRequest(
-            $this->payments_wsdl,
-            $function,
-            $functionResult,
-            $username,
-            ['paymentConfirmationRequest' => $conf]
         );
 
         $statusAWS = $result->$functionResult->status;

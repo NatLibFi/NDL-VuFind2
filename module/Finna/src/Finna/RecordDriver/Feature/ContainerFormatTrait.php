@@ -33,6 +33,7 @@ use Finna\Record\Loader;
 use Finna\RecordDriver\CuratedRecord;
 use Finna\RecordDriver\CuratedRecordList;
 use Finna\RecordDriver\PluginManager;
+use FinnaXml\XmlDoc;
 use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\ParamBag;
 use VuFindSearch\Response\RecordInterface;
@@ -51,6 +52,20 @@ use function is_callable;
  */
 trait ContainerFormatTrait
 {
+    /**
+     * Aipa XML namespace.
+     *
+     * @var string
+     */
+    protected string $aipaNs = 'http://finna.fi/ns/aipa/';
+
+    /**
+     * LRMI XML namespace.
+     *
+     * @var string
+     */
+    protected string $lrmiNs = 'http://dublincore.org/dcx/lrmi-terms/1.1/';
+
     /**
      * Cache for encapsulated records.
      *
@@ -103,7 +118,7 @@ trait ContainerFormatTrait
      * @param int  $offset Offset for results
      * @param ?int $limit  Limit for results (null for none)
      *
-     * @return RecordInterface[]
+     * @return AbstractBase[]
      * @throws \RuntimeException If the format of an encapsulated record is not
      * supported
      */
@@ -176,7 +191,7 @@ trait ContainerFormatTrait
      */
     protected function getEncapsulatedRecordElementTagName(): string
     {
-        return 'item';
+        return "{{$this->aipaNs}}item";
     }
 
     /**
@@ -188,9 +203,11 @@ trait ContainerFormatTrait
     {
         // Implementation for XML items
         $items = [];
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $tagName = $this->getEncapsulatedRecordElementTagName();
-        foreach ($xml->{$tagName} as $item) {
+        foreach ($xml->all(path: $tagName) as $node) {
+            $item = new XmlDoc();
+            $item->import($xml->export($node));
             $items[] = $item;
         }
         return $items;
@@ -206,9 +223,8 @@ trait ContainerFormatTrait
      */
     protected function getEncapsulatedRecordFormat($item): string
     {
-        // Implementation for XML items with format specified in a 'format' attribute
-        $format = $item->attributes()->{'format'} ?? null;
-        if (isset($format)) {
+        // Implementation for XmlDoc items with format specified in a 'format' attribute
+        if (null !== ($format = $item->attr($item->root(), 'format'))) {
             return ucfirst(strtolower((string)$format));
         }
         throw new \RuntimeException('Unable to determine format');
@@ -223,15 +239,14 @@ trait ContainerFormatTrait
      */
     protected function getEncapsulatedRecordPosition($item): ?int
     {
-        // Implementation for XML items with position optionally specified in a
+        // Implementation for XmlDoc items with position optionally specified in a
         // 'position' attribute or element
-        $position = $item->attributes()->{'position'}
-            ?? $item->position
+        $position = $item->attr($item->root(), "{{$this->aipaNs}}position")
+            ?? $item->firstValue(path: "{{$this->lrmiNs}}position")
             ?? null;
-        if (isset($position)) {
-            return (int)$position;
-        }
-        return null;
+        return null !== $position
+            ? (int)$position
+            : null;
     }
 
     /**
@@ -384,37 +399,40 @@ trait ContainerFormatTrait
     /**
      * Filter encapsulated records of this format for public APIs.
      *
-     * @param \SimpleXMLElement $record Container record XML.
+     * @param XmlDoc $record Container record XML.
      *
-     * @return \SimpleXMLElement Filtered container record XML.
+     * @return XmlDoc
      */
-    protected function filterEncapsulatedRecords(\SimpleXMLElement $record): \SimpleXMLElement
+    protected function filterEncapsulatedRecords(XmlDoc $record): XmlDoc
     {
-        $container = dom_import_simplexml($record);
-        $tagName = $this->getEncapsulatedRecordElementTagName();
-        foreach ($container->getElementsByTagName($tagName) as $item) {
-            $encapsulated = $this->getEncapsulatedRecord(
-                $this->getEncapsulatedRecordDriver(simplexml_import_dom($item))->getUniqueID()
-            );
-            if (is_callable([$encapsulated, 'getFilteredXMLElement'])) {
-                $filtered = dom_import_simplexml($encapsulated->getFilteredXMLElement());
-                $container->replaceChild(
-                    $container->ownerDocument->importNode($filtered, true),
-                    $item
-                );
+        // Update encapsulated record data with their filtered documents:
+        $encapsulatedTagLocalName = $record->localName($this->getEncapsulatedRecordElementTagName());
+        $record->modify(
+            function (&$node) use ($record, $encapsulatedTagLocalName): void {
+                if ($record->localName($node) === $encapsulatedTagLocalName) {
+                    $childDoc = new XmlDoc();
+                    $childDoc->import($record->export($node));
+                    $encapsulatedRecord = $this->getEncapsulatedRecord(
+                        $this->getEncapsulatedRecordDriver($childDoc)->getUniqueID()
+                    );
+                    if (is_callable([$encapsulatedRecord, 'getFilteredXMLElement'])) {
+                        $filtered = $encapsulatedRecord->getFilteredXMLElement();
+                        $record->replaceChildren($node, $filtered);
+                    }
+                }
             }
-        }
-        return simplexml_import_dom($container);
+        );
+        return $record;
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Return full record as a filtered XmlDoc for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXMLElement(): XmlDoc
     {
-        $record = clone $this->getXmlRecord();
+        $record = clone $this->getXmlReader();
         return $this->filterEncapsulatedRecords($record);
     }
 
@@ -425,19 +443,19 @@ trait ContainerFormatTrait
      */
     public function getFilteredXML()
     {
-        return $this->getFilteredXMLElement()->asXML();
+        return $this->getFilteredXMLElement()->toXML();
     }
 
     /**
      * Return record driver instance for an encapsulated curated record.
      *
-     * @param \SimpleXMLElement $item Curated record item XML
+     * @param XmlDoc $item Curated record item XML
      *
      * @return CuratedRecord
      *
      * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
      */
-    protected function getCuratedRecordDriver(\SimpleXMLElement $item): CuratedRecord
+    protected function getCuratedRecordDriver(XmlDoc $item): CuratedRecord
     {
         /* @var CuratedRecord $driver */
         $driver = $this->recordDriverManager->get('CuratedRecord');
@@ -445,9 +463,9 @@ trait ContainerFormatTrait
         $driver->setContainerRecord($this);
 
         $data = [
-            'id' => (string)$item->identifier,
-            'notes' => (string)($item->comment ?? ''),
-            'fullrecord' => $item->asXML(),
+            'id' => $item->firstValue(path: "{{$this->aipaNs}}identifier"),
+            'notes' => $item->firstValue(path: "{{$this->aipaNs}}comment"),
+            'fullrecord' => $item->toXML(),
         ];
 
         $driver->setRawData($data);
@@ -458,13 +476,13 @@ trait ContainerFormatTrait
     /**
      * Return record driver instance for an encapsulated curated record list.
      *
-     * @param \SimpleXMLElement $item Curated record list item XML
+     * @param XmlDoc $item Curated record list item XML
      *
      * @return CuratedRecordList
      *
      * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
      */
-    protected function getCuratedRecordListDriver(\SimpleXMLElement $item): CuratedRecordList
+    protected function getCuratedRecordListDriver(XmlDoc $item): CuratedRecordList
     {
         /* @var CuratedRecordList $driver */
         $driver = $this->recordDriverManager->get('CuratedRecordList');
@@ -474,11 +492,11 @@ trait ContainerFormatTrait
         $data = [
             'id' => $this->getUniqueID()
                 . ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR
-                . (string)$item->identifier,
-            'title' => (string)$item->name,
-            'description' => (string)($item->description ?? ''),
-            'additionalType' => (string)$item->additionalType,
-            'fullrecord' => $item->asXML(),
+                . $item->firstValue(path: "{{$this->aipaNs}}identifier"),
+            'title' => $item->firstValue(path: "{{$this->aipaNs}}name"),
+            'description' => $item->firstValue(path: "{{$this->aipaNs}}description"),
+            'additionalType' => $item->firstValue(path: "{{$this->aipaNs}}additionalType"),
+            'fullrecord' => $item->toXML(),
         ];
 
         $driver->setRawData($data);
