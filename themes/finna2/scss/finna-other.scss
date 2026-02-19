@@ -148,6 +148,13 @@ input[type=number].input-year::-webkit-outer-spin-button {
   margin: 0;
 }
 
+label,
+select,
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
 /* --- Image processing --- */
 
 .group [class^=col-] {
