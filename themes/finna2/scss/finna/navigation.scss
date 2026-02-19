@@ -30,7 +30,7 @@ header {
     top: 0;
     right: 0;
     left: 0;
-    z-index: 100;
+    z-index: $zindex-mobile-navbar;
     background-color: $header-background-color;
     border-width: 0 0 1px;
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
