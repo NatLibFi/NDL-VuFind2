@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2016-2022.
+ * Copyright (C) The National Library of Finland 2016-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,8 @@
  */
 
 namespace Finna\RecordDriver;
+
+use FinnaXml\XmlDoc;
 
 use function in_array;
 use function is_array;
@@ -394,6 +396,13 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      * @var array
      */
     protected $lazyRecordXML;
+
+    /**
+     * Record metadata as an XmlDoc
+     *
+     * @var XmlDoc
+     */
+    protected $lazyRecordXmlDoc;
 
     /**
      * Constructor
@@ -1001,14 +1010,35 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     {
         parent::setRawData($data);
         $this->lazyRecordXML = null;
+        $this->lazyRecordXmlDoc = null;
     }
 
     /**
      * Return full record as a filtered SimpleXMLElement for public APIs.
      *
+     * @return XmlDoc
+     */
+    public function getFilteredXMLElement(): XmlDoc
+    {
+        $container = $this->getAllRecordsXmlDoc();
+        $container->filter(
+            function ($node, $path) use ($container): bool {
+                return $container->attr($node, 'elonet-tag') === 'lehdistoarvio';
+            }
+        );
+        // Return only the main document:
+        $main = new XmlDoc();
+        $main->import($container->export($container->first()));
+        return $main;
+    }
+
+    /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Legacy method, use getFilteredXMLElement instead.
+     *
      * @return \SimpleXMLElement
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
     {
         $record = clone $this->getRecordXML();
         $remove = [];
@@ -1034,7 +1064,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getFilteredXML()
     {
-        return $this->getFilteredXMLElement()->asXML();
+        return $this->getFilteredXMLElement()->toXML();
     }
 
     /**
@@ -1051,6 +1081,20 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
             $this->lazyRecordXML = is_array($records) ? $records : [$records];
         }
         return $this->lazyRecordXML;
+    }
+
+    /**
+     * Get all original records as an XmlDoc object
+     *
+     * @return XmlDoc
+     */
+    protected function getAllRecordsXmlDoc(): XmlDoc
+    {
+        if ($this->lazyRecordXmlDoc === null) {
+            $this->lazyRecordXmlDoc = new XmlDoc();
+            $this->lazyRecordXmlDoc->parse($this->fields['fullrecord']);
+        }
+        return $this->lazyRecordXmlDoc;
     }
 
     /**
@@ -1196,6 +1240,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     {
         $records = $this->getAllRecordsXML();
         return reset($records);
+    }
+
+    /**
+     * Get the original main record as an XmlDoc node
+     *
+     * @return array
+     */
+    protected function getRecordXmlDocNode(): array
+    {
+        $container = $this->getAllRecordsXmlDoc();
+        return $container->first();
     }
 
     /**

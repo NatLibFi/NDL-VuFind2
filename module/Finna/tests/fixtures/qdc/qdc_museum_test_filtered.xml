@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<dcterms schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dcterms/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
+<dcterms xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.openarchives.org/OAI/2.0/oai_dcterms/ http://www.openarchives.org/OAI/2.0/oai_dc.xsd">
   <title comment="Wikidata Label">Ducks living in harmony</title>
   <title lang="fi" comment="Wikidata Label">Ankat el&#xE4;v&#xE4;t harmoniassa</title>
   <title lang="en" comment="Wikidata Label">Ducks living in harmony</title>

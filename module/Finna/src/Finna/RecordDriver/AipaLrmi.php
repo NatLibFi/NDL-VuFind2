@@ -33,8 +33,10 @@ use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
+use FinnaXml\XmlDoc;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
 
+use function in_array;
 use function is_callable;
 
 /**
@@ -59,6 +61,23 @@ class AipaLrmi extends SolrLrmi implements
      * @var FinnaCodeSets
      */
     protected FinnaCodeSets $codeSets;
+
+    /**
+     * Fields filtered from the record by getFilteredXmlElement method.
+     *
+     * @var array
+     */
+    protected $filterFields = [
+        'abstract',
+        'description',
+        'assignmentIdeas',
+        'learningResource/studyObjectives',
+        'learningResource/educationalLevel/name',
+        'learningResource/educationalLevel/inDefinedTermSet/name',
+        'learningResource/educationalAlignment/educationalSubject/educationalFramework',
+        'learningResource/educationalAlignment/educationalSubject/targetName',
+        'learningResource/teaches/name',
+    ];
 
     /**
      * Attach Finna Code Sets library instance.
@@ -267,7 +286,7 @@ class AipaLrmi extends SolrLrmi implements
      */
     protected function getEncapsulatedRecordElementTagName(): string
     {
-        return 'material';
+        return "{{$this->lrmiNs}}material";
     }
 
     /**
@@ -283,53 +302,40 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Return full record as a filtered XmlDoc for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXmlElement(): XmlDoc
     {
-        $record = parent::getFilteredXMLElement();
-        $this->doFilterFields($record, ['abstract', 'description', 'assignmentIdeas']);
-        foreach ($record->learningResource as $learningResource) {
-            $this->doFilterFields($learningResource, ['studyObjectives']);
-            foreach ($learningResource->educationalLevel as $educationalLevel) {
-                $this->doFilterFields($educationalLevel, ['name']);
-                foreach ($educationalLevel->inDefinedTermSet as $inDefinedTermSet) {
-                    $this->doFilterFields($inDefinedTermSet, ['name']);
-                }
+        $record = parent::getFilteredXmlElement();
+        $record->filter(
+            function (array $node, string $path) use ($record): bool {
+                $path = implode(
+                    '/',
+                    array_map(
+                        [$record, 'localName'],
+                        explode('/', $path)
+                    )
+                );
+                return in_array($path, $this->filterFields);
             }
-            foreach ($learningResource->educationalAlignment as $educationalAlignment) {
-                foreach ($educationalAlignment->educationalSubject as $educationalSubject) {
-                    $this->doFilterFields(
-                        $educationalSubject,
-                        ['educationalFramework', 'targetName']
-                    );
-                }
-            }
-            foreach ($learningResource->teaches as $teaches) {
-                $this->doFilterFields($teaches, ['name']);
-            }
-        }
+        );
+
         return $this->filterEncapsulatedRecords($record);
     }
 
     /**
      * Helper method for filtering fields.
      *
-     * @param \SimpleXMLElement $baseElement  Base element
-     * @param array             $filterFields Fields to filter
+     * @param XmlDoc $xmlDoc       Document
+     * @param array  $filterFields Fields to filter (paths with local names of nodes)
      *
      * @return void
      */
     protected function doFilterFields(
-        \SimpleXMLElement $baseElement,
+        XmlDoc $xmlDoc,
         array $filterFields
     ): void {
-        foreach ($filterFields as $filterField) {
-            while ($baseElement->{$filterField}) {
-                unset($baseElement->{$filterField}[0]);
-            }
-        }
     }
 }

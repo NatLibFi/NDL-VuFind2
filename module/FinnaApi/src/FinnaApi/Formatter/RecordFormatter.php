@@ -460,4 +460,19 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         );
         return parent::format($results, $requestedFields);
     }
+
+    /**
+     * Get full record for a record as XML
+     *
+     * @param \VuFind\RecordDriver\AbstractBase $record Record driver
+     *
+     * @return string|null
+     */
+    protected function getFullRecordLegacy($record)
+    {
+        if ($legacy = $record->tryMethod('getFilteredXMLLegacy')) {
+            return $legacy;
+        }
+        return parent::getFullRecord($record);
+    }
 }
