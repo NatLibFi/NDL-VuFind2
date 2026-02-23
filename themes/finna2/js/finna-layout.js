@@ -606,7 +606,7 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Initialize touch device galler
+   * Initialize touch device gallery
    */
   function initTouchDeviceGallery() {
     if ($('.result-view-grid')[0] != null && isTouchDevice()) {

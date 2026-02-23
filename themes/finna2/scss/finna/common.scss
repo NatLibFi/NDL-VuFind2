@@ -103,18 +103,8 @@
   padding-left: 0;
 }
 
-.add-to-favorite-col {
-  .qrcode {
-    min-width: 120px;
-  }
-  @include media-breakpoint-up(sm) {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    text-align: right;
-  }
-}
-.add-to-favorite-col, .location-link-text {
+.add-to-favorite-col,
+.location-link-text {
   .qrcodeLink {
     background-color: $body-bg;
   }
@@ -129,11 +119,16 @@
     display: inline-block;
   }
 }
-.branchInfo .location-link-text, .copy-info .location-link-text {
+.branchInfo .location-link-text,
+.copy-info .location-link-text {
   margin-left: 8px;
 }
 .copy-info .location-link-text {
   float: right;
+}
+
+.cart-controls .btn {
+  margin-bottom: 1em;
 }
 
 /* Site status bar */
