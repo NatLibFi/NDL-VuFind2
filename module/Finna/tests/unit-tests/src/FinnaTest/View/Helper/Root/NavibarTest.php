@@ -38,6 +38,7 @@ use Laminas\Router\Http\TreeRouteStack;
 use VuFind\Config\Config;
 use VuFind\View\Helper\Root\Translate;
 use VuFind\View\Helper\Root\TranslationEmpty;
+use VuFindTest\Feature\ViewTrait;
 
 /**
  * Navibar test class
@@ -50,8 +51,7 @@ use VuFind\View\Helper\Root\TranslationEmpty;
  */
 class NavibarTest extends \PHPUnit\Framework\TestCase
 {
-    use \VuFindTest\Feature\ViewTrait;
-    use \FinnaTest\Traits\ViewTrait;
+    use ViewTrait;
 
     protected Navibar $helper;
 
