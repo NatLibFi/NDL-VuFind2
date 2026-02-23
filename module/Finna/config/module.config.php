@@ -987,6 +987,16 @@ $config = [
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ],
             ],
+            'section_plugin' => [
+                'factories' => [
+                    'Finna\Navigation\FooterMenu' => 'Finna\Navigation\FooterMenuFactory',
+                    'Finna\Navigation\HeaderBar' => 'Finna\Navigation\HeaderBarFactory',
+                ],
+                'aliases' => [
+                    'VuFind\Navigation\FooterMenu' => 'Finna\Navigation\FooterMenu',
+                    'VuFind\Navigation\HeaderBar' => 'Finna\Navigation\HeaderBar',
+                ],
+            ],
             'session' => [
                 'factories' => [
                     'Finna\Session\Redis' => 'Finna\Session\RedisFactory',

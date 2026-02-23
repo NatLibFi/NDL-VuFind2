@@ -1,0 +1,12 @@
+<!-- START of: finna - header-cart.phtml -->
+<?php $cart = $this->cart(); ?>
+<li class="nav-item" role="none" id="cartSummary" aria-live="polite" aria-atomic="true">
+  <a class="nav-link icon-link" <?=$this->url('cart-home') === $_SERVER['REQUEST_URI'] ? 'aria-current="page"' : ''?> role="button" id="cartItems" data-lightbox title="<?=$this->transEsc('View Book Bag')?>" href="<?=$this->url('cart-home')?>">
+    <?=$this->icon('cart', 'icon-link__icon') ?>
+    <span class="icon-link__label">
+      <strong><?=count($cart->getItems())?></strong>
+    </span>
+    <span class="visually-hidden"><?=$this->transEsc('items')?></span>
+  </a>
+</li>
+<!-- END of: finna - header-cart.phtml -->
