@@ -41,6 +41,8 @@ use VuFind\ILS\Connection as ILSConnection;
 use VuFind\Log\LoggerAwareTrait;
 use VuFind\Session\Settings as SessionSettings;
 
+use function is_array;
+
 /**
  * Biblioworks Helpdesk Context AJAX Handler
  *
