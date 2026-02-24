@@ -61,12 +61,12 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
     /**
      * Constructor
      *
-     * @param SessionSettings          $sessionSettings   Session settings
-     * @param SessionManager           $sessionManager    Session manager
-     * @param AuthManager              $authManager       Auth manager
-     * @param ILSAuthenticator         $ilsAuthenticator  ILS authenticator
-     * @param ILSConnection            $ils               ILS connection
-     * @param array                    $biblioworksConfig Biblioworks configuration
+     * @param SessionSettings  $sessionSettings   Session settings
+     * @param SessionManager   $sessionManager    Session manager
+     * @param AuthManager      $authManager       Auth manager
+     * @param ILSAuthenticator $ilsAuthenticator  ILS authenticator
+     * @param ILSConnection    $ils               ILS connection
+     * @param array            $biblioworksConfig Biblioworks configuration
      */
     public function __construct(
         SessionSettings $sessionSettings,
