@@ -34,6 +34,7 @@ namespace Finna\RecordDriver;
 use FinnaXml\XmlDoc;
 
 use function in_array;
+use function is_array;
 
 /**
  * Model for FORWARD records in Solr.
@@ -1008,7 +1009,10 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getFilteredXMLElementLegacy(): \SimpleXMLElement
     {
-        $record = clone $this->getRecordXML();
+        $xml = new \SimpleXMLElement($this->fields['fullrecord']);
+        $records = (array)$xml->children();
+        $records = reset($records);
+        $record = is_array($records) ? $records[0] : $records;
         $remove = [];
         foreach ($record->ProductionEvent as $event) {
             $attributes = $event->attributes();
