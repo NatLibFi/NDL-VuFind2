@@ -148,7 +148,7 @@ class BiblioworksHelpdeskContextTest extends \VuFindTest\Unit\AjaxHandlerTestCas
         $result = $handler->handleRequest($params);
 
         $this->assertIsArray($result);
-        $this->assertSame(1, count($result));
+        $this->assertCount(1, $result);
         $data = $result[0];
         $this->assertSame(true, $data['logged_in']);
         $this->assertNotEmpty($data['ust']);
