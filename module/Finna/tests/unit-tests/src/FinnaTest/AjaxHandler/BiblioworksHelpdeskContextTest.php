@@ -138,9 +138,9 @@ class BiblioworksHelpdeskContextTest extends \VuFindTest\Unit\AjaxHandlerTestCas
         ];
 
         $user = $this->getMockUser();
-        $user->expects($this->any())->method('getCatId')->willReturn('borrower-123');
-        $user->expects($this->any())->method('getCatUsername')->willReturn('borrower-123');
-        $user->expects($this->any())->method('getId')->willReturn(123);
+        $user->method('getCatId')->willReturn('borrower-123');
+        $user->method('getCatUsername')->willReturn('borrower-123');
+        $user->method('getId')->willReturn(123);
 
         $handler = $this->getHandler($config, $user);
         $params = $this->getParamsHelper();
