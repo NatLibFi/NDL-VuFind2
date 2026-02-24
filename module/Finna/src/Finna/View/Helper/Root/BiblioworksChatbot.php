@@ -94,10 +94,10 @@ class BiblioworksChatbot extends AbstractHelper
         $cspNonce = $this->getView()->plugin('csp')->getNonce();
 
         return <<<HTML
-<script nonce="{$cspNonce}">
-  window.helpdeskChatbotConfig = {$helpdeskChatbotConfig};
-</script>
-<script src="{$baseUrlAttr}/helpdesk-chatbot.min.js" nonce="{$cspNonce}"></script>
-HTML;
+            <script nonce="{$cspNonce}">
+              window.helpdeskChatbotConfig = {$helpdeskChatbotConfig};
+            </script>
+            <script src="{$baseUrlAttr}/helpdesk-chatbot.min.js" nonce="{$cspNonce}"></script>
+            HTML;
     }
 }
