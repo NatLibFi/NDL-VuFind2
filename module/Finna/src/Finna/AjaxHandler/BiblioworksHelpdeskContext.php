@@ -139,7 +139,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
             $ttl = 172800;
         }
         $payload = [
-            'sub' => (string)$patronId,       // Patron/borrower ID
+            'sub' => $patronId,       // Patron/borrower ID
             'iat' => $now,
             'exp' => $now + $ttl,
             'iss' => $issuer,
@@ -267,7 +267,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
         $id = $catalogId ?: (string)$internalId;
 
         return [
-            'id' => (string)$id,
+            'id' => $id,
             'cat_username' => $catalogUsername ?: (string)$internalId,
             'mock' => true,
         ];
