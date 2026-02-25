@@ -650,9 +650,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'authorityType' => $authorityType,
            'title' => $params['title'] ?? null,
            'classes' => $params['class'] ?? [],
-           'date' => isset($params['date']) && !empty($data['date'])
-                ? $data['date']
-                : '',
+           'date' => $data['date'] ?? '',
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalData'] = $additionalData;
