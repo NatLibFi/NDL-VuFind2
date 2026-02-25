@@ -8,6 +8,9 @@
     <Title>
       <TitleText>The Zoo</TitleText>
       <TitleRelationship>original</TitleRelationship>
+      <PartDesignation>
+        <Value video-tyyppi="traileri" video-lisatieto="Traileri" video-jarjestysnro="101" online-video="0" video-rating="päihde, 12">12345_suoratoisto_esikatselu.jpg</Value>
+      </PartDesignation>
     </Title>
     <Title>
       <TitleText lang="swe">Zoo</TitleText>
@@ -24,6 +27,9 @@
     <Title>
       <TitleText>Park</TitleText>
       <TitleRelationship elokuva-elonimi-tyyppi="test name">Placeholder</TitleRelationship>
+    </Title>
+    <Title>
+      <TitleRelationship>missing</TitleRelationship>
     </Title>
     <IdentifyingTitle>The Zoo</IdentifyingTitle>
     <CountryOfReference>
@@ -120,6 +126,15 @@
         <AgentIDType>01</AgentIDType>
         <IDTypeName>elonet_yhtio</IDTypeName>
         <IDValue>1006153</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent elonet-tag="elolevittaja">
+      <Activity finna-activity-code="A99" finna-activity-text="näkymätön" elokuva-elolevittaja="levittaja">A99</Activity>
+      <AgentName>Finna-Dist Oy</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_yhtio</IDTypeName>
+        <IDValue>1001212</IDValue>
       </AgentIdentifier>
     </HasAgent>
     <HasAgent elonet-tag="elokreditoimatonesiintyja">
@@ -263,6 +278,9 @@
       </Region>
       <DateText>03.03.2000</DateText>
     </ProductionEvent>
+    <ProductionEvent>
+      <ProductionEventType elokuva-elonet-url="http://www.elonet.fi/fi/elokuva/116776" elokuva-elonet-materiaali-kuva-url="http://www.elonet.fi/tenho/media/219537_J1109603E0.jpg" finna-kayttooikeus="Luvanvarainen k&#xE4;ytt&#xF6; / ei tiedossa">DESCRIPTION</ProductionEventType>
+    </ProductionEvent>
     <SubjectTerms>
       <Term>Testi</Term>
       <Term>Unit</Term>
@@ -320,6 +338,10 @@
     <ProductionEvent elonet-tag="sisakuvat">
       <ProductionEventType>DESCRIPTION</ProductionEventType>
       <elokuva_sisakuvat>Tässä on tietoa sisäkuvista.</elokuva_sisakuvat>
+    </ProductionEvent>
+    <ProductionEvent elonet-tag="studiot">
+      <ProductionEventType>DESCRIPTION</ProductionEventType>
+      <elokuva_studiot>Studion tiedot</elokuva_studiot>
     </ProductionEvent>
     <ProductionEvent elonet-tag="kuvauspaikkahuomautus">
       <ProductionEventType>DESCRIPTION</ProductionEventType>

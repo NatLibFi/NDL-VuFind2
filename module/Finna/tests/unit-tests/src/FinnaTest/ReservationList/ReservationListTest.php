@@ -130,7 +130,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $newListTemplate = $this->getMockBuilder(FinnaResourceList::class)->onlyMethods(['getUser'])
           ->disableOriginalConstructor()->getMock();
         $service->method('createListForUser')->willReturnCallback(
-            function ($user, $params) use ($newListTemplate, $service) {
+            function (?\VuFind\Db\Entity\UserEntityInterface $user, array $params) use ($newListTemplate, $service) {
                 $cloned = clone $newListTemplate;
                 if ($params) {
                     $cloned = $service->populateListValues($cloned, $user, $params);

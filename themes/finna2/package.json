@@ -8,6 +8,6 @@
   "author": "",
   "license": "GPL-2.0-only",
   "dependencies": {
-    "tify": "^0.34.5"
+    "tify": "^0.35"
   }
 }

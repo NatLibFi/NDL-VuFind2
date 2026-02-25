@@ -589,6 +589,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'fieldLinks' => $fieldLinks,
             'externalLinks' => $externalLinks,
             'fieldIndex' => $fieldIndex,
+            'date' => $data['date'] ?? '',
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalDataHtml'] = $additionalData;
@@ -649,6 +650,7 @@ class Record extends \VuFind\View\Helper\Root\Record
            'authorityType' => $authorityType,
            'title' => $params['title'] ?? null,
            'classes' => $params['class'] ?? [],
+           'date' => $data['date'] ?? '',
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalData'] = $additionalData;
@@ -721,9 +723,6 @@ class Record extends \VuFind\View\Helper\Root\Record
                 $additionalData['role']
                     = $translator('CreatorRoles::' . $data['role']);
             }
-        }
-        if (isset($params['date']) && !empty($data['date'])) {
-            $additionalData['date'] = $data['date'];
         }
         if (!empty($additionalData)) {
             return $this->getAuthorityLinkAdditionalData($additionalData);

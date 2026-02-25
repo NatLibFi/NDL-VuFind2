@@ -288,7 +288,7 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
                             '%%url%%' => $this->url()->fromRoute('holds-list'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     if (!empty($results['warningMessage'])) {
                         $this->flashMessenger()
                             ->addWarningMessage($results['warningMessage']);
@@ -457,10 +457,7 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
                 in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
-                $this->flashMessenger()->addMessage(
-                    'must_accept_terms',
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage('must_accept_terms');
             } else {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
@@ -482,20 +479,16 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
                                 ->fromRoute('myresearch-storageretrievalrequests'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     return $this->redirectToRecord('#top');
                 } else {
                     // Failure: use flash messenger to display messages, stay on
                     // the current form.
                     if (isset($results['status'])) {
-                        $this->flashMessenger()->addMessage(
-                            $results['status'],
-                            'error'
-                        );
+                        $this->flashMessenger()->addErrorMessage($results['status']);
                     }
                     if (isset($results['sysMessage'])) {
-                        $this->flashMessenger()
-                            ->addMessage($results['sysMessage'], 'error');
+                        $this->flashMessenger()->addErrorMessage($results['sysMessage']);
                     }
                 }
             }
@@ -592,10 +585,7 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
                 in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
-                $this->flashMessenger()->addMessage(
-                    'must_accept_terms',
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage('must_accept_terms');
             } else {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
@@ -617,18 +607,18 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
                                 ->fromRoute('myresearch-illrequests'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     return $this->redirectToRecord('#top');
                 } else {
                     // Failure: use flash messenger to display messages, stay on
                     // the current form.
                     if (isset($results['status'])) {
                         $this->flashMessenger()
-                            ->addMessage($results['status'], 'error');
+                            ->addErrorMessage($results['status']);
                     }
                     if (isset($results['sysMessage'])) {
                         $this->flashMessenger()
-                            ->addMessage($results['sysMessage'], 'error');
+                            ->addErrorMessage($results['sysMessage']);
                     }
                 }
             }

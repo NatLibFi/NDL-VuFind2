@@ -365,6 +365,15 @@ $config = [
             'preview' => \Finna\Controller\Plugin\Preview::class,
         ],
     ],
+    'view_helpers' => [
+        'factories' => [
+            'Finna\View\Helper\Root\BiblioworksChatbot' =>
+                'Finna\View\Helper\Root\BiblioworksChatbotFactory',
+        ],
+        'aliases' => [
+            'biblioworksChatbot' => 'Finna\View\Helper\Root\BiblioworksChatbot',
+        ],
+    ],
     'service_manager' => [
         'allow_override' => true,
         'factories' => [
@@ -461,6 +470,8 @@ $config = [
                         'Finna\AjaxHandler\AddToListFactory',
                     'Finna\AjaxHandler\BazaarDestroySession' =>
                         'Finna\AjaxHandler\BazaarDestroySessionFactory',
+                    'Finna\AjaxHandler\BiblioworksHelpdeskContext' =>
+                        'Finna\AjaxHandler\BiblioworksHelpdeskContextFactory',
                     'Finna\AjaxHandler\CheckRequestsAreValid' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CommentRecord' =>
@@ -538,6 +549,7 @@ $config = [
                 'aliases' => [
                     'addToList' => 'Finna\AjaxHandler\AddToList',
                     'bazaarDestroySession' => 'Finna\AjaxHandler\BazaarDestroySession',
+                    'biblioworksHelpdeskContext' => 'Finna\AjaxHandler\BiblioworksHelpdeskContext',
                     'checkRequestsAreValid' => 'Finna\AjaxHandler\CheckRequestsAreValid',
                     'editList' => 'Finna\AjaxHandler\EditList',
                     'editListResource' => 'Finna\AjaxHandler\EditListResource',
