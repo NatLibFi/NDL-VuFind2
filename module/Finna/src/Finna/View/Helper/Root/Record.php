@@ -589,9 +589,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             'fieldLinks' => $fieldLinks,
             'externalLinks' => $externalLinks,
             'fieldIndex' => $fieldIndex,
-            'date' => isset($params['date']) && !empty($data['date'])
-                ? $data['date']
-                : '',
+            'date' => $data['date'] ?? '',
         ];
         if ($additionalData = $this->composeAdditionalData($data, $params)) {
             $elementParams['additionalDataHtml'] = $additionalData;
