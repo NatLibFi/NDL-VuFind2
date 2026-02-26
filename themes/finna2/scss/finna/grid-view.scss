@@ -1,7 +1,7 @@
 /* ------ GRID VIEW ------ */
 .search-grid {
   display: flex;
-  padding-top: 10px;
+  padding-top: 0.7em;
   flex-wrap: wrap;
   overflow: hidden;
   &::after {
@@ -45,11 +45,11 @@
   width: 100%;
   .grid-body {
     display: flex;
-    height: 100%;
     flex-direction: column;
+    height: 100%;
   }
   .grid-title {
-    padding-top: 5px;
+    padding-top: 0.3em;
     overflow: hidden;
     background: transparent;
     h2.title {
@@ -62,40 +62,40 @@
       white-space: nowrap;
       overflow: hidden;
     }
-  }
-  .dateyeartype {
-    display: inline;
-    p {
-      margin-top: 0px;
-      margin-bottom: 0px;
+    .dateyeartype {
+      display: inline;
+      p {
+        margin-top: 0px;
+        margin-bottom: 0px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .record-labels .label {
+        margin-right: 0px;
+      }
+    }
+    .save-record-container {
+      display: none;
+      text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      text-overflow: ellipsis;
+      .save-record {
+        float: none;
+        font-size: inherit;
+      }
     }
-  }
-  .record-labels .label {
-    margin-right: 0px;
   }
   .status {
     display: inline;
     .label {
       display: inline-block;
-      text-indent: -9999em;
       width: 8px;
       height: 8px;
       padding: 0px;
       white-space: normal;
+      text-indent: -9999em;
       border-radius: 50%;
-    }
-  }
-  .save-record-container {
-    display: none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    .save-record {
-      float: none;
-      font-size: inherit;
     }
   }
 }
