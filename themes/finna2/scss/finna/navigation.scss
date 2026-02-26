@@ -14,27 +14,23 @@ header {
     --#{$prefix}navbar-active-color: #{$header-text-active-color};
   }
 }
-@include media-breakpoint-down(md) {
-  .finna-navbar {
-    min-height: 64px;
-    .nav > li > a {
-      padding-right: 6px;
-      padding-left: 6px;
-    }
-  }
-}
 /* Mobile navbar */
-@media (max-width: $grid-float-breakpoint-max) {
+@include media-breakpoint-down(md) {
   .finna-navbar {
     position: fixed;
     top: 0;
     right: 0;
     left: 0;
     z-index: $zindex-mobile-navbar;
+    min-height: 64px;
     background-color: $header-background-color;
     border-width: 0 0 1px;
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
 
+    .nav > li > a {
+      padding-right: 6px;
+      padding-left: 6px;
+    }
     .navbar-collapse {
       &.show {
         max-height: calc(100vh - #{#{$navbar-height}});
