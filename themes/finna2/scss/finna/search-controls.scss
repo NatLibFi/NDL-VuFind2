@@ -1,9 +1,9 @@
 .search-tab-tip {
   position: relative;
-  padding: 5px;
+  padding: 0.4em;
   background-color: $search-tab-tip-bg;
   p {
-    margin: 2px;
+    margin: 0.2em;
   }
 }
 
@@ -16,7 +16,7 @@
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   .alert {
-    margin-bottom: 0;
+    margin-bottom: 0px;
   }
   .update-location-button {
     margin-top: 15px;
@@ -24,12 +24,12 @@
     color: $body-bg;
   }
   .button-label {
-    padding: 0.2rem;
+    padding: 0.2em;
   }
   .control-container{
     display: flex;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
     gap: 0.3rem;
     font-size: 0.9em;
   }
@@ -80,36 +80,36 @@
   color: $body-bg;
   .dropdown-toggle {
     display: inline-block;
+    padding: 0.4em;
+    font-size: 1em;
+    color: $action-link-color;
+    white-space: nowrap;
     background: transparent;
     border: 2px solid $action-link-color;
-    color: $action-link-color;
     border-radius: $border-radius-base;
-    font-size: 1em;
-    padding: 5px;
-    white-space: nowrap;
     &:hover,
     &:focus {
+      color: $body-bg;
       text-decoration: none;
       background: $action-link-color;
-      color: $body-bg;
       transition: background 0.2s linear;
     }
   }
   .dropdown-menu {
-    padding: 0;
+    padding: 0px;
     border-radius: $border-radius-base;
     > li > a {
-      padding-top: 10px;
-      padding-bottom: 10px;
-      text-align: left;
+      padding-top: 0.7em;
+      padding-bottom: 0.7em;
       color: $gray;
+      text-align: left;
     }
   }
 }
 
 .view-option-container .view-button {
   display: inline-block;
-  padding: 5px;
+  padding: 0.4em;
   &.selected {
     border: 2px solid $action-link-color;
     border-radius: $border-radius-base;
