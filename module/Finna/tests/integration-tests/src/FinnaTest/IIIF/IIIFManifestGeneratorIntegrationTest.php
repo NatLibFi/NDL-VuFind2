@@ -101,8 +101,7 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
     public function testGeneratedManifest(
         array $arguments,
         string $expectedReturnType
-    ): void
-    {
+    ): void {
         $generator = $this->getMockBuilder(IIIFManifestGenerator::class)
             ->setConstructorArgs([
                 $this->createMock(RouteHelper::class),
@@ -114,11 +113,11 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
             ->getMock();
         $generator->method('createBodyId')
             ->willReturnCallback(
-                fn($recordId, $index, $size, $source)
+                fn ($recordId, $index, $size, $source)
                 => "http://example.com/Cover/Show/$recordId?index=$index&size=$size&source=$source"
             );
         $generator->method('getTranslations')
-            ->willReturnCallback(fn($message) => ['en' => $message]);
+            ->willReturnCallback(fn ($message) => ['en' => $message]);
 
         $manifest = $this->callMethod($generator, 'createManifest', $arguments);
         $this->assertEqualsIgnoringCase($expectedReturnType, gettype($manifest));
@@ -131,8 +130,8 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
             $this->logWarning("validator stderr: $result->stderr");
             $this->fail(
                 "IIIF manifest generator validation failed for: $manifestJson" . PHP_EOL .
-                "validator stdout: " . $result->stdout . PHP_EOL .
-                "validator stderr: " . $result->stderr
+                'validator stdout: ' . $result->stdout . PHP_EOL .
+                'validator stderr: ' . $result->stderr
             );
         }
     }
@@ -140,13 +139,15 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
     #[TestWith([''])]
     #[TestWith(['[]'])]
     #[TestWith(["{'status': 500}"])]
-    public function testExternalValidatorInvalidInput(string $input): void {
+    public function testExternalValidatorInvalidInput(string $input): void
+    {
         $validator = $this->getFixturePath('iiif/validator.js', 'Finna');
         $result = $this->runExternalValidator(['nodejs', $validator], $input);
         $this->assertNotEquals(0, $result->exitStatus);
     }
 
-    public static function getTestManifestGeneratorImageData(): \Generator {
+    public static function getTestManifestGeneratorImageData(): \Generator
+    {
         yield '[small, medium, large]' => [
             [
                 [
@@ -155,13 +156,13 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
                             'small' => 'http://example.com/images/small.jpeg',
                             'medium' => 'http://example.com/images/medium.jpeg',
                             'large' => 'http://example.com/images/large.jpeg',
-                        ]
+                        ],
                     ],
                 ],
                 'FooRecord',
                 'solr',
                 'https://example.com/Record/FooRecord/IIIFManifest',
-                'Foo, a Fine Record'
+                'Foo, a Fine Record',
             ],
             'array',
         ];
@@ -171,13 +172,13 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
                     [
                         'urls' => [
                             'small' => 'http://example.com/images/small.jpeg',
-                        ]
+                        ],
                     ],
                 ],
                 'FooRecord',
                 'solr',
                 'https://example.com/Record/FooRecord/IIIFManifest',
-                'Foo, a Fine Record'
+                'Foo, a Fine Record',
             ],
             'array',
         ];
@@ -188,13 +189,13 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
                         'urls' => [
                             'small' => 'http://example.com/images/small.jpeg',
                             'large' => 'http://example.com/images/large.jpeg',
-                        ]
+                        ],
                     ],
                 ],
                 'FooRecord',
                 'solr',
                 'https://example.com/Record/FooRecord/IIIFManifest',
-                'Foo, a Fine Record'
+                'Foo, a Fine Record',
             ],
             'array',
         ];
@@ -204,13 +205,13 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
                     [
                         'urls' => [
                             'medium' => 'http://example.com/images/medium.jpeg',
-                        ]
+                        ],
                     ],
                 ],
                 'FooRecord',
                 'solr',
                 'https://example.com/Record/FooRecord/IIIFManifest',
-                'Foo, a Fine Record'
+                'Foo, a Fine Record',
             ],
             'array',
         ];
@@ -220,30 +221,30 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
                     [
                         'urls' => [
                             'medium' => 'http://example.com/images/1/medium.jpeg',
-                        ]
+                        ],
                     ],
                     [
                         'urls' => [
                             'large' => 'http://example.com/images/2/large.jpeg',
-                        ]
+                        ],
                     ],
                     [
                         'urls' => [
                             'small' => 'http://example.com/images/3/small.jpeg',
                             'medium' => 'http://example.com/images/3/medium.jpeg',
                             'large' => 'http://example.com/images/3/large.jpeg',
-                        ]
+                        ],
                     ],
                     [
                         'urls' => [
                             'medium' => 'http://example.com/images/4/medium.jpeg',
-                        ]
+                        ],
                     ],
                 ],
                 'FooRecord',
                 'solr',
                 'https://example.com/Record/FooRecord/IIIFManifest',
-                'Foo, a Fine Record'
+                'Foo, a Fine Record',
             ],
             'array',
         ];

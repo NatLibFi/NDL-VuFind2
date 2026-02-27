@@ -41,8 +41,6 @@ use VuFindTest\Feature\FixtureTrait;
 use VuFindTest\Feature\ReflectionTrait;
 
 use function gettype;
-use function is_resource;
-use function json_encode;
 
 /**
  * IIIFManifestGenerator test class.
@@ -63,8 +61,7 @@ class IIIFManifestGeneratorUnitTest extends TestCase
     public function testGeneratedManifest(
         array $arguments,
         string $expectedReturnType
-    ): void
-    {
+    ): void {
         $generator = new IIIFManifestGenerator(
             $this->createMock(RouteHelper::class),
             $this->createMock(ServerUrlHelper::class),
@@ -75,7 +72,8 @@ class IIIFManifestGeneratorUnitTest extends TestCase
         $this->assertEqualsIgnoringCase($expectedReturnType, gettype($manifest));
     }
 
-    public static function getTestManifestGeneratorImageData(): \Generator {
+    public static function getTestManifestGeneratorImageData(): \Generator
+    {
         yield 'empty $images returns null' => [
             [[], '','','',''],
             'null',
