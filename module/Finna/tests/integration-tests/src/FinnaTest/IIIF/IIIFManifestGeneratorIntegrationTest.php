@@ -126,8 +126,6 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         $validator = $this->getFixturePath('iiif/validator.js', 'Finna');
         $result = $this->runExternalValidator(['nodejs', $validator], $manifestJson);
         if ($result->exitStatus !== 0) {
-            $this->logWarning("validator stdout: $result->stdout");
-            $this->logWarning("validator stderr: $result->stderr");
             $this->fail(
                 "IIIF manifest generator validation failed for: $manifestJson" . PHP_EOL .
                 'validator stdout: ' . $result->stdout . PHP_EOL .
