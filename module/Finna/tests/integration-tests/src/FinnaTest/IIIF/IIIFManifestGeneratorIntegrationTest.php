@@ -103,12 +103,23 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         string $expectedReturnType
     ): void
     {
-        $generator = new IIIFManifestGenerator(
-            $this->createMock(RouteHelper::class),
-            $this->createMock(ServerUrlHelper::class),
-            $this->createMock(RecordLinker::class),
-            $this->createMock(LocaleSettings::class),
-        );
+        $generator = $this->getMockBuilder(IIIFManifestGenerator::class)
+            ->setConstructorArgs([
+                $this->createMock(RouteHelper::class),
+                $this->createMock(ServerUrlHelper::class),
+                $this->createMock(RecordLinker::class),
+                $this->createMock(LocaleSettings::class),
+            ])
+            ->onlyMethods(['createBodyId', 'getTranslations'])
+            ->getMock();
+        $generator->method('createBodyId')
+            ->willReturnCallback(
+                fn($recordId, $index, $size, $source)
+                => "http://example.com/Cover/Show/$recordId?index=$index&size=$size&source=$source"
+            );
+        $generator->method('getTranslations')
+            ->willReturnCallback(fn($message) => ['en' => $message]);
+
         $manifest = $this->callMethod($generator, 'createManifest', $arguments);
         $this->assertEqualsIgnoringCase($expectedReturnType, gettype($manifest));
 
@@ -118,7 +129,11 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         if ($result->exitStatus !== 0) {
             $this->logWarning("validator stdout: $result->stdout");
             $this->logWarning("validator stderr: $result->stderr");
-            $this->fail("IIIF manifest generator validation failed for: $manifestJson");
+            $this->fail(
+                "IIIF manifest generator validation failed for: $manifestJson" . PHP_EOL .
+                "validator stdout: " . $result->stdout . PHP_EOL .
+                "validator stderr: " . $result->stderr
+            );
         }
     }
 
