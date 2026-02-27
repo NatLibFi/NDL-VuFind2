@@ -52,8 +52,8 @@ $thumbnail-width-large:  200px !default;
     background-size: 150% auto;
     background-position: 50% 0;
     .record-view-header > .container {
-      padding-right: 0;
-      padding-left: 0;
+      padding-right: 0px;
+      padding-left: 0px;
     }
   }
 }
@@ -112,7 +112,7 @@ $thumbnail-width-large:  200px !default;
 }
 
 .no-results {
-  margin-bottom: 30px;
+  margin-bottom: 1.7em;
 }
 
 .js-result-list {
@@ -243,7 +243,7 @@ h2.title {
   margin-bottom: 1em;
   font-size: 1.2em;
   a {
-    margin-right: 5px;
+    margin-right: 0.3em;
   }
 }
 
@@ -315,12 +315,12 @@ h2.title {
 }
 @include media-breakpoint-down(sm) {
   .add-to-favorite-col {
-    margin-top: 10px;
+    margin-top: 0.7em;
     .save-record,
     .cart-add,
     .cart-remove {
       float: none;
-      margin-top: 10px;
+      margin-top: 0.7em;
       font-size: 1em;
       font-weight: 600;
       text-transform: uppercase;
@@ -343,18 +343,18 @@ h2.title {
     text-decoration: underline;
   }
   p {
-    margin: 0;
+    margin: 0px;
   }
 }
 
 .record-type-lrmi.list-view,
 .record-type-aipa.list-view {
   .targeted-information {
-    margin: 6px 0px 0px;
+    margin: 0.4em 0em 0em;
     .lrmi-topic {
       display: inline-block;
-      padding: 3px 6px;
-      margin: 0px 3px 6px 0px;
+      padding: 0.2em 0.4em;
+      margin: 0em 0.2em 0.4em 0em;
       color: $gray;
       background-color: $gray-ultralight;
     }
@@ -391,7 +391,7 @@ h2.title {
   margin: 0.5em 0em;
   font-size: 0.9em;
   > * {
-    margin-right: 4px;
+    margin-right: 0.3em;
   }
   .checkbox,
   label {
@@ -407,7 +407,7 @@ h2.title {
     display: flex;
     align-items: center;
     input {
-      margin-right: 2px;
+      margin-right: 0.2em
     }
   }
 }
@@ -418,7 +418,7 @@ h2.title {
     padding-top: 0px;
     padding-left: 1rem;
     .more-link {
-      margin-top: 2px;
+      margin-top: 0.1em;
     }
   }
   .search-stats {
@@ -466,12 +466,12 @@ table.search-history-table {
 .searchtools-background {
   background: $finna-searchtools-background;
   .searchtools {
-    padding-top: 20px;
-    padding-bottom: 20px;
+    padding-top: 1.4em;
+    padding-bottom: 1.4em;
     a {
       display: inline-block;
       padding: 0rem 0.5rem;
-      margin-right: 15px;
+      margin-right: 1em;
       font-size: 1.1em;
       font-weight: 600;
       color: $finna-searchtools-color;
