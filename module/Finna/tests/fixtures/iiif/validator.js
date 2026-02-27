@@ -2,8 +2,8 @@
 
 /**
  * This script validates that a JSON string given in stdin is a valid IIIF
- * Presentation API document. It is run as an integration from in
- * IIIFManifestGeneratorTest.php.
+ * Presentation API document. It is run from
+ * IIIFManifestGeneratorIntegrationTest.php.
  *
  * Usage:
  *   validator.js < foo.json
