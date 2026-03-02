@@ -1,4 +1,4 @@
-#!/usr/bin/env nodejs
+#!/usr/bin/env node
 
 /**
  * This script validates that a JSON string given in stdin is a valid IIIF
