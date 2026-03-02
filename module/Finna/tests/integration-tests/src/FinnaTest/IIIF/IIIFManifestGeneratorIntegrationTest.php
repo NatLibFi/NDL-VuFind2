@@ -140,7 +140,7 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
     public function testExternalValidatorInvalidInput(string $input): void
     {
         $validator = $this->getFixturePath('iiif/validator.js', 'Finna');
-        $result = $this->runExternalValidator(['nodejs', $validator], $input);
+        $result = $this->runExternalValidator([$validator], $input);
         $this->assertNotEquals(0, $result->exitStatus);
     }
 
