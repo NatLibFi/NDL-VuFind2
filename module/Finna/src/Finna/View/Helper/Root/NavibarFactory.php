@@ -74,6 +74,7 @@ class NavibarFactory implements FactoryInterface
         // NavibarTrait
         $navibar->setNavibarConfig($configManager->getConfigArray('navibar'));
         $navibar->setRouter($container->get('Router'));
+        $navibar->setServerUrlHelper($container->get(\VuFind\Http\ServerUrlHelper::class));
 
         // MenuCheckMethodsTrait
         $navibar->setCombinedConfig($configManager->getConfigArray('combined'));

@@ -70,6 +70,7 @@ class HeaderBarFactory extends \VuFind\Navigation\HeaderBarFactory
         // NavibarTrait
         $headerBar->setNavibarConfig($configManager->getConfigArray('navibar'));
         $headerBar->setRouter($container->get('Router'));
+        $headerBar->setServerUrlHelper($container->get(\VuFind\Http\ServerUrlHelper::class));
 
         // MenuCheckMethodsTrait
         $headerBar->setCombinedConfig($configManager->getConfigArray('combined'));

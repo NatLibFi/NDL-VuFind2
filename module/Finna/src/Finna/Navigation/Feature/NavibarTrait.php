@@ -32,6 +32,7 @@ namespace Finna\Navigation\Feature;
 
 use Laminas\Http\Request;
 use Laminas\Router\Http\TreeRouteStack;
+use VuFind\Http\ServerUrlHelper;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 
 use function count;
@@ -68,6 +69,13 @@ trait NavibarTrait
     protected TreeRouteStack $router;
 
     /**
+     * Server URL helper
+     *
+     * @var ServerUrlHelper
+     */
+    protected ServerUrlHelper $serverUrlHelper;
+
+    /**
      * Menu items
      *
      * @var array
@@ -96,6 +104,18 @@ trait NavibarTrait
     public function setRouter(TreeRouteStack $router): void
     {
         $this->router = $router;
+    }
+
+    /**
+     * Set server URL helper.
+     *
+     * @param ServerUrlHelper $serverUrlHelper Server URL helper
+     *
+     * @return void
+     */
+    public function setServerUrlHelper(ServerUrlHelper $serverUrlHelper): void
+    {
+        $this->serverUrlHelper = $serverUrlHelper;
     }
 
     /**
@@ -166,6 +186,7 @@ trait NavibarTrait
 
             $data['route'] = true;
             if (strncmp($url, '/', 1) === 0) {
+                $url = $this->serverUrlHelper->getBaseUrl() . $this->router->getBaseUrl() . $url;
                 $request = new Request();
                 $request->setUri($url);
                 $routeMatch = $this->router->match($request);
