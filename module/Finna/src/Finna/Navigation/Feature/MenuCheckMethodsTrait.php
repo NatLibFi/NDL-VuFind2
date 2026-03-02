@@ -154,8 +154,7 @@ trait MenuCheckMethodsTrait
     public function checkPrimo(): bool
     {
         return !empty($this->primoConfig['Institutions']['onCampusRule'])
-            && (!($this->primoConfig['General']['enabled'] ?? false)
-            || $this->primoConfig['General']['enabled'] ?? false);
+            && ($this->primoConfig['General']['enabled'] ?? true);
     }
 
     /**
