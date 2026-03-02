@@ -105,8 +105,7 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
         $processedItem['description'] = $navibarItem['desc'] ?? '';
         if ($navibarItem['action']['route'] ?? false) {
             $processedItem['route'] = $navibarItem['action']['url'];
-            $processedItem['routeParams']
-                = $navibarItem['action']['routeParams'] ?? [];
+            $processedItem['routeParams'] = $navibarItem['action']['routeParams'] ?? [];
         } else {
             $processedItem['url'] = $navibarItem['action']['url'];
         }

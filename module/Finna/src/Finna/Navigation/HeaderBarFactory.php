@@ -75,7 +75,7 @@ class HeaderBarFactory extends \VuFind\Navigation\HeaderBarFactory
         $headerBar->setCombinedConfig($configManager->getConfigArray('combined'));
         $headerBar->setPrimoConfig($configManager->getConfigArray('Primo'));
         $headerBar->setBrowseConfig($configManager->getConfigArray('browse'));
-        $headerBar->setOiConfig($configManager->getConfigArray('OrganisationInfo'));
+        $headerBar->setOrganisationInfoConfig($configManager->getConfigArray('OrganisationInfo'));
         $headerBar->setAuthorityConfig($configManager->getConfigArray('authority'));
 
         return $headerBar;

@@ -71,7 +71,7 @@ class FooterMenuFactory extends \VuFind\Navigation\FooterMenuFactory
         $footerMenu->setCombinedConfig($configManager->getConfigArray('combined'));
         $footerMenu->setPrimoConfig($configManager->getConfigArray('Primo'));
         $footerMenu->setBrowseConfig($configManager->getConfigArray('browse'));
-        $footerMenu->setOiConfig($configManager->getConfigArray('OrganisationInfo'));
+        $footerMenu->setOrganisationInfoConfig($configManager->getConfigArray('OrganisationInfo'));
         $footerMenu->setAuthorityConfig($configManager->getConfigArray('authority'));
 
         return $footerMenu;

@@ -35,16 +35,17 @@
               <a href="#" role="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?= $this->icon($item['label']) ?><?= $this->transEsc($item['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
               <ul class="dropdown-menu">
                 <?php foreach ($item['submenuItems'] as $submenuItem): ?>
-                <?php
-                  if (!($url = isset($submenuItem['route'])
-                      ? $this->url($submenuItem['route'], $submenuItem['routeParams'] ?? [])
-                      : $submenuItem['url'])) {
-                    continue;
-                  }
-                  $target = !empty($submenuItem['target']) ? $submenuItem['target'] : null;
-                  $label = $submenuItem['label'];
-                  $desc = !empty($submenuItem['description']) ? $submenuItem['description'] : null;
-                ?>
+                  <?php
+                    $url = isset($submenuItem['route'])
+                        ? $this->url($submenuItem['route'], $submenuItem['routeParams'] ?? [])
+                        : $submenuItem['url'];
+                    if (!$url) {
+                      continue;
+                    }
+                    $target = !empty($submenuItem['target']) ? $submenuItem['target'] : null;
+                    $label = $submenuItem['label'];
+                    $desc = !empty($submenuItem['description']) ? $submenuItem['description'] : null;
+                  ?>
                   <li>
                     <a class="dropdown-item"<?= $this->requestUri === $url ? ' aria-current="page"' : ''?> <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
                       <span><?= $this->transEsc($label) ?></span>

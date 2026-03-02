@@ -66,7 +66,7 @@ trait MenuCheckMethodsTrait
      *
      * @var array
      */
-    protected array $oiConfig;
+    protected array $organisationInfoConfig;
 
     /**
      * Authority configuration.
@@ -114,13 +114,13 @@ trait MenuCheckMethodsTrait
     /**
      * Set organisation info configuration.
      *
-     * @param array $oiConfig Organisation info configuration
+     * @param array $organisationInfoConfig Organisation info configuration
      *
      * @return void
      */
-    public function setOiConfig(array $oiConfig): void
+    public function setOrganisationInfoConfig(array $organisationInfoConfig): void
     {
-        $this->oiConfig = $oiConfig;
+        $this->organisationInfoConfig = $organisationInfoConfig;
     }
 
     /**
@@ -142,8 +142,8 @@ trait MenuCheckMethodsTrait
      */
     public function checkCombined(): bool
     {
-        return !isset($this->combinedConfig['General']['enabled'])
-            || $this->combinedConfig['General']['enabled'];
+
+        return (bool)($this->combinedConfig['General']['enabled'] ?? false);
     }
 
     /**
@@ -154,8 +154,8 @@ trait MenuCheckMethodsTrait
     public function checkPrimo(): bool
     {
         return !empty($this->primoConfig['Institutions']['onCampusRule'])
-            && (!isset($this->primoConfig['General']['enabled'])
-            || $this->primoConfig['General']['enabled']);
+            && (!($this->primoConfig['General']['enabled'] ?? false)
+            || $this->primoConfig['General']['enabled'] ?? false);
     }
 
     /**
@@ -165,8 +165,7 @@ trait MenuCheckMethodsTrait
      */
     public function checkBrowseDatabase(): bool
     {
-        return isset($this->browseConfig['General']['Database'])
-            && $this->browseConfig['General']['Database'];
+        return (bool)($this->browseConfig['General']['Database'] ?? false);
     }
 
     /**
@@ -176,8 +175,7 @@ trait MenuCheckMethodsTrait
      */
     public function checkBrowseJournal(): bool
     {
-        return isset($this->browseConfig['General']['Journal'])
-            && $this->browseConfig['General']['Journal'];
+        return (bool)($this->browseConfig['General']['Journal'] ?? false);
     }
 
     /**
@@ -187,7 +185,7 @@ trait MenuCheckMethodsTrait
      */
     public function checkOrganisationInfo(): bool
     {
-        return !empty($this->oiConfig['General']['enabled']);
+        return (bool)($this->organisationInfoConfig['General']['enabled'] ?? false);
     }
 
     /**
@@ -197,6 +195,6 @@ trait MenuCheckMethodsTrait
      */
     public function checkAuthority(): bool
     {
-        return $this->authorityConfig['General']['enabled'] ?? false;
+        return (bool)($this->authorityConfig['General']['enabled'] ?? false);
     }
 }
