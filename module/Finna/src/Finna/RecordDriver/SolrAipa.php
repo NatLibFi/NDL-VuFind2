@@ -330,11 +330,9 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     /**
      * Get topics
      *
-     * @param string $type defaults to /onto/yso/
-     *
      * @return array
      */
-    public function getTopics(string $type = '/onto/yso/'): array
+    public function getTopics(): array
     {
         return $this->getAllSubjectHeadings();
     }
