@@ -1666,7 +1666,7 @@ class Quria extends AxiellWebServices
                     'success' => false,
                     'status' => $message,
                 ];
-            } elseif ($result->$functionResult->reservation->status->key ?? '' === 'reservationDenied') {
+            } elseif (($result->$functionResult->reservation->status->key ?? '') === 'reservationDenied') {
                 $results[$requestId] = [
                     'success' => false,
                     'status' => 'hold_error_update_failed',
