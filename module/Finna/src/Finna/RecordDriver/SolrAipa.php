@@ -187,7 +187,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getSubjectPlaces(bool $extended = false)
     {
-        return $this->getFieldData('coverage', true, 'place', 'spatial');
+        return $this->getFieldData('coverage', $extended, 'place', 'spatial');
     }
 
     /**
