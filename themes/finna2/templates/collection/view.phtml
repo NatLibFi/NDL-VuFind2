@@ -132,9 +132,11 @@
       <?php /* End Main Details */?>
     <?php endif; ?>
   </div>
-  <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
-    <?= $this->render('record/sidebar-contents.phtml'); ?>
-  </div>
+  <?php if (!$largeImageLayout): ?>
+    <div class="sidebar right smaller-image-sidebar hidden-xs hidden-sm">
+      <?= $this->render('record/sidebar-contents.phtml'); ?>
+    </div>
+  <?php endif; ?>
 
   <div class="clearfix hidden-lg hidden-md"></div>
   <?php // N.B. The element/class structure here is important for the ajax tabs to work properly ?>
@@ -230,7 +232,7 @@
   </div>
 
 </div>
-  <div class="sidebar large-image-sidebar visible-xs visible-sm">
+  <div class="sidebar large-image-sidebar <?php if (!$largeImageLayout):?>visible-xs visible-sm <?php endif;?>">
     <?= $this->render('record/sidebar-contents.phtml'); ?>
   </div>
 </div>
