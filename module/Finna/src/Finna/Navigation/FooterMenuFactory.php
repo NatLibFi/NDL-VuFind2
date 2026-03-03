@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Navibar helper factory.
+ * FooterMenu section plugin factory
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2018.
+ * Copyright (C) The National Library of Finland 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -21,30 +21,29 @@
  * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Navigation
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
 
-namespace Finna\View\Helper\Root;
+namespace Finna\Navigation;
 
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
-use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Navibar helper factory.
+ * FooterMenu section plugin factory
  *
  * @category VuFind
- * @package  View_Helpers
- * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @package  Navigation
+ * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class NavibarFactory implements FactoryInterface
+class FooterMenuFactory extends \VuFind\Navigation\FooterMenuFactory
 {
     /**
      * Create an object
@@ -58,31 +57,23 @@ class NavibarFactory implements FactoryInterface
      * @throws ServiceNotFoundException if unable to resolve the service.
      * @throws ServiceNotCreatedException if an exception is raised when
      * creating a service.
-     * @throws ContainerException if any other error occurs
+     * @throws ContainerException&\Throwable if any other error occurs
      */
     public function __invoke(
         ContainerInterface $container,
         $requestedName,
         ?array $options = null
     ) {
-        if (!empty($options)) {
-            throw new \Exception('Unexpected options sent to factory.');
-        }
-        $navibar = new $requestedName();
+        $footerMenu = parent::__invoke($container, $requestedName, []);
         $configManager = $container->get(\VuFind\Config\ConfigManagerInterface::class);
 
-        // NavibarTrait
-        $navibar->setNavibarConfig($configManager->getConfigArray('navibar'));
-        $navibar->setRouter($container->get('Router'));
-        $navibar->setServerUrlHelper($container->get(\VuFind\Http\ServerUrlHelper::class));
-
         // MenuCheckMethodsTrait
-        $navibar->setCombinedConfig($configManager->getConfigArray('combined'));
-        $navibar->setPrimoConfig($configManager->getConfigArray('Primo'));
-        $navibar->setBrowseConfig($configManager->getConfigArray('browse'));
-        $navibar->setOiConfig($configManager->getConfigArray('OrganisationInfo'));
-        $navibar->setAuthorityConfig($configManager->getConfigArray('authority'));
+        $footerMenu->setCombinedConfig($configManager->getConfigArray('combined'));
+        $footerMenu->setPrimoConfig($configManager->getConfigArray('Primo'));
+        $footerMenu->setBrowseConfig($configManager->getConfigArray('browse'));
+        $footerMenu->setOrganisationInfoConfig($configManager->getConfigArray('OrganisationInfo'));
+        $footerMenu->setAuthorityConfig($configManager->getConfigArray('authority'));
 
-        return $navibar;
+        return $footerMenu;
     }
 }

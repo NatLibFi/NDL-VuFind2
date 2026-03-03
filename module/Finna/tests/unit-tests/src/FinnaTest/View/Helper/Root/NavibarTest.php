@@ -29,16 +29,7 @@
 
 namespace FinnaTest\View\Helper\Root;
 
-use Finna\View\Helper\Root\Authority;
-use Finna\View\Helper\Root\Browse;
-use Finna\View\Helper\Root\Combined;
 use Finna\View\Helper\Root\Navibar;
-use Finna\View\Helper\Root\Primo;
-use Laminas\Router\Http\TreeRouteStack;
-use VuFind\Config\Config;
-use VuFind\View\Helper\Root\Translate;
-use VuFind\View\Helper\Root\TranslationEmpty;
-use VuFindTest\Feature\ViewTrait;
 
 /**
  * Navibar test class
@@ -51,20 +42,18 @@ use VuFindTest\Feature\ViewTrait;
  */
 class NavibarTest extends \PHPUnit\Framework\TestCase
 {
-    use ViewTrait;
-
     protected Navibar $helper;
 
     /**
      * Get view helper to test.
      *
-     * @param ?Config $config       Menu configuration
-     * @param array   $checkMethods Values to return for specific check methods
+     * @param ?array $config       Menu configuration
+     * @param array  $checkMethods Values to return for specific check methods
      *
      * @return Navibar
      */
     protected function getHelper(
-        ?Config $config = null,
+        ?array $config = null,
         array $checkMethods = []
     ): Navibar {
         if (isset($this->helper)) {
@@ -75,47 +64,23 @@ class NavibarTest extends \PHPUnit\Framework\TestCase
             $config = $this->getDefaultMenuConfig();
         }
 
-        $combined = $this->createMock(Combined::class);
-        $combined->method('isAvailable')
+        $navibar = $this->getMockBuilder(Navibar::class)
+            ->onlyMethods(array_keys($this->getNavibarCheckMethods()))
+            ->getMock();
+        $navibar->method('checkCombined')
             ->willReturn($checkMethods['checkCombined'] ?? true);
-        $primo = $this->createMock(Primo::class);
-        $primo->method('isAvailable')
+        $navibar->method('checkPrimo')
             ->willReturn($checkMethods['checkPrimo'] ?? true);
-        $browse = $this->createMock(Browse::class);
-        $browse->method('isAvailable')->willReturnCallback(
-            function ($type) use ($checkMethods) {
-                return match ($type) {
-                    'Database' => $checkMethods['checkBrowseDatabase'] ?? true,
-                    'Journal' =>  $checkMethods['checkBrowseJournal'] ?? true,
-                };
-            }
-        );
-        $organisationInfo = $this->createMock(\Finna\View\Helper\Root\OrganisationInfo::class);
-        $organisationInfo->method('isAvailable')
+        $navibar->method('checkBrowseDatabase')
+            ->willReturn($checkMethods['checkBrowseDatabase'] ?? true);
+        $navibar->method('checkBrowseJournal')
+            ->willReturn($checkMethods['checkBrowseJournal'] ?? true);
+        $navibar->method('checkOrganisationInfo')
             ->willReturn($checkMethods['checkOrganisationInfo'] ?? true);
-        $authority = $this->createMock(Authority::class);
-        $authority->method('isAvailable')
+        $navibar->method('checkAuthority')
             ->willReturn($checkMethods['checkAuthority'] ?? true);
 
-        $view = $this->getPhpRenderer(
-            [
-                'translate' => $this->createMock(Translate::class),
-                'translationEmpty' => $this->createMock(TranslationEmpty::class),
-                'combined' => $combined,
-                'primo' => $primo,
-                'browse' => $browse,
-                'organisationInfo' => $organisationInfo,
-                'authority' => $authority,
-            ],
-            'finna2'
-        );
-
-        $navibar = new Navibar(
-            $config,
-            $this->createMock(\Finna\OrganisationInfo\OrganisationInfo::class),
-            $this->createMock(TreeRouteStack::class),
-        );
-        $navibar->setView($view);
+        $navibar->setNavibarConfig($config);
         $this->helper = $navibar;
 
         return $navibar;
@@ -152,11 +117,11 @@ class NavibarTest extends \PHPUnit\Framework\TestCase
     /**
      * Get default menu configuration for tests.
      *
-     * @return Config
+     * @return array
      */
-    protected function getDefaultMenuConfig(): Config
+    protected function getDefaultMenuConfig(): array
     {
-        return new Config([
+        return [
             'search' => [
                 'combined_search' => 'combined-home',
                 'pci_search' => 'primo-home',
@@ -168,7 +133,7 @@ class NavibarTest extends \PHPUnit\Framework\TestCase
             'about_us' => [
                 'organisation' => 'organisationinfo-home',
             ],
-        ]);
+        ];
     }
 
     /**
