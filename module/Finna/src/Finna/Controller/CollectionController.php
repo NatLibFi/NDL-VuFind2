@@ -31,6 +31,7 @@
 namespace Finna\Controller;
 
 use Finna\Controller\Feature\FinnaRecordPreviewSupportTrait;
+use Laminas\View\Model\ViewModel;
 
 /**
  * Collection Controller
@@ -65,7 +66,13 @@ class CollectionController extends \VuFind\Controller\CollectionController
             return $this->catalogLogin();
         }
 
-        return parent::showTab($tab, $ajax);
+        $result = parent::showTab($tab, $ajax);
+        // Back-compatibility for legacy view.phtml (TODO: remove when no longer needed):
+        if ($result instanceof ViewModel) {
+            $result->backgroundTabs = [];
+        }
+        return $result;
+
     }
 
     /**
