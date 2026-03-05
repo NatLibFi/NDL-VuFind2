@@ -358,8 +358,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getAdditionalInformation(): string
     {
-        // TODO: namespace?
-        return $this->getXmlReader()->firstValue(path: 'additionalInformation') ?? '';
+        return $this->getXmlReader()->firstValue(path: "{{$this->aipaNs}}additionalInformation") ?? '';
     }
 
     /**
