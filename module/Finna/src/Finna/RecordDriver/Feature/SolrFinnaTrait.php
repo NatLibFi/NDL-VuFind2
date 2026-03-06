@@ -1146,6 +1146,7 @@ trait SolrFinnaTrait
 
     /**
      * Resolve types for 'online_urls_str_mv' field's urls.
+     *
      * URLs are annotated with 'codec' field based on 'mediaType'.
      * In addition, image and audio URLs are annotated with 'type' field.
      *
@@ -1153,22 +1154,22 @@ trait SolrFinnaTrait
      *
      * @return array URL array with annotated URLs
      */
-    protected function resolveOnlineUrlTypes($urls): array
+    protected function resolveOnlineUrlTypes(array $urls): array
     {
         $newUrls = [];
         foreach ($urls as $url) {
             if (isset($url['mediaType'])) {
                 $type = $embed = null;
-                $mediaType = $url['mediaType'];
-                $codec = explode('/', $mediaType)[1] ?? '';
-                if (str_starts_with($mediaType, 'audio')) {
+                $parts = explode('/', $url['mediaType']);
+                $mediaType = $parts[0] ?? '';
+                if ($mediaType === 'audio') {
                     $type = $embed = 'audio';
                 }
-                if (str_starts_with($mediaType, 'image')) {
+                if ($mediaType === 'image') {
                     $type = 'image';
                 }
                 $url['type'] = $type;
-                $url['codec'] = $codec;
+                $url['codec'] = $parts[1] ?? '';
                 $url['embed'] = $embed;
             }
             $newUrls[] = $url;
