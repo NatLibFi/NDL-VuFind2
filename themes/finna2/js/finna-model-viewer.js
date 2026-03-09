@@ -644,6 +644,7 @@ class ModelViewerClass extends HTMLElement {
       loader = new THREE.GLTFLoader();
       if (this.decoder) {
         dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderConfig({ type: 'js' });
         dracoLoader.setDecoderPath(this.decoder);
         loader.setDRACOLoader(dracoLoader);
       }
