@@ -711,7 +711,7 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         $index = $params->fromQuery('index');
         $format = $params->fromQuery('format');
         $response = $this->getResponse();
-        if ($format && $index) {
+        if (null !== $format && null !== $index) {
             $driver = $this->loadRecord();
             $id = $driver->getUniqueID();
             $models = $driver->tryMethod('getModels')[$index]['models'] ?? [];
