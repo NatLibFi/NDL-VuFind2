@@ -117,9 +117,6 @@ section.main.template-dir-feedcontent.template-name-content > .container {
   padding-top: 0;
   padding-bottom: 3.4em;
 }
-.record-row {
-  margin-top: 20px;
-}
 
 .document-types {
   li {
@@ -176,25 +173,6 @@ label.list-group-item {
 }
 .tab-content {
   padding: 4px 0px;
-}
-
-/* --- Collection view --- */
-.template-dir-collection.template-name-view {
-  & .collection-title {
-    margin-top: 0;
-  }
-  & .list-group.filters {
-    & input {
-      max-width: 100%;
-      @include media-breakpoint-between(sm, md) {
-        width: 100%;
-        margin-bottom: 5px;
-      }
-      @include media-breakpoint-down(sm) {
-        display: inline-block;
-      }
-    }
-  }
 }
 
 /* --- Badges - blend the links in --- */
@@ -316,6 +294,12 @@ label.list-group-item {
   &.summary,
   & > :last-child {
     margin-bottom: 0;
+  }
+}
+.more-link,
+.less-link {
+  .icon {
+    padding-left: 3px;
   }
 }
 .more-link, .less-link, .less-link-top {

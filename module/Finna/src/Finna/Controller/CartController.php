@@ -126,10 +126,7 @@ class CartController extends \VuFind\Controller\CartController
                 );
                 return $this->redirectToSource('success', 'bulk_email_success', true);
             } catch (MailException $e) {
-                $this->flashMessenger()->addMessage(
-                    $e->getDisplayMessage(),
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage($e->getDisplayMessage());
             }
         }
         return $view;

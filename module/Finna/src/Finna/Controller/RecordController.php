@@ -33,6 +33,7 @@ namespace Finna\Controller;
 use Finna\Controller\Feature\FinnaRecordPreviewSupportTrait;
 use Finna\Controller\Plugin\Preview;
 use Finna\Form\Form;
+use Psr\Log\LoggerAwareInterface;
 
 use function count;
 use function in_array;
@@ -49,11 +50,12 @@ use function is_string;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class RecordController extends \VuFind\Controller\RecordController
+class RecordController extends \VuFind\Controller\RecordController implements LoggerAwareInterface
 {
     use FinnaRecordControllerTrait;
     use \Finna\Statistics\ReporterTrait;
     use FinnaRecordPreviewSupportTrait;
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -286,7 +288,7 @@ class RecordController extends \VuFind\Controller\RecordController
                             '%%url%%' => $this->url()->fromRoute('holds-list'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     if (!empty($results['warningMessage'])) {
                         $this->flashMessenger()
                             ->addWarningMessage($results['warningMessage']);
@@ -455,10 +457,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
-                $this->flashMessenger()->addMessage(
-                    'must_accept_terms',
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage('must_accept_terms');
             } else {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
@@ -480,20 +479,16 @@ class RecordController extends \VuFind\Controller\RecordController
                                 ->fromRoute('myresearch-storageretrievalrequests'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     return $this->redirectToRecord('#top');
                 } else {
                     // Failure: use flash messenger to display messages, stay on
                     // the current form.
                     if (isset($results['status'])) {
-                        $this->flashMessenger()->addMessage(
-                            $results['status'],
-                            'error'
-                        );
+                        $this->flashMessenger()->addErrorMessage($results['status']);
                     }
                     if (isset($results['sysMessage'])) {
-                        $this->flashMessenger()
-                            ->addMessage($results['sysMessage'], 'error');
+                        $this->flashMessenger()->addErrorMessage($results['sysMessage']);
                     }
                 }
             }
@@ -590,10 +585,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
-                $this->flashMessenger()->addMessage(
-                    'must_accept_terms',
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage('must_accept_terms');
             } else {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
@@ -615,18 +607,18 @@ class RecordController extends \VuFind\Controller\RecordController
                                 ->fromRoute('myresearch-illrequests'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     return $this->redirectToRecord('#top');
                 } else {
                     // Failure: use flash messenger to display messages, stay on
                     // the current form.
                     if (isset($results['status'])) {
                         $this->flashMessenger()
-                            ->addMessage($results['status'], 'error');
+                            ->addErrorMessage($results['status']);
                     }
                     if (isset($results['sysMessage'])) {
                         $this->flashMessenger()
-                            ->addMessage($results['sysMessage'], 'error');
+                            ->addErrorMessage($results['sysMessage']);
                     }
                 }
             }
@@ -719,7 +711,7 @@ class RecordController extends \VuFind\Controller\RecordController
         $index = $params->fromQuery('index');
         $format = $params->fromQuery('format');
         $response = $this->getResponse();
-        if ($format && $index) {
+        if (null !== $format && null !== $index) {
             $driver = $this->loadRecord();
             $id = $driver->getUniqueID();
             $models = $driver->tryMethod('getModels')[$index]['models'] ?? [];
@@ -881,5 +873,51 @@ class RecordController extends \VuFind\Controller\RecordController
         }
 
         return parent::showTab($tab, $ajax);
+    }
+
+    /**
+     * Call IIIF manifest generator and encode body in JSON
+     *
+     * @return \Laminas\Http\Response
+     */
+    protected function iiifManifestAction()
+    {
+        $driver = $this->loadRecord();
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+
+        if ($datasourceManifests = $driver->tryMethod('getIiifManifests')) {
+            $headers->addHeaderLine('Location', $datasourceManifests[0]['url']);
+            $response->setStatusCode(302);
+            return $response;
+        }
+
+        $generator = $this->serviceLocator->get(\Finna\Record\IIIF\IIIFManifestGenerator::class);
+        $config = $this->getConfigArray();
+        $corsAllow = $config['IIIF']['manifestCORS'] ?? [];
+        foreach ($corsAllow as $allow) {
+            $headers->addHeaderLine('Access-Control-Allow-Origin', $allow);
+        }
+        if ($manifest = $generator->generate($driver)) {
+            if ($manifestJson = json_encode($manifest)) {
+                $headers->addHeaderLine(
+                    'Content-Type: application/json;' .
+                    'profile="http://iiif.io/api/presentation/3/context.json"'
+                );
+                $response->setContent($manifestJson);
+            } else {
+                $headers->addHeaderLine('Content-Type: text/plain');
+                $response->setStatusCode(500);
+                $response->setContent('Error encoding JSON');
+                $this->logError(
+                    'IIIFManifest: Error encoding JSON for ' .
+                    $driver->getUniqueID() . ': ' .
+                    json_last_error_msg()
+                );
+            }
+        } else {
+            $response->setStatusCode(404);
+        }
+        return $response;
     }
 }

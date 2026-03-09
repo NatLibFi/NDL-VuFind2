@@ -156,7 +156,7 @@ trait FinnaCommonILSTrait
      *                                                  users messaging services.
      *                                                  See $defaultDriverMessagingServices,
      *                                                  $defaultEmailMessagingServices
-     * @param ?string                $loan_history      [Finna] Does the user have loan history enabled in the ILS?
+     * @param string|int|bool|null   $loan_history      [Finna] Does the user have loan history enabled in the ILS?
      * @param Stringable|string|null $email             [Finna] The profile's email address (null if unavailable)
      *
      * @see https://vufind.org/wiki/development:plugins:ils_drivers#getmyprofile
@@ -179,7 +179,7 @@ trait FinnaCommonILSTrait
         Stringable|string|null $home_library = null,
         array $nonDefaultFields = [],
         array $messagingServices = [],
-        ?string $loan_history = null,
+        string|int|bool|null $loan_history = null,
         Stringable|string|null $email = null
     ): array {
         $nonDefaultFields = array_merge(

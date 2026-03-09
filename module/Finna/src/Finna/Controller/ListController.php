@@ -184,7 +184,7 @@ class ListController extends \VuFind\Controller\AbstractBase
                 . '<a href="' . $listUrl . '" class="gotolist">'
                 . $this->translate('go_to_list') . '</a>.',
             ];
-            $this->flashMessenger()->addMessage($message, 'success');
+            $this->flashMessenger()->addSuccessMessage($message);
             return $this->redirect()->toRoute('list-page', ['lid' => $sourceListId]);
         }
         $userListService = $this->getDbService(\VuFind\Db\Service\UserListServiceInterface::class);

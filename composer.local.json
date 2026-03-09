@@ -7,7 +7,7 @@
             "Finna\\": ["module/Finna/src/Finna", "module/Finna"],
             "FinnaApi\\": ["module/FinnaApi/src/FinnaApi", "module/FinnaApi"],
             "FinnaConsole\\": ["module/FinnaConsole/src/FinnaConsole", "module/FinnaConsole"],
-            "FinnaCustom\\": ["module/FinnaCustom/src/FinnaCustom", "module/FinnaCustom"],
+            "FinnaCustom\\": "module/FinnaCustom/src/FinnaCustom",
             "FinnaSearch\\": ["module/FinnaSearch/src/FinnaSearch", "module/FinnaSearch"],
             "FinnaTheme\\": ["module/FinnaTheme/src/FinnaTheme", "module/FinnaTheme"]
         }
@@ -18,9 +18,11 @@
         }
     },
     "require": {
+        "defuse/php-encryption": "^2.4",
         "league/mime-type-detection": "1.9.0",
         "natlibfi/besimple-soap": "3.0.1",
         "natlibfi/finna-code-sets": "0.5.2",
+        "natlibfi/finna-xml": "1.6.0",
         "natlibfi/php-html-parser": "4.0.1",
         "phpoffice/phpspreadsheet": "^2.0",
         "picqer/php-barcode-generator": "2.0.1",
@@ -34,6 +36,7 @@
             "cd themes/finna2 && npm run updateDeps"
         ],
         "install-build-deps": [
+            "cd themes/bootstrap5 && npm run installBuildDeps",
             "cd themes/finna2 && npm run installBuildDeps"
         ]
     }

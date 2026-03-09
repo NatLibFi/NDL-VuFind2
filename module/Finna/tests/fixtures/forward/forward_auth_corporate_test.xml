@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<ExchangeSet xmlns="http://project-forward.eu/schemas/EN15907-forward" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://project-forward.eu/schemas/EN15907-forward http://forward.cineca.it/schema/EN15907-forward-v1.0.xsd">
+  <CinematographicAgent>
+    <AgentIdentifier>
+      <AgentIDType>01</AgentIDType>
+      <IDTypeName>olonet_korporaatio</IDTypeName>
+      <IDValue>54321</IDValue>
+    </AgentIdentifier>
+    <RecordSource>
+      <SourceName>Viluinen instituutti</SourceName>
+    </RecordSource>
+    <CAgentName>
+      <AgentNameType>04</AgentNameType>
+      <CorporateName>Filminen</CorporateName>
+    </CAgentName>
+    <BiographicalNote>Valmistamon jutut</BiographicalNote>
+    <ProfessionalAffiliation>
+      <ProfessionalPosition>elokuvavalmistamo</ProfessionalPosition>
+    </ProfessionalAffiliation>
+    <AgentDate>
+      <AgentDateEventType>51</AgentDateEventType>
+      <DateText>1.1.2020</DateText>
+    </AgentDate>
+    <AgentDate>
+      <AgentDateEventType>52</AgentDateEventType>
+      <DateText>9.2.2026</DateText>
+    </AgentDate>
+    <AgentPlace>
+      <AgentPlaceAssociationType>06</AgentPlaceAssociationType>
+      <LocationName yhtio-katuosoite="Yliopistonkatu 1" yhtio-postiosoite="Helsinki" yhtio-maakoodi="FI">Suomi</LocationName>
+    </AgentPlace>
+  </CinematographicAgent>
+</ExchangeSet>

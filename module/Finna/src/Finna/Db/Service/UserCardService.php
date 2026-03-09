@@ -31,6 +31,7 @@ namespace Finna\Db\Service;
 
 use Closure;
 use Doctrine\ORM\EntityManager;
+use Finna\Db\Entity\UserCard;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Config\AccountCapabilities;
 use VuFind\Db\Entity\PluginManager as EntityPluginManager;
@@ -109,6 +110,25 @@ class UserCardService extends \VuFind\Db\Service\UserCardService implements User
             );
         }
         return $cards;
+    }
+
+    /**
+     * Get all users associated with a library card
+     *
+     * @param string $catUsername Catalog username
+     *
+     * @return array
+     */
+    public function getConnectedAccountInfoForLibraryCard(string $catUsername): array
+    {
+        $qb = $this->entityManager->createQueryBuilder();
+        $qb->select('uc')
+            ->from(UserCard::class, 'uc')
+            ->where('uc.catUsername = :catUsername')
+            ->setParameter('catUsername', $catUsername);
+
+        $result = $qb->getQuery()->getResult();
+        return $result;
     }
 
     /**

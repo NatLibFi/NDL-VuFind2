@@ -82,7 +82,7 @@ class CuratedRecordList extends SolrDefault implements
      */
     protected function getEncapsulatedRecordElementTagName(): string
     {
-        return 'curatedRecord';
+        return "{{$this->aipaNs}}curatedRecord";
     }
 
     /**

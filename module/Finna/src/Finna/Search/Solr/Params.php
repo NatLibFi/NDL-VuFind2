@@ -120,7 +120,8 @@ class Params extends \VuFind\Search\Solr\Params
         $this->authorityHelper = $authorityHelper;
 
         // New items facets
-        if ($newItems = $this->facetConfig['SpecialFacets']['newItems'] ?? null) {
+        $facetConfig = $configManager->getConfigArray($options->getFacetsIni());
+        if ($newItems = $facetConfig['SpecialFacets']['newItems'] ?? null) {
             $this->newItemsFacets = $newItems;
         }
     }

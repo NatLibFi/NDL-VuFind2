@@ -31,11 +31,11 @@
 
 namespace Finna\Controller;
 
+use Finna\Db\Service\UserCardServiceInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container as SessionContainer;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
-use VuFind\Db\Service\UserCardServiceInterface;
 use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Db\Type\AuditEventSubtype;
 use VuFind\Db\Type\AuditEventType;
@@ -513,8 +513,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $id = $this->params()->fromRoute('id', $this->params()->fromQuery('id'));
 
         if (!$username) {
-            $this->flashMessenger()
-                ->addMessage('authentication_error_blank', 'error');
+            $this->flashMessenger()->addErrorMessage('authentication_error_blank');
             return false;
         }
 
@@ -598,10 +597,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     $cardInstitution == $otherInstitution
                     && strcasecmp($cardName, $otherCard->getCardName()) == 0
                 ) {
-                    $this->flashMessenger()->addMessage(
-                        'library_card_name_exists',
-                        'error'
-                    );
+                    $this->flashMessenger()->addErrorMessage('library_card_name_exists');
                     return false;
                 }
             }
@@ -616,7 +612,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                 $password
             );
         } catch (\VuFind\Exception\LibraryCard $e) {
-            $this->flashMessenger()->addMessage($e->getMessage(), 'error');
+            $this->flashMessenger()->addErrorMessage($e->getMessage());
             return false;
         }
 
@@ -648,16 +644,16 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $ilsAuth = $this->serviceLocator->get(\VuFind\Auth\PluginManager::class)->get('ILS');
             $ilsAuth->validatePasswordInUpdate(['password' => $password, 'password2' => $password2]);
         } catch (AuthException $e) {
-            $this->flashMessenger()->addMessage($e->getMessage(), 'error');
+            $this->flashMessenger()->addErrorMessage($e->getMessage());
             return false;
         }
 
         // Missing or invalid hash
         if (null === $userFromHash) {
-            $this->flashMessenger()->addMessage('recovery_user_not_found', 'error');
+            $this->flashMessenger()->addErrorMessage('recovery_user_not_found');
             return false;
         } elseif ($userFromHash->getUsername() !== $user->getUsername()) {
-            $this->flashMessenger()->addMessage('authentication_error_invalid', 'error');
+            $this->flashMessenger()->addErrorMessage('authentication_error_invalid');
             return false;
         }
 
@@ -665,7 +661,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $catalog = $this->getILS();
         $patron = $catalog->patronLogin($card->getCatUsername(), $oldPassword);
         if (!$patron) {
-            $this->flashMessenger()->addMessage('authentication_error_invalid', 'error');
+            $this->flashMessenger()->addErrorMessage('authentication_error_invalid');
             return false;
         }
 
@@ -692,7 +688,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             );
         }
         if (!$result['success']) {
-            $this->flashMessenger()->addMessage($result['status'], 'error');
+            $this->flashMessenger()->addErrorMessage($result['status']);
             return false;
         }
         $userCardService = $this->getDbService(UserCardServiceInterface::class);
@@ -771,6 +767,30 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             $this->flashMessenger()->addErrorMessage('An error has occurred');
             return $this->redirect()->toRoute('librarycards-home');
         }
+    }
+
+    /**
+     * Return a list of users connected to this library card
+     *
+     * @return mixed
+     */
+    public function connectedUsersAction()
+    {
+        if (!($user = $this->getUser())) {
+            return $this->forceLogin();
+        }
+        if (!($id = $this->params()->fromRoute('id'))) {
+            return $this->redirect()->toRoute('librarycards-home');
+        }
+        $userCardService = $this->getDbService(UserCardServiceInterface::class);
+        $card = $userCardService->getOrCreateLibraryCard($user, $id) ?? null;
+        if (!$card) {
+            throw new \Exception('Library card not found');
+        }
+
+        $catUsername = $card->getCatUsername();
+        $accounts = $userCardService->getConnectedAccountInfoForLibraryCard($catUsername);
+        return $this->createViewModel(compact('accounts'));
     }
 
     /**
