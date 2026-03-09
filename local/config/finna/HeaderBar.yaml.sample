@@ -50,7 +50,10 @@ Header:
     class: navbar-main
   navibarIni: true
   MenuItems:
-    - template: Section/HeaderBar/HeaderBar-feedback.phtml
+    - label: 'Feedback'
+      route: feedback-home
+      attributes:
+        id: feedback-link
       checkMethod: checkFeedback
 
     - template: Section/HeaderBar/HeaderBar-cart.phtml
