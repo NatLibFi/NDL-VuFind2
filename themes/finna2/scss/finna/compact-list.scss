@@ -28,7 +28,7 @@
     .qr-box {
       position: absolute;
       right: 0px;
-      z-index: 1000;
+      z-index: $zindex-dropdown;
     }
   }
 }
