@@ -628,6 +628,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
                 [
                     '{"url":"https:\/\/file.pdf","mediaType":"application\/pdf","text":"PDF","source":"source"}',
                     '{"url":"https:\/\/link.fi","mediaType":"\/","text":"Linkki verkkoaineistoon","source":"source"}',
+                    '{"url":"https:\/\/anotherLink.fi","text":"Ei mediaType","source":""}',
                 ],
                 [
                     0 => [
@@ -647,6 +648,11 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
                         'type' => null,
                         'codec' => '',
                         'embed' => null,
+                    ],
+                    2 => [
+                        'url' => 'https://anotherLink.fi',
+                        'text' => 'Ei mediaType',
+                        'source' => '',
                     ],
                 ],
                 false,
