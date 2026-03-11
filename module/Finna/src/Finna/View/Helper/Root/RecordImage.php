@@ -451,6 +451,8 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             }
             $images[$ind]['type'] = 'model';
         }
+        // Sort the array to ensure correct order:
+        ksort($images);
         return $images;
     }
 

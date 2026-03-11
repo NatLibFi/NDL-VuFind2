@@ -413,7 +413,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $language ??= $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_values(array_filter(array_column($representations, 'images')));
+        // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
+        // RecordImage::mergeModelDataToImages.
+        return array_filter(array_column($representations, 'images'));
     }
 
     /**
@@ -473,9 +475,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_values(
-            array_filter(array_column($representations, 'models'))
-        );
+        // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
+        // RecordImage::mergeModelDataToImages.
+        return array_filter(array_column($representations, 'models'));
     }
 
     /**
