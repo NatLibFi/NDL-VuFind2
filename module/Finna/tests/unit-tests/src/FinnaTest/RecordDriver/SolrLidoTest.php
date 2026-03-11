@@ -56,7 +56,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         yield 'getModels method' => [
             'getModels',
             [
-                [
+                2 => [
                     'models' => [
                         [
                             'url' => 'https://gltfmalli.gltf',
@@ -88,7 +88,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         yield 'getAllImages method' => [
             'getAllImages',
             [
-                [
+                0 => [
                     'urls' => [
                         'large' => 'https://largekuvanlinkki.com',
                         'small' => 'https://largekuvanlinkki.com',
@@ -139,7 +139,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'medium' => 'large',
                     ],
                 ],
-                [
+                1 => [
                     'urls' => [
                         'large' => 'https://largekuvanlinkki2.com',
                         'small' => 'https://thumbkuvanlinkki2.com',
@@ -200,7 +200,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'Suoristettu',
                     ],
                 ],
-                2 => [
+                7 => [
                     'urls' => [
                         'large' => 'https://kaikkilinkit.com',
                         'small' => 'https://kaikkilinkit.com',
