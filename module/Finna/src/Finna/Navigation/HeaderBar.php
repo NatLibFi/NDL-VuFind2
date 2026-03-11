@@ -33,6 +33,7 @@ use Finna\Navigation\Feature\NavibarTrait;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
 use function count;
+use function in_array;
 
 /**
  * HeaderBar section plugin
@@ -81,10 +82,11 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
                     'submenuItems' => [],
                 ];
                 foreach ($items['items'] as $submenuItem) {
-                    $navibarItem['submenuItems'][] = $this->processNavibarItem($submenuItem);
+                    $navibarItem['submenuItems'][]
+                        = $this->processNavibarItem($submenuItem, $items['id']);
                 }
             } else {
-                $navibarItem = $this->processNavibarItem($items['items'][0]);
+                $navibarItem = $this->processNavibarItem($items['items'][0], $items['id']);
             }
             $navibarItems[] = $navibarItem;
         }
@@ -94,11 +96,12 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
     /**
      * Process parsed navibar item to be compatible with header menu configuration.
      *
-     * @param array $navibarItem Navibar item
+     * @param array  $navibarItem   Navibar item
+     * @param string $navibarMenuId Navibar menu ID
      *
      * @return array
      */
-    protected function processNavibarItem(array $navibarItem): array
+    protected function processNavibarItem(array $navibarItem, string $navibarMenuId): array
     {
         $processedItem = [];
         $processedItem['label'] = $navibarItem['label'];
@@ -108,6 +111,11 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
             $processedItem['routeParams'] = $navibarItem['action']['routeParams'] ?? [];
         } else {
             $processedItem['url'] = $navibarItem['action']['url'];
+        }
+        $excluded = $this->navibarConfig['__exclude_from_site_map_page__'] ?? [];
+        $excludedFromMenu = $excluded[$navibarMenuId] ?? [];
+        if (in_array($navibarItem['id'], (array)$excludedFromMenu)) {
+            $processedItem['excludeFromSiteMapPage'] = true;
         }
         return $processedItem;
     }

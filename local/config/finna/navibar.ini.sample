@@ -19,6 +19,15 @@
 ; [__menu_sort__]
 ; __MENU__ = 1
 ; menu_item_7 = 0
+;
+; It is possible to mark selected items as excluded from the automatically generated
+; site map page.
+;
+; Example:
+;
+: [__exclude_from_site_map_page__]
+; menu[] = menu_item_1
+; menu[] = menu_item_5
 
 [search]
 advanced_search = 'search-advanced'
