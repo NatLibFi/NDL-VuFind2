@@ -1,7 +1,7 @@
 header {
   position: relative;
   z-index: $zindex-header;
-  box-shadow : 0 1px 0 1px rgba(0,0,0,0.1);
+  box-shadow : 0 1px 0 1px rgba(0, 0, 0, 0.1);
 }
 
 .finna-navbar {
@@ -18,9 +18,9 @@ header {
 @include media-breakpoint-down(md) {
   .finna-navbar {
     position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
+    top: 0px;
+    right: 0px;
+    left: 0px;
     z-index: $zindex-mobile-navbar;
     min-height: 64px;
     background-color: $header-background-color;
@@ -80,7 +80,7 @@ header {
 @include media-breakpoint-down(md) {
   .header-navbar-right {
     position: absolute;
-    top: 0;
+    top: 0px;
     right: $navbar-right;
     display: flex;
     align-items: center;
@@ -250,7 +250,7 @@ header {
   background-color: $breadcrumb-bg;
 }
 .breadcrumb {
-  margin-bottom: 0;
+  margin-bottom: 0px;
   background-color: transparent;
   border-radius: 0;
 }
@@ -273,5 +273,5 @@ header {
 
 // content-navigation-menu
 .main.template-dir-content.template-name-content .content-navigation-menu {
-  margin: 20px 0px;
+  margin: 1.3em 0em;
 }
