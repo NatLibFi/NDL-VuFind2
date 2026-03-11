@@ -947,11 +947,6 @@ class ModelViewerClass extends HTMLElement {
       };
       this.size.x -= parseFloat(computed.paddingLeft) + parseFloat(computed.paddingRight);
       this.size.y -= parseFloat(computed.paddingTop) + parseFloat(computed.paddingBottom);
-    } else {
-      this.size = {
-        x: 0,
-        y: 0,
-      };
     }
   }
 

@@ -297,6 +297,15 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
   _.canvasElements.noZoom.find('img').css('opacity', '0.5');
   _.openImageIndex = image.attr('index');
 
+  // Toggle canvas element first to ensure that it is correctly sized for model viewer:
+  _.setCanvasElement('noZoom');
+  _.setCurrentVisuals();
+  _.setPagerInfo();
+  if (typeof _.settings.onlyImage === 'undefined' || _.settings.onlyImage === false) {
+    _.loadImageInformation();
+  }
+  _.setBrowseButtons();
+
   if (image.data('type') === 'model') {
     var viewer = _.createModelViewer(image);
     _.canvasElements.noZoom.find('img,finna-model-viewer').replaceWith($(viewer));
@@ -318,14 +327,6 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
       _.canvasElements.noZoom.find('img,finna-model-viewer').replaceWith($(this));
     };
   }
-
-  _.setCanvasElement('noZoom');
-  _.setCurrentVisuals();
-  _.setPagerInfo();
-  if (typeof _.settings.onlyImage === 'undefined' || _.settings.onlyImage === false) {
-    _.loadImageInformation();
-  }
-  _.setBrowseButtons();
 };
 
 /**
@@ -334,6 +335,12 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
  */
 FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(image) {
   var _ = this;
+
+  if (image.data('type') === 'model') {
+    // Redirect to non-zoomable image for models:
+    _.onNonZoomableClick(image);
+    return;
+  }
 
   if (_.openImageIndex !== image.attr('index')) {
     _.openImageIndex = image.attr('index');
