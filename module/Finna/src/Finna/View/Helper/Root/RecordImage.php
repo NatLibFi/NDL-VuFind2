@@ -362,6 +362,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             // Limit combined results to a single image
             $images = [reset($images)];
         }
+
+        // Ensure that the array is a list so that image paginator can handle it properly:
+        $images = array_values($images);
+
         $context = [
             'type' => $type,
             'images' => $images,
