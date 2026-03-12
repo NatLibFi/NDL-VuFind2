@@ -89,6 +89,7 @@
 }
 
 .iiif-menu-button-badge {
+    @extend .badge, .position-absolute, .bottom-0, .end-0;
     width: 2em;
     border: none;
     border-radius: 0;
@@ -100,21 +101,17 @@
         height: 98%;
     }
 
-    @include media-breakpoint-down(md) {
-        position: relative;
-        width: 100%;
-        max-width: 100%;
-        border-radius: $finna-button-radius;
-
-        img.bi {
-            margin-left: auto;
-            margin-right: auto;
-            width: 27.5%;
-            height: auto;
-        }
-    }
-
     @media print {
         display: none;
+    }
+
+    .grid-body & {
+        @include media-breakpoint-only(md) {
+            right: 1.5em;
+        }
+
+        @include media-breakpoint-only(sm) {
+            right: .5em;
+        }
     }
 }
