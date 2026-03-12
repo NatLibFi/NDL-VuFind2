@@ -8,7 +8,7 @@
    */
   $class = $this->class ?? '';
   $template = $this->template ?? '';
-  $templatePath = "content/Additions/"
+  $templatePath = 'content/Additions/'
 ?>
 <?php if ($template = $this->content()->findTemplateForLng($templatePath . $template)): ?>
   <div class="<?=$class?>"><?=$this->render($template)?></div>
