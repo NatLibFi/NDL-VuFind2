@@ -337,7 +337,10 @@ trait NavibarTrait
         $menuData = $sortDataOrder = $sortData = [];
 
         foreach ($config as $menuKey => $items) {
-            if ($menuKey === 'Parent_Config') {
+            if (
+                $menuKey === 'Parent_Config'
+                || $menuKey === '__exclude_from_site_map_page__'
+            ) {
                 continue;
             }
 

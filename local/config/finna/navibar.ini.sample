@@ -20,8 +20,8 @@
 ; __MENU__ = 1
 ; menu_item_7 = 0
 ;
-; It is possible to mark selected items as excluded from the automatically generated
-; site map page.
+; It is possible to specify selected items as excluded from the automatically
+; generated site map page. The whole menu can be excluded using menu = __MENU__
 ;
 ; Example:
 ;

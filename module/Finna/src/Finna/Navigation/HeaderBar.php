@@ -113,8 +113,11 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
             $processedItem['url'] = $navibarItem['action']['url'];
         }
         $excluded = $this->navibarConfig['__exclude_from_site_map_page__'] ?? [];
-        $excludedFromMenu = $excluded[$navibarMenuId] ?? [];
-        if (in_array($navibarItem['id'], (array)$excludedFromMenu)) {
+        $excludedFromMenu = (array)($excluded[$navibarMenuId] ?? []);
+        if (
+            in_array($navibarItem['id'], $excludedFromMenu)
+            || in_array('__MENU__', $excludedFromMenu)
+        ) {
             $processedItem['excludeFromSiteMapPage'] = true;
         }
         return $processedItem;
