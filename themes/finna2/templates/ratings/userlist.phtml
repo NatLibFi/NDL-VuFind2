@@ -14,19 +14,14 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div class="useraccount-header">
-    <?=$this->component('page-title', ['title' => $this->translate('Ratings')]);?>
-    <?php if (!$this->translationEmpty('tooltip_myaccount_ratings_html')): ?>
-      <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_ratings_html') ?>"><?=$this->icon('help') ?></button>
-    <?php endif; ?>
+    <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Ratings'), 'tooltip' => 'tooltip_myaccount_ratings_html']);?>
   </div>
   <ul class="nav nav-tabs" role="tablist">
     <?php foreach ($tabs as $tab => $title): ?>
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='ratings' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
     <?php endforeach; ?>
   </ul>
-  <?php if ($template = $this->content()->findTemplateForLng('content/Additions/ratings-pre-list')): ?>
-    <div class="ratings-pre"><?=$this->render($template)?></div>
-  <?php endif; ?>
+  <?=$this->component('finna-addition-template', ['class' => 'ratings-pre-list', 'template' => 'ratings-pre-list'])?>
   <?php if (count($this->ratings) !== 0): ?>  
     <div><?=$this->transEsc('finna_nickname')?>: <?=$this->userPublicName($user);?></div>
     <nav class="search-header hidden-print">
@@ -133,9 +128,7 @@
         </tbody>
       </table>
     </form>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/ratings-post-list')): ?>
-      <div class="ratings-post"><?=$this->render($template)?></div>
-    <?php endif; ?>
+    <?=$this->component('finna-addition-template', ['class' => 'ratings-post-list', 'template' => 'ratings-post-list'])?>
   <?php else: ?>
     <?=$this->transEsc('No Ratings')?>
   <?php endif; ?>

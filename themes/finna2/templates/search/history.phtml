@@ -53,14 +53,10 @@
           <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_saved_html') ?>"><?=$this->icon('help') ?></button>
         <?php endif; ?>
       </div>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-saved-pre-list')): ?>
-      <div class="search-history-saved-pre"><?=$this->render($template)?></div>
-    <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['class' => 'search-history-saved-pre-list', 'template' => 'search-history-saved-pre-list'])?>
       <?php if (!empty($this->saved)): ?>
         <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => true]);?>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-saved-post-list')): ?>
-          <div class="search-history-saved-post"><?=$this->render($template)?></div>
-        <?php endif; ?>
+        <?=$this->component('finna-addition-template', ['class' => 'search-history-saved-post-list', 'template' => 'search-history-saved-post-list'])?>
       <?php else: ?>
         <?=
           $loggedInUser
@@ -76,16 +72,12 @@
         <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_recent_html') ?>"><?=$this->icon('help') ?></button>
       <?php endif; ?>
     </div>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-recent-pre-list')): ?>
-      <div class="search-history-recent-pre"><?=$this->render($template)?></div>
-    <?php endif; ?>
+    <?=$this->component('finna-addition-template', ['class' => 'search-history-recent-pre-list', 'template' => 'search-history-recent-pre-list'])?>
     <?php if (!empty($this->unsaved)): ?>
       <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => false]);?>
       <p class="text-right"><a href="?purge=true"><?=$this->icon('remove') ?> <?=$this->transEsc('history_purge')?></a></p>
       <br>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-history-recent-post-list')): ?>
-        <div class="search-history-recent-post"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['class' => 'search-history-recent-post-list', 'template' => 'search-history-recent-post-list'])?>
     <?php else: ?>
       <h4><?=$this->transEsc('history_no_searches')?></h4>
       <br>

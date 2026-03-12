@@ -1,0 +1,19 @@
+<?php
+  /**
+   * Page title component with tooltip, calls page title component and checks if the tooltip should be rendered or not. Use only once for each page.
+   *
+   * @param string       title         Translated title to be used as the header element value
+   * @param string|false headTitle     Translated head title to be set for the page. Default is same as the title.
+   *                                   Set to false to disable.
+   * @param int          level         Header level. Default is 2. Level 1 in lightbox context will be changed to 2
+   *                                   if lightboxLevel is unset.
+   * @param int          lightboxLevel Header level in lightbox context. Allows level 1 header to be set.
+   * @param string       class         Same as header element class attribute.
+   * @param string       tooltip       Translation key for the tooltip
+   */
+  $tooltip = $this->tooltip ?? '';
+?>
+<?=$this->component('page-title', ['title' => $this->title, 'headTitle' => $this->headTitle, 'level' => $this->level, 'lightboxLevel' => $this->lightboxLevel, 'class' => $this->class])?>
+<?php if (!$this->translationEmpty($tooltip)): ?>
+  <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc($tooltip) ?>"><?=$this->icon('help') ?></button>
+<?php endif; ?>

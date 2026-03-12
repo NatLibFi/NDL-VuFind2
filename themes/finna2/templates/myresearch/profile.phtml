@@ -47,15 +47,10 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
   <div id="useraccount-content-heading" class="useraccount-header">
-    <?=$this->component('page-title', ['title' => $this->translate('My Profile')]);?>
-    <?php if (!$this->translationEmpty('tooltip_myaccount_profile_html')): ?>
-      <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_profile_html') ?>"><?=$this->icon('help') ?></button>
-    <?php endif; ?>
+    <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('My Profile'), 'tooltip' => 'tooltip_myaccount_profile_html']);?>
   </div>
   <div class="my-research-content">
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/profile-pre-list')): ?>
-      <div class="profile-pre-list"><?=$this->render($template)?></div>
-    <?php endif; ?>
+    <?=$this->component('finna-addition-template', ['class' => 'profile-pre-list', 'template' => 'profile-pre-list'])?>
     <div>
       <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>
       <?=$this->flashmessages();?>
@@ -389,9 +384,7 @@
         <?php endif; ?>
       </div>
     </div>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/profile-post-list')): ?>
-      <div class="profile-post-list"><?=$this->render($template)?></div>
-    <?php endif; ?>
+    <?=$this->component('finna-addition-template', ['class' => 'profile-post-list', 'template' => 'profile-post-list'])?>
 
     <?php
       $proxyValues = [];

@@ -22,10 +22,7 @@
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header">
-      <?=$this->component('page-title', ['title' => $this->translate('Storage Retrieval Requests') . " ($recordCount)", 'headTitle' => $this->translate('Storage Retrieval Requests')]);?>
-      <?php if (!$this->translationEmpty('tooltip_myaccount_storage_retrieval_requests_html')): ?>
-        <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_storage_retrieval_requests_html') ?>"><?=$this->icon('help') ?></button>
-      <?php endif; ?>
+      <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Storage Retrieval Requests') . " ($recordCount)", 'headTitle' => $this->translate('Storage Retrieval Requests'), 'tooltip' => 'tooltip_myaccount_storage_retrieval_requests_html']);?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -34,9 +31,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/storageretrievalrequests-pre-list')): ?>
-        <div class="storageretrievalrequests-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['class' => 'storageretrievalrequests-pre-list', 'template' => 'storageretrievalrequests-pre-list'])?>
       <?php if (!empty($this->recordList)): ?>
         <?php if ($this->cancelForm): ?>
           <div class="myaccount-sticky-header"></div>
