@@ -169,7 +169,9 @@ FinnaPopup.prototype.show = function show() {
     _.backDrop = $('<div class="finna-popup backdrop"></div>');
     $(document.body).prepend(_.backDrop);
     _.backDrop.off('click').on('click', function checkClose(e) {
-      if (!$.contains(_.modalHolder[0], e.target)) {
+      // Note: The parentElement check below is important to avoid an element removed from DOM from being considered
+      // outside of the modal holder.
+      if (e.target.parentElement && !$.contains(_.modalHolder[0], e.target)) {
         _.onPopupClose();
       }
     });

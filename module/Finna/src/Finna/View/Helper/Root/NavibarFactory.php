@@ -80,7 +80,7 @@ class NavibarFactory implements FactoryInterface
         $navibar->setCombinedConfig($configManager->getConfigArray('combined'));
         $navibar->setPrimoConfig($configManager->getConfigArray('Primo'));
         $navibar->setBrowseConfig($configManager->getConfigArray('browse'));
-        $navibar->setOiConfig($configManager->getConfigArray('OrganisationInfo'));
+        $navibar->setOrganisationInfoConfig($configManager->getConfigArray('OrganisationInfo'));
         $navibar->setAuthorityConfig($configManager->getConfigArray('authority'));
 
         return $navibar;
