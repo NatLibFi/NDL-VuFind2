@@ -149,7 +149,7 @@
       padding-top: 5px;
       .share-buttons-toolbox a {
         padding-left: 5px;
-        display: inline-block;  
+        display: inline-block;
       }
     }
 
@@ -199,7 +199,7 @@
   }
 }
 @include media-breakpoint-down(md) {
-  .record-information .less-link.top-button { 
+  .record-information .less-link.top-button {
     top: $navbar-height;
   }
 }
@@ -585,7 +585,7 @@
 finna-model-viewer {
   position: relative;
   display: flex;
-  min-height: 400px;
+  min-height: 200px;
   .wrapper {
     flex: 1 1 100%;
     background-color: #efefefcc;
@@ -601,7 +601,7 @@ finna-model-viewer {
       .model-stats,
       .model-help {
         padding: 2px;
-        background-color: #fff; 
+        background-color: #fff;
       }
     }
     .viewer-table {
@@ -621,7 +621,7 @@ finna-model-viewer {
       color: #fff;
       background-color: #1f1f1f;
       border: none;
-      
+
       i {
         cursor: pointer;
       }
