@@ -72,7 +72,6 @@ class CollectionController extends \VuFind\Controller\CollectionController
             $result->backgroundTabs = [];
         }
         return $result;
-
     }
 
     /**
