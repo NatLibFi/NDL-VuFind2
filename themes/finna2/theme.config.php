@@ -241,6 +241,7 @@ return [
         [ 'file' => 'finna-recommendation-memory.js' ],
         [ 'file' => 'finna-record.js' ],
         [ 'file' => 'finna-search-tabs-recommendations.js' ],
+        [ 'file' => 'finna-series.js' ],
         [ 'file' => 'finna-street-search.js' ],
         [ 'file' => 'vendor/jquery.colorhelpers.min.js' ],
         [ 'file' => 'vendor/jquery.dataTables.min.js' ],

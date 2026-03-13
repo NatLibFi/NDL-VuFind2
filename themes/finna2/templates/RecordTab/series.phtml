@@ -1,0 +1,60 @@
+<?php 
+  $seriesKeys = $this->driver->getSeriesKeys();
+  $currentSeriesKey = $this->seriesKey ?? $seriesKeys[0];
+  $results = $this->driver->getSeriesResult($currentSeriesKey);
+  $currentSeries = $this->driver->getSeriesFromSeriesKey($currentSeriesKey);
+  $recordId = $this->driver->getUniqueId();
+?>
+<div class="record-tab-series-container">
+  <div class="series-header">
+  <h4 id="series"><?=$this->escapeHtml($currentSeries)?></h4>
+  <?php if (count($seriesKeys) > 1): ?>
+      <span class="series-dropdown-text"><?= $this->transEsc('Series')?>: </span><button id="dropdown-toggle" type="button" class="dropdown-toggle series-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?=$this->escapeHtml($currentSeries)?></button>
+    <ul class="dropdown-menu">
+      <?php foreach ($seriesKeys as $key): ?>
+        <li>
+          <a class="dropdown-item dropdown__link" href="#" data-id="<?=$this->escapeHtmlAttr($recordId)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-serieskey="<?=$this->escapeHtmlAttr($key)?>"><?=$this->escapeHtml($this->driver->getSeriesFromSeriesKey($key))?></a>
+        </li>
+      <? endforeach; ?>
+    </ul>
+    <?php endif; ?>
+  </div>
+  <div class="series-tab-container container">
+    <div class="list-scrollable">
+      <ul class="list flex-row flex-nowrap overflow-x-auto" id="scrollableList">
+        <?php foreach ($results as $source => $current): ?>
+          <?php
+            $images = $current->getAllImages();
+            $imgurl = $images[0]['urls']['medium'] ?? '';
+            $formats = $current->getFormats();
+            $seriesOrder = $current->getSeriesOrder();
+            $orderForCurrentSeries = null;
+            if ($seriesOrder) {
+              $orderSeriesParts = explode(' ', $seriesOrder['orderKey']);
+              $keySeriesParts = explode(' ', $currentSeriesKey);
+              $orderForCurrentSeries = $orderSeriesParts[1] === $keySeriesParts[1];
+            }
+          ?>
+        <li class="list-item <?= $recordId === $current->getUniqueId() ? 'active' :'' ?>">
+          <?php if ($orderForCurrentSeries): ?>
+            <span class="series"><?=$this->escapeHtml($seriesOrder['order'])?></span>
+          <?php endif; ?>
+          <a class="list-link" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current))?>">
+            <img loading="lazy" src="<?=$this->escapeHtmlAttr($imgurl)?>" alt="">
+            <div class="cover iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
+            <span class="title"><?=$this->escapeHtml($current->getTitle())?></span>
+          </a>
+        </li>
+        <?php endforeach; ?>
+      </ul>
+    </div>
+  </div>
+  <?php $searchQuery = urlencode('series_key_str_mv:"' . $currentSeriesKey . '"'); ?>
+  <a href='<?= $this->url('search-results') ?>?lookfor=<?=$searchQuery?>' class="btn btn-primary series-search-link"><?= $this->transEsc('channel_search') ?></a>
+</div>
+<?php
+  $script = <<<JS
+      finna.series.init();
+      JS;
+?>
+<?=$this->assetManager()->outputInlineScriptString($script);?>
