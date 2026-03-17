@@ -111,8 +111,8 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
         }
         $processedItem = [];
         $processedItem['label'] = $navibarItem['label'];
-        if (isset($navibarItem['desc'])) {
-            $processedItem['description'] = $navibarItem['desc'];
+        if ($desc = $navibarItem['desc'] ?? null) {
+            $processedItem['description'] = $desc;
         }
         if ($action['route'] ?? false) {
             $options = ['name' => $url];
@@ -126,8 +126,8 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
         } else {
             $processedItem['url'] = $url;
         }
-        if (isset($action['target'])) {
-            $processedItem['target'] = $action['target'];
+        if ($target = $action['target'] ?? null) {
+            $processedItem['target'] = $target;
         }
         return $processedItem;
     }
