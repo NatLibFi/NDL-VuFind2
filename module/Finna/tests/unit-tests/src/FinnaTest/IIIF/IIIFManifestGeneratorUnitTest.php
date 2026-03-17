@@ -76,6 +76,11 @@ class IIIFManifestGeneratorUnitTest extends TestCase
         $this->assertEqualsIgnoringCase($expectedReturnType, gettype($manifest));
     }
 
+    /**
+     * Get test inputs and expected return types for createManifest()
+     *
+     * @return \Generator
+     */
     public static function getTestManifestGeneratorImageData(): \Generator
     {
         yield 'empty $images returns null' => [
