@@ -1158,14 +1158,13 @@ trait SolrFinnaTrait
     {
         $newUrls = [];
         foreach ($urls as $url) {
-            if (isset($url['mediaType']) && !empty($url['mediaType'])) {
+            if (!empty($url['mediaType'])) {
                 $type = $embed = null;
                 $parts = explode('/', $url['mediaType']);
-                $mediaType = $parts[0] ?? '';
+                $mediaType = $parts[0];
                 if ($mediaType === 'audio') {
                     $type = $embed = 'audio';
-                }
-                if ($mediaType === 'image') {
+                } elseif ($mediaType === 'image') {
                     $type = 'image';
                 }
                 $url['type'] = $type;
