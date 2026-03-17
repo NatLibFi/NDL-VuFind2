@@ -190,41 +190,6 @@ div.facet {
   }
 }
 
-/* ------ TOP FACETS ------ */
-.top-title {
-  display: inline-block;
-  padding-top: 0.5rem;
-  padding-left: 0.5rem;
-  font-weight: bold;
-  color: #000;
-}
-.top-title .fa {
-  width: 1rem;
-  text-align: center;
-}
-@include media-breakpoint-up(sm) {
-  .top-title {
-    padding-top: 0px;
-  }
-  .top-title .fa {
-    display: none;
-  }
-  .top-facets .collapse {
-    display: block;
-    height: auto !important;
-  }
-}
-
-.top-facets .facet,
-.top-facets .narrow-toggle,
-.top-facets > strong {
-  display: inline-block;
-  width: auto;
-  padding: 0.25rem 0.5rem;
-  border: 0;
-  white-space: nowrap;
-}
-
 /* ------ Hierarchical Facets ------ */
 .facet-tree {
   .facet {
@@ -283,7 +248,56 @@ div.facet {
   }
 }
 
-/* Specific facets */
+/* ------ TOP FACETS ------ */
+.top-title {
+  display: inline-block;
+  padding-top: 0.5rem;
+  padding-left: 0.5rem;
+  font-weight: 700;
+  color: $text-color;
+  .icon {
+    width: 1rem;
+    text-align: center;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .top-title.top-title__heading {
+    display: none;
+  }
+}
+@include media-breakpoint-up(sm) {
+  .top-title {
+    &.top-title__toggle,
+    .icon {
+      display: none;
+    }
+  }
+}
+
+.top-facets-contents {
+  margin: 2px 0px;
+  padding: 0px;
+  list-style: none;
+}
+
+.top-facets .facet,
+.top-facets > strong {
+  display: inline-block;
+  width: auto;
+  padding: 2px 0px;
+  border: 0;
+  white-space: nowrap;
+}
+
+.top-facet-inner {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid $list-group-border-color;
+  .badge {
+    align-self: center;
+  }
+}
 
 .geographic-facet {
   padding: 0em 0.5em;
