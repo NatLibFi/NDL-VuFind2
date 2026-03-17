@@ -22,13 +22,13 @@
 
   > li {
     border-bottom: 1px solid $gray-lighter;
-  }
-  > li:last-child > a, li:last-child {
-    border-bottom: none;
-  }
-
-  > li > a {
-    padding: 7px 15px;
+    &:last-child > a,
+    &:last-child {
+      border-bottom: none;
+    }
+    > a {
+      padding: 7px 15px;
+    }
   }
 }
 

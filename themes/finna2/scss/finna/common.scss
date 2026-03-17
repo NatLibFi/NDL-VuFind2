@@ -140,7 +140,7 @@
   &.site-status-production {
     display: none;
   }
-  @media (max-width: $grid-float-breakpoint) {
+  @include media-breakpoint-down(md) {
     position: relative;
     top: $navbar-height;
   }
@@ -153,7 +153,7 @@
   padding-bottom: 0.6em;
   text-align: center;
   z-index: 1;
-  @media (max-width: $grid-float-breakpoint) {
+  @include media-breakpoint-down(md) {
     position: relative;
     top: $navbar-height;
   }
@@ -183,7 +183,7 @@
       border: $cookie-consent-button-border;
     }
   }
-  @media (max-width: $grid-float-breakpoint) {
+  @include media-breakpoint-down(md) {
     position: relative;
     top: $navbar-height;
     .cookie-consent-button {
@@ -197,7 +197,7 @@
 
 /* Bazaar Browse Bar */
 .finna-bazaar-browse-bar {
-  @media (max-width: $grid-float-breakpoint) {
+  @include media-breakpoint-down(md) {
     position: relative;
     top: $navbar-height;
   }

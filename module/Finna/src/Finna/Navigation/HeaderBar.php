@@ -29,6 +29,7 @@
 
 namespace Finna\Navigation;
 
+use Exception;
 use Finna\Navigation\Feature\NavibarTrait;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
@@ -81,12 +82,16 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
                     'submenuItems' => [],
                 ];
                 foreach ($items['items'] as $submenuItem) {
-                    $navibarItem['submenuItems'][] = $this->processNavibarItem($submenuItem);
+                    if ($submenuItem = $this->processNavibarItem($submenuItem)) {
+                        $navibarItem['submenuItems'][] = $submenuItem;
+                    }
                 }
             } else {
                 $navibarItem = $this->processNavibarItem($items['items'][0]);
             }
-            $navibarItems[] = $navibarItem;
+            if ($navibarItem) {
+                $navibarItems[] = $navibarItem;
+            }
         }
         return $navibarItems;
     }
@@ -96,18 +101,33 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
      *
      * @param array $navibarItem Navibar item
      *
-     * @return array
+     * @return array|false
      */
-    protected function processNavibarItem(array $navibarItem): array
+    protected function processNavibarItem(array $navibarItem): array|false
     {
+        $action = $navibarItem['action'] ?? null;
+        if (!($url = $action['url'] ?? null)) {
+            return false;
+        }
         $processedItem = [];
         $processedItem['label'] = $navibarItem['label'];
-        $processedItem['description'] = $navibarItem['desc'] ?? '';
-        if ($navibarItem['action']['route'] ?? false) {
-            $processedItem['route'] = $navibarItem['action']['url'];
-            $processedItem['routeParams'] = $navibarItem['action']['routeParams'] ?? [];
+        if ($desc = $navibarItem['desc'] ?? null) {
+            $processedItem['description'] = $desc;
+        }
+        if ($action['route'] ?? false) {
+            $options = ['name' => $url];
+            $params = $action['routeParams'] ?? [];
+            try {
+                $processedItem['url'] = $this->router->assemble($params, $options);
+            } catch (Exception) {
+                // Invalid route, skip item.
+                return false;
+            }
         } else {
-            $processedItem['url'] = $navibarItem['action']['url'];
+            $processedItem['url'] = $url;
+        }
+        if ($target = $action['target'] ?? null) {
+            $processedItem['target'] = $target;
         }
         return $processedItem;
     }
