@@ -274,19 +274,23 @@ div.facet {
   }
 }
 
-.top-facets-contents {
-  margin: 2px 0px;
-  padding: 0px;
-  list-style: none;
-}
-
 .top-facets .facet,
 .top-facets > strong {
   display: inline-block;
   width: auto;
-  padding: 2px 0px;
+  padding: 0.25rem 0rem;
   border: 0;
   white-space: nowrap;
+}
+
+.top-facets-contents {
+  margin: 0.25rem 0rem;
+  list-style: none;
+}
+
+.top-facets > strong,
+.top-facets-contents {
+  padding-left: 0.7em;
 }
 
 .top-facet-inner {
