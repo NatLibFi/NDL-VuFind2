@@ -430,6 +430,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Materials',
             'Related Places',
             'Subject Actor',
+            'Subject Place',
             'subjects_extended',
             'System Format',
             'Unit IDs',
