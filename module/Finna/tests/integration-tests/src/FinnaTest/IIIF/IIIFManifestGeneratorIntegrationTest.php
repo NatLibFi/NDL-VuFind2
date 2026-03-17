@@ -135,12 +135,18 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
             ->getMock();
         $generator->method('createBodyId')
             ->willReturnCallback(
-                fn ($recordId, $index, $size, $source)
-                => "http://example.com/Cover/Show/$recordId?index=$index&size=$size&source="
+                fn (
+                    string $recordId,
+                    int $index,
+                    string $size,
+                    string $source
+                ): string
+                => 'http://example.com/Cover/Show/'
+                   . "$recordId?index=$index&size=$size&source="
                    . strtolower($source)
             );
         $generator->method('getTranslations')
-            ->willReturnCallback(fn ($message) => (object)['en' => [$message]]);
+            ->willReturnCallback(fn (string $message): object => (object)['en' => [$message]]);
 
         // init mock record driver
 
