@@ -32,7 +32,7 @@ namespace FinnaTest\IIIF;
 use Finna\Record\IIIF\IIIFManifestGenerator;
 use Finna\RecordDriver\SolrLido;
 use Finna\View\Helper\Root\RecordLinker;
-use PHPUnit\Framework\Attributes\TestWith;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use Swaggest\JsonSchema\Context;
 use Swaggest\JsonSchema\Schema;
@@ -65,7 +65,9 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
      * https://github.com/IIIF/presentation-validator/blob/6fe43b8d6e27f12f83bd99b31125e3821e60ba7b/schema/iiif_3_0.json
      *
      * @param object $manifest Manifest
+     *
      * @return void
+     *
      * @throws \Swaggest\JsonSchema\Exception
      */
     protected function validateManifest(object $manifest): void
@@ -83,7 +85,7 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
     }
 
     /**
-     * Forces the width and height fields on each member of $manifest['items'].
+     * Force the width and height fields on each member of $manifest['items'].
      *
      * This avoids a JSON schema validation error, because these values are
      * mandatory, even if our TIFY viewer gets by without them. The actual
@@ -102,9 +104,16 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         unset($canvas);
     }
 
-    #[TestWith(['iiif/lido_one_large.xml', 'object'], 'LIDO record with 1 image')]
-    #[TestWith(['iiif/lido_three.xml', 'object'], 'LIDO record with 3 images')]
-    #[TestWith(['iiif/lido_none.xml', 'null'], 'LIDO record with 0 images')]
+    /**
+     * Initialize mock IIIFManifestGenerator, get a fake SolrLido record,
+     * generate a manifest, then validate the record against the JSON schema.
+     *
+     * @param string $xmlFixture         Path to LIDO fixture file
+     * @param string $expectedReturnType Expected return type from generate()
+     *
+     * @return void
+     */
+    #[DataProvider('getLidoFixtures')]
     public function testGeneratedManifest(
         string $xmlFixture,
         string $expectedReturnType
@@ -157,15 +166,57 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         }
     }
 
-    #[TestWith([''])]
-    #[TestWith(['[]'])]
-    #[TestWith(["{'status': 500}"])]
+    /**
+     * Get LIDO fixture files and expected return types
+     *
+     * @return \Generator<array<string>>
+     */
+    public static function getLidoFixtures(): \Generator
+    {
+        yield 'LIDO record with 1 image' =>
+            ['iiif/lido_one_large.xml', 'object'];
+        yield 'LIDO record with 3 images' =>
+            ['iiif/lido_three.xml', 'object'];
+        yield 'LIDO record with 0 images' =>
+            ['iiif/lido_none.xml', 'null'];
+    }
+
+    /**
+     * Coherence-check the validator with guaranteed-invalid JSON
+     *
+     * @param string $input Input JSON
+     *
+     * @return void
+     */
+    #[DataProvider('getInvalidInputs')]
     public function testSchemaValidatorInvalidInput(string $input): void
     {
         $this->expectException(\TypeError::class);
         $this->validateManifest(json_decode($input));
     }
 
+    /**
+     * Get invalid inputs for the schema validator
+     *
+     * @return \Generator<array<string>>
+     */
+    public static function getInvalidInputs(): \Generator
+    {
+        yield [''];
+        yield ['[]'];
+        yield ["{'status': 500}"];
+    }
+
+    /**
+     * Create a mock SolrLido record
+     *
+     * @param string $recordXml    Path to LIDO fixture file
+     * @param array  $searchConfig searchSettings for SolrLido
+     * @param array  $rawData      Raw data to set in record
+     * @param string $language     Language for Laminas\i18n\Translator
+     *
+     * @return SolrLido
+     */
     protected function getFakeSolrLido(
         string $recordXml,
         $searchConfig = [],

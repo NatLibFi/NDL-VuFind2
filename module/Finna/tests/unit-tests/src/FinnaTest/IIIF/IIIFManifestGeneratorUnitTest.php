@@ -36,7 +36,6 @@ use PHPUnit\Framework\TestCase;
 use VuFind\Http\RouteHelper;
 use VuFind\Http\ServerUrlHelper;
 use VuFind\I18n\Locale\LocaleSettings;
-use VuFindTest\Feature\FixtureTrait;
 use VuFindTest\Feature\ReflectionTrait;
 
 use function gettype;
@@ -52,9 +51,16 @@ use function gettype;
  */
 class IIIFManifestGeneratorUnitTest extends TestCase
 {
-    use FixtureTrait;
     use ReflectionTrait;
 
+    /**
+     * Unit-test IIIFManifestGenerator
+     *
+     * @param array  $arguments          Arguments
+     * @param string $expectedReturnType Expected return type from createManifest()
+     *
+     * @return void
+     */
     #[DataProvider('getTestManifestGeneratorImageData')]
     public function testGeneratedManifest(
         array $arguments,
