@@ -6,8 +6,8 @@
    * @param string       template      Template to be rendered
    * @param string       templatePath  Path to the template in custom theme
    */
-  $class = $this->class ?? '';
   $template = $this->template ?? '';
+  $class = $this->class ?? $template;
   $templatePath = 'content/Additions/'
 ?>
 <?php if ($template = $this->content()->findTemplateForLng($templatePath . $template)): ?>
