@@ -9,15 +9,15 @@ div.facet {
 .list-group.facets {
   // style Finna facet headers
   .list-group-item.title {
-    font-size: $font-size-base;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: $facet-text-color;
-    background: $facet-header-background;
-    text-align: left;
-    border: 1px solid  $facet-border-color;
     padding: 0.7em;
     margin-bottom: 0.1em;
+    font-size: $font-size-base;
+    font-weight: 600;
+    color: $facet-text-color;
+    text-align: left;
+    text-transform: uppercase;
+    background: $facet-header-background;
+    border: 1px solid  $facet-border-color;
     .icon {
       color: $action-link-color;
     }
@@ -40,13 +40,13 @@ div.facet {
     align-items: baseline;
     padding: 0em 0em 0em 0.3em;
     margin: 0.3em;
-    border-radius: 0px;
-    color: $gray;
-    background: transparent;
-    font-weight: 700;
     font-size: $font-size-small;
+    font-weight: 700;
+    color: $gray;
     text-transform: uppercase;
     text-decoration: none;
+    background: transparent;
+    border-radius: 0px;
     box-shadow: none;
     &:focus-visible {
       box-shadow: $focus-ring-box-shadow;
@@ -75,8 +75,8 @@ div.facet {
 .facet-group {
   margin-bottom: 1rem;
   .facet {
-    padding: 0.2em 0.2em 0.15em 0.6em;
     display: flex;
+    padding: 0.2em 0.2em 0.15em 0.6em;
     .main-link,
     .text {
       flex-grow: 1;
@@ -108,8 +108,8 @@ div.facet {
   }
   .main-link,
   .text {
-    gap: 0.25rem;
     flex-grow: 1;
+    gap: 0.25rem;
   }
   .badge {
     flex-shrink: 0;
@@ -141,13 +141,13 @@ div.facet {
   position: absolute;
   top: 0px;
   left: 0px;
+  z-index: 2;
   display: flex;
-  width: 100%;
-  height: 100%;
   align-items: center;
   justify-content: center;
+  width: 100%;
+  height: 100%;
   background-color: rgba(0, 0, 0, 0.4);
-  z-index: 2;
 }
 .facet-loading-overlay-label {
   padding: 0.2rem 0.5rem;
@@ -157,30 +157,30 @@ div.facet {
 
 .sidebar {
   .facet-info-header {
+    padding: 0.8em 0em 0.8em 0.6em;
     font-size: 0.9em;
     font-weight: 600;
-    padding: 0.8em 0em 0.8em 0.6em;
   }
   .facet-info {
-    margin-bottom: 0.8em;
     padding: 0.4em;
+    margin-bottom: 0.8em;
     font-size: 0.9em;
     .icon {
-      font-size: 1.2em;
-      vertical-align: baseline;
       display: table-cell;
+      font-size: 1.2em;
       color: $primary;
+      vertical-align: baseline;
     }
     .info {
-      padding-left: 0.4em;
       display: table-cell;
+      padding-left: 0.4em;
       width: 100%;
       vertical-align: middle;
     }
     .more-info {
-      text-align: right;
       display: block;
       margin-top: 0.2em;
+      text-align: right;
     }
   }
   .list-group.facet .collapse .list-group-item.facet-info-highlight {
@@ -199,10 +199,10 @@ div.facet {
     align-items: baseline;
     border-bottom: none;
     .facet-tree__toggle-expanded {
-      color: $link-color;
       // Fix focus ring:
       margin-top: 0.5em;
-      margin-right: 0.3em;
+      margin-right: 0.3em;   
+      color: $link-color;
     }
   }
 }
@@ -228,14 +228,14 @@ div.facet {
     #btn-reset-contains {
       display: flex;
       align-items: center;
-      margin-top: 0.2em;
       height: $input-height-base;
+      margin-top: 0.2em;
     }
   }
 }
 .lightbox-scroll.full-facets {
-  border: 1px solid $gray-lighter;
   margin-bottom: 0.4em;
+  border: 1px solid $gray-lighter;
   .full-facet-list {
     margin-bottom: 0px;
     .facet {
@@ -279,8 +279,8 @@ div.facet {
   display: inline-block;
   width: auto;
   padding: 0.25rem 0rem;
-  border: 0;
   white-space: nowrap;
+  border: 0;
 }
 
 .top-facets-contents {
@@ -316,10 +316,10 @@ div.facet {
     .location-search-info {
       position: absolute;
       bottom: 0px;
+      z-index: $zindex-modal;
       width: 100%;
       height: auto;
       padding: 0.7em;
-      z-index: $zindex-modal;
       text-align: center;
       background: rgba(255, 255, 255, 0.8);
     }
@@ -327,14 +327,14 @@ div.facet {
   .map-controls {
     a.map-control,
     a.user-location-filter {
-      border: 1px solid $gray-lighter;
-      background: $body-bg;
-      color: $text-color;
-      border-radius: 0px;
-      width: 50%;
       float: left;
+      width: 50%;
       padding: 0.8em 0.4em;
       font-size: 0.9em;
+      color: $text-color;
+      background: $body-bg;
+      border: 1px solid $gray-lighter;
+      border-radius: 0px;
       &:last-child {
         border-left: 0px;
       }
@@ -363,9 +363,9 @@ div.facet {
       margin: 0px;
     }
     a {
+      float: right;
       font-size: 0.9em;
       color: $gray-mid-light;
-      float: right;
     }
   }
   .geographic-facet a:hover {

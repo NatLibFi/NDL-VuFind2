@@ -17,8 +17,8 @@
 .main.template-dir-search.template-name-home,
 .sidebar {
     .list-group .list-group-item.daterange {
-        background-color: $gray-ultralight;
         padding: 0.2em 0.7em;
+        background-color: $gray-ultralight;
         .daterange-vis,
         > form {
             padding-top: 0.3em;
@@ -35,11 +35,11 @@
             }
         }
         .submit {
+            padding: 0.5em 0.6em;
             margin-top: 0px;
             margin-left: 1.1em;
-            background-color: $btn-primary-bg;
             font-size: 1em;
-            padding: 0.5em 0.6em;
+            background-color: $btn-primary-bg;
             .icon {
                 margin-right: 0.3em;
             }
@@ -51,9 +51,9 @@
 .sidebar {
     .daterange-facet .daterange-vis {
         .content {
-            clear: both;
             position: relative;
             height: 114px;
+            clear: both;
             border-radius: 5px 5px 5px 5px;
             .date-vis {
                 width: 100%;
@@ -62,46 +62,46 @@
                 background: $body-bg;
             }
             .icon--spin {
-                display: none;
-                left: 45%;
-                top: -60px;
                 position: relative;
+                top: -60px;
+                left: 45%;
+                display: none;
             }
             &.loading .icon--spin {
                 display: inline-block;
             }
         }
         .navigation {
-            margin-top: -4px;
-            padding-top: 0.5em;
-            color: $link-color;
-            width: 100%;
             display: inline-block;
-            background: $body-bg;
+            width: 100%;
+            padding-top: 0.5em;
             padding-left: 1%;
+            margin-top: -4px;
+            color: $link-color;
+            background: $body-bg;
             .zoom-out,
             .zoom-in,
             .prev,
             .next {
-                font-size: 1.1em;
                 float: left;
+                font-size: 1.1em;
             }
             .zoom-in {
-                margin-left: 0.3em;
                 margin-right: 0.2em;
+                margin-left: 0.3em;
             }
             .zoom-out {
                 margin-right: 0.3em;
             }
             .expand-modal {
                 float: right;
+                margin-top: 0.4em;
                 margin-right: 0.8em;
                 font-size: 0.8em;
-                margin-top: 0.4em;
             }
             .icon {
-                cursor: pointer;
                 font-size: 1.5em;
+                cursor: pointer;
             }
         }
         .range-type {
@@ -149,9 +149,9 @@
     .main.template-dir-search.template-name-home,
     .sidebar {
         .list-group .list-group-item.daterange.expand {
-            box-shadow: -4px 0px 13px -5px #000;
-            padding: 10px;
             z-index: $zindex-popover;
+            padding: 10px;
+            box-shadow: -4px 0px 13px -5px #000;
         }
         &.sidebar-on-left {
             .list-group .list-group-item.daterange.expand {

@@ -6,14 +6,14 @@
   @extend .checkbox-container;
 
   .checkbox {
-    margin: 0.6em 0em;
     display: flex;
     gap: 0.6em;
+    margin: 0.6em 0em;
     > div {
-      margin-left: 0px;
       display: flex;
-      width: 100%;
       justify-content: space-between;
+      width: 100%;
+      margin-left: 0px;
       &:before {
         margin-right: 0.3em;
         margin-left: -22px;
@@ -22,8 +22,8 @@
   }
   // Checkbox facet badges
   .badge.cb-facet {
-    margin-top: 0.2em;
     display: $display-checkbox-facet-amount;
+    margin-top: 0.2em;
     margin-right: 0.8em;
   }
   input[type="checkbox"] {
@@ -57,14 +57,14 @@
 .sidebar h1,
 .sidebar h2 {
   padding: 0.9em;
-  background: $sidebar-background;
-  color: $sidebar-header-text-color;
-  font-size: 1.2em;
-  font-weight: 500;
-  text-transform: uppercase;
   margin-top: 0px;
   margin-bottom: 0px;
+  font-size: 1.2em;
+  font-weight: 500;
+  color: $sidebar-header-text-color;
+  text-transform: uppercase;
   word-wrap: break-word;
+  background: $sidebar-background;
   .icon {
     color: $sidebar-header-icon-color;
   }
@@ -78,21 +78,21 @@
 }
 
 .sidebar .mobile-navigation-header-container {
-  width: 100%;
   display: flex;
-  justify-content: space-between;
-  background-color: $sidebar-background;
-  color: $sidebar-header-text-color;
-  padding: 0.7em 1.1em;;
   align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.7em 1.1em;
+  color: $sidebar-header-text-color;
+  background-color: $sidebar-background;
   h1 {
     padding: 0px;
   }
   button {
-    background-color: $sidebar-background;
-    color: $sidebar-header-text-color;
-    border: none;
     font-size: 1.2rem;
+    color: $sidebar-header-text-color;
+    background-color: $sidebar-background;
+    border: none;
   }
 }
 @include media-breakpoint-down(sm) {
@@ -102,8 +102,8 @@
     z-index: $zindex-navbar;
     margin-bottom: 0px;
     .finna-toggletip {
-      margin-right: auto;
       padding-left: 0.7em;
+      margin-right: auto;
     }
   }
 }
@@ -129,18 +129,17 @@ button.list-group-item {
   border: none;
   // title custom coloring
   &.title {
-    background: $facet-header-background;
     color: $facet-text-color;
+    background: $facet-header-background;
     &:hover,
     &:focus {
-      background: $facet-header-background;
       color: $facet-text-color;
+      background: $facet-header-background;
     }
   }
 }
 
 // Record's sidebar content
-
 .recordProvidedBy {
   .record-organisation {
     img.consortium-logo {
@@ -170,8 +169,8 @@ button.list-group-item {
   margin-top: 0px;
   border-top: none;
   .record-organisation-box {
-    border: $sidebar-border;
     margin-bottom: 1em;
+    border: $sidebar-border;
     .record-type.organisations {
       padding: 1.1em;
       margin-bottom: 0px;
@@ -185,16 +184,16 @@ button.list-group-item {
         line-height: 1em;
       }
       .record-organisation {
-        background: $body-bg;
         padding: 0.3em 0.7em;
+        background: $body-bg;
       }
       .other-organisation-links a {
-        padding: 0.4em 0.7em;
-        font-weight: 700;
         display: block;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        padding: 0.4em 0.7em;
         overflow: hidden;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
       .more-link,
       .less-link,
@@ -225,8 +224,8 @@ button.list-group-item {
     .less-link,
     .show-all-link {
       display: block;
-      margin: 0px;
       padding-top: 5px;
+      margin: 0px;
       color: $gray;
     }
   }
@@ -246,9 +245,9 @@ button.list-group-item {
 
 #similar-records {
   .details {
+    margin-top: -5px;
     font-size: 0.9em;
     line-height: 25px;
-    margin-top: -5px;
   }
 }
 
