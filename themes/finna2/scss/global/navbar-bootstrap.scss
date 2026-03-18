@@ -1,93 +1,110 @@
 .navbar {
   max-width: map-get($container-max-widths, "xl"); // dont fully scale the navigation bar text
   min-height: $navbar-height;
+}
+.navbar li .dropdown-menu > li > a {
+  white-space: normal;
+}
+// Fix dropdowns in navbar for wide screen
+@include media-breakpoint-up(md) {
+  .navbar li:not(#language_menu) .dropdown-menu > li > a {
+    width: 280px;
+  }
+}
 
+.navbar-nav {
+  margin: calc((#{$navbar-padding-vertical} / 2) - #{$navbar-padding-horizontal});
+  > li {
+    > a {
+      font-size: $navbar-font-size;
+    }
+    > .dropdown-menu {
+      margin-top: 0px;
+    }
+  }
   .collapse-open-icon {
     font-size: $font-size-icon-tiny;
-    vertical-align: middle;
   }
-  .logoutOptions, #loginOptions {
-    .my-account-icon {
-      font-size: 1.2em;
-      color: $action-link-color;
-    }
-    .login-icon {
-      font-size: 1.2em;
-    }
-    .login-text {
-      @include media-breakpoint-down(xs) {
-        display: none;
-      }
-    }
+}
+@include media-breakpoint-down(sm) {
+  .navbar-nav {
+    margin: 0px;
   }
-  .login-text {
-    @include media-breakpoint-down(xs) {
-      display: inherit;
+}
+
+.navbar-header .navbar-brand {
+  display: flex;
+  align-items: center;
+  max-width: 150px;
+  padding: 0px;
+  .navbar-logo {
+    width: auto;
+    height: $navbar-logo-height;
+    margin-right: 10px;
+    font-size: $navbar-logo-height;
+    color: $logo-color;
+    object-fit: contain;
+  }
+}
+@include media-breakpoint-down(md) {
+  .navbar-header {
+    padding-left: 10px;
+    .navbar-brand {
+      min-height: $navbar-height;
     }
   }
 }
 
 .navbar .navbar-main {
-  .dropdown .dropdown-menu > li > a > *:not(.description) {
+  .dropdown .dropdown-menu > li > a > :not(.description) {
     font-weight: bold;
   }
   .dropdown .dropdown-menu > li > a > .description {
-    font-size: .9em;
     display: block;
     width: 100%;
+    font-size: 0.9em; 
     white-space: normal;
+  }
+}
+@include media-breakpoint-down(md) {
+  .navbar .navbar-main .dropdown-menu {
+    border: none;
   }
 }
 
 .navbar-collapse {
   border-top: 3px solid $primary;
-  @media (min-width: $grid-float-breakpoint) {
-    border-top: 0;
-    box-shadow: none;
+}
+@include media-breakpoint-down(sm) {
+  #header-collapse {
+    padding-right: 0px;
+    padding-left: 0px;
   }
 }
-
-.navbar-brand {
-  padding: 0;
-//  line-height: $navbar-height;
-  max-width: 150px;
-  display: flex;
-  align-items: center;
-
-  @include media-breakpoint-down(md) {
-    min-height: 64px;
-
-  }
-
-  .navbar-logo {
-    font-size: $navbar-logo-height;
-    color: $logo-color;
-  }
-  img {
-    object-fit: contain;
-    height: $navbar-logo-height;
-    width: auto;
+@include media-breakpoint-up(md) {
+  .navbar-collapse {
+    border-top: none;
+    box-shadow: none;
   }
 }
 
 .navbar-toggler {
   position: absolute;
-  z-index: 30;
-  top: 0;
-  right: 0;
-  height: $navbar-height;
+  top: 0px;
+  right: 0px;
   width: $navbar-height;
-  margin:0;
+  height: $navbar-height;
+  padding: 0px;
+  margin: 0px;
   color: $btn-primary-color;
   background-color: $primary;
-  padding: 0;
   border-radius: 0;
   &:focus {
     background: darken($primary, 10%);
   }
-  .mobilemenu-bars, .mobilemenu-close {
+  .mobilemenu-bars,
+  .mobilemenu-close {
     font-size: 24px;
-    cursor: pointer;
   }
   &.collapsed .mobilemenu-close {
     display: none;
@@ -105,240 +122,18 @@
   }
 }
 
+// Login button within mobile menu
 .navbar-nav {
-  margin: calc((#{$navbar-padding-vertical} / 2) - #{$navbar-padding-horizontal});
-
-  > li > a {
-    font-size: $navbar-font-size;
+  .nav-login {
+    line-height: 64px;
+    text-align: center;
   }
-  &.language:not(.lang-1):before {
-    color: $navbar-default-link-color;
-    content: '';
-    height: (($navbar-height) - 24);
-    margin-top: calc((#{$navbar-height} - (#{$navbar-height} - 24px)) / 2);
-
-    @media (min-width: $grid-float-breakpoint) {
-      border-left: solid 1px $navbar-default-link-color;
-    }
-  }
-  &.lang-1 {
-    margin-left: 10px;
-  }
-  @media (max-width: $grid-float-breakpoint-max) {
-    &.lang-1 {
-      margin-left: -15px;
-      border-top: 1px solid #000;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25);
-      &:before {
-        border-left: none;
-      }
-    }
-    // Dropdowns get custom display when collapsed
-    .open:not(.logoutOptions):not(.browsebar-dropdown):not(#language_menu) .dropdown-menu {
-      position: static;
-      float: none;
-      width: auto;
-      margin-top: 0;
-      background-color: transparent;
-      border: 0;
-      box-shadow: none;
-      transition: background-color 0.2s ease-in-out;
-      padding: 0;
-      > li > a,
-      .dropdown-header {
-        padding: 5px 15px 5px 25px;
-      }
-      > li {
-        border-bottom: none;
-        &:first-child, &:last-child, &:first-child > a, &:last-child > a {
-          @include border-top-radius(0px);
-          @include border-bottom-radius(0px);
-        }
-      }
-      > li > a {
-        line-height: $line-height-computed;
-        white-space: normal;
-        &:hover,
-        &:focus {
-          background-image: none;
-          background-color: $nav-link-hover-bg;
-        }
-      }
-    }
-    .open .dropdown-menu {
-      position: absolute;
-      float: left;
-      width: initial;
-      margin-top: 0;
-      background-color: $dropdown-bg;
-      border: 1px solid $dropdown-fallback-border; // IE8 fallback
-      border: 1px solid $dropdown-border;
-      border-radius: $border-radius-base;
-      @include box-shadow(0 6px 12px rgba(0,0,0,.275));
-      > li > a,
-      .dropdown-header {
-        padding: 5px 15px 5px 25px;
-      }
-      > li > a {
-        padding: 7px 15px;
-        line-height: $line-height-computed;
-        &:hover,
-        &:focus,
-        &:active {
-          text-decoration: none;
-          color: $dropdown-link-hover-color;
-          background-color: $dropdown-link-hover-bg;
-        }
-      }
-    }
+  > li.nav-login {
+    border-bottom: none;
   }
 }
-
-.navbar-nav {
-  @include media-breakpoint-down(sm) {
-    margin: 0;
+@include media-breakpoint-down(md) {
+  .navbar-nav.nav-login {
+    display: none;
   }
-}
-
-.navbar-nav > li {
-  float: none;
-}
-
-.navbar-nav.nav-login {
-  border-top: 1px solid $gray-lighter;
-  display: none;
-  line-height: 64px;
-  text-align: center;
-}
-
-.navbar-nav>li>.dropdown-menu {
-  margin-top: -5px;
-}
-
-// Menu position and menu carets
-.navbar-nav > li > .dropdown-menu {
-  @include border-top-radius($border-radius-base);
-}
-
-// Fix dropdowns in navbar for wide screen
-@include media-breakpoint-up(md) {
-  .navbar li:not(#language_menu) .dropdown-menu > li > a {
-    width: 280px;
-    white-space: normal;
-    transition: none;
-  }
-}
-#language_menu {
-  #language_menu_dropdown_button {
-    padding-top: #{$btn-padding-y};
-    padding-bottom: #{$btn-padding-y};
-
-    &:active {
-      box-shadow: none;
-    }
-  }
-  .dropdown-menu {
-    margin: 0;
-    background-color: $navbar-default-bg;
-  }
-  .lang-icon {
-    font-size: 1.2em;
-    color: $action-link-color;
-  }
-  .active {
-    font-weight: bold;
-  }
-}
-#language_menu.open {
-  .dropdown-menu {
-    position: absolute;
-  }
-  a.preserve-anchor {
-    width: 100%;
-  }
-}
-.header-navbar-right {
-  display: flex;
-  flex-direction: row;
-  align-items: baseline;
-  // This is required for proper positioning of dropdown menus:
-  position: relative;
-
-  // Counter the responsive menu behavior for non-expandable items:
-  .dropdown-menu {
-    position: absolute;
-  }
-
-  div.logoutOptions a:active {
-    box-shadow: none;
-  }
-  div.logoutOptions, #loginOptions {
-    padding-right: 12px;
-    position: relative;
-  }
-
-  @include media-breakpoint-down(md) {
-    position: absolute;
-    top: 0;
-    display: flex;
-    align-items: center;
-    height: $navbar-height;
-    right: $navbar-right;
-
-    div.logoutOptions, #loginOptions {
-      margin-top: 0;
-    }
-    .dropdown-menu {
-      margin-top: 1rem;
-
-      > li > a {
-        white-space: normal;
-      }
-    }
-  }
-}
-
-/* Mobile navbar */
-@media(max-width: $grid-float-breakpoint-max) {
-  .finna-navbar {
-    position: fixed;
-    right: 0;
-    left: 0;
-    z-index: 100;
-    top: 0;
-    border-width: 0 0 1px;
-    background-color: $header-background-color;
-    box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
-
-    .navbar-collapse > ul > li {
-      border-bottom: 1px solid $gray-lighter;
-    }
-    .navbar-nav > li.nav-login {
-      border-bottom: none;
-    }
-    .navbar-nav.nav-login {
-      border-top: none;
-      display: inherit;
-    }
-  }
-  .navbar-collapse.show {
-    box-shadow: 0 3px 5px $gray;
-    max-height: calc(100vh - #{#{$navbar-height}});
-    overflow: scroll;
-  }
-  .navbar-header {
-    padding-left: 10px;
-  }
-}
-
-@include media-breakpoint-down(sm) {
-  #header-collapse {
-    padding-left: 0;
-    padding-right: 0;
-  }
-}
-
-.navbar .navbar-logo {
-  height: $navbar-logo-height;
-  margin-right: 10px;
 }
