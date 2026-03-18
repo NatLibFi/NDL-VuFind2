@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for GetRecordSeriesa AJAX handler.
+ * Factory for GetRecordSeries AJAX handler.
  *
  * PHP version 8
  *
