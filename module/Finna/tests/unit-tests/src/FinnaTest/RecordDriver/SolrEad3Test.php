@@ -146,7 +146,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected subject places extended data
+     * Function to get expected related places data
      *
      * @return \Iterator<(int | string), mixed>
      */
