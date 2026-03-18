@@ -1643,11 +1643,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         $seriesName = $parts[1];
         $reg = '/[\x00-\x20\x21-\x2F\x3A-\x40,\x5B-\x60,\x7B-\x7F]/';
         foreach ($this->getSeries() ?? [] as $series) {
-            if (is_array($series)) {
-                $name = $series['name'];
-            } else {
-                $name = $series;
-            }
+            $name = is_array($series) ? $series['name'] : $series;
             $str = preg_replace($reg, '', $name);
             $str = strtr($str, $this->foldingTable);
             if (mb_strtolower(trim($str), 'UTF-8') === $seriesName) {
