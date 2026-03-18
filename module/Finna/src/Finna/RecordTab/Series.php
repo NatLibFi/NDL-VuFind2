@@ -34,7 +34,7 @@ namespace Finna\RecordTab;
  *
  * @category VuFind
  * @package  RecordTabs
- * @author   Jaro Ravila <jaro.ravila@helsinki,fi>
+ * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
@@ -47,7 +47,7 @@ class Series extends \VuFind\RecordTab\AbstractBase
      */
     public function getDescription()
     {
-        return 'Series';
+        return 'series_parts';
     }
 
     /**

@@ -64,8 +64,6 @@ class GetRecordSeries extends \VuFind\AjaxHandler\AbstractBase
     /**
      * Constructor
      *
-     * @param array             $config   Framework configuration
-     * @param Request           $request  HTTP request
      * @param Loader            $loader   Record loader
      * @param RendererInterface $renderer Renderer
      */

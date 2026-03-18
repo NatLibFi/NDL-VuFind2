@@ -1622,7 +1622,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         $order = $this->getSubfield($field490, 'v');
         if (preg_match('/(\d+)$/', $order, $matches)) {
             return [
-                'order' =>(int)$matches[1],
+                'order' => (int)$matches[1],
                 'orderKey' => $this->fields['series_order_str'] ?? '',
                 ];
         }

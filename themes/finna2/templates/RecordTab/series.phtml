@@ -1,4 +1,4 @@
-<?php 
+<?php
   $seriesKeys = $this->driver->getSeriesKeys();
   $currentSeriesKey = $this->seriesKey ?? $seriesKeys[0];
   $results = $this->driver->getSeriesResult($currentSeriesKey);
@@ -7,16 +7,21 @@
 ?>
 <div class="record-tab-series-container">
   <div class="series-header">
-  <h4 id="series"><?=$this->escapeHtml($currentSeries)?></h4>
-  <?php if (count($seriesKeys) > 1): ?>
-      <span class="series-dropdown-text"><?= $this->transEsc('Series')?>: </span><button id="dropdown-toggle" type="button" class="dropdown-toggle series-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?=$this->escapeHtml($currentSeries)?></button>
-    <ul class="dropdown-menu">
-      <?php foreach ($seriesKeys as $key): ?>
-        <li>
-          <a class="dropdown-item dropdown__link" href="#" data-id="<?=$this->escapeHtmlAttr($recordId)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-serieskey="<?=$this->escapeHtmlAttr($key)?>"><?=$this->escapeHtml($this->driver->getSeriesFromSeriesKey($key))?></a>
-        </li>
-      <? endforeach; ?>
-    </ul>
+    <h2 id="series"><?=$this->escapeHtml($currentSeries)?></h2>
+    <?php if (count($seriesKeys) > 1): ?>
+      <span class="series-dropdown-text"><?= $this->transEsc('Series')?>:</span>
+      <div class="view-dropdown">
+        <div class="dropdown">
+          <a id="dropdown-toggle" type="button" class="dropdown-toggle series-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?=$this->escapeHtml($currentSeries)?><?=$this->icon('dropdown-open') ?></a>
+          <ul class="dropdown-menu">
+            <?php foreach ($seriesKeys as $key): ?>
+              <li>
+                <a class="dropdown-item dropdown__link" href="#" data-id="<?=$this->escapeHtmlAttr($recordId)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-serieskey="<?=$this->escapeHtmlAttr($key)?>"><?=$this->escapeHtml($this->driver->getSeriesFromSeriesKey($key))?></a>
+              </li>
+            <?php endforeach; ?>
+          </ul>
+        </div>
+      </div>
     <?php endif; ?>
   </div>
   <div class="series-tab-container container">
@@ -35,13 +40,13 @@
               $orderForCurrentSeries = $orderSeriesParts[1] === $keySeriesParts[1];
             }
           ?>
-        <li class="list-item <?= $recordId === $current->getUniqueId() ? 'active' :'' ?>">
+        <li class="list-item <?= $recordId === $current->getUniqueId() ? 'active' : '' ?>">
           <?php if ($orderForCurrentSeries): ?>
             <span class="series"><?=$this->escapeHtml($seriesOrder['order'])?></span>
           <?php endif; ?>
           <a class="list-link" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current))?>">
-            <img loading="lazy" src="<?=$this->escapeHtmlAttr($imgurl)?>" alt="">
-            <div class="cover iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
+              <img loading="lazy" src="<?=$this->escapeHtmlAttr($imgurl)?>" alt="">
+              <div class="cover iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
             <span class="title"><?=$this->escapeHtml($current->getTitle())?></span>
           </a>
         </li>
@@ -50,7 +55,7 @@
     </div>
   </div>
   <?php $searchQuery = urlencode('series_key_str_mv:"' . $currentSeriesKey . '"'); ?>
-  <a href='<?= $this->url('search-results') ?>?lookfor=<?=$searchQuery?>' class="btn btn-primary series-search-link"><?= $this->transEsc('channel_search') ?></a>
+  <a href="<?= $this->url('search-results') ?>?lookfor=<?=$searchQuery?>" class="btn btn-primary series-search-link"><?= $this->transEsc('channel_search') ?></a>
 </div>
 <?php
   $script = <<<JS

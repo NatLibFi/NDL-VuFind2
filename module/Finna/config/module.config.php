@@ -525,7 +525,7 @@ $config = [
                     'Finna\AjaxHandler\GetRecordInfoByAuthority' =>
                         'Finna\AjaxHandler\GetRecordInfoByAuthorityFactory',
                     'Finna\AjaxHandler\GetRecordSeries' =>
-                        'Finna\AjaxHandler\GetRecordSeriesFactory',                        
+                        'Finna\AjaxHandler\GetRecordSeriesFactory',
                     'Finna\AjaxHandler\GetRequestGroupPickupLocations' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\GetSearchResults' => 'VuFind\AjaxHandler\GetSearchResultsFactory',

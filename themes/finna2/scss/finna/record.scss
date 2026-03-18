@@ -1274,10 +1274,11 @@ finna-model-viewer .object-editor {
         color: $similar-carousel-no-image-color;
     }
   }
-  .list-scrollable .list-item > .list-link > .cover > img {
+  .list-scrollable .list-item > .list-link > img {
       width: 100%;
       object-fit: contain;
       object-position: center;
+      max-height: 250px;
   }
   .list-scrollable .list-item > .list-link > .title {
       font-size: 1rem;
@@ -1292,11 +1293,13 @@ finna-model-viewer .object-editor {
   }
   .series-header {
     display: flex;
+    align-items: center;
     #series {
       flex-basis: 70%;
     }
     .series-dropdown-text {
       align-self: center;
+      margin-right: 5px;
     }
   }
   .series-search-link {
