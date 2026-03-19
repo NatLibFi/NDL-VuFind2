@@ -1579,8 +1579,8 @@ class SolrEad3 extends SolrEad
             foreach ($controlaccess->geogname as $name) {
                 $attr = $name->attributes();
                 $relator = mb_strtolower((string)$attr->relator, 'UTF-8');
-                $id = (string)$attr->identifier ?? '';
-                $source = (string)$attr->source ?? '';
+                $id = (string)($attr->identifier ?? '');
+                $source = (string)($attr->source ?? '');
                 if (!empty($include) && !in_array($relator, $include)) {
                     continue;
                 }
