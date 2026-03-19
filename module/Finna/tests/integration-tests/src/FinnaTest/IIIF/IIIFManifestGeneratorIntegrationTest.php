@@ -41,8 +41,7 @@ use VuFind\Http\ServerUrlHelper;
 use VuFind\I18n\Locale\LocaleSettings;
 use VuFindTest\Feature\FixtureTrait;
 use VuFindTest\Feature\ReflectionTrait;
-
-use function gettype;
+use VuFindTest\Feature\TranslatorTrait;
 
 /**
  * IIIFManifestGenerator test class.
@@ -57,66 +56,21 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
 {
     use FixtureTrait;
     use ReflectionTrait;
-
-    /**
-     * Use swaggest/json-schema to validate Presentation API manifest
-     *
-     * The JSON schema fixture file is from:
-     * https://github.com/IIIF/presentation-validator/blob/6fe43b8d6e27f12f83bd99b31125e3821e60ba7b/schema/iiif_3_0.json
-     *
-     * @param object $manifest Manifest
-     *
-     * @return void
-     *
-     * @throws \Swaggest\JsonSchema\Exception
-     */
-    protected function validateManifest(object $manifest): void
-    {
-        $schema = Schema::import(
-            'file://' . $this->getFixturePath(
-                'iiif/schema/iiif_3_0.json',
-                'Finna'
-            )
-        );
-
-        $options = new Context();
-        $options->validateOnly = true;
-        $schema->in((object)$manifest);
-    }
-
-    /**
-     * Force the width and height fields on each member of $manifest['items'].
-     *
-     * This avoids a JSON schema validation error, because these values are
-     * mandatory, even if our TIFY viewer gets by without them. The actual
-     * manifest generator omits these.
-     *
-     * @param array $manifest Generated manifest
-     *
-     * @return void
-     */
-    protected function patchCanvasDimensions(object &$manifest): void
-    {
-        foreach ($manifest->items as &$canvas) {
-            $canvas->width = 1000;
-            $canvas->height = 1000;
-        }
-        unset($canvas);
-    }
+    use TranslatorTrait;
 
     /**
      * Initialize mock IIIFManifestGenerator, get a fake SolrLido record,
      * generate a manifest, then validate the record against the JSON schema.
      *
      * @param string $xmlFixture         Path to LIDO fixture file
-     * @param string $expectedReturnType Expected return type from generate()
+     * @param bool   $expectedSuccess    generate() expected to return object
      *
      * @return void
      */
     #[DataProvider('getLidoFixtures')]
     public function testGeneratedManifest(
         string $xmlFixture,
-        string $expectedReturnType
+        bool $expectedSuccess
     ): void {
         // init mock record linker
         $recordLinker = $this->createMock(RecordLinker::class);
@@ -153,7 +107,11 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         $driver = $this->getFakeSolrLido($xmlFixture);
 
         $manifest = $generator->generate($driver);
-        $this->assertEqualsIgnoringCase($expectedReturnType, gettype($manifest));
+        if ($expectedSuccess) {
+            $this->assertIsObject($manifest);
+        } else {
+            $this->assertNull($manifest);
+        }
 
         if (null === $manifest) {
             return;
@@ -162,6 +120,7 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         $this->patchCanvasDimensions($manifest);
 
         // run schema validator
+
         try {
             $this->validateManifest($manifest);
         } catch (\Swaggest\JsonSchema\Exception $e) {
@@ -180,11 +139,11 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
     public static function getLidoFixtures(): \Generator
     {
         yield 'LIDO record with 1 image' =>
-            ['iiif/lido_one_large.xml', 'object'];
+            ['iiif/lido_one_large.xml', true];
         yield 'LIDO record with 3 images' =>
-            ['iiif/lido_three.xml', 'object'];
+            ['iiif/lido_three.xml', true];
         yield 'LIDO record with 0 images' =>
-            ['iiif/lido_none.xml', 'null'];
+            ['iiif/lido_none.xml', false];
     }
 
     /**
@@ -269,11 +228,7 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         );
 
         $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
+            ->getMockTranslator([], 'en');
         $record->setTranslator($translator);
 
         $dateConverter = new \VuFind\Date\Converter([
@@ -281,5 +236,51 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
         ]);
         $record->attachDateConverter($dateConverter);
         return $record;
+    }
+
+    /**
+     * Force the width and height fields on each member of $manifest['items'].
+     *
+     * This avoids a JSON schema validation error, because these values are
+     * mandatory, even if our TIFY viewer gets by without them. The actual
+     * manifest generator omits these.
+     *
+     * @param array $manifest Generated manifest
+     *
+     * @return void
+     */
+    protected function patchCanvasDimensions(object &$manifest): void
+    {
+        foreach ($manifest->items as &$canvas) {
+            $canvas->width = 1000;
+            $canvas->height = 1000;
+        }
+        unset($canvas);
+    }
+
+    /**
+     * Use swaggest/json-schema to validate Presentation API manifest
+     *
+     * The JSON schema fixture file is from:
+     * https://github.com/IIIF/presentation-validator/blob/6fe43b8d6e27f12f83bd99b31125e3821e60ba7b/schema/iiif_3_0.json
+     *
+     * @param object $manifest Manifest
+     *
+     * @return void
+     *
+     * @throws \Swaggest\JsonSchema\Exception
+     */
+    protected function validateManifest(object $manifest): void
+    {
+        $schema = Schema::import(
+            'file://' . $this->getFixturePath(
+                'iiif/schema/iiif_3_0.json',
+                'Finna'
+            )
+        );
+
+        $options = new Context();
+        $options->validateOnly = true;
+        $schema->in((object)$manifest);
     }
 }

@@ -31,14 +31,11 @@ namespace FinnaTest\IIIF;
 
 use Finna\Record\IIIF\IIIFManifestGenerator;
 use Finna\View\Helper\Root\RecordLinker;
-use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use VuFind\Http\RouteHelper;
 use VuFind\Http\ServerUrlHelper;
 use VuFind\I18n\Locale\LocaleSettings;
 use VuFindTest\Feature\ReflectionTrait;
-
-use function gettype;
 
 /**
  * IIIFManifestGenerator test class.
@@ -54,38 +51,20 @@ class IIIFManifestGeneratorUnitTest extends TestCase
     use ReflectionTrait;
 
     /**
-     * Unit-test IIIFManifestGenerator
-     *
-     * @param array  $arguments          Arguments
-     * @param string $expectedReturnType Expected return type from createManifest()
+     * Test that createManifest() called with empty $images returns null
      *
      * @return void
      */
-    #[DataProvider('getTestManifestGeneratorImageData')]
-    public function testGeneratedManifest(
-        array $arguments,
-        string $expectedReturnType
-    ): void {
+    public function testEmptyImagesReturnsNull(): void
+    {
         $generator = new IIIFManifestGenerator(
             $this->createMock(RouteHelper::class),
             $this->createMock(ServerUrlHelper::class),
             $this->createMock(RecordLinker::class),
             $this->createMock(LocaleSettings::class),
         );
+        $arguments = [[], '', '', '', ''];
         $manifest = $this->callMethod($generator, 'createManifest', $arguments);
-        $this->assertEqualsIgnoringCase($expectedReturnType, gettype($manifest));
-    }
-
-    /**
-     * Get test inputs and expected return types for createManifest()
-     *
-     * @return \Generator
-     */
-    public static function getTestManifestGeneratorImageData(): \Generator
-    {
-        yield 'empty $images returns null' => [
-            [[], '','','',''],
-            'null',
-        ];
+        $this->assertNull($manifest);
     }
 }
