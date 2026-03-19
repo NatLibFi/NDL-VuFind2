@@ -20,7 +20,7 @@
     @include media-breakpoint-up(sm) {
       padding-right: 0;
     }
-    @media (max-width: $grid-float-breakpoint) {
+    @include media-breakpoint-down(md) {
       top: $navbar-height;
     }
     &:not(.fixed) .mylist-functions {
@@ -52,7 +52,7 @@
     .active a {
       font-weight: 600;
       text-decoration: none;
-      color: $dropdown-link-color;;
+      color: $dropdown-link-color;
       background-color: $gray-ultralight;
     }
     > li {
@@ -476,11 +476,6 @@ span.caret {
 @include media-breakpoint-down(md) {
   .sidebar.open {
     margin-top: 0px;
-  }
-  .dropdown-menu {
-    border: none;
-    border-radius: none;
-    margin: 0;
   }
 }
 

@@ -8,6 +8,7 @@
     </button>
   </div>
   <?php if (!isset($this->layout()->renderingError)): ?>
+    <?php $additionsRendered = false; ?>
     <?php foreach ($this->menu ?? [] as $group): ?>
       <?php if (isset($group['wrapper'])): ?>
         <div<?= $this->htmlAttributes($group['wrapper']['attributes'] ?? []) ?>>
@@ -81,8 +82,9 @@
             <li class="nav-item" role="none"><a<?=$linkAttrs?>><?= $this->icon($label) ?><?= $this->transEsc($label) ?></a></li>
           <?php endif; ?>
         <?php endforeach; ?>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/header-navibar')): ?>
+        <?php if (!$additionsRendered && ($template = $this->content()->findTemplateForLng('content/Additions/header-navibar'))): ?>
           <?=$this->render($template)?>
+          <?php $additionsRendered = true; ?>
         <?php endif; ?>
       </ul>
       <?php if (isset($group['wrapper'])): ?>
