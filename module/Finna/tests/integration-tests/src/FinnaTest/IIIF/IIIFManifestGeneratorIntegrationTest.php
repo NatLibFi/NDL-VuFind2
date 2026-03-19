@@ -62,8 +62,8 @@ class IIIFManifestGeneratorIntegrationTest extends TestCase
      * Initialize mock IIIFManifestGenerator, get a fake SolrLido record,
      * generate a manifest, then validate the record against the JSON schema.
      *
-     * @param string $xmlFixture         Path to LIDO fixture file
-     * @param bool   $expectedSuccess    generate() expected to return object
+     * @param string $xmlFixture      Path to LIDO fixture file
+     * @param bool   $expectedSuccess generate() expected to return object
      *
      * @return void
      */
