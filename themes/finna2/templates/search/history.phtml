@@ -50,7 +50,7 @@
       <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
         <h2><?=$this->transEsc('history_saved_searches')?></h2>
         <?php if (!$this->translationEmpty('tooltip_myaccount_search_history_saved_html')): ?>
-          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_saved_html') ?>"><?=$this->icon('help') ?></button>
+          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?=$this->transEsc('tooltip_myaccount_search_history_saved_html')?>"><?=$this->icon('help')?></button>
         <?php endif; ?>
       </div>
       <?=$this->component('finna-addition-template', ['class' => 'search-history-saved-pre-list', 'template' => 'search-history-saved-pre-list'])?>
@@ -69,7 +69,7 @@
     <div class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('history_recent_searches')?></h2>
       <?php if (!$this->translationEmpty('tooltip_myaccount_search_history_recent_html')): ?>
-        <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?= $this->transEsc('tooltip_myaccount_search_history_recent_html') ?>"><?=$this->icon('help') ?></button>
+        <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?=$this->transEsc('tooltip_myaccount_search_history_recent_html')?>"><?=$this->icon('help')?></button>
       <?php endif; ?>
     </div>
     <?=$this->component('finna-addition-template', ['class' => 'search-history-recent-pre-list', 'template' => 'search-history-recent-pre-list'])?>
