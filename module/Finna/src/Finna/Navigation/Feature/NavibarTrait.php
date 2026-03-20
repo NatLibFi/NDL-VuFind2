@@ -327,6 +327,7 @@ trait NavibarTrait
      * Returns an associative array with keys:
      *  'menuData' Menu items
      *  'sortData' Order data
+     *  'excludeData' Exclude from site map page data
      *
      * @param array $config Menu configuration
      *
@@ -334,7 +335,7 @@ trait NavibarTrait
      */
     protected function getMenuData($config)
     {
-        $menuData = $sortDataOrder = $sortData = [];
+        $menuData = $sortDataOrder = $sortData = $excludeData = [];
 
         foreach ($config as $menuKey => $items) {
             if ($menuKey === 'Parent_Config') {
@@ -358,6 +359,12 @@ trait NavibarTrait
                 }
                 continue;
             }
+
+            if ($menuKey === '__exclude_from_site_map_page__') {
+                $excludeData = $items;
+                continue;
+            }
+
             // Menu section
             $menuData[$menuKey] = $items;
         }
@@ -372,7 +379,11 @@ trait NavibarTrait
         }
         $sortData = array_merge($sortDataProcessed, $sortData);
 
-        return ['menuData' => $menuData, 'sortData' => $sortData];
+        return [
+            'menuData' => $menuData,
+            'sortData' => $sortData,
+            'excludeData' => $excludeData,
+        ];
     }
 
     /**

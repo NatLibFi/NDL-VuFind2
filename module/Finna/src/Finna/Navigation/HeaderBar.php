@@ -34,6 +34,7 @@ use Finna\Navigation\Feature\NavibarTrait;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
 use function count;
+use function in_array;
 
 /**
  * HeaderBar section plugin
@@ -82,12 +83,12 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
                     'submenuItems' => [],
                 ];
                 foreach ($items['items'] as $submenuItem) {
-                    if ($submenuItem = $this->processNavibarItem($submenuItem)) {
+                    if ($submenuItem = $this->processNavibarItem($submenuItem, $items['id'])) {
                         $navibarItem['submenuItems'][] = $submenuItem;
                     }
                 }
             } else {
-                $navibarItem = $this->processNavibarItem($items['items'][0]);
+                $navibarItem = $this->processNavibarItem($items['items'][0], $items['id']);
             }
             if ($navibarItem) {
                 $navibarItems[] = $navibarItem;
@@ -99,11 +100,12 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
     /**
      * Process parsed navibar item to be compatible with header menu configuration.
      *
-     * @param array $navibarItem Navibar item
+     * @param array  $navibarItem   Navibar item
+     * @param string $navibarMenuId Navibar menu ID
      *
      * @return array|false
      */
-    protected function processNavibarItem(array $navibarItem): array|false
+    protected function processNavibarItem(array $navibarItem, string $navibarMenuId): array|false
     {
         $action = $navibarItem['action'] ?? null;
         if (!($url = $action['url'] ?? null)) {
@@ -128,6 +130,14 @@ class HeaderBar extends \VuFind\Navigation\HeaderBar implements TranslatorAwareI
         }
         if ($target = $action['target'] ?? null) {
             $processedItem['target'] = $target;
+        }
+        $excluded = $this->navibarConfig['__exclude_from_site_map_page__'] ?? [];
+        $excludedFromMenu = (array)($excluded[$navibarMenuId] ?? []);
+        if (
+            in_array($navibarItem['id'], $excludedFromMenu)
+            || in_array('__MENU__', $excludedFromMenu)
+        ) {
+            $processedItem['excludeFromSiteMapPage'] = true;
         }
         return $processedItem;
     }

@@ -146,6 +146,78 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Function to get expected related places data
+     *
+     * @return \Iterator<(int | string), mixed>
+     */
+    public static function getRelatedPlacesData(): \Iterator
+    {
+        yield [
+            'fi',
+            [
+                'getSubjectPlacesExtended' => [
+                    [
+                    'heading' => ['Helsinki'],
+                    'id' => 'http://www.yso.fi/onto/yso/p94137',
+                    'source' => 'YSO',
+                    ],
+                ],
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
+                    ],
+                ],
+            ],
+        ];
+        yield [
+            'sv',
+            [
+                'getSubjectPlacesExtended' => [
+                    [
+                        'heading' => ['Helsingfors'],
+                        'id' => 'http://www.yso.fi/onto/yso/p94137',
+                        'source' => 'YSO',
+                    ],
+                ],
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test related places
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getRelatedPlacesData')]
+    public function testRelatedPlaces(
+        string $language,
+        array $expected
+    ): void {
+        $driver = $this->getDriver('ead3_test.xml');
+        $driver->setPreferredLanguage($language);
+        foreach ($expected as $function => $result) {
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
      * Function to get expected author data
      *
      * @return \Iterator<(int | string), mixed>
