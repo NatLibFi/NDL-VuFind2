@@ -21,7 +21,7 @@
       <div id="useraccount-content-heading" class="useraccount-header">
         <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Library Cards Connected To My Account'), 'headTitle' => $this->translate('Library Cards'), 'tooltip' => 'tooltip_myaccount_librarycards_home_html']);?>
       </div>
-      <?=$this->component('finna-addition-template', ['class' => 'librarycards-pre-list', 'template' => 'librarycards-pre-list'])?>
+      <?=$this->component('finna-addition-template', ['template' => 'librarycards-pre-list'])?>
       <?php if (empty($this->libraryCards)): ?>
         <h4><?=$this->transEsc('You do not have any library cards')?></h4>
       <?php else: ?>
@@ -120,7 +120,7 @@
             <?php endforeach; ?>
           </tbody>
         </table>
-        <?=$this->component('finna-addition-template', ['class' => 'librarycards-post-list', 'template' => 'librarycards-post-list'])?>
+        <?=$this->component('finna-addition-template', ['template' => 'librarycards-post-list'])?>
       <?php endif; ?>
 
       <div>

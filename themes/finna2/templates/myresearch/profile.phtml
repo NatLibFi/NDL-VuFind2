@@ -50,7 +50,7 @@
     <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('My Profile'), 'tooltip' => 'tooltip_myaccount_profile_html']);?>
   </div>
   <div class="my-research-content">
-    <?=$this->component('finna-addition-template', ['class' => 'profile-pre-list', 'template' => 'profile-pre-list'])?>
+    <?=$this->component('finna-addition-template', ['template' => 'profile-pre-list'])?>
     <div>
       <?php if (!$this->translationEmpty('profile_instructions')): ?><p class="no-content-message"><?=$this->transEsc('profile_instructions')?></p><?php endif; ?>
       <?=$this->flashmessages();?>
@@ -384,7 +384,7 @@
         <?php endif; ?>
       </div>
     </div>
-    <?=$this->component('finna-addition-template', ['class' => 'profile-post-list', 'template' => 'profile-post-list'])?>
+    <?=$this->component('finna-addition-template', ['template' => 'profile-post-list'])?>
 
     <?php
       $proxyValues = [];

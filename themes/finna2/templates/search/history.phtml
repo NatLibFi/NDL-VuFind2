@@ -53,10 +53,10 @@
           <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?=$this->transEsc('tooltip_myaccount_search_history_saved_html')?>"><?=$this->icon('help')?></button>
         <?php endif; ?>
       </div>
-      <?=$this->component('finna-addition-template', ['class' => 'search-history-saved-pre-list', 'template' => 'search-history-saved-pre-list'])?>
+      <?=$this->component('finna-addition-template', ['template' => 'search-history-saved-pre-list'])?>
       <?php if (!empty($this->saved)): ?>
         <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => true]);?>
-        <?=$this->component('finna-addition-template', ['class' => 'search-history-saved-post-list', 'template' => 'search-history-saved-post-list'])?>
+        <?=$this->component('finna-addition-template', ['template' => 'search-history-saved-post-list'])?>
       <?php else: ?>
         <?=
           $loggedInUser

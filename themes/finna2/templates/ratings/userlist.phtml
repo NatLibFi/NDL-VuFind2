@@ -21,7 +21,7 @@
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='ratings' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
     <?php endforeach; ?>
   </ul>
-  <?=$this->component('finna-addition-template', ['class' => 'ratings-pre-list', 'template' => 'ratings-pre-list'])?>
+  <?=$this->component('finna-addition-template', ['template' => 'ratings-pre-list'])?>
   <?php if (count($this->ratings) !== 0): ?>  
     <div><?=$this->transEsc('finna_nickname')?>: <?=$this->userPublicName($user);?></div>
     <nav class="search-header hidden-print">
@@ -128,7 +128,7 @@
         </tbody>
       </table>
     </form>
-    <?=$this->component('finna-addition-template', ['class' => 'ratings-post-list', 'template' => 'ratings-post-list'])?>
+    <?=$this->component('finna-addition-template', ['template' => 'ratings-post-list'])?>
   <?php else: ?>
     <?=$this->transEsc('No Ratings')?>
   <?php endif; ?>

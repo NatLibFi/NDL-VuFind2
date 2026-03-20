@@ -208,7 +208,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?=$this->component('finna-addition-template', ['class' => 'fines-pre-list', 'template' => 'fines-pre-list'])?>
+      <?=$this->component('finna-addition-template', ['template' => 'fines-pre-list'])?>
       <?php if (empty($this->fines)): ?>
         <h3><?=$this->transEsc('You do not have any fines')?></h3>
       <?php else: ?>
@@ -295,7 +295,7 @@
               <div class="online-payment-note"><?=$this->render($template)?></div>
             <?php endif; ?>
           <?php endif; ?>
-          <?=$this->component('finna-addition-template', ['class' => 'fines-post-list', 'template' => 'fines-post-list'])?>
+          <?=$this->component('finna-addition-template', ['template' => 'fines-post-list'])?>
         </div>
       <?php endif; ?>
     <?php endif; ?>

@@ -38,7 +38,7 @@
       <?php endif; ?>
     <?php else: ?>
       <?=$this->methodTimedBlocks('Renewals')?>
-      <?=$this->component('finna-addition-template', ['class' => 'checkedout-pre-list', 'template' => 'checkedout-pre-list'])?>
+      <?=$this->component('finna-addition-template', ['template' => 'checkedout-pre-list'])?>
       <?php if ($this->renewForm): ?>
         <div class="sort-col sort-col-mobile">
           <?php if ($sortList): ?>
@@ -250,7 +250,7 @@
             </table>
             <h3 class="visually-hidden"><?=$this->transEsc('End of List')?></h3>
             </form>
-          <?=$this->component('finna-addition-template', ['class' => 'checkedout-post-list', 'template' => 'checkedout-post-list'])?>
+          <?=$this->component('finna-addition-template', ['template' => 'checkedout-post-list'])?>
           <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination.phtml', ['params' => $params]) : ''?>
         </div>
       <?php else: ?>

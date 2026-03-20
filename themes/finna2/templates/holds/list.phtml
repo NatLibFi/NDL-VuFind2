@@ -33,7 +33,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?=$this->component('finna-addition-template', ['class' => 'holds-pre-list', 'template' => 'holds-pre-list'])?>
+      <?=$this->component('finna-addition-template', ['template' => 'holds-pre-list'])?>
       <?php if (!empty($this->recordList)): ?>
         <div class="sort-col sort-col-mobile">
           <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList])?>
@@ -256,7 +256,7 @@
             </form>
           </div>
         <?php endif; ?>
-        <?=$this->component('finna-addition-template', ['class' => 'holds-post-list', 'template' => 'holds-post-list'])?>
+        <?=$this->component('finna-addition-template', ['template' => 'holds-post-list'])?>
       <?php else: ?>
         <div class="useraccount-header">
           <h3><?=$this->transEsc('You do not have any holds or recalls placed') ?>.</h3>
