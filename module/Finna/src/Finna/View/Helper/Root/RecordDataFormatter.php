@@ -430,6 +430,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Materials',
             'Related Places',
             'Subject Actor',
+            'Subject Place',
             'subjects_extended',
             'System Format',
             'Unit IDs',
@@ -689,7 +690,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         // Apply the group spec.
         $result = [];
         foreach ($groups as $group) {
-            if (!empty($group['skipGroup'])) {
+            if (!empty($group['options']['skipGroup'])) {
                 continue;
             }
             $lines = $group['lines'];

@@ -878,10 +878,15 @@ pw               = "xxxxxx"
 ; help users find resources through your link resolver and to manage citations in
 ; Zotero.
 [OpenURL]
-; If a resolver base URL is enabled, it will be used to link ISSNs to your link
-; resolver and to access articles in Summon if that module is enabled.  Earlier
-; versions of VuFind included some parameters as part of the URL; at this point,
-; any extra parameters will be ignored -- please provide only the base URL.
+; If a resolver base URL is enabled, it will be used to link from records to your
+; OpenURL resolver. An OpenURL resolver is typically used to e.g. link to full text
+; from article metadata, but it may provide other services too. Extra parameters may
+; be added if necessary.
+; For LinkIQ (the API used with EBSCO Full Text Finder), the url format is the
+; following. {PROFILE} needs to be replaced with the actual profile code (like
+; ns123456.main.ftf), and also a password is required in the [LinkIQ] section).
+; Remember also to set resolver to "linkiq" below.
+; https://api.ebsco.io/ftf/ftfaccount/{PROFILE}/openurl
 ;url             = "http://openurl.myuniversity.edu/sfx_local"
 
 ; This string will be included as part of your OpenURL referer ID (the full string
@@ -893,8 +898,22 @@ rfr_id          = finna.fi
 
 ; By specifying your link resolver type, you can allow VuFind to optimize its
 ; OpenURLs for a particular platform.  Current legal values: "sfx", "360link",
-; "EZB" or "other" (default is "other" if commented out).
+; "JOP", "Redi", "Alma", "demo", "linkiq" or "generic" (default is "generic"
+; if commented out; "demo" generates fake values for use in testing the embed
+; setting below).
+; Note that linkiq (used with EBSCO Full Text Finder) requires additional settings
+; for the connection in the [LinkIQ] section.
 resolver        = sfx
+
+; Some link resolver drivers can filter resource links based on specific criteria.
+; This setting indicates which filter reasons should NOT be used to exclude
+; resource links. This is currently ONLY supported by the Alma resolver driver.
+; (default is "Date Filter" if commented out, for backwards compatibility)
+; You may add new filters to the array by adding new lines in the format shown below
+; Currently known valid values include: Date Filter
+; ignoredFilterReasons[] = "Date Filter"
+; To deactivate this setting you can set
+; ignoredFilterReasons = false or one line ignoredFilterReasons = ""
 
 ; If you want OpenURL links to open in a new window, set this setting to the
 ; desired Javascript window.open parameters.  If you do not want a new window
@@ -943,6 +962,16 @@ autocheck = true
 language[fi] = fin
 language[sv] = swe
 language[en-gb] = eng
+
+; Additional resolver settings required for EBSCO LinkIQ (available with EBSCO
+; Full Text Finder).
+[LinkIQ]
+; Profile Password for the service:
+;password = ""
+; Base URL for the "More Options" link to Full Text Finder. Leave empty to disable.
+; The base URL can be copied by going to EBSCO Experience Manager (experience.ebsco.com)
+; > Full Text Finder > Branding and clicking the "Copy base URL" button.
+;moreOptionsUrl = "https://resolver.ebsco.com/c/{PROFILE_OPID}/result"
 
 ; EZproxy is optional.  This section only needs to exist if you
 ; are using EZProxy to provide off-site access to online materials.

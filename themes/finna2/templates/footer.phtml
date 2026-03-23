@@ -1,42 +1,5 @@
 <!-- START of: finna - footer.phtml -->
-<div class="footer-container">
-  <div class="footer-column">
-    <h2><?=$this->transEsc('About')?></h2>
-    <ul>
-      <li><a href="<?=$this->url('content-page', ['page' => 'about'])?>"><?=$this->transEsc('About Us')?></a></li>
-      <li><a href="<?=$this->url('content-page', ['page' => 'about_finna'])?>"><?=$this->transEsc('What is Finna')?></a></li>
-      <li><a href="<?=$this->url('content-page', ['page' => 'terms'])?>"><?=$this->transEsc('Terms')?></a></li>
-      <li><a href="<?=$this->url('content-page', ['page' => 'privacy'])?>"><?=$this->transEsc('Privacy')?></a></li>
-      <?php if ($this->cookieConsent()->isEnabled()): ?>
-        <li><a href="#" data-cc="show-preferencesModal" aria-haspopup="dialog"><?=$this->transEsc('Cookie Settings')?></a></li>
-      <?php endif; ?>
-    </ul>
-  </div>
-  <div class="footer-column">
-    <h2><?=$this->transEsc('footer_header_find_more')?></h2>
-    <ul>
-      <li><a href="<?=$this->url('search-history')?>"><?=$this->transEsc('Search History')?></a></li>
-      <li><a href="<?=$this->url('search-advanced')?>"><?=$this->transEsc('Advanced Search')?></a></li>
-      <?php if ($this->primo()->isAvailable()): ?>
-      <li><a href="<?=$this->url('primo-home')?>"><?=$this->transEsc('Primo Search')?></a></li>
-      <li><a href="<?=$this->url('primo-advanced')?>"><?=$this->transEsc('Advanced Search from Primo')?></a></li>
-      <?php endif; ?>
-      <?php if ($this->browse()->isAvailable('Database')): ?>
-      <li><a href="<?=$this->url('browse-database')?>"><?=$this->transEsc('browse_extended_Database')?></a></li>
-      <?php endif; ?>
-      <?php if ($this->browse()->isAvailable('Journal')): ?>
-      <li><a href="<?=$this->url('browse-journal')?>"><?=$this->transEsc('browse_extended_Journal')?></a></li>
-      <?php endif; ?>
-    </ul>
-  </div>
-  <div class="footer-column">
-    <h2><?=$this->transEsc('footer_header_need_help')?></h2>
-    <ul>
-      <li><a href="<?=$this->url('content-page', ['page' => 'help'])?>" title="<?=$this->transEsc('Search Tips')?>"><?=$this->transEsc('Help')?></a></li>
-      <li><a href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a></li>
-    </ul>
-  </div>
-</div>
+<?=$this->section('FooterMenu')->render()?>
 <hr>
 <div class="footer-container">
   <div class="footer-column">

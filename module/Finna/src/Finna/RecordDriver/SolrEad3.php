@@ -1530,10 +1530,6 @@ class SolrEad3 extends SolrEad
                 )
             );
         }
-        $headings = array_merge(
-            $headings,
-            $this->getRelatedPlacesExtended(['aihe'], [])
-        );
 
         // The default index schema doesn't currently store subject headings in a
         // broken-down format, so we'll just send each value as a single chunk.
@@ -1582,7 +1578,9 @@ class SolrEad3 extends SolrEad
         foreach ($record->controlaccess as $controlaccess) {
             foreach ($controlaccess->geogname as $name) {
                 $attr = $name->attributes();
-                $relator = (string)$attr->relator;
+                $relator = mb_strtolower((string)$attr->relator, 'UTF-8');
+                $id = (string)($attr->identifier ?? '');
+                $source = (string)($attr->source ?? '');
                 if (!empty($include) && !in_array($relator, $include)) {
                     continue;
                 }
@@ -1597,7 +1595,7 @@ class SolrEad3 extends SolrEad
                 }
                 if ($parts) {
                     $part = implode(', ', $parts);
-                    $data = ['data' => $part, 'detail' => $relator];
+                    $data = ['data' => $part, 'detail' => $relator, 'id' => $id, 'source' => $source];
                     if (
                         $attr->lang && in_array((string)$attr->lang, $languages)
                         && !in_array($part, $languageResult)
@@ -1612,6 +1610,24 @@ class SolrEad3 extends SolrEad
             }
         }
         return $languageResultDetail ?: $resultDetail;
+    }
+
+    /**
+     * Get extended subject places
+     *
+     * @return array
+     */
+    public function getSubjectPlacesExtended(): array
+    {
+        $results = [];
+        foreach ($this->getRelatedPlacesExtended(['aihe'], []) as $place) {
+            $results[] = [
+                'heading' => [$place['data']],
+                'id' => $place['id'] ?? '',
+                'source' => $place['source'] ?? '',
+            ];
+        }
+        return $results;
     }
 
     /**

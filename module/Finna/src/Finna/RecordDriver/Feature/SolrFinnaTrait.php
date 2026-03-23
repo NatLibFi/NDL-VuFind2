@@ -546,7 +546,7 @@ trait SolrFinnaTrait
         if ($raw) {
             return $this->fields['online_urls_str_mv'];
         }
-        $merged = $this->resolveUrlTypes(
+        $merged = $this->resolveOnlineUrlTypes(
             $this->mergeURLArray(
                 $this->fields['online_urls_str_mv'],
                 true
@@ -1142,6 +1142,38 @@ trait SolrFinnaTrait
             }
         }
         return $urls;
+    }
+
+    /**
+     * Resolve types for 'online_urls_str_mv' field's urls.
+     *
+     * URLs are annotated with 'codec' field based on 'mediaType'.
+     * In addition, image and audio URLs are annotated with 'type' field.
+     *
+     * @param array $urls URLs
+     *
+     * @return array URL array with annotated URLs
+     */
+    protected function resolveOnlineUrlTypes(array $urls): array
+    {
+        $newUrls = [];
+        foreach ($urls as $url) {
+            if (!empty($url['mediaType'])) {
+                $type = $embed = null;
+                $parts = explode('/', $url['mediaType']);
+                $mediaType = $parts[0];
+                if ($mediaType === 'audio') {
+                    $type = $embed = 'audio';
+                } elseif ($mediaType === 'image') {
+                    $type = 'image';
+                }
+                $url['type'] = $type;
+                $url['codec'] = $parts[1] ?? '';
+                $url['embed'] = $embed;
+            }
+            $newUrls[] = $url;
+        }
+        return $newUrls;
     }
 
     /**

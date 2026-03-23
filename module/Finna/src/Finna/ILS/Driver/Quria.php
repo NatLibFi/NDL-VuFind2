@@ -82,6 +82,13 @@ class Quria extends AxiellWebServices
     ];
 
     /**
+     * Regex pattern for extracting payment identifier from debt note.
+     *
+     * @var string
+     */
+    protected string $paymentIdPattern = '/\s*Maksun tunnus: ([\w\-]+)/';
+
+    /**
      * Constructor
      *
      * @param \VuFind\Date\Converter      $dateConverter Date converter object
@@ -1326,6 +1333,7 @@ class Quria extends AxiellWebServices
         $blockedTypes = $paymentConfig['nonPayable'] ?? [];
         $payableMinDate
             = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
+        $mapItemIdentifier = $paymentConfig['mapItemIdentifier'] ?? null;
 
         $function = 'GetDebts';
         $functionResult = 'debtsResponse';
@@ -1372,24 +1380,13 @@ class Quria extends AxiellWebServices
             }
             // Round the amount in case it's a weird decimal number:
             $amount = round($amount);
-            $description = $this->mapAndTranslateFineType($debt->debtType) . ' - ' . $debt->debtNote;
-            $debtDate = $this->dateFormat->convertFromDisplayDate(
-                'U',
-                $this->formatDate($debt->debtDate)
-            );
-            $payable = $amount > 0 && $debtDate >= $payableMinDate && ($debt->isOnlinePaymentAllowed ?? true);
-            if ($payable) {
-                foreach ($blockedTypes as $blockedType) {
-                    if (
-                        $blockedType === $description
-                        || (strncmp($blockedType, '/', 1) === 0
-                        && substr_compare($blockedType, '/', -1) === 0
-                        && preg_match($blockedType, $description))
-                    ) {
-                        $payable = false;
-                        break;
-                    }
+            $note = (string)$debt->debtNote;
+            $productCode = null;
+            if ('productCode' === $mapItemIdentifier) {
+                if (preg_match($this->paymentIdPattern, $note, $matches)) {
+                    $productCode = $matches[1];
                 }
+                $note = preg_replace($this->paymentIdPattern, '', $note);
             }
             $fine = [
                 'debt_id' => $debt->id,
@@ -1398,13 +1395,13 @@ class Quria extends AxiellWebServices
                 'amount' => (int)$amount,
                 'checkout' => '',
                 'fine' => $this->mapAndTranslateFineType($debt->debtType),
-                'description' => (string)$debt->debtNote,
+                'description' => $note,
                 'balance' => (int)$amount,
                 'createdate' => $debt->debtDate,
-                'payableOnline' => $payable,
+                'productCode' => $productCode,
                 'organization' => trim($debt->organisation ?? ''),
             ];
-            $fine['payableOnline'] = $this->fineIsPayable($fine);
+            $fine['payableOnline'] = ($debt->isOnlinePaymentAllowed ?? true) && $this->fineIsPayable($fine);
             $finesList[] = $fine;
         }
 
@@ -1665,6 +1662,11 @@ class Quria extends AxiellWebServices
                 $results[$requestId] = [
                     'success' => false,
                     'status' => $message,
+                ];
+            } elseif (($result->$functionResult->reservation->status->key ?? '') === 'reservationDenied') {
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => 'hold_error_update_failed',
                 ];
             } else {
                 $results[$requestId] = [

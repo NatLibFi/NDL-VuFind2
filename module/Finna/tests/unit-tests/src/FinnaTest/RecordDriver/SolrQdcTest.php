@@ -550,6 +550,161 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Data for getOnlineURLs
+     *
+     * @return array
+     */
+    public static function getOnlineURLsData(): array
+    {
+        return [
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"anotherSource"}',
+                ],
+                [
+                    0 => [
+                        'url' => 'https://imagelink.fi',
+                        'mediaType' => 'image/jpeg',
+                        'text' => '',
+                        'source' => [
+                            'source',
+                            'anotherSource',
+                        ],
+                        'type' => 'image',
+                        'codec' => 'jpeg',
+                        'embed' => null,
+                    ],
+                ],
+                false,
+                null,
+            ],
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"anotherSource"}',
+                ],
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"anotherSource"}',
+                ],
+                true,
+                null,
+            ],
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/otherlink.fi","mediaType":"123","text":"","source":"source"}',
+                    '{"url":"https:\/\/otherlink.fi","mediaType":"","text":"","source":"anotherSource"}',
+                    '{"url":"https:\/\/audiolink.mp3","mediaType":"audio\/mp3","text":"","source":"source"}',
+                ],
+                [
+                    1 => [
+                        'url' => 'https://otherlink.fi',
+                        'mediaType' => '123',
+                        'text' => '',
+                        'source' => [
+                            'source',
+                            'anotherSource',
+                        ],
+                        'type' => null,
+                        'codec' => '',
+                        'embed' => null,
+                    ],
+                    2 => [
+                        'url' => 'https://audiolink.mp3',
+                        'mediaType' => 'audio/mp3',
+                        'text' => '',
+                        'source' => 'source',
+                        'type' => 'audio',
+                        'codec' => 'mp3',
+                        'embed' => 'audio',
+                    ],
+                ],
+                false,
+                ['image'],
+            ],
+            [
+                [
+                    '{"url":"https:\/\/file.pdf","mediaType":"application\/pdf","text":"PDF","source":"source"}',
+                    '{"url":"https:\/\/link.fi","mediaType":"\/","text":"Linkki verkkoaineistoon","source":"source"}',
+                    '{"url":"https:\/\/anotherLink.fi","text":"Ei mediaType","source":""}',
+                ],
+                [
+                    0 => [
+                        'url' => 'https://file.pdf',
+                        'mediaType' => 'application/pdf',
+                        'text' => 'PDF',
+                        'source' => 'source',
+                        'type' => null,
+                        'codec' => 'pdf',
+                        'embed' => null,
+                    ],
+                    1 => [
+                        'url' => 'https://link.fi',
+                        'mediaType' => '/',
+                        'text' => 'Linkki verkkoaineistoon',
+                        'source' => 'source',
+                        'type' => null,
+                        'codec' => '',
+                        'embed' => null,
+                    ],
+                    2 => [
+                        'url' => 'https://anotherLink.fi',
+                        'text' => 'Ei mediaType',
+                        'source' => '',
+                    ],
+                ],
+                false,
+                null,
+            ],
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/link.fi","mediaType":"","text":"Linkki verkkoaineistoon","source":"source"}',
+                    '{"url":"https:\/\/audiolink.mp3","mediaType":"audio\/mp3","text":"","source":"source"}',
+                ],
+                [
+                    1 => [
+                        'url' => 'https://link.fi',
+                        'mediaType' => '',
+                        'text' => 'Linkki verkkoaineistoon',
+                        'source' => 'source',
+                    ],
+                ],
+                false,
+                ['image', 'audio'],
+            ],
+        ];
+    }
+
+    /**
+     * Function to get expected online url data
+     *
+     * @param string $indexValue    Index values to test
+     * @param ?array $expected      Result to be expected
+     * @param ?bool  $raw           Boolean value for tested function
+     * @param ?array $excludedTypes Excluded types for tested function
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getOnlineURLsData')]
+    public function testGetOnlineURLs(
+        array $indexValue,
+        ?array $expected,
+        bool $raw,
+        ?array $excludedTypes
+    ): void {
+        $record = new SolrQdc([], [], new \VuFind\Config\Config([]));
+        $record->setRawData(['online_urls_str_mv' => $indexValue]);
+        $this->assertSame(
+            $expected,
+            $record->getOnlineURLs($raw, $excludedTypes)
+        );
+    }
+
+    /**
      * Function to get expected publication date range data
      *
      * @return array

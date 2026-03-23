@@ -199,6 +199,8 @@ nonPayable[] = '/^Muu maksu/'
 ;payableFineDateThreshold = "-3 months"
 ; Whether to allow selection of fines to pay
 selectFines = true
+; Whether to map item identifier from debt note to another field (only supported value is "productCode")
+;mapItemIdentifier = productCode
 
 ; Settings for messaging Settings
 [messagingSettings]

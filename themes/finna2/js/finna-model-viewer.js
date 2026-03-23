@@ -644,6 +644,7 @@ class ModelViewerClass extends HTMLElement {
       loader = new THREE.GLTFLoader();
       if (this.decoder) {
         dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderConfig({ type: 'js' });
         dracoLoader.setDecoderPath(this.decoder);
         loader.setDRACOLoader(dracoLoader);
       }
@@ -938,7 +939,7 @@ class ModelViewerClass extends HTMLElement {
     } else if (this.oldSize) {
       this.size = this.oldSize;
       delete this.oldSize;
-    } else {
+    } else if (this.parentElement) {
       const computed = getComputedStyle(this.parentElement);
       this.size = {
         x: this.parentElement.offsetWidth,

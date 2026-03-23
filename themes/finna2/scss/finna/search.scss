@@ -245,7 +245,7 @@ h2.title {
   }
   a {
     padding-left: 0.1em;
-    color: darken($link-color, 5%);
+    color: $action-link-color;
     .icon {
       font-size: 1.2em;
     }

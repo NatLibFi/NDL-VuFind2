@@ -47,6 +47,18 @@
     </relation>
   </relations>
   <controlaccess>
+    <geogname identifier="http://www.yso.fi/onto/yso/p94137" lang="fin" relator="Aihe" source="YSO">
+      <part>Helsinki</part>
+      <geographiccoordinates coordinatesystem="WGS84">60.16664, 24.94354</geographiccoordinates>
+    </geogname>
+    <geogname identifier="http://www.yso.fi/onto/yso/p94137" lang="sv" relator="aihe" source="YSO">
+      <part>Helsingfors</part>
+      <geographiccoordinates coordinatesystem="WGS84">60.16664, 24.94354</geographiccoordinates>
+    </geogname>
+    <geogname identifier="http://www.yso.fi/onto/yso/p105964" lang="fi" relator="alueellinen kattavuus" source="YSO">
+      <part>Hakaniemi</part>
+      <geographiccoordinates coordinatesystem="WGS84">60.16664, 24.94354</geographiccoordinates>
+    </geogname>
     <name localtype="http://www.rdaregistry.info/Elements/u/#P60066" relator="Kokoelmanmuodostaja" identifier="EAC_102476374">
       <part localtype="Ensisijainen nimi" lang="fin">Suomalaisen Kirjallisuuden Seura ry</part>
       <part localtype="suhteen ajallinen kattavuus">unknown - open</part>

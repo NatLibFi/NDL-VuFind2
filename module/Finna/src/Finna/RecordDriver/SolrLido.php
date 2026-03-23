@@ -413,7 +413,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $language ??= $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_values(array_filter(array_column($representations, 'images')));
+        // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
+        // RecordImage::mergeModelDataToImages.
+        return array_filter(array_column($representations, 'images'));
     }
 
     /**
@@ -473,9 +475,9 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_values(
-            array_filter(array_column($representations, 'models'))
-        );
+        // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
+        // RecordImage::mergeModelDataToImages.
+        return array_filter(array_column($representations, 'models'));
     }
 
     /**
@@ -1515,7 +1517,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 
             $places = [];
             foreach ($reader->all($node, 'eventPlace') as $eventPlace) {
-                $displayPlace = trim($reader->firstValue($eventPlace, 'displayPlace') ?? '', ', \n\r\t\v\0');
+                $displayPlace = trim($reader->firstValue($eventPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
                 $placeId = $reader->first($eventPlace, 'place/placeID');
                 if (!$displayPlace) {
                     // Gather display name from placeNameSet:
@@ -2227,7 +2229,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $results = [];
         $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace';
         foreach ($reader->all(path: $path) as $subjectPlace) {
-            $displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ', \n\r\t\v\0');
+            $displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
             if ('' === $displayPlace) {
                 $placeNames = $reader->allValues($subjectPlace, 'place/namePlaceSet/appellationValue');
                 foreach ($reader->all($subjectPlace, 'place/partOfPlace') as $part) {

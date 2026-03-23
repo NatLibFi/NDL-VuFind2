@@ -94,7 +94,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $pluginManager = $this->createMock(PluginManager::class);
         $pluginManager
             ->method('get')
-            ->willReturnCallback(function ($name, $options) use ($elements) {
+            ->willReturnCallback(function ($name, ?array $options) use ($elements) {
                 return new $elements[$name]($options['__element'], $options);
             });
         $customElementHelper = new CustomElement($pluginManager);

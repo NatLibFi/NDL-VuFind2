@@ -7,7 +7,7 @@
 }
 .browsebar .nav>li .iconlabel:before,
 .browsebar .nav-dropdown-label.iconlabel:before,
-.browsebar .dropdown-menu a.iconlabel:before{
+.browsebar .dropdown-menu a.iconlabel:before {
   vertical-align: center;
   font-size: 1.3em;
   margin-right: 0.5em;
@@ -32,7 +32,7 @@
 
   .navbar-nav {
     margin: 0;
-    & > li > a {
+    > li > a {
       color: $finna-browsebar-link-color;
       padding-left: 5px;
       padding-right: 5px;
