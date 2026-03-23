@@ -262,7 +262,6 @@ return [
         [ 'file' => 'vendor/cally.iife.js' ],
         [ 'file' => 'finna-multiselect.js' ],
         [ 'file' => 'finna-model-viewer.js' ],
-        [ 'file' => 'finna-video-element.js' ],
         [ 'file' => 'finna-feed-element.js' ],
         [ 'file' => 'finna-carousel-manager.js' ],
         [ 'file' => 'finna-select-a11y.js' ],
