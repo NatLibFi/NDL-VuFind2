@@ -210,6 +210,7 @@ button.list-group-item {
 .similar-records,
 .related-records,
 .work-expressions {
+  margin-bottom: 1em;
   @media print {
     display: none;
   }
@@ -232,7 +233,6 @@ button.list-group-item {
 }
 
 .related-records {
-  margin-bottom: 1em;
   li.list-group-item p {
     margin-bottom: 0px;
     font-weight: 600;
@@ -240,13 +240,5 @@ button.list-group-item {
   }
   .list-sub-group li {
     margin-top: 0.6em;
-  }
-}
-
-#similar-records {
-  .details {
-    margin-top: -5px;
-    font-size: 0.9em;
-    line-height: 25px;
   }
 }
