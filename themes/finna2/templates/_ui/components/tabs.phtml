@@ -63,6 +63,12 @@
   <?php endforeach; ?>
 </ul>
 <?php if ($scrollable): ?>
+    <button class="arrow-btn scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+      <?=$this->icon('tabs-prev')?>
+    </button>
+    <button class="arrow-btn scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+      <?=$this->icon('tabs-next')?>
+    </button>
   </div>
 <?php endif; ?>
 
