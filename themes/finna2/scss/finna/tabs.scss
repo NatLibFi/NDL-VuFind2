@@ -204,7 +204,8 @@
 }
 
 .recordTabs.nav {
-  margin-top: 20px;
+  margin-top: 0.5rem;
+
   .staff-view-icon {
     line-height: 1em;
   }
@@ -303,8 +304,8 @@
   /* Arrow buttons */
   .arrow-btn {
     position: absolute;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2rem;
+    height: 2rem;
     border-radius: 0.25rem;
     border: none;
     background: #fff;
