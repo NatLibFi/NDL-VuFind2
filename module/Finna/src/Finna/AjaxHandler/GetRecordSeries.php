@@ -87,10 +87,8 @@ class GetRecordSeries extends \VuFind\AjaxHandler\AbstractBase
         if (empty($seriesKey)) {
             return $this->formatResponse('', self::STATUS_HTTP_BAD_REQUEST);
         }
-        $driver = $this->recordLoader
-            ->load($params->fromQuery('id'), $params->fromQuery('source'));
+        $driver = $this->recordLoader->load($params->fromQuery('id'), $params->fromQuery('source'));
         $html = $this->renderer->render('recordtab/series.phtml', ['seriesKey' => $seriesKey, 'driver' => $driver]);
-
         return $this->formatResponse(compact('html'));
     }
 }

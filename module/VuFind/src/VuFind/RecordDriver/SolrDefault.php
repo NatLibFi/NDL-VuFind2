@@ -346,16 +346,6 @@ class SolrDefault extends DefaultRecord implements
     }
 
     /**
-     * Get series identification keys
-     *
-     * @return array
-     */
-    public function getSeriesKeys()
-    {
-        return $this->fields['series_key_str_mv'] ?? [];
-    }
-
-    /**
      * Get if the explain features is enabled.
      *
      * @return bool

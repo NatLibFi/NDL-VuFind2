@@ -407,7 +407,6 @@ $config = [
             \Finna\Record\IIIF\IIIFManifestGenerator::class => \Finna\Record\IIIF\IIIFManifestGeneratorFactory::class,
             \Finna\Record\ResourcePopulator::class => \VuFind\Record\ResourcePopulatorFactory::class,
             'Finna\RecordDriver\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
-            'Finna\RecordTab\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\RecordTab\TabManager' => 'VuFind\RecordTab\TabManagerFactory',
             'Finna\Role\PermissionManager' => 'VuFind\Role\PermissionManagerFactory',
             'Finna\Search\Solr\AuthorityHelper' => 'Finna\Search\Solr\AuthorityHelperFactory',
@@ -451,7 +450,6 @@ $config = [
             \VuFind\Ratings\RatingsService::class => \Finna\Ratings\RatingsService::class,
             'VuFind\Record\Loader' => 'Finna\Record\Loader',
             \VuFind\Record\ResourcePopulator::class => \Finna\Record\ResourcePopulator::class,
-            'VuFind\RecordTab\PluginManager' => 'Finna\RecordTab\PluginManager',
             'VuFind\RecordTab\TabManager' => 'Finna\RecordTab\TabManager',
             'VuFind\Role\PermissionManager' => 'Finna\Role\PermissionManager',
             'VuFind\Search\Solr\HierarchicalFacetHelper' => 'Finna\Search\Solr\HierarchicalFacetHelper',
@@ -1121,6 +1119,7 @@ $config = [
                     'authorityrecordstopic' => 'Finna\RecordTab\AuthorityRecordsTopic',
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
                     'holdingsarchive' => 'Finna\RecordTab\HoldingsArchive',
+                    'series' => 'Finna\RecordTab\Series',
 
                     // Overrides:
                     'VuFind\RecordTab\CollectionHierarchyTree' => 'Finna\RecordTab\CollectionHierarchyTree',

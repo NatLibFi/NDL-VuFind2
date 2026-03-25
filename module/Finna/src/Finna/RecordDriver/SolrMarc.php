@@ -1624,13 +1624,23 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
             return [
                 'order' => (int)$matches[1],
                 'orderKey' => $this->fields['series_order_str'] ?? '',
-                ];
+            ];
         }
         return null;
     }
 
     /**
-     * Get series name from series key
+     * Get series identification keys
+     *
+     * @return array
+     */
+    public function getSeriesKeys(): array
+    {
+        return $this->fields['series_key_str_mv'] ?? [];
+    }
+
+    /**
+     * Compares the series fields with the series keys created by RecordManager.
      *
      * @param string $seriesKey Series key
      *

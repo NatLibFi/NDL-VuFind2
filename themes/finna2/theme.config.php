@@ -240,6 +240,7 @@ return [
         [ 'file' => 'finna-primo-adv-search.js' ],
         [ 'file' => 'finna-recommendation-memory.js' ],
         [ 'file' => 'finna-record.js' ],
+        [ 'file' => 'finna-scrollable-list.js' ],
         [ 'file' => 'finna-search-tabs-recommendations.js' ],
         [ 'file' => 'finna-series.js' ],
         [ 'file' => 'finna-street-search.js' ],

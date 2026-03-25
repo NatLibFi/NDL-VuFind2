@@ -67,7 +67,6 @@ class Series extends \VuFind\RecordTab\AbstractBase
      */
     public function isActive()
     {
-        $series = $this->getRecordDriver()->tryMethod('getSeriesKeys');
-        return !empty($series);
+        return (bool)$this->getRecordDriver()->tryMethod('getSeriesKeys');
     }
 }
