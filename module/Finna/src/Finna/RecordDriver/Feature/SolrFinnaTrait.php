@@ -1315,11 +1315,13 @@ trait SolrFinnaTrait
      *
      * @param string $seriesKey Series key
      *
-     * @return \VuFindSearch\Response\RecordCollectionInterface
+     * @return \VuFindSearch\Response\RecordCollectionInterface|null
      */
-    public function getSeriesResult($seriesKey = ''): \VuFindSearch\Response\RecordCollectionInterface
+    public function getSeriesResult($seriesKey = ''): \VuFindSearch\Response\RecordCollectionInterface|null
     {
-        $seriesKeys = $this->getSeriesKeys();
+        if (!$seriesKeys = $this->tryMethod('getSeriesKeys')) {
+            return null;
+        }
         $key = ($seriesKey && in_array($seriesKey, $seriesKeys))
             ? $seriesKey
             : $seriesKeys[0];
