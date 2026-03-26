@@ -928,11 +928,13 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         $index = $this->params()->fromQuery('index', 0);
         $format = $this->params()->fromQuery('format');
         $type = $this->params()->fromQuery('type');
-                // Set up next/previous record links (if appropriate)
+        // Set up next/previous record links (if appropriate)
         if ($this->getSearchMemory()->getCurrentSearch()?->getOptions()?->resultScrollerActive()) {
             $scrollData = $this->resultScroller()->getScrollData(
                 $this->loadRecord()
             );
+        } else {
+            $scrollData = null;
         }
 
         if (!$this->inLightbox()) {
