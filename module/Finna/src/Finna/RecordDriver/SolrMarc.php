@@ -1725,11 +1725,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get an array of summary strings for the record.
      *
-     * @param string $language Language to return, if available
-     *
      * @return array
      */
-    public function getSummary($language = '')
+    public function getSummary()
     {
         $languageMappings = ['fin' => 'fi', 'swe' => 'sv', 'eng' => 'en-gb'];
         $languages = [];
@@ -1762,8 +1760,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
             $lng = $link && isset($languages[$link]) ? $languages[$link] : '-';
             $summaries[$lng][] = $summary;
         }
-        if ($language && isset($summaries[$language])) {
-            return $summaries[$language];
+        foreach ($this->getprioritizedlanguages() as $language) {
+            if ($summary = $summaries[$language] ?? null) {
+                return $summary;
+            }
         }
         $result = [];
         foreach ($summaries as $languageSummaries) {

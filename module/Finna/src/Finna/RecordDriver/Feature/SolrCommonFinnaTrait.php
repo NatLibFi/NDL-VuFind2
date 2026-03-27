@@ -64,14 +64,14 @@ trait SolrCommonFinnaTrait
     /**
      * Video Handler
      *
-     * @var \Finna\Video\Video
+     * @var ?\Finna\Video\Video
      */
     protected $videoHandler = null;
 
     /**
      * Locale settings
      *
-     * @var LocaleSettings
+     * @var ?LocaleSettings
      */
     protected $localeSettings = null;
 
@@ -342,7 +342,7 @@ trait SolrCommonFinnaTrait
         $languages = [
             $this->getTranslatorLocale(),
             ...$primary,
-            ...$this->localeSettings->getFallbackLocales(),
+            ...$this->localeSettings?->getFallbackLocales() ?? [],
         ];
         $final = [];
         foreach ($languages as $lang) {
