@@ -1,3 +1,4 @@
+<!-- START of: finna - comments/userlist.phtml -->
 <?php
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
@@ -12,12 +13,15 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'usercontent']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <?=$this->component('page-title', ['title' => $this->translate('Comments')]);?>
+  <div class="useraccount-header">
+    <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Comments'), 'tooltip' => 'tooltip_myaccount_comments_html']);?>
+  </div>
   <ul class="nav nav-tabs" role="tablist">
     <?php foreach ($tabs as $tab => $title): ?>
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='comments' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
     <?php endforeach; ?>
   </ul>
+  <?=$this->component('finna-addition-template', ['template' => 'comments-pre-list'])?>
   <?php if (count($this->comments) !== 0): ?>
     <div><?=$this->transEsc('finna_nickname')?>: <?=$this->userPublicName($user);?></div>
     <nav class="search-header hidden-print">
@@ -127,6 +131,7 @@
         </tbody>
       </table>
     </form>
+    <?=$this->component('finna-addition-template', ['template' => 'comments-post-list'])?>
   <?php else: ?>
     <?=$this->transEsc('No Comments')?>
   <?php endif; ?>
@@ -139,3 +144,4 @@
       JS;
 ?>
 <?=$this->assetManager()->outputInlineScriptString($script);?>
+<!-- END of: finna - comments/userlist.phtml -->

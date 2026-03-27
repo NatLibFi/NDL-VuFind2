@@ -22,6 +22,10 @@ services:
       - source: site_config
         target: /etc/apache2/sites-available/vufind2.conf
     env_file: .env
+    environment:
+      XDEBUG_CLIENT_HOST: host.docker.internal
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     ports:
       - 8080:80
     depends_on:

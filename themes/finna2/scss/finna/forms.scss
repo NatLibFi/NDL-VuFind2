@@ -1,5 +1,6 @@
 form {
-  .required-notice {
+  .required-notice,
+  .remember-me-info {
     font-size: $small-font-size;
     color: $text-muted;
   }
@@ -10,12 +11,12 @@ input, input.form-control {
 
 .form-control, .form-select {
   width: initial;
+  max-width: 100%; // make sure dropdowns don't overflow elements
   padding: 0px 5px;
-  max-width: 100%; // make sure dropdowns don't overflow elementss
   vertical-align: middle !important;
 
   &::placeholder {
-    color: #666;
+    color: $gray-light;
   }
   &[disabled],
   &[readonly],
@@ -32,10 +33,14 @@ input, input.form-control {
   }
 }
 
-
 .form-inline {
   display: inline-block;
-  @include media-breakpoint-up(sm) {
+  .btn {
+    margin-left: 1px;
+  }
+}
+@include media-breakpoint-up(sm) {
+  .form-inline {
     .form-control {
       width: auto;
     }
@@ -44,31 +49,27 @@ input, input.form-control {
       padding-left: 0px;
     }
   }
-  .btn {
-    margin-left: 1px;
-  }
 }
 
 // Alternate buttons
 // --------------------------------------------------
 .navbar-form .btn[type="submit"],
 .searchForm .btn[type="submit"] {
-  color: $btn-primary-color;
-  padding: 6px 0px;
-  border-radius: 0px;
-  margin: 0;
-  transition: background .1s ease-in-out;
-  height: 48px;
-  width: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
+  width: 48px;
+  height: 48px;
+  padding: 6px 0px;
+  margin: 0px;
+  color: $btn-primary-color;
   background: $btn-primary-bg;
+  border: none;
+  border-radius: 0px;
+  transition: background 0.1s ease-in-out;
   &:not(:focus-visible) {
     box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
   }
-
   &:hover {
     background: darken($btn-primary-bg, 5%);
   }
@@ -80,59 +81,44 @@ input, input.form-control {
   }
 }
 .searchHomeContent .btn-link {
-  font-size: 1.2em;
   margin-top: 5px;
+  font-size: 1.2em;
 }
 
 .navbar-form,
 .searchForm {
+  display: flex;
   width: 100%;
-  display:flex;
-  margin-left: 0;
-  margin-right: 0;
   padding: 0px;
+  margin: 0px;
   background-color: $search-input-bg;
-  border-radius: 0;
   border-top: 0px;
   border-bottom: 0px;
-  margin: 0px;
-  box-shadow: 0px 0px 3px rgba(100,100,100,0.5);
+  border-radius: 0px;
+  box-shadow: 0px 0px 3px rgba(100, 100, 100, 0.5);
   .form-control.search-query {
+    display: inline-block !important;
     flex: 1 1 auto;
+    height: 48px;
+    padding-left: 10px;
+    color: $gray;
+    background: transparent;
     border: none;
     box-shadow: none;
-    background: transparent;
-    display: inline-block !important;
-    color: $gray;
-    padding-left: 10px;
-    height: 48px;
     &:focus-visible {
-      outline: 0;
       box-shadow: $focus-ring-box-shadow;
-    }
-
-    @include media-breakpoint-down(sm) {
-      width: percentage(($finna-search-input-width - 0.06));
-      font-size: 1.1em;
+      outline: 0;
     }
   }
   /* --- Autocomplete and form adjust accordingly --- */
   &.input-field-only .form-control.search-query {
     width: 85%;
-    @include media-breakpoint-down(sm) {
-      width: 80%;
-    }
   }
-
   #searchForm-reset {
-    border: none;
-    margin-left: 0px;
-    background: transparent;
+    margin: auto 5px;
     color: $gray-light;
-    margin-top: auto;
-    margin-bottom: auto;
-    margin-right: 5px;
-    margin-left: 5px;
+    background: transparent;
+    border: none;
     &:hover {
       cursor: pointer;
     }
@@ -141,30 +127,46 @@ input, input.form-control {
     border-radius: 0;
   }
 }
+@include media-breakpoint-down(sm) {
+  .navbar-form,
+  .searchForm {
+    .form-control.search-query {
+      width: percentage(($finna-search-input-width - 0.06));
+      font-size: 1.1em;
+    }
+    &.input-field-only .form-control.search-query {
+      width: 80%;
+    }
+  }
+}
+
+.navbar-form .form-control.search-query {
+  font-size: $font-size-large;
+}
 
 .dropdown.form-control.type-dropdown {
-  border: none;
   display: inline-block;
-  background: transparent;
-  box-shadow: none;
-  color: $gray;
   height: 48px;
   margin: auto;
+  color: $gray;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   a {
-    color: black;
+    color: #000;
   }
   .dropdown-toggle {
-    min-width: 110px;
     display: inline-flex;
     align-content: center;
     justify-content: end;
     height: inherit;
+    min-width: 110px;
     padding: 6px 0px;
   }
   li {
-    text-align: left;
-    color: $text-color;
     min-width: 110px;
+    color: $text-color;
+    text-align: left;
   }
 }
 
@@ -181,65 +183,54 @@ button.multiselect {
 
 .radio,
 .checkbox {
-  padding-left: 10px;
   position: inherit;
+  padding-left: 10px;
 }
 
 .template-dir-feedback .template-name-form form,
 .modal-dialog .feedback-content form,
 .modal-dialog form.dynamic-form {
-    input[name='url'] {
-        margin-bottom: 30px;
-    }
-    .form-info.post {
-        margin-bottom: 20px;
-    }
-    .form-info {
-        margin: 20px 0;
-        font-weight: initial;
-    }
+  .group-url {
+    margin-bottom: 2rem;
+  }
+  .form-info {
+    margin: 1.5rem 0;
+    font-weight: initial;
+  }
 
-    .required-notice {
-        font-size: $small-font-size;
-        color: $text-muted;
-    }
+  .required-notice {
+    font-size: $small-font-size;
+    color: $text-muted;
+  }
 
-    input[type=radio] {
-        height: 1em;
-        position: absolute;
-        margin-left: -20px;
-    }
+  input[type=radio] {
+    position: absolute;
+    height: 1em;
+    margin-left: -20px;
+  }
 
-    .form-group.checkbox,
-    .form-group.radio {
+  .form-group {
+    &.checkbox,
+    &.radio {
+      padding-left: 0;
+      label.form-label, label.control-label {
         padding-left: 0;
-        margin-bottom: 15px;
-        label.form-label, label.control-label {
-            padding-left: 0;
-            font-weight: 700;
-            margin-bottom: 5px;
+        margin-bottom: 5px;
+        font-weight: 700;
+      }
+      label {
+        display: table;
+        margin: 7px 0;
+        input {
+          margin-top: 3px;
+          margin-right: 10px;
         }
-        label {
-            display: table;
-            margin: 7px 0;
-            input {
-                margin-right: 10px;
-                margin-top: 3px;
-            }
-        }
+      }
     }
-
-    .form-group.checkbox label input {
-        height: 1em;
-        margin-top: -1px;
-        display: inline-block;
+    &.checkbox label input {
+      display: inline-block;
+      height: 1em;
+      margin-top: -1px;
     }
-}
-
-.form-cart-email {
-  button.btn.show-records {
-    color: $link-color;
-    padding-top: 8px;
-    background-color: white;
   }
 }

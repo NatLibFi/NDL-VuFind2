@@ -1,19 +1,19 @@
 .floating-feedback-btn {
+  position: absolute;
+  top: auto;
+  right: 0;
+  z-index: 1001;
   margin-top: 15px;
   margin-right: 15px;
-  background: $finna-feedback-background;
   color: $finna-feedback-color;
-  position: absolute;
-  right: 0;
-  top: auto;
-  z-index: 1001;
+  background: $finna-feedback-background;
   &.fixed {
     position: fixed;
     top: 0;
   }
   &:hover {
-    background: darken($finna-feedback-background,10%);
     color: $finna-feedback-color;
+    background: darken($finna-feedback-background, 10%);
   }
 }
 
@@ -23,19 +23,8 @@
     &[readonly],
     fieldset[disabled] {
       cursor: default;
-      box-shadow: none;
       border: none;
-    }
-  }
-
-  .form-group {
-    margin-bottom: 20px;
-    label {
-      clear: both;
-      display: block;
-    }
-    textarea, input {
-      max-width: 100%;
+      box-shadow: none;
     }
   }
   .feedback-info p,
@@ -63,25 +52,24 @@ form[name=ArchiveRequest] {
   }
 }
 form[name=FeedbackRecord] .form-info {
-  border: none;
   .datasource-info {
-    font-weight: initial;
-    padding-top: 1em;
     display: block;
+    padding-top: 1em;
   }
 }
-.form-horizontal[name=emailRecord] {
-  & input[type=email] {
-    min-width: 200px;
-    max-width: 100%;
+form[name=FeedbackRecord],
+form[name=FeedbackSite] {
+  textarea {
+    width: 100%;
   }
 }
 
-div:not(.modal-body) > .feedback-content {
-  @include media-breakpoint-up(sm) {
+@include media-breakpoint-up(sm) {
+  div:not(.modal-body) > .feedback-content {
     width: 50%;
   }
 }
+
 .template-dir-feedback .feedback-content h1 {
     font-size: $finna-header-font-size;
 }

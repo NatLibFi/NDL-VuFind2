@@ -28,7 +28,7 @@
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header">
-      <?=$this->component('page-title', ['title' => $this->translate('Your Checked Out Items') . " ($totalCount)", 'headTitle' => $this->translate('Checked Out Items')]);?>
+      <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Your Checked Out Items') . " ($totalCount)", 'headTitle' => $this->translate('Checked Out Items'), 'tooltip' => 'tooltip_myaccount_checked_out_html'])?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -38,9 +38,7 @@
       <?php endif; ?>
     <?php else: ?>
       <?=$this->methodTimedBlocks('Renewals')?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkedout-pre-list')): ?>
-        <div class="checkedout-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['template' => 'checkedout-pre-list'])?>
       <?php if ($this->renewForm): ?>
         <div class="sort-col sort-col-mobile">
           <?php if ($sortList): ?>
@@ -252,9 +250,7 @@
             </table>
             <h3 class="visually-hidden"><?=$this->transEsc('End of List')?></h3>
             </form>
-          <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkedout-post-list')): ?>
-            <div class="checkedout-post-list"><?=$this->render($template)?></div>
-          <?php endif; ?>
+          <?=$this->component('finna-addition-template', ['template' => 'checkedout-post-list'])?>
           <?=$paginator ? $this->paginationControl($paginator, 'Sliding', 'Helpers/pagination.phtml', ['params' => $params]) : ''?>
         </div>
       <?php else: ?>

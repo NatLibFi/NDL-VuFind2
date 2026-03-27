@@ -25,7 +25,7 @@
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header">
-      <?=$this->component('page-title', ['title' => $this->translate('Loan History') . " ($recordCount)", 'headTitle' => $this->translate('Loan History')]);?>
+      <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Loan History') . " ($recordCount)", 'headTitle' => $this->translate('Loan History'), 'tooltip' => 'tooltip_myaccount_checkouts_history_html']);?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -34,9 +34,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/historic-loans-pre-list')): ?>
-        <div class="historic-loans-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['template' => 'historic-loans-pre-list'])?>
       <?php if (!empty($this->transactions)): ?>
         <?php if ($sortList): ?>
           <div class="sort-col sort-col-mobile">
@@ -201,9 +199,7 @@
           </div>
 
           <?=$this->paginator ? $this->paginationControl($this->paginator, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params]) : ''?>
-          <?php if ($template = $this->content()->findTemplateForLng('content/Additions/checkout-history-post-list')): ?>
-            <div class="checkout-history-post-list"><?=$this->render($template)?></div>
-          <?php endif; ?>
+          <?=$this->component('finna-addition-template', ['template' => 'checkout-history-post-list'])?>
         <?php else: ?>
           <div class="useraccount-header">
             <h3><?=$this->transEsc('You do not have any items in the checkout history')?>.</h3>

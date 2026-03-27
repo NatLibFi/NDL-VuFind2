@@ -460,6 +460,7 @@
   }
 }
 
+.popup-link-buttons,
 .image-details-container {
   .image-link,
   .model-link {
@@ -540,6 +541,12 @@
     .dropdown-menu.download {
       left: -4%;
     }
+  }
+}
+
+.popup-link-buttons {
+  .open-link {
+    margin-top: 0px;
   }
 }
 

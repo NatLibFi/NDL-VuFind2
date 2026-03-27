@@ -22,7 +22,7 @@
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header">
-      <?=$this->component('page-title', ['title' => $this->translate('Storage Retrieval Requests') . " ($recordCount)", 'headTitle' => $this->translate('Storage Retrieval Requests')]);?>
+      <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Storage Retrieval Requests') . " ($recordCount)", 'headTitle' => $this->translate('Storage Retrieval Requests'), 'tooltip' => 'tooltip_myaccount_storage_retrieval_requests_html']);?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -31,9 +31,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/storageretrievalrequests-pre-list')): ?>
-        <div class="storageretrievalrequests-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['template' => 'storageretrievalrequests-pre-list'])?>
       <?php if (!empty($this->recordList)): ?>
         <?php if ($this->cancelForm): ?>
           <div class="myaccount-sticky-header"></div>
@@ -193,9 +191,7 @@
             </form>
           </div>
         <?php endif; ?>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/storageretrievalrequests-post-list')): ?>
-          <div class="storageretrievalrequests-post-list"><?=$this->render($template)?></div>
-        <?php endif; ?>
+        <?=$this->component('finna-addition-template', ['template' => 'storageretrievalrequests-post-list'])?>
       <?php else: ?>
         <div class="useraccount-header">
           <h3><?=$this->transEsc('You do not have any storage retrieval requests placed') ?>.</h3>

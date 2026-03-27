@@ -37,6 +37,8 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 use VuFindHttp\HttpServiceAwareInterface;
 
+use function count;
+
 /**
  * IIIF manifest generator service
  *
@@ -85,9 +87,9 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      *
      * @param RecordDriver $driver Record driver
      *
-     * @return array|null
+     * @return ?object
      */
-    public function generate(RecordDriver $driver): array|null
+    public function generate(RecordDriver $driver): ?object
     {
         $images      = $driver->tryMethod('getAllImages');
         $recordId    = $driver->getUniqueID();
@@ -118,7 +120,7 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      *                            correctly.
      * @param string $recordTitle Title of the record
      *
-     * @return array
+     * @return ?object
      */
     protected function createManifest(
         ?array $images,
@@ -126,7 +128,7 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
         string $source,
         string $manifestId,
         string $recordTitle
-    ): ?array {
+    ): ?object {
         if (!$images) {
             return null;
         }
@@ -137,9 +139,12 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
             $canvasItem = [
                 'id' => "$manifestId/$idx",
                 'type' => 'Canvas',
-                'metadata' => $this->createCanvasMetadata($image),
                 'items' => [],
             ];
+            $metadata = $this->createCanvasMetadata($image);
+            if (count($metadata) > 0) {
+                $canvasItem['metadata'] = $metadata;
+            }
 
             if (
                 $rightsLink = isset($image['rights']['link']) ?
@@ -167,7 +172,7 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
                     break; // only take the largest $size
                 }
             }
-            $manifestItems[] = $canvasItem;
+            $manifestItems[] = (object)$canvasItem;
         }
 
         if (!$manifestItems) {
@@ -179,12 +184,14 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
             'id' => $manifestId,
             'type' => 'Manifest',
             'thumbnail' => [],
-            'label' => array_fill_keys($this->metadataLangKeys, $recordTitle),
-            'metadata' => [],
+            'label' => (object)array_fill_keys(
+                $this->metadataLangKeys,
+                [$recordTitle]
+            ),
             'items' => $manifestItems,
         ];
 
-        return $manifest;
+        return (object)$manifest;
     }
 
     /**
@@ -198,16 +205,22 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
     {
         $metadata = [];
         if (isset($image['description'])) {
-            $metadata[] = [
+            $metadata[] = (object)[
                 'label' => $this->getTranslations('image_description'),
-                'value' => array_fill_keys($this->metadataLangKeys, $image['description']),
+                'value' => (object)array_fill_keys(
+                    $this->metadataLangKeys,
+                    [$image['description']]
+                ),
             ];
         }
 
         if (isset($image['identifier'])) {
-            $metadata[] = [
+            $metadata[] = (object)[
                 'label' => $this->getTranslations('image_identifier'),
-                'value' => array_fill_keys($this->metadataLangKeys, $image['identifier']),
+                'value' => (object)array_fill_keys(
+                    $this->metadataLangKeys,
+                    [$image['identifier']]
+                ),
             ];
         }
         return $metadata;
@@ -221,16 +234,16 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      *
      * @param string $message Message to be translated
      *
-     * @return array Associative array of $language => $translatedMessage
+     * @return object $language => $translatedMessage
      */
-    protected function getTranslations(string $message): array
+    protected function getTranslations(string $message): object
     {
         $translator = $this->getTranslator();
 
-        return array_combine(
+        return (object)array_combine(
             $this->metadataLangKeys,
             array_map(
-                fn ($l) => $translator->translate($message, locale: $l),
+                fn ($l) => [$translator->translate($message, locale: $l)],
                 $this->locales
             )
         );
@@ -275,23 +288,23 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      * @param string $manifestId Manifest ID, i.e. URI to the calling
      *                           RecordController action
      *
-     * @return array
+     * @return object
      */
     protected function createAnnotationPage(
         int $index,
         string $size,
         string $bodyId,
         string $manifestId
-    ): array {
+    ): object {
         $annotationPageId = "$manifestId/$index/$size";
         $annotationPage = [
             'id' => $annotationPageId,
             'type' => 'AnnotationPage',
-            'items' => [[
+            'items' => [(object)[
                 'id' => "$annotationPageId/1",
                 'type' => 'Annotation',
                 'motivation' => 'painting',
-                'body' => [
+                'body' => (object)[
                     'id' => $bodyId,
                     // NOTE: The image is served through the Cover/Show
                     // endpoint, which, as of 2025-12-12, forces a conversion to
@@ -303,6 +316,6 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
             ]],
         ];
 
-        return $annotationPage;
+        return (object)$annotationPage;
     }
 }

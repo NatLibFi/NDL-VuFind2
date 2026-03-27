@@ -1,9 +1,9 @@
 /* ------ GRID VIEW ------ */
 .search-grid {
-  overflow: hidden;
-  padding-top: 10px;
   display: flex;
+  padding-top: 0.7em;
   flex-wrap: wrap;
+  overflow: hidden;
   &::after {
     display: table;
     clear: both;
@@ -13,29 +13,16 @@
 
 .grid.result {
   display: flex;
-  float: left;
   width: 33%;
+  padding: 0px 5px 10px;
+  margin-bottom: 0px;
   border-bottom: none;
-
-  .grid-checkbox {
-    min-width: 0;
+  &:focus {
+    outline: none;
   }
-  .title { font-weight: bold; }
-  .label,
-  .format {
-    display: inline-block;
-    white-space: normal;
-  }
-  .grid-result {
-    width:100%;
-  }
-  &#result0, :first-child {
+  &#result0,
+  :first-child {
     border-top: none;
-  }
-}
-@include media-breakpoint-down(xs) {
-  .grid.result {
-    width: 100%;
   }
 }
 @include media-breakpoint-down(md) {
@@ -43,84 +30,116 @@
     width: 50%;
   }
 }
-
-.grid-large-break,
-.grid-small-break { clear: both; }
-@include media-breakpoint-up(md) {
-  .grid.result{ width: 33%; }
-  .grid-small-break { display: none; }
+@include media-breakpoint-down(sm) {
+  .grid.result {
+    min-height: 250px;
+  }
+}
+@include media-breakpoint-down(xs) {
+  .grid.result {
+    width: 100%;
+  }
 }
 
-.result-view-grid {
-  .grid:not(.recordcovers) {
-    padding: 0px 5px 10px;
-    margin-bottom: 0px;
-    &:focus {
-      outline: none;
-    }
-    .grid-body {
-      display: flex;
-      height: 100%;
-      flex-direction: column;
-    }
-    .grid-title {
-      padding-top: 5px;
+.grid-result {
+  width: 100%;
+  .grid-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+  .grid-title {
+    padding-top: 0.3em;
+    overflow: hidden;
+    background: transparent;
+    h2.title {
+      // Position: relative makes ellipsis work with absolute elements in Chrome
+      position: relative;
+      font-size: 1.15em;
+      font-weight: 700;
+      line-height: 1.5;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       overflow: hidden;
-      background: transparent;
-    }
-    .status {
-      display: inline;
-      .label {
-        text-indent: -9999em;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        padding: 0;
-      }
     }
     .dateyeartype {
       display: inline;
       p {
-        margin-top: 0;
-        margin-bottom: 0;
+        margin-top: 0px;
+        margin-bottom: 0px;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
       }
-    }
-    .grid-image {
-      overflow: hidden;
-      flex-basis: 250px;
-      height: 250px;
-      position: relative;
-      display: flex;
-      background-color: $gray-ultralight;
-      flex-flow: column;
-    }
-    h2.title {
-      font-size: 1.15em;
-      line-height: 1.5;
-      text-overflow: ellipsis;
-      // Position: relative makes ellipsis work with absolute elements in Chrome
-      position: relative;
-      white-space: nowrap;
-      overflow: hidden;
+      .record-labels .label {
+        margin-right: 0px;
+      }
     }
     .save-record-container {
+      display: none;
       text-overflow: ellipsis;
       white-space: nowrap;
       overflow: hidden;
-      display: none;
+      .save-record {
+        float: none;
+        font-size: inherit;
+      }
     }
-    .save-record {
-      float: none;
-      font-size: inherit;
+  }
+  .status {
+    display: inline;
+    .label {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      padding: 0px;
+      white-space: normal;
+      text-indent: -9999em;
+      border-radius: 50%;
     }
-    img {
-      box-shadow: none;
-    }
+  }
+}
 
-    @include media-breakpoint-down(sm) {
+.grid-result {
+  .grid-image {
+    position: relative;
+    display: flex;
+    flex-flow: column;
+    flex-basis: 250px;
+    height: 250px;
+    overflow: hidden;
+    background-color: $gray-ultralight;
+    .record-image-container {
+      position: initial;
+      display: flex;
+      flex: 1 1;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0px;
+      .recordcover-holder {
+        display: flex;
+        align-items: center;
+        height: 100%;
+        .recordcover-container {
+          display: flex;
+          height: 100%;
+          .image-popup-trigger {
+            width: 250px;
+            height: 250px;
+            img.recordcover {
+              width: 100%;
+              height: 100%;
+              margin: auto;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .grid-result {
+    .record-image-container {
       .recordcover {
         width: 100%;
       }
@@ -128,64 +147,34 @@
         display: block;
       }
     }
-    &.no-image {
-      .grid-body {
-        position: relative;
-      }
-      .recordcover-holder:before {
-        color: $gray-light;
-        content: attr(data-format);
-        position: absolute;
-        top: 60%;
-        font-size: .9em;
-        left:0;
-        width: 100%;
-      }
-      .recordcover-holder:after {
-        color:  $gray-mid-light;
-        content: attr(data-noimage);
-        position: absolute;
-        top: 5px;
-        font-size: .65em;
-        right: 10px;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-      }
-      .iconlabel:before {
-        color: $gray-mid-light;
-        top: 50%;
-      }
-    }
-  }
-
-  .record-image-container {
-    margin-bottom: 0;
-    display: flex;
-    align-items: center;
-    position: initial;
-    justify-content: center;
-    flex: 1 1;
-    .recordcover-holder {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      .recordcover-container {
-        display: flex;
-        height: 100%;
-        .image-popup-trigger {
-          height: 250px;
-          width: 250px;
-          img.recordcover {
-            height: 100%;
-            width: 100%;
-            margin: auto;
-          }
-        }
-      }
-    }
   }
 }
 
-@media (max-width: 767px) {
-  .grid:not(.recordcovers) { min-height: 250px; }
+.grid.result.no-image {
+  .grid-body {
+    position: relative;
+  }
+  .recordcover-holder:before {
+    position: absolute;
+    top: 60%;
+    left: 0px;
+    width: 100%;
+    font-size: 0.9em;
+    color: $gray-light;
+    content: attr(data-format); 
+  }
+  .recordcover-holder:after {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    font-size: .65em;
+    color:  $gray-mid-light;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    content: attr(data-noimage);
+  }
+  .iconlabel:before {
+    top: 50%;
+    color: $gray-mid-light;
+  }
 }
