@@ -43,26 +43,26 @@
           );?>
         <?php endif; ?>
         <?=$rec->renderTemplate(
-          'image-download.phtml',
-          [
+              'image-download.phtml',
+              [
             'index' => $i,
             'rights' => $rights,
             'image' => $image,
-            'hiRes' => $image['highResolution'] ?? false
+            'hiRes' => $image['highResolution'] ?? false,
           ]
-        )?>
+          )?>
         <?=$rec->renderTemplate(
-          'image-information.phtml',
-          ['index' => $i, 'image' => $image]
-        );?>
+              'image-information.phtml',
+              ['index' => $i, 'image' => $image]
+          );?>
         <?=$rec->renderTemplate(
-          'image-rights.phtml',
-          [
+              'image-rights.phtml',
+              [
             'imageRightsLabel' => $imageRightsLabel,
             'rights' => $rights,
-            'truncateLicense' => $i === 0
+            'truncateLicense' => $i === 0,
           ]
-        );?>
+          );?>
       </div>
       <?php $i++;
     endforeach;

@@ -963,7 +963,6 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
   _.setBrowseButtons(_.settings.isList);
   _.setPagerInfo();
   _.setCurrentVisuals();
-  var modal = $('#imagepopup-modal').find('.imagepopup-holder').clone();
 
   if (_.settings.triggerClick === 'none') {
     var noneTrigger = $('<span class="image-popup-trigger"></span>');

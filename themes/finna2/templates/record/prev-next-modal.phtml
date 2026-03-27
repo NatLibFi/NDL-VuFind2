@@ -1,7 +1,7 @@
 <?php
 $scrollUrls = [];
 if ($scrollData) {
-  foreach($scrollData as $key => $value) {
+  foreach ($scrollData as $key => $value) {
     $scrollUrls[$key] = $value
       ? $this->recordLinker()->getActionUrl($value, 'Modal')
       : null;
