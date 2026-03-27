@@ -85,19 +85,6 @@
   margin-left: 0px;
 }
 
-.datepicker {
-  & .datepicker-switch {
-    color: $link-color;
-    font-size: 1.1em;
-  }
-  & .prev,& .next {
-    font-size: 1.1em;
-  }
-  &.dropdown-menu {
-    padding: 10px;
-  }
-}
-
 .checkbox label {
   display: inline;
   padding-left: 0;
