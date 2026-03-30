@@ -13,8 +13,9 @@ finna.scrollableList = (function finnaScrollableList() {
 
       list.querySelectorAll('.list-link img').forEach(el => {
         el.onload = function onCarouselImageLoad() {
-          if (this.naturalWidth !== 10 && this.naturalHeight !== 10) {
-            el.nextElementSibling.classList.add('hidden');
+          if (this.naturalWidth === 10 && this.naturalHeight === 10) {
+            el.classList.add('hidden');
+            el.nextElementSibling.classList.remove('hidden');
           }
         };
       });

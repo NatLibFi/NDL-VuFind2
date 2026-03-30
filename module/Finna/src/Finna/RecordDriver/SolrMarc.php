@@ -1613,18 +1613,21 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get series order number and series order index field
      *
+     * @param string $series Series name
+     *
      * @return ?array
      */
-    public function getSeriesOrder(): ?array
+    public function getSeriesOrder(string $series): ?array
     {
         $record = $this->getMarcReader();
-        $field490 = $record->getField('490');
-        $order = $this->getSubfield($field490, 'v');
-        if (preg_match('/(\d+)$/', $order, $matches)) {
-            return [
-                'order' => (int)$matches[1],
-                'orderKey' => $this->fields['series_order_str'] ?? '',
-            ];
+        foreach ($record->getFields('490') as $field490) {
+            $order = $this->getSubfield($field490, 'v');
+            if (($series === $this->getSubfield($field490, 'a')) && preg_match('/(\d+)$/', $order, $matches)) {
+                return [
+                    'order' => (int)$matches[1],
+                    'orderKey' => $this->fields['series_order_str'] ?? '',
+                ];
+            }
         }
         return null;
     }
