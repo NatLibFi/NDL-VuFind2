@@ -66,7 +66,7 @@
     </div>
   </div>
   <?php $searchQuery = urlencode('series_key_str_mv:"' . $currentSeriesKey . '"'); ?>
-  <a href="<?= $this->url('search-results') ?>?lookfor=<?=$searchQuery?>" class="btn btn-primary series-search-link"><?= $this->transEsc('channel_search') ?> (<?=$results->getTotal()?>)</a>
+  <div class="series-search-link"><a href="<?= $this->url('search-results') ?>?lookfor=<?=$searchQuery?>" class="btn btn-primary"><?= $this->transEsc('channel_search') ?> (<?=$results->getTotal()?>)</a></div>
 </div>
 <?php
   $script = <<<JS
