@@ -38,7 +38,7 @@
     opacity: 1;
   }
 }
-.modal-content:not(:has(.modal-body .lightbox-title)) .close {
+.modal-content:not(:has(.modal-body #lightbox-title)) .close {
   color: $gray-light;
 }
 
