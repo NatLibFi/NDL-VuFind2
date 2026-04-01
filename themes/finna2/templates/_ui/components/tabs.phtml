@@ -11,15 +11,24 @@
    * @param bool   $scrollable        Whether to enable horizontally scrollable tabs
    */
 
-  $tabNavClasses = array_merge($scrollable ? ['nav'] : ['nav', 'nav-tabs'], $this->tabNavClasses ?? []);
+  $tabNavClasses = array_merge($this->scrollable ? ['nav'] : ['nav', 'nav-tabs'], $this->tabNavClasses ?? []);
   $tabContentClasses = array_merge(['tab-content'], $this->tabContentClasses ?? []);
   $idSuffix = $this->idSuffix ?? '';
   $getPaneId = fn (string $tabName): string => 'tab-pane-' . $tabName . $idSuffix;
   $getButtonId = fn (string $tabName): string => 'tab-button-' . $tabName . $idSuffix;
 ?>
-<?php if ($scrollable): ?>
+<?php if ($this->scrollable): ?>
   <div class="nav-scrollable">
 <?php endif; ?>
+<?php if ($this->scrollable): ?>
+  <button class="arrow-btn scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+    <?=$this->icon('tabs-prev')?>
+  </button>
+  <button class="arrow-btn scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+    <?=$this->icon('tabs-next')?>
+  </button>
+<?php endif; ?>
+
 <ul class="<?=implode(' ', $tabNavClasses)?>" role="tablist">
   <?php foreach ($this->tabs as $tabName => $tab): ?>
     <?php
@@ -62,15 +71,6 @@
     </li>
   <?php endforeach; ?>
 </ul>
-<?php if ($scrollable): ?>
-    <button class="arrow-btn scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
-      <?=$this->icon('tabs-prev')?>
-    </button>
-    <button class="arrow-btn scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
-      <?=$this->icon('tabs-next')?>
-    </button>
-  </div>
-<?php endif; ?>
 
 <div class="<?=implode(' ', $tabContentClasses)?>">
   <?php foreach ($this->tabs as $tabName => $tab): ?>
@@ -81,14 +81,18 @@
         'role' => 'tabpanel',
         'aria-labelledby' => $getButtonId($tabName),
         'data-tab-name' => $tabName,
+        'tabindex' => '0',
       ]);
       if ($activeTab == $tabName) {
           $tabPaneAttributes->add('class', 'active');
       }
       $tabPaneAttributes->merge($tab['paneAttributes'] ?? []);
     ?>
-    <div <?=$tabPaneAttributes?>>
+    <div<?=$tabPaneAttributes?> style="clear: both">
       <?=$tab['content']?>
     </div>
   <?php endforeach; ?>
 </div>
+<?php if ($this->scrollable): ?>
+  </div>
+<?php endif; ?>

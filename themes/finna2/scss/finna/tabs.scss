@@ -275,9 +275,8 @@
  */
 .nav-scrollable {
   position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
+  Xwidth: 100%;
+  --#{$prefix}nav-link-padding-y: #{$nav-link-padding-y};
 
   .nav {
     $nav-scrollable-link-active-color: $primary !default;
@@ -302,15 +301,14 @@
   /* Arrow buttons */
   .arrow-btn {
     position: absolute;
+    // Calculate position relative to normal line height and our height taking the nav-item padding into account:
+    top: calc(var(--#{$prefix}nav-link-padding-y) - (2rem - 1rem * var(--#{$prefix}body-line-height)) / 2 + 2px);
     width: 2rem;
     height: 2rem;
     border-radius: 0.25rem;
     border: none;
     background: #fff;
     z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
     transition: opacity 0.3s, visibility 0.3s;
     box-shadow: 0 .125rem .25rem rgba(0,0,0, .25);
 
