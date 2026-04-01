@@ -44,18 +44,24 @@ finna.scrollableNav = (function finnaScrollableNav() {
 
       list.addEventListener('keydown', (e) => {
         const idx = Array.from(links).indexOf(document.activeElement);
-        if (e.key === 'ArrowRight') navigate(links[idx + 1]);
-        if (e.key === 'ArrowLeft') navigate(links[idx - 1]);
+        if (e.key === 'ArrowRight') {
+          navigate(links[idx + 1]);
+        }
+        if (e.key === 'ArrowLeft') {
+          navigate(links[idx - 1]);
+        }
       });
 
       // Show and hide arrows
       const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
-          if (entry.target === items[0])
+          if (prevBtn && entry.target === items[0]) {
             prevBtn.classList.toggle('hidden', entry.isIntersecting);
+          }
 
-          if (entry.target === items[items.length - 1])
+          if (nextBtn && entry.target === items[items.length - 1]) {
             nextBtn.classList.toggle('hidden', entry.isIntersecting);
+          }
         });
       }, { root: list, threshold: 0.9 });
 
