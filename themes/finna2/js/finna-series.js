@@ -30,7 +30,6 @@ finna.series = (function finnaSeries() {
     });
   }
 
-
   /**
    * Initialize
    */
