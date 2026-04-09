@@ -36,6 +36,7 @@
             "cd themes/finna2 && npm run updateDeps"
         ],
         "install-build-deps": [
+            "npm install --ignore-scripts",
             "cd themes/bootstrap5 && npm run installBuildDeps",
             "cd themes/finna2 && npm run installBuildDeps"
         ]

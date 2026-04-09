@@ -2,8 +2,8 @@
   "name": "finna2",
   "description": "Dependencies for finna2 theme",
   "scripts": {
-    "installBuildDeps": "npm install --no-audit && sh tools/copyDependencies.sh",
-    "updateDeps": "npm update && sh tools/copyDependencies.sh"
+    "installBuildDeps": "npm install --ignore-scripts --no-audit && sh tools/copyDependencies.sh",
+    "updateDeps": "npm update --ignore-scripts && sh tools/copyDependencies.sh"
   },
   "author": "",
   "license": "GPL-2.0-only",
