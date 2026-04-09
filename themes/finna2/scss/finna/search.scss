@@ -14,21 +14,13 @@ $thumbnail-width-large:  200px !default;
   background-color: $finna-search-background;
 }
 
-.search-bg-image-info {
-  display: flex;
-  justify-content: flex-end;
-  .search-bg-image-info-content {
-    display: inline-flex;
-    padding-right: 0.5em;
-    padding-left: 0.5em;
-    font-size: 0.8em;
-    color: $gray;
-    background: rgba(255, 255, 255, 0.9);
-  }
-}
-
 .template-dir-search.template-name-home {
   position: relative;
+  .search-form-container {
+    padding-top: 2em;
+    padding-bottom: 2em;
+    @include gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);
+  }
   .searchContent {
     -webkit-overflow-scrolling: touch;
     background-color: $background-color;
@@ -36,11 +28,6 @@ $thumbnail-width-large:  200px !default;
     background-repeat: no-repeat;
     background-position: center top;
     background-size: cover;
-    .search-form-container {
-      padding-top: 2em;
-      padding-bottom: 2em;
-      @include gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);
-    }
   }
 }
 @include media-breakpoint-down(sm) {
@@ -57,6 +44,19 @@ $thumbnail-width-large:  200px !default;
       padding-left: 0px;
     }
   }
+}
+
+.search-bg-image-info {
+  display: flex;
+  justify-content: flex-end;
+}
+.search-bg-image-info-content {
+  display: inline-flex;
+  padding-right: 0.5em;
+  padding-left: 0.5em;
+  font-size: 0.8em;
+  color: $gray;
+  background: rgba(255, 255, 255, 0.9);
 }
 
 /* Results */
