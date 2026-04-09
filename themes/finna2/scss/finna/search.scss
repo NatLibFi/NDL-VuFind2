@@ -16,6 +16,11 @@ $thumbnail-width-large:  200px !default;
 
 .template-dir-search.template-name-home {
   position: relative;
+  .search-form-container {
+    padding-top: 2em;
+    padding-bottom: 2em;
+    @include gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);
+  }
   .searchContent {
     -webkit-overflow-scrolling: touch;
     background-color: $background-color;
@@ -23,11 +28,6 @@ $thumbnail-width-large:  200px !default;
     background-repeat: no-repeat;
     background-position: center top;
     background-size: cover;
-    .search-form-container {
-      padding-top: 2em;
-      padding-bottom: 2em;
-      @include gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);
-    }
   }
 }
 @include media-breakpoint-down(sm) {
