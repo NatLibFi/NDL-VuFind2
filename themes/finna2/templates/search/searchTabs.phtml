@@ -3,6 +3,7 @@
   $isManyTabs = (count($searchTabs) > 2);
   $module = $this->layout()->templateDir;
   $hasSelectedTab = false;
+  $selectedTabLabel = 'empty_label';
 ?>
 <?php if (!$isManyTabs): ?>
   <div class="tabs-table">
