@@ -1,48 +1,43 @@
-//== Styling Finna radiobuttons
-.radiobutton {
-  font-size: 14px;
-  font-weight: normal;
-
-  & :last-child {
-    padding-bottom: 5px;
-  }
-  & input {
-    border: none;
-    background: transparent;
-    margin-right: 10px;
-    margin-top: 4px;
-  }
-  & input:before {
-    content: "\e61b";
-    font-family: finnaicons;
-    font-size: 18px;
-    margin: -3px 0px 0px -3px;
-    position: absolute;
-    background: $body-bg;
-    border-radius: 50%;
-    color: $gray-light;
-    transition: color .1s linear;
-  }
-  & input:checked:before  {
-    font-family: finnaicons;
-    content: "\e61a";
-    color: $link-color;
-  }
-}
-
 //== Bulk actions buttons
 
 .bulkActionButtons {
-  & .btn-group {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  margin: 0.5em 0em;
+  font-size: 0.9em;
+  > * {
+    margin-right: 0.3em;
+  }
+  .checkbox,
+  label {
+    display: inline-block;
+  }
+  .checkbox {
+    padding-left: 0px;
+    input[type="checkbox"] {
+      float: none;
+    }
+  }
+  label {
+    display: flex;
+    align-items: center;
+    input {
+      margin-right: 0.2em
+    }
+  }
+  .btn-group {
     .btn {
       border: 1px solid $gray-lighter;
       background: $gray-ultralight;
       color: $text-color;
-      padding: 5px 10px;
+      padding: 0.4em 0.9em;
       font-size: 0.9em;
-      @include media-breakpoint-down(sm) {
-        padding: 5px;
-      }
     }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .bulkActionButtons .btn-group .btn {
+    padding: 0.4em;
   }
 }
