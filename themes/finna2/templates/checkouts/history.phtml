@@ -37,7 +37,7 @@
       <?=$this->component('finna-addition-template', ['template' => 'historic-loans-pre-list'])?>
       <?php if (!empty($this->transactions)): ?>
         <?php if ($sortList): ?>
-          <div class="sort-col sort-col-mobile">
+          <div class="sort-col sort-col-mobile visible-xs">
             <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
           </div>
         <?php endif; ?>
@@ -77,9 +77,9 @@
                             <input type="submit" id="purgeSelected" name="purgeSelected" value="<?=$this->transEscAttr('loan_history_purge_selected')?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore disabled="disabled" aria-expanded="false">
                             <ul class="dropdown-menu useraccount-confirm" role="presentation">
                               <li><span class="dropdown-header"><?=$this->transEsc('loan_history_confirm_purge_selected')?></span></li>
-                              <li>
-                                <a class="dropdown-item" href="#" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
-                                <a class="dropdown-item" href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                              <li class="useraccount-confirm-buttons">
+                                <a class="dropdown-item" href="#" role="button" id="confirm_purge_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
+                                <a class="dropdown-item" href="#" role="button" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a>
                               </li>
                             </ul>
                           <?php endif; ?>
@@ -88,7 +88,7 @@
                           <div class="btn-group">
                             <div class="dropdown loan-history-download js-download-loan-history">
                               <button class="btn btn-primary btn-finna-toolbar dropdown-toggle download js-history-toggle" type="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <?=$this->transEsc('loan_history_download')?> <?=$this->icon('caret-down')?>
+                                <?=$this->transEsc('loan_history_download')?> <?=$this->icon('chevron-down')?>
                               </button>
                               <ul class="dropdown-menu dropdown-menu-<?php if ($purgeSelectedAllowed): ?>right<?php else: ?>left<?php endif;?> download">
                                 <li>
@@ -96,7 +96,7 @@
                                 </li>
                                 <?php foreach (['csv', 'ods', 'xlsx'] as $formatEsc): ?>
                                   <li>
-                                    <a href="<?=$this->url('myresearch-downloadcheckouthistory', [], ['query' => ['format' => $formatEsc]]);?>" class="btn btn-link dropdown-item" data-lightbox="" aria-haspopup="true"><?=$this->transEscWithPrefix('loan_history_download_', $formatEsc)?></a>
+                                    <a href="<?=$this->url('myresearch-downloadcheckouthistory', [], ['query' => ['format' => $formatEsc]]);?>" class="dropdown-item" data-lightbox="" aria-haspopup="true"><?=$this->transEscWithPrefix('loan_history_download_', $formatEsc)?></a>
                                   </li>
                                 <?php endforeach; ?>
                               </ul>
@@ -104,7 +104,7 @@
                           </div>
                         <?php endif; ?>
                       </div>
-                      <div class="sort-col">
+                      <div class="sort-col hidden-xs">
                         <?php if ($sortList): ?>
                           <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
                         <?php endif; ?>
@@ -187,9 +187,9 @@
                     <input type="submit" id="purgeAll" name="purgeAll" value="<?=$this->transEscAttr('loan_history_purge')?>" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
                     <ul class="dropdown-menu useraccount-confirm">
                       <li><span class="dropdown-header"><?=$this->transEsc('loan_history_confirm_purge_all')?></span></li>
-                      <li>
-                        <a href="#" id="confirm_purge_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
-                        <a href="#" class="confirm_purge_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                      <li class="useraccount-confirm-buttons">
+                        <a href="#" id="confirm_purge_all_yes" role="button"><?=$this->transEsc('confirm_dialog_yes')?></a>
+                        <a href="#" class="confirm_purge_no" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
                       </li>
                     </ul>
                   </div>

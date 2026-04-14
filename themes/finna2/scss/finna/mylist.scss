@@ -7,16 +7,21 @@
   }
 }
 
-.template-name-mylist {
-  .delete-list .dropdown-menu {
-    z-index: $zindex-dropdown;
-  }
-}
-
 .mylist-header {
   width: 100%;
   .alert {
     margin-top: 1em;
+  }
+}
+
+.record-container.myresearch-row {
+  padding: 0.7em;
+  margin: 0px;
+}
+
+.template-name-mylist {
+  .delete-list .dropdown-menu {
+    z-index: $zindex-dropdown;
   }
 }
 
@@ -318,6 +323,34 @@
   &:focus {
     border: 1px solid transparent;
     cursor: initial;
+  }
+}
+
+.myresearch-notes {
+  clear: both;
+  margin-top: 0.7em;
+  .resource-note {
+    margin-left: -0.4em;
+  }
+  a,
+  i {
+    color: $gray-light;
+  }
+}
+
+.list-description,
+.public-list-desc,
+.myresearch-notes,
+.template-dir-list .notes,
+.public-list-embed .notes {
+  .truncate-field.truncate-done {
+    div:first-child {
+      padding-top: 0.3em;
+    }
+  }
+  .more-link,
+  .less-link {
+    margin-bottom: 1.1em;
   }
 }
 

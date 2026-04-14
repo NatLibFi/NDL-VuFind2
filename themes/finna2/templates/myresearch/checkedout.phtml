@@ -40,7 +40,7 @@
       <?=$this->methodTimedBlocks('Renewals')?>
       <?=$this->component('finna-addition-template', ['template' => 'checkedout-pre-list'])?>
       <?php if ($this->renewForm): ?>
-        <div class="sort-col sort-col-mobile">
+        <div class="sort-col sort-col-mobile visible-xs">
           <?php if ($sortList): ?>
             <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
           <?php endif; ?>
@@ -79,9 +79,9 @@
                         <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewSelected" name="renewSelected" value="<?=$this->transEscAttr('renew_selected')?>" disabled="disabled" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
                           <li><span class="dropdown-header"><?=$this->transEsc('confirm_renew_selected_text')?></span></li>
-                          <li>
-                            <a class="dropdown-item" href="#" id="confirm_renew_selected_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
-                            <a class="dropdown-item" href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                          <li class="useraccount-confirm-buttons">
+                            <a class="dropdown-item" href="#" id="confirm_renew_selected_yes" role="button"><?=$this->transEsc('confirm_dialog_yes')?></a>
+                            <a class="dropdown-item" href="#" class="confirm_renew_no" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
                           </li>
                         </ul>
                       </div>
@@ -90,15 +90,15 @@
                           <input type="submit" class="btn btn-primary btn-finna-toolbar dropdown-toggle" id="renewAll" name="renewAll" value="<?=$this->transEscAttr('renew_all')?>" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
                           <ul class="dropdown-menu useraccount-confirm" role="presentation">
                             <li><span class="dropdown-header"><?=$this->transEsc('confirm_renew_all_text')?></span></li>
-                            <li>
-                              <a class="dropdown-item" href="#" id="confirm_renew_all_yes"><?=$this->transEsc('confirm_dialog_yes')?></a>
-                              <a class="dropdown-item" href="#" class="confirm_renew_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                            <li class="useraccount-confirm-buttons">
+                              <a class="dropdown-item" href="#" id="confirm_renew_all_yes" role="button"><?=$this->transEsc('confirm_dialog_yes')?></a>
+                              <a class="dropdown-item" href="#" class="confirm_renew_no" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
                             </li>
                           </ul>
                         </div>
                       <?php endif; ?>
                     </div>
-                    <div class="sort-col">
+                    <div class="sort-col hidden-xs">
                       <?php if ($sortList): ?>
                         <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList]); ?>
                       <?php endif; ?>
