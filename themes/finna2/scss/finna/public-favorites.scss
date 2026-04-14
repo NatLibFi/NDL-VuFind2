@@ -128,3 +128,20 @@
         margin-bottom: 12px;
     }
 }
+
+.public-list-embed {
+  .show-more {
+    text-align: center;
+    > div {
+      margin-bottom: 0.7em;
+    }
+  }
+  .savedLists.loaded {
+    display: none;
+  }
+  .controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 0.7em
+  }
+}
