@@ -39,6 +39,7 @@
       justify-content: space-between;
       .myresearch-notification {
         height: fit-content;
+        padding-left: 0px;
       }
     }
     .btn-finna-toolbar {
@@ -93,6 +94,9 @@
       &.no-list-functions {
         flex-direction: column-reverse;
         align-items: flex-start;
+        .myresearch-notification {
+          margin-top: 0px;
+        }
       }
       .btn-group {
         margin-right: 0.7em;
@@ -238,7 +242,6 @@
     }
   }
 }
-// MyResearch sidebar mobile navigation
 @include media-breakpoint-down(md) {
   .useraccount-nav.nav-tabs-personal {
     position: fixed;
