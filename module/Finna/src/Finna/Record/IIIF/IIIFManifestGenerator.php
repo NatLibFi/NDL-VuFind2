@@ -172,6 +172,19 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
                     break; // only take the largest $size
                 }
             }
+
+            $thumbUrl = $this->createBodyId(
+                $recordId,
+                $idx,
+                'small',
+                $source
+            );
+            $canvasItem['thumbnail'] = [(object)[
+                'id' => $thumbUrl,
+                'type' => 'Image',
+                'format' => 'image/jpeg',
+            ]];
+
             $manifestItems[] = (object)$canvasItem;
         }
 
@@ -203,8 +216,14 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      */
     protected function createCanvasMetadata(array $image): array
     {
+        // TODO: Currently it is a bit unclear if the 'value' fields should
+        // always be considered HTML text and therefore if we should escape the
+        // contents here.
+        //
+        // See: https://iiif.io/api/presentation/3.0/#45-html-markup-in-property-values
+
         $metadata = [];
-        if (isset($image['description'])) {
+        if (isset($image['description']) && $image['description'] !== '') {
             $metadata[] = (object)[
                 'label' => $this->getTranslations('image_description'),
                 'value' => (object)array_fill_keys(
