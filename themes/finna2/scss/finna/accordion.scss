@@ -82,6 +82,11 @@
     .truncate-field {
       display: block;
     }
+    table.citation {
+      td {
+        word-break: break-word;
+      }
+    }
   }
 }
 
