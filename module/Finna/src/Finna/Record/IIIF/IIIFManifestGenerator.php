@@ -216,9 +216,8 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      */
     protected function createCanvasMetadata(array $image): array
     {
-        // TODO: Currently it is a bit unclear if the 'value' fields should
-        // always be considered HTML text and therefore if we should escape the
-        // contents here.
+        // Metadata 'value' fields are appended with a single whitespace
+        // character to enforce a plain-text interpretation
         //
         // See: https://iiif.io/api/presentation/3.0/#45-html-markup-in-property-values
 
@@ -228,7 +227,7 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
                 'label' => $this->getTranslations('image_description'),
                 'value' => (object)array_fill_keys(
                     $this->metadataLangKeys,
-                    [$image['description']]
+                    [$image['description'] . ' ']
                 ),
             ];
         }
@@ -238,7 +237,7 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
                 'label' => $this->getTranslations('image_identifier'),
                 'value' => (object)array_fill_keys(
                     $this->metadataLangKeys,
-                    [$image['identifier']]
+                    [$image['identifier'] . ' ']
                 ),
             ];
         }
