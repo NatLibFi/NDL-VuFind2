@@ -236,11 +236,14 @@
   }
 }
 
-.record .recordTabs.nav > li > a {
-  color: $gray;
-}
-
 .record {
+  .recordTabs.nav {
+    > li {
+      > a {
+        color: $gray;
+      }
+    }
+  }
   .details-tab {
     table.citation {
       td {
