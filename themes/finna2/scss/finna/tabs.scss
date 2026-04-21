@@ -240,6 +240,16 @@
   color: $gray;
 }
 
+.record {
+  .details-tab {
+    table.citation {
+      td {
+        word-break: break-word;
+      }
+    }
+  }
+} 
+
 .mobile-main-tabs {
   width: 100%;
   .dropdown-toggle {
