@@ -222,12 +222,12 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
         // See: https://iiif.io/api/presentation/3.0/#45-html-markup-in-property-values
 
         $metadata = [];
-        if (isset($image['description']) && $image['description'] !== '') {
+        if ('' !== ($description = $image['description'] ?? '')) {
             $metadata[] = (object)[
                 'label' => $this->getTranslations('image_description'),
                 'value' => (object)array_fill_keys(
                     $this->metadataLangKeys,
-                    [$image['description'] . ' ']
+                    [$description . ' ']
                 ),
             ];
         }
