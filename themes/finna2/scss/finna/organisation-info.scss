@@ -491,12 +491,12 @@ $organisation-info-max-w: 400px !default;
                     page-break-inside: avoid;
                 }
                 .service-tooltip {
+                    padding: 0px;
                     color: $link-color;
                     text-align: left;
                     text-decoration: none;
                     background-color: inherit;
                     border: none;
-                    padding: 0px;
                 }
             }
         }
@@ -562,12 +562,12 @@ $organisation-info-max-w: 400px !default;
                 justify-content: space-between;
             }
             .location-col {
-                width: 32%;
                 float: left;
+                width: 32%;
             }
             .services {
-                width: 100%;
                 display: inline-block;
+                width: 100%;
                 .service-list {
                     column-count: 3;
                 }
@@ -583,9 +583,9 @@ $organisation-info-max-w: 400px !default;
     width: 100%;
     padding-bottom: 1.5em;
     .js-location-dropdown {
-        font-weight: normal;
-        margin-bottom: 1em;
         display: inline-block;
+        margin-bottom: 1em;
+        font-weight: 400;
         > .dropdown-toggle {
             width: 100%;
             padding: 0.35em;
@@ -595,8 +595,8 @@ $organisation-info-max-w: 400px !default;
             border-radius: 10px;
             transition: background .1s linear, color .2s linear;
             &[disabled] {
-                border: none;
                 background-color: $body-bg;
+                border: none;
                 .dropdown-icon {
                     display: none;
                 }
@@ -607,9 +607,9 @@ $organisation-info-max-w: 400px !default;
             &:hover,
             &:active,
             &:focus {
+                color: #000;
                 text-decoration: none;
                 background: $gray-lighter;
-                color: #000;
                 .icon {
                     color: #000;
                 }
