@@ -439,6 +439,8 @@ return [
             'resolver-more-options' => 'FinnaIcons:new-window',
             'route' => 'FontAwesome:bus',
             'rss-feed' => 'FinnaIcons:bell',
+            'scrollable-next' => 'Unicode:276f',
+            'scrollable-prev' => 'Unicode:276e',
             'search' => 'FinnaIcons:basic-search',
             'search-add' => 'FinnaIcons:plus-small',
             'search-advanced' => 'FinnaIcons:adv-search',

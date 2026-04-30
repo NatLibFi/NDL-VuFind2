@@ -2,12 +2,21 @@
 finna.scrollableList = (function finnaScrollableList() {
   /**
    * Initialize scrollable list
+   * @param {Element} [_container] The container element to search for links (default = document.body).
    */
-  function initScrollableList() {
-    document.querySelectorAll(".list-scrollable").forEach((scrollable, index) => {
+  function initScrollableList(_container) {
+    const container = _container || document.body;
+    container.querySelectorAll(".list-scrollable").forEach((scrollable) => {
+      if ('initialized' in scrollable.dataset) {
+        return;
+      }
+      scrollable.dataset.initialized = true;
 
       // Identify DOM elements
       const list = scrollable.querySelector(".list");
+      if (!list) {
+        console.warn('.list not found');
+      }
       const items = list.querySelectorAll(".list-item");
       const links = list.querySelectorAll(".list-link");
 
@@ -20,26 +29,9 @@ finna.scrollableList = (function finnaScrollableList() {
         };
       });
 
-      // Create next/prev buttons dynamically
-      const prevBtn = document.createElement("button");
-      prevBtn.className = "arrow-btn hidden";
-      prevBtn.setAttribute("aria-label", "Scroll backward");
-      prevBtn.innerHTML = "❮";
-
-      const nextBtn = document.createElement("button");
-      nextBtn.className = "arrow-btn";
-      nextBtn.setAttribute("aria-label", "Scroll forward");
-      nextBtn.innerHTML = "❯";
-
-      // Positioning classes
-      prevBtn.classList.add("scroll-prev-btn");
-      prevBtn.classList.add("scroll-prev-btn-" + index);
-      nextBtn.classList.add("scroll-next-btn");
-      nextBtn.classList.add("scroll-next-btn-" + index);
-
-      // Insert buttons into DOM
-      scrollable.prepend(prevBtn);
-      scrollable.append(nextBtn);
+      // Find prev/next buttons
+      const prevBtn = scrollable.querySelector('.js-scroll-prev');
+      const nextBtn = scrollable.querySelector('.js-scroll-next');
 
       /**
        * Initialize tabindex
@@ -84,10 +76,10 @@ finna.scrollableList = (function finnaScrollableList() {
       const observer = new IntersectionObserver(
         (entries) => {
           entries.forEach((entry) => {
-            if (entry.target === items[0]) {
+            if (prevBtn && entry.target === items[0]) {
               prevBtn.classList.toggle("hidden", entry.isIntersecting);
             }
-            if (entry.target === items[items.length - 1]) {
+            if (nextBtn && entry.target === items[items.length - 1]) {
               nextBtn.classList.toggle("hidden", entry.isIntersecting);
             }
           });
@@ -120,14 +112,17 @@ finna.scrollableList = (function finnaScrollableList() {
         });
       }
 
-      prevBtn.addEventListener("click", () => scrollByDir(-1));
-      nextBtn.addEventListener("click", () => scrollByDir(1));
+      if (prevBtn) {
+        prevBtn.addEventListener("click", () => scrollByDir(-1));
+      }
+      if (nextBtn) {
+        nextBtn.addEventListener("click", () => scrollByDir(1));
+      }
 
       // Make sure to start at left
       list.scrollTo({ left: 0, behavior: "instant" });
     });
   }
-
 
   /**
    * Initialize
@@ -137,7 +132,8 @@ finna.scrollableList = (function finnaScrollableList() {
   }
 
   var my = {
-    init: init
+    init,
+    initScrollableList
   };
 
   return my;

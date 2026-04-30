@@ -37,9 +37,12 @@
       <?php endif; ?>
     </div>
   </div>
-  <div class="series-tab-container container">
+  <div class="series-tab-container js-series-tab-container container">
     <div class="list-scrollable">
-      <ul class="list flex-row flex-nowrap overflow-x-auto" id="scrollableList">
+      <button class="arrow-btn scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+        <?=$this->icon('scrollable-prev')?>
+      </button>
+      <ul class="list flex-row flex-nowrap overflow-x-auto">
         <?php foreach ($results as $source => $current): ?>
           <?php
             $formats = $current->getFormats();
@@ -51,26 +54,29 @@
               $orderForCurrentSeries = $orderSeriesParts[1] === $keySeriesParts[1];
             }
           ?>
-        <li class="list-item <?= $recordId === $current->getUniqueId() ? 'active' : '' ?>">
-          <?php if ($orderForCurrentSeries): ?>
-            <span class="series"><?=$this->escapeHtml($seriesOrder['order'])?></span>
-          <?php endif; ?>
-          <a class="list-link" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current))?>">
-            <img loading="lazy" src="<?=$this->recordImage($this->record($current))->getLargeImage()?>" alt="">
-            <div class="cover iconlabel hidden format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
-            <span class="title"><?=$this->escapeHtml($current->getTitle())?></span>
-          </a>
-        </li>
+          <li class="list-item <?= $recordId === $current->getUniqueId() ? 'active' : '' ?>">
+            <?php if ($orderForCurrentSeries): ?>
+              <span class="series"><?=$this->escapeHtml($seriesOrder['order'])?></span>
+            <?php endif; ?>
+            <a class="list-link" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current))?>">
+              <img loading="lazy" src="<?=$this->recordImage($this->record($current))->getLargeImage()?>" alt="">
+              <div class="cover iconlabel hidden format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
+              <span class="title"><?=$this->escapeHtml($current->getTitle())?></span>
+            </a>
+          </li>
         <?php endforeach; ?>
       </ul>
+      <button class="arrow-btn scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+        <?=$this->icon('scrollable-next')?>
+      </button>
     </div>
   </div>
-  <?php $searchQuery = urlencode('series_key_str_mv:"' . $currentSeriesKey . '"'); ?>
-  <div class="series-search-link"><a href="<?= $this->url('search-results') ?>?lookfor=<?=$searchQuery?>" class="btn btn-primary"><?= $this->transEsc('channel_search') ?> (<?=$results->getTotal()?>)</a></div>
+  <?php $searchQuery = 'series_key_str_mv:"' . $currentSeriesKey . '"'; ?>
+  <div class="series-search-link"><a href="<?= $this->url('search-results', options: ['query' => ['lookfor' => $searchQuery]]) ?>" class="btn btn-primary"><?= $this->transEsc('channel_search') ?> (<?=$results->getTotal()?>)</a></div>
 </div>
 <?php
   $script = <<<JS
-      finna.scrollableList.init();
+      finna.scrollableList.initScrollableList(document.querySelector('.js-series-tab-container'));
       finna.series.init();
       JS;
 ?>
