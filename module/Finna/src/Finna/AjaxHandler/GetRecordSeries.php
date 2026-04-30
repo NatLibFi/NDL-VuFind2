@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Record Series" AJAX handler
+ * "Get Record Series" AJAX handler.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Laminas\View\Renderer\RendererInterface;
 use VuFind\Record\Loader;
 
 /**
- * "Get Record Series" AJAX handler
+ * "Get Record Series" AJAX handler.
  *
  * Get series tab data
  *
@@ -47,21 +47,21 @@ use VuFind\Record\Loader;
 class GetRecordSeries extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var \Laminas\View\Renderer\RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Loader            $loader   Record loader
      * @param RendererInterface $renderer Renderer

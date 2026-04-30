@@ -114,7 +114,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     ];
 
     /**
-     * Normalization character folding table
+     * Normalization character folding table.
      *
      * @var array
      */
@@ -1536,7 +1536,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get the publication end date of the record
+     * Get the publication end date of the record.
      *
      * @return number|false
      */

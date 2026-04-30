@@ -1343,7 +1343,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get parts of a series as a search result
+     * Get parts of a series as a search result.
      *
      * @param string $seriesKey Series key
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Series tab
+ * Series tab.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\RecordTab;
 
 /**
- * Series tab
+ * Series tab.
  *
  * @category VuFind
  * @package  RecordTabs
