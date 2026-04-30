@@ -36,7 +36,7 @@ use VuFind\Config\Config;
 use VuFind\Http\GuzzleService;
 
 /**
- * File loader
+ * File loader.
  *
  * @category VuFind
  * @package  File
@@ -50,7 +50,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CacheManager  $cacheManager  Cache Manager
      * @param Config        $config        Main configuration
@@ -64,7 +64,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Convert format to mime
+     * Convert format to mime.
      *
      * @param string $format Format to convert.
      *
@@ -78,7 +78,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Download a file to cache
+     * Download a file to cache.
      *
      * @param string $url           Url to download
      * @param string $fileName      Name of the file to save
@@ -122,7 +122,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Proxy a file and set proper headers, useful if download has no information
+     * Proxy a file and set proper headers, useful if download has no information.
      *
      * @param string $url      Url to load the file from
      * @param string $fileName Display name of the file to download

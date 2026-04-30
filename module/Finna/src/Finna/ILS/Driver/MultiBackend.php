@@ -81,7 +81,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     }
 
     /**
-     * Get available login targets (drivers enabled for login)
+     * Get available login targets (drivers enabled for login).
      *
      * @return string[] Source ID's
      */
@@ -103,7 +103,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -126,7 +126,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     }
 
     /**
-     * Get Renew Details
+     * Get Renew Details.
      *
      * In order to renew an item, the ILS requires information on the item and
      * patron. This function returns the information as a string which is then used
@@ -217,7 +217,7 @@ class MultiBackend extends \VuFind\ILS\Driver\MultiBackend implements Translator
     }
 
     /**
-     * Remap legacy online payment configuration
+     * Remap legacy online payment configuration.
      *
      * @param array $config Payment configuration
      *

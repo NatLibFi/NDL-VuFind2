@@ -43,7 +43,7 @@ use Psr\Container\ContainerInterface;
 class ApiControllerFactory extends \VuFindApi\Controller\ApiControllerFactory
 {
     /**
-     * Get the API controllers to register with ApiController
+     * Get the API controllers to register with ApiController.
      *
      * @param ContainerInterface $container Service manager
      *

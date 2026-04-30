@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Quria test class
+ * Quria test class.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFindTest\Feature\FixtureTrait;
 use VuFindTest\Feature\ReflectionTrait;
 
 /**
- * Quria test class
+ * Quria test class.
  *
  * @category VuFind
  * @package  Tests
@@ -51,14 +51,14 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
     use ReflectionTrait;
 
     /**
-     * Local cache
+     * Local cache.
      *
      * @var array
      */
     protected array $cache = [];
 
     /**
-     * Create connector
+     * Create connector.
      *
      * @param array $requestMap Request map
      * @param array $config     Driver config
@@ -90,7 +90,7 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testGetMyProfile
+     * Data provider for testGetMyProfile.
      *
      * @return Generator
      */
@@ -170,7 +170,7 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getMyProfile
+     * Test getMyProfile.
      *
      * @param string $fixtureKey Request fixture path
      * @param array  $expected   Expected results for the test
@@ -222,7 +222,7 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testPatronLogin
+     * Data provider for testPatronLogin.
      *
      * @return Generator
      */
@@ -260,7 +260,7 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test patronLogin
+     * Test patronLogin.
      *
      * @param string $fixtureKey Response fixture
      * @param array  $expected   Expected results for the test
@@ -301,7 +301,7 @@ class QuriaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Load fixture and convert it into an stdObject
+     * Load fixture and convert it into an stdObject.
      *
      * @param string $fixture Fixture path
      *

@@ -53,7 +53,7 @@ use function strlen;
 class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
 {
     /**
-     * Solr field used to store unique identifier
+     * Solr field used to store unique identifier.
      *
      * @var string
      */
@@ -68,42 +68,42 @@ class SimilarBuilder extends \VuFindSearch\Backend\Solr\SimilarBuilder
     protected $useHandler = false;
 
     /**
-     * MoreLikeThis Handler parameters
+     * MoreLikeThis Handler parameters.
      *
      * @var string
      */
     protected $handlerParams = '';
 
     /**
-     * Number of similar records to retrieve
+     * Number of similar records to retrieve.
      *
      * @var int
      */
     protected $count = 5;
 
     /**
-     * Boost multiplier for full string match when using the MoreLikeThis Handler
+     * Boost multiplier for full string match when using the MoreLikeThis Handler.
      *
      * @var string
      */
     protected $fullMatchBoostMultiplier = 10;
 
     /**
-     * Characters that need to be escaped in a Solr query
+     * Characters that need to be escaped in a Solr query.
      *
      * @var string
      */
     protected $escapedChars = '+-&|!(){}[]^"~*?:\\/';
 
     /**
-     * Stop words that are ignored
+     * Stop words that are ignored.
      *
      * @var array
      */
     protected $stopWords = ['and', 'not', 'the'];
 
     /**
-     * Whether to exclude other versions of the reference record from results
+     * Whether to exclude other versions of the reference record from results.
      *
      * @var bool
      */

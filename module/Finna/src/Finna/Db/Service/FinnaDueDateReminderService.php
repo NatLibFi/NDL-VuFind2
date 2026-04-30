@@ -57,7 +57,7 @@ class FinnaDueDateReminderService extends AbstractDbService implements
     }
 
     /**
-     * Get a reminded loan
+     * Get a reminded loan.
      *
      * @param UserEntityInterface $user    User
      * @param string              $loanId  Loan Id
@@ -75,7 +75,7 @@ class FinnaDueDateReminderService extends AbstractDbService implements
     }
 
     /**
-     * Add a reminded loan
+     * Add a reminded loan.
      *
      * @param UserEntityInterface $user    User
      * @param string              $loanId  Loan Id
@@ -94,7 +94,7 @@ class FinnaDueDateReminderService extends AbstractDbService implements
     }
 
     /**
-     * Delete a reminded loan
+     * Delete a reminded loan.
      *
      * @param UserEntityInterface $user   User
      * @param string              $loanId Loan Id

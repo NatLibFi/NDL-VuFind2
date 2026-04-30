@@ -1,38 +1,78 @@
+#side-collapse-first_indexed > a {
+  display: block;
+  width: fit-content;
+}
+#first_indexedFilter {
+  margin-top: 0.7em;
+  margin-bottom: 1.4em;
+  .form-group {
+    display: flex;
+    align-items: flex-end;
+    margin-bottom: 0px;
+    .finna-dateinput {
+      flex: 0;
+      label > .dateformat-hint {
+        font-size: 0.7rem;
+      }
+    }
+    button[type=submit] {
+      height: $input-height-base;
+      padding: $padding-base-vertical $padding-base-horizontal;
+      margin-left: 0.7em;
+    }
+  }
+}
+@include media-breakpoint-only(sm) {
+  #first_indexedFilter {
+    .form-group {
+      flex-direction: column;
+      align-items: flex-start;
+      button[type=submit] {
+        margin-top: 0.3em;
+        margin-left: 0px;
+      }
+    }
+  }
+}
+
+//Organisaatio filtterin oma hakukenttä
+.building-filter {
+    padding: 0.4em 0.5em;
+    input {
+      width: 12em;
+    }
+}
+@include media-breakpoint-down(sm) {
+  .building-filter {
+    padding-left: 1.7em;
+  }
+}
+
 .search-filters {
+  position: relative;
   background: $filterContent-background;
   border-top: 1px solid $filterContent-border-color;
   border-bottom: 1px solid $filterContent-border-color;
-  position: relative;
 }
 
-.finna-filters, .results .noresults {
-  color: $filterContent-text-color;
-  padding: 5px 0 5px 0;
-  // < ie 10
-  display: inline-block;
+.finna-filters,
+.results .noresults {
   display: inline-flex;
   flex-wrap: wrap;
   width: 100%;
+  padding: 0.4em 0em;
+  color: $filterContent-text-color;
   .filter-options {
     display: flex;
-    @include media-breakpoint-up(md) {
-      padding-right: 10px;
-      align-items: flex-start;
-    }
-    @include media-breakpoint-down(md) {
-      align-items: center;
-      justify-content: space-between;
-      width: 100%;
-    }
     .filters-toggle {
-      cursor: pointer;
       display: flex;
       align-items: center;
-      text-transform: uppercase;
+      gap: 0.4em;
+      height: 3.5em;
+      padding: 0px;
+      font-weight: 700;
       color: $filterContent-text-color;
-      font-weight: bold;
-      height: 40px;
-      padding: 0;
+      text-transform: uppercase;
       .icon.collapse {
         display: none;
       }
@@ -44,156 +84,96 @@
           display: initial;
         }
       }
-      @include media-breakpoint-down(md) {
-        font-size: 80%;
-        display: flex !important
-      }
-    }
-    .checkbox {
-      display: flex;
-      align-items: center;
-      padding-left: 0;
-      padding-right: 0;
-      margin: 0;
-      height: 40px;
-      label {
-        display: inline-block;
-        padding: 10px 0px;
-
-        @include media-breakpoint-down(xs) {
-          font-size: 80%;
-        }
-      }
     }
   }
   .filters {
+    display: inline-flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
     width: 100%;
     max-width: 100%;
-    flex: 1;
-    // < ie 10
-    display: inline-block;
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: wrap;
   }
   .filters-term {
-    margin-left: 5px;
+    margin-left: 0.4em;
   }
 
   .filter-title-group {
-    // < ie 10
-    display: inline-block;
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     max-width: 100%;
-    flex-wrap: wrap;
   }
   .filter-value {
-    padding: 5px 10px;
-    margin: 5px 0 5px 5px;
-    font-weight: 600;
-    background: $filters-background-color;
-    color: $filters-text-color;
-    border-radius: $border-radius-small;
     display: inline-flex;
     align-items: center;
+    padding: 0.35em 0.8em;
+    margin: 0.4em 0em 0.4em 0.4em;
+    font-weight: 600;
+    color: $filters-text-color;
     white-space: nowrap;
-    a {
-      color: $filters-icon-color;
-      margin: 4px;
-    }
+    background: $filters-background-color;
+    border-radius: $border-radius-small;
     .text {
-      white-space: nowrap;
+      flex-grow: 1;
+      margin: 0em 0.5em 0em 0em;
       overflow: hidden;
       text-overflow: ellipsis;
-      margin: 0;
-      flex-grow: 1;
-      margin-right: 0.5em;
+      white-space: nowrap;
     }
     &.dropdown-item {
       width: initial;
     }
   }
   .title-value-pair {
-    margin-left: 10px;
-  }
-  .active-filter-count {
-    margin-left: 5px;
+    margin-left: 0.7em;
   }
 }
-.finna-filters .filters a.filter-value:hover,
-.finna-filters .filters a.filter-value:focus {
-  color: #fff;
-  text-decoration: line-through;
-  background-color: $state-danger-text;
+@include media-breakpoint-down(md) {
+  .finna-filters,
+  .results .noresults {
+    .filter-options {
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      .filters-toggle {
+        font-size: 80%;
+      }
+    }
+  }
+}
+@include media-breakpoint-up(md) {
+  .finna-filters,
+  .results .noresults {
+    .filter-options {
+      align-items: flex-start;
+      padding-right: 0.7em;
+    }
+  }
+}
+
+.finna-filters {
+  .title-value-pair {
+    display: inline-block;
+  }
+  .filters a.filter-value {
+    &:hover,
+    &:focus {
+      text-decoration: line-through;
+      background-color: $state-danger-text;
+    }
+  }
 }
 
 .results .noresults {
   flex-direction: column;
-  padding: 10px;
-
+  padding: 0.7em;
   p {
     flex: 1;
   }
-}
-
-.finna-filters .title-value-pair {
-  display: inline-block;
-}
-
-.template-name-view .filters-container .finna-filters {
-  .filter-value {
-    background: $gray-ultralight;
-    color: $text-color;
-    .search-filter-remove {
-        color: $text-color;
-    }
-  }
-}
-
-.filters {
-  &.filters-bar {
-    max-width: 100%;
-  }
-}
-
-.search-filter-remove {
-  margin: 4px 1px 4px 4px;
-  font-weight: normal;
-  color: #fff;
-}
-.search-filter-dropdown {
-  display: inline-block;
-  margin-left: 5px;
-  .btn {
-    color: #fff;
-    background: $list-group-active-bg;
-    vertical-align: baseline;
-    padding-top: 5px;
-    padding-bottom: 5px;
-  }
-
-  .dropdown-menu {
-    &>li {
-      border: 0;
-    }
-    .filters-term {
-      display: block;
-      text-align: center;
-    }
-    .filter-value {
-      display: flex;
-      margin-right: 5px;
-
-      .text {
-        flex-grow: 1;
-        margin-right: 0.5em;
-      }
-      a {
-        flex-shrink: 0;
-        margin: 0;
-      }
-    }
+  .filter-value a {
+    margin: 0.3em;
+    color: $filters-icon-color;
   }
 }
 
@@ -201,16 +181,50 @@
   .filters {
     width: 100%;
     font-size: 80%;
-
     // Reset specific font sizes
-    .btn, .dropdown-menu {
+    .btn,
+    .dropdown-menu {
       font-size: 100%;
     }
   }
-  .finna-filters .retain-filters .checkbox label:before {
-    font-size: 15px;
-  }
   .filter-value {
     max-width: 95%;
+  }
+}
+
+.search-filter-dropdown {
+  display: inline-block;
+  margin-left: 0.4em;
+  .btn {
+    padding-top: 0.4em;
+    padding-bottom: 0.4em;
+    color: $filters-text-color;
+    vertical-align: baseline;
+    background: $filters-background-color;
+  }
+  .dropdown-menu {
+    > li {
+      border: 0;
+    }
+    .filters-term {
+      display: block;
+      margin-left: 0px;
+      text-align: center;
+    }
+    .filter-value {
+      display: flex;
+      margin-right: 0.4em;
+      .text {
+        flex-grow: 1;
+      }
+    }
+  }
+}
+
+// Active filters on record page
+.template-name-view .filters-container .finna-filters {
+  .filter-value {
+    color: $text-color;
+    background: $gray-ultralight;
   }
 }

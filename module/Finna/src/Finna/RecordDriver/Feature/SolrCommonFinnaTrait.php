@@ -55,28 +55,28 @@ trait SolrCommonFinnaTrait
     use FinnaRecordTrait;
 
     /**
-     * Date Converter
+     * Date Converter.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateConverter = null;
 
     /**
-     * Video Handler
+     * Video Handler.
      *
-     * @var \Finna\Video\Video
+     * @var ?\Finna\Video\Video
      */
     protected $videoHandler = null;
 
     /**
-     * Locale settings
+     * Locale settings.
      *
-     * @var LocaleSettings
+     * @var ?LocaleSettings
      */
     protected $localeSettings = null;
 
     /**
-     * Attach date converter
+     * Attach date converter.
      *
      * @param \VuFind\Date\Converter $dateConverter Date Converter
      *
@@ -88,7 +88,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Attach video handler
+     * Attach video handler.
      *
      * @param \Finna\Video\Video $videoHandler Video Handler
      *
@@ -237,7 +237,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Get sector
+     * Get sector.
      *
      * @return string
      */
@@ -247,7 +247,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Return local record IDs (only works with dedup records)
+     * Return local record IDs (only works with dedup records).
      *
      * @return array
      */
@@ -283,7 +283,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Get geographic subject headings
+     * Get geographic subject headings.
      *
      * @return array
      */
@@ -293,7 +293,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Get chronological subject headings
+     * Get chronological subject headings.
      *
      * @return array
      */
@@ -313,7 +313,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Returns the locale used by translator
+     * Returns the locale used by translator.
      *
      * @return string
      */
@@ -326,7 +326,7 @@ trait SolrCommonFinnaTrait
     /**
      * Get an array containing languages in a priority order.
      * First language is the translator locale, then languages from primary array,
-     * then sites fallback_languages and last default non-language code
+     * then sites fallback_languages and last default non-language code.
      *
      * @param array  $primary An array containing languages, which are to be checked after
      *                        translator locale.
@@ -342,7 +342,7 @@ trait SolrCommonFinnaTrait
         $languages = [
             $this->getTranslatorLocale(),
             ...$primary,
-            ...$this->localeSettings->getFallbackLocales(),
+            ...$this->localeSettings?->getFallbackLocales() ?? [],
         ];
         $final = [];
         foreach ($languages as $lang) {

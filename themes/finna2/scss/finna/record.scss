@@ -461,6 +461,7 @@
   }
 }
 
+.popup-link-buttons,
 .image-details-container {
   .image-link,
   .model-link {
@@ -541,6 +542,12 @@
     .dropdown-menu.download {
       left: -4%;
     }
+  }
+}
+
+.popup-link-buttons {
+  .open-link {
+    margin-top: 0px;
   }
 }
 
@@ -931,93 +938,31 @@ finna-model-viewer .object-editor {
 }
 
 // Material provided by
-
-.recordProvidedBy {
-  .record-organisation {
-    img.consortium-logo {
-      margin: 8px 0px 12px;
-    }
-    li.organisation-page-link {
-      padding-top: 5px;
-      a {
-        display: block;
-      }
-    }
-    li.material-questions-feedback {
-      padding-top: 10px;
-      font-weight: 700;
-    }
-  }
-  .repository-library-request {
-    padding-top: 10px;
-    font-weight: 700;
-  }
-  .repository-library-request-order {
-    margin-top: 0.3em;
-  }
-}
-
-.sidebar .recordProvidedBy {
-  margin-top: 0px;
-  border-top: none;
-  .record-type.organisations {
-    padding: 15px;
-    margin-bottom: 0px;
-    font-size: 1em;
-  }
-  .record-organisation-box {
-    border: $sidebar-border;
-    margin-bottom: 1em;
-  }
-}
-
 .record-main .recordProvidedBy {
-  padding: 0px 15px 10px 15px;
-  margin-bottom: 10px;
+  padding: 0.7em 1.1em;
+  margin-bottom: 0.7em;
   border: $sidebar-border;
   h2 {
-    font-size: 20px;
+    margin: 0.5em 0em;
+    font-size: 1.4em;
   }
   @include media-breakpoint-up(sm) {
     max-width: 300px;
   }
 }
-
 // Record feedback
 .feedback-record {
   margin-top: 0.3em;
 }
 
-.authoritybox,
 .large-image-layout.record .record-main > .media {
-  .smaller-image-sidebar {
-    display: none;
-  }
   .sidebar .organisation-menu {
     display: none
   }
 }
-
 @include media-breakpoint-down(md) {
   .large-image-sidebar {
     width: 100%;
-  }
-}
-
-.related-records {
-  margin-bottom: 1em;
-  li.list-group-item p {
-    margin-bottom: 0px;
-    font-weight: 600;
-    text-transform: uppercase;
-  }
-}
-
-#similar-records {
-  .details {
-    font-size: 0.9em;
-    line-height: 25px;
-    margin-top: -5px;
   }
 }
 

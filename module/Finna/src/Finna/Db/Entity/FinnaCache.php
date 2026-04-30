@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_cache table
+ * Entity model for finna_cache table.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Doctrine\ORM\Mapping as ORM;
 use function is_resource;
 
 /**
- * Entity model for finna_cache table
+ * Entity model for finna_cache table.
  *
  * @category VuFind
  * @package  Database
@@ -91,7 +91,7 @@ class FinnaCache implements FinnaCacheEntityInterface
     protected mixed $data = null;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Console service for reminding users x days before account expiration
+ * Console service for reminding users x days before account expiration.
  *
  * PHP version 8
  *
@@ -61,7 +61,7 @@ use function in_array;
 use function sprintf;
 
 /**
- * Console service for reminding users x days before account expiration
+ * Console service for reminding users x days before account expiration.
  *
  * @category VuFind
  * @package  Service
@@ -96,7 +96,7 @@ class AccountExpirationReminders extends AbstractUtilCommand
     protected $viewBaseDir = null;
 
     /**
-     * UrllHelper
+     * UrllHelper.
      *
      * @var urlHelper
      */
@@ -110,35 +110,35 @@ class AccountExpirationReminders extends AbstractUtilCommand
     protected $currentInstitution = null;
 
     /**
-     * Current site config
+     * Current site config.
      *
      * @var array
      */
     protected $currentSiteConfig = null;
 
     /**
-     * Current MultiBackend config
+     * Current MultiBackend config.
      *
      * @var array
      */
     protected $currentMultiBackendConfig = null;
 
     /**
-     * Expiration time in days
+     * Expiration time in days.
      *
      * @var int
      */
     protected $expirationDays;
 
     /**
-     * Days before expiration to send reminders
+     * Days before expiration to send reminders.
      *
      * @var int
      */
     protected $remindDaysBefore;
 
     /**
-     * Days between reminders
+     * Days between reminders.
      *
      * @var int
      */
@@ -152,14 +152,14 @@ class AccountExpirationReminders extends AbstractUtilCommand
     protected $reportOnly;
 
     /**
-     * Currently active view path
+     * Currently active view path.
      *
      * @var string
      */
     protected $currentViewPath = '';
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserServiceInterface               $userService       User database service
      * @param SearchServiceInterface             $searchService     Search database service

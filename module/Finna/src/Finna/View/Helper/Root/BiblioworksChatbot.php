@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BiblioWorks Chatbot View Helper
+ * BiblioWorks Chatbot View Helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use Laminas\View\Helper\AbstractHelper;
 
 /**
- * View helper for rendering BiblioWorks Helpdesk chatbot integration
+ * View helper for rendering BiblioWorks Helpdesk chatbot integration.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,14 +43,14 @@ use Laminas\View\Helper\AbstractHelper;
 class BiblioworksChatbot extends AbstractHelper
 {
     /**
-     * BiblioWorks configuration
+     * BiblioWorks configuration.
      *
      * @var array
      */
     protected array $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $config BiblioWorks configuration
      */
@@ -60,7 +60,7 @@ class BiblioworksChatbot extends AbstractHelper
     }
 
     /**
-     * Render the chatbot integration scripts if enabled
+     * Render the chatbot integration scripts if enabled.
      *
      * @return string HTML output for chatbot integration
      */

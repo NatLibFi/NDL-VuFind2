@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Search API Controller
+ * Search API Controller.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace FinnaApi\Controller;
 use Finna\RecordDriver\RenderContext;
 
 /**
- * Search API Controller
+ * Search API Controller.
  *
  * Controls the Search API functionality
  *
@@ -46,7 +46,7 @@ class SearchApiController extends \VuFindApi\Controller\SearchApiController
 {
     /**
      * Get API specification JSON fragment for services provided by the
-     * controller
+     * controller.
      *
      * @return string
      */
@@ -79,7 +79,7 @@ class SearchApiController extends \VuFindApi\Controller\SearchApiController
     }
 
     /**
-     * Search action
+     * Search action.
      *
      * @return \Laminas\Http\Response
      */

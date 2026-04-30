@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ProxyUrl helper test class
+ * ProxyUrl helper test class.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use VuFind\Net\IpAddressUtils;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * ProxyUrl helper test class
+ * ProxyUrl helper test class.
  *
  * @category VuFind
  * @package  Tests
@@ -52,7 +52,7 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
 
     /**
-     * Mock container
+     * Mock container.
      *
      * @var \VuFindTest\Container\MockContainer
      */
@@ -69,7 +69,7 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected invoke test data
+     * Function to get expected invoke test data.
      *
      * @return array
      */
@@ -90,7 +90,7 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test invoking the helper
+     * Test invoking the helper.
      *
      * @param string $url           Url to proxy
      * @param string $expected      Expected value

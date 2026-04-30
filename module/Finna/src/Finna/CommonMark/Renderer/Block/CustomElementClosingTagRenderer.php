@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element closing tag renderer
+ * Custom element closing tag renderer.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
 
 /**
- * Custom element closing tag renderer
+ * Custom element closing tag renderer.
  *
  * @category VuFind
  * @package  CommonMark

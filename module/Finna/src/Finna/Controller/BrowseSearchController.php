@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Browse Search Controller
+ * Browse Search Controller.
  *
  * PHP version 8
  *

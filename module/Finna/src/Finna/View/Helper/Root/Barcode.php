@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Barcode view helper
+ * Barcode view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Barcode view helper
+ * Barcode view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,7 +41,7 @@ namespace Finna\View\Helper\Root;
 class Barcode extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Create a barcode PNG
+     * Create a barcode PNG.
      *
      * @param string $code   String to use as the barcode
      * @param int    $width  Barcode narrow bar width
@@ -64,7 +64,7 @@ class Barcode extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Create a CODE 39 as SVG from a barcode string
+     * Create a CODE 39 as SVG from a barcode string.
      *
      * @param string $barcode         Barcode
      * @param float  $widthFactor     Minimum width of a single bar in user units.

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Record Controller
+ * Primo Central Record Controller.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * Primo Central Record Controller
+ * Primo Central Record Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -44,7 +44,7 @@ class PrimorecordController extends \VuFind\Controller\PrimorecordController
     use \Finna\Statistics\ReporterTrait;
 
     /**
-     * Handle onDispatch event
+     * Handle onDispatch event.
      *
      * @param \Laminas\Mvc\MvcEvent $e Event
      *

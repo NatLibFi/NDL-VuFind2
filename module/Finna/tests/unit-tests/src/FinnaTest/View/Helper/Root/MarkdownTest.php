@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Markdown Test Class
+ * Markdown Test Class.
  *
  * PHP version 8
  *
@@ -43,7 +43,7 @@ use VuFind\View\Helper\Root\TransEsc;
 use VuFind\View\Helper\Root\Translate;
 
 /**
- * Markdown Test Class
+ * Markdown Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -221,7 +221,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get test Markdown with finna-panel
+     * Get test Markdown with finna-panel.
      *
      * @param string $content Content
      *
@@ -239,7 +239,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get test Markdown with finna-truncate
+     * Get test Markdown with finna-truncate.
      *
      * @return string
      */
@@ -255,7 +255,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get expected result for finna-panel
+     * Get expected result for finna-panel.
      *
      * @param ?string $content Content
      * @param ?string $heading Heading
@@ -281,7 +281,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get expected result for finna-truncate
+     * Get expected result for finna-truncate.
      *
      * @return string
      */

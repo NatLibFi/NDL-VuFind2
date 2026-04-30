@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna resource list
+ * Finna resource list.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Feature\DateTimeTrait;
 
 /**
- * Finna resource list
+ * Finna resource list.
  *
  * @category VuFind
  * @package  Database
@@ -81,7 +81,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     protected string $title = '';
 
     /**
-     * Description for the list
+     * Description for the list.
      *
      * @var ?string
      */
@@ -97,7 +97,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     protected DateTime $created;
 
     /**
-     * Institution
+     * Institution.
      *
      * @var string
      */
@@ -105,7 +105,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     protected string $institution = '';
 
     /**
-     * List config identifier
+     * List config identifier.
      *
      * @var string
      */
@@ -113,7 +113,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     protected string $listConfigIdentifier = '';
 
     /**
-     * List type
+     * List type.
      *
      * @var string
      */
@@ -153,7 +153,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     protected string $connection = '';
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -172,7 +172,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     }
 
     /**
-     * Get user
+     * Get user.
      *
      * @return UserEntityInterface
      */
@@ -182,7 +182,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param UserEntityInterface $user User entity
      *
@@ -218,7 +218,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     }
 
     /**
-     * Created setter
+     * Created setter.
      *
      * @param DateTime $dateTime Created date
      *
@@ -231,7 +231,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     }
 
     /**
-     * Created getter
+     * Created getter.
      *
      * @return ?DateTime
      */
@@ -400,7 +400,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     }
 
     /**
-     * Get the external id
+     * Get the external id.
      *
      * @return ?string
      */
@@ -410,7 +410,7 @@ class FinnaResourceList implements FinnaResourceListEntityInterface
     }
 
     /**
-     * Set the external id
+     * Set the external id.
      *
      * @param ?string $id External id
      *

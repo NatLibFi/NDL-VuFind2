@@ -41,7 +41,7 @@ namespace Finna\Controller;
 trait FinnaAuthorityControllerTrait
 {
     /**
-     * Handle onDispatch event
+     * Handle onDispatch event.
      *
      * @param \Laminas\Mvc\MvcEvent $e Event
      *

@@ -43,7 +43,7 @@ namespace Finna\View\Helper\Root;
 class ImageSrc extends ThemeSrc
 {
     /**
-     * Backwards-compatible __invoke that returns self or calls getSourceAddress
+     * Backwards-compatible __invoke that returns self or calls getSourceAddress.
      *
      * @param string $arg Image filename without extension
      *
@@ -94,7 +94,7 @@ class ImageSrc extends ThemeSrc
     }
 
     /**
-     * Returns data string to generate a pixel placeholder used for lazyloading
+     * Returns data string to generate a pixel placeholder used for lazyloading.
      *
      * @return string
      */

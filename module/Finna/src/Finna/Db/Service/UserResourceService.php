@@ -51,7 +51,7 @@ use function assert;
 class UserResourceService extends \VuFind\Db\Service\UserResourceService implements UserResourceServiceInterface
 {
     /**
-     * Get total resource count for a user
+     * Get total resource count for a user.
      *
      * @param UserEntityInterface $user User
      *

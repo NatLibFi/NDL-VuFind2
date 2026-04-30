@@ -44,14 +44,14 @@ use VuFind\Db\Service\AccessTokenService as VuFindAccessTokenService;
 class AccessTokenService extends VuFindAccessTokenService implements AccessTokenServiceInterface
 {
     /**
-     * Api key type in the table
+     * Api key type in the table.
      *
      * @var string
      */
     protected const TYPE_API_KEY = 'api_key';
 
     /**
-     * Check if api key is active in database
+     * Check if api key is active in database.
      *
      * @param string $token Token for the access_token
      *

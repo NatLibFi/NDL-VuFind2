@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Robots Controller
+ * Robots Controller.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Config\Config;
 use function in_array;
 
 /**
- * Robots Controller
+ * Robots Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -46,14 +46,14 @@ use function in_array;
 class RobotsController extends \VuFind\Controller\AbstractBase
 {
     /**
-     * VuFind configuration
+     * VuFind configuration.
      *
      * @var Config
      */
     protected $config;
 
     /**
-     * Possible sitemap index file names
+     * Possible sitemap index file names.
      *
      * @var array
      */
@@ -63,7 +63,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     ];
 
     /**
-     * Always disallowed paths
+     * Always disallowed paths.
      *
      * @var array
      */
@@ -85,7 +85,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     ];
 
     /**
-     * Always disallowed user agents
+     * Always disallowed user agents.
      *
      * @var array
      */
@@ -112,7 +112,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ServiceLocatorInterface $sm     Service manager
      * @param Config                  $config VuFind configuration
@@ -126,7 +126,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Get the robots.txt file contents with modifications as necessary
+     * Get the robots.txt file contents with modifications as necessary.
      *
      * @return mixed
      */
@@ -160,7 +160,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * A naïve parser that returns robots.txt contents as an array by user-agent
+     * A naïve parser that returns robots.txt contents as an array by user-agent.
      *
      * @param string $str robots.txt file contents
      *
@@ -200,7 +200,7 @@ class RobotsController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Render a parsed robots.txt array as string
+     * Render a parsed robots.txt array as string.
      *
      * @param array $parsed A parsed robots.txt array
      *

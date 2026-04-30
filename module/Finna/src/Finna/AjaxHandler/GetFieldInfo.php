@@ -58,14 +58,14 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     use LoggerAwareTrait;
 
     /**
-     * Settings for diplaying dynamic content
+     * Settings for diplaying dynamic content.
      *
      * @var array
      */
     protected $dynamicContent;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Config                     $config            Main configuration
      * @param SessionSettings            $sessionSettings   Session settings
@@ -160,7 +160,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     }
 
     /**
-     * Get enrichment data from Skosmos
+     * Get enrichment data from Skosmos.
      *
      * @param string $id    Identifier
      * @param string $label Label
@@ -221,7 +221,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     }
 
     /**
-     * Fetch data for an identifier from Skosmos
+     * Fetch data for an identifier from Skosmos.
      *
      * @param string $id Identifier
      *
@@ -258,7 +258,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     }
 
     /**
-     * Parse Skosmos data and return labels
+     * Parse Skosmos data and return labels.
      *
      * @param string $response     Skoskos response
      * @param string $id           Requested id

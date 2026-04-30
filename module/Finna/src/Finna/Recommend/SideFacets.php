@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SideFacets Recommendations Module
+ * SideFacets Recommendations Module.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use VuFind\I18n\Translator\TranslatorAwareTrait;
 use function in_array;
 
 /**
- * SideFacets Recommendations Module
+ * SideFacets Recommendations Module.
  *
  * This class provides recommendations displaying facets beside search results
  *
@@ -56,7 +56,7 @@ class SideFacets extends \VuFind\Recommend\SideFacets implements TranslatorAware
     use SideFacetsTrait;
 
     /**
-     * Display the map under region facet
+     * Display the map under region facet.
      *
      * @var array
      */
@@ -65,7 +65,7 @@ class SideFacets extends \VuFind\Recommend\SideFacets implements TranslatorAware
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\configManagerInterface        $configManager   Configuration loader
      * @param \Finna\Search\Solr\AuthorityHelper           $authorityHelper Authority helper

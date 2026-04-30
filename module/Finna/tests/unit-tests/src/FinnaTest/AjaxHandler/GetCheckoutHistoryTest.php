@@ -73,7 +73,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     }
 
     /**
-     * Data provider for testSuccess
+     * Data provider for testSuccess.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -162,7 +162,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     }
 
     /**
-     * Data provider for testSuccess
+     * Data provider for testSuccess.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -181,7 +181,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     }
 
     /**
-     * Test successful response
+     * Test successful response.
      *
      * @param int   $defaultPageSize   Default page size to set in config
      * @param int   $batchLimit        Default batch limit to set in config
@@ -200,7 +200,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     }
 
     /**
-     * Test failures
+     * Test failures.
      *
      * @param int   $defaultPageSize   Default page size to set in config
      * @param int   $batchLimit        Default batch limit to set in config
@@ -244,11 +244,11 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     protected function runSuccessfulTest($limit, $batchLimit, $transactionResult = []): array
     {
         /**
-         * Create a wrapper class for connection as it is little bit difficult to mock
+         * Create a wrapper class for connection as it is little bit difficult to mock.
          */
         $wrapperClass = new class ($transactionResult) extends Connection {
             /**
-             * Override constructor
+             * Override constructor.
              *
              * @param array $transactionResult Result from getMyTransactionHistory
              *
@@ -259,7 +259,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
             }
 
             /**
-             * Override checkFunction
+             * Override checkFunction.
              *
              * @param string $function Function to check
              * @param ?array $params   Params to use or null
@@ -274,7 +274,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
             }
 
             /**
-             * GetMyTransactionHistory mock
+             * GetMyTransactionHistory mock.
              *
              * @param array $patron Mock patron array
              * @param array $params Contains info about ils specified limits

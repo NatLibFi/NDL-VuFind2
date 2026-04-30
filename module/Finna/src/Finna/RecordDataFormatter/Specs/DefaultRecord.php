@@ -51,21 +51,21 @@ use function is_array;
 class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
 {
     /**
-     * Record fields with single template lines
+     * Record fields with single template lines.
      *
      * @var array
      */
     protected array $singleTemplateLines = [];
 
     /**
-     * Record fields with multiple template lines
+     * Record fields with multiple template lines.
      *
      * @var array
      */
     protected array $multiTemplateLines = [];
 
     /**
-     * Order of record fields in record page
+     * Order of record fields in record page.
      *
      * @var array
      */
@@ -1890,7 +1890,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Utility function for getting fields in core metadata
+     * Utility function for getting fields in core metadata.
      *
      * @return array
      */
@@ -2032,7 +2032,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for extended music compositions
+     * Multiline constructor function for extended music compositions.
      *
      * @param array $data    Field data
      * @param array $options Field options
@@ -2062,7 +2062,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for archive relations
+     * Multiline constructor function for archive relations.
      *
      * @param array $data    Field data
      * @param array $options Field options
@@ -2100,7 +2100,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for access restrictions
+     * Multiline constructor function for access restrictions.
      *
      * @param array $data    Field data
      * @param array $options Field options
@@ -2140,7 +2140,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for lido event types field
+     * Multiline constructor function for lido event types field.
      *
      * @param array $data    Field data
      * @param array $options Field options

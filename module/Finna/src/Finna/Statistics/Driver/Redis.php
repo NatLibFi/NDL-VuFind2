@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Redis driver for statistics
+ * Redis driver for statistics.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Psr\Log\LoggerAwareInterface;
 use VuFind\Log\LoggerAwareTrait;
 
 /**
- * Redis driver for statistics
+ * Redis driver for statistics.
  *
  * @category VuFind
  * @package  Statistics
@@ -46,49 +46,49 @@ class Redis implements DriverInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * Default Redis key prefix
+     * Default Redis key prefix.
      *
      * @var string
      */
     public const DEFAULT_KEY_PREFIX = 'finna_statistics/';
 
     /**
-     * Session start key
+     * Session start key.
      *
      * @var string
      */
     public const KEY_SESSION = 'session';
 
     /**
-     * Page view key
+     * Page view key.
      *
      * @var string
      */
     public const KEY_PAGE_VIEW = 'page_view';
 
     /**
-     * Record view key (detailed)
+     * Record view key (detailed).
      *
      * @var string
      */
     public const KEY_RECORD_VIEW = 'record_view';
 
     /**
-     * Redis client
+     * Redis client.
      *
      * @var \Credis_Client
      */
     protected $redisClient;
 
     /**
-     * Queue name prefix
+     * Queue name prefix.
      *
      * @var string
      */
     protected $keyPrefix;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Credis_Client $redisClient Redis client
      * @param string         $keyPrefix   Redis key prefix
@@ -100,7 +100,7 @@ class Redis implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a new session to statistics
+     * Add a new session to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -122,7 +122,7 @@ class Redis implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a page view to statistics
+     * Add a page view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -153,7 +153,7 @@ class Redis implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a record view to statistics
+     * Add a record view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -199,7 +199,7 @@ class Redis implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add or update a statistics table entry
+     * Add or update a statistics table entry.
      *
      * @param string $key    Key name
      * @param array  $params Row identification params

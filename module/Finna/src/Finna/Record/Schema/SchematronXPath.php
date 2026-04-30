@@ -43,7 +43,7 @@ use DOMNode;
 class SchematronXPath extends Milo\SchematronXPath
 {
     /**
-     * Evaluate an XPath expression
+     * Evaluate an XPath expression.
      *
      * ($registerNodeNS is FALSE in opposition to DOMXPath default value)
      *

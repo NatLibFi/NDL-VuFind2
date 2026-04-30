@@ -42,7 +42,7 @@ namespace Finna\RecordDataFormatter\Specs;
 class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
 {
     /**
-     * Order of record fields in record page
+     * Order of record fields in record page.
      *
      * @var array
      */

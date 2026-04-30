@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Related Records: "Nothing" for easy configuration override
+ * Related Records: "Nothing" for easy configuration override.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Related;
 
 /**
- * Related Records: "Nothing" for easy configuration override
+ * Related Records: "Nothing" for easy configuration override.
  *
  * @category VuFind
  * @package  Related_Records

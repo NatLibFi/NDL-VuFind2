@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Application bootstrap event listener
+ * Application bootstrap event listener.
  *
  * Runs early on bootstrap to set the base URL properly before e.g.
  * CookieManagerFactory needs it.
@@ -36,7 +36,7 @@ use Laminas\EventManager\EventManagerInterface;
 use Laminas\Mvc\MvcEvent;
 
 /**
- * Application bootstrap event listener
+ * Application bootstrap event listener.
  *
  * @category VuFind
  * @package  Bootstrap
@@ -47,7 +47,7 @@ use Laminas\Mvc\MvcEvent;
 class AppBootstrapListener
 {
     /**
-     * Attach to an event manager
+     * Attach to an event manager.
      *
      * @param EventManagerInterface $events   Event manager
      * @param int                   $priority Priority

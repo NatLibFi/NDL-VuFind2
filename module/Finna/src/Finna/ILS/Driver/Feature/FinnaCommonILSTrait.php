@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Common functionality for ILS drivers
+ * Common functionality for ILS drivers.
  *
  * PHP version 8
  *
@@ -43,7 +43,7 @@ use Stringable;
 trait FinnaCommonILSTrait
 {
     /**
-     * Create messaging settings array containing information about services and options
+     * Create messaging settings array containing information about services and options.
      *
      * @param array  $userSettings Users defined settings
      * @param int    $nofDaysMin   Minimum value for day selection

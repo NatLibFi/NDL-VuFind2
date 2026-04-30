@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Facet Helper
+ * Facet Helper.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use function count;
 use function strlen;
 
 /**
- * Functions for manipulating facets
+ * Functions for manipulating facets.
  *
  * @category VuFind
  * @package  Search
@@ -73,7 +73,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
     }
 
     /**
-     * Check if a filter value is an ancestor of the given facet item
+     * Check if a filter value is an ancestor of the given facet item.
      *
      * @param array  $item   Facet item
      * @param string $filter Filter value
@@ -101,7 +101,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
     }
 
     /**
-     * Check if a filter value is a child of the given facet item
+     * Check if a filter value is a child of the given facet item.
      *
      * @param array  $item   Facet item
      * @param string $filter Filter value
@@ -126,7 +126,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
 
     /**
      * Check all facets for applied ancestors/children and change the href to remove
-     * those filters
+     * those filters.
      *
      * @param string $facetName       Facet name
      * @param array  $facets          Hierarchical facet array
@@ -199,7 +199,7 @@ class HierarchicalFacetHelper extends \VuFind\Search\Solr\HierarchicalFacetHelpe
     }
 
     /**
-     * Flatten a hierarchical facet list to a simple array
+     * Flatten a hierarchical facet list to a simple array.
      *
      * @param array $facetList Facet list
      *

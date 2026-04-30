@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrAuth record fallback loader
+ * SolrAuth record fallback loader.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Record\FallbackLoader;
 
 /**
- * SolrAuth record fallback loader
+ * SolrAuth record fallback loader.
  *
  * @category VuFind
  * @package  Record
@@ -41,7 +41,7 @@ namespace Finna\Record\FallbackLoader;
 class SolrAuth extends Solr
 {
     /**
-     * Record source
+     * Record source.
      *
      * @var string
      */

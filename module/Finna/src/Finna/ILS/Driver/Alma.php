@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alma ILS Driver
+ * Alma ILS Driver.
  *
  * PHP version 8
  *
@@ -44,7 +44,7 @@ use function is_array;
 use function sprintf;
 
 /**
- * Alma ILS Driver
+ * Alma ILS Driver.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -61,14 +61,14 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Simple cache to avoid repeated requests
+     * Simple cache to avoid repeated requests.
      *
      * @var array
      */
     protected $cachedRequest = [];
 
     /**
-     * Priority settings for the order of locations
+     * Priority settings for the order of locations.
      *
      * @var array
      */
@@ -90,7 +90,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     protected $hiddenProcessTypes = [];
 
     /**
-     * Mappings from fee types
+     * Mappings from fee types.
      *
      * @var array
      */
@@ -112,7 +112,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     ];
 
     /**
-     * Days before account expiration to start displaying a notification
+     * Days before account expiration to start displaying a notification.
      *
      * @var int
      */
@@ -167,7 +167,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -415,7 +415,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -676,7 +676,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -978,7 +978,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Register a new user
+     * Register a new user.
      *
      * @param array $params The data from the "create new account" form
      *
@@ -1308,7 +1308,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -1388,7 +1388,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Pick Up Locations
+     * Get Pick Up Locations.
      *
      * This is responsible get a list of valid library locations for holds / recall
      * retrieval
@@ -1691,7 +1691,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Default Pick Up Location
+     * Get Default Pick Up Location.
      *
      * @param array $patron      Patron information returned by the patronLogin
      * method.
@@ -1708,7 +1708,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Check if request is valid
+     * Check if request is valid.
      *
      * This is responsible for determining if an item is requestable
      *
@@ -1929,7 +1929,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -2213,7 +2213,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get detailed holding information for a single holdings record
+     * Get detailed holding information for a single holdings record.
      *
      * @param string $id       Bib record id
      * @param string $groupKey Details group key
@@ -2352,7 +2352,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get items as holdings entries
+     * Get items as holdings entries.
      *
      * @param \SimpleXMLElement $itemsResult         Items from Alma
      * @param string            $id                  Record id
@@ -2501,7 +2501,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Create a holding entry
+     * Create a holding entry.
      *
      * @param string $id      Bib ID
      * @param object $holding Holding
@@ -2534,7 +2534,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get specified fields from a Holdings MARC Record
+     * Get specified fields from a Holdings MARC Record.
      *
      * @param object       $record     SimpleXMLElement
      * @param array|string $fieldSpecs Array or colon-separated list of
@@ -2575,7 +2575,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get location for an item
+     * Get location for an item.
      *
      * @param SimpleXMLElement $item Item
      *
@@ -2604,7 +2604,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get the external name of a location
+     * Get the external name of a location.
      *
      * @param string $library  Library
      * @param string $location Location
@@ -2620,7 +2620,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get type of a location
+     * Get type of a location.
      *
      * @param string $library  Library
      * @param string $location Location
@@ -2634,7 +2634,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get Statuses for inventory types
+     * Get Statuses for inventory types.
      *
      * This is responsible for retrieving the status information for a
      * collection of records with specified inventory types.
@@ -2837,7 +2837,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get code table options for table
+     * Get code table options for table.
      *
      * @param string $codeTable Code table to fetch
      * @param string $sort      Sort order ('', 'code' or 'description)
@@ -2884,7 +2884,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Parse pickup location rules from configuration
+     * Parse pickup location rules from configuration.
      *
      * @param array $config Rule configuration
      *
@@ -2915,7 +2915,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Compare a rule with an array of values
+     * Compare a rule with an array of values.
      *
      * @param string|array $rule   Rule values
      * @param array        $values Values
@@ -2961,7 +2961,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Compare an item rule
+     * Compare an item rule.
      *
      * @param string       $lib    Library
      * @param string|array $loc    Locations
@@ -2992,7 +2992,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Make an HTTP request against Alma
+     * Make an HTTP request against Alma.
      *
      * @param string        $path          Path to retrieve from API (excluding base
      *                                     URL/API key)
@@ -3054,7 +3054,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Status item sort function
+     * Status item sort function.
      *
      * @param array $a First status record to compare
      * @param array $b Second status record to compare
@@ -3095,7 +3095,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Gets a translatable string for description and code
+     * Gets a translatable string for description and code.
      *
      * @param string $code        Code
      * @param string $description Description
@@ -3110,7 +3110,7 @@ class Alma extends \VuFind\ILS\Driver\Alma implements TranslatorAwareInterface
     }
 
     /**
-     * Get fields available for profile update
+     * Get fields available for profile update.
      *
      * @return array
      */

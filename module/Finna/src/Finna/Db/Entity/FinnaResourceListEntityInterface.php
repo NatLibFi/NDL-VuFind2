@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna resource list entity interface
+ * Finna resource list entity interface.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Finna resource list entity interface
+ * Finna resource list entity interface.
  *
  * @category VuFind
  * @package  Db_Interface
@@ -54,14 +54,14 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function getId(): ?int;
 
     /**
-     * Get user entity
+     * Get user entity.
      *
      * @return UserEntityInterface
      */
     public function getUser(): UserEntityInterface;
 
     /**
-     * Set user
+     * Set user.
      *
      * @param UserEntityInterface $user User entity
      *
@@ -102,7 +102,7 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function setDescription(string $description = ''): static;
 
     /**
-     * Created setter
+     * Created setter.
      *
      * @param DateTime $dateTime Created date
      *
@@ -111,21 +111,21 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function setCreated(DateTime $dateTime): static;
 
     /**
-     * Created getter
+     * Created getter.
      *
      * @return ?DateTime
      */
     public function getCreated(): ?DateTime;
 
     /**
-     * Get the institution
+     * Get the institution.
      *
      * @return string
      */
     public function getInstitution(): string;
 
     /**
-     * Set the institution
+     * Set the institution.
      *
      * @param string $institution Institution
      *
@@ -134,14 +134,14 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function setInstitution(string $institution): static;
 
     /**
-     * Get the list configuration identifier
+     * Get the list configuration identifier.
      *
      * @return string
      */
     public function getListConfigIdentifier(): string;
 
     /**
-     * Set the list configuration identifier
+     * Set the list configuration identifier.
      *
      * @param string $listConfigIdentifier List configuration identifier
      *
@@ -150,14 +150,14 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function setListConfigIdentifier(string $listConfigIdentifier): static;
 
     /**
-     * Get the list type
+     * Get the list type.
      *
      * @return string
      */
     public function getListType(): string;
 
     /**
-     * Set the list type
+     * Set the list type.
      *
      * @param string $listType List type
      *
@@ -166,28 +166,28 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function setListType(string $listType): static;
 
     /**
-     * Get the ordered flag
+     * Get the ordered flag.
      *
      * @return ?DateTime
      */
     public function getOrdered(): ?DateTime;
 
     /**
-     * Set the ordered flag
+     * Set the ordered flag.
      *
      * @return static
      */
     public function setOrdered(): static;
 
     /**
-     * Get the pickup date
+     * Get the pickup date.
      *
      * @return ?DateTime
      */
     public function getPickupDate(): ?DateTime;
 
     /**
-     * Set the pickup date
+     * Set the pickup date.
      *
      * @param DateTime $pickupDate Pickup date
      *
@@ -196,14 +196,14 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function setPickupDate(DateTime $pickupDate): static;
 
     /**
-     * Get the connection
+     * Get the connection.
      *
      * @return string
      */
     public function getConnection(): string;
 
     /**
-     * Set the connection
+     * Set the connection.
      *
      * @param string $connection Connection
      *
@@ -212,14 +212,14 @@ interface FinnaResourceListEntityInterface extends EntityInterface
     public function setConnection(string $connection): static;
 
     /**
-     * Get external id
+     * Get external id.
      *
      * @return ?string
      */
     public function getExternalId(): ?string;
 
     /**
-     * Set external id
+     * Set external id.
      *
      * @param ?string $id External id
      *

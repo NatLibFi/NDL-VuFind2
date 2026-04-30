@@ -76,7 +76,7 @@
     ?>
   </div>
 <?php elseif (isset($rangeFacets[$facet])): ?>
-  <?=$this->context($this)->renderInContext('Recommend/SideFacets/range-facet.phtml', ['results' => $results, 'title' => $facet, 'facet' => $rangeFacets[$facet]]); ?>
+  <?=$this->context($this)->renderInContext('Recommend/SideFacets/range-facet.phtml', ['results' => $results, 'title' => $facet, 'facet' => $rangeFacets[$facet], 'submitLabel' => 'Update',]); ?>
 <?php elseif ($facet == 'usage_rights_str_mv'): ?>
   <?php $contextVars = [
       'options' => $options,

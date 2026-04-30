@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Encapsulated Records aspect of the Search Multi-class (Options)
+ * Encapsulated Records aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Search\EncapsulatedRecords;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Encapsulated Records Search Options
+ * Encapsulated Records Search Options.
  *
  * @category VuFind
  * @package  Search_EncapsulatedRecords
@@ -43,7 +43,7 @@ use VuFind\Config\ConfigManagerInterface;
 class Options extends \VuFind\Search\Base\Options
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */

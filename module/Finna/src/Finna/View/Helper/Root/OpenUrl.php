@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OpenURL view helper
+ * OpenURL view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * OpenURL view helper
+ * OpenURL view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,7 +41,7 @@ namespace Finna\View\Helper\Root;
 class OpenUrl extends \VuFind\View\Helper\Root\OpenUrl
 {
     /**
-     * Public method to render the OpenURL more options template
+     * Public method to render the OpenURL more options template.
      *
      * @return string
      */

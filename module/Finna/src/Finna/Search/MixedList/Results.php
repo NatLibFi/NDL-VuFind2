@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mixed List aspect of the Search Multi-class (Results)
+ * Mixed List aspect of the Search Multi-class (Results).
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\MixedList;
 
 /**
- * Search Mixed List Results
+ * Search Mixed List Results.
  *
  * @category VuFind
  * @package  Search_MixedList

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_record_view_record table
+ * Entity model for finna_record_view_record table.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for finna_record_view_record table
+ * Entity model for finna_record_view_record table.
  *
  * @category VuFind
  * @package  Database
@@ -79,7 +79,7 @@ class FinnaRecordViewRecord implements FinnaRecordViewRecordEntityInterface
     protected string $recordId;
 
     /**
-     * Format
+     * Format.
      *
      * @var FinnaRecordViewRecordFormatEntityInterface
      */
@@ -88,7 +88,7 @@ class FinnaRecordViewRecord implements FinnaRecordViewRecordEntityInterface
     protected FinnaRecordViewRecordFormatEntityInterface $format;
 
     /**
-     * Usage rights
+     * Usage rights.
      *
      * @var FinnaRecordViewRecordRightsEntityInterface
      */
@@ -97,7 +97,7 @@ class FinnaRecordViewRecord implements FinnaRecordViewRecordEntityInterface
     protected FinnaRecordViewRecordRightsEntityInterface $usageRights;
 
     /**
-     * Online
+     * Online.
      *
      * @var bool
      */
@@ -105,7 +105,7 @@ class FinnaRecordViewRecord implements FinnaRecordViewRecordEntityInterface
     protected bool $online;
 
     /**
-     * Extra Metadata
+     * Extra Metadata.
      *
      * @var ?string
      */

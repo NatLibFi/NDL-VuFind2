@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrEad3 Test Class
+ * SolrEad3 Test Class.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\RecordDriver\SolrEad3;
 use Generator;
 
 /**
- * SolrEad3 Record Driver Test Class
+ * SolrEad3 Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -47,7 +47,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\TranslatorTrait;
 
     /**
-     * Get unit dates
+     * Get unit dates.
      *
      * @return void
      */
@@ -85,7 +85,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected other related material data
+     * Function to get expected other related material data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -125,7 +125,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getOtherRelatedMaterial
+     * Test getOtherRelatedMaterial.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -146,7 +146,79 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected author data
+     * Function to get expected related places data.
+     *
+     * @return \Iterator<(int | string), mixed>
+     */
+    public static function getRelatedPlacesData(): \Iterator
+    {
+        yield [
+            'fi',
+            [
+                'getSubjectPlacesExtended' => [
+                    [
+                    'heading' => ['Helsinki'],
+                    'id' => 'http://www.yso.fi/onto/yso/p94137',
+                    'source' => 'YSO',
+                    ],
+                ],
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
+                    ],
+                ],
+            ],
+        ];
+        yield [
+            'sv',
+            [
+                'getSubjectPlacesExtended' => [
+                    [
+                        'heading' => ['Helsingfors'],
+                        'id' => 'http://www.yso.fi/onto/yso/p94137',
+                        'source' => 'YSO',
+                    ],
+                ],
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test related places.
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getRelatedPlacesData')]
+    public function testRelatedPlaces(
+        string $language,
+        array $expected
+    ): void {
+        $driver = $this->getDriver('ead3_test.xml');
+        $driver->setPreferredLanguage($language);
+        foreach ($expected as $function => $result) {
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Function to get expected author data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -296,7 +368,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test authors
+     * Test authors.
      *
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
@@ -318,7 +390,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected subject headings data
+     * Function to get expected subject headings data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -432,7 +504,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getAllSubjectHeadingsExtended
+     * Test getAllSubjectHeadingsExtended.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -455,7 +527,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected physical descriptions data
+     * Function to get expected physical descriptions data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -499,7 +571,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getPhysicalDescriptions
+     * Test getPhysicalDescriptions.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -522,7 +594,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testGetImages
+     * Data provider for testGetImages.
      *
      * @return Generator
      */
@@ -579,7 +651,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test get images
+     * Test get images.
      *
      * @param string $xmlPath  Path for the record xml
      * @param array  $expected Return value to be expected
@@ -594,7 +666,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected general notes data
+     * Function to get expected general notes data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -623,7 +695,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getGeneralNotes
+     * Test getGeneralNotes.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna-list custom element
+ * Finna-list custom element.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\CustomElement;
 
 /**
- * Finna-list custom element
+ * Finna-list custom element.
  *
  * @category VuFind
  * @package  CustomElements

@@ -50,18 +50,6 @@
   margin-top: 2px;
 }
 
-.checkbox-container.mylist-select-all {
-  padding-left: 0;
-  white-space: nowrap;
-
-  .checkbox {
-    padding-left: 0;
-    label {
-      margin-left: 0;
-    }
-  }
-}
-
 .changeHolds {
   display: inline-block;
 }
@@ -139,6 +127,17 @@
       display: flex;
       align-items: baseline;
       padding: 5px;
+      .checkbox-container.mylist-select-all {
+        white-space: nowrap;
+        margin-right: 1rem;
+        line-height: $line-height-computed;
+        .checkbox {
+          padding-left: 0;
+          label {
+            margin-left: 0;
+          }
+        }
+      }
     }
     .list-functions {
       display: flex;
@@ -442,10 +441,22 @@
   }
   .list-title {
     font-size: $font-size-h2;
+    span {
+      display: inline;
+    }
   }
   a.dropdown-toggle {
     font-size: 0.9em;
     height: 30px;
+  }
+  // Content tooltip
+  .tooltip-myaccount {
+    background: initial;
+    border: none;
+    font-size: $font-size-h2;
+    padding-right: 0;
+    position: relative;
+    top: -4px;
   }
 }
 .sort-col.sort-col-mobile {
@@ -461,16 +472,9 @@
   }
 
 .online-payment-form > .payment-row {
-  .online-payment-area {
-    display: inline-block;
-    margin-bottom: 15px;
-
-    .online-payment-form {
-      display: inline-block;
-      input {
-        font-weight: bold;
-      }
-    }
+  display: inline-block;
+  input {
+    font-weight: bold;
   }
   @include media-breakpoint-up(sm) {
     > img {
@@ -495,17 +499,6 @@
       max-width: 60px;
       margin-top: 10px;
     }
-  }
-}
-
-.myresearch-table.online-payment {
-  .checkbox-col {
-    width: initial;
-  }
-  .toolbar {
-    border: 0;
-    padding-bottom: 0;
-    padding-left: 4px;
   }
 }
 
@@ -547,6 +540,15 @@
   font-weight: bold;
 }
 
+.myresearch-table.online-payment {
+  .toolbar {
+    border: 0;
+    padding-left: 4px;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+}
+
 .toolbar-sticky-container {
   margin: 0;
   @include media-breakpoint-down(md) {
@@ -573,15 +575,6 @@
         }
       }
     }
-  }
-}
-
-.myresearch-table.online-payment .toolbar {
-  align-items: center;
-  margin-bottom: 1rem;
-
-  .checkbox-container.mylist-select-all {
-    margin-right: 1rem;
   }
 }
 
@@ -756,6 +749,33 @@ form#renewals, form#update_holds, form#purge_history {
   }
 }
 
+.selection-controls-bar {
+  margin: 0 0 0.5rem 10px;
+  padding: 0;
+  list-style: none;
+  line-height: 25px;
+
+  li {
+    display: inline-block;
+    &.bulk-checkbox {
+      padding-inline-end: 1rem;
+      margin-top: .25rem;
+    }
+    label input {
+      margin-top: 2px;
+    }
+  }
+
+  // Like .bulkActionButtons .btn-group .btn
+  .clear-selection {
+    border: 1px solid $gray-lighter;
+    border-radius: 4px;
+    background: $gray-ultralight;
+    color: $text-color;
+    font-size: 0.9em;
+  }
+}
+
 .useraccount-nav {
   border: solid 1px $gray-lighter;
   border-top: none;
@@ -846,7 +866,8 @@ form#renewals, form#update_holds, form#purge_history {
 }
 
 // Menu style
-.myresearch-menu, #my-info-dropdown-menu {
+.myresearch-menu,
+#my-info-dropdown-menu {
   a {
     display: flex;
     justify-content: space-between;
@@ -854,7 +875,7 @@ form#renewals, form#update_holds, form#purge_history {
       display: flex;
     }
     &:hover {
-      background-color: $gray-lighter;
+      background-color: $dropdown-link-hover-bg;
       text-decoration: none;
     }
     &:focus {
@@ -871,7 +892,8 @@ form#renewals, form#update_holds, form#purge_history {
 }
 
 // Status badges
-.myresearch-menu, #my-info-dropdown-menu {
+.myresearch-menu,
+#my-info-dropdown-menu {
   .status {
     float: right;
     .badge {

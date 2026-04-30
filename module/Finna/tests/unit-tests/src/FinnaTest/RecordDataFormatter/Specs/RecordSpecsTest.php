@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RecordDataFormatter Test Class
+ * RecordDataFormatter Test Class.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\RecordDataFormatter\Specs\CollectionRecord;
 use Finna\RecordDataFormatter\Specs\DefaultRecord;
 
 /**
- * RecordDataFormatter Test Class
+ * RecordDataFormatter Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -48,7 +48,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\ViewTrait;
 
     /**
-     * Default record field keys in order to be displayed
+     * Default record field keys in order to be displayed.
      *
      * @var array
      */
@@ -232,7 +232,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
       ];
 
     /**
-     * Collection record field keys in order to be displayed
+     * Collection record field keys in order to be displayed.
      *
      * @var array
      */
@@ -416,7 +416,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
       ];
 
     /**
-     * Test default record core specs
+     * Test default record core specs.
      *
      * @return void
      */
@@ -429,7 +429,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test collection record core specs
+     * Test collection record core specs.
      *
      * @return void
      */

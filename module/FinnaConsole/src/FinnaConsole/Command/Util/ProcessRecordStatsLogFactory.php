@@ -37,7 +37,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for record stats log processor
+ * Factory for record stats log processor.
  *
  * @category VuFind
  * @package  Service
@@ -48,7 +48,7 @@ use Psr\Container\ContainerInterface;
 class ProcessRecordStatsLogFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

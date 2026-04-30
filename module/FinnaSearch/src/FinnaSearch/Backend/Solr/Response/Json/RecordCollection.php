@@ -46,7 +46,7 @@ use function count;
 class RecordCollection extends \VuFindSearch\Backend\Solr\Response\Json\RecordCollection
 {
     /**
-     * Get query debug information
+     * Get query debug information.
      *
      * @return array
      */

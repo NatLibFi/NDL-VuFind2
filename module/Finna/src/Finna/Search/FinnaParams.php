@@ -94,7 +94,7 @@ trait FinnaParams
     }
 
     /**
-     * Get the date range field from options, if available
+     * Get the date range field from options, if available.
      *
      * @return string
      */
@@ -356,7 +356,7 @@ trait FinnaParams
     }
 
     /**
-     * Check if the given filter is a date range filter
+     * Check if the given filter is a date range filter.
      *
      * @param string $field Filter field
      *
@@ -371,7 +371,7 @@ trait FinnaParams
     }
 
     /**
-     * Pull the page size parameter or set to default
+     * Pull the page size parameter or set to default.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -413,7 +413,7 @@ trait FinnaParams
     }
 
     /**
-     * Get view options list type setting
+     * Get view options list type setting.
      *
      * @return bool
      */
@@ -426,7 +426,7 @@ trait FinnaParams
     }
 
     /**
-     * Used to be used for activating all facets, but no longer needed
+     * Used to be used for activating all facets, but no longer needed.
      *
      * @return void
      */

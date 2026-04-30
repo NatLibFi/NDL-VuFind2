@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Date Range Visual" AJAX handler
+ * "Get Date Range Visual" AJAX handler.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Search\Results\PluginManager as ResultsManager;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * "Get Date Range Visual" AJAX handler
+ * "Get Date Range Visual" AJAX handler.
  *
  * Get Date Range Visual
  *
@@ -49,7 +49,7 @@ use VuFind\Session\Settings as SessionSettings;
 class GetDateRangeVisual extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings        $sessionSettings Session settings
      * @param ConfigManagerInterface $configManager   Config manager

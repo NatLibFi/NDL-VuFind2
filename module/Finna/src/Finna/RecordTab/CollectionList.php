@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Collection list tab
+ * Collection list tab.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\RecordTab;
 
 /**
- * Collection list tab
+ * Collection list tab.
  *
  * @category VuFind
  * @package  RecordTabs

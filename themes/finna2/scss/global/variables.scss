@@ -205,6 +205,8 @@ $search-input-bg: #fff !default;
 // Warning: Avoid customizing these values. They're designed to all work together.
 //
 
+$zindex-mobile-navbar:      100 !default;
+$zindex-navbar:            1000 !default;
 $zindex-cookie-consent:    1034 !default;
 $zindex-header:            1035 !default;
 $zindex-sidebar:           1036 !default;
@@ -307,20 +309,6 @@ $breadcrumbs: false !default;
 //** Textual separator for between breadcrumb elements (obsolete)
 $breadcrumb-separator:          "|" !default;
 
-
-//== Cookie Consent
-//
-//##
-$cookie-consent-background-color: $gray-light !default;
-$cookie-consent-color: #fff !default;
-$cookie-consent-link-color: #fff !default;
-$cookie-consent-button-border: 2px solid #fff !default;
-
-//== Cookie Consent Component
-:root {
-    --cc-cookie-category-block-bg: #{color.adjust($gray-base, $lightness: 93.5% /*, $space: hsl*/)};
-    --cc-btn-border-radius: #{$finna-button-radius};
-}
 
 //== Bazaar Browse Bar
 $bazaar-browse-bar-background-color: $gray-light !default;

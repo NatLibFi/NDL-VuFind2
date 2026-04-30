@@ -1,7 +1,7 @@
 <?php
 
 /**
- * IIIF manifest generator factory
+ * IIIF manifest generator factory.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Http\RouteHelper;
 use VuFind\Http\ServerUrlHelper;
 
 /**
- * IIIF manifest generator factory
+ * IIIF manifest generator factory.
  *
  * @category VuFind
  * @package  Service
@@ -46,7 +46,7 @@ use VuFind\Http\ServerUrlHelper;
 class IIIFManifestGeneratorFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param mixed              $requestedName Service being created

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetDescription AJAX handler
+ * GetDescription AJAX handler.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * GetDescription AJAX handler
+ * GetDescription AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -54,49 +54,49 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Config
+     * Config.
      *
      * @var Config
      */
     protected $config;
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * Data source configuration
+     * Data source configuration.
      *
      * @var Config
      */
     protected $dataSourceConfig;
 
     /**
-     * Description provider plugin manager
+     * Description provider plugin manager.
      *
      * @var DescriptionPluginManager
      */
     protected $descriptionPluginManager;
 
     /**
-     * Language code
+     * Language code.
      *
      * @var string
      */
     protected $langCode;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings          $ss       Session settings (for disableSessionWrites)
      * @param CacheManager             $cm       Cache manager
@@ -171,7 +171,7 @@ class GetDescription extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get a list of active description providers
+     * Get a list of active description providers.
      *
      * @param string $sourceId Record source ID
      *

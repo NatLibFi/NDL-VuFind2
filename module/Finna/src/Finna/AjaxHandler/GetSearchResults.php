@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Search Results" AJAX handler
+ * "Get Search Results" AJAX handler.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Search\Base\Results;
 
 /**
- * "Get Search Results" AJAX handler
+ * "Get Search Results" AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -44,7 +44,7 @@ use VuFind\Search\Base\Results;
 class GetSearchResults extends \VuFind\AjaxHandler\GetSearchResults
 {
     /**
-     * Render pagination
+     * Render pagination.
      *
      * @param Params  $params   Request params
      * @param Results $results  Search results

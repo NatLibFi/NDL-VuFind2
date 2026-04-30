@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Authority view helper
+ * Authority view helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\View\Helper\Root;
 use Finna\Search\Solr\AuthorityHelper;
 
 /**
- * Authority view helper
+ * Authority view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -45,21 +45,21 @@ use Finna\Search\Solr\AuthorityHelper;
 class Authority extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Authority configuration
+     * Authority configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Authority helper
+     * Authority helper.
      *
      * @var AuthorityHelper
      */
     protected $authorityHelper;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config          Authority configuration
      * @param AuthorityHelper       $authorityHelper Authority helper
@@ -73,7 +73,7 @@ class Authority extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if authhority search is available
+     * Check if authhority search is available.
      *
      * @return bool
      */
@@ -83,7 +83,7 @@ class Authority extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get the number of records having the given authority id as an author
+     * Get the number of records having the given authority id as an author.
      *
      * @param string $id Authority ID
      *
@@ -96,7 +96,7 @@ class Authority extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get the number of records having the given authority id as a topic
+     * Get the number of records having the given authority id as a topic.
      *
      * @param string $id Authority ID
      *

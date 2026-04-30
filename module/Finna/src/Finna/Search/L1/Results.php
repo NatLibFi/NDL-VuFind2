@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Search Results for L1 index
+ * Search Results for L1 index.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\L1;
 
 /**
- * Search Results for L1 index
+ * Search Results for L1 index.
  *
  * @category VuFind
  * @package  Search_L1
@@ -41,7 +41,7 @@ namespace Finna\Search\L1;
 class Results extends \Finna\Search\Solr\Results
 {
     /**
-     * Backend ID
+     * Backend ID.
      *
      * @var string
      */

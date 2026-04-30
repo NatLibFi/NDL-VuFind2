@@ -48,14 +48,14 @@ use Psr\Container\ContainerInterface;
 class CleanHtmlFactory extends \VuFind\View\Helper\Root\CleanHtmlFactory
 {
     /**
-     * Container configuration
+     * Container configuration.
      *
      * @var array
      */
     protected array $containerConfig;
 
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -79,7 +79,7 @@ class CleanHtmlFactory extends \VuFind\View\Helper\Root\CleanHtmlFactory
     }
 
     /**
-     * Sets additional configuration
+     * Sets additional configuration.
      *
      * @param HTMLPurifier_Config $config  Configuration
      * @param array               $options Additional options

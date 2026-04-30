@@ -44,7 +44,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 interface UserCardServiceInterface extends \VuFind\Db\Service\UserCardServiceInterface
 {
     /**
-     * Get all users associated with a library card
+     * Get all users associated with a library card.
      *
      * @param string $catUsername Catalog username
      *

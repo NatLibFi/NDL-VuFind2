@@ -2,7 +2,7 @@
 <?php if (!empty($this->address['types'])): ?>
   <div class="my-profile-col profile-title"><?=$this->transEsc('address_type') ?>:</div>
   <div class="profile-text-value">
-    <?=implode(', ', array_map(function ($type) { return $this->transEscWithPrefix('address_type_', $type); }, $this->address['types'])) ?>
+    <?=implode(', ', array_map(fn ($type) => $this->transEscWithPrefix('address_type_', $type), $this->address['types'])) ?>
   </div>
 <?php endif; ?>
 <?php $address1HeadingEsc = $this->transEsc('Address') . (!empty($this->address['address2']) ? ' 1' : ''); ?>

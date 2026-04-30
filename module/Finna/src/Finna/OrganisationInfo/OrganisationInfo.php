@@ -63,49 +63,49 @@ class OrganisationInfo implements
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Organisation info configuration
+     * Organisation info configuration.
      *
      * @var VuFind\Config\Config
      */
     protected $config = null;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var \VuFind\CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Language (use getLanguage())
+     * Language (use getLanguage()).
      *
      * @var string
      */
     protected $language = null;
 
     /**
-     * Results plugin manager
+     * Results plugin manager.
      *
      * @var PluginManager
      */
     protected $resultsManager;
 
     /**
-     * Hierarchical facet helper
+     * Hierarchical facet helper.
      *
      * @var HierarchicalFacetHelper
      */
     protected $facetHelper;
 
     /**
-     * Kirkanta provider
+     * Kirkanta provider.
      *
      * @var Kirkanta
      */
     protected $kirkanta;
 
     /**
-     * MuseotFi provider
+     * MuseotFi provider.
      *
      * @var MuseotFi
      */
@@ -138,7 +138,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Check if organisation info is enabled
+     * Check if organisation info is enabled.
      *
      * @return bool
      */
@@ -148,7 +148,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information.
      *
      * @param array  $sectors Sectors if known, empty array otherwise
      * @param string $id      Parent organisation ID
@@ -161,7 +161,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param array  $sectors        Sectors if known, empty array otherwise
      * @param string $id             Parent organisation ID
@@ -175,7 +175,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get location details
+     * Get location details.
      *
      * @param array   $sectors    Sectors if known, empty array otherwise
      * @param string  $id         Parent organisation ID
@@ -299,7 +299,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Convert building code to Kirjastohakemisto finna_id
+     * Convert building code to Kirjastohakemisto finna_id.
      *
      * @param string|array $building Building
      *
@@ -319,7 +319,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get facet data from a field
+     * Get facet data from a field.
      *
      * @param string $field  Field to return
      * @param string $prefix Optional facet prefix limiter
@@ -354,7 +354,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get the active language to use in a request
+     * Get the active language to use in a request.
      *
      * @return string
      */
@@ -373,7 +373,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Validate language
+     * Validate language.
      *
      * @param string $language     Language version
      * @param array  $allLanguages List of valid languages
@@ -395,7 +395,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get organisation info provider based on sector information
+     * Get organisation info provider based on sector information.
      *
      * @param array  $sectors Sectors for the organisation
      * @param string $id      Parent organisation ID

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Autocomplete view helper
+ * Autocomplete view helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use function count;
 use function in_array;
 
 /**
- * Autocomplete view helper
+ * Autocomplete view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -51,7 +51,7 @@ class Autocomplete extends \Laminas\View\Helper\AbstractHelper
     protected $searchConfig = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $searchConfig Search configiration.
      */

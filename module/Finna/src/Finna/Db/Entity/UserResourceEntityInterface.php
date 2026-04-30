@@ -41,7 +41,7 @@ namespace Finna\Db\Entity;
 interface UserResourceEntityInterface extends \VuFind\Db\Entity\UserResourceEntityInterface
 {
     /**
-     * Custom order index setter
+     * Custom order index setter.
      *
      * @param ?int $index New due date reminder setting.
      *
@@ -50,7 +50,7 @@ interface UserResourceEntityInterface extends \VuFind\Db\Entity\UserResourceEnti
     public function setFinnaCustomOrderIndex(?int $index): static;
 
     /**
-     * Custom order index getter
+     * Custom order index getter.
      *
      * @return ?int
      */

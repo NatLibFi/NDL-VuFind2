@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FinnaSuggestionsDeferred Recommendations Module
+ * FinnaSuggestionsDeferred Recommendations Module.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Recommend;
 
 /**
- * FinnaSuggestionsDeferred Recommendations Module
+ * FinnaSuggestionsDeferred Recommendations Module.
  *
  * This class provides recommendations via VuFind REST API (deferred).
  *

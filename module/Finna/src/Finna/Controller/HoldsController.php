@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Holds Controller
+ * Holds Controller.
  *
  * PHP version 8
  *
@@ -50,7 +50,7 @@ class HoldsController extends \VuFind\Controller\HoldsController
     use FinnaPersonalInformationSupportTrait;
 
     /**
-     * Send list of holds to view
+     * Send list of holds to view.
      *
      * @return mixed
      */

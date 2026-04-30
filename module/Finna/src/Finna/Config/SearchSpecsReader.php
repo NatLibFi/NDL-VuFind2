@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind SearchSpecs Configuration Reader
+ * VuFind SearchSpecs Configuration Reader.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@
 namespace Finna\Config;
 
 /**
- * VuFind SearchSpecs Configuration Reader
+ * VuFind SearchSpecs Configuration Reader.
  *
  * @category VuFind
  * @package  Config
@@ -44,14 +44,14 @@ namespace Finna\Config;
 class SearchSpecsReader extends \VuFind\Config\SearchSpecsReader
 {
     /**
-     * Cache for loaded searchspecs
+     * Cache for loaded searchspecs.
      *
      * @var array
      */
     protected $searchSpecs = [];
 
     /**
-     * Return search specs
+     * Return search specs.
      *
      * @param string $filename        Config file name
      * @param bool   $useLocalConfig  Use local configuration if available

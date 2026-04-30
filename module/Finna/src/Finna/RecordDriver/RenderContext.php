@@ -44,7 +44,7 @@ enum RenderContext: string
     case RECORD = 'record';
 
     /**
-     * Get render context from view type
+     * Get render context from view type.
      *
      * @param string $view View type i.e list, list-grid
      *

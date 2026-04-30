@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Description provider plugin manager
+ * Description provider plugin manager.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Content\Description;
 use Laminas\ServiceManager\Factory\InvokableFactory;
 
 /**
- * Description provider plugin manager
+ * Description provider plugin manager.
  *
  * @category VuFind
  * @package  Content

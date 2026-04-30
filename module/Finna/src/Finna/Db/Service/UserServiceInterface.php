@@ -44,7 +44,7 @@ use Finna\Db\Entity\UserEntityInterface;
 interface UserServiceInterface extends \VuFind\Db\Service\UserServiceInterface
 {
     /**
-     * Update due date reminder setting for a user
+     * Update due date reminder setting for a user.
      *
      * @param UserEntityInterface $user            User
      * @param int                 $dueDateReminder Due date reminder (days in advance)
@@ -77,7 +77,7 @@ interface UserServiceInterface extends \VuFind\Db\Service\UserServiceInterface
     public function getUsersWithDueDateReminders(): array;
 
     /**
-     * Check if given nickname is available
+     * Check if given nickname is available.
      *
      * @param string $nickname Nickname
      *

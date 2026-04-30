@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AIPA view helper
+ * AIPA view helper.
  *
  * PHP version 8
  *
@@ -43,7 +43,7 @@ use VuFind\View\Helper\Root\ClassBasedTemplateRendererTrait;
 use function count;
 
 /**
- * AIPA view helper
+ * AIPA view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -95,14 +95,14 @@ class Aipa extends AbstractHelper
     protected FinnaCodeSets $codeSets;
 
     /**
-     * Record driver
+     * Record driver.
      *
      * @var SolrAipa|AipaLrmi
      */
     protected SolrAipa|AipaLrmi $driver;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaCodeSets $codeSets Finna Code Sets library instance
      */

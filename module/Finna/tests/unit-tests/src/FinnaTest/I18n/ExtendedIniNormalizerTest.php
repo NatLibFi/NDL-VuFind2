@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ExtendedIniNormalizer Test Class
+ * ExtendedIniNormalizer Test Class.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ namespace FinnaTest\I18n;
 use VuFind\I18n\ExtendedIniNormalizer;
 
 /**
- * ExtendedIniNormalizer Test Class
+ * ExtendedIniNormalizer Test Class.
  *
  * @category VuFind
  * @package  Tests

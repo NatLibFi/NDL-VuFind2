@@ -26,7 +26,8 @@ class FinnaCookieConsentElement extends HTMLElement {
     if (url) {
       try {
         return new URL(url).host;
-      } catch (_) {
+      } catch (e) {
+        console.warn(e);
         return url;
       }
     }

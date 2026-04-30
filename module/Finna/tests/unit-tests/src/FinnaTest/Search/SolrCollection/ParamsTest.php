@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Collection Search Object Params Test
+ * Solr Collection Search Object Params Test.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Laminas\Stdlib\Parameters;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Solr Collection Search Object Params Test
+ * Solr Collection Search Object Params Test.
  *
  * @category VuFind
  * @package  Tests
@@ -48,7 +48,7 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\ConfigRelatedServicesTrait;
 
     /**
-     * Get Params object
+     * Get Params object.
      *
      * @param ?Options                $options    Options object (null to create)
      * @param ?ConfigManagerInterface $mockConfig Mock config plugin manager (null to create)
@@ -67,7 +67,7 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get Options object
+     * Get Options object.
      *
      * @param ?ConfigManagerInterface $configManager Config manager for Options object (null for new mock)
      *
@@ -149,7 +149,7 @@ class ParamsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test parseDateRangeFilter
+     * Test parseDateRangeFilter.
      *
      * @return void
      */

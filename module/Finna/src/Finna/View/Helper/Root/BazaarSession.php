@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Bazaar session view helper
+ * Bazaar session view helper.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Finna\Service\BazaarService;
 use Laminas\View\Helper\AbstractHelper;
 
 /**
- * Bazaar session view helper
+ * Bazaar session view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -53,7 +53,7 @@ class BazaarSession extends AbstractHelper
     protected BazaarService $bazaarService;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param BazaarService $bazaarService Bazaar service
      */

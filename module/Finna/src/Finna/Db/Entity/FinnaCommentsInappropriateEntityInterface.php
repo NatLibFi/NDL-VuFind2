@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model interface for finna_comments_inappropriate table
+ * Entity model interface for finna_comments_inappropriate table.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Entity model interface for finna_comments_inappropriate table
+ * Entity model interface for finna_comments_inappropriate table.
  *
  * @category VuFind
  * @package  Database
@@ -94,7 +94,7 @@ interface FinnaCommentsInappropriateEntityInterface extends EntityInterface
     public function setCreated(DateTime $dateTime): static;
 
     /**
-     * Created getter
+     * Created getter.
      *
      * @return DateTime
      */

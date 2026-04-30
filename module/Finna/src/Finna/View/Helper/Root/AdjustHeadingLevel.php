@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Adjust heading level view helper
+ * Adjust heading level view helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use Laminas\View\Helper\AbstractHelper;
 
 /**
- * Adjust heading level view helper
+ * Adjust heading level view helper.
  *
  * @category VuFind
  * @package  View_Helpers

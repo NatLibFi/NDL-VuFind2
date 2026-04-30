@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<lidoWrap schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
+  <lido>
+    <lidoRecID type="Test">knp-247394</lidoRecID>
+    <descriptiveMetadata lang="fi">
+      <objectClassificationWrap>
+        <objectWorkTypeWrap>
+          <objectWorkType>
+            <term> rakennetun ympäristön kohde </term>
+          </objectWorkType>
+        </objectWorkTypeWrap>
+        <classificationWrap>
+          <classification type="language">
+            <term>fi</term>
+          </classification>
+          <classification type="language">
+            <term>sv</term>
+          </classification>
+          <classification type="muu luokitus">
+            <term lang="en">buildings</term>
+            <term lang="en">department stores</term>
+            <term lang="fi">rakennukset</term>
+          </classification>
+          <classification>
+            <term lang="sv">byggnader</term>
+          </classification>
+        </classificationWrap>
+      </objectClassificationWrap>
+      <objectIdentificationWrap>
+        <repositoryWrap>
+          <repositorySet>
+            <workID>Primary id</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113">000001</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113" label="inventaarionumero">000002</workID>
+            <workID type="esinenumero">000003</workID>
+            <workID type="isbn">978-3-16-148410-0</workID>
+            <workID type="issn">2049-3630</workID>
+          </repositorySet>
+          <repositorySet>
+            <displayRepository lang="fi">Tätä paikkaa ei näytetä</displayRepository>
+            <repositoryLocation>
+              <namePlaceSet>
+                <appellationValue label="tarkempi paikka">Stockmann</appellationValue>
+              </namePlaceSet>
+              <partOfPlace>
+                <namePlaceSet>
+                  <appellationValue label="katuosoite">Aleksanterinkatu 52</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue label="kunta/kaupunki">Helsinki</appellationValue>
+                  </namePlaceSet>
+                </partOfPlace>
+              </partOfPlace>
+            </repositoryLocation>
+          </repositorySet>
+          <repositorySet type="Current location">
+            <displayRepository lang="fi">Teos on nähtävissä kirjaston aukioloaikoina.</displayRepository>
+            <displayRepository lang="en">The object can be accessed when the library is open.</displayRepository>
+            <repositoryLocation>
+              <namePlaceSet>
+                <appellationValue label="tarkempi paikka">Kansalliskirjaston kupolisali</appellationValue>
+              </namePlaceSet>
+              <partOfPlace>
+                <namePlaceSet>
+                  <appellationValue label="katuosoite">Unioninkatu 36</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue label="kunta/kaupunki">Helsinki</appellationValue>
+                  </namePlaceSet>
+                </partOfPlace>
+              </partOfPlace>
+              <placeID type="URI">http://urn.fi/URN:NBN:fi:au:finaf:000034269</placeID>
+            </repositoryLocation>
+          </repositorySet>
+        </repositoryWrap>
+        <objectDescriptionWrap>
+          <objectDescriptionSet type="introduction">
+            <descriptiveNoteValue lang="fi" label="esittely">Vain introductionissa!</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet type="description">
+            <descriptiveNoteValue lang="fi" label="kuvaus">Näkyy description typed.</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet type="description">
+            <descriptiveNoteValue lang="en" label="description">Visible description.</descriptiveNoteValue>
+          </objectDescriptionSet>
+          <objectDescriptionSet>
+              <descriptiveNoteValue label="CAPTION">Ei näy description untyped.</descriptiveNoteValue>
+          </objectDescriptionSet>
+        </objectDescriptionWrap>
+        <objectMeasurementsWrap>
+          <objectMeasurementsSet>
+            <displayObjectMeasurements label="extent" lang="fi">1001 neliömetriä</displayObjectMeasurements>
+            <displayObjectMeasurements label="extent" lang="en">1001 square meters</displayObjectMeasurements>
+            <objectMeasurements>
+              <measurementsSet>
+                <measurementType>
+                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
+                  <term lang="en">extent</term>
+                </measurementType>
+                <measurementUnit>m2</measurementUnit>
+                <measurementValue>1002</measurementValue>
+              </measurementsSet>
+            </objectMeasurements>
+          </objectMeasurementsSet>
+          <objectMeasurementsSet>
+            <displayObjectMeasurements lang="fi">pituus 73.0 cm, leveys 14 cm</displayObjectMeasurements>
+            <displayObjectMeasurements lang="en">height 73.0 cm, width 14 cm</displayObjectMeasurements>
+            <objectMeasurements>
+              <measurementsSet>
+                <measurementType>pituus</measurementType>
+                <measurementUnit>m</measurementUnit>
+                <measurementValue>2</measurementValue>
+              </measurementsSet>
+              <measurementsSet>
+                <measurementType>leveys</measurementType>
+                <measurementUnit>m</measurementUnit>
+                <measurementValue>1</measurementValue>
+              </measurementsSet>
+              <extentMeasurements lang="fi">kohde 2</extentMeasurements>
+              <extentMeasurements lang="fi">kohde 3</extentMeasurements>
+              <extentMeasurements lang="en">subjects 2 and 3</extentMeasurements>
+            </objectMeasurements>
+          </objectMeasurementsSet>
+        </objectMeasurementsWrap>
+        <displayStateEditionWrap>
+          <displayEdition>1.</displayEdition>
+        </displayStateEditionWrap>
+        <inscriptionsWrap>
+          <inscriptions>
+            <inscriptionDescription type="annotated">
+              <descriptiveNoteValue label="Annotation">
+                No huhhuh
+              </descriptiveNoteValue>
+            </inscriptionDescription>
+          </inscriptions>
+        </inscriptionsWrap>
+      </objectIdentificationWrap>
+    </descriptiveMetadata>
+    <administrativeMetadata>
+      <resourceWrap>
+        <resourceSet>
+          <resourceID type="ID">607643</resourceID>
+          <resourceDescription type="displayLink" lang="en">Image name</resourceDescription>
+          <resourceDescription type="displayLink" lang="fi">Kuvan nimi</resourceDescription>
+          <resourceRepresentation type="image_thumb">
+            <linkResource>https://example.com/1/thumb.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_large">
+            <linkResource>https://example.com/1/large.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_master">
+            <linkResource>https://example.com/1/master.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_original">
+            <linkResource formatResource="tif">https://example.com/1/original.tif</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">bytes</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">leveys</measurementType>
+              <measurementType lang="en">width</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">korkeus</measurementType>
+              <measurementType lang="en">height</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+          </resourceRepresentation>
+        </resourceSet>
+        <resourceSet>
+          <resourceID type="ID">607643</resourceID>
+          <resourceDescription type="displayLink" lang="en">Image name</resourceDescription>
+          <resourceDescription type="displayLink" lang="fi">Kuvan nimi</resourceDescription>
+          <resourceRepresentation type="image_thumb">
+            <linkResource>https://example.com/2/thumb.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_large">
+            <linkResource>https://example.com/2/large.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_master">
+            <linkResource>https://example.com/2/master.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_original">
+            <linkResource formatResource="tif">https://example.com/2/original.tif</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">bytes</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">leveys</measurementType>
+              <measurementType lang="en">width</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">korkeus</measurementType>
+              <measurementType lang="en">height</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+          </resourceRepresentation>
+        </resourceSet>
+        <resourceSet>
+          <resourceID type="ID">607643</resourceID>
+          <resourceDescription type="displayLink" lang="en">Image name</resourceDescription>
+          <resourceDescription type="displayLink" lang="fi">Kuvan nimi</resourceDescription>
+          <resourceRepresentation type="image_thumb">
+            <linkResource>https://example.com/3/thumb.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_large">
+            <linkResource>https://example.com/3/large.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_master">
+            <linkResource>https://example.com/3/master.jpeg</linkResource>
+          </resourceRepresentation>
+          <resourceRepresentation type="image_original">
+            <linkResource formatResource="tif">https://example.com/3/original.tif</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">bytes</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">leveys</measurementType>
+              <measurementType lang="en">width</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">korkeus</measurementType>
+              <measurementType lang="en">height</measurementType>
+              <measurementUnit lang="fi">pikseli</measurementUnit>
+              <measurementUnit lang="en">pixel</measurementUnit>
+              <measurementValue>5</measurementValue>
+            </resourceMeasurementsSet>
+          </resourceRepresentation>
+        </resourceSet>
+      </resourceWrap>
+    </administrativeMetadata>
+  </lido>
+</lidoWrap>

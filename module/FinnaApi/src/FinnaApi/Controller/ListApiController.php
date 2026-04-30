@@ -1,7 +1,7 @@
 <?php
 
 /**
- * List API Controller
+ * List API Controller.
  *
  * PHP version 8
  *
@@ -46,7 +46,7 @@ use function count;
 use function is_array;
 
 /**
- * List API Controller
+ * List API Controller.
  *
  * Controls the List API functionality
  *
@@ -62,21 +62,21 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
     use \Finna\Controller\Feature\FinnaUserListTrait;
 
     /**
-     * Default record fields to return if a request does not define the fields
+     * Default record fields to return if a request does not define the fields.
      *
      * @var array
      */
     protected $defaultRecordFields = [];
 
     /**
-     * Max limit of list records in API response (default 100);
+     * Max limit of list records in API response (default 100);.
      *
      * @var int
      */
     protected $maxLimit = 100;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ServiceLocatorInterface $sm              Service manager
      * @param RecordFormatter         $recordFormatter Record formatter
@@ -97,7 +97,7 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
 
     /**
      * Get API specification JSON fragment for services provided by the
-     * controller
+     * controller.
      *
      * @return string
      */
@@ -124,7 +124,7 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
     }
 
     /**
-     * List action
+     * List action.
      *
      * @return Response
      * @throws Exception
@@ -209,7 +209,7 @@ class ListApiController extends \VuFind\Controller\AbstractBase implements ApiIn
     }
 
     /**
-     * Get field list based on the request
+     * Get field list based on the request.
      *
      * TODO: Move to ApiTrait
      *

@@ -49,7 +49,7 @@ use VuFindSearch\Backend\Solr\Backend;
 class SolrAuthBackendFactory extends \VuFind\Search\Factory\SolrAuthBackendFactory
 {
     /**
-     * Solr connector class
+     * Solr connector class.
      *
      * @var string
      */

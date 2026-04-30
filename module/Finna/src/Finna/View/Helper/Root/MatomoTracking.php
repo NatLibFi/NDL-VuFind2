@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Matomo web analytics tracking code view helper for Matomo versions >= 4
+ * Matomo web analytics tracking code view helper for Matomo versions >= 4.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use function func_get_args;
 use function func_num_args;
 
 /**
- * Matomo web analytics tracking code view helper for Matomo versions >= 4
+ * Matomo web analytics tracking code view helper for Matomo versions >= 4.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -49,14 +49,14 @@ use function func_num_args;
 class MatomoTracking extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Whether Matomo tracking is enabled
+     * Whether Matomo tracking is enabled.
      *
      * @var bool
      */
     protected $active;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $config VuFind configuration
      */
@@ -79,7 +79,7 @@ class MatomoTracking extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get content impressions tracking attributes for an HTML element
+     * Get content impressions tracking attributes for an HTML element.
      *
      * @param string $name    Content name (domain)
      * @param string $piece   Content piece

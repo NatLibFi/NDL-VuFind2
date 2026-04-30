@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for user table
+ * Entity model for user table.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for user table
+ * Entity model for user table.
  *
  * @category VuFind
  * @package  Database
@@ -84,7 +84,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     protected bool $finnaProtected = false;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -94,7 +94,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Due date reminder setting setter
+     * Due date reminder setting setter.
      *
      * @param int $remind New due date reminder setting.
      *
@@ -107,7 +107,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Due date reminder setting getter
+     * Due date reminder setting getter.
      *
      * @return int
      */
@@ -117,7 +117,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Nickname setter
+     * Nickname setter.
      *
      * @param ?string $nickname Nickname or null for none
      *
@@ -130,7 +130,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Nickname getter
+     * Nickname getter.
      *
      * @return ?string
      */
@@ -140,7 +140,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Protection status setter
+     * Protection status setter.
      *
      * @param bool $protected Is the user protected
      *
@@ -153,7 +153,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Protection status getter
+     * Protection status getter.
      *
      * @return bool
      */
@@ -163,7 +163,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Last expiration reminder date setter
+     * Last expiration reminder date setter.
      *
      * @param ?DateTime $dateTime Expiration reminder date
      *
@@ -176,7 +176,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Last expiration reminder date getter
+     * Last expiration reminder date getter.
      *
      * @return DateTime
      */
@@ -186,7 +186,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Get display name
+     * Get display name.
      *
      * @return string
      */
@@ -198,7 +198,7 @@ class User extends \VuFind\Db\Entity\User implements UserEntityInterface
     }
 
     /**
-     * Get a displayable version of username
+     * Get a displayable version of username.
      *
      * @param string $loginMethod loginMethod config (MultiIls only)
      *

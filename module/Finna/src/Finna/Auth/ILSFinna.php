@@ -44,7 +44,7 @@ use VuFind\Exception\Auth as AuthException;
 trait ILSFinna
 {
     /**
-     * Check if ILS supports self-registration
+     * Check if ILS supports self-registration.
      *
      * @param string $target Login target (MultiILS)
      *
@@ -61,7 +61,7 @@ trait ILSFinna
     }
 
     /**
-     * Make sure passwords match and fulfill ILS policy
+     * Make sure passwords match and fulfill ILS policy.
      *
      * @param array $params request parameters
      *
@@ -123,5 +123,47 @@ trait ILSFinna
         }
 
         return $user;
+    }
+
+    /**
+     * Handle pre-authentication.
+     *
+     * @param string $target      MultiILS login target
+     * @param string $username    User name
+     * @param string $loginMethod Login method
+     *
+     * @return ?array
+     */
+    protected function handlePreAuthentication(
+        string $target,
+        string $username,
+        string $loginMethod,
+    ): ?array {
+        if ('email' !== $loginMethod) {
+            return null;
+        }
+
+        $username = trim($username);
+        if (!$username) {
+            throw new AuthException('authentication_error_blank');
+        }
+
+        // Fetch user by email address and send a one-time password by email if found:
+        $preAuthData = [
+            'authId' => null,
+            'target' => $target,
+            'email' => $username,
+            'messageHtml' => 'email_login_code_sent_html',
+        ];
+        if ($target) {
+            $username = "$target.$username";
+        }
+        if ($patron = $this->getCatalog()->patronLogin($username, null)) {
+            $preAuthData['authId'] = $this->emailAuthenticator->sendAuthenticationCode(
+                $preAuthData['email'],
+                compact('patron')
+            );
+        }
+        return $preAuthData;
     }
 }

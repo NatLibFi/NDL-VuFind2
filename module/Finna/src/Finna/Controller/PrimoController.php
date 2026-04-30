@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Controller
+ * Primo Central Controller.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * Primo Central Controller
+ * Primo Central Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -50,7 +50,7 @@ class PrimoController extends \VuFind\Controller\PrimoController
     protected $searchClassId = 'Primo';
 
     /**
-     * Home action
+     * Home action.
      *
      * @return mixed
      */
@@ -61,7 +61,7 @@ class PrimoController extends \VuFind\Controller\PrimoController
     }
 
     /**
-     * Handle onDispatch event
+     * Handle onDispatch event.
      *
      * @param \Laminas\Mvc\MvcEvent $e Event
      *
@@ -78,7 +78,7 @@ class PrimoController extends \VuFind\Controller\PrimoController
     }
 
     /**
-     * Search action -- call standard results action
+     * Search action -- call standard results action.
      *
      * @return mixed
      */

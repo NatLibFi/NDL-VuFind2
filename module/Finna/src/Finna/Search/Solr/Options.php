@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr aspect of the Search Multi-class (Options)
+ * Solr aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\Search\Solr;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Solr Search Options
+ * Solr Search Options.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -48,14 +48,14 @@ class Options extends \VuFind\Search\Solr\Options
     use \Finna\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Date range visualization settings
+     * Date range visualization settings.
      *
      * @var string
      */
     protected $dateRangeVis;
 
     /**
-     * Whether to display record versions
+     * Whether to display record versions.
      *
      * Finna: keep it false by default for now
      *
@@ -64,7 +64,7 @@ class Options extends \VuFind\Search\Solr\Options
     protected $displayRecordVersions = false;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */
@@ -105,7 +105,7 @@ class Options extends \VuFind\Search\Solr\Options
     }
 
     /**
-     * Get the field used for date range search
+     * Get the field used for date range search.
      *
      * @return string
      */
@@ -116,7 +116,7 @@ class Options extends \VuFind\Search\Solr\Options
     }
 
     /**
-     * Get the field used for date range visualization
+     * Get the field used for date range visualization.
      *
      * @return string
      */
@@ -144,7 +144,7 @@ class Options extends \VuFind\Search\Solr\Options
     }
 
     /**
-     * Convert a legacy sort option to current one that excludes a tie breaker
+     * Convert a legacy sort option to current one that excludes a tie breaker.
      *
      * @param string $sort Sort string
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation List Results
+ * Reservation List Results.
  *
  * PHP version 8
  *
@@ -45,7 +45,7 @@ use function array_slice;
 use function count;
 
 /**
- * Reservation List Results
+ * Reservation List Results.
  *
  * @category VuFind
  * @package  Search_ReservationList
@@ -73,35 +73,35 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     protected $list = false;
 
     /**
-     * Resource list service
+     * Resource list service.
      *
      * @var FinnaResourceListResourceServiceInterface
      */
     protected $resourceListResourceService;
 
     /**
-     * UserList service
+     * UserList service.
      *
      * @var FinnaResourceListServiceInterface
      */
     protected $listService;
 
     /**
-     * Facet list
+     * Facet list.
      *
      * @var array
      */
     protected $facets;
 
     /**
-     * All ids
+     * All ids.
      *
      * @var array
      */
     protected $allIds;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Search\Base\Params                $params          Object representing user
      *                                                                   search parameters.
@@ -123,7 +123,7 @@ class Results extends BaseResults implements AuthorizationServiceAwareInterface
     }
 
     /**
-     * Returns the stored list of facets for the last search
+     * Returns the stored list of facets for the last search.
      *
      * @param array $filter Array of field => on-screen description listing
      * all of the desired facet fields; set to null to get all configured values.

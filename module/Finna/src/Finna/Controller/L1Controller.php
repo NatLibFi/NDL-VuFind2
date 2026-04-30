@@ -1,7 +1,7 @@
 <?php
 
 /**
- * L1 Controller
+ * L1 Controller.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Controller;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 
 /**
- * L1 Controller
+ * L1 Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -43,7 +43,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 class L1Controller extends SearchController
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ServiceLocatorInterface $sm Service locator
      */

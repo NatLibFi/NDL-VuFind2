@@ -1,7 +1,7 @@
 <?php
 
 /**
- * KohaRest ILS Driver for KohaSuomi (the VuFind base implementation part)
+ * KohaRest ILS Driver for KohaSuomi (the VuFind base implementation part).
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use function is_callable;
 use function is_string;
 
 /**
- * KohaRest ILS Driver for KohaSuomi (the VuFind base implementation part)
+ * KohaRest ILS Driver for KohaSuomi (the VuFind base implementation part).
  *
  * Minimum Koha Version: work in progress as of 23 Jan 2017
  *
@@ -63,7 +63,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     use FinnaCommonILSTrait;
 
     /**
-     * Date converter object
+     * Date converter object.
      *
      * @var \VuFind\Date\Converter
      */
@@ -77,14 +77,14 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     protected $sessionFactory;
 
     /**
-     * Session cache
+     * Session cache.
      *
      * @var \Laminas\Session\Container
      */
     protected $sessionCache;
 
     /**
-     * Default pickup location
+     * Default pickup location.
      *
      * @var string
      */
@@ -101,7 +101,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Mappings from fee (account line) types
+     * Mappings from fee (account line) types.
      *
      * @var array
      */
@@ -120,7 +120,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Mappings from renewal block reasons
+     * Mappings from renewal block reasons.
      *
      * @var array
      */
@@ -138,7 +138,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Permanent renewal blocks
+     * Permanent renewal blocks.
      */
     protected $permanentRenewalBlocks = [
         'onsite_checkout',
@@ -147,7 +147,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Whether to display home branch instead of holding branch
+     * Whether to display home branch instead of holding branch.
      *
      * @var bool
      */
@@ -161,7 +161,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     protected $sortItemsByEnumChron;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Date\Converter $dateConverter  Date converter object
      * @param Callable               $sessionFactory Factory function returning
@@ -240,7 +240,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -256,7 +256,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Statuses
+     * Get Statuses.
      *
      * This is responsible for retrieving the status information for a
      * collection of records.
@@ -275,7 +275,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -297,7 +297,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Purchase History
+     * Get Purchase History.
      *
      * This is responsible for retrieving the acquisitions history data for the
      * specific record (usually recently received issues of a serial).
@@ -314,7 +314,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get New Items
+     * Get New Items.
      *
      * Retrieve the IDs of items recently added to the catalog.
      *
@@ -338,7 +338,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Find Reserves
+     * Find Reserves.
      *
      * Obtain information on course reserves.
      *
@@ -356,7 +356,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -440,7 +440,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -478,7 +478,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked out items)
      * by a specific patron.
@@ -597,7 +597,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Renew Details
+     * Get Renew Details.
      *
      * @param array $checkOutDetails An array of item data
      *
@@ -609,7 +609,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Renew My Items
+     * Renew My Items.
      *
      * Function for attempting to renew a patron's items. The data in
      * $renewDetails['details'] is determined by getRenewDetails().
@@ -655,7 +655,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transaction History
+     * Get Patron Transaction History.
      *
      * This is responsible for retrieving all historical transactions
      * (i.e. checked out items)
@@ -755,7 +755,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -838,7 +838,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Cancel Holds
+     * Cancel Holds.
      *
      * Attempts to Cancel a hold. The data in $cancelDetails['details'] is determined
      * by getCancelHoldDetails().
@@ -882,7 +882,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update holds
+     * Update holds.
      *
      * This is responsible for changing the status of hold requests
      *
@@ -955,7 +955,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Pick Up Locations
+     * Get Pick Up Locations.
      *
      * This is responsible for gettting a list of valid library locations for
      * holds / recall retrieval
@@ -1075,7 +1075,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Default Pick Up Location
+     * Get Default Pick Up Location.
      *
      * Returns the default pick up location
      *
@@ -1097,7 +1097,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if request is valid
+     * Check if request is valid.
      *
      * This is responsible for determining if an item is requestable
      *
@@ -1152,7 +1152,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Place Hold
+     * Place Hold.
      *
      * Attempts to place a hold or recall on a particular item and returns
      * an array with result details or throws an exception on failure of support
@@ -1241,7 +1241,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Storage Retrieval Requests
+     * Get Patron Storage Retrieval Requests.
      *
      * This is responsible for retrieving all article requests by a specific patron.
      *
@@ -1297,7 +1297,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Cancel Storage Retrieval Request (article request) Details
+     * Get Cancel Storage Retrieval Request (article request) Details.
      *
      * @param array $details An array of item data
      *
@@ -1309,7 +1309,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Cancel Storage Retrieval Requests (article requests)
+     * Cancel Storage Retrieval Requests (article requests).
      *
      * Attempts to Cancel an article request on a particular item. The
      * data in $cancelDetails['details'] is determined by
@@ -1354,7 +1354,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if storage retrieval request is valid
+     * Check if storage retrieval request is valid.
      *
      * This is responsible for determining if an item is requestable
      *
@@ -1397,7 +1397,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Place Storage Retrieval Request (Call Slip)
+     * Place Storage Retrieval Request (Call Slip).
      *
      * Attempts to place a call slip request on a particular item and returns
      * an array with result details
@@ -1467,7 +1467,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -1525,7 +1525,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Change Password
+     * Change Password.
      *
      * Attempts to change patron password (PIN code)
      *
@@ -1647,7 +1647,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Create a HTTP client
+     * Create a HTTP client.
      *
      * @param string $url Request URL
      *
@@ -1700,7 +1700,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Make Request
+     * Make Request.
      *
      * Makes a request to the Koha REST API
      *
@@ -1899,7 +1899,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Item Statuses
+     * Get Item Statuses.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1987,7 +1987,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get statuses for an item
+     * Get statuses for an item.
      *
      * @param array $item Item from Koha
      *
@@ -2083,7 +2083,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Status item sort function
+     * Status item sort function.
      *
      * @param array $a First status record to compare
      * @param array $b Second status record to compare
@@ -2105,7 +2105,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if an item is holdable
+     * Check if an item is holdable.
      *
      * @param array $item Item from Koha
      *
@@ -2118,7 +2118,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if an article request can be placed on the item
+     * Check if an article request can be placed on the item.
      *
      * @param array $item Item from Koha
      *
@@ -2171,7 +2171,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get branches from cache or from the API
+     * Get branches from cache or from the API.
      *
      * @return array
      */
@@ -2195,7 +2195,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get patron's blocks, if any
+     * Get patron's blocks, if any.
      *
      * @param array $patron Patron
      *
@@ -2263,7 +2263,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Fetch an item record from Koha
+     * Fetch an item record from Koha.
      *
      * @param int $id Item id
      *
@@ -2282,7 +2282,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Fetch a bib record from Koha
+     * Fetch a bib record from Koha.
      *
      * @param int $id Bib record id
      *
@@ -2319,7 +2319,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Return a hold error message
+     * Return a hold error message.
      *
      * @param int   $code   HTTP Result Code
      * @param array $result API Response
@@ -2345,7 +2345,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Map a Koha renewal block reason code to a VuFind translation string
+     * Map a Koha renewal block reason code to a VuFind translation string.
      *
      * @param string $reason Koha block code
      *
@@ -2357,7 +2357,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Return a location for a Koha item
+     * Return a location for a Koha item.
      *
      * @param array $item Item
      *
@@ -2377,7 +2377,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Translate location name
+     * Translate location name.
      *
      * @param string $location Location code
      * @param string $default  Default value if translation is not available
@@ -2398,7 +2398,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Return a call number for a Koha item
+     * Return a call number for a Koha item.
      *
      * @param array $item Item
      *
@@ -2410,7 +2410,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get a reason for why a hold cannot be placed
+     * Get a reason for why a hold cannot be placed.
      *
      * @param array $result Hold check result
      *
@@ -2445,7 +2445,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get item and title information for a checkout
+     * Get item and title information for a checkout.
      *
      * @param array $entry Checkout entry
      *
@@ -2492,7 +2492,7 @@ class KohaRestSuomiVuFind extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Converts given key to corresponding parameter
+     * Converts given key to corresponding parameter.
      *
      * @param string $key     to convert
      * @param string $default value to return

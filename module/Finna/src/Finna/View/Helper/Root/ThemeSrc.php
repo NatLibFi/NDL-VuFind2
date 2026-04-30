@@ -43,14 +43,14 @@ namespace Finna\View\Helper\Root;
 class ThemeSrc extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Theme information service
+     * Theme information service.
      *
      * @var \VufindTheme\ThemeInfo
      */
     protected $themeInfo;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFindTheme\ThemeInfo $themeInfo Theme information service
      */

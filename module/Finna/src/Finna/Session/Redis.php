@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Redis session handler extensions
+ * Redis session handler extensions.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Session;
 
 /**
- * Redis session handler extensions
+ * Redis session handler extensions.
  *
  * @category VuFind
  * @package  Session_Handlers

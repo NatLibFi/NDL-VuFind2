@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_record_stats_log table
+ * Entity model for finna_record_stats_log table.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for finna_record_stats_log table
+ * Entity model for finna_record_stats_log table.
  *
  * @category VuFind
  * @package  Database
@@ -47,7 +47,7 @@ use Doctrine\ORM\Mapping as ORM;
 class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogEntityInterface
 {
     /**
-     * Backend
+     * Backend.
      *
      * @var string
      */
@@ -56,7 +56,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     protected string $backend;
 
     /**
-     * Source
+     * Source.
      *
      * @var string
      */
@@ -65,7 +65,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     protected string $source;
 
     /**
-     * Record ID
+     * Record ID.
      *
      * @var string
      */
@@ -82,7 +82,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     protected string $formats;
 
     /**
-     * Usage rights
+     * Usage rights.
      *
      * @var string
      */
@@ -90,7 +90,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     protected string $usageRights;
 
     /**
-     * Online
+     * Online.
      *
      * @var bool
      */
@@ -98,7 +98,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     protected bool $online;
 
     /**
-     * Extra Metadata
+     * Extra Metadata.
      *
      * @var ?string
      */
@@ -106,7 +106,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     protected ?string $extraMetadata = null;
 
     /**
-     * Backend setter
+     * Backend setter.
      *
      * @param string $backend Backend
      *
@@ -119,7 +119,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Backend getter
+     * Backend getter.
      *
      * @return string
      */
@@ -129,7 +129,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Source setter
+     * Source setter.
      *
      * @param string $source Source
      *
@@ -142,7 +142,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Source getter
+     * Source getter.
      *
      * @return string
      */
@@ -152,7 +152,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Record Id setter
+     * Record Id setter.
      *
      * @param string $recordId Record Id
      *
@@ -165,7 +165,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Record Id getter
+     * Record Id getter.
      *
      * @return string
      */
@@ -175,7 +175,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Formats setter
+     * Formats setter.
      *
      * @param string $formats Formats
      *
@@ -188,7 +188,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Formats getter
+     * Formats getter.
      *
      * @return string
      */
@@ -198,7 +198,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Usage rights setter
+     * Usage rights setter.
      *
      * @param string $usageRights Usage rights
      *
@@ -211,7 +211,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Usage rights getter
+     * Usage rights getter.
      *
      * @return string
      */
@@ -221,7 +221,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Online setter
+     * Online setter.
      *
      * @param bool $online Online
      *
@@ -234,7 +234,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Online getter
+     * Online getter.
      *
      * @return string
      */
@@ -244,7 +244,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Extra metadata setter
+     * Extra metadata setter.
      *
      * @param ?string $extraMetadata Extra metadata
      *
@@ -257,7 +257,7 @@ class FinnaRecordStatsLog extends FinnaBaseStats implements FinnaRecordStatsLogE
     }
 
     /**
-     * Extra metadata getter
+     * Extra metadata getter.
      *
      * @return ?string
      */

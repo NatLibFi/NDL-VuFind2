@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Favorites aspect of the Search Multi-class (Results)
+ * Favorites aspect of the Search Multi-class (Results).
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use function assert;
 use function intval;
 
 /**
- * Search Favorites Results
+ * Search Favorites Results.
  *
  * @category VuFind
  * @package  Search_Favorites

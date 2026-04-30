@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrAuth aspect of the Search Multi-class (Options)
+ * SolrAuth aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\SolrAuth;
 
 /**
- * SolrAuth Search Options
+ * SolrAuth Search Options.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -41,7 +41,7 @@ namespace Finna\Search\SolrAuth;
 class Options extends \VuFind\Search\SolrAuth\Options
 {
     /**
-     * Default view option
+     * Default view option.
      *
      * @var string
      */

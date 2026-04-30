@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Proxy URL view helper
+ * Proxy URL view helper.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Net\IpAddressUtils;
 use function in_array;
 
 /**
- * Proxy URL view helper
+ * Proxy URL view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -47,28 +47,28 @@ use function in_array;
 class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
 {
     /**
-     * IP address utils
+     * IP address utils.
      *
      * @var IpAddressUtils
      */
     protected $ipAddressUtils;
 
     /**
-     * Permissions configuration
+     * Permissions configuration.
      *
      * @var Config
      */
     protected $permissions;
 
     /**
-     * Cached value for IP check
+     * Cached value for IP check.
      *
      * @var null|bool
      */
     protected $ipInRange = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config      VuFind configuration
      * @param CacheAdapter          $cache       Cache for web service responses
@@ -186,7 +186,7 @@ class ProxyUrl extends \VuFind\View\Helper\Root\ProxyUrl
 
     /**
      * Check if the requester's IP is in any known IP address range and cache the
-     * result
+     * result.
      *
      * @return bool
      */

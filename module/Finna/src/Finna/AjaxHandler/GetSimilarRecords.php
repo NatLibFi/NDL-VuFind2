@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Similar Records" AJAX handler
+ * "Get Similar Records" AJAX handler.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Related\Similar;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * "Get Similar Records" AJAX handler
+ * "Get Similar Records" AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -47,28 +47,28 @@ use VuFind\Session\Settings as SessionSettings;
 class GetSimilarRecords extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * Similar record handler
+     * Similar record handler.
      *
      * @var Similar
      */
     protected $similar;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings   $ss       Session settings
      * @param Loader            $loader   Record loader

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list ajax handler
+ * Reservation list ajax handler.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
 /**
- * Reservation list ajax handler
+ * Reservation list ajax handler.
  *
  * @category VuFind
  * @package  AjaxHandler
@@ -49,7 +49,7 @@ class ReservationList extends \VuFind\AjaxHandler\AbstractBase implements Transl
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ?UserEntityInterface   $user                   Logged in user (or null)
      * @param ReservationListService $reservationListService Reservation list service

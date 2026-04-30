@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for user_resource table
+ * Entity model for user_resource table.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for user_resource table
+ * Entity model for user_resource table.
  *
  * @category VuFind
  * @package  Database
@@ -56,7 +56,7 @@ class UserResource extends \VuFind\Db\Entity\UserResource implements UserResourc
     protected ?int $finnaCustomOrderIndex;
 
     /**
-     * Custom order index setter
+     * Custom order index setter.
      *
      * @param ?int $index New due date reminder setting.
      *
@@ -69,7 +69,7 @@ class UserResource extends \VuFind\Db\Entity\UserResource implements UserResourc
     }
 
     /**
-     * Custom order index getter
+     * Custom order index getter.
      *
      * @return ?int
      */

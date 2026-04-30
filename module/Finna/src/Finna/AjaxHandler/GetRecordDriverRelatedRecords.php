@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Get "RecordDriverRelatedRecords" AJAX handler
+ * Get "RecordDriverRelatedRecords" AJAX handler.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use function array_slice;
 use function is_string;
 
 /**
- * Get "RecordDriverRelatedRecords" AJAX handler
+ * Get "RecordDriverRelatedRecords" AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -49,28 +49,28 @@ use function is_string;
 class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * SearchRunner
+     * SearchRunner.
      *
      * @var SearchRunner
      */
     protected $searchRunner;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Loader            $loader       Record loader
      * @param SearchRunner      $searchRunner Search runner

@@ -36,7 +36,7 @@ use VuFind\Db\Entity\EntityInterface;
 use function assert;
 
 /**
- * Console service for unprotecting users
+ * Console service for unprotecting users.
  *
  * @category VuFind
  * @package  Service
@@ -50,21 +50,21 @@ use function assert;
 class Unprotect extends \FinnaConsole\Command\AbstractRecordUpdateCommand
 {
     /**
-     * Table display name
+     * Table display name.
      *
      * @var string
      */
     protected $tableName = 'user';
 
     /**
-     * Command description
+     * Command description.
      *
      * @var string
      */
     protected $description = 'Unprotect users in the database';
 
     /**
-     * Update a record
+     * Update a record.
      *
      * @param EntityInterface $record Record
      *

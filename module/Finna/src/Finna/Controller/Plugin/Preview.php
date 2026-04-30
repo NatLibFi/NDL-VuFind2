@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind Action Helper - Record Preview Support Methods
+ * VuFind Action Helper - Record Preview Support Methods.
  *
  * PHP version 8
  *
@@ -42,7 +42,7 @@ use VuFind\Log\LoggerAwareTrait;
 use VuFindHttp\HttpServiceInterface;
 
 /**
- * VuFind Action Helper - Record Preview Support Methods
+ * VuFind Action Helper - Record Preview Support Methods.
  *
  * @category VuFind
  * @package  Controller_Plugins
@@ -55,35 +55,35 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * Record validation - no issues
+     * Record validation - no issues.
      *
      * @var int
      */
     public const VALIDATION_NO_ISSUES = 0;
 
     /**
-     * Record validation - only recommendations found
+     * Record validation - only recommendations found.
      *
      * @var int
      */
     public const VALIDATION_RECOMMENDATIONS = 1;
 
     /**
-     * Record validation - warnings found
+     * Record validation - warnings found.
      *
      * @var int
      */
     public const VALIDATION_WARNINGS = 2;
 
     /**
-     * Record validation - errors found
+     * Record validation - errors found.
      *
      * @var int
      */
     public const VALIDATION_ERRORS = 3;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ContainerInterface   $serviceLocator Service locator
      * @param array                $config         Main configuration
@@ -99,7 +99,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
     }
 
     /**
-     * Load and validate a preview record
+     * Load and validate a preview record.
      *
      * @return array Associative array with driver, errors and validation_result (see consts at the top)
      */
@@ -149,7 +149,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
     }
 
     /**
-     * Load normalized record metadata from RecordManager for preview
+     * Load normalized record metadata from RecordManager for preview.
      *
      * @param string $data   Record Metadata
      * @param string $format Metadata format
@@ -212,7 +212,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
     }
 
     /**
-     * Validate a record if configured
+     * Validate a record if configured.
      *
      * @param string $metadata Metadata
      * @param string $format   Metadata format
@@ -284,7 +284,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
     }
 
     /**
-     * Create a DOMDocument and inject the default namespace for the given format if necessary
+     * Create a DOMDocument and inject the default namespace for the given format if necessary.
      *
      * Also pretty-prints the document so that it can be output nicely in a validation report.
      *

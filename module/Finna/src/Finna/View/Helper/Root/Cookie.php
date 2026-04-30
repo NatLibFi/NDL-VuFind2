@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Cookie view helper
+ * Cookie view helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use VuFind\Cookie\CookieManager;
 
 /**
- * Cookie view helper
+ * Cookie view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,14 +43,14 @@ use VuFind\Cookie\CookieManager;
 class Cookie extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Cookie manager
+     * Cookie manager.
      *
      * @var CookieManager
      */
     protected $cookieManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Cookie\Manager $cookieManager Cookie manager
      */
@@ -60,7 +60,7 @@ class Cookie extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get a cookie
+     * Get a cookie.
      *
      * @param string $cookie Cookie name
      *

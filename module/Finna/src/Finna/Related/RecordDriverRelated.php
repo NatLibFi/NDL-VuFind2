@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Related Record: record driver based
+ * Related Record: record driver based.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Related;
 
 /**
- * Related Record: record driver based
+ * Related Record: record driver based.
  *
  * @category VuFind
  * @package  Related_Records
@@ -41,7 +41,7 @@ namespace Finna\Related;
 class RecordDriverRelated implements \VuFind\Related\RelatedInterface
 {
     /**
-     * Record driver
+     * Record driver.
      *
      * @var \VuFind\RecordDriver\AbstractBase
      */
@@ -74,7 +74,7 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get the current record ID
+     * Get the current record ID.
      *
      * @return string
      */
@@ -87,7 +87,7 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get the current record source
+     * Get the current record source.
      *
      * @return string
      */

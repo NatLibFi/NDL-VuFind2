@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Navibar test class
+ * Navibar test class.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace FinnaTest\View\Helper\Root;
 use Finna\View\Helper\Root\Navibar;
 
 /**
- * Navibar test class
+ * Navibar test class.
  *
  * @category VuFind
  * @package  Tests

@@ -30,7 +30,7 @@
 namespace Finna\Search\Combined;
 
 /**
- * Combined results search model
+ * Combined results search model.
  *
  * @category VuFind
  * @package  Search_Solr

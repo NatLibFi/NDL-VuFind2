@@ -47,28 +47,28 @@ use VuFind\View\Helper\Root\Record as RecordHelper;
 class GetRecordInfoByAuthority extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Tab manager
+     * Tab manager.
      *
      * @var TabManager
      */
     protected $recordHelper;
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * Tab manager
+     * Tab manager.
      *
      * @var TabManager
      */
     protected $tabManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings $ss           Session settings
      * @param Loader          $loader       Record loader

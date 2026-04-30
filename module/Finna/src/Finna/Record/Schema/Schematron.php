@@ -50,7 +50,7 @@ use function in_array;
 class Schematron extends Milo\Schematron
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $namespace Schema namespace (self::NS_*)
      *

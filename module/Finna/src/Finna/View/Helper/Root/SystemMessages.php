@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Helper class for system messages
+ * Helper class for system messages.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Laminas\Session\Container;
 use VuFind\Config\Config;
 
 /**
- * Helper class for system messages
+ * Helper class for system messages.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -51,21 +51,21 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Core configuration
+     * Core configuration.
      *
      * @var Config
      */
     protected $coreConfig;
 
     /**
-     * Local system configuration
+     * Local system configuration.
      *
      * @var Config
      */
     protected $localConfig;
 
     /**
-     * Session container
+     * Session container.
      *
      * @var Container
      */
@@ -79,7 +79,7 @@ class SystemMessages extends \Laminas\View\Helper\AbstractHelper implements
     public const SESSION_NAME = 'SystemMessages';
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Config    $coreConfig  Configuration
      * @param Config    $localConfig Local configuration

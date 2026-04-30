@@ -82,6 +82,7 @@ finna.itemStatus = (function finnaItemStatus() {
       try {
         cookie = JSON.parse(cookie);
       } catch (error) {
+        console.warn(error);
         cookie = [];
       }
       if (!Array.isArray(cookie)) {

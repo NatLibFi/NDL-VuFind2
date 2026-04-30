@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Favorites aspect of the Search Multi-class (Options)
+ * Favorites aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\Controller\MyResearchController;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Search Favorites Options
+ * Search Favorites Options.
  *
  * @category VuFind
  * @package  Search_Favorites
@@ -46,7 +46,7 @@ class Options extends \VuFind\Search\Favorites\Options
     use \Finna\Search\FinnaOptions;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * Add the limit and views options to Favorites.
      *

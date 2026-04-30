@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Biblioworks Helpdesk Context AJAX Handler
+ * Biblioworks Helpdesk Context AJAX Handler.
  *
  * PHP version 8
  *
@@ -44,7 +44,7 @@ use VuFind\Session\Settings as SessionSettings;
 use function is_array;
 
 /**
- * Biblioworks Helpdesk Context AJAX Handler
+ * Biblioworks Helpdesk Context AJAX Handler.
  *
  * Mints UST (User Session Token) for authenticated users.
  * UST is an encrypted token containing patron_id, used by the helpdesk adapter
@@ -61,7 +61,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
     use LoggerAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings  $sessionSettings   Session settings
      * @param SessionManager   $sessionManager    Session manager
@@ -168,7 +168,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
     }
 
     /**
-     * Encrypt UST payload using Defuse Crypto
+     * Encrypt UST payload using Defuse Crypto.
      *
      * @param array $payload  JWT-like payload to encrypt
      * @param array $settings Integration settings
@@ -197,7 +197,7 @@ class BiblioworksHelpdeskContext extends \VuFind\AjaxHandler\AbstractBase implem
     }
 
     /**
-     * Fetch integration configuration
+     * Fetch integration configuration.
      *
      * @return array
      */

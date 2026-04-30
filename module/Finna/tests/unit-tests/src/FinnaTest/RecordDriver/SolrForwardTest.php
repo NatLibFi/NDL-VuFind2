@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrForward Test Class
+ * SolrForward Test Class.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Finna\Video\Video;
 use function is_callable;
 
 /**
- * SolrForward Record Driver Test Class
+ * SolrForward Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests

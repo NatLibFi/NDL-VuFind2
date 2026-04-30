@@ -68,7 +68,7 @@ trait FinnaOptions
     }
 
     /**
-     * Get view option list type setting
+     * Get view option list type setting.
      *
      * @return bool
      */

@@ -22,7 +22,7 @@
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header">
-      <?=$this->component('page-title', ['title' => $this->translate('Interlibrary Loan Requests') . " ($recordCount)", 'headTitle' => $this->translate('Interlibrary Loan Requests')])?>
+      <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Interlibrary Loan Requests') . " ($recordCount)", 'headTitle' => $this->translate('Interlibrary Loan Requests'), 'tooltip' => 'tooltip_myaccount_ill_requests_html'])?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -31,9 +31,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/illrequests-pre-list')): ?>
-        <div class="illrequests-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['template' => 'illrequests-pre-list'])?>
       <?php if (!empty($this->recordList)): ?>
         <?php if ($this->cancelForm): ?>
         <div class="myaccount-sticky-header"></div>
@@ -196,9 +194,7 @@
             </form>
           </div>
         <?php endif; ?>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/illrequests-post-list')): ?>
-          <div class="illrequests-post-list"><?=$this->render($template)?></div>
-        <?php endif; ?>
+        <?=$this->component('finna-addition-template', ['template' => 'illrequests-post-list'])?>
       <?php else: ?>
         <div class="useraccount-header">
           <h3><?=$this->transEsc('You do not have any interlibrary loan requests placed') ?>.</h3>

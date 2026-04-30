@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CPU Payment
+ * CPU Payment.
  *
  * PHP version 8
  *
@@ -58,7 +58,7 @@ class Payment
 {
     /**
      * E-Commerce integration.
-     * 3 = eCommerce
+     * 3 = eCommerce.
      *
      * @var string
      */
@@ -145,7 +145,7 @@ class Payment
     public $LastName = null;
 
     /**
-     * UI Language
+     * UI Language.
      *
      * @var string
      */

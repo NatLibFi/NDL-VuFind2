@@ -111,7 +111,7 @@ section.template-name-search .sidebar,
 section.template-name-blended .sidebar,
 section.template-name-mylist .sidebar,
 section.template-dir-record.template-name-view .sidebar.search-facets,
-section.template-dir-collection.template-name-view .sidebar {
+section.template-dir-collection.template-name-view .sidebar.search-facets {
   @include media-breakpoint-down(sm) {
     position: fixed;
     background: $body-bg;

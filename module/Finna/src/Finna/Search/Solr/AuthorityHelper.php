@@ -53,7 +53,7 @@ class AuthorityHelper
     public const AUTHOR2_ID_FACET = 'author2_id_str_mv';
 
     /**
-     * Index field for author id-role combinations
+     * Index field for author id-role combinations.
      *
      * @var string
      */
@@ -103,42 +103,42 @@ class AuthorityHelper
     public const LINK_TYPE_SEARCH_SUBJECT = 'search-subject';
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var \VuFind\Record\Loader
      */
     protected $recordLoader;
 
     /**
-     * Search runner
+     * Search runner.
      *
      * @var \VuFind\Search\SearchRunner
      */
     protected $searchRunner;
 
     /**
-     * Translator
+     * Translator.
      *
      * @var \VuFind\Translator
      */
     protected $translator;
 
     /**
-     * Authority config
+     * Authority config.
      *
      * @var \VuFind\Config\Config|null
      */
     protected $authorityConfig;
 
     /**
-     * Authority search config
+     * Authority search config.
      *
      * @var \VuFind\Config\Config
      */
     protected $authoritySearchConfig;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Record\Loader              $recordLoader          Record loader
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
@@ -293,7 +293,7 @@ class AuthorityHelper
     }
 
     /**
-     * Return biblio records that are linked to an authority
+     * Return biblio records that are linked to an authority.
      *
      * @param string $id        Authority id(s)
      * @param string $field     Solr field to search by (author, topic)
@@ -323,7 +323,7 @@ class AuthorityHelper
     }
 
     /**
-     * Return identifiers for an authority record
+     * Return identifiers for an authority record.
      *
      * @param DefaultRecord $record Authority record
      *

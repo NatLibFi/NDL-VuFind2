@@ -34,7 +34,7 @@ use VuFind\Db\Entity\UserListEntityInterface;
 use VuFind\Db\Service\TagServiceInterface;
 
 /**
- * Tags view helper
+ * Tags view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -45,7 +45,7 @@ use VuFind\Db\Service\TagServiceInterface;
 class Tags extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param TagServiceInterface $tagService Tag service
      */

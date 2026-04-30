@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Book Bag / Bulk Action Controller
+ * Book Bag / Bulk Action Controller.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use function count;
 use function is_array;
 
 /**
- * Book Bag / Bulk Action Controller
+ * Book Bag / Bulk Action Controller.
  *
  * @category VuFind
  * @package  Controller

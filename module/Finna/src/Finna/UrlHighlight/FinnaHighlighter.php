@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Provide URL formatted as HTML and prefixed with proxy if applicable
+ * Provide URL formatted as HTML and prefixed with proxy if applicable.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use VStelmakh\UrlHighlight\Matcher\UrlMatch;
 use VuFind\View\Helper\Root\ProxyUrl;
 
 /**
- * Provide URL formatted as HTML and prefixed with proxy if applicable
+ * Provide URL formatted as HTML and prefixed with proxy if applicable.
  *
  * @category VuFind
  * @package  UrlHighlight
@@ -45,14 +45,14 @@ use VuFind\View\Helper\Root\ProxyUrl;
 class FinnaHighlighter extends \VuFind\UrlHighlight\VuFindHighlighter
 {
     /**
-     * URL truncator
+     * URL truncator.
      *
      * @var TruncateUrl
      */
     protected $truncateUrl;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ProxyUrl    $proxyUrl    Proxy url helper
      * @param TruncateUrl $truncateUrl URL truncator
@@ -64,7 +64,7 @@ class FinnaHighlighter extends \VuFind\UrlHighlight\VuFindHighlighter
     }
 
     /**
-     * Content used to display url: ...>{here}</a>
+     * Content used to display url: ...>{here}</a>.
      *
      * @param UrlMatch $match URL match
      *

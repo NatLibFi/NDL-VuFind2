@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SFX Link Resolver Driver
+ * SFX Link Resolver Driver.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@
 namespace Finna\Resolver\Driver;
 
 /**
- * SFX Link Resolver Driver
+ * SFX Link Resolver Driver.
  *
  * @category VuFind
  * @package  Resolver_Drivers
@@ -44,7 +44,7 @@ namespace Finna\Resolver\Driver;
 class Sfx extends \VuFind\Resolver\Driver\Sfx
 {
     /**
-     * Parse Links
+     * Parse Links.
      *
      * Parses an XML file returned by a link resolver
      * and converts it to a standardised format for display

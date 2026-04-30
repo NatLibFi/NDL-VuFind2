@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Search box view helper
+ * Search box view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Search box view helper
+ * Search box view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class SearchBox extends \VuFind\View\Helper\Root\SearchBox
 {
     /**
-     * Configuration for search tabs
+     * Configuration for search tabs.
      *
      * @var array
      */
     protected $tabConfig;
 
     /**
-     * Set configuration for search tabs
+     * Set configuration for search tabs.
      *
      * @param array $config Configuration
      *

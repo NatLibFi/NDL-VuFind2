@@ -56,7 +56,7 @@ use VuFind\Mailer\Mailer;
 class AccountExpirationRemindersFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

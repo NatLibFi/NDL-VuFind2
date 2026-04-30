@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AuthorityRecommend Recommendations Module
+ * AuthorityRecommend Recommendations Module.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFindSearch\Backend\Exception\RequestErrorException;
 use function in_array;
 
 /**
- * AuthorityRecommend Module
+ * AuthorityRecommend Module.
  *
  * This class provides recommendations based on Authority records.
  * i.e. searches for a pseudonym will provide the user with a link
@@ -54,49 +54,49 @@ use function in_array;
 class AuthorityRecommend extends \VuFind\Recommend\AuthorityRecommend
 {
     /**
-     * Authority ids
+     * Authority ids.
      *
      * @var array
      */
     protected $authorIds = null;
 
     /**
-     * Authority roles
+     * Authority roles.
      *
      * @var array
      */
     protected $roles = null;
 
     /**
-     * Authority helper
+     * Authority helper.
      *
      * @var \Finna\Search\Solr\AuthorityHelper
      */
     protected $authorityHelper = null;
 
     /**
-     * Session
+     * Session.
      *
      * @var \Laminas\Session\Container
      */
     protected $session = null;
 
     /**
-     * Cookie manager
+     * Cookie manager.
      *
      * @var \VuFind\Cookie\CookieManager
      */
     protected $cookieManager = null;
 
     /**
-     * Config
+     * Config.
      *
      * @var \VuFind\Config\Config
      */
     protected $config = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Search\Results\PluginManager $results         Results
      * plugin manager

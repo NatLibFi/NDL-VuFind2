@@ -1,3 +1,4 @@
+<!-- START of: finna - ratings/userlist.phtml -->
 <?php
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
@@ -12,13 +13,16 @@
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'usercontent']); ?>
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?>">
-  <?=$this->component('page-title', ['title' => $this->translate('Ratings')]);?>
+  <div class="useraccount-header">
+    <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Ratings'), 'tooltip' => 'tooltip_myaccount_ratings_html']);?>
+  </div>
   <ul class="nav nav-tabs" role="tablist">
     <?php foreach ($tabs as $tab => $title): ?>
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='ratings' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
     <?php endforeach; ?>
   </ul>
-  <?php if (count($this->ratings) !== 0): ?>
+  <?=$this->component('finna-addition-template', ['template' => 'ratings-pre-list'])?>
+  <?php if (count($this->ratings) !== 0): ?>  
     <div><?=$this->transEsc('finna_nickname')?>: <?=$this->userPublicName($user);?></div>
     <nav class="search-header hidden-print">
       <?php
@@ -124,8 +128,10 @@
         </tbody>
       </table>
     </form>
+    <?=$this->component('finna-addition-template', ['template' => 'ratings-post-list'])?>
   <?php else: ?>
     <?=$this->transEsc('No Ratings')?>
   <?php endif; ?>
   <?=$this->paginationControl($this->ratings, 'Sliding', 'Helpers/pagination.phtml', ['params' => $this->params])?>
 </div>
+<!-- END of: finna - ratings/userlist.phtml -->

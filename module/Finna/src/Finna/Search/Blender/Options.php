@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Blender aspect of the Search Multi-class (Options)
+ * Blender aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Search\Blender;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Blender Search Options
+ * Blender Search Options.
  *
  * @category VuFind
  * @package  Search_Blender
@@ -43,14 +43,14 @@ use VuFind\Config\ConfigManagerInterface;
 class Options extends \VuFind\Search\Blender\Options
 {
     /**
-     * Date range visualization settings
+     * Date range visualization settings.
      *
      * @var string
      */
     protected $dateRangeVis;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */
@@ -72,7 +72,7 @@ class Options extends \VuFind\Search\Blender\Options
     }
 
     /**
-     * Get the field used for date range search
+     * Get the field used for date range search.
      *
      * @return string
      */

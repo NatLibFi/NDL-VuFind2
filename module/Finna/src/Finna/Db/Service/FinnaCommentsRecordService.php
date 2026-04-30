@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Resource list service
+ * Resource list service.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\CommentsEntityInterface;
 use VuFind\Db\Service\AbstractDbService;
 
 /**
- * Resource list service
+ * Resource list service.
  *
  * @category VuFind
  * @package  Db_Service

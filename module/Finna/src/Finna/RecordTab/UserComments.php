@@ -1,7 +1,7 @@
 <?php
 
 /**
- * User comments tab
+ * User comments tab.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@
 namespace Finna\RecordTab;
 
 /**
- * User comments tab
+ * User comments tab.
  *
  * @category VuFind
  * @package  RecordTabs

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetCheckoutHistory AJAX handler
+ * GetCheckoutHistory AJAX handler.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFind\ILS\PaginationHelper;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * GetCheckoutHistory AJAX handler
+ * GetCheckoutHistory AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -48,7 +48,7 @@ use VuFind\Session\Settings as SessionSettings;
 class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
     /**
-     * Cache for patron
+     * Cache for patron.
      *
      * @var array
      */
@@ -62,7 +62,7 @@ class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
     protected array $cachedFunctionConfig = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings       $ss               Session settings
      * @param Connection            $ils              ILS connection
@@ -133,7 +133,7 @@ class GetCheckoutHistory extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
     }
 
     /**
-     * Get checkout history result for user if available
+     * Get checkout history result for user if available.
      *
      * @param int  $page  First page to get from ils
      * @param ?int $limit Current limit for the page size or null for default

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Item Status" AJAX handler
+ * "Get Item Status" AJAX handler.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\AjaxHandler;
 use Laminas\Mvc\Controller\Plugin\Params;
 
 /**
- * "Get Item Status" AJAX handler
+ * "Get Item Status" AJAX handler.
  *
  * This is responsible for printing the holdings information for a
  * collection of records in JSON format.

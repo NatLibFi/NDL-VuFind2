@@ -231,7 +231,7 @@
 
   <?php if (!$fullWidthLayout): ?>
     <?php // This sidebar is used for smaller screens and always in large image layout, but never in full width layout ?>
-    <div class="sidebar left large-image-sidebar visible-xs visible-sm">
+    <div class="sidebar left large-image-sidebar <?php if (!$largeImageLayout): ?> visible-xs visible-sm<?php endif; ?>">
       <?= $this->render('record/sidebar-contents.phtml'); ?>
     </div>
   <?php endif; ?>

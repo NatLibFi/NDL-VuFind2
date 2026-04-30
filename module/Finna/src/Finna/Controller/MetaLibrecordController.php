@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MetaLib Record Controller
+ * MetaLib Record Controller.
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\Controller;
 
 /**
- * MetaLib Record Controller
+ * MetaLib Record Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -43,7 +43,7 @@ namespace Finna\Controller;
 class MetaLibrecordController extends \VuFind\Controller\AbstractBase
 {
     /**
-     * Home (default) action -- show MetaLib unavailable message
+     * Home (default) action -- show MetaLib unavailable message.
      *
      * @return mixed
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Browse action support trait
+ * Browse action support trait.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\AjaxHandler;
 
 /**
- * Browse action support trait
+ * Browse action support trait.
  *
  * @category VuFind
  * @package  AJAX

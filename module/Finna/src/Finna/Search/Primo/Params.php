@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Search Parameters
+ * Primo Central Search Parameters.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Search\Primo;
 use function in_array;
 
 /**
- * Primo Central Search Parameters
+ * Primo Central Search Parameters.
  *
  * @category VuFind
  * @package  Search_Primo

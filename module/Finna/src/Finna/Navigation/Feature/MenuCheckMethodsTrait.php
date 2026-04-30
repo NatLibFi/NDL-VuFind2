@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Menu check methods trait
+ * Menu check methods trait.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Navigation\Feature;
 
 /**
- * Menu check methods trait
+ * Menu check methods trait.
  *
  * @category VuFind
  * @package  Navigation

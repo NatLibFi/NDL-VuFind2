@@ -43,7 +43,7 @@ use Laminas\Http\Response;
 abstract class AbstractDescriptionProvider implements DescriptionProviderInterface
 {
     /**
-     * Process a response
+     * Process a response.
      *
      * @param Response $response HTTP response
      *

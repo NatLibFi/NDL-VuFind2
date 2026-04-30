@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind Mailer Class
+ * VuFind Mailer Class.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFind\Exception\Mail as MailException;
 use VuFind\RecordDriver\AbstractBase as AbstractRecord;
 
 /**
- * VuFind Mailer Class
+ * VuFind Mailer Class.
  *
  * @category VuFind
  * @package  Mailer

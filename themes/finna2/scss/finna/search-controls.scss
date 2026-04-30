@@ -1,119 +1,117 @@
+.search-tab-tip {
+  position: relative;
+  padding: 0.4em;
+  background-color: $search-tab-tip-bg;
+  p {
+    margin: 0.2em;
+  }
+}
+
 // All search control buttons
 .search-controls {
   display: flex;
-  align-items: center;
   flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   .alert {
-    margin-bottom: 0;
+    margin-bottom: 0px;
   }
   .update-location-button {
     margin-top: 15px;
+    font-weight: 600;
+    color: $body-bg;
   }
   .button-label {
-    padding: 3px;
+    padding: 0.2em;
   }
-  @include media-breakpoint-down(xs) {
-    & .view-options, & .view-dropdown, & .sort-button {
-      &  .dropdown > a {
+  .control-container {
+    display: flex;
+    margin-top: 0.4em;
+    margin-bottom: 0.4em;
+    gap: 0.3rem;
+    font-size: 0.9em;
+  }
+  .sort-option-container,
+  .limit-option-container,
+  .view-option-container {
+    display: inline-block;
+  }
+}
+@include media-breakpoint-down(xs) {
+  .search-controls {
+    .sort-button,
+    .view-dropdown {
+      .dropdown-toggle {
+        display: inline-block;
         max-width: 150px;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
-        display: inline-block;
       }
     }
-  }
-  @include media-breakpoint-down(xs) {
-    .view-dropdown .dropdown-menu {
-      left: -50%;
-    }
-  }
-  .control-container{
-    font-size: 0.9em;
-    margin-bottom: 5px;
-    margin-top: 5px;
-  }
-  .sort-option-container, .limit-option-container, .view-option-container{
-    display: inline-block;
   }
 }
 
 @include media-breakpoint-up(sm) {
-  .search-header { display: flex; }
-  .search-stats { flex-grow: 1; }
+  .search-header {
+    display: flex;
+    .search-stats {
+      flex-grow: 1;
+    }
+  }
   .search-controls {
     text-align: right;
   }
 }
 
-.view-options, .view-dropdown, .sort-button, .results-per-page-button, .update-location-button {
-  color: $body-bg;
-  font-weight: 600;
+@include media-breakpoint-up(lg) {
+  .sort-button,
+  .view-options,
+  .view-dropdown {
+    display: inline-block;
+  }
+}
 
-  .dropdown > a {
+.sort-button,
+.view-dropdown {
+  font-weight: 600;
+  color: $body-bg;
+  .dropdown-toggle {
+    display: inline-block;
+    padding: 0.4em;
+    font-size: 1em;
+    color: $action-link-color;
+    white-space: nowrap;
     background: transparent;
     border: 2px solid $action-link-color;
-    color: $action-link-color;
     border-radius: $border-radius-base;
-    font-size: 1em;
-    padding: 5px;
-    display: inline-block;
-    white-space: nowrap;
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
+      color: $body-bg;
       text-decoration: none;
       background: $action-link-color;
-      color: $body-bg;
       transition: background 0.2s linear;
     }
   }
   .dropdown-menu {
+    padding: 0px;
     border-radius: $border-radius-base;
-    padding: 0;
-
-    & > li > a {
-      text-align: left;
+    > li > a {
+      padding-top: 0.7em;
+      padding-bottom: 0.7em;
       color: $gray;
-      padding-top: 10px;
-      padding-bottom: 10px;
-    }
-  }
-  @include media-breakpoint-up(lg) {
-    display: inline-block;
-  }
-  .dropdown-menu &:not(.sort-button) {
-    @include media-breakpoint-down(md) {
-      font-size: 1.1em;
+      text-align: left;
     }
   }
 }
 
-.view-option-container {
-  .view-button {
-    display: inline-block;
-    padding: 5px;
-    & .icon{
-      color: $action-link-color;
-    }
-    &.selected {
-      border: 2px solid $action-link-color;
-      border-radius: $border-radius-base;
-      & .icon{
-        color: $action-link-color;
-      }
-    }
-  }
-}
-
-.search-tab-tip {
-  background-color: $search-tab-tip-bg;
-  box-shadow: 2px 2px 4px #888888;
-  margin-bottom: 12px;
-  padding: 5px;
-  position: relative;
-  p {
-    margin: 2px;
+.view-option-container .view-button {
+  display: inline-block;
+  padding: 0.4em;
+  &.selected {
+    border: 2px solid $action-link-color;
+    border-radius: $border-radius-base;
   }
 }

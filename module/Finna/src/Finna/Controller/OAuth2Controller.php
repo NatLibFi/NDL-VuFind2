@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAuth2 Controller
+ * OAuth2 Controller.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Controller;
 use Laminas\Http\Response;
 
 /**
- * OAuth2 Controller
+ * OAuth2 Controller.
  *
  * Provides authorization support for external systems
  *

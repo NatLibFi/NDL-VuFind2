@@ -41,7 +41,7 @@ namespace Finna\RecordDriver\Feature;
 trait LrmiDriverTrait
 {
     /**
-     * Return root educational levels
+     * Return root educational levels.
      *
      * @return array
      */

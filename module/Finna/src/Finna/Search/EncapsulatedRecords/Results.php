@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Encapsulated Records aspect of the Search Multi-class (Results)
+ * Encapsulated Records aspect of the Search Multi-class (Results).
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use VuFind\RecordDriver\AbstractBase;
 
 /**
- * Encapsulated Records Search Results
+ * Encapsulated Records Search Results.
  *
  * @category VuFind
  * @package  Search_EncapsulatedRecords
@@ -51,7 +51,7 @@ class Results extends \VuFind\Search\Base\Results
     protected AbstractBase|bool $containerRecord = false;
 
     /**
-     * Returns the stored list of facets for the last search
+     * Returns the stored list of facets for the last search.
      *
      * @param array $filter Array of field => on-screen description listing
      * all of the desired facet fields; set to null to get all configured values.

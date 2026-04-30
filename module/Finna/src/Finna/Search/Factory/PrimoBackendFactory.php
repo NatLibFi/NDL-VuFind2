@@ -46,7 +46,7 @@ use FinnaSearch\Backend\Primo\RestConnector;
 class PrimoBackendFactory extends \VuFind\Search\Factory\PrimoBackendFactory
 {
     /**
-     * Primo REST API connector class
+     * Primo REST API connector class.
      *
      * @var string
      */

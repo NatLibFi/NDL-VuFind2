@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Default Controller
+ * Default Controller.
  *
  * PHP version 8
  *
@@ -52,7 +52,7 @@ class SearchController extends \VuFind\Controller\SearchController
     use FinnaSearchControllerTrait;
 
     /**
-     * Handle an advanced search
+     * Handle an advanced search.
      *
      * @return mixed
      */
@@ -115,7 +115,7 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
-     * Redirection for VuFind 1 DualResults action
+     * Redirection for VuFind 1 DualResults action.
      *
      * @return mixed
      */
@@ -192,7 +192,7 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
-     * Returns a list of all items associated with one facet for the lightbox
+     * Returns a list of all items associated with one facet for the lightbox.
      *
      * Parameters:
      * facet        The facet to retrieve
@@ -213,7 +213,7 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
-     * Parse OpenURL and return a keyed array
+     * Parse OpenURL and return a keyed array.
      *
      * @return array
      */
@@ -321,7 +321,7 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
-     * Process the OpenURL params and try to find record(s) with them
+     * Process the OpenURL params and try to find record(s) with them.
      *
      * @param array $params        Referent params
      * @param array $hiddenFilters Optional hidden filters
@@ -447,7 +447,7 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
-     * Try a search and return results if found
+     * Try a search and return results if found.
      *
      * @param \VuFind\Search\SearchRunner $runner             Search runner
      * @param array                       $params             Search params
@@ -499,7 +499,7 @@ class SearchController extends \VuFind\Controller\SearchController
     }
 
     /**
-     * Open map facet modal
+     * Open map facet modal.
      *
      * @return \VuFind\Controller\ViewModel
      */

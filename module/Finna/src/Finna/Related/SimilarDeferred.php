@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Related Records: Solr-based similarity with AJAX loading
+ * Related Records: Solr-based similarity with AJAX loading.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Related;
 
 /**
- * Related Records: Solr-based similarity with AJAX loading
+ * Related Records: Solr-based similarity with AJAX loading.
  *
  * @category VuFind
  * @package  Related_Records
@@ -41,7 +41,7 @@ namespace Finna\Related;
 class SimilarDeferred implements \VuFind\Related\RelatedInterface
 {
     /**
-     * Record ID
+     * Record ID.
      *
      * @var string
      */
@@ -61,7 +61,7 @@ class SimilarDeferred implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get the current record ID
+     * Get the current record ID.
      *
      * @return string
      */

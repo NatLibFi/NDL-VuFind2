@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna Markdown Service factory
+ * Finna Markdown Service factory.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use League\CommonMark\Environment\EnvironmentBuilderInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * Finna Markdown Service factory
+ * Finna Markdown Service factory.
  *
  * @category VuFind
  * @package  VuFind\Service
@@ -45,14 +45,14 @@ use Psr\Container\ContainerInterface;
 class MarkdownFactory extends \VuFind\Service\MarkdownFactory
 {
     /**
-     * Service Manager
+     * Service Manager.
      *
      * @var ContainerInterface
      */
     protected $container;
 
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service Manager
      * @param string             $requestedName Service being created

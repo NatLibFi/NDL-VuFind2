@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna Module Configuration
+ * Finna Module Configuration.
  *
  * PHP version 8
  *
@@ -1226,6 +1226,7 @@ $dynamicRoutes = [
 $staticRoutes = [
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
+    'LibraryCards/VerifyRegistrationEmail',
     'LocationService/Modal',
     'Cover/Pipe',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',

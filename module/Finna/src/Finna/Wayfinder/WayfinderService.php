@@ -60,7 +60,7 @@ class WayfinderService
     protected bool $isConfigured;
 
     /**
-     * Locale mappings
+     * Locale mappings.
      *
      * @var array
      */
@@ -127,7 +127,7 @@ class WayfinderService
     }
 
     /**
-     * Get relevant location-related fields from all call number fields
+     * Get relevant location-related fields from all call number fields.
      *
      * @param array $fields Fields
      *

@@ -44,14 +44,14 @@ use VuFindSearch\Backend\Exception\BackendException;
 class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
 {
     /**
-     * Unicode normalization form
+     * Unicode normalization form.
      *
      * @var string
      */
     protected $unicodeNormalizationForm;
 
     /**
-     * Search filters
+     * Search filters.
      *
      * @var array
      */
@@ -102,7 +102,7 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     }
 
     /**
-     * Perform final normalizations to a search string
+     * Perform final normalizations to a search string.
      *
      * @param string $searchString Input search string
      *
@@ -114,7 +114,7 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     }
 
     /**
-     * Check if passed string is an ISBN and convert to ISBN-13
+     * Check if passed string is an ISBN and convert to ISBN-13.
      *
      * @param string $searchString The query string
      *
@@ -134,7 +134,7 @@ class LuceneSyntaxHelper extends \VuFindSearch\Backend\Solr\LuceneSyntaxHelper
     }
 
     /**
-     * Normalize UNICODE form
+     * Normalize UNICODE form.
      *
      * @param string $searchString Input search string
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Blender Search Parameters
+ * Blender Search Parameters.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFindSearch\ParamBag;
 use function in_array;
 
 /**
- * Blender Search Parameters
+ * Blender Search Parameters.
  *
  * @category VuFind
  * @package  Search_Blender
@@ -50,7 +50,7 @@ class Params extends \VuFind\Search\Blender\Params
     use \Finna\Search\Solr\ParamsSharedTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Search\Base\Options $options         Options to use
      * @param ConfigManagerInterface      $configManager   Config manager
@@ -80,7 +80,7 @@ class Params extends \VuFind\Search\Blender\Params
     }
 
     /**
-     * Get the date range field from options, if available
+     * Get the date range field from options, if available.
      *
      * @return string
      */
@@ -193,7 +193,7 @@ class Params extends \VuFind\Search\Blender\Params
     }
 
     /**
-     * Check if the given filter is a date range filter
+     * Check if the given filter is a date range filter.
      *
      * @param string $field Filter field
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Form test class
+ * Form test class.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use VuFind\Form\Handler\PluginManager;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * Form test class
+ * Form test class.
  *
  * @category VuFind
  * @package  Tests
@@ -51,7 +51,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
 
     /**
-     * Get testFormFieldValues data
+     * Get testFormFieldValues data.
      *
      * @return Generator
      */
@@ -251,7 +251,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get UserEntityInterface mock
+     * Get UserEntityInterface mock.
      *
      * @param ?int    $getIdReturn        getId return value
      * @param ?string $getFirstnameReturn getFirstname return value
@@ -283,7 +283,7 @@ class FormTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test setting user information to form
+     * Test setting user information to form.
      *
      * @param string $fixture  Fixture name
      * @param array  $expected Expected results

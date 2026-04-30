@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Config view helper
+ * Config view helper.
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Config view helper
+ * Config view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -42,7 +42,7 @@ namespace Finna\View\Helper\Root;
 class Config extends \VuFind\View\Helper\Root\Config
 {
     /**
-     * Is video embedding on record page enabled
+     * Is video embedding on record page enabled.
      *
      * @return bool
      */
@@ -52,7 +52,7 @@ class Config extends \VuFind\View\Helper\Root\Config
     }
 
     /**
-     * Get default facet fields
+     * Get default facet fields.
      *
      * @return array
      */
@@ -63,7 +63,7 @@ class Config extends \VuFind\View\Helper\Root\Config
     }
 
     /**
-     * Get default checkbox facets
+     * Get default checkbox facets.
      *
      * @return array
      */
@@ -74,7 +74,7 @@ class Config extends \VuFind\View\Helper\Root\Config
     }
 
     /**
-     * Is map selection shown
+     * Is map selection shown.
      *
      * @return bool
      */
@@ -85,7 +85,7 @@ class Config extends \VuFind\View\Helper\Root\Config
 
     /**
      * Display similar records at the bottom of record view
-     * as a carousel
+     * as a carousel.
      *
      * @return string
      */

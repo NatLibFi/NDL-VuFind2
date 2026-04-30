@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element block node
+ * Custom element block node.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use League\CommonMark\Node\Block\AbstractBlock;
 use League\CommonMark\Node\Node;
 
 /**
- * Custom element block node
+ * Custom element block node.
  *
  * @category VuFind
  * @package  CommonMark
@@ -44,28 +44,28 @@ use League\CommonMark\Node\Node;
 class CustomElement extends AbstractBlock
 {
     /**
-     * Custom element name
+     * Custom element name.
      *
      * @var string
      */
     protected string $name;
 
     /**
-     * Opening tag
+     * Opening tag.
      *
      * @var string
      */
     protected string $openingTag;
 
     /**
-     * Can the custom element be server-side rendered
+     * Can the custom element be server-side rendered.
      *
      * @var bool
      */
     protected bool $canSsr;
 
     /**
-     * Is the block closed
+     * Is the block closed.
      *
      * @var bool
      */
@@ -91,7 +91,7 @@ class CustomElement extends AbstractBlock
     }
 
     /**
-     * Get custom element name
+     * Get custom element name.
      *
      * @return string
      */
@@ -101,7 +101,7 @@ class CustomElement extends AbstractBlock
     }
 
     /**
-     * Get custom element opening tag
+     * Get custom element opening tag.
      *
      * @return string
      */
@@ -111,7 +111,7 @@ class CustomElement extends AbstractBlock
     }
 
     /**
-     * Should the custom element be server-side rendered
+     * Should the custom element be server-side rendered.
      *
      * @return bool
      */
@@ -122,7 +122,7 @@ class CustomElement extends AbstractBlock
     }
 
     /**
-     * Is the block closed
+     * Is the block closed.
      *
      * @return bool
      */

@@ -52,7 +52,7 @@ trait ViewTrait
     use ConfigRelatedServicesTrait;
 
     /**
-     * Get a CleanHtml helper
+     * Get a CleanHtml helper.
      *
      * @param array $customElements Custom elements
      *

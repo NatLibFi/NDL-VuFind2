@@ -231,7 +231,7 @@ trait ContainerFormatTrait
     }
 
     /**
-     * Return position for an encapsulated record, or null for unspecified position
+     * Return position for an encapsulated record, or null for unspecified position.
      *
      * @param mixed $item Encapsulated record item
      *

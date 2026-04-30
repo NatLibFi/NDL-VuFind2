@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Navibar view helper
+ * Navibar view helper.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Laminas\View\Helper\AbstractHelper;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
 /**
- * Navibar view helper
+ * Navibar view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -51,14 +51,14 @@ class Navibar extends AbstractHelper implements TranslatorAwareInterface
     use NavibarTrait;
 
     /**
-     * View helpers
+     * View helpers.
      *
      * @var array
      */
     protected $viewHelpers = [];
 
     /**
-     * Current language
+     * Current language.
      *
      * @var string
      */
@@ -136,7 +136,7 @@ class Navibar extends AbstractHelper implements TranslatorAwareInterface
     }
 
     /**
-     * Return view helper
+     * Return view helper.
      *
      * @param string $id Helper id
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetLinkedEvents AJAX handler
+ * GetLinkedEvents AJAX handler.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 
 /**
- * GetLinkedEvents AJAX handler
+ * GetLinkedEvents AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -46,21 +46,21 @@ class GetLinkedEvents extends \VuFind\AjaxHandler\AbstractBase implements Transl
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Linked Events
+     * Linked Events.
      *
      * @var \Finna\Feed\LinkedEvents $linkedEvents
      */
     protected $linkedEvents;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var ViewRenderer $viewRenderer
      */
     protected $viewRenderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param LinkedEvents $linkedEvents linkedEvents service
      * @param ViewRenderer $viewRenderer view renderer

@@ -41,7 +41,7 @@ namespace Finna\OrganisationInfo\Provider;
 interface ProviderInterface
 {
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information.
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -51,7 +51,7 @@ interface ProviderInterface
     public function lookup(string $language, string $id): array;
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -62,7 +62,7 @@ interface ProviderInterface
     public function getConsortiumInfo(string $language, string $id, array $locationFilter = []): array;
 
     /**
-     * Get location details
+     * Get location details.
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID

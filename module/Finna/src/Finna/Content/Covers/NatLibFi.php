@@ -41,7 +41,7 @@ namespace Finna\Content\Covers;
 class NatLibFi extends \VuFind\Content\AbstractCover
 {
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {

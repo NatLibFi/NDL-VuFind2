@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Api
+ * Class Api.
  *
  * PHP version 8
  *
@@ -45,7 +45,7 @@ use function is_array;
 use function strval;
 
 /**
- * Class Api
+ * Class Api.
  *
  * @category VuFind
  * @package  Form
@@ -64,14 +64,14 @@ class Api implements
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Site base url
+     * Site base url.
      *
      * @var string
      */
     protected $baseUrl;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $baseUrl Site base url
      */

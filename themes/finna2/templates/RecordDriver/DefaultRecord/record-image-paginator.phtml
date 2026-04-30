@@ -91,7 +91,7 @@
     <img src="<?=$this->imageSrc()->getDataPixel()?>" data-src="<?=$this->url('cover-unavailable')?>" class="recordcover<?= ($images[0]['pdf'] ?? false) ? ' pdf-cover' : ''?>" alt="<?=$this->transEsc('No Cover Image')?>">
   </a>
   <?php if ($manifests): ?>
-    <span class="badge text-bg-light position-absolute bottom-0 end-0 iiif-menu-button-badge">
+    <span class="text-bg-light iiif-menu-button-badge">
         <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>" alt="IIIF" class="bi">
     </span>
   <?php endif ?>

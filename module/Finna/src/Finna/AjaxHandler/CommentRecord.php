@@ -51,14 +51,14 @@ use function intval;
 class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
 {
     /**
-     * Search runner
+     * Search runner.
      *
      * @var ?SearchRunner
      */
     protected ?SearchRunner $searchRunner = null;
 
     /**
-     * Setter for search runner
+     * Setter for search runner.
      *
      * @param SearchRunner $runner Search runner
      *

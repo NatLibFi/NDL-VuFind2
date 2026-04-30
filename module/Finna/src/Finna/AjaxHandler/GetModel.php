@@ -37,7 +37,7 @@ use VuFind\Session\Settings as SessionSettings;
 use VuFind\View\Helper\Root\Url;
 
 /**
- * GetModel AJAX handler
+ * GetModel AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -50,42 +50,42 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase implements \VuFindHttp\H
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Session settings
+     * Session settings.
      *
      * @var Settings
      */
     protected $sessionSettings;
 
     /**
-     * Loader
+     * Loader.
      *
      * @var RecordLoader
      */
     protected $recordLoader;
 
     /**
-     * File loader
+     * File loader.
      *
      * @var Loader
      */
     protected $fileLoader;
 
     /**
-     * Domain url
+     * Domain url.
      *
      * @var Url
      */
     protected $urlHelper;
 
     /**
-     * Router
+     * Router.
      *
      * @var \Laminas\Router\Http\TreeRouteStack
      */
     protected $router;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings $ss           Session settings
      * @param RecordLoader    $recordLoader Recordloader

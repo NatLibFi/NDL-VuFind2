@@ -43,7 +43,7 @@ use function count;
 class Search extends \VuFind\View\Helper\Bootstrap5\Search
 {
     /**
-     * Get number of active filters
+     * Get number of active filters.
      *
      * @param array $checkboxFilters Checkbox filters
      * @param array $filterList      Other filters

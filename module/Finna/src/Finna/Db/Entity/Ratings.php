@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for ratings table
+ * Entity model for ratings table.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Doctrine\ORM\Mapping as ORM;
 use VuFind\Db\Feature\DateTimeTrait;
 
 /**
- * Entity model for ratings table
+ * Entity model for ratings table.
  *
  * @category VuFind
  * @package  Database
@@ -71,7 +71,7 @@ class Ratings extends \VuFind\Db\Entity\Ratings implements RatingsEntityInterfac
     }
 
     /**
-     * Last check date getter
+     * Last check date getter.
      *
      * @return DateTime
      */
@@ -81,7 +81,7 @@ class Ratings extends \VuFind\Db\Entity\Ratings implements RatingsEntityInterfac
     }
 
     /**
-     * Last check date setter
+     * Last check date setter.
      *
      * @param ?DateTime $dateTime Last updated
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Bazaar API Controller
+ * Bazaar API Controller.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFindApi\Controller\ApiInterface;
 use VuFindApi\Controller\ApiTrait;
 
 /**
- * Bazaar API Controller
+ * Bazaar API Controller.
  *
  * Controls the Bazaar API functionality
  *
@@ -102,7 +102,7 @@ class BazaarApiController extends ApiController implements ApiInterface
 
     /**
      * Get API specification JSON fragment for services provided by the
-     * controller
+     * controller.
      *
      * @return string
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Account Notifications" AJAX handler
+ * "Get Account Notifications" AJAX handler.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ namespace Finna\AjaxHandler;
 use Laminas\Mvc\Controller\Plugin\Params;
 
 /**
- * "Get Account Notifications" AJAX handler
+ * "Get Account Notifications" AJAX handler.
  *
  * @category VuFind
  * @package  AJAX

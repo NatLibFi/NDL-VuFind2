@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record tab manager
+ * Record tab manager.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\RecordTab;
 use VuFind\RecordDriver\AbstractBase as AbstractRecordDriver;
 
 /**
- * Record tab manager
+ * Record tab manager.
  *
  * @category VuFind
  * @package  RecordTabs
@@ -101,7 +101,7 @@ class TabManager extends \VuFind\RecordTab\TabManager
     }
 
     /**
-     * Get channels tab
+     * Get channels tab.
      *
      * @param AbstractRecordDriver $driver Record driver
      *

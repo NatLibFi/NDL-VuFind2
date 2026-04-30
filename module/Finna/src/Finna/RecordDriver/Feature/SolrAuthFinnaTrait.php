@@ -228,7 +228,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return summary
+     * Return summary.
      *
      * @return array
      */
@@ -248,7 +248,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return description (for backward compatibility)
+     * Return description (for backward compatibility).
      *
      * @return string|null
      */
@@ -258,7 +258,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return authority data sources
+     * Return authority data sources.
      *
      * @return array|null
      */
@@ -308,7 +308,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Get data source id
+     * Get data source id.
      *
      * @return string
      */
@@ -324,9 +324,9 @@ trait SolrAuthFinnaTrait
      *
      * @return array
      */
-    public function getInstitutions()
+    public function getInstitutions(): array
     {
-        return $this->fields['institution'] ?? [];
+        return (array)($this->fields['institution'] ?? []);
     }
 
     /**
@@ -383,7 +383,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Get online URLs
+     * Get online URLs.
      *
      * @param bool $raw Whether to return raw data
      *

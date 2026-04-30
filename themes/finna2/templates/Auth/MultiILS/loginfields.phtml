@@ -4,51 +4,54 @@
   $loginTargets = $authManager->getLoginTargets();
 ?>
 <div>
-  <div class="form-group">
-    <?php
-      $currentTarget = $this->request->get('target', $this->defaultTarget);
-      if (!$currentTarget || !in_array($currentTarget, $loginTargets)) {
-        $currentTarget = $this->auth()->getManager()->getDefaultLoginTarget();
-      }
-    ?>
-    <?php if (count($loginTargets) > 1): ?>
-      <label class="form-label" for="login_<?=$this->escapeHtmlAttr($topClass)?>_target"><?=$this->transEsc('login_target')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
-      <select id="login_<?=$this->escapeHtmlAttr($topClass)?>_target" name="target" required class="form-select">
-        <?php foreach ($loginTargets as $target):?>
-          <option value="<?=$this->escapeHtmlAttr($target)?>"<?=($target == $currentTarget ? ' selected="selected"' : '')?>><?=$this->transEsc("source_$target", null, $target)?></option>
-        <?php endforeach ?>
-      </select>
-    <?php else: ?>
-      <input type="hidden" id="login_<?=$this->escapeHtmlAttr($topClass)?>_target" name="target" value="<?=$this->escapeHtmlAttr($currentTarget)?>">
-      <div><strong><?=$this->transEsc("source_$currentTarget", null, $currentTarget)?></strong></div>
-    <?php endif; ?>
+  <?php if ($authManager->getPreAuthenticationData()): ?>
+    <?=$this->auth()->getOtpLoginFields()?>
+  <?php else: ?>
+    <div class="form-group">
+      <?php
+        $currentTarget = $this->request->get('target', $this->defaultTarget);
+        if (!$currentTarget || !in_array($currentTarget, $loginTargets)) {
+          $currentTarget = $this->auth()->getManager()->getDefaultLoginTarget();
+        }
+      ?>
+      <?php if (count($loginTargets) > 1): ?>
+        <label class="form-label" for="login_<?=$this->escapeHtmlAttr($topClass)?>_target"><?=$this->transEsc('login_target')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
+        <select id="login_<?=$this->escapeHtmlAttr($topClass)?>_target" name="target" required class="form-select">
+          <?php foreach ($loginTargets as $target):?>
+            <option value="<?=$this->escapeHtmlAttr($target)?>"<?=($target == $currentTarget ? ' selected="selected"' : '')?>><?=$this->transEsc("source_$target", null, $target)?></option>
+          <?php endforeach ?>
+        </select>
+      <?php else: ?>
+        <input type="hidden" id="login_<?=$this->escapeHtmlAttr($topClass)?>_target" name="target" value="<?=$this->escapeHtmlAttr($currentTarget)?>">
+        <div><strong><?=$this->transEsc("source_$currentTarget", null, $currentTarget)?></strong></div>
+      <?php endif; ?>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label password-login" for="login_<?=$this->escapeHtmlAttr($topClass)?>_username"><?=$this->transEsc('Username')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
+      <label class="form-label email-login hidden" for="login_<?=$this->escapeHtmlAttr($topClass)?>_username"><?=$this->transEsc('Email')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
+      <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_username" type="text" name="username" value="<?=$this->escapeHtmlAttr($this->request->get('username'))?>" required class="form-control">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="login_<?=$this->escapeHtmlAttr($topClass)?>_password"><?=$this->transEsc('Password')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
+      <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_password" type="password" name="password" required class="form-control">
+    </div>
   </div>
 
-  <div class="form-group">
-    <label class="form-label password-login" for="login_<?=$this->escapeHtmlAttr($topClass)?>_username"><?=$this->transEsc('Username')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
-    <label class="form-label email-login hidden" for="login_<?=$this->escapeHtmlAttr($topClass)?>_username"><?=$this->transEsc('Email')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
-    <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_username" type="text" name="username" value="<?=$this->escapeHtmlAttr($this->request->get('username'))?>" required class="form-control">
-  </div>
+  <?php
+    $methods = [];
+    foreach ($authManager->getLoginTargets() as $target) {
+      $methods[$target] = $authManager->getILSLoginMethod($target);
+    }
 
-  <div class="form-group">
-    <label class="form-label" for="login_<?=$this->escapeHtmlAttr($topClass)?>_password"><?=$this->transEsc('Password')?>: <span class="required-notice"><?=$this->transEsc('form_required_notice')?></span></label>
-    <input id="login_<?=$this->escapeHtmlAttr($topClass)?>_password" type="password" name="password" required class="form-control">
-  </div>
-</div>
+    $methods = json_encode($methods);
+    $script = <<<EOT
+          setupMultiILSLoginFields($methods, 'login_{$topClass}_');
+        EOT;
 
-<?php
-  $methods = [];
-  foreach ($authManager->getLoginTargets() as $target) {
-    $methods[$target] = $authManager->getILSLoginMethod($target);
-  }
-
-  $methods = json_encode($methods);
-  $script = <<<EOT
-        setupMultiILSLoginFields($methods, 'login_{$topClass}_');
-      EOT;
-
-  // Inline the script for lightbox compatibility
-  echo $this->assetManager()->outputInlineScriptString($script);
-?>
-
+    // Inline the script for lightbox compatibility
+    echo $this->assetManager()->outputInlineScriptString($script);
+  ?>
+<?php endif; ?>
 <!-- END of: finna - Auth/MultiILS/loginfields.phtml -->

@@ -145,7 +145,7 @@ class FinnaResourceListResourceService extends AbstractDbService implements
     }
 
     /**
-     * Get resources for a resource list
+     * Get resources for a resource list.
      *
      * @param UserEntityInterface              $user   User entity
      * @param FinnaResourceListEntityInterface $list   List entity

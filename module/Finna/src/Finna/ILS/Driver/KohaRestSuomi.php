@@ -1,7 +1,7 @@
 <?php
 
 /**
- * KohaRest ILS Driver for KohaSuomi
+ * KohaRest ILS Driver for KohaSuomi.
  *
  * PHP version 8
  *
@@ -40,7 +40,7 @@ use function in_array;
 use function is_array;
 
 /**
- * KohaRest ILS Driver for KohaSuomi
+ * KohaRest ILS Driver for KohaSuomi.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -52,7 +52,7 @@ use function is_array;
 class KohaRestSuomi extends KohaRestSuomiVuFind
 {
     /**
-     * Mappings from Koha messaging preferences
+     * Mappings from Koha messaging preferences.
      *
      * @var array
      */
@@ -76,21 +76,21 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     ];
 
     /**
-     * Whether to use location in addition to branch when grouping holdings
+     * Whether to use location in addition to branch when grouping holdings.
      *
      * @param bool
      */
     protected $groupHoldingsByLocation;
 
     /**
-     * Priority settings for the order of branches or branch/location combinations
+     * Priority settings for the order of branches or branch/location combinations.
      *
      * @var array
      */
     protected $holdingsBranchOrder;
 
     /**
-     * Priority settings for the order of locations (in branches)
+     * Priority settings for the order of locations (in branches).
      *
      * @var array
      */
@@ -138,7 +138,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -176,7 +176,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -197,7 +197,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Statuses
+     * Get Statuses.
      *
      * This is responsible for retrieving the status information for a
      * collection of records.
@@ -224,7 +224,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -244,7 +244,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -341,7 +341,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Purge Patron Transaction History
+     * Purge Patron Transaction History.
      *
      * @param array  $patron The patron array from patronLogin
      * @param ?array $ids    IDs to purge, or null for all
@@ -377,7 +377,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -416,7 +416,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron Patron array
      * @param string $phone  Phone number
@@ -454,7 +454,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron's SMS alert number
+     * Update patron's SMS alert number.
      *
      * @param array  $patron Patron array
      * @param string $number SMS alert number
@@ -497,7 +497,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array  $patron Patron array
      * @param String $email  Email address
@@ -535,7 +535,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -600,7 +600,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron messaging settings
+     * Update patron messaging settings.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of messaging settings
@@ -769,7 +769,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get a password recovery data for a user
+     * Get a password recovery data for a user.
      *
      * @param array $params Required params such as cat_username and email
      *
@@ -930,7 +930,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Pick Up Locations
+     * Get Pick Up Locations.
      *
      * This is responsible for gettting a list of valid library locations for
      * holds / recall retrieval
@@ -1103,7 +1103,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Return a location for a Koha item
+     * Return a location for a Koha item.
      *
      * @param array $item Item
      *
@@ -1132,7 +1132,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Return a call number for a Koha item
+     * Return a call number for a Koha item.
      *
      * @param array $item Item
      *
@@ -1177,7 +1177,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Item Statuses
+     * Get Item Statuses.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1473,7 +1473,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Create a holding entry
+     * Create a holding entry.
      *
      * @param string $id      Bib ID
      * @param array  $holding Holding
@@ -1543,7 +1543,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Create a serial entry
+     * Create a serial entry.
      *
      * @param array $subscription Subscription record
      * @param int   $sortKey      Sort key
@@ -1580,7 +1580,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Return a location for a Koha branch ID
+     * Return a location for a Koha branch ID.
      *
      * @param string $branchId Branch ID
      *
@@ -1598,7 +1598,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get a MARC record for the given holding or null if not available
+     * Get a MARC record for the given holding or null if not available.
      *
      * @param array $holding Holding
      *
@@ -1622,7 +1622,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get holding data from a holding record
+     * Get holding data from a holding record.
      *
      * @param array $holding Holding record from Koha
      *
@@ -1699,7 +1699,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get specified fields from a MARC Record
+     * Get specified fields from a MARC Record.
      *
      * @param MarcReader   $record     Marc reader
      * @param array|string $fieldSpecs Array or colon-separated list of
@@ -1748,7 +1748,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Translate location name
+     * Translate location name.
      *
      * @param string $location Location code
      * @param string $default  Default value if translation is not available
@@ -1776,7 +1776,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Translate collection name
+     * Translate collection name.
      *
      * @param string $code        Collection code
      * @param string $description Collection description
@@ -1797,7 +1797,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Status item sort function
+     * Status item sort function.
      *
      * @param array $a First status record to compare
      * @param array $b Second status record to compare

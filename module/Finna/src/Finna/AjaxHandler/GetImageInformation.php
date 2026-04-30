@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetImageInformation AJAX handler
+ * GetImageInformation AJAX handler.
  *
  * PHP version 8
  *
@@ -41,7 +41,7 @@ use VuFind\Session\Settings as SessionSettings;
 use VuFind\View\Helper\Root\Record;
 
 /**
- * GetImageInformation AJAX handler
+ * GetImageInformation AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -55,7 +55,7 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
     use \Finna\Statistics\ReporterTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings              $sessionSettings     Session settings
      * @param Config                       $config              Main configuration

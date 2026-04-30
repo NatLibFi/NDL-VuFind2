@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Abstract base class for classes that are capable of rendering custom elements
+ * Abstract base class for classes that are capable of rendering custom elements.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\CustomElement;
 
 /**
- * Abstract base class for classes that are capable of rendering custom elements
+ * Abstract base class for classes that are capable of rendering custom elements.
  *
  * @category VuFind
  * @package  CustomElements
@@ -41,14 +41,14 @@ namespace Finna\View\CustomElement;
 abstract class AbstractCustomElementEnabledBase
 {
     /**
-     * Names of elements to render
+     * Names of elements to render.
      *
      * @var array
      */
     protected array $customElements;
 
     /**
-     * Renderer
+     * Renderer.
      *
      * @var CustomElementRendererInterface
      */

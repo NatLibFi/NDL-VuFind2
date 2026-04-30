@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Resource list service interface
+ * Resource list service interface.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 
 /**
- * Resource list service interface
+ * Resource list service interface.
  *
  * @category VuFind
  * @package  Database
@@ -62,7 +62,7 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
     public function deleteResourceList(FinnaResourceListEntityInterface $list): void;
 
     /**
-     * Get lists which does contain given resource
+     * Get lists which does contain given resource.
      *
      * @param UserEntityInterface     $user           User entity object or ID
      * @param ResourceEntityInterface $resource       Resource entity to look for
@@ -91,7 +91,7 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
     public function getResourceListById(int $id): FinnaResourceListEntityInterface;
 
     /**
-     * Get resource lists for user
+     * Get resource lists for user.
      *
      * @param UserEntityInterface $user           User entity object
      * @param string              $listIdentifier Identifier of the list used by institution
@@ -108,7 +108,7 @@ interface FinnaResourceListServiceInterface extends DbServiceInterface
     ): array;
 
     /**
-     * Get lists which does not contain given resource
+     * Get lists which does not contain given resource.
      *
      * @param UserEntityInterface     $user           User entity object
      * @param ResourceEntityInterface $resource       Resource entity to look for

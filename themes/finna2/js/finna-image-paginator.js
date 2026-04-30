@@ -399,10 +399,10 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
      * @returns {object} Object containing height and width
      */
     function calculateBounds(boundWidth, imageWidth, boundHeight, imageHeight) {
-      var heightPercentage = 0;
-      var widthPercentage = 0;
-      var newHeight = imageHeight;
-      var newWidth = imageWidth;
+      var heightPercentage;
+      var widthPercentage;
+      var newHeight;
+      var newWidth;
 
       if (imageHeight >= boundHeight) {
         newHeight = boundHeight - (boundHeight / 100 * offsetPercentage);

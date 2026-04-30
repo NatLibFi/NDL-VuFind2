@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Video handler plugin manager
+ * Video handler plugin manager.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Video\Handler;
 
 /**
- * Video handler plugin manager
+ * Video handler plugin manager.
  *
  * @category VuFind
  * @package  Video

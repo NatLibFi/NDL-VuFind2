@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_feedback table
+ * Entity model for finna_feedback table.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Doctrine\ORM\Mapping as ORM;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Entity model for finna_feedback table
+ * Entity model for finna_feedback table.
  *
  * @category VuFind
  * @package  Database
@@ -62,7 +62,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected int $id;
 
     /**
-     * User that created request
+     * User that created request.
      *
      * @var ?UserEntityInterface
      */
@@ -71,7 +71,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected ?UserEntityInterface $user = null;
 
     /**
-     * Site URL
+     * Site URL.
      *
      * @var string
      */
@@ -79,7 +79,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected string $siteUrl;
 
     /**
-     * Form name
+     * Form name.
      *
      * @var string
      */
@@ -87,7 +87,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected string $formName;
 
     /**
-     * Form data
+     * Form data.
      *
      * @var ?array
      */
@@ -95,7 +95,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected ?array $formData = null;
 
     /**
-     * Message
+     * Message.
      *
      * @var string
      */
@@ -103,7 +103,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected string $message;
 
     /**
-     * Creation date
+     * Creation date.
      *
      * @var DateTime
      */
@@ -111,7 +111,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected DateTime $created;
 
     /**
-     * Status
+     * Status.
      *
      * @var string
      */
@@ -119,7 +119,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected string $status = 'open';
 
     /**
-     * User that updated request
+     * User that updated request.
      *
      * @var ?int
      */
@@ -127,7 +127,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     protected ?int $modifierId = null;
 
     /**
-     * Last modification date
+     * Last modification date.
      *
      * @var ?DateTime
      */
@@ -154,7 +154,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Message setter
+     * Message setter.
      *
      * @param string $message Message
      *
@@ -167,7 +167,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Message getter
+     * Message getter.
      *
      * @return string
      */
@@ -190,7 +190,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Form data getter
+     * Form data getter.
      *
      * @return ?array
      */
@@ -213,7 +213,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Form name getter
+     * Form name getter.
      *
      * @return string
      */
@@ -236,7 +236,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Created getter
+     * Created getter.
      *
      * @return DateTime
      */
@@ -259,7 +259,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Status getter
+     * Status getter.
      *
      * @return string
      */
@@ -282,7 +282,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Site URL getter
+     * Site URL getter.
      *
      * @return string
      */
@@ -305,7 +305,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * User getter
+     * User getter.
      *
      * @return ?UserEntityInterface
      */
@@ -315,7 +315,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Get modifier ID
+     * Get modifier ID.
      *
      * @return ?int
      */
@@ -325,7 +325,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Set modifier ID
+     * Set modifier ID.
      *
      * @param ?int $modifierId Modifier ID
      *
@@ -339,7 +339,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Get modification date
+     * Get modification date.
      *
      * @return ?DateTime
      */
@@ -349,7 +349,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Set modification date
+     * Set modification date.
      *
      * @param ?DateTime $modified Modification date
      *
@@ -377,7 +377,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Updated getter
+     * Updated getter.
      *
      * Note: this gets the date from the same field as getModificationDate, but returns current date if it's null
      *
@@ -403,7 +403,7 @@ class FinnaFeedback implements FinnaFeedbackEntityInterface
     }
 
     /**
-     * Updatedby getter
+     * Updatedby getter.
      *
      * Not supported in finna_feedback!
      *

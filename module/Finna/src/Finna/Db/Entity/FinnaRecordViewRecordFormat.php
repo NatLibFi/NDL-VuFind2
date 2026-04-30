@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_record_view_record_format table
+ * Entity model for finna_record_view_record_format table.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for finna_record_view_record_format table
+ * Entity model for finna_record_view_record_format table.
  *
  * @category VuFind
  * @package  Database

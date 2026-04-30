@@ -50,14 +50,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ProcessRecordStatsLog extends AbstractUtilCommand
 {
     /**
-     * Record batch size to process at a time
+     * Record batch size to process at a time.
      *
      * @var int
      */
     protected $batchSize = 1000;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param protected FinnaStatisticsServiceInterface $statisticsService Statics database service
      */

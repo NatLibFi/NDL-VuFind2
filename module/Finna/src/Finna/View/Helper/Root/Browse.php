@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Browse database/journal view helper
+ * Browse database/journal view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Browse database/journal view helper
+ * Browse database/journal view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class Browse extends \VuFind\View\Helper\Root\Browse
 {
     /**
-     * Browser configuration
+     * Browser configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config Browse configuration
      */
@@ -58,7 +58,7 @@ class Browse extends \VuFind\View\Helper\Root\Browse
     }
 
     /**
-     * Check if Browse is available
+     * Check if Browse is available.
      *
      * @param string $type Type (Database or Journal).
      *

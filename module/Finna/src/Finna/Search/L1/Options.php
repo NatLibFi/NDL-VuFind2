@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Search Options for L1 index
+ * Search Options for L1 index.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Search\L1;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Search Options for L1 index
+ * Search Options for L1 index.
  *
  * @category VuFind
  * @package  Search_L1
@@ -43,7 +43,7 @@ use VuFind\Config\ConfigManagerInterface;
 class Options extends \Finna\Search\Solr\Options
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */

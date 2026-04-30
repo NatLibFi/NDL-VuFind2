@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Strip tags view helper
+ * Strip tags view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Strip tags view helper
+ * Strip tags view helper.
  *
  * @category VuFind
  * @package  View_Helpers

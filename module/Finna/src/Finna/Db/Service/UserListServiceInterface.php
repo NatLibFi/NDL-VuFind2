@@ -44,7 +44,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 interface UserListServiceInterface extends \VuFind\Db\Service\UserListServiceInterface
 {
     /**
-     * Check if custom favorite order is used in a list
+     * Check if custom favorite order is used in a list.
      *
      * @param UserListEntityInterface $list List entity.
      *
@@ -53,7 +53,7 @@ interface UserListServiceInterface extends \VuFind\Db\Service\UserListServiceInt
     public function isCustomOrderAvailable(UserListEntityInterface $list);
 
     /**
-     * Get next available custom order index
+     * Get next available custom order index.
      *
      * @param UserListEntityInterface $list List entity.
      *
@@ -62,7 +62,7 @@ interface UserListServiceInterface extends \VuFind\Db\Service\UserListServiceInt
     public function getNextAvailableCustomOrderIndex(UserListEntityInterface $list);
 
     /**
-     * Update custom favorite list order
+     * Update custom favorite list order.
      *
      * @param UserEntityInterface $user        User id
      * @param int                 $listId      List id

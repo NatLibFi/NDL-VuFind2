@@ -100,7 +100,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     ];
 
     /**
-     * Content descriptors
+     * Content descriptors.
      *
      * @var array
      */
@@ -112,7 +112,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     ];
 
     /**
-     * Age restrictions
+     * Age restrictions.
      *
      * @var array
      */
@@ -126,7 +126,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     ];
 
     /**
-     * Array of roles to convert
+     * Array of roles to convert.
      *
      * @var array
      */
@@ -137,7 +137,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     ];
 
     /**
-     * Roles to filter
+     * Roles to filter.
      *
      * @var array
      */
@@ -149,7 +149,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     /**
      * Mappings for saving author name attributes into proper keys.
      * - credited Credited authors
-     * - uncredited Uncredited authors
+     * - uncredited Uncredited authors.
      *
      * @var array
      */
@@ -381,7 +381,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     ];
 
     /**
-     * Mappings for description types
+     * Mappings for description types.
      *
      * @var array
      */
@@ -391,7 +391,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
@@ -444,7 +444,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return all subject headings
+     * Return all subject headings.
      *
      * @param bool $extended Whether to return a keyed array with the following
      * keys:
@@ -548,7 +548,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return aspect ratio
+     * Return aspect ratio.
      *
      * @return string
      */
@@ -559,7 +559,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return type
+     * Return type.
      *
      * @return string
      */
@@ -570,7 +570,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return color
+     * Return color.
      *
      * @return string
      */
@@ -581,7 +581,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return color system
+     * Return color system.
      *
      * @return string
      */
@@ -592,7 +592,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get country
+     * Get country.
      *
      * @return string
      */
@@ -604,7 +604,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return descriptions
+     * Return descriptions.
      *
      * @return array
      */
@@ -618,7 +618,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get distributors
+     * Get distributors.
      *
      * @return array
      */
@@ -629,7 +629,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get funders
+     * Get funders.
      *
      * @return array
      */
@@ -679,7 +679,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return music information
+     * Return music information.
      *
      * @return string
      */
@@ -697,7 +697,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get presenters as an assoc array
+     * Get presenters as an assoc array.
      *
      * @return array
      */
@@ -708,7 +708,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get all primary authors apart from presenters
+     * Get all primary authors apart from presenters.
      *
      * @return array
      */
@@ -719,7 +719,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
@@ -730,7 +730,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get all secondary authors apart from presenters
+     * Get all secondary authors apart from presenters.
      *
      * @return array
      */
@@ -741,7 +741,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Loop through all the authors and return them in an associative array
+     * Loop through all the authors and return them in an associative array.
      *
      * @return array
      */
@@ -867,7 +867,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get online URLs
+     * Get online URLs.
      *
      * @param bool $raw Whether to return raw data
      *
@@ -897,7 +897,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return original work information
+     * Return original work information.
      *
      * @return string
      */
@@ -908,7 +908,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return playing times
+     * Return playing times.
      *
      * @return array
      */
@@ -920,7 +920,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return press review
+     * Return press review.
      *
      * @return string
      */
@@ -935,7 +935,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get producers
+     * Get producers.
      *
      * @return array
      */
@@ -946,7 +946,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return sound
+     * Return sound.
      *
      * @return string
      */
@@ -957,7 +957,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return sound system
+     * Return sound system.
      *
      * @return string
      */
@@ -968,7 +968,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return summary
+     * Return summary.
      *
      * @return array
      */
@@ -1040,7 +1040,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Loop through all the descriptions and return them in an associative array
+     * Loop through all the descriptions and return them in an associative array.
      *
      * @return array
      */
@@ -1068,7 +1068,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Loop through all production events and return them in an associative array
+     * Loop through all production events and return them in an associative array.
      *
      * @return array
      */
@@ -1177,7 +1177,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Get video URLs
+     * Get video URLs.
      *
      * @return array
      */
@@ -1242,7 +1242,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return production cost
+     * Return production cost.
      *
      * @return string
      */
@@ -1253,7 +1253,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return premier night theaters and places
+     * Return premier night theaters and places.
      *
      * @return array
      */
@@ -1264,7 +1264,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return opening night time
+     * Return opening night time.
      *
      * @return string
      */
@@ -1275,7 +1275,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return television broadcasting dates, channels and amount of viewers
+     * Return television broadcasting dates, channels and amount of viewers.
      *
      * @return array
      */
@@ -1286,7 +1286,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return filmfestival attendance information
+     * Return filmfestival attendance information.
      *
      * @return array
      */
@@ -1297,7 +1297,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return foreign distributors and countries
+     * Return foreign distributors and countries.
      *
      * @return array
      */
@@ -1308,7 +1308,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return number of film copies
+     * Return number of film copies.
      *
      * @return string
      */
@@ -1319,7 +1319,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return number of viewer
+     * Return number of viewer.
      *
      * @return string
      */
@@ -1330,7 +1330,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return other screening occasions
+     * Return other screening occasions.
      *
      * @return array
      */
@@ -1341,7 +1341,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return movie inspection details
+     * Return movie inspection details.
      *
      * @return array
      */
@@ -1352,7 +1352,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return Movie Thanks
+     * Return Movie Thanks.
      *
      * @return array
      */
@@ -1363,7 +1363,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return movie Age limit
+     * Return movie Age limit.
      *
      * Get Age limit from last inspection's details
      *
@@ -1392,7 +1392,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return exteriors
+     * Return exteriors.
      *
      * @return array
      */
@@ -1403,7 +1403,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return interiors
+     * Return interiors.
      *
      * @return array
      */
@@ -1414,7 +1414,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return studios
+     * Return studios.
      *
      * @return array
      */
@@ -1425,7 +1425,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return location notes
+     * Return location notes.
      *
      * @return array
      */
@@ -1436,7 +1436,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return filming date
+     * Return filming date.
      *
      * @return string
      */
@@ -1447,7 +1447,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
-     * Return archive films
+     * Return archive films.
      *
      * @return string
      */

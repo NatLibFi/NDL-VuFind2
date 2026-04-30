@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Error Controller
+ * Error Controller.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * Error Controller
+ * Error Controller.
  *
  * @category VuFind
  * @package  Controller

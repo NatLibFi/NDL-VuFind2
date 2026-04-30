@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Holdings Helper
+ * Holdings Helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\View\Helper\Root;
 use function strlen;
 
 /**
- * Holdings Settings Helper
+ * Holdings Settings Helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -45,7 +45,7 @@ use function strlen;
 class Holdings extends \VuFind\View\Helper\Root\Holdings
 {
     /**
-     * Return the configured holding details mode
+     * Return the configured holding details mode.
      *
      * @return string
      */
@@ -138,7 +138,7 @@ class Holdings extends \VuFind\View\Helper\Root\Holdings
     }
 
     /**
-     * Get grouped unique call numbers for an items list
+     * Get grouped unique call numbers for an items list.
      *
      * @param array $items Items
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record driver plugin manager
+ * Record driver plugin manager.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\RecordDriver;
 use VuFind\RecordDriver\AbstractBase;
 
 /**
- * Record driver plugin manager
+ * Record driver plugin manager.
  *
  * @category VuFind
  * @package  RecordDrivers

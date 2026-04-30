@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Turku Payment API PaymentRequest
+ * Turku Payment API PaymentRequest.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 use Paytrail\SDK\Exception\ValidationException;
 
 /**
- * Turku Payment API PaymentRequest
+ * Turku Payment API PaymentRequest.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -43,21 +43,21 @@ use Paytrail\SDK\Exception\ValidationException;
 class PaymentRequest extends \Paytrail\SDK\Request\PaymentRequest
 {
     /**
-     * Use prices without vat
+     * Use prices without vat.
      *
      * @var bool
      */
     protected $usePricesWithoutVat = true;
 
     /**
-     * Sap organization details
+     * Sap organization details.
      *
      * @var array
      */
     protected $sapOrganizationDetails = [];
 
     /**
-     * Set use prices without vat
+     * Set use prices without vat.
      *
      * @param bool $value Should prices not include vat
      *
@@ -70,7 +70,7 @@ class PaymentRequest extends \Paytrail\SDK\Request\PaymentRequest
     }
 
     /**
-     * Get use prices without vat
+     * Get use prices without vat.
      *
      * @return bool
      */
@@ -80,7 +80,7 @@ class PaymentRequest extends \Paytrail\SDK\Request\PaymentRequest
     }
 
     /**
-     * Set sap organization details
+     * Set sap organization details.
      *
      * @param array $sapOrganizationDetails Sap organization details
      *
@@ -94,7 +94,7 @@ class PaymentRequest extends \Paytrail\SDK\Request\PaymentRequest
     }
 
     /**
-     * Get sap organization details
+     * Get sap organization details.
      *
      * @return bool
      */
@@ -105,7 +105,7 @@ class PaymentRequest extends \Paytrail\SDK\Request\PaymentRequest
 
     /**
      * Validates with Respect\Validation library
-     * and throws an exception for invalid objects
+     * and throws an exception for invalid objects.
      *
      * @throws ValidationException
      *

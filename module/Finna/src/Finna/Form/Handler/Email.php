@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Email
+ * Class Email.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ namespace Finna\Form\Handler;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Class Email
+ * Class Email.
  *
  * @category VuFind
  * @package  Form

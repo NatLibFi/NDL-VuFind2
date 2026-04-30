@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Organisations list view helper
+ * Organisations list view helper.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ namespace Finna\View\Helper\Root;
 use Finna\OrganisationInfo\OrganisationInfo;
 
 /**
- * Organisations list view helper
+ * Organisations list view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -47,14 +47,14 @@ use Finna\OrganisationInfo\OrganisationInfo;
 class OrganisationsList extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Organisation info service
+     * Organisation info service.
      *
      * @var OrganisationInfo
      */
     protected $organisationInfo;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param OrganisationInfo $organisationInfo Organisation info service
      */

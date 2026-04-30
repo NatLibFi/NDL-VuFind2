@@ -1,7 +1,7 @@
 <?php
 
 /**
- * III Sierra REST API driver
+ * III Sierra REST API driver.
  *
  * PHP version 8
  *
@@ -40,7 +40,7 @@ use function sprintf;
 use function strlen;
 
 /**
- * III Sierra REST API driver
+ * III Sierra REST API driver.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -53,21 +53,21 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     use FinnaCommonILSTrait;
 
     /**
-     * Fine types that allow online payment
+     * Fine types that allow online payment.
      *
      * @var array
      */
     protected $onlinePayableFineTypes = [2, 4, 5, 6];
 
     /**
-     * Manual fine description regexp patterns that allow online payment
+     * Manual fine description regexp patterns that allow online payment.
      *
      * @var array
      */
     protected $onlinePayableManualFineDescriptionPatterns = [];
 
     /**
-     * Mappings from item status codes to VuFind strings
+     * Mappings from item status codes to VuFind strings.
      *
      * @var array
      */
@@ -89,7 +89,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     ];
 
     /**
-     * SOAP options for the IMMS connection
+     * SOAP options for the IMMS connection.
      *
      * @var array
      */
@@ -102,14 +102,14 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     ];
 
     /**
-     * Days before account expiration to start displaying a notification
+     * Days before account expiration to start displaying a notification.
      *
      * @var int
      */
     protected $daysBeforeAccountExpirationNotification = 30;
 
     /**
-     * Product code mappings
+     * Product code mappings.
      *
      * @var array
      */
@@ -124,7 +124,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     protected $httpRetryCount = 3;
 
     /**
-     * Exception message regexp patterns for request errors that can be retried
+     * Exception message regexp patterns for request errors that can be retried.
      *
      * @var array
      */
@@ -179,7 +179,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -230,7 +230,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -256,7 +256,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked out items)
      * by a specific patron.
@@ -303,7 +303,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get Pick Up Locations
+     * Get Pick Up Locations.
      *
      * This is responsible for getting a list of valid library locations for
      * holds / recall retrieval
@@ -372,7 +372,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -496,7 +496,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -530,7 +530,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -609,7 +609,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -698,7 +698,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Update holds
+     * Update holds.
      *
      * This is responsible for changing the status of hold requests
      *
@@ -834,7 +834,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get Item Statuses
+     * Get Item Statuses.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1059,7 +1059,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Return item-specific location information as configured
+     * Return item-specific location information as configured.
      *
      * @param array $item Koha item
      *
@@ -1093,7 +1093,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Check if a fine can be paid online
+     * Check if a fine can be paid online.
      *
      * @param array $fine Fine
      *
@@ -1115,7 +1115,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get a product code for a fine
+     * Get a product code for a fine.
      *
      * @param array $fine Fine
      *
@@ -1137,7 +1137,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get hold shelf for an available hold
+     * Get hold shelf for an available hold.
      *
      * @param array $hold   Hold
      * @param array $patron The patron array from patronLogin
@@ -1195,7 +1195,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get hold shelf handler configuration
+     * Get hold shelf handler configuration.
      *
      * @param array $hold Hold
      *
@@ -1223,7 +1223,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get hold shelf for an available hold with IMMS
+     * Get hold shelf for an available hold with IMMS.
      *
      * @param array $config IMMS configuration
      * @param array $params Extra parameters
@@ -1288,7 +1288,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get hold shelf for an available hold with IMMS
+     * Get hold shelf for an available hold with IMMS.
      *
      * @param array $config IMMS configuration
      * @param array $params Extra parameters
@@ -1368,7 +1368,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get a new authentication token from IMMS
+     * Get a new authentication token from IMMS.
      *
      * @param array $config IMMS config
      *
@@ -1392,7 +1392,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get item barcode
+     * Get item barcode.
      *
      * @param string $itemId Item ID
      * @param array  $patron The patron array from patronLogin
@@ -1407,7 +1407,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Make Request
+     * Make Request.
      *
      * Makes a request to the Sierra REST API
      *
@@ -1473,7 +1473,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Get locations
+     * Get locations.
      *
      * @return array
      */
@@ -1489,7 +1489,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Build an API URL from a hierarchy array
+     * Build an API URL from a hierarchy array.
      *
      * @param array $hierarchy Hierarchy
      *
@@ -1513,7 +1513,7 @@ class SierraRest extends \VuFind\ILS\Driver\SierraRest
     }
 
     /**
-     * Authenticate a patron using the API version 6 patrons/auth endpoint
+     * Authenticate a patron using the API version 6 patrons/auth endpoint.
      *
      * Returns patron information on success and null on failure
      *

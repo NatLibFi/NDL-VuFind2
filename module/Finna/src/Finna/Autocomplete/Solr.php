@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Autocomplete Module
+ * Solr Autocomplete Module.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use function in_array;
 use function is_bool;
 
 /**
- * Solr Autocomplete Module
+ * Solr Autocomplete Module.
  *
  * This class provides suggestions by using the local Solr index.
  *
@@ -50,70 +50,70 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Autocomplete faceting settings
+     * Autocomplete faceting settings.
      *
      * @var array
      */
     protected $facetSettings;
 
     /**
-     * Facet configuration
+     * Facet configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $facetConfig;
 
     /**
-     * Hierarchical facets
+     * Hierarchical facets.
      *
      * @var array
      */
     protected $hierarchicalFacets;
 
     /**
-     * Checkbox facets
+     * Checkbox facets.
      *
      * @var array
      */
     protected $checkboxFacets;
 
     /**
-     * OR facets
+     * OR facets.
      *
      * @var array
      */
     protected $orFacets;
 
     /**
-     * Search configuration
+     * Search configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $searchConfig;
 
     /**
-     * Facet translations
+     * Facet translations.
      *
      * @var array
      */
     protected $facetTranslations;
 
     /**
-     * Current request
+     * Current request.
      *
      * @var \Laminas\Stdlib\Parameters
      */
     protected $request = null;
 
     /**
-     * Url helper
+     * Url helper.
      *
      * @var Url
      */
     protected $urlHelper;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param PluginManager         $results      Results plugin manager
      * @param \VuFind\Config\Config $facetConfig  Facet configuration
@@ -286,7 +286,7 @@ class Solr extends \VuFind\Autocomplete\Solr implements \VuFind\I18n\Translator\
 
     /**
      * Get a record from the search results if the
-     * query matches record ISBN
+     * query matches record ISBN.
      *
      * @param $query search query
      *

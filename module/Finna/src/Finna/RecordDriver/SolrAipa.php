@@ -65,7 +65,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected array $encapsulatedContentTypeRecords;
 
     /**
-     * Array of excluded descriptions
+     * Array of excluded descriptions.
      *
      * @var array
      */
@@ -190,7 +190,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
-     * Get extended subject places
+     * Get extended subject places.
      *
      * @return array
      */
@@ -331,7 +331,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
-     * Get topics
+     * Get topics.
      *
      * @return array
      */

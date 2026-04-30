@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_comments_record table
+ * Entity model for finna_comments_record table.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Doctrine\ORM\Mapping as ORM;
 use VuFind\Db\Entity\CommentsEntityInterface;
 
 /**
- * Entity model for finna_comments_record table
+ * Entity model for finna_comments_record table.
  *
  * @category VuFind
  * @package  Database

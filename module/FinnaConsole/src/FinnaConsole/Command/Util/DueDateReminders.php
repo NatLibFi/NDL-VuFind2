@@ -74,7 +74,7 @@ class DueDateReminders extends AbstractUtilCommand
     use EmailWithRetryTrait;
 
     /**
-     * URL Helper
+     * URL Helper.
      *
      * @var \VuFind\View\Helper\Root\Url
      */
@@ -116,7 +116,7 @@ class DueDateReminders extends AbstractUtilCommand
     protected $currentViewPath = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserServiceInterface                 $userService            User database service
      * @param UserCardServiceInterface             $userCardService        User card database service

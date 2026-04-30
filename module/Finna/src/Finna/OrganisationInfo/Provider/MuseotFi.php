@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Service for querying museot.fi API
+ * Service for querying museot.fi API.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ namespace Finna\OrganisationInfo\Provider;
 use function strlen;
 
 /**
- * Service for querying museot.fi API
+ * Service for querying museot.fi API.
  *
  * @category VuFind
  * @package  Content
@@ -49,7 +49,7 @@ use function strlen;
 class MuseotFi extends AbstractProvider
 {
     /**
-     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part).
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -75,7 +75,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get consortium information (includes list of locations) (provider-specific part)
+     * Get consortium information (includes list of locations) (provider-specific part).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -89,7 +89,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get location details (provider-specific part)
+     * Get location details (provider-specific part).
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -110,7 +110,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -272,7 +272,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Fetch data from cache or external API
+     * Fetch data from cache or external API.
      *
      * @param string $locationId Location ID
      *
@@ -290,7 +290,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get open times for a date
+     * Get open times for a date.
      *
      * @param string $day  Weekday
      * @param array  $json Data from museum api

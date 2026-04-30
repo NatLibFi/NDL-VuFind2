@@ -259,7 +259,6 @@ return [
         [ 'file' => 'vendor/leaflet.min.js' ],
         [ 'file' => 'vendor/leaflet.draw.min.js' ],
         [ 'file' => 'vendor/L.Control.Locate.min.js' ],
-        [ 'file' => 'vendor/js.cookie.js' ],
         [ 'file' => 'vendor/select-a11y.iife.js' ],
         [ 'file' => 'vendor/cally.iife.js' ],
         [ 'file' => 'finna-multiselect.js' ],

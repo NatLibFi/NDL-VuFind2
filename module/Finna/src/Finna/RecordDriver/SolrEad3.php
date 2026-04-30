@@ -173,7 +173,7 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
-     * Supported video formats
+     * Supported video formats.
      *
      * @var array
      */
@@ -183,7 +183,7 @@ class SolrEad3 extends SolrEad
     ];
 
     /**
-     * Get archive type
+     * Get archive type.
      *
      * @return string
      */
@@ -310,7 +310,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get origination
+     * Get origination.
      *
      * @return string
      */
@@ -321,7 +321,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get all originations
+     * Get all originations.
      *
      * @return array
      */
@@ -336,7 +336,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get extended origination info
+     * Get extended origination info.
      *
      * @return array
      */
@@ -445,7 +445,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * See if holdings tab is shown on current item
+     * See if holdings tab is shown on current item.
      *
      * @return bool
      */
@@ -470,7 +470,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
@@ -762,7 +762,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get unit ids
+     * Get unit ids.
      *
      * @return array
      */
@@ -837,7 +837,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -855,7 +855,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get item history
+     * Get item history.
      *
      * @return string
      */
@@ -1129,7 +1129,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Determine image size
+     * Determine image size.
      *
      * @param string $type    Type given in metadata
      * @param string $default Default to return
@@ -1530,10 +1530,6 @@ class SolrEad3 extends SolrEad
                 )
             );
         }
-        $headings = array_merge(
-            $headings,
-            $this->getRelatedPlacesExtended(['aihe'], [])
-        );
 
         // The default index schema doesn't currently store subject headings in a
         // broken-down format, so we'll just send each value as a single chunk.
@@ -1582,7 +1578,9 @@ class SolrEad3 extends SolrEad
         foreach ($record->controlaccess as $controlaccess) {
             foreach ($controlaccess->geogname as $name) {
                 $attr = $name->attributes();
-                $relator = (string)$attr->relator;
+                $relator = mb_strtolower((string)$attr->relator, 'UTF-8');
+                $id = (string)($attr->identifier ?? '');
+                $source = (string)($attr->source ?? '');
                 if (!empty($include) && !in_array($relator, $include)) {
                     continue;
                 }
@@ -1597,7 +1595,7 @@ class SolrEad3 extends SolrEad
                 }
                 if ($parts) {
                     $part = implode(', ', $parts);
-                    $data = ['data' => $part, 'detail' => $relator];
+                    $data = ['data' => $part, 'detail' => $relator, 'id' => $id, 'source' => $source];
                     if (
                         $attr->lang && in_array((string)$attr->lang, $languages)
                         && !in_array($part, $languageResult)
@@ -1612,6 +1610,24 @@ class SolrEad3 extends SolrEad
             }
         }
         return $languageResultDetail ?: $resultDetail;
+    }
+
+    /**
+     * Get extended subject places.
+     *
+     * @return array
+     */
+    public function getSubjectPlacesExtended(): array
+    {
+        $results = [];
+        foreach ($this->getRelatedPlacesExtended(['aihe'], []) as $place) {
+            $results[] = [
+                'heading' => [$place['data']],
+                'id' => $place['id'] ?? '',
+                'source' => $place['source'] ?? '',
+            ];
+        }
+        return $results;
     }
 
     /**
@@ -1687,7 +1703,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Parse dates
+     * Parse dates.
      *
      * @param string $date  date to parse
      * @param bool   $start whether given date is the start date of a year range
@@ -1724,7 +1740,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Check if date string contains "unknown" characters
+     * Check if date string contains "unknown" characters.
      *
      * @param string $string The string to be checked
      *
@@ -1741,7 +1757,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get related records (used by RecordDriverRelated - Related module)
+     * Get related records (used by RecordDriverRelated - Related module).
      *
      * Returns an associative array of group => records, where each item in
      * records is either a record id or an array with keys:
@@ -1819,7 +1835,7 @@ class SolrEad3 extends SolrEad
      *               'link'  => link_URI
      *        ),
      *        ...
-     * )
+     * ).
      *
      * @return null|array
      */
@@ -1915,7 +1931,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get parent series
+     * Get parent series.
      *
      * @return array
      */
@@ -1947,7 +1963,7 @@ class SolrEad3 extends SolrEad
 
     /**
      * Get the parent title(s) associated with this item (empty if none).
-     * (defaults to series and subseries)
+     * (defaults to series and subseries).
      *
      * @param string[] $levels Optional list of level types to return
      *
@@ -2060,7 +2076,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get notes with URLs on finding aids related to the record
+     * Get notes with URLs on finding aids related to the record.
      *
      * @return array
      */
@@ -2201,7 +2217,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get subject actors
+     * Get subject actors.
      *
      * @param bool $extended Whether to return a keyed array with the following keys:
      * - name: name of the actor
@@ -2224,7 +2240,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get extended subject actors
+     * Get extended subject actors.
      *
      * @return array
      */
@@ -2253,7 +2269,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get related material
+     * Get related material.
      *
      * @return array
      */
@@ -2494,7 +2510,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get role translation key
+     * Get role translation key.
      *
      * @param string $role     EAD3 role
      * @param string $fallback Fallback to use when no supported role is found
@@ -2563,7 +2579,7 @@ class SolrEad3 extends SolrEad
     }
 
     /**
-     * Get all authors elements
+     * Get all authors elements.
      *
      * @return array
      */

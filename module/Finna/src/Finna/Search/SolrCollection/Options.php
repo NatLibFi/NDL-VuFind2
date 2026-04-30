@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Collection aspect of the Search Multi-class (Options)
+ * Solr Collection aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\Search\SolrCollection;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Solr Collection Search Options
+ * Solr Collection Search Options.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -47,14 +47,14 @@ class Options extends \VuFind\Search\SolrCollection\Options
     use \Finna\Search\FinnaOptions;
 
     /**
-     * Date range visualization settings
+     * Date range visualization settings.
      *
      * @var string
      */
     protected $dateRangeVis;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */
@@ -84,7 +84,7 @@ class Options extends \VuFind\Search\SolrCollection\Options
     }
 
     /**
-     * Get the field used for date range search
+     * Get the field used for date range search.
      *
      * @return string
      */

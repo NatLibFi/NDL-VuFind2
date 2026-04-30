@@ -50,7 +50,7 @@ class SolrAuthForward extends SolrAuthDefault implements \Psr\Log\LoggerAwareInt
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Runtime cache for method results to avoid duplicate processing
+     * Runtime cache for method results to avoid duplicate processing.
      *
      * @var array
      */
@@ -81,7 +81,7 @@ class SolrAuthForward extends SolrAuthDefault implements \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Return description
+     * Return description.
      *
      * @return string|null
      */

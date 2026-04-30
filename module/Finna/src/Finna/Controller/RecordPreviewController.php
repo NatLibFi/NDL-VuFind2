@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record preview controller
+ * Record preview controller.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\Controller\Plugin\Preview;
 use InvalidArgumentException;
 
 /**
- * Record preview controller
+ * Record preview controller.
  *
  * @category VuFind
  * @package  Controller
@@ -121,7 +121,7 @@ class RecordPreviewController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Validate a record and return result as JSON
+     * Validate a record and return result as JSON.
      *
      * @return mixed
      */

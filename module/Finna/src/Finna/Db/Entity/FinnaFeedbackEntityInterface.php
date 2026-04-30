@@ -43,14 +43,14 @@ use DateTime;
 interface FinnaFeedbackEntityInterface extends \VuFind\Db\Entity\FeedbackEntityInterface
 {
     /**
-     * Get modifier ID
+     * Get modifier ID.
      *
      * @return ?int
      */
     public function getModifierId(): ?int;
 
     /**
-     * Set modifier ID
+     * Set modifier ID.
      *
      * @param ?int $modifierId Modifier ID
      *
@@ -59,14 +59,14 @@ interface FinnaFeedbackEntityInterface extends \VuFind\Db\Entity\FeedbackEntityI
     public function setModifierId(?int $modifierId): static;
 
     /**
-     * Get modification date
+     * Get modification date.
      *
      * @return ?DateTime
      */
     public function getModified(): ?DateTime;
 
     /**
-     * Set modification date
+     * Set modification date.
      *
      * @param ?DateTime $modified Modification date
      *

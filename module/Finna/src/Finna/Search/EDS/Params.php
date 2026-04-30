@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EDS API Params
+ * EDS API Params.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\EDS;
 
 /**
- * EDS API Params
+ * EDS API Params.
  *
  * @category VuFind
  * @package  EBSCO

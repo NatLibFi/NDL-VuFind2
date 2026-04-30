@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Empty Search Object
+ * Empty Search Object.
  *
  * PHP version 8
  *

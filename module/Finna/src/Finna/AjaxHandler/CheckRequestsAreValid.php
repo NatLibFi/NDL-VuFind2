@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AJAX handler for checking that requests are valid
+ * AJAX handler for checking that requests are valid.
  *
  * PHP version 8
  *

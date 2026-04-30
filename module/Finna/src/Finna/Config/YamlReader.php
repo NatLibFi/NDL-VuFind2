@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind YAML Configuration Reader
+ * VuFind YAML Configuration Reader.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Config;
 
 /**
- * VuFind YAML Configuration Reader
+ * VuFind YAML Configuration Reader.
  *
  * @category VuFind
  * @package  Config
@@ -41,7 +41,7 @@ namespace Finna\Config;
 class YamlReader extends \VuFind\Config\YamlReader
 {
     /**
-     * Return a Finna configuration (Finna default or view specific)
+     * Return a Finna configuration (Finna default or view specific).
      *
      * @param string $filename        Config file name
      * @param bool   $localDir        Config directory (local/finna or local/vufind)

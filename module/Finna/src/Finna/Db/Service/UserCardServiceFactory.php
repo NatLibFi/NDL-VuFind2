@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database usercard service factory
+ * Database usercard service factory.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use Psr\Container\ContainerInterface;
 use VuFind\Db\Service\AbstractDbServiceFactory;
 
 /**
- * Database usercard service factory
+ * Database usercard service factory.
  *
  * @category VuFind
  * @package  Database
@@ -51,7 +51,7 @@ use VuFind\Db\Service\AbstractDbServiceFactory;
 class UserCardServiceFactory extends AbstractDbServiceFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

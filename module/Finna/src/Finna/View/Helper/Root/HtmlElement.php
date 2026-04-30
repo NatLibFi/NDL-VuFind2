@@ -1,7 +1,7 @@
 <?php
 
 /**
- * HtmlElement helper
+ * HtmlElement helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use function in_array;
 use function strlen;
 
 /**
- * HtmlElement helper
+ * HtmlElement helper.
  *
  * @category VuFind
  * @package  Content
@@ -44,7 +44,7 @@ use function strlen;
 class HtmlElement extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Boolean attributes
+     * Boolean attributes.
      *
      * @var array
      */
@@ -57,21 +57,21 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
     ];
 
     /**
-     * Array holding base data for elements
+     * Array holding base data for elements.
      *
      * @var array
      */
     protected $elementBase = [];
 
     /**
-     * HTML escaper
+     * HTML escaper.
      *
      * @var \Laminas\Escaper\Escaper
      */
     protected $escaper;
 
     /**
-     * HtmlElement constructor
+     * HtmlElement constructor.
      */
     public function __construct()
     {
@@ -80,7 +80,7 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
 
     /**
      * Adds a base element to $this->elementBase array
-     * identified by $identifier
+     * identified by $identifier.
      *
      * @param string $identifier key for the element in base data
      * @param array  $data       attributes of the element
@@ -94,7 +94,7 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
 
     /**
      * Removes a base element from $this->elementBase array
-     * identified by $identifier
+     * identified by $identifier.
      *
      * @param string $identifier key for the element to remove
      *
@@ -113,7 +113,7 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
 
     /**
      * Escapes given values from an array
-     * escapeHtmlAttr
+     * escapeHtmlAttr.
      *
      * @param array $array with escapable data
      *
@@ -134,7 +134,7 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
     /**
      * Creates a string of given key value pairs in form of html attributes,
      * if identifier is set, try to find corresponding basedata for
-     * that element
+     * that element.
      *
      * @param array   $data       attributes of element to create
      * @param ?string $identifier key for the element in base data
@@ -165,7 +165,7 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Stringify array
+     * Stringify array.
      *
      * @param array $element to stringify
      *
@@ -190,7 +190,7 @@ class HtmlElement extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Function to combine attributes from 2 arrays
+     * Function to combine attributes from 2 arrays.
      *
      * @param array $baseAttributes base attributes of element
      * @param array $newAttributes  attributes for element

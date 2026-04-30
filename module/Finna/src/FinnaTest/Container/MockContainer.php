@@ -52,7 +52,7 @@ class MockContainer implements ServiceLocatorInterface
     use MockContainerTrait;
 
     /**
-     * Entries
+     * Entries.
      *
      * @var array
      */
@@ -90,7 +90,7 @@ class MockContainer implements ServiceLocatorInterface
     }
 
     /**
-     * Add an entry to the container
+     * Add an entry to the container.
      *
      * @param string $id    Entry identifier
      * @param mixed  $value Value

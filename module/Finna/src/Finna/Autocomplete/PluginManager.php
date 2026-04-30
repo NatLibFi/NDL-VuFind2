@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Autocomplete handler plugin manager
+ * Autocomplete handler plugin manager.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Autocomplete;
 
 /**
- * Autocomplete handler plugin manager
+ * Autocomplete handler plugin manager.
  *
  * @category VuFind
  * @package  Autocomplete
@@ -41,7 +41,7 @@ namespace Finna\Autocomplete;
 class PluginManager extends \VuFind\Autocomplete\PluginManager
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * Make sure plugins are properly initialized.
      *

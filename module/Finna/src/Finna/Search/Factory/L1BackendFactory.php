@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for a L1 backend
+ * Factory for a L1 backend.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Search\Factory;
 use FinnaSearch\Backend\L1\Connector;
 
 /**
- * Factory for a L1 backend
+ * Factory for a L1 backend.
  *
  * @category VuFind
  * @package  Search_Factory
@@ -50,7 +50,7 @@ class L1BackendFactory extends SolrDefaultBackendFactory
     protected $createRecordMethod = 'getL1Record';
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {

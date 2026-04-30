@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Count of all indexed items view helper
+ * Count of all indexed items view helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use VuFind\Cache\Manager as CacheManager;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 
 /**
- * Count of all indexed items view helper
+ * Count of all indexed items view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -44,21 +44,21 @@ use VuFind\Search\Results\PluginManager as ResultsManager;
 class TotalIndexed extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Results manager
+     * Results manager.
      *
      * @var ResultsManager
      */
     protected $resultsManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CacheManager   $cm Cache manager
      * @param ResultsManager $rm Results manager

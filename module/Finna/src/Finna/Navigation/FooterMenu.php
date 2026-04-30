@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FooterMenu section plugin
+ * FooterMenu section plugin.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Navigation;
 use Finna\Navigation\Feature\MenuCheckMethodsTrait;
 
 /**
- * FooterMenu section plugin
+ * FooterMenu section plugin.
  *
  * @category VuFind
  * @package  Navigation

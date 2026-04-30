@@ -46,7 +46,7 @@ use VuFind\Db\Entity\ResourceEntityInterface;
 interface UserResourceServiceInterface extends \VuFind\Db\Service\UserResourceServiceInterface
 {
     /**
-     * Get total resource count for a user
+     * Get total resource count for a user.
      *
      * @param UserEntityInterface $user User
      *

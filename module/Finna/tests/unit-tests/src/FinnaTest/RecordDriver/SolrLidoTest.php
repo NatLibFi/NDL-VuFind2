@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrLido Test Class
+ * SolrLido Test Class.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Finna\RecordDriver\SolrLido;
 use function is_callable;
 
 /**
- * SolrLido Record Driver Test Class
+ * SolrLido Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -47,7 +47,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Function to get expected representations data
+     * Function to get expected representations data.
      *
      * @return \Iterator
      */
@@ -305,7 +305,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test representations
+     * Test representations.
      *
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
@@ -333,7 +333,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected other classifications data
+     * Function to get expected other classifications data.
      *
      * @return array
      */
@@ -397,7 +397,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getOtherClassifications
+     * Test getOtherClassifications.
      *
      * @param string $function Function of the driver to test
      * @param string $language Language
@@ -422,7 +422,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected measurements data
+     * Function to get expected measurements data.
      *
      * @return array
      */
@@ -514,7 +514,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getMeasurementsByType
+     * Test getMeasurementsByType.
      *
      * @param string $function Function of the driver to test
      * @param string $language Language
@@ -539,7 +539,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get data for subject field
+     * Function to get data for subject field.
      *
      * @return array
      */
@@ -628,7 +628,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getAllSubjectHeadingsForDisplayExtended
+     * Test getAllSubjectHeadingsForDisplayExtended.
      *
      * @param string $language Language
      * @param string $xmlFile  Xml record to use for the test
@@ -650,7 +650,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getAllSubjectHeadings function
+     * Test getAllSubjectHeadings function.
      *
      * @return void
      */
@@ -736,7 +736,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected physical locations data
+     * Function to get expected physical locations data.
      *
      * @return array
      */
@@ -786,7 +786,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getPhysicalLocations
+     * Test getPhysicalLocations.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -880,7 +880,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected date range data
+     * Function to get expected date range data.
      *
      * @return array
      */
@@ -923,7 +923,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getDateRange
+     * Test getDateRange.
      *
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
@@ -953,7 +953,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected summary data
+     * Function to get expected summary data.
      *
      * @return array
      */
@@ -997,7 +997,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getSummary()
+     * Test getSummary().
      *
      * @param string $xmlFile  Xml record to use for the test
      * @param array  $expected Expected results from function
@@ -1021,7 +1021,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected events data
+     * Function to get expected events data.
      *
      * @return array
      */
@@ -1256,7 +1256,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getEvents
+     * Test getEvents.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -1276,7 +1276,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected related publications data
+     * Function to get expected related publications data.
      *
      * @return array
      */
@@ -1329,7 +1329,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getRelatedPublications
+     * Test getRelatedPublications.
      *
      * @param array $expected Result to be expected
      *
@@ -1685,7 +1685,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a record driver with fake data
+     * Get a record driver with fake data.
      *
      * @param string $recordXml    Xml record to use for the test
      * @param array  $overrides    Fixture fields to override

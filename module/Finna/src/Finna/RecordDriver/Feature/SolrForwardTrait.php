@@ -47,14 +47,14 @@ use FinnaXml\XmlDoc;
 trait SolrForwardTrait
 {
     /**
-     * Forward XML namespace
+     * Forward XML namespace.
      *
      * @var string
      */
     protected $forwardNs = 'http://project-forward.eu/schemas/EN15907-forward';
 
     /**
-     * Record metadata as an XmlDoc
+     * Record metadata as an XmlDoc.
      *
      * @var XmlDoc
      */
@@ -144,7 +144,7 @@ trait SolrForwardTrait
     }
 
     /**
-     * Get all original records as an XmlDoc object
+     * Get all original records as an XmlDoc object.
      *
      * @return XmlDoc
      */

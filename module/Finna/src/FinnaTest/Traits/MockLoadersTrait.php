@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait which returns pre-configured mocks
+ * Trait which returns pre-configured mocks.
  *
  * PHP version 8
  *
@@ -50,7 +50,7 @@ use VuFind\RecordDriver\Missing;
 use function in_array;
 
 /**
- * Trait which returns pre-configured mocks
+ * Trait which returns pre-configured mocks.
  *
  * @category VuFind
  * @package  Tests
@@ -120,7 +120,7 @@ trait MockLoadersTrait
     }
 
     /**
-     * Get record driver plugin manager
+     * Get record driver plugin manager.
      *
      * @param array $config Main config
      *

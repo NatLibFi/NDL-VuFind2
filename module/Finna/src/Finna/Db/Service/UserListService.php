@@ -50,7 +50,7 @@ use function assert;
 class UserListService extends \VuFind\Db\Service\UserListService implements UserListServiceInterface
 {
     /**
-     * Check if custom favorite order is used in a list
+     * Check if custom favorite order is used in a list.
      *
      * @param UserListEntityInterface $list List entity.
      *
@@ -67,7 +67,7 @@ class UserListService extends \VuFind\Db\Service\UserListService implements User
     }
 
     /**
-     * Get next available custom order index
+     * Get next available custom order index.
      *
      * @param UserListEntityInterface $list List entity.
      *
@@ -124,7 +124,7 @@ class UserListService extends \VuFind\Db\Service\UserListService implements User
     }
 
     /**
-     * Update custom favorite list order
+     * Update custom favorite list order.
      *
      * @param UserEntityInterface $user        User id
      * @param int                 $listId      List id

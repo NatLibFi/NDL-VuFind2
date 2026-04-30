@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Online payment view helper
+ * Online payment view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Online payment view helper
+ * Online payment view helper.
  *
  * @category VuFind
  * @package  View_Helpers

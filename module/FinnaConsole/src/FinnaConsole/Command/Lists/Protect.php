@@ -36,7 +36,7 @@ use VuFind\Db\Entity\EntityInterface;
 use function assert;
 
 /**
- * Console service for protecting lists
+ * Console service for protecting lists.
  *
  * @category VuFind
  * @package  Service
@@ -50,21 +50,21 @@ use function assert;
 class Protect extends \FinnaConsole\Command\AbstractRecordUpdateCommand
 {
     /**
-     * Table display name
+     * Table display name.
      *
      * @var string
      */
     protected $tableName = 'list';
 
     /**
-     * Command description
+     * Command description.
      *
      * @var string
      */
     protected $description = 'Protect lists in the database';
 
     /**
-     * Update a record
+     * Update a record.
      *
      * @param EntityInterface $record Record
      *

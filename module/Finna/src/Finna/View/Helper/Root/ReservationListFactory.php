@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for ReservationList view helper
+ * Factory for ReservationList view helper.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for ReservationList view helper
+ * Factory for ReservationList view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -47,7 +47,7 @@ use Psr\Container\ContainerInterface;
 class ReservationListFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element closing tag block continue parser
+ * Custom element closing tag block continue parser.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use League\CommonMark\Parser\Block\BlockContinueParserInterface;
 use League\CommonMark\Parser\Cursor;
 
 /**
- * Custom element closing tag block continue parser
+ * Custom element closing tag block continue parser.
  *
  * @category VuFind
  * @package  CommonMark
@@ -49,7 +49,7 @@ use League\CommonMark\Parser\Cursor;
 class CustomElementClosingTagParser extends AbstractBlockContinueParser
 {
     /**
-     * The current block being parsed by this parser
+     * The current block being parsed by this parser.
      *
      * @var CustomElementClosingTag
      */
@@ -66,7 +66,7 @@ class CustomElementClosingTagParser extends AbstractBlockContinueParser
     }
 
     /**
-     * Return the current block being parsed by this parser
+     * Return the current block being parsed by this parser.
      *
      * @return CustomElementClosingTag
      */
@@ -77,7 +77,7 @@ class CustomElementClosingTagParser extends AbstractBlockContinueParser
 
     /**
      * Return whether we are interested in possibly lazily parsing any subsequent
-     * lines
+     * lines.
      *
      * @return bool
      */
@@ -87,7 +87,7 @@ class CustomElementClosingTagParser extends AbstractBlockContinueParser
     }
 
     /**
-     * Attempt to parse the given line
+     * Attempt to parse the given line.
      *
      * @param Cursor                       $cursor            Cursor
      * @param BlockContinueParserInterface $activeBlockParser Parser
@@ -102,7 +102,7 @@ class CustomElementClosingTagParser extends AbstractBlockContinueParser
     }
 
     /**
-     * Add the given line of text to the current block
+     * Add the given line of text to the current block.
      *
      * @param string $line Line
      *

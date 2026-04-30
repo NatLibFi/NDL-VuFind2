@@ -1,7 +1,7 @@
 <?php
 
 /**
- * URL truncater
+ * URL truncater.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use function strlen;
 
 /**
- * URL truncater
+ * URL truncater.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,7 +43,7 @@ use function strlen;
 class TruncateUrl extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Truncate a URL for display
+     * Truncate a URL for display.
      *
      * @param string $url URL to truncate
      *

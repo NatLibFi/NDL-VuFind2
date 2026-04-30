@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrMarc Test Class
+ * SolrMarc Test Class.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Finna\RecordDriver\SolrMarc;
 use Generator;
 
 /**
- * SolrMarc Record Driver Test Class
+ * SolrMarc Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -48,7 +48,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Data provider for testTitlePunctuation
+     * Data provider for testTitlePunctuation.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -73,7 +73,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test title trailing punctuation handling
+     * Test title trailing punctuation handling.
      *
      * @param string $expected Expected result
      * @param string $title    Record title
@@ -109,7 +109,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testHostRecordsData
+     * Data provider for testHostRecordsData.
      *
      * @return Generator
      */
@@ -300,7 +300,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test record linking with Legacy and new way
+     * Test record linking with Legacy and new way.
      *
      * @param string $fixture  Fixture path to test file
      * @param array  $dsConfig Datasource configuration
@@ -332,7 +332,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testRecordLinking
+     * Data provider for testRecordLinking.
      *
      * @return Generator
      */
@@ -550,7 +550,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getAllRecordLinks
+     * Test getAllRecordLinks.
      *
      * @param string $fixture  Fixture path to test file
      * @param array  $dsConfig Datasource configuration

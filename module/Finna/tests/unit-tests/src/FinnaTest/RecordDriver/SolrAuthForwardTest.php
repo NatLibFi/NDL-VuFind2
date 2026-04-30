@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrAuthForward Test Class
+ * SolrAuthForward Test Class.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Finna\Video\Video;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
- * SolrAuthForward Record Driver Test Class
+ * SolrAuthForward Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests

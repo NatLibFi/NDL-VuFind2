@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list handler factory
+ * Reservation list handler factory.
  *
  * PHP Version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * Reservation list handler factory
+ * Reservation list handler factory.
  *
  * @category VuFind
  * @package  ReservationList
@@ -44,7 +44,7 @@ use Psr\Container\ContainerInterface;
 class HandlerFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

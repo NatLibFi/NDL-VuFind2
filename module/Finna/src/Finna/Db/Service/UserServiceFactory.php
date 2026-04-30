@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database user service factory
+ * Database user service factory.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Psr\Container\ContainerInterface;
 use VuFind\Db\Service\AbstractDbServiceFactory;
 
 /**
- * Database user service factory
+ * Database user service factory.
  *
  * @category VuFind
  * @package  Database
@@ -47,7 +47,7 @@ use VuFind\Db\Service\AbstractDbServiceFactory;
 class UserServiceFactory extends AbstractDbServiceFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

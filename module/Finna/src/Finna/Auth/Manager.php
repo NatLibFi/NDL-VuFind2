@@ -55,7 +55,7 @@ class Manager extends \VuFind\Auth\Manager
     }
 
     /**
-     * Get secondary login field label (if any)
+     * Get secondary login field label (if any).
      *
      * This method only exists for back-compatibility
      *
@@ -69,7 +69,7 @@ class Manager extends \VuFind\Auth\Manager
     }
 
     /**
-     * Check if ILS supports password recovery
+     * Check if ILS supports password recovery.
      *
      * @param string $target Login target (only for MultiILS)
      *
@@ -83,7 +83,7 @@ class Manager extends \VuFind\Auth\Manager
     }
 
     /**
-     * Check if ILS supports self-registration
+     * Check if ILS supports self-registration.
      *
      * @param string $target Login target (only for MultiILS)
      *

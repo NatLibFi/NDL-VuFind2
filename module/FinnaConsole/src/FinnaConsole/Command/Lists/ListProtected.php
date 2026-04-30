@@ -36,7 +36,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
- * Console service for listing protected lists
+ * Console service for listing protected lists.
  *
  * @category VuFind
  * @package  Service
@@ -50,7 +50,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class ListProtected extends Command
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserListServiceInterface $userListService User list database service
      */

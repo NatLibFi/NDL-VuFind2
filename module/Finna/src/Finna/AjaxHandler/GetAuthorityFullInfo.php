@@ -46,7 +46,7 @@ use VuFind\Db\Service\SearchServiceInterface;
 class GetAuthorityFullInfo extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param RendererInterface                    $renderer           View renderer
      * @param AuthorityRecommend                   $authorityRecommend Authority Recommend

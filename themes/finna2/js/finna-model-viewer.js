@@ -663,7 +663,7 @@ class ModelViewerClass extends HTMLElement {
         this.loaded = true;
       },
       (xhr) => {
-        let loaded = '';
+        let loaded;
         if (xhr.total < 1) {
           loaded = `${(xhr.loaded / 1024 / 1024).toFixed(0)}MB`;
         } else {
@@ -755,7 +755,7 @@ class ModelViewerClass extends HTMLElement {
       // Set camera and position to center from the newly created object
       const objectHeight = (newBox.max.y - newBox.min.y);
       const objectWidth = (newBox.max.x - newBox.min.x);
-      let result = 0;
+      let result;
       if (objectHeight >= objectWidth) {
         result = objectHeight / getTanDeg(this.viewerPaddingAngle);
       } else {

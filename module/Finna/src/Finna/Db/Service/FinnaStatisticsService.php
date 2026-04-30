@@ -55,35 +55,35 @@ class FinnaStatisticsService extends AbstractDbService implements
     FinnaStatisticsServiceInterface
 {
     /**
-     * Formats cache for detailed record views
+     * Formats cache for detailed record views.
      *
      * @var FinnaRecordViewRecordFormatEntityInterface[]
      */
     protected $formatCache = [];
 
     /**
-     * Usage rights cache for detailed record views
+     * Usage rights cache for detailed record views.
      *
      * @var FinnaRecordViewRecordRightsEntityInterface[]
      */
     protected $usageRightsCache = [];
 
     /**
-     * Cache for a view record
+     * Cache for a view record.
      *
      * @var ?FinnaRecordViewRecordEntityInterface
      */
     protected ?FinnaRecordViewRecordEntityInterface $cachedViewRecord = null;
 
     /**
-     * Cache for an institution+view
+     * Cache for an institution+view.
      *
      * @var ?FinnaRecordViewInstitutionViewEntityInterface
      */
     protected ?FinnaRecordViewInstitutionViewEntityInterface $cachedViewInstView = null;
 
     /**
-     * Create a new session stats entity
+     * Create a new session stats entity.
      *
      * @return FinnaSessionStatsEntityInterface
      */
@@ -93,7 +93,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Create a new page view entity
+     * Create a new page view entity.
      *
      * @return FinnaPageViewStatsEntityInterface
      */
@@ -103,7 +103,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Create a new record stats log entity
+     * Create a new record stats log entity.
      *
      * @return FinnaRecordStatsLogEntityInterface
      */
@@ -113,7 +113,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Get a batch of log entries to process from finna_record_stats_log table
+     * Get a batch of log entries to process from finna_record_stats_log table.
      *
      * @param int $batchSize Number of records to retrieve
      *
@@ -128,7 +128,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Delete a record stats log entry
+     * Delete a record stats log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $entry Log entry
      *
@@ -140,7 +140,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Add a new session entry
+     * Add a new session entry.
      *
      * @param FinnaSessionStatsEntityInterface $session Session
      *
@@ -159,7 +159,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Add a page view
+     * Add a page view.
      *
      * @param FinnaPageViewStatsEntityInterface $pageView Page view
      *
@@ -180,7 +180,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Add a record view entry from a log entry
+     * Add a record view entry from a log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -199,7 +199,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Add a record stats log entry (a detailed entry for processing later via addDetailedRecordView)
+     * Add a record stats log entry (a detailed entry for processing later via addDetailedRecordView).
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -225,7 +225,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Add a detailed record view entry from a log entry
+     * Add a detailed record view entry from a log entry.
      *
      * Note: This is a relatively slow and complex function and should only be
      * executed from a batch processing utility
@@ -247,7 +247,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Get a record view format entity by id
+     * Get a record view format entity by id.
      *
      * @param int $id Id
      *
@@ -259,7 +259,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Get a record view format entity by id
+     * Get a record view format entity by id.
      *
      * @param int $id Id
      *
@@ -271,7 +271,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Get a record view record by log entry
+     * Get a record view record by log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -314,7 +314,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Get record view record format entity from string
+     * Get record view record format entity from string.
      *
      * @param string $format Format
      *
@@ -338,7 +338,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Get record view record rights entity from string
+     * Get record view record rights entity from string.
      *
      * @param string $rights Rights
      *
@@ -362,7 +362,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Get FinnaRecordViewInstitutionView for a log entry
+     * Get FinnaRecordViewInstitutionView for a log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -398,7 +398,7 @@ class FinnaStatisticsService extends AbstractDbService implements
     }
 
     /**
-     * Add or update a statistics table entry
+     * Add or update a statistics table entry.
      *
      * @param string $entityClass Entity class
      * @param array  $params      Columns

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Preview Plugin Test Class
+ * Preview Plugin Test Class.
  *
  * PHP version 8
  *
@@ -44,7 +44,7 @@ use VuFindHttp\HttpService;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * Preview Plugin Test Class
+ * Preview Plugin Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -57,7 +57,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
 
     /**
-     * Data provider for testPreview
+     * Data provider for testPreview.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -93,7 +93,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test preview
+     * Test preview.
      *
      * @param string $format          Record format
      * @param string $record          Record fixture
@@ -131,7 +131,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get Preview plugin
+     * Get Preview plugin.
      *
      * @param array  $config     VuFind configuration
      * @param string $format     Record format

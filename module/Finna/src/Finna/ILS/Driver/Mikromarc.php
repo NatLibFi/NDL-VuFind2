@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mikromarc ILS Driver
+ * Mikromarc ILS Driver.
  *
  * PHP version 8
  *
@@ -45,7 +45,7 @@ use function is_string;
 use function strlen;
 
 /**
- * Mikromarc ILS Driver
+ * Mikromarc ILS Driver.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -69,35 +69,35 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     use FinnaCommonILSTrait;
 
     /**
-     * Date converter object
+     * Date converter object.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateConverter;
 
     /**
-     * Sorter
+     * Sorter.
      *
      * @var \VuFind\I18n\Sorter
      */
     protected $sorter;
 
     /**
-     * Institution settings for the order of organisations
+     * Institution settings for the order of organisations.
      *
      * @var array
      */
     protected $holdingsOrganisationOrder;
 
     /**
-     * Default pickup location
+     * Default pickup location.
      *
      * @var string
      */
     protected $defaultPickUpLocation;
 
     /**
-     * Mappings from fee (account line) types
+     * Mappings from fee (account line) types.
      *
      * @var array
      */
@@ -123,7 +123,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Mappings for request groups
+     * Mappings for request groups.
      *
      * @var array
      */
@@ -133,21 +133,21 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Default request group
+     * Default request group.
      *
      * @var string
      */
     protected $defaultRequestGroup = 'normal';
 
     /**
-     * Are request groups enabled
+     * Are request groups enabled.
      *
      * @var bool
      */
     protected $requestGroupsEnabled = false;
 
     /**
-     * Messaging settings status code mappings
+     * Messaging settings status code mappings.
      *
      * @var array
      */
@@ -159,7 +159,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Date\Converter $dateConverter Date converter object
      * @param \VuFind\I18n\Sorter    $sorter        Sorter
@@ -256,7 +256,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -283,7 +283,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Purchase History
+     * Get Purchase History.
      *
      * This is responsible for retrieving the acquisitions history data for the
      * specific record (usually recently received issues of a serial).
@@ -300,7 +300,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -316,7 +316,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Statuses
+     * Get Statuses.
      *
      * This is responsible for retrieving the status information for a
      * collection of records.
@@ -335,7 +335,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -431,7 +431,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all unpaid fines by a specific patron.
      *
@@ -518,7 +518,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -620,7 +620,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked out items)
      * by a specific patron.
@@ -684,7 +684,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Renew Details
+     * Get Renew Details.
      *
      * @param array $checkOutDetails An array of item data
      *
@@ -696,7 +696,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Renew My Items
+     * Renew My Items.
      *
      * Function for attempting to renew a patron's items. The data in
      * $renewDetails['details'] is determined by getRenewDetails().
@@ -751,7 +751,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -836,7 +836,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Place Hold
+     * Place Hold.
      *
      * Attempts to place a hold or recall on a particular item and returns
      * an array with result details or throws an exception on failure of support
@@ -908,7 +908,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get request group key with a value from mapping array
+     * Get request group key with a value from mapping array.
      *
      * @param string $value Value to get the key for
      *
@@ -921,7 +921,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Cancel Holds
+     * Cancel Holds.
      *
      * Attempts to Cancel a hold. The data in $cancelDetails['details'] is determined
      * by getCancelHoldDetails().
@@ -961,7 +961,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update holds
+     * Update holds.
      *
      * This is responsible for changing the status of hold requests
      *
@@ -1021,7 +1021,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Pick Up Locations
+     * Get Pick Up Locations.
      *
      * This is responsible for gettting a list of valid library locations for
      * holds / recall retrieval
@@ -1084,7 +1084,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Default Pick Up Location
+     * Get Default Pick Up Location.
      *
      * Returns the default pick up location
      *
@@ -1106,7 +1106,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transaction History
+     * Get Patron Transaction History.
      *
      * This is responsible for retrieving all historical transactions
      * (i.e. checked out items)
@@ -1194,7 +1194,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron Patron array
      * @param string $phone  Phone number
@@ -1222,7 +1222,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array  $patron Patron array
      * @param String $email  Email address
@@ -1247,7 +1247,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -1287,7 +1287,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -1319,7 +1319,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron messaging settings
+     * Update patron messaging settings.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of messaging settings
@@ -1411,7 +1411,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Change Password
+     * Change Password.
      *
      * Attempts to change patron password (PIN code)
      *
@@ -1617,7 +1617,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if online payment is supported and enabled
+     * Check if online payment is supported and enabled.
      *
      * @return bool
      */
@@ -1628,7 +1628,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get request groups
+     * Get request groups.
      *
      * @param integer $bibId       BIB ID
      * @param array   $patronId    Patron information returned by the patronLogin
@@ -1658,7 +1658,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Default Request Group
+     * Get Default Request Group.
      *
      * Returns the default request group
      *
@@ -1679,7 +1679,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Item Statuses
+     * Get Item Statuses.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1979,7 +1979,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get patron's blocks, if any
+     * Get patron's blocks, if any.
      *
      * @param array $patron Patron
      *
@@ -2009,7 +2009,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Create a HTTP client
+     * Create a HTTP client.
      *
      * @param string $url Request URL
      *
@@ -2061,7 +2061,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if an item is holdable
+     * Check if an item is holdable.
      *
      * @param array $item Item
      *
@@ -2101,7 +2101,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Convert error message into a translation key
+     * Convert error message into a translation key.
      *
      * @param int   $code   HTTP Result Code
      * @param array $result API Response
@@ -2138,7 +2138,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Make Request
+     * Make Request.
      *
      * Makes a request to the Mikromarc REST API
      *
@@ -2280,7 +2280,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Status item sort function
+     * Status item sort function.
      *
      * @param array $a First status record to compare
      * @param array $b Second status record to compare
@@ -2312,7 +2312,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Fetch name of the department where the shelf is located
+     * Fetch name of the department where the shelf is located.
      *
      * @param int $locationId Id of the shelf
      *
@@ -2334,7 +2334,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Format date
+     * Format date.
      *
      * @param string $dateString Date as a string
      *
@@ -2356,7 +2356,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if request is valid
+     * Check if request is valid.
      *
      * This is responsible for determining if an item is requestable
      *
@@ -2382,7 +2382,7 @@ class Mikromarc extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Map ILS code to common status
+     * Map ILS code to common status.
      *
      * @param string $code Code to map
      *

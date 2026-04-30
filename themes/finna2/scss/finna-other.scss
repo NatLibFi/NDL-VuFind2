@@ -35,7 +35,7 @@
 @import "finna/browsebar";
 @import "finna/forms";
 @import "finna/search-controls";
-@import "finna/result-sidebar";
+@import "finna/sidebar";
 @import "finna/library-cards";
 @import "finna/tooltip";
 @import "finna/street-search";
@@ -146,6 +146,13 @@ input[type=number].input-year::-webkit-inner-spin-button,
 input[type=number].input-year::-webkit-outer-spin-button {
   -webkit-appearance: none !important;
   margin: 0;
+}
+
+label,
+select,
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
 }
 
 /* --- Image processing --- */

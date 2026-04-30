@@ -43,14 +43,14 @@ use VuFindCode\ISBN;
 class BTJ extends \VuFind\Content\AbstractCover
 {
     /**
-     * Recordloader to fetch the current record
+     * Recordloader to fetch the current record.
      *
      * @var VuFind\RecordLoader
      */
     protected $recordLoader = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param VuFind\RecordLoader $recordLoader Record loader.
      */
@@ -114,7 +114,7 @@ class BTJ extends \VuFind\Content\AbstractCover
     }
 
     /**
-     * Get record by id
+     * Get record by id.
      *
      * @param string $id Id for the record to load.
      *

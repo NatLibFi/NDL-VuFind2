@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_record_view table
+ * Entity model for finna_record_view table.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Finna\Db\Type\FinnaStatisticsClientType;
 
 /**
- * Entity model for finna_record_view table
+ * Entity model for finna_record_view table.
  *
  * @category VuFind
  * @package  Database
@@ -46,7 +46,7 @@ use Finna\Db\Type\FinnaStatisticsClientType;
 class FinnaRecordView implements FinnaRecordViewEntityInterface
 {
     /**
-     * Institution+view ID
+     * Institution+view ID.
      *
      * @var FinnaRecordViewInstitutionViewEntityInterface
      */
@@ -76,7 +76,7 @@ class FinnaRecordView implements FinnaRecordViewEntityInterface
     protected string $date;
 
     /**
-     * Record ID
+     * Record ID.
      *
      * @var FinnaRecordViewRecordEntityInterface
      */

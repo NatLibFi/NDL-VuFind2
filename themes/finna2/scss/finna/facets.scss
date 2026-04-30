@@ -1,197 +1,87 @@
 // Finna Facet styling
-
-// No inverse active items
-.facet-group .active
-{
-  background: $list-group-bg;
-  color: $action-link-color;
-}
-
 div.facet {
   ul {
-    margin-bottom: 0;
-  }
-
-  > a {
-    min-width: 0;
-    > span.text, > span.facet-value {
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      display: inline-block;
-    }
+    margin-bottom: 0px;
   }
 }
 
-.facet-group .active {
-  font-weight: bold;
-  color: $link-color;
-}
-
-.list-group.filters {
-  background: $list-group-bg;
-  padding: 10px 0px;
-  .list-group-item.title, .list-group-item.active {
-    padding: 5px 10px;
-    background: transparent;
-    color: $gray;
-    transition: background 0.2s ease-in-out;
-    &:hover {
-      background: $gray-lighter;
-      text-decoration: line-through;
-    }
-  }
-  h5 {
-    margin-top: 0px;
-  }
-}
-
-.list-group.facet, .list-group.facets {
+.list-group.facet,
+.list-group.facets {
   // style Finna facet headers
   .list-group-item.title {
-    cursor:pointer;
-    font-size: 1em;
+    padding: 0.7em;
+    margin-bottom: 0.1em;
+    font-size: $font-size-base;
     font-weight: 600;
-    text-transform: uppercase;
     color: $facet-text-color;
-    background: $facet-header-background;
     text-align: left;
+    text-transform: uppercase;
+    background: $facet-header-background;
     border: 1px solid  $facet-border-color;
-    padding: 10px;
-    margin-bottom: 1px;
-
     .icon {
-      cursor: pointer;
       color: $action-link-color;
     }
   }
-  .collapse, .collapsing {
-    a {
-      background-color: $body-bg;
-    }
-    .list-group-item {
-      background: transparent;
-      border-top-left-radius: 0px;
-      border-top-right-radius: 0px;
-    }
-  }
-
-  .usage-right-group {
-    padding: 3px 0 3px 8px;
-    @include media-breakpoint-down(sm) {
-      padding: 6px 10px 3px 14px;
-    }
-  }
-  .usage-right-group.usage-rights-excludable {
-    padding-right: 0;
-  }
-  .usage-right-group .list-group-item {
-    padding-right: 0;
-  }
-
   a {
     color: $link-color;
     &:hover {
       text-decoration: underline;
     }
   }
-
   .more-less-btn-wrapper {
-    border-bottom: none;
-    padding: 1px;
+    padding: 0.1em;
     .icon + span {
-      margin-left: 3px;
+      margin-left: 0.3em;
     }
   }
-
-  .more-less-btn-wrapper .btn, a.more-narrow-toggle {
+  .more-less-btn-wrapper .btn,
+  a.more-narrow-toggle {
     display: flex;
     align-items: baseline;
-    padding: 0 0 0 4px;
-    margin: 4px;
-    border-radius: 0px;
+    padding: 0em 0em 0em 0.3em;
+    margin: 0.3em;
+    font-size: $font-size-small;
+    font-weight: 700;
     color: $gray;
-    background: transparent;
-    font-weight: bold;
-    font-size: 0.8em;
     text-transform: uppercase;
     text-decoration: none;
+    background: transparent;
+    border-radius: 0px;
     box-shadow: none;
     &:focus-visible {
       box-shadow: $focus-ring-box-shadow;
     }
   }
-
-  .list-group-item i.fa.fa-check-square-o {
-    color: $link-color;
-  }
-
-  // tablet mobile facet adjustments
-  @include media-breakpoint-down(sm) {
-    .facet:not(.facet-group), .usage-right-group {
-      font-size: 1.15em;
-      line-height: 1.15em;
-    }
-    .narrow-toggle .text, .more-less-btn-wrapper {
-      font-size: 0.8em;
-    }
-  }
-  @include media-breakpoint-down(md) {
-    .datepicker.datepicker-dropdown {
-        font-size: 1.4em;
-    }
-  }
-
   // Allow wrapping for facet_usage_rights_ext_str_mv
   #facet_usage_rights_ext_str_mv li span.main {
     white-space: inherit;
   }
 }
-
-h4 + .list-group.facet {
-  margin-top: 5px;
-}
-
-#side-collapse-publishDate .list-group-item {
-    padding: 10px 15px;
-    border-bottom-left-radius:$border-radius-base;
-    border-bottom-right-radius:$border-radius-base;
-}
-
-.building-filter {
-    padding: 5px 0px 5px 6px;
-    @include media-breakpoint-down(sm) {
-        padding-left: 30px;
+@include media-breakpoint-down(sm) {
+  .list-group.facet,
+  .list-group.facets {
+    // tablet mobile facet adjustments
+    .facet:not(.facet-group) {
+      font-size: 1.15em;
+      line-height: 1.15em;
     }
-    input {
-        width: 190px;
-        @include media-breakpoint-only(sm) {
-            width: 135px;
-        }
+    .narrow-toggle .text,
+    .more-less-btn-wrapper {
+      font-size: $font-size-small;
     }
-}
-
-// Checkbox facet badges
-.sidebar .checkbox-filters span.badge.cb-facet {
-    display: $display-checkbox-facet-amount;
-}
-span.badge.cb-facet {
-    float: right;
-    margin-right: 10px;
+  }
 }
 
 .facet-group {
   margin-bottom: 1rem;
-
   .facet {
-    padding: 3px 3px 2px 8px;
     display: flex;
-
-    .main-link, .text {
+    padding: 0.2em 0.2em 0.15em 0.6em;
+    .main-link,
+    .text {
       flex-grow: 1;
       overflow: hidden;
     }
-
     .text .facet-value {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -199,64 +89,45 @@ span.badge.cb-facet {
   }
   .title {
     display: flex;
-    line-height: 1.5;
-    padding: 4px 8px 4px 10px;
-    font-weight: bold;
+    line-height: $line-height-base;
   }
   // Hide checkbox from facets
   .icon-link .icon {
     display: none;
   }
-
-  [data-toggle="collapse"], [data-bs-toggle="collapse"] {
-    cursor: pointer;
-  }
-
-  .collapse, .collapsing {
+  .collapse,
+  .collapsing {
     position: relative;
   }
-
-  .badge {
+  .main-link,
+  .text,
+  .badge,
+  .exclude {
     display: flex;
-    flex-shrink: 0;
     align-items: center;
   }
-  .main-link, .text, .hierarchical-facet-anchor {
-    display: flex;
-    gap: 0.25rem;
-    align-items: center;
+  .main-link,
+  .text {
     flex-grow: 1;
+    gap: 0.25rem;
+  }
+  .badge {
+    flex-shrink: 0;
   }
   .exclude {
-    margin-left: 5px;
+    margin-left: 0.4em;
     flex-shrink: 0;
     text-align: center;
     .icon  {
-      font-size: 0.8em;
+      font-size: $font-size-small;
     }
   }
-
-  body.rtl {
-    padding-left: 0;
-    padding-right: 15px;
+  // No inverse active items
+  .active {
+    font-weight: bold;
+    color: $action-link-color;
+    background: $list-group-bg;
   }
-}
-.facet-loading-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  display: flex;
-  width: 100%;
-  height: 100%;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0,0,0,0.4);
-  z-index: 2;
-}
-.facet-loading-overlay-label {
-  padding: 1px .5rem;
-  color: #fff;
-  background-color: #000;
 }
 .facet-group .facet-title {
   flex: 1 1 0%;
@@ -266,246 +137,262 @@ span.badge.cb-facet {
   flex: none;
 }
 
+.facet-loading-overlay {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+.facet-loading-overlay-label {
+  padding: 0.2rem 0.5rem;
+  color: #fff;
+  background-color: #000;
+}
+
+.sidebar {
+  .facet-info-header {
+    padding: 0.8em 0em 0.8em 0.6em;
+    font-size: 0.9em;
+    font-weight: 600;
+  }
+  .facet-info {
+    padding: 0.4em;
+    margin-bottom: 0.8em;
+    font-size: 0.9em;
+    .icon {
+      display: table-cell;
+      font-size: 1.2em;
+      color: $primary;
+      vertical-align: baseline;
+    }
+    .info {
+      display: table-cell;
+      padding-left: 0.4em;
+      width: 100%;
+      vertical-align: middle;
+    }
+    .more-info {
+      display: block;
+      margin-top: 0.2em;
+      text-align: right;
+    }
+  }
+  .list-group.facet .collapse .list-group-item.facet-info-highlight {
+    @extend .alert;
+    @extend .alert-info;
+    padding: 0.6em;
+  }
+}
+
+/* ------ Hierarchical Facets ------ */
+.facet-tree {
+  .facet {
+    padding-left: 0.1rem;
+  }
+  li {
+    align-items: baseline;
+    border-bottom: none;
+    .facet-tree__toggle-expanded {
+      // Fix focus ring:
+      margin-top: 0.5em;
+      margin-right: 0.3em;   
+      color: $link-color;
+    }
+  }
+}
+
 // Full facet list
-.full-facet-sort-options.form-group {
-  margin-bottom: 5px;
-  .btn-group {
-    a {
-      padding: 5px 10px;
-      border: 1px solid $action-link-color;
+.full-facet-controls {
+  .full-facet-sort-options.form-group {
+    margin-bottom: 0.2em;
+    .btn-group a {
+      padding: 0.4em 0.8em;
       color: $action-link-color;
       background-color: $body-bg;
+      border: 1px solid $action-link-color;
       &.active {
         color: $body-bg;
         background-color: $action-link-color;
       }
     }
   }
+  .facet-lightbox-filter.form-group {
+    display: block;
+    margin: 0.5rem 0rem;
+    #btn-reset-contains {
+      display: flex;
+      align-items: center;
+      height: $input-height-base;
+      margin-top: 0.2em;
+    }
+  }
 }
 .lightbox-scroll.full-facets {
+  margin-bottom: 0.4em;
   border: 1px solid $gray-lighter;
-  margin-bottom: 5px;
-}
-.full-facet-list {
-  margin-bottom: 0;
-  .active .fa {
-    float: right;
-    margin-top: .25rem;
-    margin-left: 0.5rem;
-  }
-  .facet {
-    display: flex;
-    flex-direction: row;
-    .badge {
-      padding-right: 4px;
-    }
-    .fa-square-o {
-      display: none;
-    }
-  }
-}
-.form-inline .facet-lightbox-filter.form-group {
-  display: block;
-  margin: 0.5rem 0;
-
-  .btn {
-    padding-top: 6px;
-    padding-bottom: 6px;
-    height: $input-height-base;
-  }
-}
-
-.sidebar {
-  .facet-info-header {
-    font-size: 0.9em;
-    font-weight: 600;
-    padding: 10px 0 10px 8px;
-  }
-  .facet-info {
-    margin-left: 0;
-    margin-right: 0;
-    margin-bottom: 10px;
-    padding: 5px;
-    font-size: 0.9em;
-    .icon {
-      font-size: 1.2em;
-      vertical-align: baseline;
-      display: table-cell;
-      color: $primary;
-    }
-    .info {
-      padding-left: 5px;
-      display: table-cell;
-      width: 100%;
-    }
-    .more-info {
-      text-align: right;
-      display: block;
-      margin-top: 3px;
-    }
-  }
-  .list-group.facet .collapse .list-group-item.facet-info-highlight {
-    @extend .alert;
-    @extend .alert-info;
-    padding: 8px;
-  }
-}
-
-.geographic-facet {
-  margin-bottom: 10px;
-  padding: 0 8px;
-  .map-controls {
-    a.map-control, a.user-location-filter {
-      border: 1px solid $gray-lighter;
-      background: $body-bg;
-      color: $text-color;
-      border-radius: 0;
-      width: 50%;
-      float: left;
-      padding: 10px 5px;
-      font-size: 0.9em;
-      &:last-child {
-        border-left: 0;
-      }
-      @include media-breakpoint-down(lg) {
-        white-space: normal;
+  .full-facet-list {
+    margin-bottom: 0px;
+    .facet {
+      display: flex;
+      flex-direction: row;
+      .badge {
+        padding-right: 0.3em;
       }
     }
-  }
-  .info-message {
-    margin: 10px 0;
-  }
-}
-.list-group.facet .geofacet-header {
-  margin: 8px;
-  h5, a {
-    padding: 0;
-    margin: 0;
-    display: inline-block;
-  }
-  a {
-    font-size: 0.9em;
-    color: $gray-mid-light;
-    float: right;
-  }
-}
-.list-group.facet .geographic-facet a:hover {
-  text-decoration: none;
-}
-
-.location-search-info .close-info {
-  float: right;
-  padding: 5px;
-  cursor: pointer;
-}
-
-.map-container {
-  position: relative;
-  .location-search-info {
-    bottom: 0;
-    height: auto;
-    width: 100%;
-    z-index: 1050;
-    position: absolute;
-    background: rgba(255, 255, 255, 0.8);
-    text-align: center;
-    padding: 10px;
   }
 }
 
 /* ------ TOP FACETS ------ */
 .top-title {
   display: inline-block;
-  padding-top: .5rem;
-  padding-left: .5rem;
-  font-weight: bold;
-  color: #000;
+  padding-top: 0.5rem;
+  padding-left: 0.5rem;
+  font-weight: 700;
+  color: $text-color;
+  .icon {
+    width: 1rem;
+    text-align: center;
+  }
 }
-.top-title .fa {
-  width: 1rem;
-  text-align: center;
+@include media-breakpoint-down(sm) {
+  .top-title.top-title__heading {
+    display: none;
+  }
 }
 @include media-breakpoint-up(sm) {
-  .top-title { padding-top: 0; }
-  .top-title .fa { display: none; }
-  .top-facets .collapse {
-    display: block;
-    height: auto !important;
+  .top-title {
+    &.top-title__toggle,
+    .icon {
+      display: none;
+    }
   }
 }
 
 .top-facets .facet,
-.top-facets .narrow-toggle,
 .top-facets > strong {
   display: inline-block;
   width: auto;
-  padding: .25rem .5rem;
-  border: 0;
+  padding: 0.25rem 0rem;
   white-space: nowrap;
+  border: 0;
 }
 
-/* ------ Hierarchical Facets ------ */
-.facet-tree {
-  padding-left: 0;
-
-  ul {
-    padding: 0;
-    width: 100%;
-  }
-
-  li {
-    border-bottom: none;
-
-    .facet-tree__toggle-expanded {
-      color: $link-color;
-      // Fix focus ring:
-      margin-top: 6px;
-      margin-right: 3px;
-    }
-  }
-
-  .facet {
-    border: 0;
-    padding-left: .1rem;
-  }
+.top-facets-contents {
+  margin: 0.25rem 0rem;
+  list-style: none;
 }
 
-/* ------ Ranges ------ */
-.facet-range-form {
-  width: 100%;
+.top-facets > strong,
+.top-facets-contents {
+  padding-left: 0.7em;
 }
-.date-fields {
+
+.top-facet-inner {
   display: flex;
-
-  .date-from, .date-to { flex: 0 1 100%; }
-  .date-from { padding-right: .25rem; }
-  .date-to   { padding-left:  .25rem; }
-}
-// These includes Primo
-#creationdateFilter, #publishDateFilter, #PublicationDateFilter {
-  input[type="text"], input[type="number"] {
-    width: 40%;
-    max-width: 70px;
-    padding: 0px 5px;
-    display: inline-block;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border: 1px solid $list-group-border-color;
+  .badge {
+    align-self: center;
   }
-  input[type="number"] {
-    /* Firefox */
-    -moz-appearance: textfield;
+}
 
-    /* Chrome, Safari, Edge, Opera */
-    &::-webkit-outer-spin-button,
-    &::-webkit-inner-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
+.geographic-facet {
+  padding: 0em 0.5em;
+  margin-bottom: 0.7em;
+  .location-search-info .close-info {
+    float: right;
+    padding: 0.3em;
+    cursor: pointer;
+  }
+  .map-container {
+    position: relative;
+    .location-search-info {
+      position: absolute;
+      bottom: 0px;
+      z-index: $zindex-modal;
+      width: 100%;
+      height: auto;
+      padding: 0.7em;
+      text-align: center;
+      background: rgba(255, 255, 255, 0.8);
     }
   }
-  .slider-container {
-    margin: 1rem 0;
+  .map-controls {
+    a.map-control,
+    a.user-location-filter {
+      float: left;
+      width: 50%;
+      padding: 0.8em 0.4em;
+      font-size: 0.9em;
+      color: $text-color;
+      background: $body-bg;
+      border: 1px solid $gray-lighter;
+      border-radius: 0px;
+      &:last-child {
+        border-left: 0px;
+      }
+    }
+  }
+  .info-message {
+    margin: 0.7em 0em;
+  }
+}
+@include media-breakpoint-down(lg) {
+  .geographic-facet .map-controls {
+    a.map-control,
+    a.user-location-filter {
+      white-space: normal;
+    }
   }
 }
 
-/* ------ New items filter ------ */
-.btn.new-items-apply {
-  margin-top: 4px;
+.list-group.facet {
+  .geofacet-header {
+    margin: 0.6em;
+    h5,
+    a {
+      display: inline-block;
+      padding: 0px;
+      margin: 0px;
+    }
+    a {
+      float: right;
+      font-size: 0.9em;
+      color: $gray-mid-light;
+    }
+  }
+  .geographic-facet a:hover {
+    text-decoration: none;
+  }
+}
+
+// usage_rights_str_mv
+.list-group.facet,
+.list-group.facets {
+  .usage-right-group {
+    padding: 0.2em 0em 0.2em 0.6em;
+  }
+  .usage-right-group.usage-rights-excludable {
+    padding-right: 0px;
+  }
+  .usage-right-group .list-group-item {
+    padding-right: 0px;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .list-group.facet,
+  .list-group.facets {
+    .usage-right-group {
+      padding: 0.4em 0.7em 0.3em 0.6em;
+      font-size: 1.15em;
+      line-height: 1.15em;
+    }
+  }
 }

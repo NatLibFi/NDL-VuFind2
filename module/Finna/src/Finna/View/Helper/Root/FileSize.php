@@ -1,7 +1,7 @@
 <?php
 
 /**
- * File size view helper
+ * File size view helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use function count;
 
 /**
- * File size view helper
+ * File size view helper.
  *
  * @category VuFind
  * @package  View_Helpers

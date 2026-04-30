@@ -63,7 +63,7 @@ abstract class AbstractProvider implements
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Template with all the default details fields
+     * Template with all the default details fields.
      *
      * @var array
      */
@@ -84,49 +84,49 @@ abstract class AbstractProvider implements
     ];
 
     /**
-     * Organisation info configuration
+     * Organisation info configuration.
      *
      * @var VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var \VuFind\CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Date converter
+     * Date converter.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateConverter;
 
     /**
-     * URL plugin
+     * URL plugin.
      *
      * @var Url
      */
     protected $urlPlugin;
 
     /**
-     * Results plugin manager
+     * Results plugin manager.
      *
      * @var PluginManager
      */
     protected $resultsManager;
 
     /**
-     * Hierarchical facet helper
+     * Hierarchical facet helper.
      *
      * @var HierarchicalFacetHelper
      */
     protected $facetHelper;
 
     /**
-     * Sorter
+     * Sorter.
      *
      * @var Sorter
      */
@@ -162,7 +162,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information.
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -179,7 +179,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -203,7 +203,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Get location details
+     * Get location details.
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -225,7 +225,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part).
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -235,7 +235,7 @@ abstract class AbstractProvider implements
     abstract protected function doLookup(string $language, string $id): array;
 
     /**
-     * Get consortium information (includes list of locations) (provider-specific part)
+     * Get consortium information (includes list of locations) (provider-specific part).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -246,7 +246,7 @@ abstract class AbstractProvider implements
     abstract protected function doGetConsortiumInfo(string $language, string $id, array $locationFilter = []): array;
 
     /**
-     * Get location details (provider-specific part)
+     * Get location details (provider-specific part).
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -265,7 +265,7 @@ abstract class AbstractProvider implements
     ): array;
 
     /**
-     * Fetch JSON data as an array from cache or external API
+     * Fetch JSON data as an array from cache or external API.
      *
      * @param string $url URL
      *
@@ -324,7 +324,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Proxify an image url for loading via the OrganisationInfo controller
+     * Proxify an image url for loading via the OrganisationInfo controller.
      *
      * @param string $url Image URL
      *
@@ -368,7 +368,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Process response data and extract various fields
+     * Process response data and extract various fields.
      *
      * @param array $result Result
      *
@@ -504,7 +504,7 @@ abstract class AbstractProvider implements
 
     /**
      * Enrich organisation details with accessibility information from TPR
-     * Palvelukuvausrekisteri
+     * Palvelukuvausrekisteri.
      *
      * @param string $language      Language
      * @param string $id            Parent organisation ID

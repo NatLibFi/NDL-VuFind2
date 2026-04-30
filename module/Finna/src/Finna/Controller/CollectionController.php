@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Collection Controller
+ * Collection Controller.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\Controller;
 use Finna\Controller\Feature\FinnaRecordPreviewSupportTrait;
 
 /**
- * Collection Controller
+ * Collection Controller.
  *
  * @category VuFind
  * @package  Controller

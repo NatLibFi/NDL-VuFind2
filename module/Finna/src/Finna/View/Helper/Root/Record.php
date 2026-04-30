@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record driver view helper
+ * Record driver view helper.
  *
  * PHP version 8
  *
@@ -54,7 +54,7 @@ use function is_array;
 use function is_string;
 
 /**
- * Record driver view helper
+ * Record driver view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -69,77 +69,77 @@ use function is_string;
 class Record extends \VuFind\View\Helper\Root\Record
 {
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $loader;
 
     /**
-     * Rendered URLs
+     * Rendered URLs.
      *
      * @var array
      */
     protected $renderedUrls = [];
 
     /**
-     * Record image helper
+     * Record image helper.
      *
      * @var RecordImage
      */
     protected $recordImageHelper;
 
     /**
-     * Authority helper
+     * Authority helper.
      *
      * @var AuthorityHelper
      */
     protected $authorityHelper;
 
     /**
-     * Url helper
+     * Url helper.
      *
      * @var Url
      */
     protected $urlHelper;
 
     /**
-     * Record link helper
+     * Record link helper.
      *
      * @var RecordLinker
      */
     protected $recordLinker;
 
     /**
-     * Local cache
+     * Local cache.
      *
      * @var array
      */
     protected $cache = [];
 
     /**
-     * Tab Manager
+     * Tab Manager.
      *
      * @var TabManager
      */
     protected $tabManager;
 
     /**
-     * Form
+     * Form.
      *
      * @var Form
      */
     protected $form;
 
     /**
-     * User preference service
+     * User preference service.
      *
      * @var UserPreferenceService
      */
     protected $userPreferenceService;
 
     /**
-     * Callback to get encapsulated records results
+     * Callback to get encapsulated records results.
      *
      * @var callable
      */
@@ -147,14 +147,14 @@ class Record extends \VuFind\View\Helper\Root\Record
 
     /**
      * Counter used to ensure unique ID attributes when several sets of encapsulated
-     * records are displayed
+     * records are displayed.
      *
      * @var int
      */
     protected $indexStart = 1000;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param TagsService           $tagsService            Tags service
      * @param Config                $config                 VuFind config
@@ -309,7 +309,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Return record driver
+     * Return record driver.
      *
      * @return \VuFind\RecordDriver\AbstractBase
      */
@@ -319,7 +319,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Render the record as text for email
+     * Render the record as text for email.
      *
      * @return string
      */
@@ -701,7 +701,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Compose additional data string for a link
+     * Compose additional data string for a link.
      *
      * @param array $data   Link data
      * @param array $params Link params
@@ -763,7 +763,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Return if image popup zoom has been enabled in config
+     * Return if image popup zoom has been enabled in config.
      *
      * @return bool
      */
@@ -823,7 +823,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Return an array of all record images in all sizes
+     * Return an array of all record images in all sizes.
      *
      * @param string $language   Language for description and rights
      * @param bool   $thumbnails Whether to include thumbnail links if no image links
@@ -925,7 +925,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Render online URLs
+     * Render online URLs.
      *
      * @param string $context Record context ('results', 'record' or 'holdings')
      *
@@ -943,7 +943,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Render citation links
+     * Render citation links.
      *
      * @return string
      */
@@ -977,7 +977,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Render average rating
+     * Render average rating.
      *
      * @return string
      *
@@ -1029,7 +1029,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if given array of urls contains pdf links
+     * Check if given array of urls contains pdf links.
      *
      * @param array $urls Array of urls in the format returned by
      *                    getUrls and getOnlineUrls
@@ -1060,7 +1060,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Set rendered URLs
+     * Set rendered URLs.
      *
      * @param array $urls Array of rendered URLs
      *
@@ -1072,7 +1072,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Get rendered URLs
+     * Get rendered URLs.
      *
      * @return array
      */
@@ -1082,7 +1082,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Render a source id element if necessary
+     * Render a source id element if necessary.
      *
      * @return string
      *
@@ -1094,7 +1094,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if the record driver has a tab (regardless of whether it's active)
+     * Check if the record driver has a tab (regardless of whether it's active).
      *
      * @param string $tab Tab
      *
@@ -1147,7 +1147,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Return number of linked biblio records for an authority record.
      * Returns an array with keys 'author' and 'topic'
-     * (number of biblio records where the authority is an author/topic)
+     * (number of biblio records where the authority is an author/topic).
      *
      * @param bool $onAuthorityPage Called from authority record page?
      *
@@ -1284,7 +1284,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if full width layout should be used for the record
+     * Check if full width layout should be used for the record.
      *
      * @return bool
      */
@@ -1294,7 +1294,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Check if large image layout should be used for the record
+     * Check if large image layout should be used for the record.
      *
      * @return bool
      */
@@ -1343,7 +1343,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Get the organisation menu position for the record
+     * Get the organisation menu position for the record.
      *
      * @return string|false 'sidebar', 'inline' or false for no menu
      */
@@ -1398,7 +1398,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Get Similar Items Carousel tab
+     * Get Similar Items Carousel tab.
      *
      * @return \VuFind\RecordTab\Channels
      *
@@ -1410,7 +1410,7 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Get Channels tab
+     * Get Channels tab.
      *
      * @return \VuFind\RecordTab\Channels
      */

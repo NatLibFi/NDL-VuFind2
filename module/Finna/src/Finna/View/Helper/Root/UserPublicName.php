@@ -1,7 +1,7 @@
 <?php
 
 /**
- * User public name view helper
+ * User public name view helper.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ namespace Finna\View\Helper\Root;
 use Finna\Db\Entity\UserEntityInterface;
 
 /**
- * User public name view helper
+ * User public name view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -52,7 +52,7 @@ class UserPublicName extends \Laminas\View\Helper\AbstractHelper implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Create publicly shown user name
+     * Create publicly shown user name.
      *
      * @param ?UserEntityInterface $user User, if any
      *

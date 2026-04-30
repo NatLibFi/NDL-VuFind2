@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for comments table
+ * Entity model for comments table.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for comments table
+ * Entity model for comments table.
  *
  * @category VuFind
  * @package  Database
@@ -66,7 +66,7 @@ class Comments extends \VuFind\Db\Entity\Comments implements CommentsEntityInter
     protected ?DateTime $finnaUpdated = null;
 
     /**
-     * Last update date getter
+     * Last update date getter.
      *
      * @return DateTime
      */
@@ -76,7 +76,7 @@ class Comments extends \VuFind\Db\Entity\Comments implements CommentsEntityInter
     }
 
     /**
-     * Last update date setter
+     * Last update date setter.
      *
      * @param ?DateTime $dateTime Last updated
      *

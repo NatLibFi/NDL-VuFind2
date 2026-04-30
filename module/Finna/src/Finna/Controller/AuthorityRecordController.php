@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Authority Record Controller
+ * Authority Record Controller.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * Authority Record Controller
+ * Authority Record Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -43,7 +43,7 @@ class AuthorityRecordController extends RecordController
     use FinnaAuthorityControllerTrait;
 
     /**
-     * Type of record to display
+     * Type of record to display.
      *
      * @var string
      */

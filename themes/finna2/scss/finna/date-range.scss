@@ -1,174 +1,180 @@
+/* ------ Ranges ------ */
+.facet-range-form {
+  width: 100%;
+}
+
+.slider-container {
+    margin: 1rem 0rem;
+    .noUi-base,
+    .noUi-handle {
+        cursor: pointer;
+    }
+    .noUi-base .noUi-handle:hover {
+        background: darken($btn-primary-bg, 5%);
+    }
+}
+
 .main.template-dir-search.template-name-home,
 .sidebar {
-    & .list-group-item:not(.title).daterange.expand {
-        transition: box .3s linear;
-
-        .timeline_within {
-            margin-left: 10px;
+    .list-group .list-group-item.daterange {
+        padding: 0.2em 0.7em;
+        background-color: $gray-ultralight;
+        .daterange-vis,
+        > form {
+            padding-top: 0.3em;
         }
-        @include media-breakpoint-up(sm) {
-            box-shadow: -4px 0px 13px -5px #000;
-            padding: 10px;
-            z-index: 4;
-        }
-        @include media-breakpoint-up(lg) {
-            width: 1140px;
-            margin-left: -878px;
-        }
-        @include media-breakpoint-only(md) {
-            width: 940px;
-            margin-left: -728px;
-        }
-        @include media-breakpoint-only(sm) {
-            width: 720px;
-            margin-left: -562px;
-        }
-    }
-    & .daterange-facet {
-        & .list-group-item:not(.title).daterange {
-            padding-top: 10px;
-            background-color: $gray-ultralight;
-            padding: 3px 10px;
-        }
-
-        & .fa.timeline {
-            margin-left: 10px;
-        }
-        & .submit .fa {
-            margin-right: 5px;
-        }
-        & .daterange-vis {
-            padding-top: 5px;
-            & button {
-                margin-left: 10px;
-                margin-top: 1px;
-                margin-bottom: 10px;
-                @include media-breakpoint-only(sm) {
-                    margin-left: 0;
-                }
+        .year-range {
+            float: left;
+            margin-bottom: 0.7em;
+            .year-separator,
+            .spacer {
+                color: $gray;
             }
-            & .range-type {
-                margin: 5px 0px;
-                clear: both;
-                label {
-                    display: inline;
-                }
-            }
-            & .form-ui {
-
-                & .year-range {
-                    float: left;
-                    margin-bottom: 10px;
-                }
-                & .year-separator {
-                    color: $gray;
-                }
-                & label {
-                    color: white;
-                    & input {
-                        color: blue;
-                    }
-                }
-                & .submit {
-                    margin-top: 0;
-                    margin-left: 15px;
-                    background-color: $btn-primary-bg;
-                }
-            }
-            & .content {
-                clear: both;
-                position: relative;
-                height: 114px;
-                border-radius: 5px 5px 5px 5px;
-
-                & .date-vis {
-                    width: 100%;
-                    height: 110px;
-                    cursor: crosshair;
-                    background: $body-bg;
-                }
-                & .icon--spin {
-                    display: none;
-                    left: 45%;
-                    top: -60px;
-                    position: relative;
-                }
-                &.loading .icon--spin {
-                    display: inline-block;
-                }
-            }
-            & .navigation {
-                    margin-top: -4px;
-                    padding-top: 7px;
-                    color: $link-color;
-                    width: 100%;
-                    display: inline-block;
-                    background: $body-bg;
-                    padding-left: 1%;
-                    & .zoom-out, .zoom-in, .prev, .next {
-                        font-size: 1.1em;
-                        float: left;
-                    }
-                    & .zoom-out {
-                        margin-right: 5px;
-                    }
-                    & .zoom-in {
-                        margin-left: 5px;
-                        margin-right: 3px;
-                    }
-                    & .expand-modal {
-                        float: right;
-                        margin-right: 9px;
-                        font-size: .8em;
-                        margin-top: 4px;
-                        @include media-breakpoint-down(sm) {
-                           display: none;
-                        }
-                    }
-                    & .icon {
-                        cursor: pointer;
-                        font-size: 1.5em;
-                    }
-            }
-
-        }
-        & .daterange-form {
-            display: block;
-            overflow: auto;
-            & .submit {
-                float: right;
-                background-color: $btn-primary-bg;
-            }
-            & .range-type {
-                margin-top: 10px;
-                clear: both;
+            input[type=number] {
+                width: 48px;
             }
         }
-        & .btn-primary {
+        .submit {
+            padding: 0.5em 0.6em;
+            margin-top: 0px;
+            margin-left: 1.1em;
             font-size: 1em;
-            padding: 7px 8px;
-        }
-        & input[type=number] {
-            width: 48px;
-        }
-    }
-    &.sidebar-on-left {
-        & .list-group-item:not(.title).daterange.expand {
-            margin-left: 0;
-            @include media-breakpoint-up(sm) {
-                box-shadow: 4px 0px 13px -5px #000;
+            background-color: $btn-primary-bg;
+            .icon {
+                margin-right: 0.3em;
             }
         }
     }
 }
 
-.template-dir-primo {
-    & .sidebar .daterange-facet .form-ui {
-        & .year-range {
-            float: left;
+.main.template-dir-search.template-name-home,
+.sidebar {
+    .daterange-facet .daterange-vis {
+        .content {
+            position: relative;
+            height: 114px;
+            clear: both;
+            border-radius: 5px 5px 5px 5px;
+            .date-vis {
+                width: 100%;
+                height: 110px;
+                cursor: crosshair;
+                background: $body-bg;
+            }
+            .icon--spin {
+                position: relative;
+                top: -60px;
+                left: 45%;
+                display: none;
+            }
+            &.loading .icon--spin {
+                display: inline-block;
+            }
         }
-        & .submit {
-            margin-top: 0;
+        .navigation {
+            display: inline-block;
+            width: 100%;
+            padding-top: 0.5em;
+            padding-left: 1%;
+            margin-top: -4px;
+            color: $link-color;
+            background: $body-bg;
+            .zoom-out,
+            .zoom-in,
+            .prev,
+            .next {
+                float: left;
+                font-size: 1.1em;
+            }
+            .zoom-in {
+                margin-right: 0.2em;
+                margin-left: 0.3em;
+            }
+            .zoom-out {
+                margin-right: 0.3em;
+            }
+            .expand-modal {
+                float: right;
+                margin-top: 0.4em;
+                margin-right: 0.8em;
+                font-size: 0.8em;
+            }
+            .icon {
+                font-size: 1.5em;
+                cursor: pointer;
+            }
+        }
+        .range-type {
+            margin: 0.4em 0em;
+            clear: both;
+            label {
+                display: inline;
+            }
+        }
+    }
+    .list-group-item:not(.title).daterange.expand {
+        transition: box .3s linear;
+    }
+    &.sidebar-on-left {
+        .list-group-item:not(.title).daterange.expand {
+            margin-left: 0px;
+        }
+    }
+}
+@include media-breakpoint-only(sm) {
+    .main.template-dir-search.template-name-home,
+    .sidebar {
+        .list-group-item:not(.title).daterange.expand {
+            width: 720px;
+            margin-left: -562px;
+        }
+        .daterange-facet {
+            .daterange-vis button {
+                margin-left: 0px;
+            }
+        }
+    }
+}
+@include media-breakpoint-down(sm) {
+    .main.template-dir-search.template-name-home,
+    .sidebar {
+        .daterange-facet .daterange-vis .navigation {
+            .expand-modal {
+                display: none;
+            }
+        }
+    }
+}
+@include media-breakpoint-up(sm) {
+    .main.template-dir-search.template-name-home,
+    .sidebar {
+        .list-group .list-group-item.daterange.expand {
+            z-index: $zindex-popover;
+            padding: 10px;
+            box-shadow: -4px 0px 13px -5px #000;
+        }
+        &.sidebar-on-left {
+            .list-group .list-group-item.daterange.expand {
+                box-shadow: 4px 0px 13px -5px #000;
+            }
+        }
+    }
+}
+@include media-breakpoint-only(md) {
+    .main.template-dir-search.template-name-home,
+    .sidebar {
+        .list-group .list-group-item.daterange.expand {
+            width: 940px;
+            margin-left: -728px;
+        }
+    }
+}
+@include media-breakpoint-up(lg) {
+    .main.template-dir-search.template-name-home,
+    .sidebar {
+        .list-group .list-group-item.daterange.expand {
+            width: 1140px;
+            margin-left: -878px;
         }
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrLrmi Test Class
+ * SolrLrmi Test Class.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Finna\RecordDriver\SolrLrmi;
 use function is_callable;
 
 /**
- * SolrLrmi Test Class
+ * SolrLrmi Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -47,7 +47,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Function to get expected function data
+     * Function to get expected function data.
      *
      * @return array
      */
@@ -129,7 +129,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test functions
+     * Test functions.
      *
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
@@ -157,7 +157,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get summary data
+     * Function to get summary data.
      *
      * @return array
      */
@@ -194,7 +194,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getSummary
+     * Test getSummary.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -221,7 +221,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected alternative titles data
+     * Function to get expected alternative titles data.
      *
      * @return array
      */
@@ -237,7 +237,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getAlternativeTitles
+     * Test getAlternativeTitles.
      *
      * @param string $title     Title index value to test
      * @param array  $altTitles Alternative title index values to test

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record Tab Factory Class
+ * Record Tab Factory Class.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Laminas\ServiceManager\ServiceManager;
 use VuFind\Config\PathResolver;
 
 /**
- * Record Tab Factory Class
+ * Record Tab Factory Class.
  *
  * @category VuFind
  * @package  RecordDrivers

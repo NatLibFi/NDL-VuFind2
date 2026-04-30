@@ -45,7 +45,7 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
     use Feature\SolrFinnaTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)

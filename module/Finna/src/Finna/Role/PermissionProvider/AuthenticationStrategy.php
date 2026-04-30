@@ -53,35 +53,35 @@ use function is_callable;
 class AuthenticationStrategy implements PermissionProviderInterface
 {
     /**
-     * Authentication manager
+     * Authentication manager.
      *
      * @var AuthManager
      */
     protected $authManager;
 
     /**
-     * ILS authenticator
+     * ILS authenticator.
      *
      * @var ILSAuthenticator
      */
     protected $ilsAuth;
 
     /**
-     * ILS connection
+     * ILS connection.
      *
      * @var ILSConnection
      */
     protected $ils;
 
     /**
-     * Session storage
+     * Session storage.
      *
      * @var SessionContainer
      */
     protected $sessionContainer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param AuthManager      $am      Authentication manager
      * @param ILSConnection    $ils     ILS connection
@@ -143,7 +143,7 @@ class AuthenticationStrategy implements PermissionProviderInterface
     }
 
     /**
-     * Get patron authorization status
+     * Get patron authorization status.
      *
      * @param bool $staff Whether to check staff or normal user authorization
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Turku Payment API handler
+ * Turku Payment API handler.
  *
  * PHP version 8
  *
@@ -44,7 +44,7 @@ use VuFind\Db\Type\AuditEventSubtype;
 use VuFind\Exception\PaymentException;
 
 /**
- * Turku Payment API handler
+ * Turku Payment API handler.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -58,7 +58,7 @@ class TurkuPaymentAPI extends \VuFind\OnlinePayment\Handler\AbstractBase
     use OrganizationProductCodeMappingsTrait;
 
     /**
-     * Mappings from VuFind language codes to Paytrail
+     * Mappings from VuFind language codes to Paytrail.
      *
      * @var array
      */
@@ -317,7 +317,7 @@ class TurkuPaymentAPI extends \VuFind\OnlinePayment\Handler\AbstractBase
     }
 
     /**
-     * Initialize the Paytrail client
+     * Initialize the Paytrail client.
      *
      * @return Client
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Search Options
+ * Primo Central Search Options.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\Search\Primo;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Primo Search Options
+ * Primo Search Options.
  *
  * @category VuFind
  * @package  Search_Primo
@@ -47,14 +47,14 @@ class Options extends \VuFind\Search\Primo\Options
     use \Finna\Search\FinnaOptions;
 
     /**
-     * Date range visualization settings
+     * Date range visualization settings.
      *
      * @var string
      */
     protected $dateRangeVis;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */
@@ -70,7 +70,7 @@ class Options extends \VuFind\Search\Primo\Options
     }
 
     /**
-     * Get the field used for date range search
+     * Get the field used for date range search.
      *
      * @return string
      */
@@ -81,7 +81,7 @@ class Options extends \VuFind\Search\Primo\Options
     }
 
     /**
-     * Get the field used for date range visualization
+     * Get the field used for date range visualization.
      *
      * @return string
      */

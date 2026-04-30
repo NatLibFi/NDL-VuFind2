@@ -45,14 +45,14 @@ use function array_key_exists;
 class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
 {
     /**
-     * Hidden filters
+     * Hidden filters.
      *
      * @var array
      */
     protected $hiddenFilters = [];
 
     /**
-     * Set hidden filters
+     * Set hidden filters.
      *
      * @param array $filters Hidden filters
      *
@@ -64,7 +64,7 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
     }
 
     /**
-     * Support method for query() -- perform inner search logic
+     * Support method for query() -- perform inner search logic.
      *
      * @param array $terms Associative array:
      *     index       string: primo index to search (default "any")
@@ -109,7 +109,7 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
     }
 
     /**
-     * Convert contains and contains_all to boolean searches
+     * Convert contains and contains_all to boolean searches.
      *
      * @param array $terms Search terms
      *

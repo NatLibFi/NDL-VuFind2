@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alma Link Resolver Driver
+ * Alma Link Resolver Driver.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Resolver\Driver;
 
 /**
- * Alma Link Resolver Driver
+ * Alma Link Resolver Driver.
  *
  * @category VuFind
  * @package  Resolver_Drivers
@@ -41,7 +41,7 @@ namespace Finna\Resolver\Driver;
 class Alma extends \VuFind\Resolver\Driver\Alma
 {
     /**
-     * Fetch Links
+     * Fetch Links.
      *
      * Fetches a set of links corresponding to an OpenURL
      *

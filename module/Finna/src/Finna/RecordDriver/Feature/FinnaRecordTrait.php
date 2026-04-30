@@ -55,14 +55,14 @@ use function is_callable;
 trait FinnaRecordTrait
 {
     /**
-     * Preferred language for display strings
+     * Preferred language for display strings.
      *
      * @var string
      */
     protected $preferredLanguage = null;
 
     /**
-     * Search settings
+     * Search settings.
      *
      * @var array
      */
@@ -83,49 +83,49 @@ trait FinnaRecordTrait
     protected int $maxImagesInSearch = 20;
 
     /**
-     * Maximum limit of URLs to render in search context
+     * Maximum limit of URLs to render in search context.
      *
      * @var int
      */
     protected int $maxURLsInSearch = 200;
 
     /**
-     * Maximum limit of URLs to get in record context
+     * Maximum limit of URLs to get in record context.
      *
      * @var int
      */
     protected int $maxURLsInRecord = 200;
 
     /**
-     * Maximum limit of images to get in record context
+     * Maximum limit of images to get in record context.
      *
      * @var int
      */
     protected int $maxImagesInRecord = 1000;
 
     /**
-     * Current record render context
+     * Current record render context.
      *
      * @var RenderContext
      */
     protected RenderContext $renderContext = RenderContext::RECORD;
 
     /**
-     * Current amount of images
+     * Current amount of images.
      *
      * @var int
      */
     protected int $imagesCount = 0;
 
     /**
-     * Current amount of URLs
+     * Current amount of URLs.
      *
      * @var int
      */
     protected int $urlsCount = 0;
 
     /**
-     * Set current record render context
+     * Set current record render context.
      *
      * @param string $context Record render context
      *
@@ -148,7 +148,7 @@ trait FinnaRecordTrait
     }
 
     /**
-     * Has the record exceeded maximum amount of URLs for its current context
+     * Has the record exceeded maximum amount of URLs for its current context.
      *
      * @return bool
      */
@@ -172,7 +172,7 @@ trait FinnaRecordTrait
     }
 
     /**
-     * Get amount of URLs allowed to be rendered in current context
+     * Get amount of URLs allowed to be rendered in current context.
      *
      * @return int Current URLs render limit
      */
@@ -330,7 +330,7 @@ trait FinnaRecordTrait
     }
 
     /**
-     * Get an author for OpenURL
+     * Get an author for OpenURL.
      *
      * @return string
      */

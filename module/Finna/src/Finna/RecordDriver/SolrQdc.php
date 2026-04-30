@@ -58,35 +58,35 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Dublin Core XML namespace
+     * Dublin Core XML namespace.
      *
      * @var string
      */
     protected string $dcNs = 'http://purl.org/dc/elements/1.1/';
 
     /**
-     * Dublin Core Terms vocabulary namespace
+     * Dublin Core Terms vocabulary namespace.
      *
      * @var string
      */
     protected string $dcTermsNs = 'http://purl.org/dc/terms/';
 
     /**
-     * Extended Dublic Core namespace
+     * Extended Dublic Core namespace.
      *
      * @var string
      */
     protected string $qdcExtendedNs = 'http://www.kansalliskirjasto.fi/qdc_extended';
 
     /**
-     * KK namespace
+     * KK namespace.
      *
      * @var string
      */
     protected string $kkNs = 'http://kk/1.0';
 
     /**
-     * Image size mappings
+     * Image size mappings.
      *
      * @var array
      */
@@ -100,7 +100,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     ];
 
     /**
-     * Image media types
+     * Image media types.
      *
      * @var array
      */
@@ -110,7 +110,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     ];
 
     /**
-     * Mappings for series information, type => key
+     * Mappings for series information, type => key.
      *
      * @var array
      */
@@ -120,21 +120,21 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     ];
 
     /**
-     * Default value for no_locale definition used for no language
+     * Default value for no_locale definition used for no language.
      *
      * @var string
      */
     protected const NO_LOCALE = 'no_locale';
 
     /**
-     * Array of excluded descriptions
+     * Array of excluded descriptions.
      *
      * @var array
      */
     protected $excludedDescriptions = ['notification'];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
@@ -153,7 +153,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Return an associative array of abstracts associated with this record
+     * Return an associative array of abstracts associated with this record.
      *
      * @return array of abstracts using abstract languages as keys
      */
@@ -186,7 +186,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get descriptions as an array
+     * Get descriptions as an array.
      *
      * @return array
      */
@@ -206,7 +206,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get an array of mediums for the record
+     * Get an array of mediums for the record.
      *
      * @return array
      */
@@ -216,7 +216,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get an array of formats/extents for the record
+     * Get an array of formats/extents for the record.
      *
      * @return array
      */
@@ -226,7 +226,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
@@ -416,7 +416,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get image rights
+     * Get image rights.
      *
      * @param string $language Language for the copyright
      *
@@ -487,7 +487,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Return education programs
+     * Return education programs.
      *
      * @return array
      */
@@ -595,7 +595,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -612,7 +612,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get identifiers as an array
+     * Get identifiers as an array.
      *
      * @return array
      */
@@ -679,7 +679,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
      *               'link'  => link_URI
      *        ),
      *        ...
-     * )
+     * ).
      *
      * @return null|array
      */
@@ -712,7 +712,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Return keywords
+     * Return keywords.
      *
      * @return array
      */
@@ -788,7 +788,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get series information
+     * Get series information.
      *
      * @return array
      */
@@ -819,7 +819,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get access rights
+     * Get access rights.
      *
      * @return array
      */
@@ -843,7 +843,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get descriptions by type
+     * Get descriptions by type.
      *
      * @param array $include Description types to include, otherwise all but excluded types
      *
@@ -893,7 +893,7 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
-     * Get contributor role translation key
+     * Get contributor role translation key.
      *
      * @param string $role     Contributor role
      * @param string $fallback Fallback to use when no supported role is found

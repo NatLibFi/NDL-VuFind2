@@ -1,17 +1,8 @@
 .modal-content {
   & .comment-inappropriate-form {
-    & label {
-      font-weight: inherit;
-    }
     .form-control {
       width: 100%;
       margin-bottom: 12px;
-    }
-    .textarea {
-      .form-control {
-        width: 100%;
-        margin-bottom: 12px;
-      }
     }
   }
 }
@@ -37,6 +28,9 @@
   &:hover {
     opacity: 1;
   }
+}
+.modal-content:not(:has(.modal-body #lightbox-title)) .close {
+  color: $gray-light;
 }
 
 .modal-body {

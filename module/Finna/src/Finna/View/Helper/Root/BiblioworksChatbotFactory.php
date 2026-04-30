@@ -1,7 +1,7 @@
 <?php
 
 /**
- * BiblioWorks Chatbot View Helper Factory
+ * BiblioWorks Chatbot View Helper Factory.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for BiblioWorks Chatbot View Helper
+ * Factory for BiblioWorks Chatbot View Helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -44,7 +44,7 @@ use Psr\Container\ContainerInterface;
 class BiblioworksChatbotFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

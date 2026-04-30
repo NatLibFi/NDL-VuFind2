@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Service for modifying User Lists
+ * Service for modifying User Lists.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use VuFind\Record\Cache as RecordCache;
 use function assert;
 
 /**
- *  Favorites service
+ *  Favorites service.
  *
  * @category VuFind
  * @package  Favorites

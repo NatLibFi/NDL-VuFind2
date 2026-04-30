@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Summon view helper
+ * Summon view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Summon view helper
+ * Summon view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class Summon extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Summon configuration
+     * Summon configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config Summon configuration
      */
@@ -58,7 +58,7 @@ class Summon extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if Summon is available
+     * Check if Summon is available.
      *
      * @return bool
      */

@@ -1,0 +1,244 @@
+//== Styling Finna sidebar checkbox filters
+#sidebar .checkbox-filters {
+  padding: 0px;
+  margin: 0.3em 0em 0.6em;
+
+  @extend .checkbox-container;
+
+  .checkbox {
+    display: flex;
+    gap: 0.6em;
+    margin: 0.6em 0em;
+    > div {
+      display: flex;
+      justify-content: space-between;
+      width: 100%;
+      margin-left: 0px;
+      &:before {
+        margin-right: 0.3em;
+        margin-left: -22px;
+      }
+    }
+  }
+  // Checkbox facet badges
+  .badge.cb-facet {
+    display: $display-checkbox-facet-amount;
+    margin-top: 0.2em;
+    margin-right: 0.8em;
+  }
+  input[type="checkbox"] {
+    min-width: 16px;
+  }
+}
+@include media-breakpoint-between(sm, md) {
+  #sidebar .checkbox-filters {
+    .badge {
+      max-width: 100px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .checkbox > div {
+      flex-wrap: wrap;
+    }
+  }
+}
+
+/* Sidebar container and header */
+
+.sidebar {
+  margin-bottom: 2em;
+}
+@include media-breakpoint-down(sm) {
+  .sidebar {
+    clear: both;
+  }
+}
+
+.sidebar h1,
+.sidebar h2 {
+  padding: 0.9em;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: $sidebar-header-text-color;
+  text-transform: uppercase;
+  word-wrap: break-word;
+  background: $sidebar-background;
+  .icon {
+    color: $sidebar-header-icon-color;
+  }
+}
+
+.results,
+.record-tabs {
+  .sidebar .mobile-navigation-header-container {
+    margin-bottom: 0.4em;
+  }
+}
+
+.sidebar .mobile-navigation-header-container {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.7em 1.1em;
+  color: $sidebar-header-text-color;
+  background-color: $sidebar-background;
+  h1 {
+    padding: 0px;
+  }
+  button {
+    font-size: 1.2rem;
+    color: $sidebar-header-text-color;
+    background-color: $sidebar-background;
+    border: none;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .sidebar .mobile-navigation-header-container {
+    position: sticky;
+    top: 0px;
+    z-index: $zindex-navbar;
+    margin-bottom: 0px;
+    .finna-toggletip {
+      padding-left: 0.7em;
+      margin-right: auto;
+    }
+  }
+}
+
+.mylist-bar,
+.reservationlist-bar {
+  h1.mobile-navigation-header {
+    text-transform: none;
+  }
+}
+
+/* Sidebar content */
+
+.list-group {
+  margin-bottom: 0.4em;
+}
+
+.list-group-item,
+button.list-group-item {
+  position: relative;
+  font-size: 1em;
+  vertical-align: middle;
+  border: none;
+  // title custom coloring
+  &.title {
+    color: $facet-text-color;
+    background: $facet-header-background;
+    &:hover,
+    &:focus {
+      color: $facet-text-color;
+      background: $facet-header-background;
+    }
+  }
+}
+
+// Record's sidebar content
+.recordProvidedBy {
+  .record-organisation {
+    img.consortium-logo {
+      margin: 0.5em 0em 1.1em;
+    }
+    li.organisation-page-link {
+      padding-top: 0.3em;
+      a {
+        display: block;
+      }
+    }
+    li.material-questions-feedback {
+      padding-top: 0.7em;
+      font-weight: 700;
+    }
+  }
+  .repository-library-request {
+    padding-top: 0.7em;
+    font-weight: 700;
+  }
+  .repository-library-request-order {
+    margin-top: 0.3em;
+  }
+}
+
+.sidebar .recordProvidedBy {
+  margin-top: 0px;
+  border-top: none;
+  .record-organisation-box {
+    margin-bottom: 1em;
+    border: $sidebar-border;
+    .record-type.organisations {
+      padding: 1.1em;
+      margin-bottom: 0px;
+      font-size: 1em;
+    }
+    .list-group.organisations {
+      padding: 0px;
+      margin-bottom: 0.7em;
+      background: $list-group-bg;
+      a {
+        line-height: 1em;
+      }
+      .record-organisation {
+        padding: 0.3em 0.7em;
+        background: $body-bg;
+      }
+      .other-organisation-links a {
+        display: block;
+        padding: 0.4em 0.7em;
+        overflow: hidden;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .more-link,
+      .less-link,
+      .less-link-top {
+        padding-left: 0.8em;
+      }
+      .more-link {
+        margin-top: 0.5rem;
+      }
+    }
+  }
+}
+
+.similar-records,
+.related-records,
+.work-expressions {
+  margin-bottom: 1em;
+  @media print {
+    display: none;
+  }
+  .list-group-item {
+    border: $sidebar-border;
+  }
+  .details {
+    color: $text-color;
+  }
+  .list-group {
+    .more-link,
+    .less-link,
+    .show-all-link {
+      display: block;
+      padding-top: 5px;
+      margin: 0px;
+      color: $gray;
+    }
+  }
+}
+
+.related-records {
+  li.list-group-item p {
+    margin-bottom: 0px;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+  .list-sub-group li {
+    margin-top: 0.6em;
+  }
+}

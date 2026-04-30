@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Feedback Controller
+ * Feedback Controller.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use VuFind\Log\LoggerAwareTrait;
 use function assert;
 
 /**
- * Feedback Controller
+ * Feedback Controller.
  *
  * @category VuFind
  * @package  Controller

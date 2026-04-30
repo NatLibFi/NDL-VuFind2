@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Markdown view helper
+ * Markdown view helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\View\Helper\Root;
 use League\CommonMark\Util\RegexHelper;
 
 /**
- * Markdown view helper
+ * Markdown view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -80,7 +80,7 @@ class Markdown extends \VuFind\View\Helper\Root\Markdown
     }
 
     /**
-     * Converts markdown to html
+     * Converts markdown to html.
      *
      * Finna: back-compatibility with default param and call logic
      *

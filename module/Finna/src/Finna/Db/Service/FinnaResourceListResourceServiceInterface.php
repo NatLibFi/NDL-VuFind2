@@ -97,7 +97,7 @@ interface FinnaResourceListResourceServiceInterface extends DbServiceInterface
     public function changeResourceId(int $old, int $new): void;
 
     /**
-     * Get resources for a resource list
+     * Get resources for a resource list.
      *
      * @param UserEntityInterface              $user   User entity
      * @param FinnaResourceListEntityInterface $list   List entity

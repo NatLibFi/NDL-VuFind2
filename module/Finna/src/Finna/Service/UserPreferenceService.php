@@ -1,7 +1,7 @@
 <?php
 
 /**
- * User preference support service
+ * User preference support service.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Cookie\CookieManager;
 use function is_array;
 
 /**
- * User preference support service
+ * User preference support service.
  *
  * @category VuFind
  * @package  Service
@@ -46,21 +46,21 @@ use function is_array;
 class UserPreferenceService
 {
     /**
-     * Authentication manager
+     * Authentication manager.
      *
      * @var AuthManager
      */
     protected $authManager;
 
     /**
-     * Cookie manager
+     * Cookie manager.
      *
      * @var ?CookieManager
      */
     protected $cookieManager;
 
     /**
-     * Temporal cache
+     * Temporal cache.
      *
      * @var array
      */
@@ -81,7 +81,7 @@ class UserPreferenceService
     }
 
     /**
-     * Get preferred data sources in order of importance for a user
+     * Get preferred data sources in order of importance for a user.
      *
      * @return array
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CPU Product
+ * CPU Product.
  *
  * PHP version 8
  *

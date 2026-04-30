@@ -60,21 +60,21 @@ trait SolrFinnaTrait
     use SolrCommonFinnaTrait;
 
     /**
-     * Search settings
+     * Search settings.
      *
      * @var array
      */
     protected $searchSettings = [];
 
     /**
-     * Runtime cache for method results to avoid duplicate processing
+     * Runtime cache for method results to avoid duplicate processing.
      *
      * @var array
      */
     protected $cache = [];
 
     /**
-     * An array of non-displayable formats
+     * An array of non-displayable formats.
      *
      * @var array
      */
@@ -130,7 +130,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get Author Information with Associated Data Fields
+     * Get Author Information with Associated Data Fields.
      *
      * @param string $index      The author index [primary, corporate, or secondary]
      * used to construct a method name for retrieving author data (e.g.
@@ -240,7 +240,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return geographic center point
+     * Return geographic center point.
      *
      * @return array lon, lat
      */
@@ -258,7 +258,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get data source id
+     * Get data source id.
      *
      * @return string
      */
@@ -270,7 +270,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get a Date Range from Index Fields
+     * Get a Date Range from Index Fields.
      *
      * @param string $event Event name
      *
@@ -315,7 +315,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return education programs
+     * Return education programs.
      *
      * @return array
      */
@@ -335,7 +335,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return genres
+     * Return genres.
      *
      * @return array
      */
@@ -345,7 +345,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return geographic locations (coordinates)
+     * Return geographic locations (coordinates).
      *
      * @return array
      */
@@ -389,7 +389,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -431,7 +431,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return keywords
+     * Return keywords.
      *
      * @return array
      */
@@ -510,7 +510,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
@@ -530,7 +530,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get online URLs
+     * Get online URLs.
      *
      * @param bool  $raw          Whether to return raw data
      * @param array $excludeTypes If set, will remove types of urls from result
@@ -546,7 +546,7 @@ trait SolrFinnaTrait
         if ($raw) {
             return $this->fields['online_urls_str_mv'];
         }
-        $merged = $this->resolveUrlTypes(
+        $merged = $this->resolveOnlineUrlTypes(
             $this->mergeURLArray(
                 $this->fields['online_urls_str_mv'],
                 true
@@ -586,7 +586,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get all the original languages associated with the record
+     * Get all the original languages associated with the record.
      *
      * @return array
      */
@@ -596,7 +596,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get presenters
+     * Get presenters.
      *
      * @return array
      */
@@ -717,7 +717,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return SFX Object ID
+     * Return SFX Object ID.
      *
      * @return string
      */
@@ -727,7 +727,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return Alma MMS ID
+     * Return Alma MMS ID.
      *
      * @return string
      */
@@ -800,7 +800,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get array containing major genres
+     * Get array containing major genres.
      *
      * @return array
      */
@@ -810,7 +810,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get array containing Usage rights extended
+     * Get array containing Usage rights extended.
      *
      * @return array
      */
@@ -959,7 +959,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Extract sources from record IDs and create an array of sources and IDs
+     * Extract sources from record IDs and create an array of sources and IDs.
      *
      * @param array $ids Record ID's
      *
@@ -995,7 +995,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get information on records deduplicated with this one
+     * Get information on records deduplicated with this one.
      *
      * @param bool $load Whether to try to load dedup data if it's not already
      * available
@@ -1026,7 +1026,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get related records (used by RecordDriverRelated - Related module)
+     * Get related records (used by RecordDriverRelated - Related module).
      *
      * Returns an associative array of group => records, where each item in
      * records is either a record id or an array with keys:
@@ -1097,7 +1097,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * A helper function that merges an array of JSON-encoded URLs
+     * A helper function that merges an array of JSON-encoded URLs.
      *
      * @param array $urlArray Array of JSON-encoded URL attributes
      * @param bool  $sources  Whether to store data source of each URL
@@ -1142,6 +1142,38 @@ trait SolrFinnaTrait
             }
         }
         return $urls;
+    }
+
+    /**
+     * Resolve types for 'online_urls_str_mv' field's urls.
+     *
+     * URLs are annotated with 'codec' field based on 'mediaType'.
+     * In addition, image and audio URLs are annotated with 'type' field.
+     *
+     * @param array $urls URLs
+     *
+     * @return array URL array with annotated URLs
+     */
+    protected function resolveOnlineUrlTypes(array $urls): array
+    {
+        $newUrls = [];
+        foreach ($urls as $url) {
+            if (!empty($url['mediaType'])) {
+                $type = $embed = null;
+                $parts = explode('/', $url['mediaType']);
+                $mediaType = $parts[0];
+                if ($mediaType === 'audio') {
+                    $type = $embed = 'audio';
+                } elseif ($mediaType === 'image') {
+                    $type = 'image';
+                }
+                $url['type'] = $type;
+                $url['codec'] = $parts[1] ?? '';
+                $url['embed'] = $embed;
+            }
+            $newUrls[] = $url;
+        }
+        return $newUrls;
     }
 
     /**
@@ -1238,7 +1270,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return count of other versions available
+     * Return count of other versions available.
      *
      * Finna: Like VersionAwareTrait's getOtherVersionCount, but adds the call to
      * addVersionsFilters.
@@ -1274,7 +1306,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Retrieve versions as a search result
+     * Retrieve versions as a search result.
      *
      * Finna: Like VersionAwareTrait's getVersions, but adds the call to
      * addVersionsFilters.
@@ -1346,7 +1378,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get the number of child records belonging to this record
+     * Get the number of child records belonging to this record.
      *
      * @return int Number of records
      */
@@ -1377,7 +1409,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Add versions search filters to params
+     * Add versions search filters to params.
      *
      * @param \VuFindSearch\ParamBag $paramBag Params
      *
@@ -1399,7 +1431,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Parse an URL safely. Checks if the URL contains http or https for parse_url to work properly
+     * Parse an URL safely. Checks if the URL contains http or https for parse_url to work properly.
      *
      * @param string $url       The URL to parse.
      * @param int    $component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT,
@@ -1452,7 +1484,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Compare the title of current object with items from given array as titles
+     * Compare the title of current object with items from given array as titles.
      *
      * @param array $compare An array of items to compare
      *

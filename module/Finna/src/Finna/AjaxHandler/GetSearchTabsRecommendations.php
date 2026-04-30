@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Search Tabs Recommendations" AJAX handler
+ * "Get Search Tabs Recommendations" AJAX handler.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use VuFind\Search\SearchRunner;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * "Get Search Tabs Recommendations" AJAX handler
+ * "Get Search Tabs Recommendations" AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -52,7 +52,7 @@ class GetSearchTabsRecommendations extends \VuFind\AjaxHandler\AbstractBase impl
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings        $sessionSettings Session settings
      * @param Config                 $config          Main config

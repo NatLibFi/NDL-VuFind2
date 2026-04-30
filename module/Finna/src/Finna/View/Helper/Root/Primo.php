@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Index view helper
+ * Primo Central Index view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Primo Central Index view helper
+ * Primo Central Index view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class Primo extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Primo configuration
+     * Primo configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config Primo configuration
      */
@@ -58,7 +58,7 @@ class Primo extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if PCI is available
+     * Check if PCI is available.
      *
      * @return bool
      */
