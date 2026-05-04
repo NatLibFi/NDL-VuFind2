@@ -26,11 +26,16 @@
         <span class="series-dropdown-text"><?= $this->transEsc('Series')?>:</span>
         <div class="view-dropdown">
           <div class="dropdown">
-            <a id="dropdown-toggle" type="button" class="dropdown-toggle series-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?=$this->escapeHtml($currentSeries)?><?=$this->icon('dropdown-open') ?></a>
+            <a id="dropdown-toggle" type="button" class="dropdown-toggle series-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <?=$this->escapeHtml($currentSeries)?>
+              <?=$this->icon('dropdown-open') ?>
+            </a>
             <ul class="dropdown-menu">
               <?php foreach ($seriesKeys as $key): ?>
                 <li>
-                  <a class="dropdown-item dropdown__link" href="#" data-id="<?=$this->escapeHtmlAttr($recordId)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-serieskey="<?=$this->escapeHtmlAttr($key)?>"><?=$this->escapeHtml($this->driver->getSeriesFromSeriesKey($key))?></a>
+                  <a class="dropdown-item dropdown__link" href="#" data-id="<?=$this->escapeHtmlAttr($recordId)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-serieskey="<?=$this->escapeHtmlAttr($key)?>">
+                    <?=$this->escapeHtml($this->driver->getSeriesFromSeriesKey($key))?>
+                  </a>
                 </li>
               <?php endforeach; ?>
             </ul>
