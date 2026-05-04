@@ -114,27 +114,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     ];
 
     /**
-     * Normalization character folding table.
-     *
-     * @var array
-     */
-    protected $foldingTable = [
-        'Š' => 'S', 'š' => 's', 'Ž' => 'Z', 'ž' => 'z', 'À' => 'A',
-        'Á' => 'A', 'Â' => 'A', 'Ã' => 'A', 'Ä' => 'A', 'Å' => 'A',
-        'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E', 'Ê' => 'E',
-        'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
-        'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O',
-        'Ö' => 'O', 'Ø' => 'O', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U',
-        'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a',
-        'á' => 'a', 'â' => 'a', 'ã' => 'a', 'ä' => 'a', 'å' => 'a',
-        'æ' => 'a', 'ç' => 'c', 'è' => 'e', 'é' => 'e', 'ê' => 'e',
-        'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
-        'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o',
-        'õ' => 'o', 'ö' => 'o', 'ø' => 'o', 'ù' => 'u', 'ú' => 'u',
-        'û' => 'u', 'ü' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y',
-    ];
-
-    /**
      * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
@@ -1620,9 +1599,16 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     public function getSeriesOrder(string $series): ?array
     {
         $record = $this->getMarcReader();
+        $seriesNormalized = $this->normalizeStringForComparison($series);
         foreach ($record->getFields('490') as $field490) {
             $order = $this->getSubfield($field490, 'v');
-            if (($series === $this->getSubfield($field490, 'a')) && preg_match('/(\d+)$/', $order, $matches)) {
+            $subANormalized = $this->normalizeStringForComparison(
+                $this->stripTrailingPunctuation($this->getSubfield($field490, 'a'))
+            );
+            if (
+                $seriesNormalized === $subANormalized
+                && preg_match('/(\d+)$/', $order, $matches)
+            ) {
                 return [
                     'order' => (int)$matches[1],
                     'orderKey' => $this->fields['series_order_str'] ?? '',
@@ -1630,40 +1616,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
             }
         }
         return null;
-    }
-
-    /**
-     * Get series identification keys.
-     *
-     * @return array
-     */
-    public function getSeriesKeys(): array
-    {
-        return $this->fields['series_key_str_mv'] ?? [];
-    }
-
-    /**
-     * Compares the series fields with the series keys created by RecordManager.
-     *
-     * @param string $seriesKey Series key
-     *
-     * @return string
-     */
-    public function getSeriesFromSeriesKey($seriesKey): string
-    {
-        $parts = explode(' ', $seriesKey);
-        \Normalizer::normalize($seriesKey, \Normalizer::FORM_KC);
-        $seriesName = $parts[1];
-        $reg = '/[\x00-\x20\x21-\x2F\x3A-\x40,\x5B-\x60,\x7B-\x7F]/';
-        foreach ($this->getSeries() ?? [] as $series) {
-            $name = is_array($series) ? $series['name'] : $series;
-            $str = preg_replace($reg, '', $name);
-            $str = strtr($str, $this->foldingTable);
-            if (mb_strtolower(trim($str), 'UTF-8') === $seriesName) {
-                return $name;
-            }
-        }
-        return '';
     }
 
     /**
