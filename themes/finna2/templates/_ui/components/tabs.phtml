@@ -53,7 +53,7 @@
         'data-bs-toggle' => 'tab',
         'data-bs-target' => '#' . $paneId,
       ]);
-      if ($activeTab == $tabName) {
+      if ($this->activeTab == $tabName) {
         $buttonAttributes->add('class', 'active');
         $buttonAttributes->add('aria-selected', 'true');
       } else {
@@ -71,6 +71,9 @@
     </li>
   <?php endforeach; ?>
 </ul>
+<?php if ($this->scrollable): ?>
+  </div>
+<?php endif; ?>
 
 <div class="<?=implode(' ', $tabContentClasses)?>">
   <?php foreach ($this->tabs as $tabName => $tab): ?>
@@ -93,6 +96,3 @@
     </div>
   <?php endforeach; ?>
 </div>
-<?php if ($this->scrollable): ?>
-  </div>
-<?php endif; ?>
