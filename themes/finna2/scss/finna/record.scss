@@ -1143,6 +1143,11 @@ finna-model-viewer .object-editor {
   .series-header {
     display: flex;
     align-items: center;
+
+    h2 {
+      margin-top: 0.5rem;
+    }
+
     @include media-breakpoint-down(md) {
       flex-flow: column;
       align-items: flex-start;
@@ -1152,7 +1157,7 @@ finna-model-viewer .object-editor {
     }
     .series-controls {
       display: flex;
-      flex-basis: 50%;
+      flex: 1 0 50%;
       justify-content: flex-end;
       align-items: center;
       .series-dropdown-text {

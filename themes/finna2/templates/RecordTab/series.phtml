@@ -7,7 +7,9 @@
 ?>
 <div class="record-tab-series-container">
   <div class="series-header">
-    <h2 id="series"><?=$this->escapeHtml($currentSeries)?></h2>
+    <?php if ($currentSeries): ?>
+      <h2 id="series"><?=$this->escapeHtml($currentSeries)?></h2>
+    <?php endif; ?>
     <div class="series-controls">
       <?=
         $this->translate(
