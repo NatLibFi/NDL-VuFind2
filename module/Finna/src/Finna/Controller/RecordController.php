@@ -921,18 +921,10 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
     /**
      * Display record as modal content
      *
-     * @return mixed
+     * @return \Laminas\View\Model\ViewModel
      */
-    public function modalAction(): mixed
+    public function mediaAction(): \Laminas\View\Model\ViewModel
     {
-        if (APPLICATION_ENV !== 'development' && !$this->inLightbox()) {
-            return $this->redirect()->toRoute(
-                'record',
-                [$id = $this->loadRecord()->getUniqueId()],
-                ['force_canonical' => true],
-            );
-        }
-
         $index  = $this->params()->fromQuery('index', 0);
         $format = $this->params()->fromQuery('format');
         $type   = $this->params()->fromQuery('type');
@@ -947,6 +939,6 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
 
         return $this
             ->createViewModel(compact('index', 'format', 'scrollData'))
-            ->setTemplate('record/modal');
+            ->setTemplate('record/media');
     }
 }

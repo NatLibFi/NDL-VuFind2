@@ -3,7 +3,7 @@ $scrollUrls = [];
 if ($scrollData) {
   foreach ($scrollData as $key => $value) {
     $scrollUrls[$key] = $value
-      ? $this->recordLinker()->getActionUrl($value, 'Modal')
+      ? $this->recordLinker()->getActionUrl($value, 'Media')
       : null;
   }
 }

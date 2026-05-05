@@ -1293,17 +1293,17 @@ $config['router']['routes']['solrauthrecord-feedback'] = [
         ],
     ],
 ];
-$config['router']['routes']['record-modal'] = [
+$config['router']['routes']['record-media'] = [
     'type'    => 'Laminas\Router\Http\Segment',
     'options' => [
-        'route'    => '/Record/[:id]/Modal',
+        'route'    => '/Record/[:id]/Media',
         'constraints' => [
             'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
             'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
         ],
         'defaults' => [
             'controller' => 'Record',
-            'action'     => 'Modal',
+            'action'     => 'Media',
         ],
     ],
 ];
