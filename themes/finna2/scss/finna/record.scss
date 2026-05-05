@@ -1126,19 +1126,41 @@ finna-model-viewer .object-editor {
 
 // Series tab
 .record-tab-series-container {
-  .list-scrollable .list-item > .series {
-    display: flex;
-    font-size: 1.5rem;
-    background: lightgrey;
-    position: absolute;
-    left: 0;
-    top: 0;
-    padding: 0.5rem;
-    width: 2.5rem;
-    height: 2.5rem;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 .125rem .25rem rgba(0,0,0, .15);
+  .list-scrollable__list-item {
+    &.show-more {
+      color: $similar-carousel-no-image-color;
+      width: 120px;
+
+      .list-scrollable__image {
+        align-content: center;
+      }
+    }
+
+    > .series {
+      display: flex;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.9);
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .list-scrollable__image.iconlabel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0px;
+      &:before {
+        position: relative;
+        font-size: 45px;
+        color: $similar-carousel-no-image-color;
+      }
+    }
   }
   .series-header {
     display: flex;
@@ -1168,7 +1190,7 @@ finna-model-viewer .object-editor {
       span {
         padding: 0.1rem;
       }
-  }
+    }
   }
   .series-search-link {
     display: flex;
@@ -1176,6 +1198,7 @@ finna-model-viewer .object-editor {
   }
 }
 
+// Component parts
 .dataTables_wrapper {
   width: 100%;
 }

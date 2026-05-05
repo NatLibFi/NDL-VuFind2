@@ -13,14 +13,15 @@ finna.scrollableList = (function finnaScrollableList() {
       scrollable.dataset.initialized = true;
 
       // Identify DOM elements
-      const list = scrollable.querySelector(".list");
+      const list = scrollable.querySelector(".list-scrollable__list");
       if (!list) {
         console.warn('.list not found');
+        return;
       }
-      const items = list.querySelectorAll(".list-item");
-      const links = list.querySelectorAll(".list-link");
+      const items = list.querySelectorAll(".js-list-item");
+      const links = list.querySelectorAll(".js-list-link");
 
-      list.querySelectorAll('.list-link img').forEach(el => {
+      list.querySelectorAll('.list-scrollable__image').forEach(el => {
         el.onload = function onCarouselImageLoad() {
           if (this.naturalWidth === 10 && this.naturalHeight === 10) {
             el.classList.add('hidden');
@@ -41,7 +42,7 @@ finna.scrollableList = (function finnaScrollableList() {
 
         // Active item from HTML or fallback to the first one
         const activeItem =
-            list.querySelector(".list-item.active .list-link") ||
+            list.querySelector(".list-scrollable__list-item.active .list-scrollable__item-container") ||
             links[0];
         activeItem.setAttribute("tabindex", "0");
       }
