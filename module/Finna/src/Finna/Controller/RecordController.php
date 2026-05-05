@@ -919,7 +919,7 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
     }
 
     /**
-     * Display record as modal content
+     * Display record as modal content.
      *
      * @return \Laminas\View\Model\ViewModel
      */
