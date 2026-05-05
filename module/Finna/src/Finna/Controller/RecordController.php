@@ -925,7 +925,15 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
      */
     public function modalAction(): mixed
     {
-        $index = $this->params()->fromQuery('index', 0);
+        if (APPLICATION_ENV !== 'development' && !$this->inLightbox()) {
+            return $this->redirect()->toRoute(
+                'record',
+                [$id = $this->loadRecord()->getUniqueId()],
+                ['force_canonical' => true],
+            );
+        }
+
+        $index  = $this->params()->fromQuery('index', 0);
         $format = $this->params()->fromQuery('format');
         $type = $this->params()->fromQuery('type');
         // Set up next/previous record links (if appropriate)
@@ -937,9 +945,8 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
             $scrollData = null;
         }
 
-        if (!$this->inLightbox()) {
-            return $this->redirect()->toRoute('record', [], ['force_canonical' => true]);
-        }
-        return $this->createViewModel(compact('index', 'format', 'scrollData'))->setTemplate('record/modal');
+        return $this
+            ->createViewModel(compact('index', 'format', 'scrollData'))
+            ->setTemplate('record/modal');
     }
 }
