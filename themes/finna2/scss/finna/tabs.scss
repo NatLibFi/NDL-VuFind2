@@ -97,13 +97,6 @@
   &::-webkit-scrollbar {
     display: none;
   }
-  @include media-breakpoint-down(sm) {
-    > .recordTabs {
-      width: 150%;
-      margin-left: 0px;
-      margin-right: 0px;
-    }
-  }
 }
 
 // RSS-feed and Linked Events tabs
@@ -211,13 +204,8 @@
 }
 
 .recordTabs.nav {
-  margin-top: 20px;
   .staff-view-icon {
     line-height: 1em;
-  }
-  @include media-breakpoint-down(sm) {
-    margin-left: -15px;
-    margin-right: -15px;
   }
   @media print {
     .record-tab.versions {
@@ -293,4 +281,87 @@
 
 .loginTabs a {
   cursor: default;
+}
+
+/*
+ * Scrollable tab navigation
+ */
+.nav-scrollable {
+  position: relative;
+  --#{$prefix}nav-link-padding-y: #{$nav-link-padding-y};
+
+  .nav {
+    $nav-scrollable-link-active-color: $primary !default;
+    $nav-scrollable-link-active-border-color: $primary !default;
+    --#{$prefix}nav-scrollable-border-width: #{$nav-tabs-border-width};
+    --#{$prefix}nav-scrollable-border-color: #{$nav-tabs-border-color};
+    --#{$prefix}nav-scrollable-link-active-color: #{$nav-scrollable-link-active-color};
+    --#{$prefix}nav-scrollable-link-active-border-color: #{$nav-scrollable-link-active-border-color};
+    display: flex;
+    flex-wrap: nowrap; /* Overrides default wrap */
+    overflow-x: auto;
+    padding-left: 1px; /* Padding for focus ring */
+    padding-right: 1px; /* Padding for focus ring */
+    width: 100%;
+    border-bottom: var(--#{$prefix}nav-scrollable-border-width) solid var(--#{$prefix}nav-scrollable-border-color);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    &::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+  }
+
+  /* Arrow buttons */
+  .arrow-btn {
+    position: absolute;
+    // Calculate position relative to normal line height and our height taking the nav-item padding into account:
+    top: calc(var(--#{$prefix}nav-link-padding-y) - (2rem - 1rem * var(--#{$prefix}body-line-height)) / 2 + 2px);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    border: none;
+    background: #fff;
+    z-index: 10;
+    transition: opacity 0.3s, visibility 0.3s;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0, .25);
+
+    &.scroll-next-btn {
+      right: -0.5rem;
+    }
+    &.scroll-prev-btn {
+      left: -0.5rem;
+    }
+    &.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  /* Items and active indicator */
+  .nav-item {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    padding: 2px 2px 0 2px; /* Padding for focus ring */
+
+    .nav-link {
+      white-space: nowrap;
+      position: relative;
+
+      &.active {
+        color: var(--#{$prefix}nav-scrollable-link-active-color);
+        font-weight: 500;
+
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 3px;
+          background: var(--#{$prefix}nav-scrollable-link-active-border-color);
+          border-radius: 3px 3px 0 0;
+        }
+      }
+    }
+  }
 }

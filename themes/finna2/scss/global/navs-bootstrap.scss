@@ -1,6 +1,7 @@
 .nav {
-  margin-bottom: 12px;
-  margin-top: 12px;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+
   > li {
     > a {
       transition: background .2s ease-in-out;
@@ -16,16 +17,13 @@
     --#{$prefix}nav-link-hover-color: #{$nav-tabs-text-color};
   }
   // style 5 tabs to make sure they stay as tabs
-  > li {
-    > a {
-      font-size: 1.1em;
+  > .nav-item {
+    > .nav-link {
       font-weight: 500;
       background-color: transparent;
       color: $nav-tabs-text-color;
       margin-right: 3px;
       padding: .6em .5em;
-      border: 1px solid transparent;
-      margin-bottom: 0;
       border-radius: 0;
       transition: none;
       @include media-breakpoint-only(sm) {
@@ -34,12 +32,9 @@
           text-align: center;
         }
       }
-      @include media-breakpoint-down(md) {
-        font-size: .9em;
-      }
     }
     // Active state
-    & > a.nav-link.active {
+    & > .nav-link.active {
         background-color: $body-bg;
         border-left: 1px solid $nav-tabs-border-color;
         border-top: 4px solid $nav-tabs-active-color;
