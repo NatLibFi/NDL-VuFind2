@@ -29,8 +29,9 @@
 <?php
   $renderedImagesCount = count($images);
   $totalImagesCount = $this->driver->tryMethod('getTotalAmountOfImages') ?? $renderedImagesCount;
+  $uniqueId = $this->driver->getUniqueId();
   $settings = [
-    'recordId' => $this->driver->getUniqueId(),
+    'recordId' => $uniqueId,
     'recordType' => $this->driver->tryMethod('getRecordFormat'),
     'recordSource' => $this->driver->tryMethod('getSourceIdentifier'),
     'enableImageZoom' => $this->record($this->driver)->getImagePopupZoom(),
@@ -69,11 +70,22 @@
   }
   $manifests = $this->driver->tryMethod('getIiifManifests');
   $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThemes: true);
+  $modalUrl = $this->url(
+      'record-modal',
+      ['id' => urlencode($uniqueId)],
+      ['query' => ['index' => 0, 'sid' => $this->results?->getSearchId()]],
+  );
 ?>
 
 <div class="recordcover-container">
   <button class="next-image left" type="button"><?=$this->icon('image-previous') ?><span class="visually-hidden"><?= $this->transEsc('previous_image') ?></span></button>
-  <a class="image-popup-trigger init" draggable="false" href="<?=$this->escapeHtmlAttr($this->url('record-modal', ['id' => $this->driver->getUniqueID()], ['query' => ['index' => 0, 'sid' => $this->results?->getSearchId()]])) ?>" data-images="<?=htmlspecialchars(json_encode($images ?? []), ENT_QUOTES, 'UTF-8');?>" data-settings="<?=htmlspecialchars(json_encode($settings ?? []), ENT_QUOTES, 'UTF-8');?>" data-lightbox>
+  <a class="image-popup-trigger init"
+    draggable="false"
+    href="<?=$this->escapeHtmlAttr($modalUrl)?>"
+    data-images="<?=htmlspecialchars(json_encode($images ?? []), ENT_QUOTES, 'UTF-8');?>"
+    data-settings="<?=htmlspecialchars(json_encode($settings ?? []), ENT_QUOTES, 'UTF-8');?>"
+    data-lightbox
+  >
     <div class="iconlabel format-<?=$this->record($this->driver)->getFormatClass(end($formats))?>"></div>
     <div class="paginator-info d-flex align-items-center">
       <span<?=$this->htmlAttributes($imageIndexAttrs)?>></span>
