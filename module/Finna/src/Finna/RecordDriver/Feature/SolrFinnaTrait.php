@@ -1183,7 +1183,7 @@ trait SolrFinnaTrait
         foreach ($urls as $url) {
             if (!empty($url['mediaType'])) {
                 $type = $embed = null;
-                $parts = explode('/', $url['mediaType']);
+                $parts = explode('/', $url['mediaType'], 2);
                 $mediaType = $parts[0];
                 if ($mediaType === 'audio') {
                     $type = $embed = 'audio';
