@@ -200,7 +200,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'Suoristettu',
                     ],
                 ],
-                7 => [
+                8 => [
                     'urls' => [
                         'large' => 'https://kaikkilinkit.com',
                         'small' => 'https://kaikkilinkit.com',
@@ -212,7 +212,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'description' => [
                             0 => 'Tässä on kuvien copyright.',
                             1 => 'Tässä on mallien copyright.',
-                            2 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
+                            2 => 'Tässä on videoiden copyright.',
+                            3 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
                         ],
                     ],
                     'highResolution' => [],
@@ -253,6 +254,25 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'value' => '74576596',
                         ],
                     ],
+                    'downloadable' => true,
+                ],
+                [
+                    'desc' => 'VideoTestiInC.mp4',
+                    'url' => 'https://linkkiInCVideoon.fi',
+                    'embed' => 'video',
+                    'format' => 'mp4',
+                    'videoSources' => [
+                        'src' => 'https://linkkiInCVideoon.fi',
+                        'type' => 'video/mp4',
+                    ],
+                    'resourceName' => 'VideoTestiInC.mp4',
+                    'data' => [
+                        'size' => [
+                            'unit' => 'byte',
+                            'value' => '74576596',
+                        ],
+                    ],
+                    'downloadable' => false,
                 ],
             ],
         ];

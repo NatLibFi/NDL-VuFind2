@@ -721,11 +721,13 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 }
                 // Representation is a video
                 if (in_array($type, $videoTypeKeys)) {
+                    $videoRights = $this->getResourceRights($resourceSet, $language, false);
                     if (
                         $video = $this->getVideo(
                             $url,
                             $format,
                             $description,
+                            $videoRights,
                             $reader->all($representation, 'resourceMeasurementsSet')
                         )
                     ) {
@@ -997,11 +999,13 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      * - embed          Video embed is video
      * - videosources
      *  - src           Different sources for the video
-     *  - type          Codec type.
+     *  - type          Codec type
+     * - downloadable   True if video is allowed to be downloaded.
      *
      * @param string  $url          Url of the video
      * @param string  $format       Format of the video
      * @param string  $description  Description of the video
+     * @param array   $rights       Array of video rights
      * @param array[] $measurements Measurements nodes
      *
      * @return array
@@ -1010,7 +1014,8 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         string $url,
         string $format,
         string $description,
-        array $measurements
+        array $rights,
+        array $measurements,
     ): array {
         $mediaType = $this->supportedVideoFormats[$format] ?? false;
         if ($this->maxAmountOfURLs()) {
@@ -1034,6 +1039,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     'src' => $url,
                     'type' => $mediaType,
                 ],
+                'downloadable' => $this->allowRecordImageDownload(compact('rights')),
             ],
         };
         if ($video && $measurements) {
