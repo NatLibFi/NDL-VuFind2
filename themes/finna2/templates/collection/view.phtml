@@ -38,8 +38,10 @@
   $headText = $this->driver->getBreadcrumb() . ' | ' . $this->translate('Collection') . (isset($dataSource) ? ' | ' . $this->transEsc('default::source_' . $dataSource, null, $dataSource) : '');
   $this->headTitle($headText);
 
-  // LIDO records are displayed like on the record page:
-  $displayAsFullRecord = $this->driver instanceof \Finna\RecordDriver\SolrLido;
+  // Ead3 records with images and all LIDO records are displayed like on the record page:
+  $displayAsFullRecord =
+    $this->driver instanceof \Finna\RecordDriver\SolrLido
+    || ($this->driver instanceof \Finna\RecordDriver\SolrEad3 && $this->driver->getAllImages(includePdf: true));
   $largeImageLayout = $displayAsFullRecord && $this->record($this->driver)->hasLargeImageLayout();
 
   if ($oldRecordId = $this->driver->getExtraDetail('redirectedFromId')) {
