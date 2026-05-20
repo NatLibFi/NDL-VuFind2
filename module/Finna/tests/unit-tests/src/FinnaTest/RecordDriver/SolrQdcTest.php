@@ -879,6 +879,66 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test titles.
+     *
+     * @return void
+     */
+    public function testTitles(): void
+    {
+        $rawData = [
+            'title' => 'Otsikko suomeksi',
+            'title_fi_txt' => 'Otsikko suomeksi',
+            'title_en_txt' => 'Title in English',
+            'title_sv_txt' => 'Titel på svenska',
+            'title_alt' => [
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+        ];
+        $driver = $this->getMuseumDriver(overrides: $rawData, language: 'fi', fallbackLanguages: 'fi,sv,en');
+        $this->assertSame(
+            'Otsikko suomeksi',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Titel på svenska',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getMuseumDriver(overrides: $rawData, language: 'sv');
+        $this->assertSame(
+            'Titel på svenska',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getMuseumDriver(overrides: $rawData, language: 'en');
+        $this->assertSame(
+            'Title in English',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+    }
+
+    /**
      * Get a record driver with fake data.
      *
      * @param array  $overrides    Fixture fields to override
@@ -966,13 +1026,19 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     /**
      * Get a record driver with fake data.
      *
-     * @param array $overrides    Fixture fields to override
-     * @param array $searchConfig Search configuration
+     * @param array  $overrides         Fixture fields to override
+     * @param array  $searchConfig      Search configuration
+     * @param string $language          Language
+     * @param string $fallbackLanguages Site fallback languages
      *
      * @return SolrQdc
      */
-    protected function getMuseumDriver($overrides = [], $searchConfig = []): SolrQdc
-    {
+    protected function getMuseumDriver(
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+        $fallbackLanguages = 'fi,en',
+    ): SolrQdc {
         $fixture = $this->getFixture('qdc/qdc_museum_test.xml', 'Finna');
         $config = [
             'Record' => [
@@ -998,7 +1064,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         $localeConfig = [
             'Site' => [
                 'language' => 'fi',
-                'fallback_languages' => 'en-gb,sv',
+                'fallback_languages' => $fallbackLanguages,
                 'browserDetectLanguage' => false,
             ],
             'Languages' => [
@@ -1010,7 +1076,15 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
-        $record->setRawData(['id' => 'knp-247394', 'fullrecord' => $fixture]);
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $record->setTranslator($translator);
+        $defaultData = ['id' => 'knp-247394', 'fullrecord' => $fixture];
+        $record->setRawData(array_merge($defaultData, $overrides));
         return $record;
     }
 }

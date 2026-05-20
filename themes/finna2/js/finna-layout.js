@@ -975,22 +975,6 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Initialize cookie consent events
-   */
-  function initCookieConsent() {
-    var state = finna.common.getCookie('cookieConsent');
-    if ('undefined' === typeof state || !state) {
-      $('.cookie-consent-dismiss').on('click', function dismiss() {
-        finna.common.setCookie('cookieConsent', 1, { expires: 365 });
-        $('.cookie-consent').addClass('hidden');
-      });
-      $('.cookie-consent').removeClass('hidden');
-    }
-    VuFind.listen('cookie-consent-first-done', VuFind.refreshPage);
-    VuFind.listen('cookie-consent-changed', VuFind.refreshPage);
-  }
-
-  /**
    * Toggle login accordion.
    * The accordion has a delicate relationship with the tabs. Handle with care!
    * @param {string} tabId Current tab id
@@ -1208,7 +1192,6 @@ finna.layout = (function finnaLayout() {
       initAudioButtons();
       initPriorityNav();
       initFiltersToggle();
-      initCookieConsent();
       setImagePaginatorTranslations();
       initImagePaginators();
       initHelpTabs();

@@ -303,6 +303,40 @@ trait SolrCommonFinnaTrait
     }
 
     /**
+     * Get all titles in prioritized order.
+     *
+     * @return array
+     */
+    public function getAllTitles(): array
+    {
+        $titles = [];
+        if ($title = $this->fields['title'] ?? '') {
+            $titles[] = $title;
+        }
+        foreach ($this->getPrioritizedLanguages() as $language) {
+            if ('' !== ($title = $this->fields['title_' . $language . '_txt'] ?? '')) {
+                $titles[] = $title;
+            }
+        }
+        return array_values(array_unique([...$titles, ...$this->fields['title_alt'] ?? []]));
+    }
+
+    /**
+     * Get the title prioritized title field based on language.
+     *
+     * @return string
+     */
+    public function getPrioritizedTitleField(): string
+    {
+        foreach ($this->getPrioritizedLanguages() as $language) {
+            if ('' !== ($this->fields['title_' . $language . '_txt'] ?? '')) {
+                return 'title_' . $language . '_txt';
+            }
+        }
+        return 'title';
+    }
+
+    /**
      * Get the VuFind configuration.
      *
      * @return \VuFind\Config\Config

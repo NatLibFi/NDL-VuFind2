@@ -145,11 +145,11 @@ class SolrEad3 extends SolrEad
 
     // Relation type map
     public const RELATION_MAP = [
-        'On jatkoa' => self::RELATION_CONTINUED_FROM,
-        'Sisältyy' => self::RELATION_PART_OF,
-        'Sisältää' => self::RELATION_CONTAINS,
-        'Katso myös' => self::RELATION_SEE_ALSO,
-        'Erotettu aineisto' => self::RELATION_SEPARATED,
+        'on jatkoa' => self::RELATION_CONTINUED_FROM,
+        'sisältyy' => self::RELATION_PART_OF,
+        'sisältää' => self::RELATION_CONTAINS,
+        'katso myös' => self::RELATION_SEE_ALSO,
+        'erotettu aineisto' => self::RELATION_SEPARATED,
     ];
 
     // Relator attribute for archive origination
@@ -1204,6 +1204,26 @@ class SolrEad3 extends SolrEad
     }
 
     /**
+     * Get the full title of the record.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->fields[$this->getPrioritizedTitleField()] ?? '';
+    }
+
+    /**
+     * Get an array of alternative titles for the record.
+     *
+     * @return array
+     */
+    public function getAlternativeTitles()
+    {
+        return $this->compareWithTitle($this->getAllTitles());
+    }
+
+    /**
      * Get the statement of responsibility that goes with the title (i.e. "by John
      * Smith").
      *
@@ -1799,7 +1819,8 @@ class SolrEad3 extends SolrEad
             if ((string)$attr->encodinganalog !== self::RELATION_RECORD) {
                 continue;
             }
-            $role = self::RELATION_MAP[(string)$attr->arcrole] ?? null;
+            $arcrole = trim((string)($attr->arcrole ?? ''));
+            $role = self::RELATION_MAP[mb_strtolower($arcrole, 'UTF-8')] ?? null;
             if (!$role) {
                 continue;
             }
@@ -1922,9 +1943,10 @@ class SolrEad3 extends SolrEad
             if (!in_array((string)$attr->level, $levels)) {
                 continue;
             }
+            $preferredTitleField = 'title_' . substr($this->getLocale(), 0, 2);
             $result[] = [
                 'id' => $this->getDatasource() . '.' . (string)$attr->id,
-                'title' => (string)$attr->title,
+                'title' => (string)($attr->$preferredTitleField ?? (string)$attr->title),
             ];
         }
         return array_reverse($result);
@@ -1975,12 +1997,28 @@ class SolrEad3 extends SolrEad
         if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(
                 function ($parent) {
-                    return $parent['title'];
+                    $preferredTitleField = 'title_' . substr($this->getLocale(), 0, 2);
+                    return $parent[$preferredTitleField] ?? $parent['title'];
                 },
                 $parents
             );
         }
         return parent::getHierarchyParentTitle($levels);
+    }
+
+    /**
+     * Get the absolute parent title(s) associated with this item (empty if none).
+     *
+     * @return array
+     */
+    public function getHierarchyTopTitle()
+    {
+        $xml = $this->getXmlRecord();
+        $preferredTitleField = 'title_' . substr($this->getLocale(), 0, 2);
+        if ($title = (string)($xml->{'add-data'}->archive->attributes()->$preferredTitleField ?? '')) {
+            return [$title];
+        }
+        return (array)($this->fields['hierarchy_top_title'] ?? []);
     }
 
     /**

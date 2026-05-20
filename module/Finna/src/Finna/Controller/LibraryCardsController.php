@@ -34,12 +34,14 @@ namespace Finna\Controller;
 use Finna\Db\Service\UserCardServiceInterface;
 use Laminas\ServiceManager\ServiceLocatorInterface;
 use Laminas\Session\Container as SessionContainer;
+use VuFind\Auth\UserSessionPersistenceInterface;
 use VuFind\Db\Entity\UserCardEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Db\Type\AuditEventSubtype;
 use VuFind\Db\Type\AuditEventType;
 use VuFind\Exception\Auth as AuthException;
+use VuFind\Validator\CsrfInterface;
 
 use function in_array;
 use function intval;
@@ -260,8 +262,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             if (empty($email)) {
                 $this->flashMessenger()->addErrorMessage('no_email_address');
             } else {
-                $emailAuthenticator = $this->serviceLocator
-                    ->get(\VuFind\Auth\EmailAuthenticator::class);
+                $emailAuthenticator = $this->serviceLocator->get(\VuFind\Auth\EmailAuthenticator::class);
 
                 $patron = $catalog->patronLogin("$target.$email", ' ');
                 $targetName = $this->translate("source_$target", null, $target);
@@ -270,41 +271,109 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     ['%%target%%' => $targetName]
                 );
                 try {
+                    $authData = [
+                        'email' => $email,
+                        'authId' => null,
+                        'target' => $target,
+                        'targetName' => $targetName,
+                    ];
                     if ($patron) {
-                        $patron['target'] = $target;
-                        $emailAuthenticator->sendAuthenticationLink(
+                        // Account already exists, but send the message using the authentication code mechanism so that
+                        // it can handle recovery interval checks etc.
+                        $emailAuthenticator->sendAuthenticationCode(
                             $patron['email'],
-                            $patron,
-                            ['auth_method' => 'MultiILS'],
-                            'myresearch-home',
                             [],
                             $subject,
-                            'Email/registration-login-link.phtml'
+                            'Email/registration-account-exists.phtml',
+                            $authData
+                        );
+                        $this->getAuditEventService()->addEvent(
+                            AuditEventType::User,
+                            AuditEventSubtype::SendAddressVerificationEmail,
+                            null,
+                            data: [
+                                'authData' => $authData,
+                                'duplicate' => true,
+                            ]
                         );
                     } else {
-                        $emailAuthenticator->sendAuthenticationLink(
+                        $authData['authId'] = $emailAuthenticator->sendAuthenticationCode(
                             $email,
                             [
                                 'email' => $email,
                                 'target' => $target,
                             ],
-                            [],
-                            'librarycards-registrationform',
-                            [],
                             $subject,
-                            'Email/registration-link.phtml'
+                            'Email/registration-code.phtml',
+                            $authData
+                        );
+                        $this->getAuditEventService()->addEvent(
+                            AuditEventType::User,
+                            AuditEventSubtype::SendAddressVerificationEmail,
+                            null,
+                            data: compact('authData')
                         );
                     }
-                    $this->flashMessenger()
-                        ->addSuccessMessage('email_registration_link_sent');
-                    $view->emailSent = true;
+                    $userSessionService = $this->getDbService(UserSessionPersistenceInterface::class);
+                    $userSessionService->setEmailVerificationData($authData);
+                    return $this->redirect()->toRoute('librarycards-verifyregistrationemail');
                 } catch (AuthException $e) {
-                    $this->flashMessenger()
-                        ->addErrorMessage($e->getMessage());
+                    $this->flashMessenger()->addErrorMessage($e->getMessage());
                 }
             }
         }
         return $view;
+    }
+
+    /**
+     * Verify new account email using a one-time password.
+     *
+     * @return mixed
+     */
+    public function verifyRegistrationEmailAction()
+    {
+        $userSessionService = $this->getDbService(UserSessionPersistenceInterface::class);
+        if (!($authData = $userSessionService->getEmailVerificationData())) {
+            return $this->redirect()->toRoute('myresearch-home');
+        }
+
+        // Process form submission:
+        if ($this->formWasSubmitted()) {
+            $csrf = $this->getService(CsrfInterface::class);
+            if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
+                throw new \VuFind\Exception\BadRequest('error_inconsistent_parameters');
+            } else {
+                // After successful token verification, clear list to shrink session:
+                $csrf->trimTokenList(0);
+            }
+
+            $password = $this->getRequest()->getPost()->get('password', '');
+            $emailAuthenticator = $this->getService(\VuFind\Auth\EmailAuthenticator::class);
+            if (
+                ($authId = $authData['authId'] ?? null)
+                && ($patronData = $emailAuthenticator->verifyAuthenticationCode($authId, $password))
+            ) {
+                $this->getAuditEventService()->addEvent(
+                    AuditEventType::User,
+                    AuditEventSubtype::VerifyEmail,
+                    null,
+                    data: $authData
+                );
+                $userSessionService->setEmailVerificationData(null);
+                $sessionManager = $this->serviceLocator
+                    ->get(\Laminas\Session\SessionManager::class);
+                $session = new \Laminas\Session\Container('registerPatron', $sessionManager);
+                $hash = md5(random_bytes(32));
+                $session->params = [
+                    $hash => $patronData,
+                ];
+                return $this->redirect()
+                    ->toRoute('librarycards-registrationform', options: ['query' => compact('hash')]);
+            }
+            $this->flashMessenger()->addErrorMessage('authentication_error_invalid');
+        }
+
+        return $this->createViewModel(compact('authData'));
     }
 
     /**
@@ -318,21 +387,14 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
         $sessionManager = $this->serviceLocator
             ->get(\Laminas\Session\SessionManager::class);
         $session = new \Laminas\Session\Container('registerPatron', $sessionManager);
-        $hash = $this->params()->fromQuery(
-            'hash',
-            $this->params()->fromPost('hash', '')
-        );
+        $hash = $this->params()->fromQuery('hash') ?? $this->params()->fromPost('hash');
+
         if (empty($session->params[$hash])) {
-            $emailAuthenticator = $this->serviceLocator
-                ->get(\VuFind\Auth\EmailAuthenticator::class);
-            $params = $emailAuthenticator->authenticate($hash);
-            if (!isset($session->params)) {
-                $session->params = [];
-            }
-            $params['hash'] = $hash;
-            $session->params[$hash] = $params;
+            $this->flashMessenger()->addErrorMessage('An error has occurred');
+            return $this->redirect()->toRoute('myresearch-home');
         } else {
             $params = $session->params[$hash];
+            $params['hash'] = $hash;
         }
 
         // Make sure we're configured to do this
@@ -444,8 +506,12 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
                     ]
                 );
                 if ($result['success']) {
-                    $this->flashMessenger()
-                        ->addSuccessMessage('new_ils_account_added');
+                    $this->getAuditEventService()->addEvent(
+                        AuditEventType::User,
+                        AuditEventSubtype::Create,
+                        null,
+                        data: $params
+                    );
                     return $this->redirect()->toRoute(
                         'librarycards-registrationdone',
                         [],
@@ -460,7 +526,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
     }
 
     /**
-     * Self-registration confirmation action.
+     * Self-registration done action.
      *
      * @return View object
      */
@@ -517,6 +583,7 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return false;
         }
 
+        $rawUsername = $username;
         if ($target) {
             $username = "$target.$username";
         }
@@ -557,32 +624,32 @@ class LibraryCardsController extends \VuFind\Controller\LibraryCardsController
             return false;
         }
         if ('email' === $loginMethod) {
+            // Use raw (non-prefixed) username as email to display so that we don't accidentally reveal if a
+            // patron was found:
+            $authData = [
+                'email' => $rawUsername,
+                'authId' => null,
+            ];
             if ($patron) {
-                $info = $patron;
-                $info['cardID'] = $id;
-                $info['cardName'] = $cardName;
-                $emailAuthenticator = $this->serviceLocator
-                    ->get(\VuFind\Auth\EmailAuthenticator::class);
-                $emailAuthenticator->sendAuthenticationLink(
-                    $info['email'],
-                    $info,
-                    ['auth_method' => 'Email'],
-                    'editLibraryCard'
-                );
+                $cardData = [
+                    'cat_username' => $patron['cat_username'],
+                    'email' => $patron['email'],
+                    'cardID' => $id,
+                    'cardName' => $cardName,
+                ];
+                $emailAuthenticator = $this->getService(\VuFind\Auth\EmailAuthenticator::class);
+                $authData['authId'] = $emailAuthenticator->sendAuthenticationCode($cardData['email'], $cardData);
                 $this->getAuditEventService()->addEvent(
                     AuditEventType::User,
                     AuditEventSubtype::SendCardAuthEmail,
                     $user,
-                    data: [
-                        'username' => $username,
-                        'card_id' => $id,
-                        'email' => $info['email'],
-                    ]
+                    data: $cardData
                 );
             }
             // Don't reveal the result
-            $this->flashMessenger()->addSuccessMessage('email_login_link_sent');
-            return $this->redirect()->toRoute('librarycards-home');
+            $this->getDbService(UserSessionPersistenceInterface::class)
+                ->setLibraryCardAuthenticationData($authData);
+            return $this->redirect()->toRoute('librarycards-verifyotp');
         }
 
         $userCardService = $this->getDbService(UserCardServiceInterface::class);

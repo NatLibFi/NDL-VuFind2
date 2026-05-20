@@ -144,7 +144,7 @@
             <br>
           <?php endif; ?>
 
-          <?=$recordHelper->renderTemplate('holdings.phtml');?>
+          <?=$recordHelper->renderTemplate('holdings.phtml', ['loadDedupData' => true]);?>
           <?=$recordHelper->getOnlineUrls('results');?>
           <?=$recordHelper->getPreviews();?>
         </div>

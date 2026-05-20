@@ -62,6 +62,9 @@ class Demo extends \VuFind\ILS\Driver\Demo
      */
     public function getConfig($function, $params = null)
     {
+        if ('registerPatron' === $function) {
+            return $this->config['NewUser'] ?? [];
+        }
         $result = parent::getConfig($function, $params);
         if ($function == 'Holdings') {
             $result['display_total_item_count_in_results']
@@ -145,6 +148,22 @@ class Demo extends \VuFind\ILS\Driver\Demo
             }
         }
         return $this->holdError('hold_error_failed');
+    }
+
+    /**
+     * Register a new user.
+     *
+     * @param array $params The data from the "create new account" form
+     *
+     * @throws \VuFind\Exception\Auth
+     *
+     * @return bool
+     */
+    public function registerPatron($params)
+    {
+        return [
+            'success' => true,
+        ];
     }
 
     /**

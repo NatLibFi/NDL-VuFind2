@@ -104,14 +104,4 @@
     @media print {
         display: none;
     }
-
-    .grid-body & {
-        @include media-breakpoint-only(md) {
-            right: 1.5em;
-        }
-
-        @include media-breakpoint-only(sm) {
-            right: .5em;
-        }
-    }
 }

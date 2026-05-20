@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library 2015-2023.
+ * Copyright (C) The National Library 2015-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -58,6 +58,29 @@ use function strlen;
 trait SolrFinnaTrait
 {
     use SolrCommonFinnaTrait;
+
+    /**
+     * Normalization character folding table.
+     *
+     * Similar to the default folding table in RecordManager's MetadataUtils but with åäöÅÄÖ removed for Finnish.
+     *
+     * @var array
+     */
+    protected $foldingTable = [
+        'Š' => 'S', 'š' => 's', 'Ž' => 'Z', 'ž' => 'z', 'À' => 'A',
+        'Á' => 'A', 'Â' => 'A', 'Ã' => 'A',/* 'Ä' => 'A', 'Å' => 'A',*/
+        'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E', 'Ê' => 'E',
+        'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
+        'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O',
+        /*'Ö' => 'O', */'Ø' => 'O', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U',
+        'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a',
+        'á' => 'a', 'â' => 'a', 'ã' => 'a',/* 'ä' => 'a', 'å' => 'a',*/
+        'æ' => 'a', 'ç' => 'c', 'è' => 'e', 'é' => 'e', 'ê' => 'e',
+        'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o',
+        'õ' => 'o',/* 'ö' => 'o',*/ 'ø' => 'o', 'ù' => 'u', 'ú' => 'u',
+        'û' => 'u', 'ü' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y',
+    ];
 
     /**
      * Search settings.
@@ -1160,7 +1183,7 @@ trait SolrFinnaTrait
         foreach ($urls as $url) {
             if (!empty($url['mediaType'])) {
                 $type = $embed = null;
-                $parts = explode('/', $url['mediaType']);
+                $parts = explode('/', $url['mediaType'], 2);
                 $mediaType = $parts[0];
                 if ($mediaType === 'audio') {
                     $type = $embed = 'audio';
@@ -1385,6 +1408,83 @@ trait SolrFinnaTrait
     }
 
     /**
+     * Get parts of a series as a search result.
+     *
+     * @param string $seriesKey Series key
+     *
+     * @return \VuFindSearch\Response\RecordCollectionInterface|null
+     */
+    public function getSeriesResult($seriesKey = ''): \VuFindSearch\Response\RecordCollectionInterface|null
+    {
+        if (!$seriesKeys = $this->tryMethod('getSeriesKeys')) {
+            return null;
+        }
+        $key = ($seriesKey && in_array($seriesKey, $seriesKeys))
+            ? $seriesKey
+            : $seriesKeys[0];
+
+        $query = new \VuFindSearch\Query\Query(
+            'series_key_str_mv:"' . $key . '"'
+        );
+        $params = new \VuFindSearch\ParamBag(['sort' => 'series_order_str asc']);
+        $command = new SearchCommand($this->sourceIdentifier, $query, 0, 40, $params);
+        return $this->searchService->invoke($command)->getResult();
+    }
+
+    /**
+     * Get series identification keys.
+     *
+     * @return array
+     */
+    public function getSeriesKeys(): array
+    {
+        return (array)($this->fields['series_key_str_mv'] ?? []);
+    }
+
+    /**
+     * Compares the series fields with the series keys created by RecordManager.
+     *
+     * @param string $seriesKey Series key
+     *
+     * @return string
+     */
+    public function getSeriesFromSeriesKey(string $seriesKey): string
+    {
+        if (!$seriesKey) {
+            return '';
+        }
+        $parts = explode(' ', $seriesKey);
+        $seriesName = $parts[1] ?? '';
+        $reg = '/[\x00-\x20\x21-\x2F\x3A-\x40,\x5B-\x60,\x7B-\x7F]/';
+        foreach ($this->tryMethod('getSeries') ?? [] as $series) {
+            $name = is_array($series) ? $series['name'] : $series;
+            $str = $this->normalizeStringForComparison(preg_replace($reg, '', $name));
+            if ($str === $seriesName) {
+                return $name;
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Normalize a string for comparison.
+     *
+     * @param string $str String to normalize
+     *
+     * @return string
+     */
+    protected function normalizeStringForComparison(string $str): string
+    {
+        $str = strtr($str, $this->foldingTable);
+        $str = preg_replace(
+            '/[\x00-\x20\x21-\x2F\x3A-\x40,\x5B-\x60,\x7B-\x7F]/',
+            '',
+            $str
+        );
+        return mb_strtolower(trim($str), 'UTF-8');
+    }
+
+    /**
      * Add versions search filters to params.
      *
      * @param \VuFindSearch\ParamBag $paramBag Params
@@ -1473,7 +1573,7 @@ trait SolrFinnaTrait
         $compareFull = str_replace([',', ';'], '', implode(' ', $compare));
         if ($compareFull != $title) {
             foreach ($compare as $item) {
-                $checkTitle = str_replace([',', ';'], ' ', (string)$item) != $title;
+                $checkTitle = str_replace([',', ';'], '', (string)$item) != $title;
                 if ($checkTitle) {
                     $compareDone[] = (string)$item;
                 }

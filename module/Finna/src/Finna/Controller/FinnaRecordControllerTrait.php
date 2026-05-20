@@ -53,6 +53,8 @@ trait FinnaRecordControllerTrait
     {
         $view = parent::createViewModel($params);
         $this->modifyLastSearchURL();
+        // Back-compatibility for legacy view.phtml (TODO: remove when no longer needed):
+        $view->backgroundTabs = [];
         return $view;
     }
 

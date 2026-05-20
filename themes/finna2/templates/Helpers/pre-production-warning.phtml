@@ -24,7 +24,7 @@
   }
 
   $script = <<<JS
-      $('.preproduction-warning-dismiss').on('click', function dismissWarning() {
+      $('.js-pre-production-ok-button').on('click', function dismissWarning() {
         VuFind.cookie.set('hidePreProductionWarning', 1, { expires: 1/24 });
         $('.pre-production-warning').addClass('hidden');
       });
@@ -32,11 +32,11 @@
 ?>
 
 <div class="container-fluid pre-production-warning">
-  <div class="cookie-consent-text">
+  <div class="pre-production-warning__text">
     <?=$this->translate('preproduction_warning_html', ['%%url%%' => $this->escapeHtmlAttr($productionUrl)])?>
   </div>
-  <div class="nav navbar-nav nav-absolute cookie-consent-button">
-    <button class="btn btn-primary preproduction-warning-dismiss" aria-label="<?=$this->transEscAttr('close')?>"><?=$this->transEsc('OK')?></button>
+  <div class="nav navbar-nav nav-absolute pre-production-warning__button-container">
+    <button class="btn btn-primary pre-production-warning__dismiss js-pre-production-ok-button" aria-label="<?=$this->transEscAttr('close')?>"><?=$this->transEsc('OK')?></button>
     <?=$this->assetManager()->outputInlineScriptString($script)?>
   </div>
 </div>

@@ -29,11 +29,12 @@
       <objectIdentificationWrap>
         <titleWrap>
           <titleSet>
-            <appellationValue>Otsikko näkyy partial.</appellationValue>
-            <appellationValue>Näkyy kokonaan.</appellationValue>
-            <appellationValue pref="http://terminology.lido-schema.org/lido00169">Ei näy preferred.</appellationValue>
-            <appellationValue pref="alternate">Ei näy alternate.</appellationValue>
-            <appellationValue pref="alternate" label="aiheen tarkenne">Aiheen tarkenne</appellationValue>
+            <appellationValue lang="fi">Otsikko näkyy partial.</appellationValue>
+            <appellationValue lang="en">Title visible partial.</appellationValue>
+            <appellationValue lang="fi">Näkyy kokonaan.</appellationValue>
+            <appellationValue lang="fi" pref="http://terminology.lido-schema.org/lido00169">Ei näy preferred.</appellationValue>
+            <appellationValue lang="fi" pref="alternate">Ei näy alternate.</appellationValue>
+            <appellationValue lang="fi" pref="alternate" label="aiheen tarkenne">Aiheen tarkenne</appellationValue>
           </titleSet>
         </titleWrap>
         <repositoryWrap>

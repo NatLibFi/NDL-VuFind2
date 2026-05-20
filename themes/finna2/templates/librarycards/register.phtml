@@ -10,40 +10,38 @@
 <?=$this->component('page-title', ['title' => $this->translate('new_ils_account') . " ($targetName)"]);?>
 <?=$this->flashmessages()?>
 
-<?php if (!$this->emailSent): ?>
-  <div class="login-col">
-    <?php if ($this->introductionText): ?>
-      <p><?=$this->introductionText ?></p>
+<div class="login-col">
+  <?php if ($this->introductionText): ?>
+    <p><?=$this->introductionText ?></p>
+  <?php endif; ?>
+
+  <p><?=$this->transEsc('email_registration_info') ?></p>
+
+  <form id="registration-email" method="post" autocomplete="off">
+    <input type="hidden" name="target" value="<?=$this->escapeHtmlAttr($this->target)?>">
+    <?php if (!$this->translationEmpty('library_card_registration_help_html')): ?>
+      <p><?=$this->translate('library_card_registration_help_html') ?></p>
     <?php endif; ?>
-
-    <p><?=$this->transEsc('email_registration_info') ?></p>
-
-    <form id="registration-email" method="post" autocomplete="off">
-      <input type="hidden" name="target" value="<?=$this->escapeHtmlAttr($this->target)?>">
-      <?php if (!$this->translationEmpty('library_card_registration_help_html')): ?>
-        <p><?=$this->translate('library_card_registration_help_html') ?></p>
-      <?php endif; ?>
-      <div class="form-group">
-        <label class="form-label" for="email"><?=$this->transEsc('Email') ?>:</label>
-        <input type="email" name="email" id="email" class="form-control" required aria-required="true">
-      </div>
-      <div class="form-group">
-        <?=$this->captcha()->html($this->useCaptcha) ?>
-      </div>
-      <div class="form-group">
-        <a class="back-to-login btn btn-link" href="<?=$this->url('myresearch-userlogin') ?>"><?=$this->icon('back') ?> <?=$this->transEsc('Back')?></a>
-        <input class="btn btn-primary" name="submitButton" type="submit" value="<?=$this->transEscAttr('Submit') ?>">
-      </div>
-    </form>
-  </div>
-  <?php if (!$this->translationEmpty('email_registration_infobox_html')): ?>
-    <div class="login-col">
-      <div class="register-description">
-        <p class="register-info">
-          <?=$this->translate('email_registration_infobox_html', ['%%target%%' => $this->escapeHtml($targetName)])?>
-        </p>
-      </div>
+    <div class="form-group">
+      <label class="form-label" for="email"><?=$this->transEsc('Email') ?>:</label>
+      <input type="email" name="email" id="email" class="form-control" required aria-required="true">
     </div>
-  <?php endif;?>
-<?php endif; ?>
+    <div class="form-group">
+      <?=$this->captcha()->html($this->useCaptcha) ?>
+    </div>
+    <div class="form-group">
+      <a class="back-to-login btn btn-link" href="<?=$this->url('myresearch-userlogin') ?>"><?=$this->icon('back') ?> <?=$this->transEsc('Back')?></a>
+      <input class="btn btn-primary" name="submitButton" type="submit" value="<?=$this->transEscAttr('Submit') ?>">
+    </div>
+  </form>
+</div>
+<?php if (!$this->translationEmpty('email_registration_infobox_html')): ?>
+  <div class="login-col">
+    <div class="register-description">
+      <p class="register-info">
+        <?=$this->translate('email_registration_infobox_html', ['%%target%%' => $this->escapeHtml($targetName)])?>
+      </p>
+    </div>
+  </div>
+<?php endif;?>
 <!-- END of: finna - librarycards/register.phtml -->

@@ -200,7 +200,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'Suoristettu',
                     ],
                 ],
-                7 => [
+                8 => [
                     'urls' => [
                         'large' => 'https://kaikkilinkit.com',
                         'small' => 'https://kaikkilinkit.com',
@@ -212,7 +212,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'description' => [
                             0 => 'Tässä on kuvien copyright.',
                             1 => 'Tässä on mallien copyright.',
-                            2 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
+                            2 => 'Tässä on videoiden copyright.',
+                            3 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
                         ],
                     ],
                     'highResolution' => [],
@@ -253,6 +254,25 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             'value' => '74576596',
                         ],
                     ],
+                    'downloadable' => true,
+                ],
+                [
+                    'desc' => 'VideoTestiInC.mp4',
+                    'url' => 'https://linkkiInCVideoon.fi',
+                    'embed' => 'video',
+                    'format' => 'mp4',
+                    'videoSources' => [
+                        'src' => 'https://linkkiInCVideoon.fi',
+                        'type' => 'video/mp4',
+                    ],
+                    'resourceName' => 'VideoTestiInC.mp4',
+                    'data' => [
+                        'size' => [
+                            'unit' => 'byte',
+                            'value' => '74576596',
+                        ],
+                    ],
+                    'downloadable' => false,
                 ],
             ],
         ];
@@ -978,8 +998,28 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     'Näkyy description untyped.',
                     'Näkyy subject unlabeled.',
                 ],
-                ['title' => 'Otsikko'],
+                [
+                    'title' => 'Otsikko',
+                    'title_fi_txt' => 'Otsikko',
+                    'title_en_txt' => 'Title',
+                ],
                 'fi',
+            ],
+            [
+                'lido_test2.xml',
+                [
+                    'visible partial.',
+                    'Otsikko',
+                    'Näkyy description untyped.',
+                    'Synas description untyped.',
+                    'Näkyy subject unlabeled.',
+                ],
+                [
+                    'title' => 'Otsikko',
+                    'title_fi_txt' => 'Otsikko',
+                    'title_en_txt' => 'Title',
+                ],
+                'en-gb',
             ],
             [
                 'lido_test.xml',
@@ -1017,6 +1057,66 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             $expected,
             $driver->getSummary()
+        );
+    }
+
+    /**
+     * Test titles.
+     *
+     * @return void
+     */
+    public function testTitles(): void
+    {
+        $rawData = [
+            'title' => 'Otsikko suomeksi',
+            'title_fi_txt' => 'Otsikko suomeksi',
+            'title_en_txt' => 'Title in English',
+            'title_sv_txt' => 'Titel på svenska',
+            'title_alt' => [
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+        ];
+        $driver = $this->getDriver('lido_test2.xml', rawData: $rawData, language: 'fi', fallbackLanguages: 'fi,sv,en');
+        $this->assertSame(
+            'Otsikko suomeksi',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Titel på svenska',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getDriver('lido_test2.xml', rawData: $rawData, language: 'sv');
+        $this->assertSame(
+            'Titel på svenska',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getDriver('lido_test2.xml', rawData: $rawData, language: 'en');
+        $this->assertSame(
+            'Title in English',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
         );
     }
 
@@ -1534,26 +1634,28 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      */
     public function testAlternativeTitleAndSummary(): void
     {
-        $driver = $this->getDriver('lido_test2.xml');
+        $driver = $this->getDriver('lido_test2.xml', language: 'fi');
         $this->assertSame(
             [
                 'Otsikko näkyy partial.',
                 'Näkyy kokonaan.',
                 'Otsikko',
                 'Näkyy description untyped.',
-                'Synas description untyped.',
                 'Näkyy subject unlabeled.',
             ],
             $driver->getSummary()
         );
 
-        $driver = $this->getDriver('lido_test2.xml', rawData: ['title_alt' => ['Otsikko näkyy partial.']]);
+        $driver = $this->getDriver(
+            'lido_test2.xml',
+            language: 'fi',
+            rawData: ['title_alt' => ['Otsikko näkyy partial.']]
+        );
         $this->assertSame(
             [
                 'Näkyy kokonaan.',
                 'Otsikko',
                 'Näkyy description untyped.',
-                'Synas description untyped.',
                 'Näkyy subject unlabeled.',
             ],
             $driver->getSummary()
@@ -1687,11 +1789,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     /**
      * Get a record driver with fake data.
      *
-     * @param string $recordXml    Xml record to use for the test
-     * @param array  $overrides    Fixture fields to override
-     * @param array  $searchConfig Search configuration
-     * @param array  $rawData      Raw data for the record
-     * @param string $language     Language
+     * @param string $recordXml         Xml record to use for the test
+     * @param array  $overrides         Fixture fields to override
+     * @param array  $searchConfig      Search configuration
+     * @param array  $rawData           Raw data for the record
+     * @param string $language          Language
+     * @param string $fallbackLanguages Site fallback languages
      *
      * @return SolrLido
      */
@@ -1701,6 +1804,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $searchConfig = [],
         $rawData = [],
         $language = 'en',
+        $fallbackLanguages = 'fi,en',
     ): SolrLido {
         $fixture = $this->getFixture("lido/$recordXml", 'Finna');
         $config = [
@@ -1737,7 +1841,22 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $record->setRawData(
             array_merge($defaultData, $rawData)
         );
-
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => $fallbackLanguages,
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+                'se' => 'Northern Sámi',
+            ],
+        ];
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         $translator = $this
             ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
             ->disableOriginalConstructor()

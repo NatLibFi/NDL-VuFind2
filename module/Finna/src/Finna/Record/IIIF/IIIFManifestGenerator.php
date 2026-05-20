@@ -172,6 +172,19 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
                     break; // only take the largest $size
                 }
             }
+
+            $thumbUrl = $this->createBodyId(
+                $recordId,
+                $idx,
+                'small',
+                $source
+            );
+            $canvasItem['thumbnail'] = [(object)[
+                'id' => $thumbUrl,
+                'type' => 'Image',
+                'format' => 'image/jpeg',
+            ]];
+
             $manifestItems[] = (object)$canvasItem;
         }
 
@@ -203,13 +216,18 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      */
     protected function createCanvasMetadata(array $image): array
     {
+        // Metadata 'value' fields are appended with a single whitespace
+        // character to enforce a plain-text interpretation
+        //
+        // See: https://iiif.io/api/presentation/3.0/#45-html-markup-in-property-values
+
         $metadata = [];
-        if (isset($image['description'])) {
+        if ('' !== ($description = $image['description'] ?? '')) {
             $metadata[] = (object)[
                 'label' => $this->getTranslations('image_description'),
                 'value' => (object)array_fill_keys(
                     $this->metadataLangKeys,
-                    [$image['description']]
+                    [$description . ' ']
                 ),
             ];
         }
@@ -219,7 +237,7 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
                 'label' => $this->getTranslations('image_identifier'),
                 'value' => (object)array_fill_keys(
                     $this->metadataLangKeys,
-                    [$image['identifier']]
+                    [$image['identifier'] . ' ']
                 ),
             ];
         }

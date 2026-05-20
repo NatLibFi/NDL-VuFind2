@@ -154,40 +154,38 @@
   }
 }
 
-/* Cookie Consent and pre-production warning message */
-.cookie-consent, .pre-production-warning {
-  background-color: $cookie-consent-background-color;
-  color: $cookie-consent-color;
+/* Pre-production warning message */
+.pre-production-warning {
+  background-color: $gray-light;
+  color: #fff;
+  border: 2px dotted red;
   display: flex;
   align-items: center;
   z-index: 1;
-  .cookie-consent-text {
+  .pre-production-warning__text {
     flex: 1;
     margin-right: 19px;
     padding-top: 0.6em;
     padding-bottom: 0.6em;
     a {
-      color: $cookie-consent-link-color;
+      color: #fff;
       text-decoration: underline;
     }
   }
-  .cookie-consent-button {
+  .pre-production-warning__button-container {
     position: relative;
     right: 15px;
     a {
-      border: $cookie-consent-button-border;
+      border: 2px solid #fff;
     }
   }
   @include media-breakpoint-down(md) {
     position: relative;
     top: $navbar-height;
-    .cookie-consent-button {
+    .pre-production-warning__button-container {
       right: 0;
     }
   }
-}
-.pre-production-warning {
-  border: 2px dotted red;
 }
 
 /* Bazaar Browse Bar */
@@ -400,92 +398,8 @@ ol {
 }
 
 // Cookie Consent Dialog
-.show--preferences #cc-main .cc--anim .pm-overlay {
-  opacity: $modal-backdrop-opacity;
-}
-
-#cc-main {
-  -webkit-font-smoothing: inherit;
-  -moz-osx-font-smoothing: inherit;
-  text-rendering: inherit;
-
-  .cm {
-    z-index: 1;
-  }
-  .pm {
-    z-index: 2;
-  }
-  a {
-    &:hover {
-      color: $link-hover-color;
-      text-decoration: $link-hover-decoration;
-      background-size: 0%;
-    }
-  }
-  .cm-wrapper {
-    z-index: 1;
-    position: relative;
-  }
-  .cc--anim .cm__close,
-  .cc--anim .cm__btn,
-  .pm__btn {
-    transition: none;
-  }
-  .cm--bar .cm__btn, .pm__btn {
-    font-size: 14px;
-    padding: $padding-base-vertical $padding-base-horizontal;
-
-    &:hover {
-      color: $btn-primary-color;
-      background: darken($btn-primary-bg, 5%);
-    }
-  }
-  .cm--bar .cm__btn {
-    flex: none;
-  }
-  @media screen and (max-width: 640px) {
-    .pm--box {
-      top: $navbar-height + 1px;
-    }
-  }
-  .pm__section--expandable .pm__section-arrow {
-    background: none;
-  }
-
-  .pm__section--toggle {
-    background: transparent;
-  }
-  .pm__header {
-    color: $modal-header-color;
-    background: $modal-header-background;
-    font-size: $content-headings-font-size-h4;
-    padding: 8px 1em;
-
-    h2 {
-      margin: 0.5rem 0;
-    }
-  }
-  .pm__body, .pm__footer {
-    padding-left: 1em;
-    padding-right: 1em;
-  }
-  .pm__close-btn {
-    background: transparent;
-    border: none;
-    svg {
-      stroke: $modal-header-color;
-      stroke-width: 5;
-      stroke-opacity: 0.8;
-      transform: scale(.7);
-    }
-    &:hover {
-      background: transparent;
-      border: none;
-      svg {
-        stroke-opacity: 1;
-      }
-    }
-  }
+.cookie-consent {
+    --vufind-cc-category-bg-color: #{color.adjust($gray-base, $lightness: 93.5% /*, $space: hsl*/)};
 }
 
 // OIDC Login Prompt

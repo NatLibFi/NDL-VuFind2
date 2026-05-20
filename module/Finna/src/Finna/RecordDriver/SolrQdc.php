@@ -50,9 +50,8 @@ use function in_array;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\LoggerAwareInterface
+class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
-    use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
@@ -176,13 +175,23 @@ class SolrQdc extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logge
     }
 
     /**
+     * Get the full title of the record.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->fields[$this->getPrioritizedTitleField()] ?? '';
+    }
+
+    /**
      * Get an array of alternative titles for the record.
      *
      * @return array
      */
     public function getAlternativeTitles()
     {
-        return $this->fields['title_alt'] ?? [];
+        return $this->compareWithTitle($this->getAllTitles());
     }
 
     /**

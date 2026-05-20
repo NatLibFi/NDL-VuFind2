@@ -44,7 +44,8 @@
     }
   }
   .record-versions,
-  .record-to-componentparts-link {
+  .record-to-componentparts-link,
+  .record-to-series-link {
     margin-top: 6px;
     font-size: 0.9em;
     &:not(.loading) {
@@ -1123,6 +1124,86 @@ finna-model-viewer .object-editor {
   }
 }
 
+// Series tab
+.record-tab-series-container {
+  .list-scrollable__list-item {
+    &.show-more {
+      color: $similar-carousel-no-image-color;
+      width: 120px;
+
+      .list-scrollable__image {
+        align-content: center;
+      }
+    }
+
+    > .series {
+      display: flex;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.9);
+      position: absolute;
+      left: 0;
+      top: 0;
+      padding: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .list-scrollable__image.iconlabel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0px;
+      &:before {
+        position: relative;
+        font-size: 45px;
+        color: $similar-carousel-no-image-color;
+      }
+    }
+  }
+  .series-header {
+    display: flex;
+    align-items: center;
+
+    h2 {
+      margin-top: 0.5rem;
+    }
+
+    @include media-breakpoint-down(md) {
+      flex-flow: column;
+      align-items: flex-start;
+    }
+    #series {
+      flex-basis: 50%;
+    }
+    .series-controls {
+      display: flex;
+      flex: 1 0 50%;
+      justify-content: flex-end;
+      align-items: center;
+      .series-dropdown-text {
+        align-self: center;
+        margin-right: 0.5rem;
+        margin-left: 1rem;
+      }
+      span {
+        padding: 0.1rem;
+      }
+    }
+  }
+  .series-search-link {
+    display: flex;
+    place-content: center;
+  }
+  .series-record-format .iconlabel {
+    font-size: 0.9rem;
+    color: $gray-dark;
+    margin: 0;
+  }
+}
+
+// Component parts
 .dataTables_wrapper {
   width: 100%;
 }

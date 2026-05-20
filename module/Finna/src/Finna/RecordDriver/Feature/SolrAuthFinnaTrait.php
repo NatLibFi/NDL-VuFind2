@@ -324,9 +324,9 @@ trait SolrAuthFinnaTrait
      *
      * @return array
      */
-    public function getInstitutions()
+    public function getInstitutions(): array
     {
-        return $this->fields['institution'] ?? [];
+        return (array)($this->fields['institution'] ?? []);
     }
 
     /**

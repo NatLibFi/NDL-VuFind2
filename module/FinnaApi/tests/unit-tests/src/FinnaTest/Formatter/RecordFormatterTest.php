@@ -199,6 +199,22 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             'FinnaApi'
         );
         $driver->setRawData($marcFields);
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => 'fi,en',
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+                'se' => 'Northern Sámi',
+            ],
+        ];
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
+        $driver->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
 
         $ratingsService = $this->getMockBuilder(\VuFind\Db\Service\RatingsService::class)
             ->disableOriginalConstructor()

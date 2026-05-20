@@ -216,6 +216,7 @@ button.list-group-item {
   }
   .list-group-item {
     border: $sidebar-border;
+    border-top: none;
   }
   .details {
     color: $text-color;

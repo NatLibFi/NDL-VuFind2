@@ -829,6 +829,43 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
+     * Get related places.
+     *
+     * @param array $include Relator attributes to include
+     * @param array $exclude Relator attributes to exclude
+     *
+     * @return array
+     */
+    public function getRelatedPlacesExtended($include = [], $exclude = [])
+    {
+        // Relator attribute is currently not in use.
+        $record = $this->getXmlRecord();
+        $result = $resultDetail = [];
+        foreach ($record->controlaccess as $controlaccess) {
+            foreach ($controlaccess->geogname as $name) {
+                // Check both geogname and geogname/part
+                $parts = [];
+                if ($namestr = trim((string)$name)) {
+                    $parts[] = $namestr;
+                }
+                foreach ($name->part ?? [] as $place) {
+                    if ($p = trim((string)$place)) {
+                        $parts[] = $p;
+                    }
+                }
+                if ($parts) {
+                    $part = implode(', ', $parts);
+                    if (!in_array($part, $result)) {
+                        $resultDetail[] = ['data' => $part];
+                        $result[] = $part;
+                    }
+                }
+            }
+        }
+        return $resultDetail;
+    }
+
+    /**
      * Replace placeholders in the URL with the values from the record.
      *
      * @param string $url URL

@@ -660,7 +660,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             return [
                 'success' => false,
                 'status' => $status,
-                'sys_message' => $result['data']['error'] ?? $result['code'],
+                'sys_message' => $this->getPrefixedMessage($result['data']['error'] ?? $result['code']),
             ];
         }
 
@@ -723,7 +723,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             return  [
                 'success' => false,
                 'status' => 'Updating of patron information failed',
-                'sys_message' => $result['error'] ?? $result['code'],
+                'sys_message' => $this->getPrefixedMessage($result['error'] ?? $result['code']),
             ];
         }
 

@@ -141,14 +141,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
         string $function,
         $expected
     ): void {
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale('fi');
-        $driver = $this->getDriver('lrmi_test.xml');
-        $driver->setTranslator($translator);
+        $driver = $this->getDriver('lrmi_test.xml', language: 'fi');
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertEquals(
             $expected,
@@ -206,14 +199,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
         string $language,
         array $expected
     ): void {
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $driver = $this->getDriver('lrmi_test.xml');
-        $driver->setTranslator($translator);
+        $driver = $this->getDriver('lrmi_test.xml', language: $language);
         $this->assertEquals(
             $expected,
             $driver->getSummary()
@@ -221,17 +207,36 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected alternative titles data.
+     * Function to get expected titles data.
      *
      * @return array
      */
-    public static function getAlternativeTitlesData(): array
+    public static function getTitlesData(): array
     {
         return [
             [
-                'Pääotsikko',
-                ['Pääotsikko', 'Vaihtoehtoinen otsikko 1', 'Vaihtoehtoinen otsikko 2'],
-                ['Vaihtoehtoinen otsikko 1', 'Vaihtoehtoinen otsikko 2'],
+                [
+                    'title' => 'Pääotsikko',
+                    'title_fi' => 'Pääotsikko',
+                    'title_en' => 'Title in English',
+                    'title_sv' => 'Titel på svenska',
+                    'title_se' => '',
+                    'title_alt' => ['Pääotsikko', 'Vaihtoehtoinen otsikko 1', 'Title in English'],
+                ],
+                [
+                    'titles' => [
+                        'en' => 'Title in English',
+                        'fi' => 'Pääotsikko',
+                        'sv' => 'Titel på svenska',
+                        'se' => 'Pääotsikko',
+                    ],
+                    'altTitles' => [
+                        'en' => ['Pääotsikko', 'Vaihtoehtoinen otsikko 1'],
+                        'fi' => ['Title in English', 'Vaihtoehtoinen otsikko 1'],
+                        'sv' => ['Pääotsikko', 'Title in English', 'Vaihtoehtoinen otsikko 1'],
+                        'se' => ['Title in English', 'Vaihtoehtoinen otsikko 1'],
+                    ],
+                ],
             ],
         ];
     }
@@ -239,32 +244,59 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
     /**
      * Test getAlternativeTitles.
      *
-     * @param string $title     Title index value to test
-     * @param array  $altTitles Alternative title index values to test
-     * @param ?array $expected  Result to be expected
+     * @param array $titles   Title index values to test
+     * @param array $expected Result to be expected
      *
      * @return void
      */
-    #[\PHPUnit\Framework\Attributes\DataProvider('getAlternativeTitlesData')]
-    public function testGetAlternativeTitles(
-        string $title,
-        array $altTitles,
-        ?array $expected
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTitlesData')]
+    public function testTitles(
+        array $titles,
+        array $expected,
     ): void {
-        $record = new SolrLrmi(
-            [],
-            [],
-            new \VuFind\Config\Config([])
-        );
-        $record->setRawData(
-            [
-                'title' => $title,
-                'title_alt' => $altTitles,
-            ]
+        $rawData = [
+            'title' => $titles['title'],
+            'title_fi_txt' => $titles['title_fi'],
+            'title_en_txt' => $titles['title_en'],
+            'title_sv_txt' => $titles['title_sv'],
+            'title_se_txt' => $titles['title_se'],
+            'title_alt' => $titles['title_alt'],
+        ];
+        $driver = $this->getDriver('lrmi_test.xml', overrides: $rawData);
+        $this->assertEquals(
+            $expected['altTitles']['en'],
+            $driver->getAlternativeTitles()
         );
         $this->assertEquals(
-            $expected,
-            $record->getAlternativeTitles()
+            $expected['titles']['en'],
+            $driver->getTitle()
+        );
+        $driver = $this->getDriver('lrmi_test.xml', overrides: $rawData, language: 'fi');
+        $this->assertEquals(
+            $expected['altTitles']['fi'],
+            $driver->getAlternativeTitles()
+        );
+        $this->assertEquals(
+            $expected['titles']['fi'],
+            $driver->getTitle()
+        );
+        $driver = $this->getDriver('lrmi_test.xml', overrides: $rawData, language: 'sv');
+        $this->assertEquals(
+            $expected['altTitles']['sv'],
+            $driver->getAlternativeTitles()
+        );
+        $this->assertEquals(
+            $expected['titles']['sv'],
+            $driver->getTitle()
+        );
+        $driver = $this->getDriver('lrmi_test.xml', overrides: $rawData, language: 'se');
+        $this->assertEquals(
+            $expected['altTitles']['se'],
+            $driver->getAlternativeTitles()
+        );
+        $this->assertEquals(
+            $expected['titles']['se'],
+            $driver->getTitle()
         );
     }
 
@@ -274,11 +306,16 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
      * @param string $recordXml    Xml record to use for the test
      * @param array  $overrides    Fixture fields to override.
      * @param array  $searchConfig Search configuration.
+     * @param string $language     Language
      *
      * @return SolrLrmi
      */
-    protected function getDriver(string $recordXml, $overrides = [], $searchConfig = []): SolrLrmi
-    {
+    protected function getDriver(
+        string $recordXml,
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+    ): SolrLrmi {
         $fixture = $this->getFixture("lrmi/$recordXml", 'Finna');
         $record = new SolrLrmi(
             null,
@@ -301,7 +338,17 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
-        $record->setRawData(['fullrecord' => $fixture]);
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $record->setTranslator($translator);
+        $defaultData = [
+            'fullrecord' => $fixture,
+        ];
+        $record->setRawData(array_merge($defaultData, $overrides));
         return $record;
     }
 }

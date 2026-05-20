@@ -1517,7 +1517,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get the publication end date of the record.
      *
-     * @return number|false
+     * @return int|false
      */
     public function getPublicationEndDate()
     {
@@ -1561,7 +1561,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      *
      * @return array
      */
-    public function getSeries()
+    public function getSeries(): array
     {
         $matches = [];
 
@@ -1587,6 +1587,36 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         }
 
         return $matches;
+    }
+
+    /**
+     * Get series order number and series order index field.
+     *
+     * @param string $series    Current series
+     * @param string $seriesKey Current series key
+     *
+     * @return ?array
+     */
+    public function getSeriesOrder(string $series, string $seriesKey): ?array
+    {
+        $record = $this->getMarcReader();
+        $seriesNormalized = $this->normalizeStringForComparison($series);
+        foreach ($record->getFields('490') as $field490) {
+            $order = $this->getSubfield($field490, 'v');
+            $subANormalized = $this->normalizeStringForComparison(
+                $this->stripTrailingPunctuation($this->getSubfield($field490, 'a'))
+            );
+            if (
+                $seriesNormalized === $subANormalized
+                && preg_match('/(\d+)/', $order, $matches)
+            ) {
+                return [
+                    'order' => (int)$matches[1],
+                    'orderKey' => $this->fields['series_order_str'] ?? '',
+                ];
+            }
+        }
+        return null;
     }
 
     /**
@@ -1872,6 +1902,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                         || preg_match('/^(http|ftp)s?:\/\//', $address))
                     ) {
                         // Is there a description?  If not, just use the URL itself.
+                        $desc = null;
+                        $subfield = null;
                         foreach ($subfields as $subfield) {
                             $desc = $this->getSubfield($url, $subfield);
                             if ($desc) {
@@ -2007,10 +2039,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Returns the array element for the 'getAllRecordLinks' method.
      *
-     * @param File_MARC_Data_Field $field Field to examine
+     * @param array $field Field to examine
      *
-     * @return array|bool                 Array on success, boolean false if no
-     * valid link could be found in the data.
+     * @return array|bool Array on success, boolean false if no valid link could be found in the data.
      */
     protected function getFieldData($field)
     {

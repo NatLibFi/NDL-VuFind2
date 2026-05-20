@@ -310,20 +310,6 @@ $breadcrumbs: false !default;
 $breadcrumb-separator:          "|" !default;
 
 
-//== Cookie Consent
-//
-//##
-$cookie-consent-background-color: $gray-light !default;
-$cookie-consent-color: #fff !default;
-$cookie-consent-link-color: #fff !default;
-$cookie-consent-button-border: 2px solid #fff !default;
-
-//== Cookie Consent Component
-:root {
-    --cc-cookie-category-block-bg: #{color.adjust($gray-base, $lightness: 93.5% /*, $space: hsl*/)};
-    --cc-btn-border-radius: #{$finna-button-radius};
-}
-
 //== Bazaar Browse Bar
 $bazaar-browse-bar-background-color: $gray-light !default;
 $bazaar-browse-bar-color: #fff !default;

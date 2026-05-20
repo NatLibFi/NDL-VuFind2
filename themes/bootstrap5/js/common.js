@@ -203,6 +203,7 @@ var VuFind = (function VuFindModule() {
       function handleChange(event) {
         let elem = event.target;
         if (elem.hasAttribute('data-submit-on-change')) {
+          console.warn('Deprecation: "data-submit-on-change" will be removed in a future release.');
           elem.form.requestSubmit();
         }
       }
@@ -390,7 +391,7 @@ var VuFind = (function VuFindModule() {
     const tmpDiv = document.createElement('div');
     tmpDiv.innerHTML = html;
     const scripts = [];
-    // Cloning scripts wont work as they pass internal executed state so save them for later
+    // Cloning scripts won't work as they pass internal executed state so save them for later
     tmpDiv.querySelectorAll('script').forEach(script => {
       const type = script.getAttribute('type');
       if (!type || 'text/javascript' === type) {

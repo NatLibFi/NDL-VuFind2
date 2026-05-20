@@ -29,6 +29,10 @@
 
 namespace Finna\Controller;
 
+use Laminas\Mvc\MvcEvent;
+
+use function is_object;
+
 /**
  * Primo Central Controller.
  *
@@ -48,6 +52,28 @@ class PrimoController extends \VuFind\Controller\PrimoController
      * @var string
      */
     protected $searchClassId = 'Primo';
+
+    /**
+     * Use preDispatch event to block access when appropriate.
+     *
+     * @param MvcEvent $e Event object
+     *
+     * @return void
+     */
+    public function validateAccessPermission(MvcEvent $e)
+    {
+        // If there is an access permission set for this controller, pass it
+        // through the permission helper, and if the helper returns a custom
+        // response, use that instead of the normal behavior.
+        if ($this->accessPermission) {
+            $response = $this->permission()
+                ->check($this->accessPermission, $this->accessDeniedBehavior);
+            if (is_object($response)) {
+                $e->setResponse($response);
+                $e->stopPropagation();
+            }
+        }
+    }
 
     /**
      * Home action.

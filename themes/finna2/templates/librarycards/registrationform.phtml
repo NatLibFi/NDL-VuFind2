@@ -14,7 +14,8 @@
 
 <h3><?=$this->transEsc('new_ils_account_title_registration')?></h3>
 <div class="login-col">
-  <form id="new-account-form" method="post" autocomplete="off" data-toggle="validator">
+  <form id="new-account-form" method="post" autocomplete="off" data-toggle="validator" action="<?=$this->url('librarycards-registrationform')?>">
+    <input type="hidden" name="hash" value="<?=$this->escapeHtmlAttr($this->hash)?>">
     <?php if (!$this->translationEmpty('new_ils_account_help_html')): ?>
       <p><?=$this->translate('new_ils_account_help_html') ?></p>
     <?php endif; ?>

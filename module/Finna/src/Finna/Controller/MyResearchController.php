@@ -726,8 +726,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $user->setEmail('');
                 $user->setHasUserProvidedEmail(true);
                 $userService->persistEntity($user);
-            } elseif ($values->email === $user->getEmail()) {
-                // No need to do anything
             } elseif ($validator->isValid($values->email)) {
                 $this->getAuthManager()->updateEmail($user, $values->email);
                 // If we have a pending change, we need to send a verification email:
@@ -764,6 +762,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $this->flashMessenger()->addErrorMessage('profile_update_failed');
             } elseif ($showSuccess) {
                 $this->flashMessenger()->addSuccessMessage('profile_update');
+            }
+
+            // Redirect to verification if the user has a pending email change:
+            if ($user->getPendingEmail()) {
+                return $this->redirect()->toRoute('myresearch-verifyemail');
             }
         }
 
