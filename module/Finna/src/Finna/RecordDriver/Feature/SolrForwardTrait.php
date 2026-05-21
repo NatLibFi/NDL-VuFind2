@@ -31,7 +31,7 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use FinnaXml\XmlDoc;
+use VuFindXml\XmlDoc;
 
 /**
  * Additional functionality for SolrForward and SolrForwardAuth records.

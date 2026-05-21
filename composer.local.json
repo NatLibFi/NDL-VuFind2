@@ -22,7 +22,7 @@
         "league/mime-type-detection": "1.9.0",
         "natlibfi/besimple-soap": "3.0.1",
         "natlibfi/finna-code-sets": "0.5.2",
-        "natlibfi/finna-xml": "1.6.0",
+        "vufind-org/vufind-xml": "1.7.0",
         "natlibfi/php-html-parser": "5.0.1",
         "phpoffice/phpspreadsheet": "^2.0",
         "picqer/php-barcode-generator": "2.0.1",

@@ -34,9 +34,9 @@ use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
 use Finna\RecordDriver\Feature\FinnaXmlReaderTrait;
-use FinnaXml\XmlDoc;
 use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\Response\RecordInterface;
+use VuFindXml\XmlDoc;
 
 use function count;
 
