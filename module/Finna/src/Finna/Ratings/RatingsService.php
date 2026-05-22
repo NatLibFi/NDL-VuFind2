@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ratings service
+ * Ratings service.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Ratings;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
 /**
- * Ratings service
+ * Ratings service.
  *
  * @category VuFind
  * @package  Ratings

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_due_date_reminder table
+ * Entity model for finna_due_date_reminder table.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Doctrine\ORM\Mapping as ORM;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Entity model for finna_due_date_reminder table
+ * Entity model for finna_due_date_reminder table.
  *
  * @category VuFind
  * @package  Database
@@ -98,7 +98,7 @@ class FinnaDueDateReminder implements FinnaDueDateReminderEntityInterface
     protected DateTime $notificationDate;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {

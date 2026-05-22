@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Back-compatibility class for ScheduledSearch/Notify
+ * Back-compatibility class for ScheduledSearch/Notify.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace FinnaConsole\Command\Util;
 use Symfony\Component\Console\Attribute\AsCommand;
 
 /**
- * Back-compatibility class for ScheduledSearch/Notify
+ * Back-compatibility class for ScheduledSearch/Notify.
  *
  * @category VuFind
  * @package  Command

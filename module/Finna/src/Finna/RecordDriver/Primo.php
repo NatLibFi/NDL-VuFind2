@@ -284,7 +284,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Return DOI (false if none)
+     * Return DOI (false if none).
      *
      * @return mixed
      */
@@ -310,7 +310,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Get primary author information with highlights applied (if applicable)
+     * Get primary author information with highlights applied (if applicable).
      *
      * @return array
      */
@@ -388,7 +388,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Return information whether fulltext is available
+     * Return information whether fulltext is available.
      *
      * @return bool
      */
@@ -507,7 +507,7 @@ class Primo extends \VuFind\RecordDriver\Primo
 
     /**
      * Utility function for processing OpenURL parameters.
-     * This duplicates 'rft_<param>' prefixed parameters as 'rft.<param>'
+     * This duplicates 'rft_<param>' prefixed parameters as 'rft.<param>'.
      *
      * @param array $params OpenURL parameters as key-value pairs
      *

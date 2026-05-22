@@ -45,14 +45,14 @@ class Video
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * HandlerPluginManager
+     * HandlerPluginManager.
      *
      * @var HandlerPluginManager
      */
     protected $pluginManager;
 
     /**
-     * Data source configuration
+     * Data source configuration.
      *
      * @var \VuFind\Config\Config
      */
@@ -73,7 +73,7 @@ class Video
     }
 
     /**
-     * Get video handler or null if not configured properly
+     * Get video handler or null if not configured properly.
      *
      * @param string $source Datasource
      *

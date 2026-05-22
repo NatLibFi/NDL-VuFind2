@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind Driver for Koha, using REST API
+ * VuFind Driver for Koha, using REST API.
  *
  * PHP version 8
  *
@@ -42,7 +42,7 @@ use function in_array;
 use function is_array;
 
 /**
- * VuFind Driver for Koha, using REST API
+ * VuFind Driver for Koha, using REST API.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -56,7 +56,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     use FinnaCommonILSTrait;
 
     /**
-     * Mappings from Koha messaging preferences
+     * Mappings from Koha messaging preferences.
      *
      * @var array
      */
@@ -86,42 +86,42 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     ];
 
     /**
-     * Whether to use location in addition to library when grouping holdings
+     * Whether to use location in addition to library when grouping holdings.
      *
      * @param bool
      */
     protected $groupHoldingsByLocation;
 
     /**
-     * Priority settings for the order of libraries or library/location combinations
+     * Priority settings for the order of libraries or library/location combinations.
      *
      * @var array
      */
     protected $holdingsLibraryOrder;
 
     /**
-     * Priority settings for the order of locations (in libraries)
+     * Priority settings for the order of locations (in libraries).
      *
      * @var array
      */
     protected $holdingsLocationOrder;
 
     /**
-     * Minimum payable amount
+     * Minimum payable amount.
      *
      * @var int
      */
     protected $minimumPayableAmount = 0;
 
     /**
-     * Non-payable fine types
+     * Non-payable fine types.
      *
      * @var array
      */
     protected $nonPayableTypes = [];
 
     /**
-     * Non-payable fine statuses
+     * Non-payable fine statuses.
      *
      * @var array
      */
@@ -176,7 +176,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -211,7 +211,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -227,7 +227,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Statuses
+     * Get Statuses.
      *
      * This is responsible for retrieving the status information for a
      * collection of records.
@@ -254,7 +254,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -393,7 +393,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -443,7 +443,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -538,7 +538,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -553,7 +553,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron Patron array
      * @param string $phone  Phone number
@@ -568,7 +568,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Update patron's SMS alert number
+     * Update patron's SMS alert number.
      *
      * @param array  $patron Patron array
      * @param string $number SMS alert number
@@ -592,7 +592,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array  $patron Patron array
      * @param String $email  Email address
@@ -607,7 +607,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -660,7 +660,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             return [
                 'success' => false,
                 'status' => $status,
-                'sys_message' => $result['data']['error'] ?? $result['code'],
+                'sys_message' => $this->getPrefixedMessage($result['data']['error'] ?? $result['code']),
             ];
         }
 
@@ -673,7 +673,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Update patron messaging settings
+     * Update patron messaging settings.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of messaging settings
@@ -723,7 +723,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
             return  [
                 'success' => false,
                 'status' => 'Updating of patron information failed',
-                'sys_message' => $result['error'] ?? $result['code'],
+                'sys_message' => $this->getPrefixedMessage($result['error'] ?? $result['code']),
             ];
         }
 
@@ -760,7 +760,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Pick Up Locations
+     * Get Pick Up Locations.
      *
      * This is responsible for gettting a list of valid library locations for
      * holds / recall retrieval
@@ -906,7 +906,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Item Statuses
+     * Get Item Statuses.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1282,7 +1282,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Status item sort function
+     * Status item sort function.
      *
      * @param array $a First status record to compare
      * @param array $b Second status record to compare
@@ -1324,7 +1324,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Update a patron in Koha with the data in $fields
+     * Update a patron in Koha with the data in $fields.
      *
      * @param array $patron The patron array from patronLogin
      * @param array $fields Patron fields to update
@@ -1368,7 +1368,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Return a location for a Koha item
+     * Return a location for a Koha item.
      *
      * @param array $item Item
      *
@@ -1397,7 +1397,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Return item-specific location information as configured
+     * Return item-specific location information as configured.
      *
      * @param array $item Koha item
      *
@@ -1460,7 +1460,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Translate sub-location name
+     * Translate sub-location name.
      *
      * @param string $location Location code
      * @param string $default  Default value if translation is not available
@@ -1485,7 +1485,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get sub-locations from cache or from the API
+     * Get sub-locations from cache or from the API.
      *
      * @return array
      */
@@ -1510,7 +1510,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Create a holdings entry
+     * Create a holdings entry.
      *
      * @param string $id       Bib ID
      * @param array  $holdings Holdings record
@@ -1558,7 +1558,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Create a serial entry
+     * Create a serial entry.
      *
      * @param array $subscription Subscription record
      * @param int   $sortKey      Sort key
@@ -1594,7 +1594,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Return a call number for a Koha item
+     * Return a call number for a Koha item.
      *
      * @param array $item Item
      *
@@ -1632,7 +1632,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get a MARC record for the given holding or null if not available
+     * Get a MARC record for the given holding or null if not available.
      *
      * @param array $holding Holding
      *
@@ -1656,7 +1656,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get holding data from a holding record
+     * Get holding data from a holding record.
      *
      * @param array $holding Holding record from Koha
      *
@@ -1733,7 +1733,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get specified fields from a MARC Record
+     * Get specified fields from a MARC Record.
      *
      * @param MarcReader   $record     Marc reader
      * @param array|string $fieldSpecs Array or colon-separated list of
@@ -1782,7 +1782,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Translate collection name
+     * Translate collection name.
      *
      * @param string $code        Collection code
      * @param string $description Collection description
@@ -1803,7 +1803,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Translate location name
+     * Translate location name.
      *
      * @param string $location Location code
      * @param string $default  Default value if translation is not available
@@ -1830,7 +1830,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get a description for a block
+     * Get a description for a block.
      *
      * @param string $reason  Koha block reason
      * @param array  $details Any details related to the reason
@@ -1879,7 +1879,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked-out items
      * or checked-in items) by a specific patron.
@@ -2022,7 +2022,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     }
 
     /**
-     * Create a HTTP client
+     * Create a HTTP client.
      *
      * @param string $url Request URL
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database driver for statistics
+ * Database driver for statistics.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Psr\Log\LoggerAwareInterface;
 use VuFind\Log\LoggerAwareTrait;
 
 /**
- * Database driver for statistics
+ * Database driver for statistics.
  *
  * @category VuFind
  * @package  Statistics
@@ -48,7 +48,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaStatisticsServiceInterface $statisticsService Statistics database service
      */
@@ -57,7 +57,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a new session to statistics
+     * Add a new session to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -81,7 +81,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a page view to statistics
+     * Add a page view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -109,7 +109,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a record view to statistics
+     * Add a record view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Combined results view helper
+ * Combined results view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Combined results view helper
+ * Combined results view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class Combined extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Combined search configuration
+     * Combined search configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config Combined configuration
      */
@@ -58,7 +58,7 @@ class Combined extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if combined results view is available
+     * Check if combined results view is available.
      *
      * @return bool
      */

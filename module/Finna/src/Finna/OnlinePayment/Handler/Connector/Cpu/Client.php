@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CPU Client
+ * CPU Client.
  *
  * PHP version 8
  *

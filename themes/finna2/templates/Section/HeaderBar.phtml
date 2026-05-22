@@ -1,0 +1,96 @@
+<!-- START of: finna - Section/HeaderBar.phtml -->
+<div role="navigation" aria-label="<?=$this->transEscAttr('Main Menu')?>" class="finna-navbar navbar-expand-md">
+  <div class="navbar-header">
+    <?php if ($this->resolver('navibar-logo.phtml')): ?><a class="navbar-brand" href="<?=$this->url('home')?>"><?=$this->render('navibar-logo.phtml')?></a><?php endif ?>
+    <button type="button" class="navbar-toggler navbar-toggle collapsed" data-bs-toggle="collapse" data-bs-target="#header-collapse" aria-label="<?=$this->transEscAttr('Mobile Menu') ?>" aria-expanded="false">
+      <span class="mobilemenu-bars"><?=$this->icon('mobilemenu-bars') ?></span>
+      <span class="mobilemenu-close"><?=$this->icon('mobilemenu-close') ?></span>
+    </button>
+  </div>
+  <?php if (!isset($this->layout()->renderingError)): ?>
+    <?php $additionsRendered = false; ?>
+    <?php foreach ($this->menu ?? [] as $group): ?>
+      <?php if (isset($group['wrapper'])): ?>
+        <div<?= $this->htmlAttributes($group['wrapper']['attributes'] ?? []) ?>>
+      <?php endif; ?>
+      <?php
+        $attributes = $this->htmlAttributes(['role' => 'presentation', 'class' => ['nav', 'navbar-nav']]);
+        if (isset($group['attributes'])) {
+          $attributes->merge($group['attributes']);
+        }
+      ?>
+      <ul<?= $attributes ?>>
+        <?php foreach ($group['MenuItems'] ?? [] as $item): ?>
+          <?php if (isset($item['template'])): ?>
+            <?php
+              // Pass section plugin and section context to template.
+              $context = [
+                'sectionPlugin' => $this->{\VuFind\View\Helper\Root\Section::SECTION_PLUGIN_KEY},
+                ...$this->{\VuFind\View\Helper\Root\Section::SECTION_CONTEXT_KEY},
+                ...$item,
+              ];
+            ?>
+            <?= $this->render($item['template'], $context) ?>
+          <?php elseif (isset($item['submenuItems'])): ?>
+            <li class="nav-item dropdown" id="<?= $item['label'] ?>">
+              <a href="#" role="button" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?= $this->icon($item['label']) ?><?= $this->transEsc($item['label']) ?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+              <ul class="dropdown-menu">
+                <?php foreach ($item['submenuItems'] as $submenuItem): ?>
+                  <?php
+                    $url = isset($submenuItem['route'])
+                        ? $this->url($submenuItem['route'], $submenuItem['routeParams'] ?? [])
+                        : $submenuItem['url'];
+                    if (!$url) {
+                      continue;
+                    }
+                    $target = !empty($submenuItem['target']) ? $submenuItem['target'] : null;
+                    $label = $submenuItem['label'];
+                    $desc = !empty($submenuItem['description']) ? $submenuItem['description'] : null;
+                  ?>
+                  <li>
+                    <a class="dropdown-item"<?= $this->requestUri === $url ? ' aria-current="page"' : ''?> <?= $target ? ' target="' . $this->escapeHtmlAttr($target) . '"' : ''?> href="<?=$this->escapeHtmlAttr($url)?>">
+                      <span><?= $this->transEsc($label) ?></span>
+                      <?php if ($desc): ?>
+                        <span class="description"><?= $this->transEsc($desc) ?></span>
+                      <?php endif; ?>
+                    </a>
+                  </li>
+                <?php endforeach; ?>
+              </ul>
+            </li>
+          <?php else:
+            if (!($url = isset($item['route'])
+                ? $this->url($item['route'], $item['routeParams'] ?? [])
+                : $item['url'])) {
+              continue;
+            }
+            $label = $item['label'];
+            $linkAttrs = $this->htmlAttributes(
+                [
+                    'href' => $url,
+                    'class' => ['nav-link'],
+                ]
+            );
+            if ($this->requestUri === $url) {
+              $linkAttrs->add('class', 'active');
+              $linkAttrs->add('aria-current', 'page');
+            }
+            if ($target = $item['target'] ?? null) {
+              $linkAttrs->add('target', $target);
+            }
+          ?>
+            <li class="nav-item" role="none"><a<?=$linkAttrs?>><?= $this->icon($label) ?><?= $this->transEsc($label) ?></a></li>
+          <?php endif; ?>
+        <?php endforeach; ?>
+        <?php if (!$additionsRendered && ($template = $this->content()->findTemplateForLng('content/Additions/header-navibar'))): ?>
+          <?=$this->render($template)?>
+          <?php $additionsRendered = true; ?>
+        <?php endif; ?>
+      </ul>
+      <?php if (isset($group['wrapper'])): ?>
+        </div>
+      <?php endif; ?>
+    <?php endforeach; ?>
+  <?php endif; ?>
+</div>
+<!-- END of: finna - Section/HeaderBar.phtml -->

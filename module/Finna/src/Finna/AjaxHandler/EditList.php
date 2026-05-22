@@ -54,7 +54,7 @@ class EditList extends \VuFind\AjaxHandler\AbstractBase implements TranslatorAwa
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ?UserEntityInterface     $user             Logged in user (or null)
      * @param UserListServiceInterface $userListService  UserList database service

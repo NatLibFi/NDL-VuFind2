@@ -49,7 +49,7 @@ use function count;
 trait TranslatorAwareTrait
 {
     /**
-     * Translate a string (or string-castable object)
+     * Translate a string (or string-castable object).
      *
      * @param string|object|array $target          String to translate or an array of text
      *                                             domain and string to translate
@@ -137,7 +137,7 @@ trait TranslatorAwareTrait
     /**
      * Tries to translate a hierarchical string without the middle levels, bu only if
      * it looks like a hierarchical facet that starts with a number and ends with a
-     * slash
+     * slash.
      *
      * @param string $str             String to translate
      * @param string $domain          Translation domain

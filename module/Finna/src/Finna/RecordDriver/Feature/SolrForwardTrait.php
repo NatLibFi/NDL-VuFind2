@@ -31,6 +31,8 @@
 
 namespace Finna\RecordDriver\Feature;
 
+use FinnaXml\XmlDoc;
+
 /**
  * Additional functionality for SolrForward and SolrForwardAuth records.
  *
@@ -44,6 +46,37 @@ namespace Finna\RecordDriver\Feature;
  */
 trait SolrForwardTrait
 {
+    /**
+     * Forward XML namespace.
+     *
+     * @var string
+     */
+    protected $forwardNs = 'http://project-forward.eu/schemas/EN15907-forward';
+
+    /**
+     * Record metadata as an XmlDoc.
+     *
+     * @var XmlDoc
+     */
+    protected $lazyRecordXmlDoc;
+
+    /**
+     * Set raw data to initialize the object.
+     *
+     * @param mixed $data Raw data representing the record; Record Model
+     * objects are normally constructed by Record Driver objects using data
+     * passed in from a Search Results object. The exact nature of the data may
+     * vary depending on the data source -- the important thing is that the
+     * Record Driver + Search Results objects work together correctly.
+     *
+     * @return void
+     */
+    public function setRawData($data)
+    {
+        parent::setRawData($data);
+        $this->lazyRecordXmlDoc = null;
+    }
+
     /**
      * Return an array of image URLs associated with this record with keys:
      * - url         Image URL
@@ -66,28 +99,26 @@ trait SolrForwardTrait
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
-        foreach ($this->getAllRecordsXML() as $xml) {
-            foreach ($xml->ProductionEvent as $event) {
-                $attributes = $event->ProductionEventType->attributes();
-                if (empty($attributes->{'elokuva-elonet-materiaali-kuva-url'})) {
+        $xmlDoc = $this->getAllRecordsXmlDoc();
+        foreach ($xmlDoc->all() as $xml) {
+            foreach ($xmlDoc->all($xml, 'ProductionEvent') as $event) {
+                $eventType = $xmlDoc->first($event, 'ProductionEventType');
+                if (!($url = $xmlDoc->attr($eventType, 'elokuva-elonet-materiaali-kuva-url'))) {
                     continue;
                 }
-                $url = (string)$attributes->{'elokuva-elonet-materiaali-kuva-url'};
                 if (!$this->isUrlLoadable($url, $this->getUniqueID())) {
                     continue;
                 }
-                if (!empty($xml->Title->PartDesignation->Value)) {
-                    $partAttrs = $xml->Title->PartDesignation->Value->attributes();
-                    $desc = (string)$partAttrs->{'kuva-kuvateksti'};
+
+                if ($partValue = $xmlDoc->first($xml, 'Title/PartDesignation/Value')) {
+                    $desc = $xmlDoc->attr($partValue, 'kuva-kuvateksti');
                 } else {
                     $desc = '';
                 }
                 $rights = [];
-                if (!empty($attributes->{'finna-kayttooikeus'})) {
-                    $rights['copyright']
-                        = (string)$attributes->{'finna-kayttooikeus'};
-                    $link
-                        = $this->getRightsLink($rights['copyright'], $language);
+                if ($copyright = $xmlDoc->attr($eventType, 'finna-kayttooikeus')) {
+                    $rights['copyright'] = $copyright;
+                    $link = $this->getRightsLink($rights['copyright'], $language);
                     if ($link) {
                         $rights['link'] = $link;
                     }
@@ -110,5 +141,34 @@ trait SolrForwardTrait
         }
         $this->cache[$cacheKey] = $images;
         return $images;
+    }
+
+    /**
+     * Get all original records as an XmlDoc object.
+     *
+     * @return XmlDoc
+     */
+    protected function getAllRecordsXmlDoc(): XmlDoc
+    {
+        if ($this->lazyRecordXmlDoc === null) {
+            $this->lazyRecordXmlDoc = new XmlDoc();
+            $this->lazyRecordXmlDoc->parse($this->fields['fullrecord']);
+            $this->lazyRecordXmlDoc->setDefaultNamespace($this->forwardNs);
+        }
+        return $this->lazyRecordXmlDoc;
+    }
+
+    /**
+     * Get the original main record as an XmlDoc node.
+     *
+     * This is just a very simple wrapper to account for any future needs.
+     *
+     * @param XmlDoc $xml Document
+     *
+     * @return array
+     */
+    protected function getMainRecordNode(XmlDoc $xml): array
+    {
+        return $xml->first();
     }
 }

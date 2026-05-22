@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Functionality related to IIIF manifests in records
+ * Functionality related to IIIF manifests in records.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\RecordDriver\Feature;
 
 /**
- * Additional functionality for IIIF in Finna
+ * Additional functionality for IIIF in Finna.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -51,7 +51,7 @@ trait FinnaIiifTrait
     }
 
     /**
-     * Checks that the content type corresponds to a IIIF Presentation manifest
+     * Checks that the content type corresponds to a IIIF Presentation manifest.
      *
      * @param string $contentType Content type to check
      *

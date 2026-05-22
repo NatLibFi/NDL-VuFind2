@@ -45,14 +45,14 @@ use VuFind\Session\Settings as SessionSettings;
 class GetUserList extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * UserlistEmbed helper
+     * UserlistEmbed helper.
      *
      * @var UserlistEmbed
      */
     protected $helper;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings $ss     Session settings
      * @param UserlistEmbed   $helper UserlistEmbed helper.

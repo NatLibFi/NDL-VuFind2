@@ -56,7 +56,7 @@ use function sprintf;
 class QueryBuilder extends \VuFindSearch\Backend\Solr\QueryBuilder
 {
     /**
-     * Maximum number of words in search query for spellcheck to be used
+     * Maximum number of words in search query for spellcheck to be used.
      */
     protected $maxSpellcheckWords;
 

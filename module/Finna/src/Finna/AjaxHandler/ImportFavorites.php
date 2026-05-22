@@ -62,7 +62,7 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ?UserEntityInterface         $user                Logged in user (or null)
      * @param SearchNormalizer             $searchNormalizer    Search normalize

@@ -65,7 +65,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected array $encapsulatedContentTypeRecords;
 
     /**
-     * Array of excluded descriptions
+     * Array of excluded descriptions.
      *
      * @var array
      */
@@ -108,15 +108,14 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
             return $this->cache[$cacheKey];
         }
 
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $uniqueId = $this->getUniqueID();
         $result = [];
         $images = ['image/png', 'image/jpeg'];
-        foreach ($xml->description as $desc) {
-            $attr = $desc->attributes();
-            $format = trim((string)($attr['format'] ?? ''));
+        foreach ($xml->all(path: 'description') as $desc) {
+            $format = $xml->attr($desc, 'format');
             if ($format && in_array($format, $images)) {
-                $url = (string)$desc;
+                $url = $xml->value($desc);
                 if ($this->isUrlLoadable($url, $uniqueId)) {
                     if (!$this->maxAmountOfImages()) {
                         $result[] = [
@@ -187,11 +186,11 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getSubjectPlaces(bool $extended = false)
     {
-        return $this->getFieldData('coverage', true, 'place', 'spatial');
+        return $this->getFieldData('coverage', $extended, 'place', 'spatial');
     }
 
     /**
-     * Get extended subject places
+     * Get extended subject places.
      *
      * @return array
      */
@@ -249,20 +248,19 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     ) {
         $lang = $this->getLocale();
         $lang = $lang === 'en-gb' ? 'en' : $lang;
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $elements = [];
-        foreach ($xml->{$xmlElementName} as $xmlElement) {
+        foreach ($this->getElements($xmlElementName) as $xmlElement) {
             if ($requiredType) {
-                $type = $xmlElement->attributes()->{'type'} ?? null;
-                if (!$type || $requiredType !== (string)$type) {
+                if ($requiredType !== $xml->attr($xmlElement, 'type')) {
                     continue;
                 }
             }
-            $elementLang = $xmlElement->attributes()->{'lang'} ?? null;
-            if ($elementLang && $lang !== (string)$elementLang) {
+            $elementLang = $this->getLangAttr($xmlElement);
+            if ($elementLang && $lang !== $elementLang) {
                 continue;
             }
-            $element = (string)$xmlElement;
+            $element = $xml->value($xmlElement);
             if ($extended) {
                 $element = [
                     'heading' => [$element],
@@ -270,11 +268,11 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
                     'detail' => '',
                     'authType' => '',
                 ];
-                if ($source = $xmlElement->attributes()->{'source'} ?? '') {
-                    $element['source'] = (string)$source;
+                if ($source = $xml->attr($xmlElement, 'source')) {
+                    $element['source'] = $source;
                 }
-                if ($id = $xmlElement->attributes()->{'identifier'} ?? null) {
-                    $element['id'] = (string)$id;
+                if ($id = $xml->attr($xmlElement, 'identifier')) {
+                    $element['id'] = $id;
                     $element['ids'][] = $element['id'];
                 }
             }
@@ -295,16 +293,20 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getAccessRestrictionsType($language)
     {
-        $xml = $this->getXmlRecord();
-        $rights = [];
-        if (!empty($xml->rights)) {
-            $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
-            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
-                $rights['link'] = $link;
-            }
-            return $rights;
+        if (!($elements = $this->getElements('rights'))) {
+            return false;
         }
-        return false;
+        $xml = $this->getXmlReader();
+        if (!($value = $xml->value(reset($elements)))) {
+            return false;
+        }
+        $rights = [
+            'copyright' => $this->getMappedRights($value),
+        ];
+        if ($link = $this->getRightsLink($rights['copyright'], $language)) {
+            $rights['link'] = $link;
+        }
+        return $rights;
     }
 
     /**
@@ -324,17 +326,16 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getType(): string
     {
-        return (string)($this->getXmlRecord()->type ?? '');
+        $elements = $this->getElements('type');
+        return $elements ? $this->getXmlReader()->value(reset($elements)) : '';
     }
 
     /**
-     * Get topics
-     *
-     * @param string $type defaults to /onto/yso/
+     * Get topics.
      *
      * @return array
      */
-    public function getTopics(string $type = '/onto/yso/'): array
+    public function getTopics(): array
     {
         return $this->getAllSubjectHeadings();
     }
@@ -346,7 +347,8 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getProvenance(): string
     {
-        return (string)($this->getXmlRecord()->provenance ?? '');
+        $elements = $this->getElements('provenance');
+        return $elements ? $this->getXmlReader()->value(reset($elements)) : '';
     }
 
     /**
@@ -356,7 +358,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getAdditionalInformation(): string
     {
-        return (string)($this->getXmlRecord()->additionalInformation ?? '');
+        return $this->getXmlReader()->firstValue(path: "{{$this->aipaNs}}additionalInformation") ?? '';
     }
 
     /**

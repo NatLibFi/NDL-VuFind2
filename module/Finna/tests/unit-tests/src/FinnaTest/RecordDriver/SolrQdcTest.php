@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrQdc Institutional Repository Test Class
+ * SolrQdc Institutional Repository Test Class.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Finna\RecordDriver\SolrQdc;
 use function is_callable;
 
 /**
- * SolrQdc Institutional Repository Test Class
+ * SolrQdc Institutional Repository Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -209,7 +209,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test functions
+     * Test functions.
      *
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
@@ -237,7 +237,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected author data
+     * Function to get expected author data.
      *
      * @return array
      */
@@ -290,7 +290,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getNonPresenterAuthors
+     * Test getNonPresenterAuthors.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -317,7 +317,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getXML
+     * Test getXML.
      *
      * @return void
      */
@@ -405,7 +405,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected function data
+     * Function to get expected function data.
      *
      * @return array
      */
@@ -529,7 +529,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test functions with return value array
+     * Test functions with return value array.
      *
      * @param string $function Function of the driver to test
      * @param mixed  $expected Result to be expected
@@ -550,7 +550,162 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected publication date range data
+     * Data for getOnlineURLs.
+     *
+     * @return array
+     */
+    public static function getOnlineURLsData(): array
+    {
+        return [
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"anotherSource"}',
+                ],
+                [
+                    0 => [
+                        'url' => 'https://imagelink.fi',
+                        'mediaType' => 'image/jpeg',
+                        'text' => '',
+                        'source' => [
+                            'source',
+                            'anotherSource',
+                        ],
+                        'type' => 'image',
+                        'codec' => 'jpeg',
+                        'embed' => null,
+                    ],
+                ],
+                false,
+                null,
+            ],
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"anotherSource"}',
+                ],
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"anotherSource"}',
+                ],
+                true,
+                null,
+            ],
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/otherlink.fi","mediaType":"123","text":"","source":"source"}',
+                    '{"url":"https:\/\/otherlink.fi","mediaType":"","text":"","source":"anotherSource"}',
+                    '{"url":"https:\/\/audiolink.mp3","mediaType":"audio\/mp3","text":"","source":"source"}',
+                ],
+                [
+                    1 => [
+                        'url' => 'https://otherlink.fi',
+                        'mediaType' => '123',
+                        'text' => '',
+                        'source' => [
+                            'source',
+                            'anotherSource',
+                        ],
+                        'type' => null,
+                        'codec' => '',
+                        'embed' => null,
+                    ],
+                    2 => [
+                        'url' => 'https://audiolink.mp3',
+                        'mediaType' => 'audio/mp3',
+                        'text' => '',
+                        'source' => 'source',
+                        'type' => 'audio',
+                        'codec' => 'mp3',
+                        'embed' => 'audio',
+                    ],
+                ],
+                false,
+                ['image'],
+            ],
+            [
+                [
+                    '{"url":"https:\/\/file.pdf","mediaType":"application\/pdf","text":"PDF","source":"source"}',
+                    '{"url":"https:\/\/link.fi","mediaType":"\/","text":"Linkki verkkoaineistoon","source":"source"}',
+                    '{"url":"https:\/\/anotherLink.fi","text":"Ei mediaType","source":""}',
+                ],
+                [
+                    0 => [
+                        'url' => 'https://file.pdf',
+                        'mediaType' => 'application/pdf',
+                        'text' => 'PDF',
+                        'source' => 'source',
+                        'type' => null,
+                        'codec' => 'pdf',
+                        'embed' => null,
+                    ],
+                    1 => [
+                        'url' => 'https://link.fi',
+                        'mediaType' => '/',
+                        'text' => 'Linkki verkkoaineistoon',
+                        'source' => 'source',
+                        'type' => null,
+                        'codec' => '',
+                        'embed' => null,
+                    ],
+                    2 => [
+                        'url' => 'https://anotherLink.fi',
+                        'text' => 'Ei mediaType',
+                        'source' => '',
+                    ],
+                ],
+                false,
+                null,
+            ],
+            [
+                [
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/imagelink.fi","mediaType":"image\/jpeg","text":"","source":"source"}',
+                    '{"url":"https:\/\/link.fi","mediaType":"","text":"Linkki verkkoaineistoon","source":"source"}',
+                    '{"url":"https:\/\/audiolink.mp3","mediaType":"audio\/mp3","text":"","source":"source"}',
+                ],
+                [
+                    1 => [
+                        'url' => 'https://link.fi',
+                        'mediaType' => '',
+                        'text' => 'Linkki verkkoaineistoon',
+                        'source' => 'source',
+                    ],
+                ],
+                false,
+                ['image', 'audio'],
+            ],
+        ];
+    }
+
+    /**
+     * Function to get expected online url data.
+     *
+     * @param string $indexValue    Index values to test
+     * @param ?array $expected      Result to be expected
+     * @param ?bool  $raw           Boolean value for tested function
+     * @param ?array $excludedTypes Excluded types for tested function
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getOnlineURLsData')]
+    public function testGetOnlineURLs(
+        array $indexValue,
+        ?array $expected,
+        bool $raw,
+        ?array $excludedTypes
+    ): void {
+        $record = new SolrQdc([], [], new \VuFind\Config\Config([]));
+        $record->setRawData(['online_urls_str_mv' => $indexValue]);
+        $this->assertSame(
+            $expected,
+            $record->getOnlineURLs($raw, $excludedTypes)
+        );
+    }
+
+    /**
+     * Function to get expected publication date range data.
      *
      * @return array
      */
@@ -597,7 +752,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getPublicationDateRange
+     * Test getPublicationDateRange.
      *
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
@@ -627,7 +782,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Simple function to test element filtering works properly
+     * Simple function to test element filtering works properly.
      *
      * @return void
      */
@@ -647,7 +802,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected human readable publication dates data
+     * Function to get expected human readable publication dates data.
      *
      * @return array
      */
@@ -694,7 +849,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getHumanReadablePublicationDates
+     * Test getHumanReadablePublicationDates.
      *
      * @param string $indexValue Index value to test
      * @param ?array $expected   Result to be expected
@@ -724,7 +879,67 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a record driver with fake data
+     * Test titles.
+     *
+     * @return void
+     */
+    public function testTitles(): void
+    {
+        $rawData = [
+            'title' => 'Otsikko suomeksi',
+            'title_fi_txt' => 'Otsikko suomeksi',
+            'title_en_txt' => 'Title in English',
+            'title_sv_txt' => 'Titel på svenska',
+            'title_alt' => [
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+        ];
+        $driver = $this->getMuseumDriver(overrides: $rawData, language: 'fi', fallbackLanguages: 'fi,sv,en');
+        $this->assertSame(
+            'Otsikko suomeksi',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Titel på svenska',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getMuseumDriver(overrides: $rawData, language: 'sv');
+        $this->assertSame(
+            'Titel på svenska',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getMuseumDriver(overrides: $rawData, language: 'en');
+        $this->assertSame(
+            'Title in English',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+    }
+
+    /**
+     * Get a record driver with fake data.
      *
      * @param array  $overrides    Fixture fields to override
      * @param array  $searchConfig Search configuration
@@ -809,15 +1024,21 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a record driver with fake data
+     * Get a record driver with fake data.
      *
-     * @param array $overrides    Fixture fields to override
-     * @param array $searchConfig Search configuration
+     * @param array  $overrides         Fixture fields to override
+     * @param array  $searchConfig      Search configuration
+     * @param string $language          Language
+     * @param string $fallbackLanguages Site fallback languages
      *
      * @return SolrQdc
      */
-    protected function getMuseumDriver($overrides = [], $searchConfig = []): SolrQdc
-    {
+    protected function getMuseumDriver(
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+        $fallbackLanguages = 'fi,en',
+    ): SolrQdc {
         $fixture = $this->getFixture('qdc/qdc_museum_test.xml', 'Finna');
         $config = [
             'Record' => [
@@ -843,7 +1064,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         $localeConfig = [
             'Site' => [
                 'language' => 'fi',
-                'fallback_languages' => 'en-gb,sv',
+                'fallback_languages' => $fallbackLanguages,
                 'browserDetectLanguage' => false,
             ],
             'Languages' => [
@@ -855,7 +1076,15 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
-        $record->setRawData(['id' => 'knp-247394', 'fullrecord' => $fixture]);
+        $translator = $this
+            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods([])
+            ->getMock();
+        $translator->setLocale($language);
+        $record->setTranslator($translator);
+        $defaultData = ['id' => 'knp-247394', 'fullrecord' => $fixture];
+        $record->setRawData(array_merge($defaultData, $overrides));
         return $record;
     }
 }

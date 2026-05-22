@@ -43,7 +43,7 @@ use Laminas\Cache\Storage\Adapter\AdapterOptions;
 class FilesystemOptions extends AdapterOptions
 {
     /**
-     * Get cache dir
+     * Get cache dir.
      *
      * @return string
      */

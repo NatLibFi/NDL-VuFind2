@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Statistics driver plugin manager
+ * Statistics driver plugin manager.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Statistics\Driver;
 
 /**
- * Statistics driver plugin manager
+ * Statistics driver plugin manager.
  *
  * @category VuFind
  * @package  Statistics

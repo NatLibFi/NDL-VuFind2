@@ -43,7 +43,7 @@ use DateTime;
 interface UserEntityInterface extends \VuFind\Db\Entity\UserEntityInterface
 {
     /**
-     * Due date reminder setting setter
+     * Due date reminder setting setter.
      *
      * @param int $remind New due date reminder setting.
      *
@@ -52,14 +52,14 @@ interface UserEntityInterface extends \VuFind\Db\Entity\UserEntityInterface
     public function setFinnaDueDateReminder(int $remind): static;
 
     /**
-     * Due date reminder setting getter
+     * Due date reminder setting getter.
      *
      * @return int
      */
     public function getFinnaDueDateReminder(): int;
 
     /**
-     * Nickname setter
+     * Nickname setter.
      *
      * @param ?string $nickname Nickname or null for none
      *
@@ -68,14 +68,14 @@ interface UserEntityInterface extends \VuFind\Db\Entity\UserEntityInterface
     public function setFinnaNickname(?string $nickname): static;
 
     /**
-     * Nickname getter
+     * Nickname getter.
      *
      * @return ?string
      */
     public function getFinnaNickName(): ?string;
 
     /**
-     * Protection status setter
+     * Protection status setter.
      *
      * @param bool $protected Is the user protected
      *
@@ -84,14 +84,14 @@ interface UserEntityInterface extends \VuFind\Db\Entity\UserEntityInterface
     public function setFinnaProtected(bool $protected): static;
 
     /**
-     * Protection status getter
+     * Protection status getter.
      *
      * @return bool
      */
     public function getFinnaProtected(): bool;
 
     /**
-     * Last expiration reminder date setter
+     * Last expiration reminder date setter.
      *
      * @param ?DateTime $dateTime Expiration reminder date
      *
@@ -100,21 +100,21 @@ interface UserEntityInterface extends \VuFind\Db\Entity\UserEntityInterface
     public function setFinnaLastExpirationReminderDate(?DateTime $dateTime): static;
 
     /**
-     * Last expiration reminder date getter
+     * Last expiration reminder date getter.
      *
      * @return ?DateTime
      */
     public function getFinnaLastExpirationReminderDate(): ?DateTime;
 
     /**
-     * Get display name
+     * Get display name.
      *
      * @return string
      */
     public function getDisplayName();
 
     /**
-     * Get a displayable version of username (improved version of getDisplayName)
+     * Get a displayable version of username (improved version of getDisplayName).
      *
      * @return string
      */

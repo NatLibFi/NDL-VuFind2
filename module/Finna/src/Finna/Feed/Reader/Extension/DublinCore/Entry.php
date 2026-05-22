@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Laminas\Feed\Entry extension for Dublin Core
+ * Laminas\Feed\Entry extension for Dublin Core.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Laminas\Feed\Reader\Extension\DublinCore\Entry as ParentEntry;
 use function array_key_exists;
 
 /**
- * Laminas\Feed\Entry extension for Dublin Core
+ * Laminas\Feed\Entry extension for Dublin Core.
  *
  * @category VuFind
  * @package  Feed_Plugins

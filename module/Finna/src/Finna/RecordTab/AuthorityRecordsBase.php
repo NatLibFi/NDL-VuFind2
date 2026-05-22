@@ -46,7 +46,7 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase imple
     use TranslatorAwareTrait;
 
     /**
-     * Authority helper
+     * Authority helper.
      *
      * @var \Finna\Search\Solr\AuthorityHelper
      */
@@ -60,7 +60,7 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase imple
     protected $records = null;
 
     /**
-     * Record count
+     * Record count.
      *
      * @var int
      */
@@ -74,7 +74,7 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase imple
     protected $driver;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Finna\Search\Solr\AuthorityHelper $authorityHelper Authority helper
      */
@@ -170,14 +170,14 @@ abstract class AuthorityRecordsBase extends \VuFind\RecordTab\AbstractBase imple
     }
 
     /**
-     * Get record tab label
+     * Get record tab label.
      *
      * @return string
      */
     abstract protected function getLabel();
 
     /**
-     * Return index field used when listing records
+     * Return index field used when listing records.
      *
      * @return string
      */

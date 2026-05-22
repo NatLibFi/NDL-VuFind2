@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Feed support trait
+ * Feed support trait.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFind\Config\Config;
 use function is_string;
 
 /**
- * Feed support trait
+ * Feed support trait.
  *
  * @category VuFind
  * @package  AJAX

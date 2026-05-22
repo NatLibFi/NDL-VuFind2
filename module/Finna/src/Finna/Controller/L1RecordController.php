@@ -1,7 +1,7 @@
 <?php
 
 /**
- * L1 Record Controller
+ * L1 Record Controller.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Config\Config;
 
 /**
- * L1 Record Controller
+ * L1 Record Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -44,7 +44,7 @@ use VuFind\Config\Config;
 class L1RecordController extends RecordController
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ServiceLocatorInterface $sm     Service manager
      * @param Config                  $config VuFind configuration

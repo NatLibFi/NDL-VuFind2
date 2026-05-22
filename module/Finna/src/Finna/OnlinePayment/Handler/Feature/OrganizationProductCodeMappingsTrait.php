@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait for organization product code mappings
+ * Trait for organization product code mappings.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\OnlinePayment\Handler\Feature;
 
 /**
- * Trait for organization product code mappings
+ * Trait for organization product code mappings.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -41,14 +41,14 @@ namespace Finna\OnlinePayment\Handler\Feature;
 trait OrganizationProductCodeMappingsTrait
 {
     /**
-     * Organization-specific product code mappings
+     * Organization-specific product code mappings.
      *
      * @var array
      */
     protected $organizationProductCodeMappings = [];
 
     /**
-     * Initialize the handler
+     * Initialize the handler.
      *
      * @param array $paymentConfig Online payment configuration
      *
@@ -62,7 +62,7 @@ trait OrganizationProductCodeMappingsTrait
     }
 
     /**
-     * Get a product code for a fine
+     * Get a product code for a fine.
      *
      * @param array $fine Fine
      *

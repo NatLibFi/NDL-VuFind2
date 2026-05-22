@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Cart Class
+ * Cart Class.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna;
 
 /**
- * Cart Class
+ * Cart Class.
  *
  * The data model object representing a user's book cart.
  *

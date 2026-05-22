@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait which returns pre-configured mocks
+ * Trait which returns pre-configured mocks.
  *
  * PHP version 8
  *
@@ -50,7 +50,7 @@ use VuFind\RecordDriver\Missing;
 use function in_array;
 
 /**
- * Trait which returns pre-configured mocks
+ * Trait which returns pre-configured mocks.
  *
  * @category VuFind
  * @package  Tests
@@ -100,6 +100,22 @@ trait MockLoadersTrait
                     $rawData = $record['raw_data'] ?? [];
                     $rawData['fullrecord'] = $fixture;
                     $mockedRecord->setRawData($rawData);
+                    $localeConfig = [
+                        'Site' => [
+                            'language' => 'fi',
+                            'fallback_languages' => 'fi,en',
+                            'browserDetectLanguage' => false,
+                        ],
+                        'Languages' => [
+                            'fi' => 'Finnish',
+                            'en' => 'English',
+                            'sv' => 'Swedish',
+                            'en-gb' => 'British English',
+                            'se' => 'Northern Sámi',
+                        ],
+                    ];
+                    $localeConfig = new \VuFind\Config\Config($localeConfig);
+                    $mockedRecord->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
                     $foundRecords[] = $mockedRecord;
                 }
             }
@@ -120,7 +136,7 @@ trait MockLoadersTrait
     }
 
     /**
-     * Get record driver plugin manager
+     * Get record driver plugin manager.
      *
      * @param array $config Main config
      *

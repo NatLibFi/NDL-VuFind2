@@ -45,7 +45,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 interface FinnaDueDateReminderEntityInterface extends EntityInterface
 {
     /**
-     * Id getter
+     * Id getter.
      *
      * @return ?int
      */

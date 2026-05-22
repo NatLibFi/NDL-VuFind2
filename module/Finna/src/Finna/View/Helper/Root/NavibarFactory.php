@@ -47,7 +47,7 @@ use Psr\Container\ContainerInterface;
 class NavibarFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -68,10 +68,21 @@ class NavibarFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        return new $requestedName(
-            $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('navibar'),
-            $container->get('Finna\OrganisationInfo\OrganisationInfo'),
-            $container->get('Router')
-        );
+        $navibar = new $requestedName();
+        $configManager = $container->get(\VuFind\Config\ConfigManagerInterface::class);
+
+        // NavibarTrait
+        $navibar->setNavibarConfig($configManager->getConfigArray('navibar'));
+        $navibar->setRouter($container->get('Router'));
+        $navibar->setServerUrlHelper($container->get(\VuFind\Http\ServerUrlHelper::class));
+
+        // MenuCheckMethodsTrait
+        $navibar->setCombinedConfig($configManager->getConfigArray('combined'));
+        $navibar->setPrimoConfig($configManager->getConfigArray('Primo'));
+        $navibar->setBrowseConfig($configManager->getConfigArray('browse'));
+        $navibar->setOrganisationInfoConfig($configManager->getConfigArray('OrganisationInfo'));
+        $navibar->setAuthorityConfig($configManager->getConfigArray('authority'));
+
+        return $navibar;
     }
 }

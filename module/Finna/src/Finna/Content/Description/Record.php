@@ -47,14 +47,14 @@ class Record extends AbstractDescriptionProvider implements TranslatorAwareInter
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param RendererInterface $renderer View renderer
      */
@@ -77,7 +77,6 @@ class Record extends AbstractDescriptionProvider implements TranslatorAwareInter
         if ($record instanceof \Finna\RecordDriver\SolrLido) {
             return '';
         }
-        $language = $this->translator->getLocale();
         if (!($summary = $record->getSummary())) {
             return '';
         }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Recommendation Module Factory Class
+ * Recommendation Module Factory Class.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ namespace Finna\Recommend;
 use Laminas\ServiceManager\ServiceManager;
 
 /**
- * Recommendation Module Factory Class
+ * Recommendation Module Factory Class.
  *
  * @category VuFind
  * @package  Recommendations

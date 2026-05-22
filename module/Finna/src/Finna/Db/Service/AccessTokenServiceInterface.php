@@ -41,7 +41,7 @@ namespace Finna\Db\Service;
 interface AccessTokenServiceInterface extends \VuFind\Db\Service\AccessTokenServiceInterface
 {
     /**
-     * Check if api key is active in database
+     * Check if api key is active in database.
      *
      * @param string $token Token for the access_token
      *

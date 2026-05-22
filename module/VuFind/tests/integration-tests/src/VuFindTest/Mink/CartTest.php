@@ -613,7 +613,7 @@ final class CartTest extends \VuFindTest\Integration\MinkTestCase
         );
         $this->clickCss($page, '.modal-body .btn.btn-primary');
         // Check for confirmation message
-        $this->assertEquals(
+        $this->assertSame(
             'Your item(s) were emailed',
             $this->findCssAndGetText($page, '.modal .alert-success')
         );
@@ -646,7 +646,7 @@ final class CartTest extends \VuFindTest\Integration\MinkTestCase
 
         // Save the favorites.
         $this->clickCss($page, '.modal-body input[name=submitButton]');
-        $this->assertEquals(
+        $this->assertSame(
             'Your item(s) were saved successfully. Go to List.',
             $this->findCssAndGetText($page, '.modal-body .alert-success')
         );
@@ -796,7 +796,7 @@ final class CartTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Assert visibility
+     * Assert visibility.
      *
      * @param array  $combo    Current Site configuration
      * @param bool[] $elements Array of element visibility states indexed by name
@@ -814,7 +814,7 @@ final class CartTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Run tests on a specified configuration
+     * Run tests on a specified configuration.
      *
      * @param Element $page  Page element
      * @param array   $combo Site configuration to test
@@ -858,7 +858,7 @@ final class CartTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Test toolbar visibility configuration combinations
+     * Test toolbar visibility configuration combinations.
      *
      * @return void
      */

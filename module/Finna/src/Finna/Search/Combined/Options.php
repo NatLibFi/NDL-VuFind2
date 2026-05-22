@@ -45,7 +45,7 @@ class Options extends \VuFind\Search\Combined\Options
     use \Finna\Search\FinnaOptions;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface               $configManager  Config loader
      * @param \VuFind\Search\Options\PluginManager $optionsManager Options plugin manager

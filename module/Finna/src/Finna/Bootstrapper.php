@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind Bootstrapper
+ * VuFind Bootstrapper.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Laminas\Mvc\MvcEvent;
 use function in_array;
 
 /**
- * VuFind Bootstrapper
+ * VuFind Bootstrapper.
  *
  * @category VuFind
  * @package  Bootstrap
@@ -47,28 +47,28 @@ use function in_array;
 class Bootstrapper
 {
     /**
-     * Main VuFind configuration
+     * Main VuFind configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config = null;
 
     /**
-     * Current MVC event
+     * Current MVC event.
      *
      * @var MvcEvent
      */
     protected $event;
 
     /**
-     * Event manager
+     * Event manager.
      *
      * @var \Laminas\EventManager\EventManagerInterface
      */
     protected $events;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param MvcEvent $event Laminas MVC Event object
      */
@@ -97,7 +97,7 @@ class Bootstrapper
     }
 
     /**
-     * Set up bot check that disallows access to some functions from bots
+     * Set up bot check that disallows access to some functions from bots.
      *
      * @return void
      */
@@ -168,7 +168,7 @@ class Bootstrapper
     }
 
     /**
-     * Set up statistics event handler
+     * Set up statistics event handler.
      *
      * N.B. The event handler may have already been created by the database row
      * session factory to ensure proper hookup before session events.

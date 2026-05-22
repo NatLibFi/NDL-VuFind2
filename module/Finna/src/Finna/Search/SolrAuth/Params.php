@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrAuth Search Parameters
+ * SolrAuth Search Parameters.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\SolrAuth;
 
 /**
- * SolrAuth Search Parameters
+ * SolrAuth Search Parameters.
  *
  * @category VuFind
  * @package  Search_Solr

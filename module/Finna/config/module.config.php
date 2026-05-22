@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna Module Configuration
+ * Finna Module Configuration.
  *
  * PHP version 8
  *
@@ -365,6 +365,15 @@ $config = [
             'preview' => \Finna\Controller\Plugin\Preview::class,
         ],
     ],
+    'view_helpers' => [
+        'factories' => [
+            'Finna\View\Helper\Root\BiblioworksChatbot' =>
+                'Finna\View\Helper\Root\BiblioworksChatbotFactory',
+        ],
+        'aliases' => [
+            'biblioworksChatbot' => 'Finna\View\Helper\Root\BiblioworksChatbot',
+        ],
+    ],
     'service_manager' => [
         'allow_override' => true,
         'factories' => [
@@ -461,6 +470,8 @@ $config = [
                         'Finna\AjaxHandler\AddToListFactory',
                     'Finna\AjaxHandler\BazaarDestroySession' =>
                         'Finna\AjaxHandler\BazaarDestroySessionFactory',
+                    'Finna\AjaxHandler\BiblioworksHelpdeskContext' =>
+                        'Finna\AjaxHandler\BiblioworksHelpdeskContextFactory',
                     'Finna\AjaxHandler\CheckRequestsAreValid' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\CommentRecord' =>
@@ -511,6 +522,8 @@ $config = [
                         'Finna\AjaxHandler\GetRecordDriverRelatedRecordsFactory',
                     'Finna\AjaxHandler\GetRecordInfoByAuthority' =>
                         'Finna\AjaxHandler\GetRecordInfoByAuthorityFactory',
+                    'Finna\AjaxHandler\GetRecordSeries' =>
+                        'Finna\AjaxHandler\GetRecordSeriesFactory',
                     'Finna\AjaxHandler\GetRequestGroupPickupLocations' =>
                         'VuFind\AjaxHandler\AbstractIlsAndUserActionFactory',
                     'Finna\AjaxHandler\GetSearchResults' => 'VuFind\AjaxHandler\GetSearchResultsFactory',
@@ -538,6 +551,7 @@ $config = [
                 'aliases' => [
                     'addToList' => 'Finna\AjaxHandler\AddToList',
                     'bazaarDestroySession' => 'Finna\AjaxHandler\BazaarDestroySession',
+                    'biblioworksHelpdeskContext' => 'Finna\AjaxHandler\BiblioworksHelpdeskContext',
                     'checkRequestsAreValid' => 'Finna\AjaxHandler\CheckRequestsAreValid',
                     'editList' => 'Finna\AjaxHandler\EditList',
                     'editListResource' => 'Finna\AjaxHandler\EditListResource',
@@ -563,6 +577,7 @@ $config = [
                     'getRecordData' => 'Finna\AjaxHandler\GetRecordData',
                     'getRecordDriverRelatedRecords' => 'Finna\AjaxHandler\GetRecordDriverRelatedRecords',
                     'getRecordInfoByAuthority' => 'Finna\AjaxHandler\GetRecordInfoByAuthority',
+                    'getRecordSeries' => 'Finna\AjaxHandler\GetRecordSeries',
                     'getSearchTabsRecommendations' => 'Finna\AjaxHandler\GetSearchTabsRecommendations',
                     'getSimilarRecords' => 'Finna\AjaxHandler\GetSimilarRecords',
                     'getUserList' => 'Finna\AjaxHandler\GetUserList',
@@ -771,6 +786,22 @@ $config = [
                     'VuFind\Form\Handler\Email' => 'Finna\Form\Handler\Email',
                 ],
             ],
+            'hierarchy_treedataformatter' => [
+                'factories' => [
+                    'Finna\Hierarchy\TreeDataFormatter\Json' => 'VuFind\Hierarchy\TreeDataFormatter\AbstractBaseFactory',
+                ],
+                'aliases' => [
+                    'VuFind\Hierarchy\TreeDataFormatter\Json' => 'Finna\Hierarchy\TreeDataFormatter\Json',
+                ],
+            ],
+            'hierarchy_treedatasource' => [
+                'factories' => [
+                    'Finna\Hierarchy\TreeDataSource\Solr' => 'VuFind\Hierarchy\TreeDataSource\SolrFactory',
+                ],
+                'aliases' => [
+                    'VuFind\Hierarchy\TreeDataSource\Solr' => 'Finna\Hierarchy\TreeDataSource\Solr',
+                ],
+            ],
             'ils_driver' => [
                 'factories' => [
                     'Finna\ILS\Driver\Alma' => 'VuFind\ILS\Driver\DriverWithDateConverterFactory',
@@ -975,6 +1006,16 @@ $config = [
                     'SolrBrowse' => 'Finna\Search\SolrBrowse\Results',
                 ],
             ],
+            'section_plugin' => [
+                'factories' => [
+                    'Finna\Navigation\FooterMenu' => 'Finna\Navigation\FooterMenuFactory',
+                    'Finna\Navigation\HeaderBar' => 'Finna\Navigation\HeaderBarFactory',
+                ],
+                'aliases' => [
+                    'VuFind\Navigation\FooterMenu' => 'Finna\Navigation\FooterMenu',
+                    'VuFind\Navigation\HeaderBar' => 'Finna\Navigation\HeaderBar',
+                ],
+            ],
             'session' => [
                 'factories' => [
                     'Finna\Session\Redis' => 'Finna\Session\RedisFactory',
@@ -1083,6 +1124,8 @@ $config = [
                     'Finna\RecordTab\HierarchyTree' => 'VuFind\RecordTab\HierarchyTreeFactory',
                     'Finna\RecordTab\Map' => 'Finna\RecordTab\Factory::getMap',
                     'Finna\RecordTab\UserComments' => 'Finna\RecordTab\Factory::getUserComments',
+                    'Finna\RecordTab\Series' => 'Finna\RecordTab\Factory::getSeries',
+
                 ],
                 'invokables' => [
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
@@ -1092,6 +1135,7 @@ $config = [
                     'authorityrecordstopic' => 'Finna\RecordTab\AuthorityRecordsTopic',
                     'componentparts' => 'Finna\RecordTab\ComponentParts',
                     'holdingsarchive' => 'Finna\RecordTab\HoldingsArchive',
+                    'series' => 'Finna\RecordTab\Series',
 
                     // Overrides:
                     'VuFind\RecordTab\CollectionHierarchyTree' => 'Finna\RecordTab\CollectionHierarchyTree',
@@ -1198,6 +1242,7 @@ $dynamicRoutes = [
 $staticRoutes = [
     'LibraryCards/Recover', 'LibraryCards/Register',
     'LibraryCards/RegistrationDone', 'LibraryCards/RegistrationForm',
+    'LibraryCards/VerifyRegistrationEmail',
     'LocationService/Modal',
     'Cover/Pipe',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',

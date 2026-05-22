@@ -5,7 +5,7 @@
         $linkText = 'View Full Record';
     }
 ?>
-<h2><?=$this->escapeHtml($this->driver->getShortTitle() . ' ' . $this->driver->getSubtitle() . ' ' . $this->driver->getTitleSection())?></h2>
+<h2><?=$this->escapeHtml($this->driver->getTitle())?></h2>
 <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($this->driver))?>">
     <?=$this->transEsc($linkText)?>
 </a>

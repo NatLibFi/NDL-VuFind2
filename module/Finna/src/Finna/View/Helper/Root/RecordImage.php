@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Header view helper
+ * Header view helper.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use Laminas\View\Helper\Url;
 use function func_get_args;
 
 /**
- * Header view helper
+ * Header view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -49,14 +49,14 @@ use function func_get_args;
 class RecordImage extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Record view helper
+     * Record view helper.
      *
      * @var Record
      */
     protected $record;
 
     /**
-     * Url helper
+     * Url helper.
      *
      * @var Url
      */
@@ -232,7 +232,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Returns an array containing all the high resolution images for record image
+     * Returns an array containing all the high resolution images for record image.
      *
      * @param int $index Record image index
      *
@@ -245,7 +245,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get all images as Cover links
+     * Get all images as Cover links.
      *
      * @param string $language   Language for copyright information
      * @param array  $params     Optional array of image parameters as an
@@ -362,6 +362,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             // Limit combined results to a single image
             $images = [reset($images)];
         }
+
+        // Ensure that the array is a list so that image paginator can handle it properly:
+        $images = array_values($images);
+
         $context = [
             'type' => $type,
             'images' => $images,
@@ -451,11 +455,13 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             }
             $images[$ind]['type'] = 'model';
         }
+        // Sort the array to ensure correct order:
+        ksort($images);
         return $images;
     }
 
     /**
-     * Get image with index as cover links
+     * Get image with index as cover links.
      *
      * @param int $index Index of the image array to get.
      *

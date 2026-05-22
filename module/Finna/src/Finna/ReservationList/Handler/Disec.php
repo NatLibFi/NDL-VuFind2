@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Disec handler
+ * Disec handler.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Disec handler
+ * Disec handler.
  *
  * @category VuFind
  * @package  ReservationList
@@ -44,7 +44,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 class Disec extends AbstractBase
 {
     /**
-     * Common headers in requests
+     * Common headers in requests.
      *
      * @var array
      */
@@ -54,7 +54,7 @@ class Disec extends AbstractBase
     ];
 
     /**
-     * Places an order
+     * Places an order.
      *
      * @param array               $formValues Values gathered from submitted form
      * @param UserEntityInterface $user       User entity
@@ -152,7 +152,7 @@ class Disec extends AbstractBase
     }
 
     /**
-     * Initialize connection handler
+     * Initialize connection handler.
      *
      * @param string $institution List owner institution code
      * @param array  $config      List specific configuration as an array

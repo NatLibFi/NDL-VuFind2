@@ -48,7 +48,7 @@ class HideFacetValueListenerTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\MockSearchCommandTrait;
 
     /**
-     * Get a mock backend
+     * Get a mock backend.
      *
      * @param string $id ID of fake backend.
      *
@@ -94,7 +94,7 @@ class HideFacetValueListenerTest extends \PHPUnit\Framework\TestCase
             );
         $result->method('setFacets')
             ->willReturnCallback(
-                function ($new) use (&$facets): void {
+                function (array $new) use (&$facets): void {
                     $facets = $new;
                 }
             );

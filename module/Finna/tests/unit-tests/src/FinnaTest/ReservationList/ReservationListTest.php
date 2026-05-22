@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ReservationList test class
+ * ReservationList test class.
  *
  * PHP version 8
  *
@@ -60,7 +60,7 @@ use VuFindHttp\HttpService;
 use VuFindTest\Container\MockContainer;
 
 /**
- * Reservation list tests
+ * Reservation list tests.
  *
  * @category VuFind
  * @package  Tests
@@ -83,7 +83,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     protected $container;
 
     /**
-     * Setup method
+     * Setup method.
      *
      * @return void
      */
@@ -93,7 +93,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mocked reservation list service
+     * Get mocked reservation list service.
      *
      * @param ?MockObject $mockHttpService       Http service
      * @param ?MockObject $listPluginManager     List plugin manager
@@ -130,7 +130,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $newListTemplate = $this->getMockBuilder(FinnaResourceList::class)->onlyMethods(['getUser'])
           ->disableOriginalConstructor()->getMock();
         $service->method('createListForUser')->willReturnCallback(
-            function ($user, $params) use ($newListTemplate, $service) {
+            function (?\VuFind\Db\Entity\UserEntityInterface $user, array $params) use ($newListTemplate, $service) {
                 $cloned = clone $newListTemplate;
                 if ($params) {
                     $cloned = $service->populateListValues($cloned, $user, $params);
@@ -167,7 +167,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for properly set list data
+     * Data provider for properly set list data.
      *
      * @return array
      */
@@ -192,7 +192,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for insufficient list data
+     * Data provider for insufficient list data.
      *
      * @return array
      */
@@ -218,7 +218,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test list creation
+     * Test list creation.
      *
      * @param int   $id      User id
      * @param array $prefill Data to prefill the list with
@@ -236,7 +236,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test failing list creation
+     * Test failing list creation.
      *
      * @param int   $id      User id
      * @param array $prefill Array to prefill the list with
@@ -254,7 +254,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing user access for lists
+     * Data provider for testing user access for lists.
      *
      * @return array
      */
@@ -273,7 +273,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing user access for lists
+     * Data provider for testing user access for lists.
      *
      * @return array
      */
@@ -292,7 +292,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test user list access
+     * Test user list access.
      *
      * @param int $ownerId   Owner id for the list
      * @param int $currentId Current user id for the list
@@ -311,7 +311,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test user list access failure
+     * Test user list access failure.
      *
      * @param int  $ownerId   Owner id for the list
      * @param ?int $currentId Current user id for the list or null for no user
@@ -329,7 +329,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing user deletion of lists
+     * Data provider for testing user deletion of lists.
      *
      * @return array
      */
@@ -355,7 +355,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test deleting list
+     * Test deleting list.
      *
      * @param int    $ownerId   Owner id for the list
      * @param ?int   $currentId Current user id for the list or null for no user
@@ -381,7 +381,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing setting a list being ordered
+     * Data provider for testing setting a list being ordered.
      *
      * @return array
      */
@@ -441,7 +441,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test deleting list
+     * Test deleting list.
      *
      * @param int   $ownerId  Owner id for the list
      * @param array $data     Data to pass for the list being ordered
@@ -465,7 +465,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get test data for testing handlers
+     * Get test data for testing handlers.
      *
      * @return array
      */
@@ -543,7 +543,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Creates an instance of a plugin manager for getting connection handlers
+     * Creates an instance of a plugin manager for getting connection handlers.
      *
      * @param ?MockObject $mockDisec              Disec handler
      * @param ?MockObject $mockEmail              Email handler
@@ -671,7 +671,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test list value returns for handlers
+     * Test list value returns for handlers.
      *
      * @param string $institution    Institution for list
      * @param string $listIdentifier List identifier for list
@@ -709,7 +709,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test disec data sending
+     * Test disec data sending.
      *
      * @return void
      */
@@ -755,7 +755,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test email data sending
+     * Test email data sending.
      *
      * @return void
      */
@@ -800,7 +800,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testgetListHandlerFromApi
+     * Data provider for testgetListHandlerFromApi.
      *
      * @return Generator
      */
@@ -827,7 +827,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test list fetch from an api endpoint
+     * Test list fetch from an api endpoint.
      *
      * @param bool   $success     Is the request successful
      * @param string $fixturePath Fixture path

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * STUB for legacy templates
+ * STUB for legacy templates.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * STUB for legacy templates
+ * STUB for legacy templates.
  *
  * @category VuFind
  * @package  View_Helpers

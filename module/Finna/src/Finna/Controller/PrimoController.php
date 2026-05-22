@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Controller
+ * Primo Central Controller.
  *
  * PHP version 8
  *
@@ -29,8 +29,12 @@
 
 namespace Finna\Controller;
 
+use Laminas\Mvc\MvcEvent;
+
+use function is_object;
+
 /**
- * Primo Central Controller
+ * Primo Central Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -50,7 +54,29 @@ class PrimoController extends \VuFind\Controller\PrimoController
     protected $searchClassId = 'Primo';
 
     /**
-     * Home action
+     * Use preDispatch event to block access when appropriate.
+     *
+     * @param MvcEvent $e Event object
+     *
+     * @return void
+     */
+    public function validateAccessPermission(MvcEvent $e)
+    {
+        // If there is an access permission set for this controller, pass it
+        // through the permission helper, and if the helper returns a custom
+        // response, use that instead of the normal behavior.
+        if ($this->accessPermission) {
+            $response = $this->permission()
+                ->check($this->accessPermission, $this->accessDeniedBehavior);
+            if (is_object($response)) {
+                $e->setResponse($response);
+                $e->stopPropagation();
+            }
+        }
+    }
+
+    /**
+     * Home action.
      *
      * @return mixed
      */
@@ -61,7 +87,7 @@ class PrimoController extends \VuFind\Controller\PrimoController
     }
 
     /**
-     * Handle onDispatch event
+     * Handle onDispatch event.
      *
      * @param \Laminas\Mvc\MvcEvent $e Event
      *
@@ -78,7 +104,7 @@ class PrimoController extends \VuFind\Controller\PrimoController
     }
 
     /**
-     * Search action -- call standard results action
+     * Search action -- call standard results action.
      *
      * @return mixed
      */

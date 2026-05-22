@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Map tab
+ * Map tab.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use function count;
 use function in_array;
 
 /**
- * Map tab
+ * Map tab.
  *
  * @category VuFind
  * @package  RecordTabs
@@ -58,7 +58,7 @@ class Map extends \VuFind\RecordTab\Map
     }
 
     /**
-     * Get all map markers (points, polygons etc.)
+     * Get all map markers (points, polygons etc.).
      *
      * @return string
      */
@@ -105,7 +105,7 @@ class Map extends \VuFind\RecordTab\Map
     }
 
     /**
-     * Convert WKT envelope to array
+     * Convert WKT envelope to array.
      *
      * @param string $envelope WKT envelope
      *
@@ -125,7 +125,7 @@ class Map extends \VuFind\RecordTab\Map
     }
 
     /**
-     * Convert WKT to array (support function for getGoogleMapMarker)
+     * Convert WKT to array (support function for getGoogleMapMarker).
      *
      * @param string $location Well Known Text, envelope or simple point
      *

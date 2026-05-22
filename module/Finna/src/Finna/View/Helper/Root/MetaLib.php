@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Dummy MetaLib view helper (for legacy code template code)
+ * Dummy MetaLib view helper (for legacy code template code).
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Dummy MetaLib view helper (for legacy code template code)
+ * Dummy MetaLib view helper (for legacy code template code).
  *
  * @category VuFind
  * @package  View_Helpers

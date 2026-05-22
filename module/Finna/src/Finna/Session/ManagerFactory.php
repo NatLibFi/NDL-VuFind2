@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for instantiating Session Manager
+ * Factory for instantiating Session Manager.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for instantiating Session Manager
+ * Factory for instantiating Session Manager.
  *
  * @category VuFind
  * @package  Session_Handlers
@@ -48,7 +48,7 @@ use Psr\Container\ContainerInterface;
 class ManagerFactory extends \VuFind\Session\ManagerFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * IIIF manifest generator factory
+ * IIIF manifest generator factory.
  *
  * PHP version 8
  *
@@ -31,9 +31,11 @@ namespace Finna\Record\IIIF;
 
 use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
+use VuFind\Http\RouteHelper;
+use VuFind\Http\ServerUrlHelper;
 
 /**
- * IIIF manifest generator factory
+ * IIIF manifest generator factory.
  *
  * @category VuFind
  * @package  Service
@@ -44,7 +46,7 @@ use Psr\Container\ContainerInterface;
 class IIIFManifestGeneratorFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param mixed              $requestedName Service being created
@@ -64,9 +66,10 @@ class IIIFManifestGeneratorFactory implements FactoryInterface
         }
         $viewRenderer = $container->get('ViewRenderer');
         $generator = new IIIFManifestGenerator(
-            $viewRenderer->plugin('url'),
-            $viewRenderer->plugin('serverUrl'),
+            $container->get(RouteHelper::class),
+            $container->get(ServerUrlHelper::class),
             $viewRenderer->plugin('recordLinker'),
+            $container->get(\VuFind\I18n\Locale\LocaleSettings::class),
         );
         return $generator;
     }

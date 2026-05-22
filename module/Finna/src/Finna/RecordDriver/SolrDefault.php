@@ -45,7 +45,7 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
     use Feature\SolrFinnaTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
@@ -77,5 +77,19 @@ class SolrDefault extends \VuFind\RecordDriver\SolrDefault
         if ($maxURLsInSearch > 0) {
             $this->maxURLsInSearch = min($maxURLsInSearch, $this->maxURLsInSearch);
         }
+    }
+
+    /**
+     * Get a highlighted title string, if available.
+     *
+     * @return string
+     */
+    public function getHighlightedTitle()
+    {
+        // Don't check for highlighted values if highlighting is disabled:
+        if (!$this->highlight) {
+            return '';
+        }
+        return $this->highlightDetails[$this->getPrioritizedTitleField()][0] ?? '';
     }
 }

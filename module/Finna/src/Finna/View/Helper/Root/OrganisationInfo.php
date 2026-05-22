@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Organisation info component view helper
+ * Organisation info component view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Organisation info component view helper
+ * Organisation info component view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class OrganisationInfo extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Configuration
+     * Configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param VuFind\Config\Config $config Configuration
      */
@@ -95,7 +95,7 @@ class OrganisationInfo extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if organisation info is available
+     * Check if organisation info is available.
      *
      * @return bool
      */

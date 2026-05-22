@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna comments-record service interface
+ * Finna comments-record service interface.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use VuFind\Db\Entity\CommentsEntityInterface;
 use VuFind\Db\Service\DbServiceInterface;
 
 /**
- * Finna comments-record service interface
+ * Finna comments-record service interface.
  *
  * @category VuFind
  * @package  Database

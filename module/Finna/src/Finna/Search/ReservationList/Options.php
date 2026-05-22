@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation List Options
+ * Reservation List Options.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\Search\ReservationList;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * Reservation List Options
+ * Reservation List Options.
  *
  * @category VuFind
  * @package  Search_ReservationList
@@ -45,7 +45,7 @@ use VuFind\Config\ConfigManagerInterface;
 class Options extends \VuFind\Search\Base\Options
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */

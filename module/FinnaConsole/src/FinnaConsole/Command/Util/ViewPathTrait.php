@@ -43,7 +43,7 @@ namespace FinnaConsole\Command\Util;
 trait ViewPathTrait
 {
     /**
-     * Get the default view path
+     * Get the default view path.
      *
      * @return string
      */
@@ -53,7 +53,7 @@ trait ViewPathTrait
     }
 
     /**
-     * Check if the given view path points to the default view
+     * Check if the given view path points to the default view.
      *
      * @param string $path View path
      *

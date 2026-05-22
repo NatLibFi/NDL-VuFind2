@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record field Markdown view helper factory
+ * Record field Markdown view helper factory.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\Factory\FactoryInterface;
 use Psr\Container\ContainerInterface;
 
 /**
- * Record field Markdown view helper factory
+ * Record field Markdown view helper factory.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -44,7 +44,7 @@ use Psr\Container\ContainerInterface;
 class RecordFieldMarkdownFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service Manager
      * @param string             $requestedName Service being created

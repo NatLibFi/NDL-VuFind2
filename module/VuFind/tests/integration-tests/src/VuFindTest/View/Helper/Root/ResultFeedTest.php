@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ResultFeed Test Class
+ * ResultFeed Test Class.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace VuFindTest\Integration\View\Helper\Root;
 use VuFind\View\Helper\Root\ResultFeed;
 
 /**
- * ResultFeed Test Class
+ * ResultFeed Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -62,7 +62,7 @@ class ResultFeedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get plugins to register to support view helper being tested
+     * Get plugins to register to support view helper being tested.
      *
      * @return array
      */
@@ -106,7 +106,7 @@ class ResultFeedTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test feed generation
+     * Test feed generation.
      *
      * @param array  $options      Options to pass to the ResultFeed object.
      * @param string $expectedLink The link URL we expect to find in the first result in the feed.
@@ -146,13 +146,13 @@ class ResultFeedTest extends \PHPUnit\Framework\TestCase
         $rss = $feed->export('rss');
 
         // Make sure it's really an RSS feed:
-        $this->assertTrue(strstr($rss, '<rss') !== false);
+        $this->assertNotFalse(strstr($rss, '<rss'));
 
         // Make sure custom Dublin Core elements are present:
-        $this->assertTrue(strstr($rss, 'dc:format') !== false);
+        $this->assertNotFalse(strstr($rss, 'dc:format'));
 
         // Make sure custom Atom link elements are present:
-        $this->assertTrue(strstr($rss, 'atom:link') !== false);
+        $this->assertNotFalse(strstr($rss, 'atom:link'));
 
         // Now re-parse it and check for some expected values:
         $parsedFeed = \Laminas\Feed\Reader\Reader::importString($rss);

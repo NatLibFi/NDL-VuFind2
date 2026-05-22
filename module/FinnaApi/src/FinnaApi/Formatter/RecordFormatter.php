@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record formatter for API responses
+ * Record formatter for API responses.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use function in_array;
 use function is_array;
 
 /**
- * Record formatter for API responses
+ * Record formatter for API responses.
  *
  * @category VuFind
  * @package  API_Formatter
@@ -50,21 +50,21 @@ use function is_array;
 class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
 {
     /**
-     * User locale
+     * User locale.
      *
      * @var string
      */
     protected $locale;
 
     /**
-     * Current record render context
+     * Current record render context.
      *
      * @var RenderContext
      */
     protected RenderContext $renderContext = RenderContext::RECORD;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array               $recordFields  Record field definitions
      * @param HelperPluginManager $helperManager View helper plugin manager
@@ -80,7 +80,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Set current record render context
+     * Set current record render context.
      *
      * @param string $context Render context
      *
@@ -92,7 +92,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get extended image information
+     * Get extended image information.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -117,7 +117,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get record identifier
+     * Get record identifier.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -165,7 +165,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get image rights
+     * Get image rights.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -178,7 +178,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get images
+     * Get images.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -194,7 +194,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get institutions
+     * Get institutions.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -221,7 +221,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get online URLs for a record as an array
+     * Get online URLs for a record as an array.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -260,7 +260,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get raw data for a record as an array
+     * Get raw data for a record as an array.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -289,7 +289,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get record links for a record as an array
+     * Get record links for a record as an array.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -314,7 +314,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get sectors
+     * Get sectors.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -338,7 +338,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get sources
+     * Get sources.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -351,7 +351,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get sources
+     * Get sources.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -374,7 +374,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
     }
 
     /**
-     * Get URLs for a record as an array
+     * Get URLs for a record as an array.
      *
      * @param \VuFind\RecordDriver\SolrDefault $record Record driver
      *
@@ -459,5 +459,20 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
             $results
         );
         return parent::format($results, $requestedFields);
+    }
+
+    /**
+     * Get full record for a record as XML.
+     *
+     * @param \VuFind\RecordDriver\AbstractBase $record Record driver
+     *
+     * @return string|null
+     */
+    protected function getFullRecordLegacy($record)
+    {
+        if ($legacy = $record->tryMethod('getFilteredXMLLegacy')) {
+            return $legacy;
+        }
+        return parent::getFullRecord($record);
     }
 }

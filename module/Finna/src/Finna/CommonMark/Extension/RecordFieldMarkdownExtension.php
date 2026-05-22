@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record field Markdown extension
+ * Record field Markdown extension.
  *
  * PHP version 8
  *
@@ -43,7 +43,7 @@ use League\CommonMark\Renderer\Inline\NewlineRenderer;
 use League\CommonMark\Renderer\Inline\TextRenderer;
 
 /**
- * Record field Markdown extension
+ * Record field Markdown extension.
  *
  * @category VuFind
  * @package  VuFind\Service
@@ -54,7 +54,7 @@ use League\CommonMark\Renderer\Inline\TextRenderer;
 final class RecordFieldMarkdownExtension implements ExtensionInterface
 {
     /**
-     * Register the extension
+     * Register the extension.
      *
      * @param EnvironmentBuilderInterface $environment Enviroment
      *

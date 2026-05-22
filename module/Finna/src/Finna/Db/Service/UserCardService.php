@@ -55,7 +55,7 @@ use function is_int;
 class UserCardService extends \VuFind\Db\Service\UserCardService implements UserCardServiceInterface
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManager       $entityManager          Doctrine ORM entity manager
      * @param EntityPluginManager $entityPluginManager    VuFind entity plugin manager
@@ -113,7 +113,7 @@ class UserCardService extends \VuFind\Db\Service\UserCardService implements User
     }
 
     /**
-     * Get all users associated with a library card
+     * Get all users associated with a library card.
      *
      * @param string $catUsername Catalog username
      *

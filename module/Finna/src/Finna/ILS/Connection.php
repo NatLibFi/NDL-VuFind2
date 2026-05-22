@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Catalog Connection Class
+ * Catalog Connection Class.
  *
  * This wrapper works with a driver class to pass information from the ILS to
  * VuFind.
@@ -35,7 +35,7 @@ namespace Finna\ILS;
 use VuFind\Exception\ILS as ILSException;
 
 /**
- * Catalog Connection Class
+ * Catalog Connection Class.
  *
  * This wrapper works with a driver class to pass information from the ILS to
  * VuFind.
@@ -52,7 +52,7 @@ use VuFind\Exception\ILS as ILSException;
 class Connection extends \VuFind\ILS\Connection
 {
     /**
-     * Set cache lifetime settings
+     * Set cache lifetime settings.
      *
      * @param array $settings Lifetime settings
      *
@@ -97,7 +97,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check Holds
+     * Check Holds.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports Holds.
@@ -122,7 +122,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check Storage Retrieval Request
+     * Check Storage Retrieval Request.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports storage
@@ -152,7 +152,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check ILL Request
+     * Check ILL Request.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports storage
@@ -178,7 +178,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for Authorization Status
+     * Check for Authorization Status.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports getting
@@ -205,7 +205,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for Staff User Authorization Status
+     * Check for Staff User Authorization Status.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports getting
@@ -234,7 +234,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateAddress
+     * Check for updateAddress.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating address.
@@ -270,7 +270,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for checkMethodupdateTransactionHistoryState
+     * Check for checkMethodupdateTransactionHistoryState.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports change of
@@ -299,7 +299,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateEmail
+     * Check for updateEmail.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating email
@@ -337,7 +337,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateMessagingSettings
+     * Check for updateMessagingSettings.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating
@@ -372,7 +372,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updatePhone
+     * Check for updatePhone.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating phone
@@ -410,7 +410,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateSmsNumber
+     * Check for updateSmsNumber.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating phone
@@ -448,7 +448,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check if catalog login is availale
+     * Check if catalog login is availale.
      *
      * @return bool true if the login is available
      */
@@ -467,7 +467,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check if title lists are enabled
+     * Check if title lists are enabled.
      *
      * @param array  $functionConfig Function configuration values
      * @param ?array $params         An array of function-specific params (or null)

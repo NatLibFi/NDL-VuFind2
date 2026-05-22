@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record field Markdown view helper
+ * Record field Markdown view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Record field Markdown view helper
+ * Record field Markdown view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,7 +41,7 @@ namespace Finna\View\Helper\Root;
 class RecordFieldMarkdown extends \VuFind\View\Helper\Root\Markdown
 {
     /**
-     * Return HTML
+     * Return HTML.
      *
      * @param string  $markdown  Markdown
      * @param ?string $softBreak Alternative string to use for rendering soft breaks
@@ -61,7 +61,7 @@ class RecordFieldMarkdown extends \VuFind\View\Helper\Root\Markdown
     }
 
     /**
-     * Converts Markdown to HTML
+     * Converts Markdown to HTML.
      *
      * Finna: back-compatibility with default param and call logic
      *

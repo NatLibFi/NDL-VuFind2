@@ -52,7 +52,7 @@ class GetEncapsulatedRecords extends \VuFind\AjaxHandler\AbstractBase
     protected Record $helper;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings $ss     Session settings
      * @param Record          $helper Record helper

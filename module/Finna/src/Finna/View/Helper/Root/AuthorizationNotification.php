@@ -47,14 +47,14 @@ use function in_array;
 class AuthorizationNotification extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Authorization service
+     * Authorization service.
      *
      * @var AuthorizationService
      */
     protected $authService;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param AuthorizationService $authService Authorization service
      */

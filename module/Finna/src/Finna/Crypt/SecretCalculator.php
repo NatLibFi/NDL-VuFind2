@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Secret calculator
+ * Secret calculator.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ namespace Finna\Crypt;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Secret calculator
+ * Secret calculator.
  *
  * @category VuFind
  * @package  Crypt

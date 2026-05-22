@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Mixed List Search Parameters
+ * Mixed List Search Parameters.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\MixedList;
 
 /**
- * Mixed List Search Parameters
+ * Mixed List Search Parameters.
  *
  * @category VuFind
  * @package  Search_MixedList

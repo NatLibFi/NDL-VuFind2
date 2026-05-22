@@ -50,7 +50,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\ReflectionTrait;
 
     /**
-     * Test performing an autocomplete
+     * Test performing an autocomplete.
      *
      * @return void
      */
@@ -114,6 +114,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $coll);
         $this->assertEquals('test', $coll->getSourceIdentifier());
         $rec  = $coll->first();
+        $this->assertInstanceOf(\VuFindSearch\Response\RecordInterface::class, $rec);
         $this->assertEquals('test', $rec->getSourceIdentifier());
         $this->assertEquals('bwh,201407212251PR.NEWS.USPR.MM73898', $rec->getUniqueID());
     }
@@ -147,6 +148,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(1, $coll);
         $this->assertEquals('test', $coll->getSourceIdentifier());
         $rec  = $coll->first();
+        $this->assertInstanceOf(\VuFindSearch\Response\RecordInterface::class, $rec);
         $this->assertEquals('test', $rec->getSourceIdentifier());
         $this->assertEquals('edp297646', $rec->getUniqueID());
     }
@@ -179,6 +181,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
         $this->assertCount(3, $coll);
         $this->assertEquals('test', $coll->getSourceIdentifier());
         $rec  = $coll->first();
+        $this->assertInstanceOf(\VuFindSearch\Response\RecordInterface::class, $rec);
         $this->assertEquals('test', $rec->getSourceIdentifier());
         $this->assertEquals('bwh,201407212251PR.NEWS.USPR.MM73898', $rec->getUniqueID());
         $recs = $coll->getRecords();
@@ -285,7 +288,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Return backend
+     * Return backend.
      *
      * @param \VuFindSearch\Backend\EDS\Connector                     $connector Connector
      * @param \VuFindSearch\Response\RecordCollectionFactoryInterface $factory   Record collection factory
@@ -326,7 +329,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Build a real record collection factory for EDS records
+     * Build a real record collection factory for EDS records.
      *
      * @return \VuFindSearch\Backend\EDS\Response\RecordCollectionFactory
      */
@@ -337,7 +340,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Build a real record collection factory for EPF records
+     * Build a real record collection factory for EPF records.
      *
      * @return \VuFindSearch\Backend\EDS\Response\RecordCollectionFactory
      */
@@ -348,7 +351,7 @@ class BackendTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Build a real record collection factory
+     * Build a real record collection factory.
      *
      * @param string $driverClass class of the RecordDriver to create
      *

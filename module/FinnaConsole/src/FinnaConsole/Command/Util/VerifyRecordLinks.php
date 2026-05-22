@@ -66,14 +66,14 @@ use function in_array;
 class VerifyRecordLinks extends AbstractUtilCommand
 {
     /**
-     * Record batch size to process at a time
+     * Record batch size to process at a time.
      *
      * @var int
      */
     protected $batchSize = 100;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManagerInterface              $entityManager              Entity manager
      * @param RecordServiceInterface              $recordService              Record database service
@@ -153,7 +153,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
     }
 
     /**
-     * Check comment links
+     * Check comment links.
      *
      * @return void
      */
@@ -189,7 +189,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
     }
 
     /**
-     * Verify comment links for a batch of comments
+     * Verify comment links for a batch of comments.
      *
      * @param array $batch Batch to process
      *
@@ -240,7 +240,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
     }
 
     /**
-     * Check rating links
+     * Check rating links.
      *
      * @return void
      */
@@ -285,7 +285,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
     }
 
     /**
-     * Verify ratings
+     * Verify ratings.
      *
      * @param array $batch Batch of rating + recordId
      *
@@ -339,7 +339,7 @@ class VerifyRecordLinks extends AbstractUtilCommand
     }
 
     /**
-     * Get IDs of duplicate records (including the given record)
+     * Get IDs of duplicate records (including the given record).
      *
      * @param array $recordIds Record IDs
      *

@@ -53,14 +53,14 @@ use function is_object;
 trait ConsoleLoggerTrait
 {
     /**
-     * Output interface
+     * Output interface.
      *
      * @var OutputInterface
      */
     protected $output = null;
 
     /**
-     * Log an error
+     * Log an error.
      *
      * @param string $msg Message
      *
@@ -119,7 +119,7 @@ trait ConsoleLoggerTrait
     }
 
     /**
-     * Convert function argument to a loggable string
+     * Convert function argument to a loggable string.
      *
      * @param mixed $arg Argument
      *
@@ -150,7 +150,7 @@ trait ConsoleLoggerTrait
     }
 
     /**
-     * Output a message with a timestamp
+     * Output a message with a timestamp.
      *
      * @param string $msg     Message
      * @param int    $verbose Verbosity level (one of OutputInterface::VERBOSITY_*
@@ -169,7 +169,7 @@ trait ConsoleLoggerTrait
     }
 
     /**
-     * Output an error message with a timestamp
+     * Output an error message with a timestamp.
      *
      * @param string $msg          Message
      * @param string $publishedMsg Published version of the error message. Must
@@ -196,7 +196,7 @@ trait ConsoleLoggerTrait
     }
 
     /**
-     * Output a warning message with a timestamp
+     * Output a warning message with a timestamp.
      *
      * @param string $msg Message
      *

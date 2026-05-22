@@ -50,7 +50,7 @@ class GetUserLists extends \VuFind\AjaxHandler\AbstractBase implements Translato
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ?UserEntityInterface         $user                Logged in user (or null)
      * @param UserListServiceInterface     $userListService     UserList database service

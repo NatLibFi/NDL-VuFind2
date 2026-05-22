@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Translation Helper
+ * Translation Helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use function is_array;
 use function is_string;
 
 /**
- * Translation helper
+ * Translation helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -47,14 +47,14 @@ class Translation extends \Laminas\View\Helper\AbstractHelper implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Default language
+     * Default language.
      *
      * @var string
      */
     protected $defaultLanguage;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $defaultLanguage Default language
      */
@@ -64,7 +64,7 @@ class Translation extends \Laminas\View\Helper\AbstractHelper implements
     }
 
     /**
-     * Try to find a language-specific string from the given variable
+     * Try to find a language-specific string from the given variable.
      *
      * @param mixed $mixed String or array of strings keyed by language code
      *

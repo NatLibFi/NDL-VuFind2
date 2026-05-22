@@ -52,7 +52,7 @@ use VuFind\Exception\Auth as AuthException;
 class Shibboleth extends \VuFind\Auth\Shibboleth
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \Laminas\Session\ManagerInterface $sessionManager      Session manager
      * @param ConfigurationLoaderInterface      $configurationLoader Configuration loader

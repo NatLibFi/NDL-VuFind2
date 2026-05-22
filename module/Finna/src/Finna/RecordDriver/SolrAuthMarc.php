@@ -149,7 +149,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Return historical information
+     * Return historical information.
      *
      * @return array
      */
@@ -320,7 +320,7 @@ class SolrAuthMarc extends \VuFind\RecordDriver\SolrAuthMarc
     }
 
     /**
-     * Format date
+     * Format date.
      *
      * @param string $date   Date
      * @param string $format Format of converted date

@@ -60,7 +60,7 @@ enum ReservationListStatus: string
     }
 
     /**
-     * Return instance of ENUM by mapping a status key into a proper enum status
+     * Return instance of ENUM by mapping a status key into a proper enum status.
      *
      * @param string $text Value to map
      *

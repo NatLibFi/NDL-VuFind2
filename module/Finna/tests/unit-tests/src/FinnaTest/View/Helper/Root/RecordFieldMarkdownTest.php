@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RecordFieldMarkdown Test Class
+ * RecordFieldMarkdown Test Class.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace FinnaTest\View\Helper\Root;
 use Finna\View\Helper\Root\RecordFieldMarkdown;
 
 /**
- * RecordFieldMarkdown Test Class
+ * RecordFieldMarkdown Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -66,7 +66,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test basic markdown conversion with the default soft break
+     * Test basic markdown conversion with the default soft break.
      *
      * @return void
      */
@@ -82,7 +82,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test basic markdown conversion with a provided soft break
+     * Test basic markdown conversion with a provided soft break.
      *
      * @return void
      */
@@ -102,7 +102,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Return test Markdown input
+     * Return test Markdown input.
      *
      * @return string
      */

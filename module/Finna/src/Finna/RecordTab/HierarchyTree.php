@@ -1,7 +1,7 @@
 <?php
 
 /**
- * HierarchyTree tab
+ * HierarchyTree tab.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\RecordTab;
 
 /**
- * HierarchyTree tab
+ * HierarchyTree tab.
  *
  * @category VuFind
  * @package  RecordTabs

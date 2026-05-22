@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "System Status" AJAX handler
+ * "System Status" AJAX handler.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ namespace Finna\AjaxHandler;
 use Laminas\Mvc\Controller\Plugin\Params;
 
 /**
- * "System Status" AJAX handler
+ * "System Status" AJAX handler.
  *
  * This is responsible for keeping the session alive whenever called
  * (via JavaScript)

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ratings Controller
+ * Ratings Controller.
  *
  * PHP version 8
  *
@@ -43,7 +43,7 @@ class RatingsController extends \VuFind\Controller\RatingsController
     use Feature\UserContentTrait;
 
     /**
-     * Array of sort options for userListAction
+     * Array of sort options for userListAction.
      *
      * @var array
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element closing tag block start parser
+ * Custom element closing tag block start parser.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use League\CommonMark\Parser\MarkdownParserStateInterface;
 use function strlen;
 
 /**
- * Custom element closing tag block start parser
+ * Custom element closing tag block start parser.
  *
  * @category VuFind
  * @package  CommonMark
@@ -49,14 +49,14 @@ use function strlen;
 class CustomElementClosingTagStartParser implements BlockStartParserInterface
 {
     /**
-     * Regex for matching custom element closing tags
+     * Regex for matching custom element closing tags.
      *
      * @var string
      */
     public const CLOSING_REGEX = '/<\/([A-Za-z][A-Za-z0-9]*-[A-Za-z0-9-]+)*\s*>/';
 
     /**
-     * Check whether we should handle the block at the current position
+     * Check whether we should handle the block at the current position.
      *
      * @param Cursor                       $cursor      A cloned copy of the cursor
      * at the current parsing location

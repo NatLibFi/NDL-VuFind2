@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Additional functionality for Finna SideFacets
+ * Additional functionality for Finna SideFacets.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\Recommend;
 use VuFind\Solr\Utils as SolrUtils;
 
 /**
- * Additional functionality for Finna SideFacets
+ * Additional functionality for Finna SideFacets.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -47,14 +47,14 @@ use VuFind\Solr\Utils as SolrUtils;
 trait SideFacetsTrait
 {
     /**
-     * New items facet configuration
+     * New items facet configuration.
      *
      * @var array
      */
     protected $newItemsFacets = [];
 
     /**
-     * Get new items facets (facet titles)
+     * Get new items facets (facet titles).
      *
      * @return array
      */

@@ -41,7 +41,7 @@ namespace VuFindTest\Mink;
 class RecordCoverImageTest extends \VuFindTest\Integration\MinkTestCase
 {
     /**
-     * Data provider for testCoverLoading()
+     * Data provider for testCoverLoading().
      *
      * @return \Iterator
      */
@@ -181,6 +181,19 @@ class RecordCoverImageTest extends \VuFindTest\Integration\MinkTestCase
         }
 
         // Confirm the expected status of the image (most importantly, should it be visible or hidden?):
+        $coverContainer = $this->findCss($page, '.record-cover-container');
+        if ($noCoverAvailableImage) {
+            $this->assertStringNotContainsString(
+                'hidden',
+                $coverContainer?->getAttribute('class') ?? ''
+            );
+        } else {
+            $this->assertStringContainsString(
+                'hidden',
+                $coverContainer?->getAttribute('class') ?? ''
+            );
+        }
+
         $expectedClasses = 'recordcover'
             . ($ajaxcovers ? ' ajax' : '')
             . (empty($noCoverAvailableImage) ? ' hidden' : '');
@@ -196,7 +209,7 @@ class RecordCoverImageTest extends \VuFindTest\Integration\MinkTestCase
 
         // Verify path
         $expectedPath = $expectedImageParts[0];
-        $this->assertStringContainsString($expectedPath, $imageSrc);
+        $this->assertStringContainsString($expectedPath, (string)$imageSrc);
 
         // Verify query except timestamp hash for deactivated browser cache
         $imageSrcQuery = explode('&', explode('?', $imageSrc)[1] ?? '');

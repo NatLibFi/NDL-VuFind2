@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrBrowse aspect of the Search Multi-class (Options)
+ * SolrBrowse aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Search\SolrBrowse;
 use VuFind\Config\ConfigManagerInterface;
 
 /**
- * SolrBrowse Search Options
+ * SolrBrowse Search Options.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -43,56 +43,56 @@ use VuFind\Config\ConfigManagerInterface;
 class Options extends \Finna\Search\Solr\Options
 {
     /**
-     * Default search handler
+     * Default search handler.
      *
      * @var string
      */
     protected $defaultHandler = 'Title';
 
     /**
-     * Default limit option
+     * Default limit option.
      *
      * @var int
      */
     protected $defaultLimit = 100;
 
     /**
-     * Default view option
+     * Default view option.
      *
      * @var string
      */
     protected $defaultView = 'condensed';
 
     /**
-     * Spelling setting
+     * Spelling setting.
      *
      * @var bool
      */
     protected $spellcheck = false;
 
     /**
-     * Configuration file to read search settings from
+     * Configuration file to read search settings from.
      *
      * @var string
      */
     protected $searchIni = 'browse';
 
     /**
-     * Configuration file to read facet settings from
+     * Configuration file to read facet settings from.
      *
      * @var string
      */
     protected $facetsIni = 'facets-browse';
 
     /**
-     * Browse type
+     * Browse type.
      *
      * @var string
      */
     protected $browseType = '';
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ConfigManagerInterface $configManager Config manager
      */
@@ -115,7 +115,7 @@ class Options extends \Finna\Search\Solr\Options
     }
 
     /**
-     * Set curren browse type
+     * Set curren browse type.
      *
      * @param string $type Browse type
      *

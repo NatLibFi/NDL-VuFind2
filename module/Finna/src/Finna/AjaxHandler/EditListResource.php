@@ -49,7 +49,7 @@ class EditListResource extends \VuFind\AjaxHandler\AbstractBase implements Trans
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ?UserEntityInterface         $user                Logged in user (or null)
      * @param UserResourceServiceInterface $userResourceService UserResource database service

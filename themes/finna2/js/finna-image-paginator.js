@@ -266,6 +266,26 @@ FinnaPaginator.prototype.setCanvasElement = function setCanvasElement(type) {
 };
 
 /**
+ * Create a 3D model viewer
+ * @param {object} image Object containing image data
+ * @returns {HTMLElement} Finna model viewer
+ */
+FinnaPaginator.prototype.createModelViewer = function createModelViewer(image) {
+  var _ = this;
+
+  var viewer = document.createElement('finna-model-viewer');
+  viewer.src = `${VuFind.path}/AJAX/JSON?${image.data('params')}`;
+  viewer.texture = `${VuFind.path}${image.data('texture')}`;
+  viewer.scripts = `${VuFind.path}${image.data('scripts')}`;
+  viewer.translations = _.settings.modelTranslations;
+  viewer.debug = _.settings.viewerDebug;
+  if (image.attr('href')) {
+    viewer.previewsrc = image.attr('href');
+  }
+  return viewer;
+};
+
+/**
  * Function which is executed after nonzoomable image has been opened to a popup
  * @param {object} image Object containing image data
  */
@@ -277,23 +297,7 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
   _.canvasElements.noZoom.find('img').css('opacity', '0.5');
   _.openImageIndex = image.attr('index');
 
-  var img = new Image();
-  img.src = image.data('large');
-  $(img).attr('alt', image.data('alt'));
-  img.onload = function onLoad() {
-    if (typeof _.canvasElements.noZoom === 'undefined') {
-      return;
-    }
-    if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
-      _.canvasElements.noZoom.addClass('no-image');
-      icon.show();
-      $(this).attr('alt', translations.no_cover);
-    } else if (_.canvasElements.noZoom.hasClass('no-image')) {
-      icon.hide();
-    }
-    _.canvasElements.noZoom.find('img').replaceWith($(this));
-  };
-
+  // Toggle canvas element first to ensure that it is correctly sized for model viewer:
   _.setCanvasElement('noZoom');
   _.setCurrentVisuals();
   _.setPagerInfo();
@@ -301,6 +305,28 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
     _.loadImageInformation();
   }
   _.setBrowseButtons();
+
+  if (image.data('type') === 'model') {
+    var viewer = _.createModelViewer(image);
+    _.canvasElements.noZoom.find('img,finna-model-viewer').replaceWith($(viewer));
+  } else {
+    var img = new Image();
+    img.src = image.data('large');
+    $(img).attr('alt', image.data('alt'));
+    img.onload = function onLoad() {
+      if (typeof _.canvasElements.noZoom === 'undefined') {
+        return;
+      }
+      if (this.naturalWidth && this.naturalWidth === 10 && this.naturalHeight === 10) {
+        _.canvasElements.noZoom.addClass('no-image');
+        icon.show();
+        $(this).attr('alt', translations.no_cover);
+      } else if (_.canvasElements.noZoom.hasClass('no-image')) {
+        icon.hide();
+      }
+      _.canvasElements.noZoom.find('img,finna-model-viewer').replaceWith($(this));
+    };
+  }
 };
 
 /**
@@ -309,6 +335,12 @@ FinnaPaginator.prototype.onNonZoomableClick = function onNonZoomableClick(image)
  */
 FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(image) {
   var _ = this;
+
+  if (image.data('type') === 'model') {
+    // Redirect to non-zoomable image for models:
+    _.onNonZoomableClick(image);
+    return;
+  }
 
   if (_.openImageIndex !== image.attr('index')) {
     _.openImageIndex = image.attr('index');
@@ -367,10 +399,10 @@ FinnaPaginator.prototype.onLeafletImageClick = function onLeafletImageClick(imag
      * @returns {object} Object containing height and width
      */
     function calculateBounds(boundWidth, imageWidth, boundHeight, imageHeight) {
-      var heightPercentage = 0;
-      var widthPercentage = 0;
-      var newHeight = imageHeight;
-      var newWidth = imageWidth;
+      var heightPercentage;
+      var widthPercentage;
+      var newHeight;
+      var newWidth;
 
       if (imageHeight >= boundHeight) {
         newHeight = boundHeight - (boundHeight / 100 * offsetPercentage);
@@ -786,15 +818,12 @@ FinnaPaginator.prototype.createImagePopup = function createImagePopup(image, ind
       var img = new Image();
       img.src = image.urls.small;
       img.alt = image.description;
-      img.title = image.title;
+      img.title = image.title || '';
       holder.append(img, VuFind.icon('spinner', 'spinner-icon'));
       img.onload = function onLoad() {
         $(this).siblings('.spinner-icon').remove();
       };
     } else if (image.type === 'model') {
-      if (_.popup.track) {
-        return undefined;
-      }
       holder.append(VuFind.icon('model-3d', 'model-3d-icon'));
     }
   }
@@ -954,15 +983,7 @@ FinnaPaginator.prototype.setTrigger = function setTrigger(imagePopup) {
     _.viewer = undefined;
   }
   if (imageType === 'model') {
-    _.viewer = document.createElement('finna-model-viewer');
-    _.viewer.src = `${VuFind.path}/AJAX/JSON?${imagePopup.data('params')}`;
-    _.viewer.texture = `${VuFind.path}${imagePopup.data('texture')}`;
-    _.viewer.scripts = `${VuFind.path}${imagePopup.data('scripts')}`;
-    _.viewer.translations = _.settings.modelTranslations;
-    _.viewer.debug = _.settings.viewerDebug;
-    if (imagePopup.attr('href')) {
-      _.viewer.previewsrc = imagePopup.attr('href');
-    }
+    _.viewer = _.createModelViewer(imagePopup);
     _.trigger.append(_.viewer);
     _.trigger.trigger('removeclick.finna');
     _.trigger.removeClass('no-image');

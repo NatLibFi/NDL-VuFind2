@@ -56,7 +56,7 @@ class WayfinderPlacementLinkLookup extends AbstractBase
     protected $wayfinderService;
 
     /**
-     * Handler constructor
+     * Handler constructor.
      *
      * @param WayfinderService $wayfinderService Wayfinder service instance
      */

@@ -29,6 +29,7 @@
 
 namespace VuFindTest\OAuth2\Repository;
 
+use League\OAuth2\Server\Entities\ScopeEntityInterface;
 use VuFind\OAuth2\Repository\ScopeRepository;
 
 /**
@@ -43,7 +44,7 @@ use VuFind\OAuth2\Repository\ScopeRepository;
 class ScopeRepositoryTest extends AbstractTokenRepositoryTestCase
 {
     /**
-     * Data provider for testScopeRepository
+     * Data provider for testScopeRepository.
      *
      * @return \Iterator
      */
@@ -55,7 +56,7 @@ class ScopeRepositoryTest extends AbstractTokenRepositoryTestCase
     }
 
     /**
-     * Test scope repository
+     * Test scope repository.
      *
      * @param string $scopeId Scope ID
      * @param string $desc    Expected description
@@ -88,6 +89,7 @@ class ScopeRepositoryTest extends AbstractTokenRepositoryTestCase
         $repo = new ScopeRepository($config);
 
         $scope = $repo->getScopeEntityByIdentifier($scopeId);
+        $this->assertInstanceOf(ScopeEntityInterface::class, $scope);
         $this->assertEquals($desc, $scope->getDescription());
         $this->assertEquals($hidden, $scope->gethidden());
         $this->assertEquals($ils, $scope->getILSNeeded());
@@ -100,7 +102,7 @@ class ScopeRepositoryTest extends AbstractTokenRepositoryTestCase
     }
 
     /**
-     * Test scope repository with invalid id
+     * Test scope repository with invalid id.
      *
      * @return void
      */
@@ -115,11 +117,11 @@ class ScopeRepositoryTest extends AbstractTokenRepositoryTestCase
         ];
         $repo = new ScopeRepository($config);
 
-        $this->assertNull($repo->getScopeEntityByIdentifier('foo'));
+        $this->assertNotInstanceOf(ScopeEntityInterface::class, $repo->getScopeEntityByIdentifier('foo'));
     }
 
     /**
-     * Test scope repository with invalid configuration
+     * Test scope repository with invalid configuration.
      *
      * @return void
      */

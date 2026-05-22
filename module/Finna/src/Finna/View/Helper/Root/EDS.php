@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ebsco Discovery Service view helper
+ * Ebsco Discovery Service view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Ebsco Discovery Service view helper
+ * Ebsco Discovery Service view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class EDS extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * EDS configuration
+     * EDS configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config EDS configuration
      */
@@ -58,7 +58,7 @@ class EDS extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if EDS is available
+     * Check if EDS is available.
      *
      * @return bool
      */

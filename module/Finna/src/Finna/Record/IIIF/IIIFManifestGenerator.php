@@ -1,7 +1,7 @@
 <?php
 
 /**
- * IIIF manifest generator service
+ * IIIF manifest generator service.
  *
  * PHP version 8
  *
@@ -30,12 +30,17 @@
 namespace Finna\Record\IIIF;
 
 use Finna\View\Helper\Root\RecordLinker;
-use Laminas\View\Helper\ServerUrl;
-use Laminas\View\Helper\Url;
+use VuFind\Http\RouteHelper;
+use VuFind\Http\ServerUrlHelper;
+use VuFind\I18n\Locale\LocaleSettings;
+use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
+use VuFindHttp\HttpServiceAwareInterface;
+
+use function count;
 
 /**
- * IIIF manifest generator service
+ * IIIF manifest generator service.
  *
  * Only intended for internal use as a compatibility layer. With this we can use
  * Tify to show non-IIIF images and image sets.
@@ -46,40 +51,51 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
-class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
+class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
+    use \VuFind\I18n\Translator\TranslatorAwareTrait;
+
+    protected array $locales;
+
+    protected array $metadataLangKeys;
 
     /**
      * Constructor.
      *
-     * @param Url          $url          URL helper
-     * @param ServerUrl    $serverUrl    Server URL helper
-     * @param RecordLinker $recordLinker RecordLinker helper
-     *                                   For getting the URL of the record
-     *                                   action constructing this class
+     * @param RouteHelper     $routeHelper     URL helper
+     * @param ServerUrlHelper $serverUrlHelper Server URL helper
+     * @param RecordLinker    $recordLinker    RecordLinker helper for getting the URL of the record action constructing
+     * this class
+     * @param LocaleSettings  $localeSettings  LocaleSettings for getting enabled locales
      */
     public function __construct(
-        protected Url $url,
-        protected ServerUrl $serverUrl,
+        protected RouteHelper $routeHelper,
+        protected ServerUrlHelper $serverUrlHelper,
         protected RecordLinker $recordLinker,
+        protected LocaleSettings $localeSettings,
     ) {
+        $this->locales = array_keys($this->localeSettings->getEnabledLocales());
+        $this->metadataLangKeys = array_map(
+            fn ($l) => explode('-', $l)[0],
+            $this->locales
+        );
     }
 
     /**
-     * Generate IIIF presentation manifest (version 3)
+     * Generate IIIF presentation manifest (version 3).
      *
      * @param RecordDriver $driver Record driver
      *
-     * @return array|null
+     * @return ?object
      */
-    public function generate(RecordDriver $driver): array|null
+    public function generate(RecordDriver $driver): ?object
     {
         $images      = $driver->tryMethod('getAllImages');
         $recordId    = $driver->getUniqueID();
         $source      = $driver->getSourceIdentifier();
         $manifestId  = $this->recordLinker->getGeneratedIiifManifestUrl($driver);
-        $recordTitle = $driver->getTitle();
+        $recordTitle = $driver->tryMethod('getTitle', default: '');
 
         return $this->createManifest(
             $images,
@@ -91,7 +107,7 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Handle actual manifest generation
+     * Handle actual manifest generation.
      *
      * @param ?array $images      Images
      *                            Array, or null if driver did not have the
@@ -104,7 +120,7 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
      *                            correctly.
      * @param string $recordTitle Title of the record
      *
-     * @return array
+     * @return ?object
      */
     protected function createManifest(
         ?array $images,
@@ -112,7 +128,7 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
         string $source,
         string $manifestId,
         string $recordTitle
-    ): ?array {
+    ): ?object {
         if (!$images) {
             return null;
         }
@@ -123,9 +139,12 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
             $canvasItem = [
                 'id' => "$manifestId/$idx",
                 'type' => 'Canvas',
-                'metadata' => $this->createCanvasMetadata($image),
                 'items' => [],
             ];
+            $metadata = $this->createCanvasMetadata($image);
+            if (count($metadata) > 0) {
+                $canvasItem['metadata'] = $metadata;
+            }
 
             if (
                 $rightsLink = isset($image['rights']['link']) ?
@@ -153,7 +172,20 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
                     break; // only take the largest $size
                 }
             }
-            $manifestItems[] = $canvasItem;
+
+            $thumbUrl = $this->createBodyId(
+                $recordId,
+                $idx,
+                'small',
+                $source
+            );
+            $canvasItem['thumbnail'] = [(object)[
+                'id' => $thumbUrl,
+                'type' => 'Image',
+                'format' => 'image/jpeg',
+            ]];
+
+            $manifestItems[] = (object)$canvasItem;
         }
 
         if (!$manifestItems) {
@@ -165,21 +197,18 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
             'id' => $manifestId,
             'type' => 'Manifest',
             'thumbnail' => [],
-            'label' => [
-                'fi' => $recordTitle,
-                'sv' => $recordTitle,
-                'en' => $recordTitle,
-                'se' => $recordTitle,
-            ],
-            'metadata' => [],
+            'label' => (object)array_fill_keys(
+                $this->metadataLangKeys,
+                [$recordTitle]
+            ),
             'items' => $manifestItems,
         ];
 
-        return $manifest;
+        return (object)$manifest;
     }
 
     /**
-     * Create metadata array for a canvas
+     * Create metadata array for a canvas.
      *
      * @param array $image Image
      *
@@ -187,28 +216,59 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
      */
     protected function createCanvasMetadata(array $image): array
     {
+        // Metadata 'value' fields are appended with a single whitespace
+        // character to enforce a plain-text interpretation
+        //
+        // See: https://iiif.io/api/presentation/3.0/#45-html-markup-in-property-values
+
         $metadata = [];
-        if (isset($image['description'])) {
-            $metadata[] = [
-                'label' => [
-                    'en' => 'Description',
-                    'fi' => 'Kuvaus',
-                    'sv' => 'Beskrivning',
-                    'se' => 'Govvádus',
-                ],
-                'value' => [
-                    'en' => $image['description'],
-                    'fi' => $image['description'],
-                    'sv' => $image['description'],
-                    'se' => $image['description'],
-                ],
+        if ('' !== ($description = $image['description'] ?? '')) {
+            $metadata[] = (object)[
+                'label' => $this->getTranslations('image_description'),
+                'value' => (object)array_fill_keys(
+                    $this->metadataLangKeys,
+                    [$description . ' ']
+                ),
+            ];
+        }
+
+        if (isset($image['identifier'])) {
+            $metadata[] = (object)[
+                'label' => $this->getTranslations('image_identifier'),
+                'value' => (object)array_fill_keys(
+                    $this->metadataLangKeys,
+                    [$image['identifier'] . ' ']
+                ),
             ];
         }
         return $metadata;
     }
 
     /**
-     * Build the cover URL for this image
+     * Translate a message for all provided locales at once.
+     *
+     * Uses Laminas\Translator\TranslatorInterface directly, because VuFind's
+     * interface does not expose the $locale parameter.
+     *
+     * @param string $message Message to be translated
+     *
+     * @return object $language => $translatedMessage
+     */
+    protected function getTranslations(string $message): object
+    {
+        $translator = $this->getTranslator();
+
+        return (object)array_combine(
+            $this->metadataLangKeys,
+            array_map(
+                fn ($l) => [$translator->translate($message, locale: $l)],
+                $this->locales
+            )
+        );
+    }
+
+    /**
+     * Build the cover URL for this image.
      *
      * @param string $recordId Record unique ID
      * @param int    $index    Image number
@@ -223,23 +283,22 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
         string $size,
         string $source
     ): string {
-        return ($this->url)(
-            'cover-show',
-            [],
-            [
-                'force_canonical' => true,
-                'query' => [
+        return $this->serverUrlHelper->getUrlForPath(
+            $this->routeHelper->getUrlFromRoute(
+                'cover-show',
+                [],
+                [
                     'id'     => $recordId,
                     'index'  => $index,
                     'size'   => $size,
                     'source' => $source,
-                ],
-            ]
+                ]
+            )
         );
     }
 
     /**
-     * Create annotation page representing a given image
+     * Create annotation page representing a given image.
      *
      * @param int    $index      Image number
      * @param string $size       Image size: 'large', 'medium', 'small'
@@ -247,23 +306,23 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
      * @param string $manifestId Manifest ID, i.e. URI to the calling
      *                           RecordController action
      *
-     * @return array
+     * @return object
      */
     protected function createAnnotationPage(
         int $index,
         string $size,
         string $bodyId,
         string $manifestId
-    ): array {
+    ): object {
         $annotationPageId = "$manifestId/$index/$size";
         $annotationPage = [
             'id' => $annotationPageId,
             'type' => 'AnnotationPage',
-            'items' => [[
+            'items' => [(object)[
                 'id' => "$annotationPageId/1",
                 'type' => 'Annotation',
                 'motivation' => 'painting',
-                'body' => [
+                'body' => (object)[
                     'id' => $bodyId,
                     // NOTE: The image is served through the Cover/Show
                     // endpoint, which, as of 2025-12-12, forces a conversion to
@@ -275,6 +334,6 @@ class IIIFManifestGenerator implements \VuFindHttp\HttpServiceAwareInterface
             ]],
         ];
 
-        return $annotationPage;
+        return (object)$annotationPage;
     }
 }

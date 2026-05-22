@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Matomo web analytics view helper for Matomo versions >= 4
+ * Matomo web analytics view helper for Matomo versions >= 4.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use function in_array;
 use function is_array;
 
 /**
- * Matomo web analytics view helper for Matomo versions >= 4
+ * Matomo web analytics view helper for Matomo versions >= 4.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -48,7 +48,7 @@ use function is_array;
 class Matomo extends \VuFind\View\Helper\Root\Matomo
 {
     /**
-     * Locale settings
+     * Locale settings.
      *
      * @var \VuFind\I18n\Locale\LocaleSettings
      */
@@ -62,7 +62,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     protected $additionalCustomData = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config                $config  VuFind configuration
      * @param \Laminas\Router\Http\TreeRouteStack  $router  Router
@@ -94,7 +94,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     }
 
     /**
-     * Get the URL for the current page
+     * Get the URL for the current page.
      *
      * @return string
      */
@@ -112,7 +112,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     }
 
     /**
-     * Convert a custom data array to JavaScript dimensions code
+     * Convert a custom data array to JavaScript dimensions code.
      *
      * @param array $customData Custom data
      *
@@ -130,7 +130,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     }
 
     /**
-     * Convert a custom data array to JavaScript code
+     * Convert a custom data array to JavaScript code.
      *
      * @param array $customData Custom data
      *
@@ -172,7 +172,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     }
 
     /**
-     * Augment custom data with additional information
+     * Augment custom data with additional information.
      *
      * @param array $customData Custom data
      *
@@ -193,7 +193,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     }
 
     /**
-     * Get custom data for record page
+     * Get custom data for record page.
      *
      * @param RecordDriverBase $recordDriver Record driver
      *
@@ -237,7 +237,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     }
 
     /**
-     * Get custom data for lightbox actions
+     * Get custom data for lightbox actions.
      *
      * @return array Associative array of custom data
      */
@@ -262,7 +262,7 @@ class Matomo extends \VuFind\View\Helper\Root\Matomo
     }
 
     /**
-     * Get Page View Tracking Code
+     * Get Page View Tracking Code.
      *
      * @param array $customData Custom data
      *

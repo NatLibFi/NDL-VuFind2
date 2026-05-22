@@ -51,14 +51,14 @@ use function sprintf;
 class SolrExtensionsListener
 {
     /**
-     * Terms filter prefix for a filter (%s is the field name)
+     * Terms filter prefix for a filter (%s is the field name).
      *
      * @var string
      */
     public const TERMS_FILTER_PREFIX = "{!terms f=%s separator=\"\u{001f}\" method=docValuesTermsFilter}";
 
     /**
-     * Terms filter prefix for a source filter
+     * Terms filter prefix for a source filter.
      *
      * @var string
      */
@@ -205,7 +205,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Get a list of active sources
+     * Get a list of active sources.
      *
      * @param EventInterface $event Event
      *
@@ -257,7 +257,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Add a boost query for boosting the geo filter
+     * Add a boost query for boosting the geo filter.
      *
      * @param EventInterface $event Event
      *
@@ -304,7 +304,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Add alternative authority IDs to authority search
+     * Add alternative authority IDs to authority search.
      *
      * @param EventInterface $event Event
      *
@@ -412,7 +412,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Display debug information about the query
+     * Display debug information about the query.
      *
      * @param EventInterface $event Event
      *
@@ -498,7 +498,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Process availability checkbox filters
+     * Process availability checkbox filters.
      *
      * Changes the following filters if deduplication is enabled:
      *

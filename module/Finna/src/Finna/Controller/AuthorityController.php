@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Authority Controller
+ * Authority Controller.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * Authority Record Controller
+ * Authority Record Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -46,7 +46,7 @@ class AuthorityController extends \Finna\Controller\SearchController
     protected $searchClassId = 'SolrAuth';
 
     /**
-     * Home action
+     * Home action.
      *
      * @return mixed
      */
@@ -57,7 +57,7 @@ class AuthorityController extends \Finna\Controller\SearchController
     }
 
     /**
-     * Record action -- display a record
+     * Record action -- display a record.
      *
      * @return \Laminas\View\Model\ViewModel
      */
@@ -70,7 +70,7 @@ class AuthorityController extends \Finna\Controller\SearchController
     }
 
     /**
-     * Search action -- call standard results action
+     * Search action -- call standard results action.
      *
      * @return mixed
      */

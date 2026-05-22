@@ -86,7 +86,6 @@
         // Deal with cart stuff:
         $cart = $this->cart();
         if ($cart->isActive()) {
-          $this->assetManager()->appendScriptLink('vendor/js.cookie.js');
           $this->assetManager()->appendScriptLink('cart.js');
         }
       }
@@ -147,13 +146,13 @@
 
       $this->assetManager()->appendScriptString(implode("\n", $appendScripts));
     ?>
-    <?=$this->cookieConsent()->render()?>
     <?=$this->assetManager()->outputHeaderAssets()?>
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/general-post-head')): ?>
       <?=$this->render($template)?>
     <?php endif; ?>
   </head>
   <body class="template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?> <?=$this->layoutClass('offcanvas-row')?><?php if ($this->layout()->rtl): ?> rtl<?php endif; ?>">
+    <?=$this->cookieConsent()->render('bottom')?>
     <?=$this->render('search/modals.phtml') ?>
     <?php if (isset($this->layout()->srmessage)): // message for benefit of screen-reader users ?>
       <span class="visually-hidden"><?=$this->layout()->srmessage ?></span>
@@ -312,6 +311,7 @@
       }
     ?>
     <?=$this->assetManager()->outputFooterAssets() ?>
+    <?=$this->biblioworksChatbot()?>
   </body>
 </html>
 <!-- END of: finna - layout/layout.phtml -->

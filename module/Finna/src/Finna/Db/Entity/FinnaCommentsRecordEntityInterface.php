@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model interface for finna_comments_record table
+ * Entity model interface for finna_comments_record table.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use VuFind\Db\Entity\CommentsEntityInterface;
 use VuFind\Db\Entity\EntityInterface;
 
 /**
- * Entity model interface for finna_comments_record table
+ * Entity model interface for finna_comments_record table.
  *
  * @category VuFind
  * @package  Database

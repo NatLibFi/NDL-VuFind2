@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Collection Search Parameters
+ * Solr Collection Search Parameters.
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\Search\SolrCollection;
 
 /**
- * Solr Collection Search Parameters
+ * Solr Collection Search Parameters.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -46,14 +46,14 @@ class Params extends \VuFind\Search\SolrCollection\Params
     use \Finna\Search\FinnaParams;
 
     /**
-     * Applied filters
+     * Applied filters.
      *
      * @var array
      */
     protected $filterList = [];
 
     /**
-     * Date converter
+     * Date converter.
      *
      * @var \Vufind\Date\Converter
      */

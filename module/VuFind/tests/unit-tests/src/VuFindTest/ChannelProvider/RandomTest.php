@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Random Test Class
+ * Random Test Class.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFindSearch\Query\Query;
 use VuFindTest\RecordDriver\TestHarness;
 
 /**
- * Random Test Class
+ * Random Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -117,7 +117,11 @@ class RandomTest extends \PHPUnit\Framework\TestCase
         $recordRouter = $this->getConfiguredRecordRouterMock($recordDriver);
         $random->setCoverRouter($coverRouter);
         $random->setRecordRouter($recordRouter);
-        return [$random, $expectedResult, $params];
+        return [
+            $random,
+            $expectedResult,
+            $params,
+        ];
     }
 
     /**
@@ -196,7 +200,7 @@ class RandomTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a fake record driver
+     * Get a fake record driver.
      *
      * @return TestHarness
      */

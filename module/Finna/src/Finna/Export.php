@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Export support class
+ * Export support class.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
 /**
- * Export support class
+ * Export support class.
  *
  * @category VuFind
  * @package  Export

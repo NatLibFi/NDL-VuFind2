@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EDS Record Controller
+ * EDS Record Controller.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * EDS Record Controller
+ * EDS Record Controller.
  *
  * @category VuFind
  * @package  Controller

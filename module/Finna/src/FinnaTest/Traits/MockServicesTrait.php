@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait which returns pre-configured db mocks
+ * Trait which returns pre-configured db mocks.
  *
  * PHP version 8
  *
@@ -44,7 +44,7 @@ use VuFind\Db\PersistenceManager;
 use VuFindHttp\HttpService;
 
 /**
- * Trait which returns pre-configured db mocks
+ * Trait which returns pre-configured db mocks.
  *
  * @category VuFind
  * @package  Tests
@@ -55,7 +55,7 @@ use VuFindHttp\HttpService;
 trait MockServicesTrait
 {
     /**
-     * Get Finna access token service as a mocked service
+     * Get Finna access token service as a mocked service.
      *
      * @return MockObject
      */
@@ -121,7 +121,7 @@ trait MockServicesTrait
     }
 
     /**
-     * Get http service
+     * Get http service.
      *
      * @param array $urlAndResponseMap Url and response map. Url is the parameter for createClient.
      *                                 Value is an array containing keys 'success', 'body'
@@ -149,7 +149,7 @@ trait MockServicesTrait
     }
 
     /**
-     * Create a mocked entity
+     * Create a mocked entity.
      *
      * @param string      $name     Entity class name
      * @param array       $data     Array containing data as key => value

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Results as feed" view helper
+ * "Results as feed" view helper.
  *
  * PHP version 8
  *
@@ -43,7 +43,7 @@ use function is_array;
 use function is_string;
 
 /**
- * "Results as feed" view helper
+ * "Results as feed" view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -55,14 +55,14 @@ use function is_string;
 class ResultFeed extends \VuFind\View\Helper\Root\ResultFeed
 {
     /**
-     * User list object
+     * User list object.
      *
      * @var UserListEntityInterface
      */
     protected $list = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param RecordHelper                 $recordHelper        Record helper
      * @param RecordImageHelper            $recordImageHelper   Record image helper

@@ -59,21 +59,21 @@ use function count;
 class ImportComments extends AbstractUtilCommand
 {
     /**
-     * Log file
+     * Log file.
      *
      * @var string
      */
     protected $logFile;
 
     /**
-     * Whether to output verbose messages
+     * Whether to output verbose messages.
      *
      * @var bool
      */
     protected $verbose = false;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserServiceInterface     $userService       User database service
      * @param CommentsServiceInterface $commentsService   Comments database service
@@ -380,7 +380,7 @@ class ImportComments extends AbstractUtilCommand
     }
 
     /**
-     * Find a record
+     * Find a record.
      *
      * @param string $sourceId Source ID
      * @param string $id       Raw ID
@@ -430,7 +430,7 @@ class ImportComments extends AbstractUtilCommand
     }
 
     /**
-     * Write a log message
+     * Write a log message.
      *
      * @param string $msg    Message
      * @param bool   $screen Whether to output the message on screen too

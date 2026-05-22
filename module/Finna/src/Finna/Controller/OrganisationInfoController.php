@@ -45,7 +45,7 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
     use Feature\DownloadTrait;
 
     /**
-     * Default action if none provided
+     * Default action if none provided.
      *
      * @return Laminas\View\Model\ViewModel
      */
@@ -96,7 +96,7 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Proxy load image
+     * Proxy load image.
      *
      * @return Laminas\View\Model\ViewModel
      */

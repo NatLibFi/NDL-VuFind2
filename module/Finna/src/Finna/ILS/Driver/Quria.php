@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Quria ILS Driver
+ * Quria ILS Driver.
  *
  * PHP version 8.1
  *
@@ -45,7 +45,7 @@ use function is_object;
 use function strlen;
 
 /**
- * Quria ILS Driver
+ * Quria ILS Driver.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -61,7 +61,7 @@ use function strlen;
 class Quria extends AxiellWebServices
 {
     /**
-     * SOAP Options
+     * SOAP Options.
      *
      * @var array
      */
@@ -82,7 +82,14 @@ class Quria extends AxiellWebServices
     ];
 
     /**
-     * Constructor
+     * Regex pattern for extracting payment identifier from debt note.
+     *
+     * @var string
+     */
+    protected string $paymentIdPattern = '/\s*Maksun tunnus: ([\w\-]+)/';
+
+    /**
+     * Constructor.
      *
      * @param \VuFind\Date\Converter      $dateConverter Date converter object
      * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
@@ -122,7 +129,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Pickup Locations
+     * Get Pickup Locations.
      *
      * This is responsible for retrieving pickup locations.
      *
@@ -239,7 +246,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -336,7 +343,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * This is responsible for iterating the organisation holdings
+     * This is responsible for iterating the organisation holdings.
      *
      * @param array   $organisationHoldings Organisation holdings
      * @param string  $id                   The record id to retrieve the holdings
@@ -565,7 +572,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -724,7 +731,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked out items)
      * by a specific patron.
@@ -853,7 +860,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Patron Transaction History
+     * Get Patron Transaction History.
      *
      * This is responsible for retrieving all historical transactions
      * (i.e. checked out items)
@@ -948,7 +955,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Returns an id which is used to authenticate current session in SOAP API
+     * Returns an id which is used to authenticate current session in SOAP API.
      *
      * @param string $username patron username
      * @param string $password patron password
@@ -985,7 +992,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -1117,7 +1124,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -1211,7 +1218,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -1261,7 +1268,7 @@ class Quria extends AxiellWebServices
     /**
      * Returns translated value of a fine type.
      * Maps Quria message in to more unified version in VuFind
-     * I.E reservationFeeDebt => 'fine_status_Hold Expired'
+     * I.E reservationFeeDebt => 'fine_status_Hold Expired'.
      *
      * @param string $key Key to check for mapping
      *
@@ -1308,7 +1315,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -1326,6 +1333,7 @@ class Quria extends AxiellWebServices
         $blockedTypes = $paymentConfig['nonPayable'] ?? [];
         $payableMinDate
             = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
+        $mapItemIdentifier = $paymentConfig['mapItemIdentifier'] ?? null;
 
         $function = 'GetDebts';
         $functionResult = 'debtsResponse';
@@ -1372,24 +1380,13 @@ class Quria extends AxiellWebServices
             }
             // Round the amount in case it's a weird decimal number:
             $amount = round($amount);
-            $description = $this->mapAndTranslateFineType($debt->debtType) . ' - ' . $debt->debtNote;
-            $debtDate = $this->dateFormat->convertFromDisplayDate(
-                'U',
-                $this->formatDate($debt->debtDate)
-            );
-            $payable = $amount > 0 && $debtDate >= $payableMinDate && ($debt->isOnlinePaymentAllowed ?? true);
-            if ($payable) {
-                foreach ($blockedTypes as $blockedType) {
-                    if (
-                        $blockedType === $description
-                        || (strncmp($blockedType, '/', 1) === 0
-                        && substr_compare($blockedType, '/', -1) === 0
-                        && preg_match($blockedType, $description))
-                    ) {
-                        $payable = false;
-                        break;
-                    }
+            $note = (string)$debt->debtNote;
+            $productCode = null;
+            if ('productCode' === $mapItemIdentifier) {
+                if (preg_match($this->paymentIdPattern, $note, $matches)) {
+                    $productCode = $matches[1];
                 }
+                $note = preg_replace($this->paymentIdPattern, '', $note);
             }
             $fine = [
                 'debt_id' => $debt->id,
@@ -1398,13 +1395,13 @@ class Quria extends AxiellWebServices
                 'amount' => (int)$amount,
                 'checkout' => '',
                 'fine' => $this->mapAndTranslateFineType($debt->debtType),
-                'description' => (string)$debt->debtNote,
+                'description' => $note,
                 'balance' => (int)$amount,
                 'createdate' => $debt->debtDate,
-                'payableOnline' => $payable,
+                'productCode' => $productCode,
                 'organization' => trim($debt->organisation ?? ''),
             ];
-            $fine['payableOnline'] = $this->fineIsPayable($fine);
+            $fine['payableOnline'] = ($debt->isOnlinePaymentAllowed ?? true) && $this->fineIsPayable($fine);
             $finesList[] = $fine;
         }
 
@@ -1576,7 +1573,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update holds
+     * Update holds.
      *
      * This is responsible for changing the status of hold requests
      *
@@ -1666,6 +1663,11 @@ class Quria extends AxiellWebServices
                     'success' => false,
                     'status' => $message,
                 ];
+            } elseif (($result->$functionResult->reservation->status->key ?? '') === 'reservationDenied') {
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => 'hold_error_update_failed',
+                ];
             } else {
                 $results[$requestId] = [
                     'success' => true,
@@ -1676,7 +1678,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Place Hold
+     * Place Hold.
      *
      * This is responsible for both placing holds as well as placing recalls.
      *
@@ -1760,7 +1762,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array    $patron  Patron array
      * @param String   $email   Email address
@@ -1855,7 +1857,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron  Patron array
      * @param string $phone   Phone number
@@ -1940,7 +1942,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Cancel Holds
+     * Cancel Holds.
      *
      * This is responsible for canceling holds.
      *
@@ -2007,7 +2009,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Renew Items
+     * Renew Items.
      *
      * This is responsible for renewing items.
      *

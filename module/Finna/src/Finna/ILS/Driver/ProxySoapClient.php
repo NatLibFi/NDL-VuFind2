@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Modified BeSimple SoapClient for Zend HTTP Client
+ * Modified BeSimple SoapClient for Zend HTTP Client.
  *
  * PHP version 8
  *
@@ -47,14 +47,14 @@ use VuFindHttp\HttpServiceInterface;
 class ProxySoapClient extends \BeSimple\SoapClient\SoapClient
 {
     /**
-     * HTTP Service
+     * HTTP Service.
      *
      * @var HttpServiceInterface
      */
     protected $httpService;
 
     /**
-     * Create the Curl client
+     * Create the Curl client.
      *
      * @param array $options Client options
      *

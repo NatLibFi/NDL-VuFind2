@@ -134,13 +134,13 @@
         $searchboxAttributes['class'] .= ' suggestions:0';
       }
       if (!empty($acHandlers)) {
-        $searchboxAttributes['class'] .= ' handlers:' . implode('|', array_map(function ($h) { return $h['handler']; }, $acHandlers));
+        $searchboxAttributes['class'] .= ' handlers:' . implode('|', array_map(fn ($h) => $h['handler'], $acHandlers));
       }
       if ($phrase) {
         $searchboxAttributes['class'] .= " phrase:$phrase";
       }
       if (!empty($acFilters)) {
-        $searchboxAttributes['class'] .= ' filters:' . implode('||', array_map(function ($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters));
+        $searchboxAttributes['class'] .= ' filters:' . implode('||', array_map(fn ($k, $v) => $k . '|' . $v, array_keys($acFilters), $acFilters));
       }
     }
     if (!empty($keyboardLayouts)) {

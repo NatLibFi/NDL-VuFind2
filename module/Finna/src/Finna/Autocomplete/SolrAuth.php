@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Authority Autocomplete Module
+ * Solr Authority Autocomplete Module.
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\Autocomplete;
 
 /**
- * Solr Authority Autocomplete Module
+ * Solr Authority Autocomplete Module.
  *
  * This class provides suggestions by using the local Solr authority index.
  *
@@ -44,7 +44,7 @@ namespace Finna\Autocomplete;
 class SolrAuth extends Solr
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param PluginManager         $results      Results plugin manager
      * @param \VuFind\Config\Config $facetConfig  Facet configuration

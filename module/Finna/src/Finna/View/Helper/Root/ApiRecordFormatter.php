@@ -1,7 +1,7 @@
 <?php
 
 /**
- * API record formatter view helper
+ * API record formatter view helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use FinnaApi\Formatter\RecordFormatter;
 
 /**
- * API record formatter view helper
+ * API record formatter view helper.
  *
  * @category VuFind
  * @package  View_Helpers

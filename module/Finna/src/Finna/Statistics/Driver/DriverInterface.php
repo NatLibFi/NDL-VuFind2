@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Statistics driver plugin interface
+ * Statistics driver plugin interface.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Statistics\Driver;
 
 /**
- * Statistics driver plugin interface
+ * Statistics driver plugin interface.
  *
  * @category VuFind
  * @package  Statistics
@@ -41,7 +41,7 @@ namespace Finna\Statistics\Driver;
 interface DriverInterface
 {
     /**
-     * Add a new session to statistics
+     * Add a new session to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -58,7 +58,7 @@ interface DriverInterface
     ): void;
 
     /**
-     * Add a record view to statistics
+     * Add a record view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -86,7 +86,7 @@ interface DriverInterface
     ): void;
 
     /**
-     * Add a page view to statistics
+     * Add a page view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)

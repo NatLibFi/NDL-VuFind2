@@ -67,7 +67,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     public const FILE_LEVELS = ['file'];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
@@ -244,7 +244,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -321,7 +321,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get origination
+     * Get origination.
      *
      * @return string
      */
@@ -332,7 +332,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get all originations
+     * Get all originations.
      *
      * @return array
      */
@@ -347,7 +347,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get extended origination
+     * Get extended origination.
      *
      * @return array
      */
@@ -370,7 +370,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get origination Id
+     * Get origination Id.
      *
      * @return string
      */
@@ -415,7 +415,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get an array of external service URLs
+     * Get an array of external service URLs.
      *
      * @return array Array of urls with 'url' and 'desc' keys
      */
@@ -484,7 +484,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get unit ID (for reference)
+     * Get unit ID (for reference).
      *
      * @return string Unit ID
      */
@@ -571,7 +571,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get the value of whether or not this is a collection level record
+     * Get the value of whether or not this is a collection level record.
      *
      * NOTE: \VuFind\Hierarchy\TreeDataFormatter\AbstractBase::isCollection()
      * duplicates some of this logic.
@@ -591,7 +591,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Check if the record is a fonds or a collection by format
+     * Check if the record is a fonds or a collection by format.
      *
      * @return bool
      */
@@ -651,7 +651,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get parent archives
+     * Get parent archives.
      *
      * @return array
      */
@@ -672,7 +672,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get parent series
+     * Get parent series.
      *
      * @return array
      */
@@ -689,7 +689,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Get parent files
+     * Get parent files.
      *
      * @return array
      */
@@ -829,7 +829,44 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Replace placeholders in the URL with the values from the record
+     * Get related places.
+     *
+     * @param array $include Relator attributes to include
+     * @param array $exclude Relator attributes to exclude
+     *
+     * @return array
+     */
+    public function getRelatedPlacesExtended($include = [], $exclude = [])
+    {
+        // Relator attribute is currently not in use.
+        $record = $this->getXmlRecord();
+        $result = $resultDetail = [];
+        foreach ($record->controlaccess as $controlaccess) {
+            foreach ($controlaccess->geogname as $name) {
+                // Check both geogname and geogname/part
+                $parts = [];
+                if ($namestr = trim((string)$name)) {
+                    $parts[] = $namestr;
+                }
+                foreach ($name->part ?? [] as $place) {
+                    if ($p = trim((string)$place)) {
+                        $parts[] = $p;
+                    }
+                }
+                if ($parts) {
+                    $part = implode(', ', $parts);
+                    if (!in_array($part, $result)) {
+                        $resultDetail[] = ['data' => $part];
+                        $result[] = $part;
+                    }
+                }
+            }
+        }
+        return $resultDetail;
+    }
+
+    /**
+     * Replace placeholders in the URL with the values from the record.
      *
      * @param string $url URL
      *
@@ -857,7 +894,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
-     * Build a record array for hierarchy display
+     * Build a record array for hierarchy display.
      *
      * @param array $ids    Record IDs
      * @param array $titles Record titles

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetPiwikPopularSearches AJAX handler
+ * GetPiwikPopularSearches AJAX handler.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * GetPiwikPopularSearches AJAX handler
+ * GetPiwikPopularSearches AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -55,28 +55,28 @@ class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase implement
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Config
+     * Config.
      *
      * @var Config
      */
     protected $config;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings   $ss       Session settings
      * @param CacheManager      $cm       Cache manager

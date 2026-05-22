@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Component view helper
+ * Component view helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use function strlen;
 
 /**
- * Component view helper
+ * Component view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -47,7 +47,7 @@ class Component extends \VuFind\View\Helper\Root\Component
     ];
 
     /**
-     * Expand path and render template
+     * Expand path and render template.
      *
      * @param string $name   Component name that matches a template
      * @param array  $params Data for the component template

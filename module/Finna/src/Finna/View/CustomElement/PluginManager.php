@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element plugin manager
+ * Custom element plugin manager.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\CustomElement;
 
 /**
- * Custom element plugin manager
+ * Custom element plugin manager.
  *
  * @category VuFind
  * @package  CustomElements
@@ -41,7 +41,7 @@ namespace Finna\View\CustomElement;
 class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * Make sure plugins are properly initialized.
      *

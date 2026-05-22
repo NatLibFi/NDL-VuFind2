@@ -60,14 +60,14 @@ class SolrDefaultBackendFactory extends \VuFind\Search\Factory\SolrDefaultBacken
     protected $createRecordMethod = 'getSolrRecord';
 
     /**
-     * Solr backend class
+     * Solr backend class.
      *
      * @var string
      */
     protected $backendClass = \FinnaSearch\Backend\Solr\Backend::class;
 
     /**
-     * Record collection class for RecordCollectionFactory
+     * Record collection class for RecordCollectionFactory.
      *
      * @var string
      */
@@ -158,7 +158,7 @@ class SolrDefaultBackendFactory extends \VuFind\Search\Factory\SolrDefaultBacken
     }
 
     /**
-     * Get a deduplication listener for the backend
+     * Get a deduplication listener for the backend.
      *
      * @param Backend $backend Search backend
      * @param bool    $enabled Whether deduplication is enabled

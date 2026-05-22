@@ -109,7 +109,7 @@ final class PasswordAccessTest extends \VuFindTest\Integration\MinkTestCase
         $this->findCssAndSetValue($page, '#login_PasswordAccess_password', 'bad');
         $this->clickCss($page, '.modal-content input[type="submit"]');
         $this->waitForPageLoad($page);
-        $this->assertEquals(
+        $this->assertSame(
             'Invalid login -- please try again.',
             $this->findCssAndGetText($page, '.modal-content .alert-danger')
         );
@@ -146,7 +146,7 @@ final class PasswordAccessTest extends \VuFindTest\Integration\MinkTestCase
         $this->findCssAndSetValue($page, '#login_PasswordAccess_password', 'bad');
         $this->clickCss($page, '.modal-content input[type="submit"]');
         $this->waitForPageLoad($page);
-        $this->assertEquals(
+        $this->assertSame(
             'Invalid login -- please try again.',
             $this->findCssAndGetText($page, '.modal-content .alert-danger')
         );
@@ -155,14 +155,14 @@ final class PasswordAccessTest extends \VuFindTest\Integration\MinkTestCase
         $this->findCssAndSetValue($page, '#login_PasswordAccess_password', 'password');
         $this->clickCss($page, '.modal-content input[type="submit"]');
         $this->waitForPageLoad($page);
-        $this->assertEquals(
+        $this->assertSame(
             'Invalid login -- please try again.',
             $this->findCssAndGetText($page, '.modal-content .alert-danger')
         );
     }
 
     /**
-     * Logs out on the current page and checks if logout was successful
+     * Logs out on the current page and checks if logout was successful.
      *
      * @param Element $page Current page object
      *
@@ -174,7 +174,7 @@ final class PasswordAccessTest extends \VuFindTest\Integration\MinkTestCase
         $this->clickCss($page, '.logoutOptions a.logout');
 
         // Check that login link is back
-        $this->assertNotEmpty($this->findCss($page, '#loginOptions a'));
+        $this->findCss($page, '#loginOptions a');
     }
 
     /**

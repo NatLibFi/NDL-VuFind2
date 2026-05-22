@@ -22,7 +22,7 @@ finna.dateRangeVis = (function finnaDateRangeVis() {
    */
   function padZeros(_number, _length) {
     var number = _number;
-    var length = typeof length === 'undefined' ? 4 : _length;
+    var length = typeof _length === 'undefined' ? 4 : _length;
     // Room for any leading negative sign
     var negative = false;
     if (number < 0) {

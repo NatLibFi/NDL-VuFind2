@@ -4,6 +4,10 @@
   $this->indexStart = 0;
 } ?>
 <div class="<?=$this->escapeHtmlAttr(trim('search-grid ' . ($this->resultsClass ?? '')))?>"<?=isset($this->resultsAttrs) ? ' ' . $this->resultsAttrs : ''?>>
+  <?php $list = $this->sortList ? $this->sortList : $this->params->getSortList(); ?>  
+  <?php if ($list['title']['selected'] ?? false): ?>
+    <?=$this->render('search/sort-title-message.phtml')?>
+  <?php endif; ?>
   <?php $i = $this->indexStart; ?>
   <?php foreach ($this->results->getResults() as $current): ?>
     <div id="result<?=$i++ ?>" class="result grid">

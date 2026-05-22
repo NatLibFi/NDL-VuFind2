@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Turku Payment API Item
+ * Turku Payment API Item.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 use Paytrail\SDK\Exception\ValidationException;
 
 /**
- * Turku Payment API Item
+ * Turku Payment API Item.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -43,14 +43,14 @@ use Paytrail\SDK\Exception\ValidationException;
 class Item extends \Paytrail\SDK\Model\Item
 {
     /**
-     * Holds required sap products
+     * Holds required sap products.
      *
      * @var array
      */
     protected $sapProduct = [];
 
     /**
-     * Set sapProduct
+     * Set sapProduct.
      *
      * @param array $sapProduct The sapProduct
      *
@@ -63,7 +63,7 @@ class Item extends \Paytrail\SDK\Model\Item
     }
 
     /**
-     * Get sapProduct
+     * Get sapProduct.
      *
      * @return array
      */
@@ -74,7 +74,7 @@ class Item extends \Paytrail\SDK\Model\Item
 
     /**
      * Validates with Respect\Validation library and
-     * throws an exception for invalid objects
+     * throws an exception for invalid objects.
      *
      * @throws ValidationException
      *

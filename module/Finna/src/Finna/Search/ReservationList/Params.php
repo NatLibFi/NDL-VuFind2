@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ReservationList aspect of the Search Multi-class (Params)
+ * ReservationList aspect of the Search Multi-class (Params).
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\Search\ReservationList;
 
 /**
- * Search ReservationList Parameters
+ * Search ReservationList Parameters.
  *
  * @category VuFind
  * @package  Search_ReservationList

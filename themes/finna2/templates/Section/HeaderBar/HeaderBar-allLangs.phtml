@@ -1,0 +1,32 @@
+<!-- START of: finna - header-allLangs.phtml -->
+<?php
+    $lang = $this->layout()->userLang;
+    $selectedLang = $this->layout()->allLangs[$lang];
+?>
+<?php if (isset($this->layout()->allLangs) && count($this->layout()->allLangs) > 1): ?>
+<li id="language_menu" class="nav-item dropdown">
+  <a href="#" id="language_menu_dropdown_button" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="<?=$this->transEscAttr('Language')?>" aria-description="<?=$this->displayLanguageOption($selectedLang)?> <?=$this->transEscAttr('selected')?>">
+    <?=$this->icon('language', 'lang-icon') ?>
+    <span class="hidden-xs"><?=$this->displayLanguageOption($selectedLang)?></span>
+    <?=$this->icon('collapse-open', 'collapse-open-icon') ?>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-right dropdown-menu-end">
+      <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+        <?php if ($this->layout()->userLang == $langCode): ?>
+          <li>
+            <a class="dropdown-item preserve-anchor active" aria-description="<?=$this->transEscAttr('selected')?>" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->sectionPlugin->getLanguageUrl($langCode))?>"> <?=$this->displayLanguageOption($langName)?></a>
+          </li>
+          <?php break; ?>
+        <?php endif ?>
+      <?php endforeach; ?>
+      <?php foreach ($this->layout()->allLangs as $langCode => $langName): ?>
+        <?php if ($this->layout()->userLang != $langCode): ?>
+          <li>
+            <a class="dropdown-item preserve-anchor" lang="<?=$this->escapeHtmlAttr($langCode)?>" href="<?=$this->escapeHtmlAttr($this->sectionPlugin->getLanguageUrl($langCode))?>"><?=$this->displayLanguageOption($langName)?></a>
+          </li>
+        <?php endif ?>
+      <?php endforeach; ?>
+  </ul>
+</li>
+<?php endif; ?>
+<!-- END of: finna - header-allLangs.phtml -->

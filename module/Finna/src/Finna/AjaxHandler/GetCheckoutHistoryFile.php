@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetCheckoutHistoryFile AJAX handler
+ * GetCheckoutHistoryFile AJAX handler.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Ods;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 /**
- * GetCheckoutHistoryFile AJAX handler
+ * GetCheckoutHistoryFile AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -70,7 +70,7 @@ class GetCheckoutHistoryFile extends GetCheckoutHistory
     ];
 
     /**
-     * Helper boolean for checking if this returns stream as a response
+     * Helper boolean for checking if this returns stream as a response.
      *
      * @var bool
      */
@@ -110,7 +110,7 @@ class GetCheckoutHistoryFile extends GetCheckoutHistory
     }
 
     /**
-     * Create a file for transaction history
+     * Create a file for transaction history.
      *
      * @param int    $part       Part of the transaction history to download
      * @param int    $limit      Limit for how many transactions one fetch from ils fetches

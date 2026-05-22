@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MetadataUtils Class
+ * MetadataUtils Class.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Util;
 use function is_array;
 
 /**
- * MetadataUtils Class
+ * MetadataUtils Class.
  *
  * This class contains a collection of static helper functions for metadata
  * processing
@@ -46,7 +46,7 @@ use function is_array;
 class MetadataUtils
 {
     /**
-     * Convert first character of string to upper case (mb aware)
+     * Convert first character of string to upper case (mb aware).
      *
      * @param string|string[] $str String to be converted
      *

@@ -199,6 +199,22 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             'FinnaApi'
         );
         $driver->setRawData($marcFields);
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => 'fi,en',
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+                'se' => 'Northern Sámi',
+            ],
+        ];
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
+        $driver->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
 
         $ratingsService = $this->getMockBuilder(\VuFind\Db\Service\RatingsService::class)
             ->disableOriginalConstructor()
@@ -235,6 +251,21 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
             'marc/record_formatter_test_1.xml',
             'marc/record_formatter_test_1_result.json',
         ];
+        yield 'Test marc record with legacy getFilteredXMLElement' => [
+            'marc/record_formatter_test_1.json',
+            'marc/record_formatter_test_1.xml',
+            'marc/record_formatter_test_2_result.json',
+            [
+                'fullRecord' => [
+                    'vufind.method' => 'Formatter::getFullRecordLegacy',
+                    'description' => 'Full metadata record (typically XML)',
+                    'type' => 'array',
+                    'items' => [
+                        'type' => 'string',
+                    ],
+                ],
+            ],
+        ];
         yield 'Test lido record' => [
             'lido/record_formatter_test_1.json',
             'lido/record_formatter_test_1.xml',
@@ -248,13 +279,23 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
      * @param string $indexFixture  Fixture for indexed record
      * @param string $xmlFixture    Fixture for full XML record
      * @param string $resultFixture Fixture for expected result
+     * @param array  $addFields     Default field definitions to add or override
      *
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('getTestRecordFormatterData')]
-    public function testFormatter(string $indexFixture, string $xmlFixture, string $resultFixture)
-    {
-        $formatter = $this->getFormatter();
+    public function testFormatter(
+        string $indexFixture,
+        string $xmlFixture,
+        string $resultFixture,
+        array $addFields = []
+    ) {
+
+        $defaultFields = $this->getDefaultDefs();
+        if ($addFields) {
+            $defaultFields = array_merge($defaultFields, $addFields);
+        }
+        $formatter = $this->getFormatter($defaultFields);
 
         $driver = $this->getDriver($indexFixture, $xmlFixture);
         // Test requesting no fields.
@@ -263,7 +304,7 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
         // Test requesting fields:
         $results = $formatter->format(
             [$driver],
-            array_keys($this->getDefaultDefs())
+            array_keys($defaultFields)
         );
         $expected = $this->getJsonFixture(
             $resultFixture,

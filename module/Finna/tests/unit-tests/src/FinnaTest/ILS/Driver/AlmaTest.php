@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Alma test class
+ * Alma test class.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use SimpleXMLElement;
 use VuFind\I18n\TranslatableString;
 
 /**
- * Alma test class
+ * Alma test class.
  *
  * @category VuFind
  * @package  Tests
@@ -49,7 +49,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Get data for update address test
+     * Get data for update address test.
      *
      * @return Generator
      */
@@ -127,7 +127,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test updating address
+     * Test updating address.
      *
      * @param array  $patron          User patron
      * @param array  $details         Update details
@@ -158,7 +158,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testPatronLogin
+     * Data provider for testPatronLogin.
      *
      * @return Generator
      */
@@ -193,7 +193,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test patron login
+     * Test patron login.
      *
      * @param string $fixtureKey Fixture key
      * @param array  $expected   Expected results
@@ -216,7 +216,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testGetMyProfileData
+     * Data provider for testGetMyProfileData.
      *
      * @return Generator
      */
@@ -329,7 +329,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getMyProfile
+     * Test getMyProfile.
      *
      * @param string $fixtureKey Fixture key
      * @param array  $expected   Expected results
@@ -353,7 +353,7 @@ class AlmaTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mocked alma record driver
+     * Get mocked alma record driver.
      *
      * @param array $makeRequestMap Map for requests in makeRequest function.
      *                              0 => url, 1 => method, 2 => response, expected => if assertEquals is required

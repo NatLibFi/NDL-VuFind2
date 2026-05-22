@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element renderer
+ * Custom element renderer.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use League\CommonMark\Renderer\ChildNodeRendererInterface;
 use League\CommonMark\Renderer\NodeRendererInterface;
 
 /**
- * Custom element renderer
+ * Custom element renderer.
  *
  * @category VuFind
  * @package  CommonMark

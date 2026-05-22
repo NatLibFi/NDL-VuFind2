@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna Cache Manager
+ * Finna Cache Manager.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ namespace Finna\Cache;
 use Laminas\Cache\Service\StorageAdapterFactory;
 
 /**
- * Finna Cache Manager
+ * Finna Cache Manager.
  *
  * @category VuFind
  * @package  Cache
@@ -86,7 +86,7 @@ class Manager extends \VuFind\Cache\Manager
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array                 $config  Main VuFind configuration
      * @param StorageAdapterFactory $factory Cache storage adapter factory

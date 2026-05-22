@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Feed component view helper
+ * Feed component view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Feed component view helper
+ * Feed component view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class Feed extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Feed configuration
+     * Feed configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param VuFind\Config\Config $config Feed configuration
      * custom variables

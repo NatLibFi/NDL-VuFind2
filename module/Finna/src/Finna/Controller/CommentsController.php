@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Comments Controller
+ * Comments Controller.
  *
  * PHP version 8
  *
@@ -49,7 +49,7 @@ class CommentsController extends \VuFind\Controller\CommentsController
     use Feature\UserContentTrait;
 
     /**
-     * Array of sort options for userListAction
+     * Array of sort options for userListAction.
      *
      * @var array
      */
@@ -60,7 +60,7 @@ class CommentsController extends \VuFind\Controller\CommentsController
     ];
 
     /**
-     * Report inappropriate comment
+     * Report inappropriate comment.
      *
      * @return mixed
      */

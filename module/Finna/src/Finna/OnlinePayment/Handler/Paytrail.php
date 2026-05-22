@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Payment handle for Paytrail
+ * Payment handle for Paytrail.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ namespace Finna\OnlinePayment\Handler;
 use Finna\OnlinePayment\Handler\Feature\OrganizationProductCodeMappingsTrait;
 
 /**
- * Payment handle for Paytrail
+ * Payment handle for Paytrail.
  *
  * @category VuFind
  * @package  OnlinePayment

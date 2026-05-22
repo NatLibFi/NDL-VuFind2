@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Embedded component parts tab
+ * Embedded component parts tab.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\RecordTab;
 
 /**
- * Embedded component parts tab
+ * Embedded component parts tab.
  *
  * @category VuFind
  * @package  RecordTabs

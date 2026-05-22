@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Search Parameters
+ * Solr Search Parameters.
  *
  * PHP version 8
  *
@@ -40,7 +40,7 @@ use function is_callable;
 use function strlen;
 
 /**
- * Solr Search Parameters
+ * Solr Search Parameters.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -56,28 +56,28 @@ class Params extends \VuFind\Search\Solr\Params
     use ParamsSharedTrait;
 
     /**
-     * Maximum facet limit
+     * Maximum facet limit.
      *
      * @var int
      */
     public const MAX_FACET_LIMIT = 100;
 
     /**
-     * Date converter
+     * Date converter.
      *
      * @var \Vufind\Date\Converter
      */
     protected $dateConverter;
 
     /**
-     * New items facet configuration
+     * New items facet configuration.
      *
      * @var array
      */
     protected $newItemsFacets = [];
 
     /**
-     * Query debug flag
+     * Query debug flag.
      *
      * @var bool
      */
@@ -98,7 +98,7 @@ class Params extends \VuFind\Search\Solr\Params
     protected $facetFilters = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Search\Base\Options $options         Options to use
      * @param ConfigManagerInterface      $configManager   Config manager
@@ -158,7 +158,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Format a Solr date for display
+     * Format a Solr date for display.
      *
      * @param string $date   Date
      * @param string $domain Translation domain
@@ -220,7 +220,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Pull the search parameters
+     * Pull the search parameters.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -256,7 +256,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Initialize coordinate filter (coordinates, VuFind1)
+     * Initialize coordinate filter (coordinates, VuFind1).
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -288,7 +288,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Get query debug flag status
+     * Get query debug flag status.
      *
      * @return bool
      */
@@ -298,7 +298,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Enable or disable query debugging
+     * Enable or disable query debugging.
      *
      * @param bool $value Whether to enable debugging
      *
@@ -310,7 +310,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Remove all hidden filters
+     * Remove all hidden filters.
      *
      * @return void
      */
@@ -320,7 +320,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Get current limit for hierarchical facets
+     * Get current limit for hierarchical facets.
      *
      * @return int
      */
@@ -330,7 +330,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Set limit for hierarchical facets
+     * Set limit for hierarchical facets.
      *
      * @param int $limit New limit
      *
@@ -527,7 +527,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Initialize new items filter (first_indexed and other configured ones)
+     * Initialize new items filter (first_indexed and other configured ones).
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.

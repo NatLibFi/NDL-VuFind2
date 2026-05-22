@@ -51,7 +51,7 @@ class BazaarDestroySession extends \VuFind\AjaxHandler\AbstractBase
     protected BazaarService $bazaarService;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param BazaarService $bazaarService Bazaar service
      */

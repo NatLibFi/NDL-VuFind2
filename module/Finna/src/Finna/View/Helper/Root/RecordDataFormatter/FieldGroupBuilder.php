@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Field group builder for record driver data formatting view helper
+ * Field group builder for record driver data formatting view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root\RecordDataFormatter;
 
 /**
- * Field group builder for record driver data formatting view helper
+ * Field group builder for record driver data formatting view helper.
  *
  * @category VuFind
  * @package  View_Helpers

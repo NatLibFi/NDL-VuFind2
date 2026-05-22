@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Admin Api Controller
+ * Admin Api Controller.
  *
  * PHP version 8
  *
@@ -49,7 +49,7 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
     use RetryTrait;
 
     /**
-     * Clear the cache
+     * Clear the cache.
      *
      * @return \Laminas\Http\Response
      */
@@ -118,7 +118,7 @@ class AdminApiController extends \VuFindApi\Controller\AdminApiController
     }
 
     /**
-     * Returns list of organisations
+     * Returns list of organisations.
      *
      * @return \Laminas\Http\Response
      */

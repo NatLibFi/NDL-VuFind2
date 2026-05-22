@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Search Params for L1 index
+ * Search Params for L1 index.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\L1;
 
 /**
- * Search Params for L1 index
+ * Search Params for L1 index.
  *
  * @category VuFind
  * @package  Search_L1

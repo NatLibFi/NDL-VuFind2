@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Turku Payment API Signature
+ * Turku Payment API Signature.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Paytrail\SDK\Exception\HmacException;
 use function is_array;
 
 /**
- * Turku Payment API Signature
+ * Turku Payment API Signature.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -45,7 +45,7 @@ use function is_array;
 class TurkuSignature
 {
     /**
-     * Calculate TurkuPayment hash
+     * Calculate TurkuPayment hash.
      *
      * @param array[] $params       HTTP headers in an associative array.
      * @param string  $body         HTTP request body,

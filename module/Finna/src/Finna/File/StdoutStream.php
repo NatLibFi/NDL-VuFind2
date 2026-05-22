@@ -1,7 +1,7 @@
 <?php
 
 /**
- * STDOUT stream
+ * STDOUT stream.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Psr\Http\Message\StreamInterface;
 use function strlen;
 
 /**
- * STDOUT stream
+ * STDOUT stream.
  *
  * @category VuFind
  * @package  File
@@ -45,14 +45,14 @@ use function strlen;
 class StdoutStream implements StreamInterface
 {
     /**
-     * Whether STDOUT output is active
+     * Whether STDOUT output is active.
      *
      * @var bool
      */
     protected bool $outputActive = false;
 
     /**
-     * Toggle STDOUT output
+     * Toggle STDOUT output.
      *
      * @param bool $value STDOUT active setting
      *
@@ -115,7 +115,7 @@ class StdoutStream implements StreamInterface
     }
 
     /**
-     * Returns the current position of the file read/write pointer
+     * Returns the current position of the file read/write pointer.
      *
      * @return int Position of the file pointer
      * @throws \RuntimeException on error.
@@ -238,7 +238,7 @@ class StdoutStream implements StreamInterface
     }
 
     /**
-     * Returns the remaining contents in a string
+     * Returns the remaining contents in a string.
      *
      * @return string
      *

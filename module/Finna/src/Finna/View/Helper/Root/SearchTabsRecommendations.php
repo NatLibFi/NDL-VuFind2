@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class SearchTabsRecommendations extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Recommendation config
+     * Recommendation config.
      *
      * @var array
      */
     protected $recommendationConfig;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $recommendationConfig Tab recommendation configuration
      */
@@ -58,7 +58,7 @@ class SearchTabsRecommendations extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get the search tabs recommendation settings for the active search class
+     * Get the search tabs recommendation settings for the active search class.
      *
      * @return array
      */

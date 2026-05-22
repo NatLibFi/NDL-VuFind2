@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrAuthEaccpf Test Class
+ * SolrAuthEaccpf Test Class.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace FinnaTest\RecordDriver;
 use Finna\RecordDriver\SolrAuthEaccpf;
 
 /**
- * SolrAuthEaccpf Record Driver Test Class
+ * SolrAuthEaccpf Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -45,7 +45,7 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Test getAlternativeTitles
+     * Test getAlternativeTitles.
      *
      * @return void
      */
@@ -71,7 +71,7 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getRelatedPublication
+     * Test getRelatedPublication.
      *
      * @return void
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Encapsulated Records aspect of the Search Multi-class (Params)
+ * Encapsulated Records aspect of the Search Multi-class (Params).
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\EncapsulatedRecords;
 
 /**
- * Encapsulated Records Search Parameters
+ * Encapsulated Records Search Parameters.
  *
  * @category VuFind
  * @package  Search_EncapsulatedRecords
@@ -66,7 +66,7 @@ class Params extends \VuFind\Search\Base\Params
     }
 
     /**
-     * Pull the page size parameter or set to default
+     * Pull the page size parameter or set to default.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.

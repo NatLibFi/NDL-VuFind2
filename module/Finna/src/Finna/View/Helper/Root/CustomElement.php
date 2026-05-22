@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element view helper
+ * Custom element view helper.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\View\Helper\AbstractHelper;
 
 /**
- * Custom element view helper
+ * Custom element view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -46,14 +46,14 @@ use Laminas\View\Helper\AbstractHelper;
 class CustomElement extends AbstractHelper implements CustomElementRendererInterface
 {
     /**
-     * Custom element plugin manager
+     * Custom element plugin manager.
      *
      * @var CustomElementManager
      */
     protected $pluginManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CustomElementManager $pm Custom element plugin manager
      */

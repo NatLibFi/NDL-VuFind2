@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Feed service
+ * Feed service.
  *
  * PHP version 8
  *
@@ -48,7 +48,7 @@ use function is_string;
 use function strlen;
 
 /**
- * Feed service
+ * Feed service.
  *
  * @category VuFind
  * @package  Content
@@ -88,42 +88,42 @@ class Feed implements
     protected $organisationInfoFeedConfig;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * URL helper
+     * URL helper.
      *
      * @var Url
      */
     protected $urlHelper;
 
     /**
-     * Server URL helper
+     * Server URL helper.
      *
      * @var ServerUrl
      */
     protected $serverUrl;
 
     /**
-     * Image link helper
+     * Image link helper.
      *
      * @var ImageLink
      */
     protected $imageLinkHelper;
 
     /**
-     * Clean HTML helper
+     * Clean HTML helper.
      *
      * @var CleanHtml
      */
     protected $cleanHtml;
 
     /**
-     * Organisation info service
+     * Organisation info service.
      *
      * @var OrganisationInfo
      */
@@ -272,7 +272,7 @@ class Feed implements
     }
 
     /**
-     * Check for a local file and create a timestamped link if found
+     * Check for a local file and create a timestamped link if found.
      *
      * @param string $url url
      *
@@ -430,7 +430,7 @@ class Feed implements
     }
 
     /**
-     * Function to parse feed with config
+     * Function to parse feed with config.
      *
      * @param AbstractFeed $channel Feed channel
      * @param Config       $config  Feed config
@@ -698,7 +698,7 @@ class Feed implements
     }
 
     /**
-     * Set up custom extensions
+     * Set up custom extensions.
      *
      * @param ContainerInterface $container Service container
      *
@@ -716,7 +716,7 @@ class Feed implements
     }
 
     /**
-     * Process item content
+     * Process item content.
      *
      * @param string $content       Content as string
      * @param array  $searchReplace Search and replacement values
@@ -799,7 +799,7 @@ class Feed implements
     }
 
     /**
-     * Proxify an image url for loading via the FeedContent controller
+     * Proxify an image url for loading via the FeedContent controller.
      *
      * @param string $url    Image URL
      * @param string $feedId Feed identifier

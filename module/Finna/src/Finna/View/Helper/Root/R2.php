@@ -43,7 +43,7 @@ namespace Finna\View\Helper\Root;
 class R2 extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Check if R2 is available
+     * Check if R2 is available.
      *
      * @return bool
      */
@@ -75,7 +75,7 @@ class R2 extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if user is has access to R2
+     * Check if user is has access to R2.
      *
      * @param bool $ignoreCache Ignore cache?
      *

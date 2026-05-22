@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Axiell Web Services ILS Driver
+ * Axiell Web Services ILS Driver.
  *
  * PHP version 8
  *
@@ -48,7 +48,7 @@ use function is_object;
 use function strlen;
 
 /**
- * Axiell Web Services ILS Driver
+ * Axiell Web Services ILS Driver.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -77,154 +77,154 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Date formatting object
+     * Date formatting object.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateFormat;
 
     /**
-     * Config file path resolver
+     * Config file path resolver.
      *
      * @var \VuFind\Config\PathResolver
      */
     protected $pathResolver;
 
     /**
-     * Default pickup location
+     * Default pickup location.
      *
      * @var string
      */
     protected $defaultPickUpLocation;
 
     /**
-     * Default request group
+     * Default request group.
      *
      * @var bool|string
      */
     protected $defaultRequestGroup;
 
     /**
-     * Whether request groups are enabled
+     * Whether request groups are enabled.
      *
      * @var bool
      */
     protected $requestGroupsEnabled;
 
     /**
-     * Regional hold
+     * Regional hold.
      *
      * @var bool
      */
     protected $regionalHold = false;
 
     /**
-     * Arena Member code of the institution
+     * Arena Member code of the institution.
      *
      * @var string
      */
     protected $arenaMember = '';
 
     /**
-     * Wsdl file name or url for accessing the catalogue section of AWS
+     * Wsdl file name or url for accessing the catalogue section of AWS.
      *
      * @var string
      */
     protected $catalogue_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the patron section of AWS
+     * Wsdl file name or url for accessing the patron section of AWS.
      *
      * @var string
      */
     protected $patron_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the patronaurora section of AWS
+     * Wsdl file name or url for accessing the patronaurora section of AWS.
      *
      * @var string
      */
     protected $patronaurora_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the loans section of AWS
+     * Wsdl file name or url for accessing the loans section of AWS.
      *
      * @var string
      */
     protected $loans_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the loansaurora section of aws
+     * Wsdl file name or url for accessing the loansaurora section of aws.
      *
      * @var string
      */
     protected $loansaurora_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the payment section of AWS
+     * Wsdl file name or url for accessing the payment section of AWS.
      *
      * @var string
      */
     protected $payments_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the reservation section of AWS
+     * Wsdl file name or url for accessing the reservation section of AWS.
      *
      * @var string
      */
     protected $reservations_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the catalogue aurora section of AWS
+     * Wsdl file name or url for accessing the catalogue aurora section of AWS.
      *
      * @var string
      */
     protected $catalogueaurora_wsdl = '';
 
     /**
-     * Path of the AWS debug log-file
+     * Path of the AWS debug log-file.
      *
      * @var string
      */
     protected $logFile = '';
 
     /**
-     * Pathname with prefix for logging the duration of AWS calls
+     * Pathname with prefix for logging the duration of AWS calls.
      *
      * @var string
      */
     protected $durationLogPrefix = '';
 
     /**
-     * Verbose debug-mode
+     * Verbose debug-mode.
      *
      * @var bool
      */
     protected $verbose = false;
 
     /**
-     * Institution settings for the order of organisations
+     * Institution settings for the order of organisations.
      *
      * @var array
      */
     protected $holdingsOrganisationOrder;
 
     /**
-     * Institution settings for the order of branches
+     * Institution settings for the order of branches.
      *
      * @var array
      */
     protected $holdingsBranchOrder;
 
     /**
-     * Institution settings for single reservation queue
+     * Institution settings for single reservation queue.
      *
      * @var bool
      */
     protected $singleReservationQueue = false;
 
     /**
-     * Messaging methods excluded from a service
+     * Messaging methods excluded from a service.
      *
      * @var array
      */
@@ -235,7 +235,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Title list mappings
+     * Title list mappings.
      *
      * @var array
      */
@@ -247,7 +247,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Messaging preference type mappings
+     * Messaging preference type mappings.
      *
      * @var array
      */
@@ -259,7 +259,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Messaging settings status code mappings
+     * Messaging settings status code mappings.
      *
      * @var array
      */
@@ -269,7 +269,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * SOAP Options
+     * SOAP Options.
      *
      * @var array
      */
@@ -290,14 +290,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Titlelist cache time mappings in minutes
+     * Titlelist cache time mappings in minutes.
      *
      * @var array
      */
     protected $titleListCacheSettings = [];
 
     /**
-     * Pick up location block list
+     * Pick up location block list.
      *
      * @var array
      */
@@ -313,7 +313,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Date\Converter      $dateConverter Date converter object
      * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
@@ -532,7 +532,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if request is valid
+     * Check if request is valid.
      *
      * This is responsible for determining if an item is requestable
      *
@@ -548,7 +548,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -572,7 +572,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Pickup Locations
+     * Get Pickup Locations.
      *
      * This is responsible for retrieving pickup locations.
      *
@@ -688,7 +688,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Default Pick Up Location
+     * Get Default Pick Up Location.
      *
      * Returns the default pick up location set in the .ini file
      *
@@ -707,7 +707,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Default Request Group
+     * Get Default Request Group.
      *
      * Returns the default request group
      *
@@ -726,7 +726,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get request groups
+     * Get request groups.
      *
      * @param integer $bibId       BIB ID
      * @param array   $patronId    Patron information returned by the patronLogin
@@ -758,7 +758,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Place Hold
+     * Place Hold.
      *
      * This is responsible for both placing holds as well as placing recalls.
      *
@@ -844,7 +844,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Cancel Holds
+     * Cancel Holds.
      *
      * This is responsible for canceling holds.
      *
@@ -906,7 +906,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update holds
+     * Update holds.
      *
      * This is responsible for changing the status of hold requests
      *
@@ -996,7 +996,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1013,7 +1013,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Statuses
+     * Get Statuses.
      *
      * This is responsible for retrieving the status information for a
      * collection of records.
@@ -1033,7 +1033,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -1124,7 +1124,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * This is responsible for iterating the organisation holdings
+     * This is responsible for iterating the organisation holdings.
      *
      * @param array  $organisationHoldings Organisation holdings
      * @param string $id                   The record id to retrieve the holdings
@@ -1334,7 +1334,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Purchase History
+     * Get Purchase History.
      *
      * This is responsible for retrieving the acquisitions history data for the
      * specific record (usually recently received issues of a serial).
@@ -1350,7 +1350,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -1512,7 +1512,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Helper function to format obtained messaging services from object into common array format
+     * Helper function to format obtained messaging services from object into common array format.
      *
      * @param ?object $userServices    User defined services and methods
      * @param array   $allowedServices Services allowed, obtained from ILS
@@ -1637,7 +1637,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Function to fetch dynamic lists from Aurora
+     * Function to fetch dynamic lists from Aurora.
      *
      * @param array $params To fetch
      *
@@ -1702,7 +1702,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Checks if key has a value in mapped list and returns it
+     * Checks if key has a value in mapped list and returns it.
      *
      * @param string $key to map
      *
@@ -1714,7 +1714,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Checks if value has a key in mapped list and returns it
+     * Checks if value has a key in mapped list and returns it.
      *
      * @param string $value to map
      *
@@ -1727,7 +1727,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked out items)
      * by a specific patron.
@@ -1855,7 +1855,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transaction History
+     * Get Patron Transaction History.
      *
      * This is responsible for retrieving all historical transactions
      * (i.e. checked out items)
@@ -1946,7 +1946,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Returns an id which is used to authenticate current session in SOAP API
+     * Returns an id which is used to authenticate current session in SOAP API.
      *
      * @param string $username patron username
      * @param string $password patron password
@@ -1984,7 +1984,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron messaging settings
+     * Update patron messaging settings.
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -2025,7 +2025,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get message services available
+     * Get message services available.
      *
      * @param array $patron The patron array from patronLogin
      *
@@ -2096,7 +2096,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Function to change message service in SOAP API
+     * Function to change message service in SOAP API.
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -2155,7 +2155,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Function to remove message service from use in SOAP API
+     * Function to remove message service from use in SOAP API.
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -2205,7 +2205,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -2397,7 +2397,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -2539,7 +2539,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Renew Details
+     * Renew Details.
      *
      * This is responsible for getting the details required for renewing loans.
      *
@@ -2555,7 +2555,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Renew Items
+     * Renew Items.
      *
      * This is responsible for renewing items.
      *
@@ -2626,7 +2626,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron Patron array
      * @param string $phone  Phone number
@@ -2702,7 +2702,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -2751,7 +2751,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array  $patron Patron array
      * @param String $email  Email address
@@ -2832,7 +2832,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array  $patron  Patron array
      * @param String $details Associative array of patron contact information
@@ -2921,7 +2921,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Change pin code
+     * Change pin code.
      *
      * @param String $cardDetails Patron card data
      *
@@ -3001,7 +3001,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Send a SOAP request
+     * Send a SOAP request.
      *
      * @param string $wsdl           Name of the wsdl file
      * @param string $function       Name of the function
@@ -3052,7 +3052,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Format date
+     * Format date.
      *
      * @param string $dateString Date as a string
      *
@@ -3073,7 +3073,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Pretty-print an XML string
+     * Pretty-print an XML string.
      *
      * @param string $xml XML string
      *
@@ -3092,7 +3092,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get the language to be used in the interface
+     * Get the language to be used in the interface.
      *
      * @return string Language as string
      */
@@ -3108,7 +3108,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Handle system status error messages from Axiell Web Services
+     * Handle system status error messages from Axiell Web Services.
      *
      * @param string $function  Function name
      * @param object $statusAWS AWS status object
@@ -3139,7 +3139,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
     /**
      * Sort function for sorting holdings locations
-     * according to organisation and branch
+     * according to organisation and branch.
      *
      * @param array $a Holding info
      * @param array $b Holding info
@@ -3239,7 +3239,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Function for determining the type of Hold
+     * Function for determining the type of Hold.
      *
      * @param array $holdDetails Hold details
      *
@@ -3258,7 +3258,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Sort function for sorting pickup locations
+     * Sort function for sorting pickup locations.
      *
      * @param array $a Pickup location
      * @param array $b Pickup location
@@ -3285,7 +3285,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Map statuses
+     * Map statuses.
      *
      * @param string $status   Status as a string
      * @param string $function AWS function that returned the status
@@ -3317,7 +3317,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if renewal is permanently blocked
+     * Check if renewal is permanently blocked.
      *
      * @param string $status Status as a string
      *
@@ -3334,7 +3334,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Code to status
+     * Code to status.
      *
      * @param string $code as a string
      *
@@ -3346,7 +3346,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Status to code
+     * Status to code.
      *
      * @param string $status as a string
      *
@@ -3387,7 +3387,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get a cache key for patron information
+     * Get a cache key for patron information.
      *
      * @param string $username Unique username
      *
@@ -3425,7 +3425,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get path to a WSDL file taking inheritance into account
+     * Get path to a WSDL file taking inheritance into account.
      *
      * @param string $wsdl WSDL file name
      *

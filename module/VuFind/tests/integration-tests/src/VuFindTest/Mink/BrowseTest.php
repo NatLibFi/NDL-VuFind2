@@ -102,7 +102,7 @@ class BrowseTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Test configuration of available browse options
+     * Test configuration of available browse options.
      *
      * @param string[] $expected Expected option list
      * @param array    $settings Settings to adjust in config.ini [Browse] section
@@ -198,7 +198,7 @@ class BrowseTest extends \VuFindTest\Integration\MinkTestCase
         $this->assertSame(['HG - Finance 1'], $values2);
         $page->clickLink($values2[0]);
         // We should now be on search results with a filter applied:
-        $this->assertEquals('HG - Finance', $this->findCssAndGetText($page, '.filter-value .text'));
+        $this->assertSame('HG - Finance', $this->findCssAndGetText($page, '.filter-value .text'));
     }
 
     /**
@@ -293,7 +293,7 @@ class BrowseTest extends \VuFindTest\Integration\MinkTestCase
         $page->clickLink('Tag');
         $page->clickLink('By Alphabetical');
         $page->clickLink('A');
-        $this->assertEquals('No Results!', $this->findCssAndGetText($page, '#list4 .browse-item'));
+        $this->assertSame('No Results!', $this->findCssAndGetText($page, '#list4 .browse-item'));
     }
 
     /**

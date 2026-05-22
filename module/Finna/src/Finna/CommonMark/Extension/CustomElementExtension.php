@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element Markdown extension
+ * Custom element Markdown extension.
  *
  * PHP version 8
  *
@@ -40,7 +40,7 @@ use League\CommonMark\Environment\EnvironmentBuilderInterface;
 use League\CommonMark\Extension\ExtensionInterface;
 
 /**
- * Custom element Markdown extension
+ * Custom element Markdown extension.
  *
  * The implementation uses a separate block parser for custom element closing tags
  * to enable regular Markdown processing for element contents.

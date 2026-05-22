@@ -133,7 +133,7 @@ class EDS extends \VuFind\RecordDriver\EDS
     }
 
     /**
-     * Obtain an array or authors indicated on the record
+     * Obtain an array or authors indicated on the record.
      *
      * @return array
      */
@@ -371,7 +371,7 @@ class EDS extends \VuFind\RecordDriver\EDS
     }
 
     /**
-     * Get a field from record fields with the given path
+     * Get a field from record fields with the given path.
      *
      * @param string $fieldPath Slash-separated field path
      *
@@ -391,7 +391,7 @@ class EDS extends \VuFind\RecordDriver\EDS
     }
 
     /**
-     * Get a numbering field value
+     * Get a numbering field value.
      *
      * @param string $type Field type
      *

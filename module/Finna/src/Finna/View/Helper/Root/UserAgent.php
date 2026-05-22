@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * User agent view helper
+ * User agent view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,21 +41,21 @@ namespace Finna\View\Helper\Root;
 class UserAgent extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Request object
+     * Request object.
      *
      * @var \Laminas\Http\PhpEnvironment\Request
      */
     protected $request;
 
     /**
-     * Cached result for isBot
+     * Cached result for isBot.
      *
      * @var bool|null
      */
     protected $isBot = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Laminas\Http\PhpEnvironment\Request $request Request
      */
@@ -65,7 +65,7 @@ class UserAgent extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if the request comes from a bot
+     * Check if the request comes from a bot.
      *
      * @return bool
      */

@@ -69,7 +69,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     protected string $marcNs = 'http://www.loc.gov/MARC21/slim';
 
     /**
-     * Fields that may contain subject headings, and their descriptions
+     * Fields that may contain subject headings, and their descriptions.
      *
      * @var array
      */
@@ -87,7 +87,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     ];
 
     /**
-     * Accepted book binding strings mapped to translation key strings
+     * Accepted book binding strings mapped to translation key strings.
      *
      * @var array
      */
@@ -105,7 +105,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     ];
 
     /**
-     * Mappings for component part relations
+     * Mappings for component part relations.
      *
      * @var array
      */
@@ -114,7 +114,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
@@ -218,7 +218,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      *               'link'  => link_URI
      *        ),
      *        ...
-     * )
+     * ).
      *
      * @return null|array
      */
@@ -639,7 +639,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get original version notes.
      * Each result contains:
-     * - notes => Notes found
+     * - notes => Notes found.
      *
      * @return array
      */
@@ -659,7 +659,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get an array of embedded component parts
+     * Get an array of embedded component parts.
      *
      * @param bool $onlyCollections Only get component parts that are collections
      *
@@ -962,6 +962,66 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
+     * Return full record as a filtered SimpleXMLElement for public APIs.
+     *
+     * This is not particularly beautiful, but the aim is to do the work with the
+     * least effort.
+     * Legacy method, use getFilteredXMLElement instead.
+     *
+     * @return \SimpleXMLElement
+     */
+    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
+    {
+        $collection = new \DOMDocument();
+        $collection->preserveWhiteSpace = false;
+        $collection->loadXML($this->getMarcReader()->toFormat('MARCXML'));
+        $record = $collection->getElementsByTagName('record')->item(0);
+        $fieldsToRemove = [];
+        $componentPartIds = [];
+        foreach ($record->getElementsByTagName('datafield') as $field) {
+            $tag = $field->getAttribute('tag');
+            // Delete 520 (summary etc. may contain material under copyright) and
+            // 979 (we will add a new one with just component part ids):
+            if ('520' === $tag) {
+                $fieldsToRemove[] = $field;
+            } elseif ('979' === $tag) {
+                foreach ($field->getElementsByTagName('subfield') as $subfield) {
+                    if ('a' === $subfield->getAttribute('code')) {
+                        $componentPartIds[] = $subfield->textContent;
+                    }
+                }
+                $fieldsToRemove[] = $field;
+            }
+        }
+        foreach ($fieldsToRemove as $field) {
+            $record->removeChild($field);
+        }
+        if ($componentPartIds) {
+            $field = $collection->createElement('datafield');
+            $tag = $collection->createAttribute('tag');
+            $tag->value = '979';
+            $field->appendChild($tag);
+            $ind1 = $collection->createAttribute('ind1');
+            $ind1->value = ' ';
+            $field->appendChild($ind1);
+            $ind2 = $collection->createAttribute('ind2');
+            $ind2->value = ' ';
+            $field->appendChild($ind2);
+            foreach ($componentPartIds as $id) {
+                $subfield = $collection->createElement('subfield');
+                $code = $collection->createAttribute('code');
+                $code->value = 'a';
+                $subfield->appendChild($code);
+                $subfield->appendChild($collection->createTextNode($id));
+                $field->appendChild($subfield);
+            }
+            $record->appendChild($field);
+        }
+
+        return simplexml_import_dom($collection);
+    }
+
+    /**
      * Return full record as filtered XML for public APIs.
      *
      * @return string
@@ -986,7 +1046,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get an array of host records
+     * Get an array of host records.
      *
      * Return an array of arrays with the following keys:
      *   id
@@ -1172,7 +1232,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get manufacturer
+     * Get manufacturer.
      *
      * @return string
      */
@@ -1191,7 +1251,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get producers
+     * Get producers.
      *
      * @return array
      */
@@ -1211,7 +1271,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get all authors and primary presenters
+     * Get all authors and primary presenters.
      *
      * @return array
      */
@@ -1221,7 +1281,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Return extended author information
+     * Return extended author information.
      *
      * @return array
      */
@@ -1231,7 +1291,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
@@ -1241,7 +1301,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Gets all author fields
+     * Gets all author fields.
      *
      * @param bool $getPrimaryPresenters Whether the function returns primary presenters alongside authors (optional)
      *
@@ -1348,7 +1408,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get presenters
+     * Get presenters.
      *
      * @param bool $getSecondaryPresentersOnly Whether returns only secondary presenters
      *
@@ -1410,7 +1470,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get secondary presenters
+     * Get secondary presenters.
      *
      * @return array
      */
@@ -1455,9 +1515,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get the publication end date of the record
+     * Get the publication end date of the record.
      *
-     * @return number|false
+     * @return int|false
      */
     public function getPublicationEndDate()
     {
@@ -1501,7 +1561,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      *
      * @return array
      */
-    public function getSeries()
+    public function getSeries(): array
     {
         $matches = [];
 
@@ -1530,7 +1590,37 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Return SFX Object ID
+     * Get series order number and series order index field.
+     *
+     * @param string $series    Current series
+     * @param string $seriesKey Current series key
+     *
+     * @return ?array
+     */
+    public function getSeriesOrder(string $series, string $seriesKey): ?array
+    {
+        $record = $this->getMarcReader();
+        $seriesNormalized = $this->normalizeStringForComparison($series);
+        foreach ($record->getFields('490') as $field490) {
+            $order = $this->getSubfield($field490, 'v');
+            $subANormalized = $this->normalizeStringForComparison(
+                $this->stripTrailingPunctuation($this->getSubfield($field490, 'a'))
+            );
+            if (
+                $seriesNormalized === $subANormalized
+                && preg_match('/(\d+)/', $order, $matches)
+            ) {
+                return [
+                    'order' => (int)$matches[1],
+                    'orderKey' => $this->fields['series_order_str'] ?? '',
+                ];
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Return SFX Object ID.
      *
      * @return string
      */
@@ -1547,7 +1637,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Return Alma MMS ID
+     * Return Alma MMS ID.
      *
      * @return string
      */
@@ -1665,11 +1755,9 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Get an array of summary strings for the record.
      *
-     * @param string $language Language to return, if available
-     *
      * @return array
      */
-    public function getSummary($language = '')
+    public function getSummary()
     {
         $languageMappings = ['fin' => 'fi', 'swe' => 'sv', 'eng' => 'en-gb'];
         $languages = [];
@@ -1702,8 +1790,10 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
             $lng = $link && isset($languages[$link]) ? $languages[$link] : '-';
             $summaries[$lng][] = $summary;
         }
-        if ($language && isset($summaries[$language])) {
-            return $summaries[$language];
+        foreach ($this->getprioritizedlanguages() as $language) {
+            if ($summary = $summaries[$language] ?? null) {
+                return $summary;
+            }
         }
         $result = [];
         foreach ($summaries as $languageSummaries) {
@@ -1720,7 +1810,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      * - source    Source of authority for the restriction
      * - url       URL to terms
      * - rightsSource Source of the access licence (e.g. 'cc' for Creative Commons)
-     * - rights    Licence code
+     * - rights    Licence code.
      *
      * @return string
      */
@@ -1812,6 +1902,8 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                         || preg_match('/^(http|ftp)s?:\/\//', $address))
                     ) {
                         // Is there a description?  If not, just use the URL itself.
+                        $desc = null;
+                        $subfield = null;
                         foreach ($subfields as $subfield) {
                             $desc = $this->getSubfield($url, $subfield);
                             if ($desc) {
@@ -1855,7 +1947,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Does this record have embedded component parts
+     * Does this record have embedded component parts.
      *
      * @return bool Whether this record has embedded component parts
      */
@@ -1945,12 +2037,11 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Returns the array element for the 'getAllRecordLinks' method
+     * Returns the array element for the 'getAllRecordLinks' method.
      *
-     * @param File_MARC_Data_Field $field Field to examine
+     * @param array $field Field to examine
      *
-     * @return array|bool                 Array on success, boolean false if no
-     * valid link could be found in the data.
+     * @return array|bool Array on success, boolean false if no valid link could be found in the data.
      */
     protected function getFieldData($field)
     {
@@ -2057,7 +2148,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get linked MARC field contents
+     * Get linked MARC field contents.
      *
      * @param string|array $field     Field tag or actual field
      * @param array        $subfields Subfields
@@ -2100,7 +2191,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get component parts that are collections
+     * Get component parts that are collections.
      *
      * @return array
      */
@@ -2385,7 +2476,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get audience characteristics from field 385
+     * Get audience characteristics from field 385.
      *
      * @return array
      */
@@ -2401,7 +2492,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get creator/contributor characteristics from field 386
+     * Get creator/contributor characteristics from field 386.
      *
      * @return array
      */
@@ -2652,7 +2743,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get System details from field 538
+     * Get System details from field 538.
      *
      * @return array
      */
@@ -2673,14 +2764,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
 
     /**
      * Get accessibility information from field 341, subfields a and b.
-     * Additional information from field 532, subfield a
+     * Additional information from field 532, subfield a.
      *
      * @return array
      */
     public function getAccessibilityFeatures(): array
     {
         $results = [];
-        $results = $this->getFieldArray('341', ['a', 'b', 'c', 'd', 'e'], true, ': ');
+        $results = $this->getFieldArray('341', ['b', 'c', 'd', 'e'], false, '');
         foreach ($this->getMarcReader()->getFields('532') as $field) {
             if (
                 in_array($field['i1'], ['0', '1'])
@@ -2742,7 +2833,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get original languages from fields 041, subfield h and 979, subfields h and i
+     * Get original languages from fields 041, subfield h and 979, subfields h and i.
      *
      * @return array
      */
@@ -2761,7 +2852,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get book binding from fields 020 subfield q, 340 subfield l or 500 subfield a
+     * Get book binding from fields 020 subfield q, 340 subfield l or 500 subfield a.
      *
      * @return string
      */
@@ -2804,7 +2895,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Get record linking settings
+     * Get record linking settings.
      *
      * @param string $recordSource Record source
      *

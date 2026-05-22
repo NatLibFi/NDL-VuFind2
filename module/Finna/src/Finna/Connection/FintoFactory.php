@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finto connection factory
+ * Finto connection factory.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Finto connection factory
+ * Finto connection factory.
  *
  * @category VuFind
  * @package  Connection
@@ -47,7 +47,7 @@ use Psr\Container\ContainerInterface;
 class FintoFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

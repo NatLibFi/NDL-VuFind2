@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Combined Search Controller
+ * Combined Search Controller.
  *
  * PHP version 8
  *
@@ -43,7 +43,7 @@ class CombinedController extends \VuFind\Controller\CombinedController
     use FinnaSearchControllerTrait;
 
     /**
-     * Handle onDispatch event
+     * Handle onDispatch event.
      *
      * @param \Laminas\Mvc\MvcEvent $e Event
      *
@@ -60,7 +60,7 @@ class CombinedController extends \VuFind\Controller\CombinedController
     }
 
     /**
-     * Results action
+     * Results action.
      *
      * @return mixed
      */

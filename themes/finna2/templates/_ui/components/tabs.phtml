@@ -1,0 +1,99 @@
+<?php
+  /**
+   * Tabs component.
+   *
+   * @param array  $tabs              Tabs
+   * @param string $activeTab         Active tab
+   * @param string $idSuffix          Id suffix (optional)
+   * @param array  $tabNavClasses     Extra classes for the tab bar (optional)
+   * @param array  $tabContentClasses Extra classes for the tab content container (optional)
+   * @param array  $tabPaneClasses    Extra classes for the tab pane (optional)
+   * @param bool   $scrollable        Whether to enable horizontally scrollable tabs
+   */
+
+  $tabNavClasses = array_merge($this->scrollable ? ['nav'] : ['nav', 'nav-tabs'], $this->tabNavClasses ?? []);
+  $tabContentClasses = array_merge(['tab-content'], $this->tabContentClasses ?? []);
+  $idSuffix = $this->idSuffix ?? '';
+  $getPaneId = fn (string $tabName): string => 'tab-pane-' . $tabName . $idSuffix;
+  $getButtonId = fn (string $tabName): string => 'tab-button-' . $tabName . $idSuffix;
+?>
+<?php if ($this->scrollable): ?>
+  <?php // Note: the tablist and tab panel must be under the same parent. Otherwise e.g. Chrome + VoiceOver will lose focus. ?>
+  <div class="nav-scrollable">
+<?php endif; ?>
+<?php if ($this->scrollable): ?>
+  <button class="arrow-btn scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+    <?=$this->icon('tabs-prev')?>
+  </button>
+  <button class="arrow-btn scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+    <?=$this->icon('tabs-next')?>
+  </button>
+<?php endif; ?>
+
+<ul class="<?=implode(' ', $tabNavClasses)?>" role="tablist">
+  <?php foreach ($this->tabs as $tabName => $tab): ?>
+    <?php
+      $paneId = $getPaneId($tabName);
+      $buttonLiAttributes = $this->htmlAttributes([
+          'class' => 'nav-item',
+          'role' => 'presentation',
+      ]);
+      if (!($tab['visible'] ?? true)) {
+        $buttonLiAttributes->add('class', 'hidden');
+      }
+      if (isset($tab['icon'])) {
+        $buttonLiAttributes->add('class', 'tab-right');
+      }
+
+      $buttonAttributes = $this->htmlAttributes([
+        'id' => $getButtonId($tabName),
+        'class' => 'nav-link ' . $tabName . '-tab-button',
+        'role' => 'tab',
+        'type' => 'button',
+        'aria-controls' => $paneId,
+        'data-bs-toggle' => 'tab',
+        'data-bs-target' => '#' . $paneId,
+      ]);
+      if ($this->activeTab == $tabName) {
+        $buttonAttributes->add('class', 'active');
+        $buttonAttributes->add('aria-selected', 'true');
+      } else {
+        $buttonAttributes->add('aria-selected', 'false');
+      }
+      $buttonAttributes->merge($tab['buttonAttributes'] ?? []);
+      $tabDescription = $tab['description'];
+    ?>
+    <li<?=$buttonLiAttributes?>>
+      <button<?=$buttonAttributes?>>
+        <?=$this->transEsc($tab['description'])?><?php if (isset($tab['icon'])): ?><?=$this->icon($tab['icon']['name'], $tab['icon']['class'] ?? null)?><?php endif; ?>
+        <?php if (isset($tab['count'])): ?> (<span class="count"><?=$this->escapeHtml($tab['count']) ?></span>)<?php endif; ?>
+        <i class="icon"></i>
+      </button>
+    </li>
+  <?php endforeach; ?>
+</ul>
+
+<div class="<?=implode(' ', $tabContentClasses)?>">
+  <?php foreach ($this->tabs as $tabName => $tab): ?>
+    <?php
+      $tabPaneAttributes = $this->htmlAttributes([
+        'id' => $getPaneId($tabName),
+        'class' => ['tab-pane', $tabName . '-tab'] + ($this->tabPaneClasses ?? []),
+        'role' => 'tabpanel',
+        'aria-labelledby' => $getButtonId($tabName),
+        'data-tab-name' => $tabName,
+        'tabindex' => '0',
+      ]);
+      if ($this->activeTab == $tabName) {
+          $tabPaneAttributes->add('class', 'active');
+      }
+      $tabPaneAttributes->merge($tab['paneAttributes'] ?? []);
+    ?>
+    <div<?=$tabPaneAttributes?>>
+      <?=$tab['content']?>
+    </div>
+  <?php endforeach; ?>
+</div>
+<?php if ($this->scrollable): ?>
+  </div>
+<?php endif; ?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Turku Payment API client
+ * Turku Payment API client.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFindHttp\HttpServiceAwareTrait;
 use function in_array;
 
 /**
- * Turku Payment API client
+ * Turku Payment API client.
  *
  * @category VuFind
  * @package  OnlinePayment
@@ -51,35 +51,35 @@ class Client extends \Paytrail\SDK\Client
     use HttpServiceAwareTrait;
 
     /**
-     * OId for authorized users
+     * OId for authorized users.
      *
      * @var string
      */
     protected $oId;
 
     /**
-     * Use different merchant id as the normal value is declared as an int
+     * Use different merchant id as the normal value is declared as an int.
      *
      * @var string
      */
     protected $merchantIdString;
 
     /**
-     * Timestamp generated
+     * Timestamp generated.
      *
      * @var string
      */
     protected $timeStamp;
 
     /**
-     * Use overwritable version of the api endpoint
+     * Use overwritable version of the api endpoint.
      *
      * @var string
      */
     protected $apiEndpoint;
 
     /**
-     * Request body
+     * Request body.
      *
      * @param array
      */

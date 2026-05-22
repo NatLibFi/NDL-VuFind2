@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Search tabs" view helper
+ * "Search tabs" view helper.
  *
  * PHP version 8
  *
@@ -40,7 +40,7 @@ use function in_array;
 use function is_callable;
 
 /**
- * "Search tabs" view helper
+ * "Search tabs" view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -51,14 +51,14 @@ use function is_callable;
 class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
 {
     /**
-     * Active search class
+     * Active search class.
      *
      * @var string
      */
     protected $activeSearchClass = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param PluginManager          $results       Search results plugin manager
      * @param Url                    $url           URL helper
@@ -77,7 +77,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
     }
 
     /**
-     * Determine information about search tabs
+     * Determine information about search tabs.
      *
      * @param string $activeSearchClass The search class ID of the active search
      * @param string $query             The current search query
@@ -298,7 +298,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
 
     /**
      * Find out the tab id with search class and hidden filters and return it
-     * url-encoded to avoid it containing e.g. colon
+     * url-encoded to avoid it containing e.g. colon.
      *
      * @param string $searchClass   Search class
      * @param array  $hiddenFilters Hidden filters

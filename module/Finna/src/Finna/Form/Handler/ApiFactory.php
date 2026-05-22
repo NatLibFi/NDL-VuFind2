@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class ApiFactory
+ * Class ApiFactory.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Class ApiFactory
+ * Class ApiFactory.
  *
  * @category VuFind
  * @package  Form
@@ -49,7 +49,7 @@ use Psr\Container\ContainerInterface;
 class ApiFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

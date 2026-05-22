@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for user_card table
+ * Entity model for user_card table.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Db\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for user_card table
+ * Entity model for user_card table.
  *
  * @category VuFind
  * @package  Database
@@ -55,7 +55,7 @@ class UserCard extends \VuFind\Db\Entity\UserCard implements UserCardEntityInter
     protected int $finnaDueDateReminder = 0;
 
     /**
-     * Barcode from profile
+     * Barcode from profile.
      *
      * @var ?string
      *
@@ -64,7 +64,7 @@ class UserCard extends \VuFind\Db\Entity\UserCard implements UserCardEntityInter
     protected ?string $barcode = null;
 
     /**
-     * Due date reminder setting setter
+     * Due date reminder setting setter.
      *
      * @param int $remind New due date reminder setting.
      *
@@ -77,7 +77,7 @@ class UserCard extends \VuFind\Db\Entity\UserCard implements UserCardEntityInter
     }
 
     /**
-     * Due date reminder setting getter
+     * Due date reminder setting getter.
      *
      * @return int
      */
@@ -87,7 +87,7 @@ class UserCard extends \VuFind\Db\Entity\UserCard implements UserCardEntityInter
     }
 
     /**
-     * Get barcode (RUNTIME ONLY!)
+     * Get barcode (RUNTIME ONLY!).
      *
      * @return ?string
      */
@@ -97,7 +97,7 @@ class UserCard extends \VuFind\Db\Entity\UserCard implements UserCardEntityInter
     }
 
     /**
-     * Set barcode (RUNTIME ONLY!)
+     * Set barcode (RUNTIME ONLY!).
      *
      * @param ?string $barcode Barcode
      *

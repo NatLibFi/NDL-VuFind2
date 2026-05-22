@@ -43,7 +43,7 @@ use DateTime;
 interface UserListEntityInterface extends \VuFind\Db\Entity\UserListEntityInterface
 {
     /**
-     * Protection status setter
+     * Protection status setter.
      *
      * @param bool $protected Is the user protected
      *
@@ -52,14 +52,14 @@ interface UserListEntityInterface extends \VuFind\Db\Entity\UserListEntityInterf
     public function setFinnaProtected(bool $protected): static;
 
     /**
-     * Protection status getter
+     * Protection status getter.
      *
      * @return bool
      */
     public function getFinnaProtected(): bool;
 
     /**
-     * Last update date setter
+     * Last update date setter.
      *
      * @param ?DateTime $dateTime Last updated
      *
@@ -68,7 +68,7 @@ interface UserListEntityInterface extends \VuFind\Db\Entity\UserListEntityInterf
     public function setFinnaUpdated(?DateTime $dateTime): static;
 
     /**
-     * Last update date getter
+     * Last update date getter.
      *
      * @return ?DateTime
      */

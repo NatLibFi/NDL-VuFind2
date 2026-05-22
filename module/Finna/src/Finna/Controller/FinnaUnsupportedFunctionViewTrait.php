@@ -62,8 +62,7 @@ trait FinnaUnsupportedFunctionViewTrait
         if (!$supported) {
             $view = $this->createViewModel();
             $view->noSupport = true;
-            $this->flashMessenger()->setNamespace('error')
-                ->addMessage('no_ils_support_for_' . strtolower($function));
+            $this->flashMessenger()->addErrorMessage('no_ils_support_for_' . strtolower($function));
             return $view;
         }
         return false;

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Additional functionality for date range facet
+ * Additional functionality for date range facet.
  *
  * PHP version 8
  *
@@ -47,21 +47,21 @@ use function strlen;
 trait DateRangeFilterTrait
 {
     /**
-     *  Date range index field (VuFind1)
+     *  Date range index field (VuFind1).
      *
      * @var string
      */
     public string $spatialDateRangeFieldVF1 = 'search_sdaterange_mv';
 
     /**
-     * Date range index field type (VuFind1)
+     * Date range index field type (VuFind1).
      *
      * @var string
      */
     public string $spatialDateRangeFieldTypeVF1 = 'search_sdaterange_mvtype';
 
     /**
-     * Default date range type value
+     * Default date range type value.
      *
      * @var string
      */
@@ -109,7 +109,7 @@ trait DateRangeFilterTrait
     }
 
     /**
-     * Return the current filters as an array of strings ['field:filter']
+     * Return the current filters as an array of strings ['field:filter'].
      *
      * @return array $filterQuery
      */
@@ -139,7 +139,7 @@ trait DateRangeFilterTrait
     }
 
     /**
-     * Initialize date range filter (search_daterange_mv)
+     * Initialize date range filter (search_daterange_mv).
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.

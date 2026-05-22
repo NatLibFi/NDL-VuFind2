@@ -63,7 +63,7 @@ class UserService extends \VuFind\Db\Service\UserService implements
     use DbServiceAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManager       $entityManager        Doctrine ORM entity manager
      * @param EntityPluginManager $entityPluginManager  VuFind entity plugin manager
@@ -123,7 +123,7 @@ class UserService extends \VuFind\Db\Service\UserService implements
     }
 
     /**
-     * Update due date reminder setting for a user
+     * Update due date reminder setting for a user.
      *
      * @param UserEntityInterface $user            User
      * @param int                 $dueDateReminder Due date reminder (days in advance)
@@ -201,7 +201,7 @@ class UserService extends \VuFind\Db\Service\UserService implements
     }
 
     /**
-     * Check if given nickname is available
+     * Check if given nickname is available.
      *
      * @param string $nickname Nickname
      *
@@ -214,7 +214,7 @@ class UserService extends \VuFind\Db\Service\UserService implements
     }
 
     /**
-     * Add institution prefix to a string if it isn't already prefixed
+     * Add institution prefix to a string if it isn't already prefixed.
      *
      * @param string $value String
      *

@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library 2015-2023.
+ * Copyright (C) The National Library 2015-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -60,21 +60,44 @@ trait SolrFinnaTrait
     use SolrCommonFinnaTrait;
 
     /**
-     * Search settings
+     * Normalization character folding table.
+     *
+     * Similar to the default folding table in RecordManager's MetadataUtils but with åäöÅÄÖ removed for Finnish.
+     *
+     * @var array
+     */
+    protected $foldingTable = [
+        'Š' => 'S', 'š' => 's', 'Ž' => 'Z', 'ž' => 'z', 'À' => 'A',
+        'Á' => 'A', 'Â' => 'A', 'Ã' => 'A',/* 'Ä' => 'A', 'Å' => 'A',*/
+        'Æ' => 'A', 'Ç' => 'C', 'È' => 'E', 'É' => 'E', 'Ê' => 'E',
+        'Ë' => 'E', 'Ì' => 'I', 'Í' => 'I', 'Î' => 'I', 'Ï' => 'I',
+        'Ñ' => 'N', 'Ò' => 'O', 'Ó' => 'O', 'Ô' => 'O', 'Õ' => 'O',
+        /*'Ö' => 'O', */'Ø' => 'O', 'Ù' => 'U', 'Ú' => 'U', 'Û' => 'U',
+        'Ü' => 'U', 'Ý' => 'Y', 'Þ' => 'B', 'ß' => 'Ss', 'à' => 'a',
+        'á' => 'a', 'â' => 'a', 'ã' => 'a',/* 'ä' => 'a', 'å' => 'a',*/
+        'æ' => 'a', 'ç' => 'c', 'è' => 'e', 'é' => 'e', 'ê' => 'e',
+        'ë' => 'e', 'ì' => 'i', 'í' => 'i', 'î' => 'i', 'ï' => 'i',
+        'ð' => 'o', 'ñ' => 'n', 'ò' => 'o', 'ó' => 'o', 'ô' => 'o',
+        'õ' => 'o',/* 'ö' => 'o',*/ 'ø' => 'o', 'ù' => 'u', 'ú' => 'u',
+        'û' => 'u', 'ü' => 'u', 'ý' => 'y', 'þ' => 'b', 'ÿ' => 'y',
+    ];
+
+    /**
+     * Search settings.
      *
      * @var array
      */
     protected $searchSettings = [];
 
     /**
-     * Runtime cache for method results to avoid duplicate processing
+     * Runtime cache for method results to avoid duplicate processing.
      *
      * @var array
      */
     protected $cache = [];
 
     /**
-     * An array of non-displayable formats
+     * An array of non-displayable formats.
      *
      * @var array
      */
@@ -130,7 +153,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get Author Information with Associated Data Fields
+     * Get Author Information with Associated Data Fields.
      *
      * @param string $index      The author index [primary, corporate, or secondary]
      * used to construct a method name for retrieving author data (e.g.
@@ -240,7 +263,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return geographic center point
+     * Return geographic center point.
      *
      * @return array lon, lat
      */
@@ -258,7 +281,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get data source id
+     * Get data source id.
      *
      * @return string
      */
@@ -270,7 +293,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get a Date Range from Index Fields
+     * Get a Date Range from Index Fields.
      *
      * @param string $event Event name
      *
@@ -315,7 +338,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return education programs
+     * Return education programs.
      *
      * @return array
      */
@@ -335,7 +358,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return genres
+     * Return genres.
      *
      * @return array
      */
@@ -345,7 +368,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return geographic locations (coordinates)
+     * Return geographic locations (coordinates).
      *
      * @return array
      */
@@ -389,7 +412,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -431,7 +454,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return keywords
+     * Return keywords.
      *
      * @return array
      */
@@ -510,7 +533,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
@@ -530,7 +553,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get online URLs
+     * Get online URLs.
      *
      * @param bool  $raw          Whether to return raw data
      * @param array $excludeTypes If set, will remove types of urls from result
@@ -546,7 +569,7 @@ trait SolrFinnaTrait
         if ($raw) {
             return $this->fields['online_urls_str_mv'];
         }
-        $merged = $this->resolveUrlTypes(
+        $merged = $this->resolveOnlineUrlTypes(
             $this->mergeURLArray(
                 $this->fields['online_urls_str_mv'],
                 true
@@ -586,7 +609,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get all the original languages associated with the record
+     * Get all the original languages associated with the record.
      *
      * @return array
      */
@@ -596,7 +619,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get presenters
+     * Get presenters.
      *
      * @return array
      */
@@ -717,7 +740,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return SFX Object ID
+     * Return SFX Object ID.
      *
      * @return string
      */
@@ -727,7 +750,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return Alma MMS ID
+     * Return Alma MMS ID.
      *
      * @return string
      */
@@ -800,7 +823,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get array containing major genres
+     * Get array containing major genres.
      *
      * @return array
      */
@@ -810,7 +833,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get array containing Usage rights extended
+     * Get array containing Usage rights extended.
      *
      * @return array
      */
@@ -959,7 +982,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Extract sources from record IDs and create an array of sources and IDs
+     * Extract sources from record IDs and create an array of sources and IDs.
      *
      * @param array $ids Record ID's
      *
@@ -995,7 +1018,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get information on records deduplicated with this one
+     * Get information on records deduplicated with this one.
      *
      * @param bool $load Whether to try to load dedup data if it's not already
      * available
@@ -1026,7 +1049,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get related records (used by RecordDriverRelated - Related module)
+     * Get related records (used by RecordDriverRelated - Related module).
      *
      * Returns an associative array of group => records, where each item in
      * records is either a record id or an array with keys:
@@ -1097,7 +1120,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * A helper function that merges an array of JSON-encoded URLs
+     * A helper function that merges an array of JSON-encoded URLs.
      *
      * @param array $urlArray Array of JSON-encoded URL attributes
      * @param bool  $sources  Whether to store data source of each URL
@@ -1142,6 +1165,38 @@ trait SolrFinnaTrait
             }
         }
         return $urls;
+    }
+
+    /**
+     * Resolve types for 'online_urls_str_mv' field's urls.
+     *
+     * URLs are annotated with 'codec' field based on 'mediaType'.
+     * In addition, image and audio URLs are annotated with 'type' field.
+     *
+     * @param array $urls URLs
+     *
+     * @return array URL array with annotated URLs
+     */
+    protected function resolveOnlineUrlTypes(array $urls): array
+    {
+        $newUrls = [];
+        foreach ($urls as $url) {
+            if (!empty($url['mediaType'])) {
+                $type = $embed = null;
+                $parts = explode('/', $url['mediaType'], 2);
+                $mediaType = $parts[0];
+                if ($mediaType === 'audio') {
+                    $type = $embed = 'audio';
+                } elseif ($mediaType === 'image') {
+                    $type = 'image';
+                }
+                $url['type'] = $type;
+                $url['codec'] = $parts[1] ?? '';
+                $url['embed'] = $embed;
+            }
+            $newUrls[] = $url;
+        }
+        return $newUrls;
     }
 
     /**
@@ -1238,7 +1293,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Return count of other versions available
+     * Return count of other versions available.
      *
      * Finna: Like VersionAwareTrait's getOtherVersionCount, but adds the call to
      * addVersionsFilters.
@@ -1274,7 +1329,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Retrieve versions as a search result
+     * Retrieve versions as a search result.
      *
      * Finna: Like VersionAwareTrait's getVersions, but adds the call to
      * addVersionsFilters.
@@ -1322,7 +1377,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get the number of child records belonging to this record
+     * Get the number of child records belonging to this record.
      *
      * @return int Number of records
      */
@@ -1353,7 +1408,84 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Add versions search filters to params
+     * Get parts of a series as a search result.
+     *
+     * @param string $seriesKey Series key
+     *
+     * @return \VuFindSearch\Response\RecordCollectionInterface|null
+     */
+    public function getSeriesResult($seriesKey = ''): \VuFindSearch\Response\RecordCollectionInterface|null
+    {
+        if (!$seriesKeys = $this->tryMethod('getSeriesKeys')) {
+            return null;
+        }
+        $key = ($seriesKey && in_array($seriesKey, $seriesKeys))
+            ? $seriesKey
+            : $seriesKeys[0];
+
+        $query = new \VuFindSearch\Query\Query(
+            'series_key_str_mv:"' . $key . '"'
+        );
+        $params = new \VuFindSearch\ParamBag(['sort' => 'series_order_str asc']);
+        $command = new SearchCommand($this->sourceIdentifier, $query, 0, 40, $params);
+        return $this->searchService->invoke($command)->getResult();
+    }
+
+    /**
+     * Get series identification keys.
+     *
+     * @return array
+     */
+    public function getSeriesKeys(): array
+    {
+        return (array)($this->fields['series_key_str_mv'] ?? []);
+    }
+
+    /**
+     * Compares the series fields with the series keys created by RecordManager.
+     *
+     * @param string $seriesKey Series key
+     *
+     * @return string
+     */
+    public function getSeriesFromSeriesKey(string $seriesKey): string
+    {
+        if (!$seriesKey) {
+            return '';
+        }
+        $parts = explode(' ', $seriesKey);
+        $seriesName = $parts[1] ?? '';
+        $reg = '/[\x00-\x20\x21-\x2F\x3A-\x40,\x5B-\x60,\x7B-\x7F]/';
+        foreach ($this->tryMethod('getSeries') ?? [] as $series) {
+            $name = is_array($series) ? $series['name'] : $series;
+            $str = $this->normalizeStringForComparison(preg_replace($reg, '', $name));
+            if ($str === $seriesName) {
+                return $name;
+            }
+        }
+        return '';
+    }
+
+    /**
+     * Normalize a string for comparison.
+     *
+     * @param string $str String to normalize
+     *
+     * @return string
+     */
+    protected function normalizeStringForComparison(string $str): string
+    {
+        $str = strtr($str, $this->foldingTable);
+        $str = preg_replace(
+            '/[\x00-\x20\x21-\x2F\x3A-\x40,\x5B-\x60,\x7B-\x7F]/',
+            '',
+            $str
+        );
+        return mb_strtolower(trim($str), 'UTF-8');
+    }
+
+    /**
+     * Add versions search filters to params.
      *
      * @param \VuFindSearch\ParamBag $paramBag Params
      *
@@ -1375,7 +1507,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Parse an URL safely. Checks if the URL contains http or https for parse_url to work properly
+     * Parse an URL safely. Checks if the URL contains http or https for parse_url to work properly.
      *
      * @param string $url       The URL to parse.
      * @param int    $component Specify one of PHP_URL_SCHEME, PHP_URL_HOST, PHP_URL_PORT,
@@ -1428,7 +1560,7 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Compare the title of current object with items from given array as titles
+     * Compare the title of current object with items from given array as titles.
      *
      * @param array $compare An array of items to compare
      *
@@ -1441,7 +1573,7 @@ trait SolrFinnaTrait
         $compareFull = str_replace([',', ';'], '', implode(' ', $compare));
         if ($compareFull != $title) {
             foreach ($compare as $item) {
-                $checkTitle = str_replace([',', ';'], ' ', (string)$item) != $title;
+                $checkTitle = str_replace([',', ';'], '', (string)$item) != $title;
                 if ($checkTitle) {
                     $compareDone[] = (string)$item;
                 }

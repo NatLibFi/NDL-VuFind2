@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna resource list resource
+ * Finna resource list resource.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Resource list resource
+ * Resource list resource.
  *
  * @category VuFind
  * @package  Database
@@ -104,7 +104,7 @@ class FinnaResourceListResource implements FinnaResourceListResourceEntityInterf
     protected ?FinnaResourceListEntityInterface $list = null;
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {

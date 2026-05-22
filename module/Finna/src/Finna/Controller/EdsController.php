@@ -1,7 +1,7 @@
 <?php
 
 /**
- * EDS Controller
+ * EDS Controller.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\Controller;
 use function count;
 
 /**
- * EDS Controller
+ * EDS Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -45,7 +45,7 @@ class EdsController extends \VuFind\Controller\EdsController
     use FinnaSearchControllerTrait;
 
     /**
-     * Home action
+     * Home action.
      *
      * @return mixed
      */
@@ -56,7 +56,7 @@ class EdsController extends \VuFind\Controller\EdsController
     }
 
     /**
-     * Handle an advanced search
+     * Handle an advanced search.
      *
      * @return mixed
      */

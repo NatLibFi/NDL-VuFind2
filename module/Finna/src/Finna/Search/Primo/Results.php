@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Search Results
+ * Primo Central Search Results.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Search\Primo;
 
 /**
- * Primo Central Search Parameters
+ * Primo Central Search Parameters.
  *
  * @category VuFind
  * @package  Search_Primo

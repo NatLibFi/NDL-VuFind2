@@ -131,94 +131,19 @@
     <?=$this->driver->supportsCoinsOpenURL() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenURL()) . '"></span>' : ''?>
 
     <div class="clearfix hidden-lg hidden-md"></div>
-    <div class="record-tabs record-accordions">
-      <?php if (count($this->tabs) > 0): ?>
+    <div class="record-tabs">
+      <?php if ($this->tabs): ?>
         <a id="tabnav"><h2 class="visually-hidden"><?=$this->transEsc('Additional Information')?></h2></a>
-          <?php if (count($this->tabs) > 3): ?>
-            <div class="tabs-responsive">
-          <?php endif; ?>
-          <ul class="recordTabs nav nav-tabs visible-md visible-lg" role="tablist">
-            <?php foreach ($this->tabs as $tab => $obj): ?>
-              <?php // add current tab to breadcrumbs if applicable:
-                $desc = $obj->getDescription();
-                $tabName = preg_replace("/\W/", '-', strtolower($tab));
-                $tabClasses = [ 'nav-item', 'record-tab', $tabName ];
-                $linkClasses = [ 'nav-link', $tabName ];
-                if (0 === strcasecmp($this->activeTab, $tab)) {
-                  if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
-                      $linkClasses[] = 'active';
-                  }
-                  $tabClasses[] = 'initiallyActive';
-                  $activeTabName = $tabName;
-                  $activeTabObj = $obj;
-                }
-                if (!$obj->isVisible()) {
-                  $tabClasses[] = 'hidden';
-                }
-                if (!$obj->supportsAjax()) {
-                  $tabClasses[] = 'noajax';
-                }
-                if (strtolower($tab) == 'details') {
-                  $tabClasses[] = 'hidden-xs tab-right';
-                }
-              ?>
-              <li role="presentation" id="record-tab-<?=$this->escapeHtmlAttr($tabName)?>" class="<?=implode(' ', $tabClasses)?>" data-tab="<?=$this->escapeHtmlAttr($tabName)?>"<?php if ($obj->supportsAjax() && in_array($tab, $this->backgroundTabs)):?> data-background<?php endif ?>>
-                <a role="tab" class="<?=implode(' ', $linkClasses)?>" aria-label="<?=$this->transEscAttr($desc)?>"
-                  href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $tab))?>#tabnav" data-bs-target=".tab-pane.<?=$this->escapeHtmlAttr($tabName)?>" data-lightbox-ignore>
-                  <?php if (strtolower($tab) == 'details'): ?><?=$this->icon('staff-view', 'staff-view-icon')?><?php endif; ?>
-                  <span class="tab-name"><?=$this->transEsc($desc)?></span>
-                  <?php if (strtolower($tab) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?>
-                </a>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-          <?php if (count($this->tabs) > 3): ?>
-            </div>
-          <?php endif; ?>
+        <?=$this->component(
+          'tabs',
+          [
+            'tabs' => $this->recordTabs()->getTabs($this->driver, $this->tabs, $this->activeTab),
+            'activeTab' => $this->activeTab,
+            'tabNavClasses' => ['recordTabs'],
+            'scrollable' => true,
+          ]
+        )?>
       <?php endif; ?>
-
-      <div class="record-accordions">
-        <?php foreach ($this->tabs as $accordion => $obj): ?>
-          <?php
-            $desc = $obj->getDescription();
-            $accordion_classes = [
-              'accordion',
-              'accordion-' . strtolower($accordion),
-            ];
-            if (0 === strcasecmp($this->activeTab, $accordion)) {
-              if (!$this->loadInitialTabWithAjax || !$obj->supportsAjax()) {
-                $accordion_classes[] = 'active';
-              }
-              $accordion_classes[] = 'initiallyActive';
-            }
-            if (!$obj->isVisible()) {
-              $accordion_classes[] = 'hidden';
-            }
-            if (!$obj->supportsAjax()) {
-              $accordion_classes[] = 'noajax';
-            }
-          ?>
-          <div class="<?=implode(' ', $accordion_classes)?>">
-            <div class="accordion-toggle">
-              <a data-tab="<?=$this->escapeHtmlAttr(strtolower($accordion)) ?>" class="accordion-title"
-                href="<?=$this->escapeHtmlAttr($this->recordLinker()->getTabUrl($this->driver, $accordion))?>#tabnav"<?php if ($obj->supportsAjax() && in_array($accordion, $this->backgroundTabs)):?>
-                data-background<?php endif ?>
-              >
-                <span class="title"><?=$this->transEsc($desc)?><?php if (strtolower($accordion) == 'usercomments') : ?> (<span class="count"><?= count($this->record($this->driver)->getComments()) ?></span>)<?php endif; ?></span>
-                <i class="icon"></i>
-              </a>
-            </div>
-          </div>
-        <?php endforeach; ?>
-        <div class="tab-content" tabindex="0">
-          <?php if (!$this->loadInitialTabWithAjax || !isset($activeTabObj) || !$activeTabObj->supportsAjax()): ?>
-            <div class="tab-pane active <?=$this->escapeHtmlAttr($this->activeTab) ?>-tab" aria-labelledby="record-tab-<?=$this->escapeHtmlAttr($activeTabName ?? '')?>">
-              <?=isset($activeTabObj) ? $this->record($this->driver)->getTab($activeTabObj) : '' ?>
-            </div>
-          <?php endif; ?>
-        </div>
-      </div>
-      <div class="clearfix hidden-lg hidden-md"></div>
     </div>
   </div>
     <?php if (!$fullWidthLayout && !$largeImageLayout):?>
@@ -231,7 +156,7 @@
 
   <?php if (!$fullWidthLayout): ?>
     <?php // This sidebar is used for smaller screens and always in large image layout, but never in full width layout ?>
-    <div class="sidebar left large-image-sidebar visible-xs visible-sm">
+    <div class="sidebar left large-image-sidebar <?php if (!$largeImageLayout): ?> visible-xs visible-sm<?php endif; ?>">
       <?= $this->render('record/sidebar-contents.phtml'); ?>
     </div>
   <?php endif; ?>
@@ -242,5 +167,4 @@
   <?php endif; ?>
 
 <?=$this->record($this->driver)->renderTemplate('toolbar_mobile.phtml') ?>
-<?=$this->assetManager()->outputInlineScriptString('$(document).ready(recordDocReady);') ?>
 <!-- END of: finna - record/view.phtml -->

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Service for querying kirjastohakemisto (Kirkanta)
+ * Service for querying kirjastohakemisto (Kirkanta).
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use function in_array;
 
 /**
  * Service for querying Kirjastohakemisto (Kirkanta)
- * See: https://api.kirjastot.fi/
+ * See: https://api.kirjastot.fi/.
  *
  * @category VuFind
  * @package  Content
@@ -50,7 +50,7 @@ use function in_array;
 class Kirkanta extends AbstractProvider
 {
     /**
-     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part).
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -82,7 +82,7 @@ class Kirkanta extends AbstractProvider
     }
 
     /**
-     * Get consortium information (includes list of locations) (provider-specific part)
+     * Get consortium information (includes list of locations) (provider-specific part).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -164,7 +164,7 @@ class Kirkanta extends AbstractProvider
     }
 
     /**
-     * Get location details (provider-specific part)
+     * Get location details (provider-specific part).
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -230,7 +230,7 @@ class Kirkanta extends AbstractProvider
     }
 
     /**
-     * Fetch data from cache or Kirkanta
+     * Fetch data from cache or Kirkanta.
      *
      * @param string $action Action
      * @param array  $params Query parameters
@@ -250,7 +250,7 @@ class Kirkanta extends AbstractProvider
     }
 
     /**
-     * Parse organisation list
+     * Parse organisation list.
      *
      * @param array $response JSON array
      *
@@ -340,7 +340,7 @@ class Kirkanta extends AbstractProvider
     }
 
     /**
-     * Parse schedules of a location
+     * Parse schedules of a location.
      *
      * @param object $data JSON data for a location
      *
@@ -606,7 +606,7 @@ class Kirkanta extends AbstractProvider
     }
 
     /**
-     * Parse the services from response
+     * Parse the services from response.
      *
      * @param array $response JSON array for a single location
      *

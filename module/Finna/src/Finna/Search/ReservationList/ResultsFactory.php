@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for ReservationList search results
+ * Factory for ReservationList search results.
  *
  * PHP version 8
  *
@@ -40,7 +40,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for ReservationList search results
+ * Factory for ReservationList search results.
  *
  * @category VuFind
  * @package  Search_ReservationList
@@ -53,7 +53,7 @@ use Psr\Container\ContainerInterface;
 class ResultsFactory extends \VuFind\Search\Results\ResultsFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

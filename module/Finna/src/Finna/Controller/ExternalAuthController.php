@@ -1,7 +1,7 @@
 <?php
 
 /**
- * External Authentication/Authorization Controller
+ * External Authentication/Authorization Controller.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * External Authentication/Authorization Controller
+ * External Authentication/Authorization Controller.
  *
  * Provides authorization support for external systems, e.g. EZproxy
  *
@@ -46,7 +46,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 class ExternalAuthController extends \VuFind\Controller\ExternalAuthController
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ServiceLocatorInterface $sm Service locator
      */

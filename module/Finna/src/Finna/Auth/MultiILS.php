@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Multiple ILS authentication module that works with MultiBackend driver
+ * Multiple ILS authentication module that works with MultiBackend driver.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@
 namespace Finna\Auth;
 
 /**
- * Multiple ILS authentication module that works with MultiBackend driver
+ * Multiple ILS authentication module that works with MultiBackend driver.
  *
  * @category VuFind
  * @package  Authentication

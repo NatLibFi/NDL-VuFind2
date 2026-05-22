@@ -49,28 +49,28 @@ use VuFind\Db\Service\DbServiceInterface;
 interface FinnaStatisticsServiceInterface extends DbServiceInterface
 {
     /**
-     * Create a new session stats entity
+     * Create a new session stats entity.
      *
      * @return FinnaSessionStatsEntityInterface
      */
     public function createSessionEntity(): FinnaSessionStatsEntityInterface;
 
     /**
-     * Create a new page view entity
+     * Create a new page view entity.
      *
      * @return FinnaPageViewStatsEntityInterface
      */
     public function createPageViewEntity(): FinnaPageViewStatsEntityInterface;
 
     /**
-     * Create a new record stats log entity
+     * Create a new record stats log entity.
      *
      * @return FinnaRecordStatsLogEntityInterface
      */
     public function createRecordStatsLogEntity(): FinnaRecordStatsLogEntityInterface;
 
     /**
-     * Get a batch of log entries to process from finna_record_stats_log table
+     * Get a batch of log entries to process from finna_record_stats_log table.
      *
      * @param int $batchSize Number of records to retrieve
      *
@@ -79,7 +79,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function getRecordStatsLogEntriesToProcess(int $batchSize): array;
 
     /**
-     * Delete a record stats log entry
+     * Delete a record stats log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $entry Log entry
      *
@@ -88,7 +88,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function deleteRecordStatsLogEntry(FinnaRecordStatsLogEntityInterface $entry): void;
 
     /**
-     * Get a record view format entity by id
+     * Get a record view format entity by id.
      *
      * @param int $id Id
      *
@@ -97,7 +97,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function getRecordViewRecordFormatById(int $id): FinnaRecordViewRecordFormatEntityInterface;
 
     /**
-     * Get a record view format entity by id
+     * Get a record view format entity by id.
      *
      * @param int $id Id
      *
@@ -106,7 +106,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function getRecordViewRecordUsageRightsById(int $id): FinnaRecordViewRecordRightsEntityInterface;
 
     /**
-     * Get a record view record by log entry
+     * Get a record view record by log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -117,7 +117,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     ): FinnaRecordViewRecordEntityInterface;
 
     /**
-     * Add a new session entry
+     * Add a new session entry.
      *
      * @param FinnaSessionStatsEntityInterface $session Session
      *
@@ -126,7 +126,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function addSession(FinnaSessionStatsEntityInterface $session): void;
 
     /**
-     * Add a page view
+     * Add a page view.
      *
      * @param FinnaPageViewStatsEntityInterface $pageView Page view
      *
@@ -135,7 +135,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function addPageView(FinnaPageViewStatsEntityInterface $pageView): void;
 
     /**
-     * Add a record view from a log entry
+     * Add a record view from a log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -144,7 +144,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function addRecordView(FinnaRecordStatsLogEntityInterface $logEntry): void;
 
     /**
-     * Add a record stats log entry (a detailed entry for processing later via addDetailedRecordView)
+     * Add a record stats log entry (a detailed entry for processing later via addDetailedRecordView).
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -153,7 +153,7 @@ interface FinnaStatisticsServiceInterface extends DbServiceInterface
     public function addRecordStatsLogEntry(FinnaRecordStatsLogEntityInterface $logEntry): void;
 
     /**
-     * Add a detailed record view from a log entry
+     * Add a detailed record view from a log entry.
      *
      * Note: This is a relatively slow and complex function and should only be
      * executed from a batch processing utility

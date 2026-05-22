@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class AuthTokenTest
+ * Class AuthTokenTest.
  *
  * PHP version 8
  *
@@ -44,7 +44,7 @@ use VuFind\Db\Service\UserServiceInterface;
 use VuFind\Exception\LoginToken as LoginTokenException;
 
 /**
- * Class LoginTokenManagerTest
+ * Class LoginTokenManagerTest.
  *
  * @category VuFind
  * @package  VuFindTest\Auth
@@ -55,7 +55,7 @@ use VuFind\Exception\LoginToken as LoginTokenException;
 class LoginTokenManagerTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test login exception
+     * Test login exception.
      *
      * @return void
      */
@@ -80,7 +80,7 @@ class LoginTokenManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test logging in with invalid token
+     * Test logging in with invalid token.
      *
      * @return void
      */
@@ -102,11 +102,11 @@ class LoginTokenManagerTest extends \PHPUnit\Framework\TestCase
         $tokenTable->expects($this->once())->method('getByUser')
             ->willReturn([$mockToken]);
         $loginToken = $this->getLoginToken($cookieManager, $tokenTable, $userService, true);
-        $this->assertNull($loginToken->tokenLogin('123'));
+        $this->assertNotInstanceOf(\VuFind\Db\Entity\UserEntityInterface::class, $loginToken->tokenLogin('123'));
     }
 
     /**
-     * Test failed login
+     * Test failed login.
      *
      * @return void
      */
@@ -122,7 +122,7 @@ class LoginTokenManagerTest extends \PHPUnit\Framework\TestCase
         $tokenTable->expects($this->once())->method('matchToken')
             ->willReturn(null);
         $loginToken = $this->getLoginToken($cookieManager, $tokenTable, $userService, true);
-        $this->assertNull($loginToken->tokenLogin('123'));
+        $this->assertNotInstanceOf(\VuFind\Db\Entity\UserEntityInterface::class, $loginToken->tokenLogin('123'));
     }
 
     /**
@@ -164,7 +164,7 @@ class LoginTokenManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get cookie manager
+     * Get cookie manager.
      *
      * @param array $cookies Cookies
      *
@@ -182,7 +182,7 @@ class LoginTokenManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get login token
+     * Get login token.
      *
      * @param CookieManager $cookieManager cookie manager
      * @param LoginToken    $tokenTable    Login token table

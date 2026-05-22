@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element interface
+ * Custom element interface.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\CustomElement;
 use Laminas\View\Model\ModelInterface;
 
 /**
- * Custom element interface
+ * Custom element interface.
  *
  * @category VuFind
  * @package  CustomElements

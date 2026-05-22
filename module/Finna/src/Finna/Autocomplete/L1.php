@@ -1,7 +1,7 @@
 <?php
 
 /**
- * L1 Autocomplete Module
+ * L1 Autocomplete Module.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Autocomplete;
 
 /**
- * L1 Autocomplete Module
+ * L1 Autocomplete Module.
  *
  * @category VuFind
  * @package  Autocomplete
@@ -41,7 +41,7 @@ namespace Finna\Autocomplete;
 class L1 extends Solr
 {
     /**
-     * Search object family to use
+     * Search object family to use.
      *
      * @var string
      */

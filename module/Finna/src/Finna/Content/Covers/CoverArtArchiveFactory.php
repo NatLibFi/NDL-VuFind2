@@ -36,7 +36,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * BrowZine cover loader factory
+ * BrowZine cover loader factory.
  *
  * @category VuFind
  * @package  Content
@@ -47,7 +47,7 @@ use Psr\Container\ContainerInterface;
 class CoverArtArchiveFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

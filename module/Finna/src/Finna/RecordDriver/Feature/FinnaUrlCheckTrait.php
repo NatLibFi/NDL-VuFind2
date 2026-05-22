@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait for checking external content url validity
+ * Trait for checking external content url validity.
  *
  * Dependencies:
  * - Main configuration available via getConfig method
@@ -37,7 +37,7 @@ use function in_array;
 use function is_callable;
 
 /**
- * Trait for checking external content url validity
+ * Trait for checking external content url validity.
  *
  * @category VuFind
  * @package  Content
@@ -64,7 +64,7 @@ trait FinnaUrlCheckTrait
     protected static $hostCheckResultCache = [];
 
     /**
-     * Check if the given URL is loadable according to configured rules
+     * Check if the given URL is loadable according to configured rules.
      *
      * @param string $url URL
      * @param string $id  Record ID (for logging)
@@ -172,7 +172,7 @@ trait FinnaUrlCheckTrait
     }
 
     /**
-     * Check if the given host is allowed by the given filters
+     * Check if the given host is allowed by the given filters.
      *
      * @param string $id             Record ID
      * @param string $url            Full URL
@@ -229,7 +229,7 @@ trait FinnaUrlCheckTrait
     }
 
     /**
-     * Check if the host name matches a filter
+     * Check if the host name matches a filter.
      *
      * @param string $host       Lower-cased host name
      * @param array  $filterList Filters
@@ -253,7 +253,7 @@ trait FinnaUrlCheckTrait
     }
 
     /**
-     * Get the IPv4 address for a host
+     * Get the IPv4 address for a host.
      *
      * @param string $host Host
      *
@@ -265,7 +265,7 @@ trait FinnaUrlCheckTrait
     }
 
     /**
-     * Get the IPv6 address for a host
+     * Get the IPv6 address for a host.
      *
      * @param string $host Host
      *

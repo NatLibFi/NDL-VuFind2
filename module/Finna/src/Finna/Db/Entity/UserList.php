@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for user_list table
+ * Entity model for user_list table.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity model for user_list table
+ * Entity model for user_list table.
  *
  * @category VuFind
  * @package  Database
@@ -61,7 +61,7 @@ class UserList extends \VuFind\Db\Entity\UserList implements UserListEntityInter
     protected bool $finnaProtected = false;
 
     /**
-     * Protection status setter
+     * Protection status setter.
      *
      * @param bool $protected Is the user protected
      *
@@ -74,7 +74,7 @@ class UserList extends \VuFind\Db\Entity\UserList implements UserListEntityInter
     }
 
     /**
-     * Protection status getter
+     * Protection status getter.
      *
      * @return bool
      */
@@ -84,7 +84,7 @@ class UserList extends \VuFind\Db\Entity\UserList implements UserListEntityInter
     }
 
     /**
-     * Last update date setter
+     * Last update date setter.
      *
      * @param ?DateTime $dateTime Last updated
      *
@@ -97,7 +97,7 @@ class UserList extends \VuFind\Db\Entity\UserList implements UserListEntityInter
     }
 
     /**
-     * Last update date getter
+     * Last update date getter.
      *
      * @return ?DateTime
      */

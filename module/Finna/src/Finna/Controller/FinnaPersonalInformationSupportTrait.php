@@ -41,7 +41,7 @@ namespace Finna\Controller;
 trait FinnaPersonalInformationSupportTrait
 {
     /**
-     * Sort request (hold, ILL, storage retrieval) list
+     * Sort request (hold, ILL, storage retrieval) list.
      *
      * @param array  $recordList Requests
      * @param string $sort       Sort order
@@ -89,7 +89,7 @@ trait FinnaPersonalInformationSupportTrait
     }
 
     /**
-     * Sort available requests to beginning of the record list
+     * Sort available requests to beginning of the record list.
      *
      * @param array $recordList List to order
      *
@@ -140,7 +140,7 @@ trait FinnaPersonalInformationSupportTrait
     }
 
     /**
-     * Get account blocks if supported by the ILS
+     * Get account blocks if supported by the ILS.
      *
      * @param array $patron Patron
      *

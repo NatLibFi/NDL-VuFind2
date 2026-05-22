@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Authentication view helper
+ * Authentication view helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use Laminas\Http\PhpEnvironment\Request;
 
 /**
- * Authentication view helper
+ * Authentication view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,14 +43,14 @@ use Laminas\Http\PhpEnvironment\Request;
 class Auth extends \VuFind\View\Helper\Root\Auth
 {
     /**
-     * Request
+     * Request.
      *
      * @var Request
      */
     protected $request;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Auth\Manager          $manager          Authentication manager
      * @param \VuFind\Auth\ILSAuthenticator $ilsAuthenticator ILS Authenticator
@@ -66,7 +66,7 @@ class Auth extends \VuFind\View\Helper\Root\Auth
     }
 
     /**
-     * Get auth method requested in current request
+     * Get auth method requested in current request.
      *
      * @return string
      */

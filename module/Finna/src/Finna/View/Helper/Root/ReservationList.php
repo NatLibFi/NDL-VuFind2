@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list view helper
+ * Reservation list view helper.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
 /**
- * Reservation list view helper
+ * Reservation list view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -48,14 +48,14 @@ use VuFind\RecordDriver\DefaultRecord;
 class ReservationList extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * User logged in or null
+     * User logged in or null.
      *
      * @var UserEntityInterface|null
      */
     protected ?UserEntityInterface $user;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ReservationListService $reservationListService Reservation list service
      * @param ILSAuthenticator       $ilsAuthenticator       Authenticator to ILS
@@ -71,7 +71,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Invoke
+     * Invoke.
      *
      * @param ?UserEntityInterface $user User currently logged in or null
      *
@@ -133,7 +133,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get associative array of [institution => configured lists] where driver matches
+     * Get associative array of [institution => configured lists] where driver matches.
      *
      * @param DefaultRecord $driver Record driver
      *
@@ -145,7 +145,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get available reservation lists for user, user must be invoked
+     * Get available reservation lists for user, user must be invoked.
      *
      * @return FinnaResourceListEntityInterface[]
      */
@@ -158,7 +158,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Get lists containing record
+     * Get lists containing record.
      *
      * @param DefaultRecord $record Record
      *
@@ -173,7 +173,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if reservation lists are enabled
+     * Check if reservation lists are enabled.
      *
      * @return bool
      */
@@ -183,7 +183,7 @@ class ReservationList extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if single order is possible
+     * Check if single order is possible.
      *
      * @return bool
      */

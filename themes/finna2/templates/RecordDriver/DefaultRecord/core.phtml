@@ -269,6 +269,14 @@
       <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
         <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
       <?php endif; ?>
+      <?php if (isset($this->tabs['Series'])): ?>
+        <div class="record-to-series-link">
+          <a class="icon-link" href="#series">
+            <?=$this->icon('more', 'icon-link__icon') ?>
+            <span class="icon-link__label"><?=$this->transEsc('series_parts_link')?></span>
+          </a>
+        </div>
+      <?php endif; ?>
     </div> <?php // record-core-metadata ?>
 
     <div class="description recordSummary">

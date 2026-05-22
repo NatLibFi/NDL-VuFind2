@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RecordLinker view helper
+ * RecordLinker view helper.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use VuFind\Search\Memory;
 use function sprintf;
 
 /**
- * RecordLinker view helper
+ * RecordLinker view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -51,28 +51,28 @@ use function sprintf;
 class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
 {
     /**
-     * Data source configuration
+     * Data source configuration.
      *
      * @var array
      */
     protected $datasourceConfig;
 
     /**
-     * Search memory
+     * Search memory.
      *
      * @var Memory
      */
     protected $searchMemory = null;
 
     /**
-     * ServerUrl helper
+     * ServerUrl helper.
      *
      * @var ServerUrl
      */
     protected $serverUrl;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Record\Router $router    Record router
      * @param array                 $dsConfig  Data source configuration
@@ -89,7 +89,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Inject the search memory
+     * Inject the search memory.
      *
      * @param Memory $memory Search memory
      *
@@ -101,7 +101,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Returns 'data-embed-iframe' if url is vimeo or youtube url
+     * Returns 'data-embed-iframe' if url is vimeo or youtube url.
      *
      * @param string $url record url
      *
@@ -116,7 +116,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Returns url for video embedding if url is vimeo or youtube url
+     * Returns url for video embedding if url is vimeo or youtube url.
      *
      * @param string $url record url
      *
@@ -242,7 +242,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Return URL of the record in staff interface if available
+     * Return URL of the record in staff interface if available.
      *
      * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
      *
@@ -266,7 +266,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Return fully qualified URL to a generated IIIF manifest of the record
+     * Return fully qualified URL to a generated IIIF manifest of the record.
      *
      * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
      *

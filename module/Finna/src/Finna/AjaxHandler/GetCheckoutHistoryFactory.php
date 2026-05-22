@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for GetCheckoutHistory Ajax handler
+ * Factory for GetCheckoutHistory Ajax handler.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Psr\Container\ContainerInterface;
 use VuFind\AjaxHandler\AbstractIlsAndUserActionFactory;
 
 /**
- * Factory for GetCheckoutHistory Ajax handler
+ * Factory for GetCheckoutHistory Ajax handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -47,7 +47,7 @@ use VuFind\AjaxHandler\AbstractIlsAndUserActionFactory;
 class GetCheckoutHistoryFactory extends AbstractIlsAndUserActionFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

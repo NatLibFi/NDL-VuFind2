@@ -41,7 +41,7 @@ namespace Finna\View\Helper\Root;
 class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
 {
     /**
-     * Retrieve the last search class id
+     * Retrieve the last search class id.
      *
      * @return string
      */
@@ -52,7 +52,7 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the last search type
+     * Retrieve the last search type.
      *
      * @return string
      */
@@ -63,7 +63,7 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the last search lookfor
+     * Retrieve the last search lookfor.
      *
      * @return string
      */
@@ -75,7 +75,7 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the scroll data
+     * Retrieve the scroll data.
      *
      * @return array
      *

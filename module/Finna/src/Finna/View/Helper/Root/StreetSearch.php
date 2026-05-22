@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Helper for Street Search
+ * Helper for Street Search.
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Helper for Street Search
+ * Helper for Street Search.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,7 +43,7 @@ namespace Finna\View\Helper\Root;
 class StreetSearch extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * This component outputs code for Finna Street
+     * This component outputs code for Finna Street.
      *
      * @return string
      */

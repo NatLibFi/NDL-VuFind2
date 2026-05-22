@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Handler interface
+ * Handler interface.
  *
  * PHP Version 8
  *
@@ -34,7 +34,7 @@ use Finna\ReservationList\Form\Form;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * Handler interface
+ * Handler interface.
  *
  * @category VuFind
  * @package  ReservationList
@@ -45,14 +45,14 @@ use VuFind\Db\Entity\UserEntityInterface;
 interface HandlerInterface
 {
     /**
-     * Is enabled
+     * Is enabled.
      *
      * @return bool
      */
     public function isEnabled(): bool;
 
     /**
-     * Get translation for title
+     * Get translation for title.
      *
      * @param string $language Language to get title for
      *
@@ -61,7 +61,7 @@ interface HandlerInterface
     public function getTitle(string $language): string;
 
     /**
-     * Get translation for description
+     * Get translation for description.
      *
      * @param string $language Language to get description for
      *
@@ -70,14 +70,14 @@ interface HandlerInterface
     public function getDescription(string $language): string;
 
     /**
-     * Get address information
+     * Get address information.
      *
      * @return array
      */
     public function getAddress(): array;
 
     /**
-     * Get recipient
+     * Get recipient.
      *
      * @return array
      */
@@ -91,7 +91,7 @@ interface HandlerInterface
     public function databaseAccountAllowed(): bool;
 
     /**
-     * Check if library card matches to allowed sources
+     * Check if library card matches to allowed sources.
      *
      * @param string $libraryCardSource Library card source
      *
@@ -100,7 +100,7 @@ interface HandlerInterface
     public function cardIsValid(string $libraryCardSource): bool;
 
     /**
-     * Check if datasource matches to allowed sources
+     * Check if datasource matches to allowed sources.
      *
      * @param string $datasource Datasource
      *
@@ -109,84 +109,84 @@ interface HandlerInterface
     public function datasourceIsValid(string $datasource): bool;
 
     /**
-     * Get connection type
+     * Get connection type.
      *
      * @return string
      */
     public function getConnectionType(): string;
 
     /**
-     * Get connection settings
+     * Get connection settings.
      *
      * @return array
      */
     public function getConnectionSettings(): array;
 
     /**
-     * Get institution
+     * Get institution.
      *
      * @return string
      */
     public function getInstitution(): string;
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return string
      */
     public function getIdentifier(): string;
 
     /**
-     * Get all list properties
+     * Get all list properties.
      *
      * @return array
      */
     public function getAsArray(): array;
 
     /**
-     * Get api url
+     * Get api url.
      *
      * @return string
      */
     public function getApiUrl(): string;
 
     /**
-     * Get api secret
+     * Get api secret.
      *
      * @return string
      */
     public function getApiSecret(): string;
 
     /**
-     * Get email sender name
+     * Get email sender name.
      *
      * @return string
      */
     public function getSenderName(): string;
 
     /**
-     * Get email sender
+     * Get email sender.
      *
      * @return string
      */
     public function getSenderEmail(): string;
 
     /**
-     * Get email sender
+     * Get email sender.
      *
      * @return string
      */
     public function getEmailSubject(): string;
 
     /**
-     * Use patron id to send information
+     * Use patron id to send information.
      *
      * @return bool
      */
     public function getUsePatronId(): bool;
 
     /**
-     * Places an order
+     * Places an order.
      *
      * @param array               $formValues Values gathered from submitted form
      * @param UserEntityInterface $user       User entity
@@ -258,7 +258,7 @@ interface HandlerInterface
     public function getSingleOrderForm(array $prefill = []): Form;
 
     /**
-     * Initialize connection handler
+     * Initialize connection handler.
      *
      * @param string $institution List owner institution code
      * @param array  $config      List specific configuration as an array

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * YamlReader test class
+ * YamlReader test class.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Config\PathResolver;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * YamlReader test class
+ * YamlReader test class.
  *
  * @category VuFind
  * @package  Tests
@@ -49,7 +49,7 @@ class YamlReaderTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
 
     /**
-     * Get testGetFinna data
+     * Get testGetFinna data.
      *
      * @return Generator
      */
@@ -107,7 +107,7 @@ class YamlReaderTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getFinna method
+     * Test getFinna method.
      *
      * @param string $fixture  Fixture name
      * @param array  $expected Expected results

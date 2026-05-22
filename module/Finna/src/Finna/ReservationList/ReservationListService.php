@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list service
+ * Reservation list service.
  *
  * PHP version 8
  *
@@ -61,7 +61,7 @@ use VuFind\RecordDriver\DefaultRecord;
 use VuFindHttp\HttpService;
 
 /**
- * Reservation list service
+ * Reservation list service.
  *
  * @category VuFind
  * @package  ReservationList
@@ -76,21 +76,21 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     use DbServiceAwareTrait;
 
     /**
-     * Type of resource list
+     * Type of resource list.
      *
      * @var string
      */
     public const RESOURCE_LIST_TYPE = 'reservationlist';
 
     /**
-     * Default connection handler used for list connections
+     * Default connection handler used for list connections.
      *
      * @var string
      */
     public const DEFAULT_CONNECTION_HANDLER = 'email';
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaResourceListServiceInterface         $resourceListService         Resource list database service
      * @param FinnaResourceListResourceServiceInterface $resourceListResourceService Resource and list relation
@@ -126,7 +126,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Create a new list object for the specified user
+     * Create a new list object for the specified user.
      *
      * @param ?UserEntityInterface $user    Logged in user (null if logged out)
      * @param array                $prefill Prefill the list with these values.
@@ -278,7 +278,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Set list ordered
+     * Set list ordered.
      *
      * @param UserEntityInterface              $user      User to check for rights to list
      * @param FinnaResourceListEntityInterface $list      List entity or id of the list
@@ -422,7 +422,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get resource list as an array containing formatted dates to be displayed in templates
+     * Get resource list as an array containing formatted dates to be displayed in templates.
      *
      * @param int                  $listId List id
      * @param ?UserEntityInterface $user   User entity object
@@ -440,7 +440,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get resource lists identified as reservation list for user
+     * Get resource lists identified as reservation list for user.
      *
      * @param UserEntityInterface $user           Optional user ID or entity object (to limit results
      *                                            to a particular user).
@@ -491,7 +491,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get resources for list
+     * Get resources for list.
      *
      * @param FinnaResourceListEntityInterface $list List to get resources for
      * @param UserEntityInterface              $user User entity
@@ -570,7 +570,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get all available lists for given record
+     * Get all available lists for given record.
      *
      * @param DefaultRecord $driver Record to look for a matching list
      *
@@ -601,7 +601,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get list configuration using configured method
+     * Get list configuration using configured method.
      *
      * @return array
      */
@@ -659,7 +659,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Check if single order form is set in the config file
+     * Check if single order form is set in the config file.
      *
      * @return bool
      */

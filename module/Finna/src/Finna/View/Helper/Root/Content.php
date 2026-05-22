@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Content page view helper
+ * Content page view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Content page view helper
+ * Content page view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,7 +41,7 @@ namespace Finna\View\Helper\Root;
 class Content extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Page heading
+     * Page heading.
      *
      * @var string
      */
@@ -80,7 +80,7 @@ class Content extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Try to find the best template for the current language
+     * Try to find the best template for the current language.
      *
      * @param string $templateName Template name without .phtml suffix
      *

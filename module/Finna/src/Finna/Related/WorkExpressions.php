@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Related Records: Solr-based work expressions
+ * Related Records: Solr-based work expressions.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\Query\WorkKeysQuery;
 
 /**
- * Related Records: Solr-based work expressions
+ * Related Records: Solr-based work expressions.
  *
  * @category VuFind
  * @package  Related_Records
@@ -47,49 +47,49 @@ use VuFindSearch\Query\WorkKeysQuery;
 class WorkExpressions implements \VuFind\Related\RelatedInterface
 {
     /**
-     * Work expressions
+     * Work expressions.
      *
      * @var array
      */
     protected $results;
 
     /**
-     * Total count
+     * Total count.
      *
      * @var int
      */
     protected $resultCount;
 
     /**
-     * Search service
+     * Search service.
      *
      * @var \VuFindSearch\Service
      */
     protected $searchService;
 
     /**
-     * Search configuration
+     * Search configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $searchConfig;
 
     /**
-     * Record ID
+     * Record ID.
      *
      * @var string
      */
     protected $recordId;
 
     /**
-     * Work keys
+     * Work keys.
      *
      * @var array
      */
     protected $workKeys;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFindSearch\Service $search       Search service
      * @param \VuFind\Config\Config $searchConfig Search configuration
@@ -154,7 +154,7 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get the number of results to be displayed by default
+     * Get the number of results to be displayed by default.
      *
      * @return int
      */
@@ -164,7 +164,7 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get the number of results to be displayed with the more link
+     * Get the number of results to be displayed with the more link.
      *
      * @return int
      */
@@ -174,7 +174,7 @@ class WorkExpressions implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get parameters for a search URL that display all work expressions
+     * Get parameters for a search URL that display all work expressions.
      *
      * @return string
      */

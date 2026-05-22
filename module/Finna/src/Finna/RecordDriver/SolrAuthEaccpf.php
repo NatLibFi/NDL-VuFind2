@@ -51,7 +51,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     use Feature\FinnaXmlReaderTrait;
 
     /**
-     * Get authority title
+     * Get authority title.
      *
      * @return string
      */
@@ -107,7 +107,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Get dates from either date or dateRange elements
+     * Get dates from either date or dateRange elements.
      *
      * @param \SimpleXmlElement $dateElement date element
      *
@@ -146,7 +146,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Return description
+     * Return description.
      *
      * @return array|null
      */
@@ -194,7 +194,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Return exist date
+     * Return exist date.
      *
      * @param string $localType localType attribute
      *
@@ -214,7 +214,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Get related places
+     * Get related places.
      *
      * @return array
      */
@@ -296,7 +296,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Return sources
+     * Return sources.
      *
      * @return array
      */
@@ -366,7 +366,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Format date
+     * Format date.
      *
      * @param string $date Date
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list connection plugin manager
+ * Reservation list connection plugin manager.
  *
  * PHP Version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\ReservationList\Handler;
 
 /**
- * Reservation list plugin manager
+ * Reservation list plugin manager.
  *
  * @category VuFind
  * @package  ReservationList
@@ -63,7 +63,7 @@ class PluginManager extends \VuFind\ServiceManager\AbstractPluginManager
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * Make sure plugins are properly initialized.
      *

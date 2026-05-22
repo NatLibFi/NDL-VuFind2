@@ -45,14 +45,14 @@ class CoverArtArchive extends \VuFind\Content\AbstractCover implements \VuFindHt
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Recordloader to fetch the current record
+     * Recordloader to fetch the current record.
      *
      * @var \VuFind\Record\Loader
      */
     protected $recordLoader = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Record\Loader $loader Record loader
      */

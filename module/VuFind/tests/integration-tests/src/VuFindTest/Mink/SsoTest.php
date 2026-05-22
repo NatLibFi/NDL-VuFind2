@@ -68,7 +68,7 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Data provider for testLogin()
+     * Data provider for testLogin().
      *
      * @return \Iterator
      */
@@ -87,7 +87,7 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Test SSO login
+     * Test SSO login.
      *
      * @param array $extraSsoConfigs Extra configurations for SimulatedSSO.ini
      *
@@ -112,7 +112,7 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * SSO login in lightbox
+     * SSO login in lightbox.
      *
      * @return void
      */
@@ -128,7 +128,7 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
         $this->clickCss($page, '.record-nav .save-record');
 
         // Login in lightbox
-        $this->assertEquals('Institutional Login', $this->findCssAndGetText($page, '.modal-body .btn.btn-link'));
+        $this->assertSame('Institutional Login', $this->findCssAndGetText($page, '.modal-body .btn.btn-link'));
         $this->clickCss($page, '.modal-body .btn.btn-link');
 
         // Check if save form is in lightbox
@@ -139,7 +139,7 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
         $this->closeLightbox($page);
 
         // Check that we are still on the record page
-        $this->assertEquals(
+        $this->assertSame(
             'Journal of rational emotive therapy : the journal of the Institute for Rational-Emotive Therapy.',
             $this->findCssAndGetText($page, '.record .media-body h1')
         );
@@ -149,7 +149,7 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Test SSO external logout
+     * Test SSO external logout.
      *
      * @return void
      */
@@ -191,11 +191,11 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
 
         // Check that login link is back:
         $session->reload();
-        $this->assertNotEmpty($this->findCss($page, '#loginOptions a'));
+        $this->findCss($page, '#loginOptions a');
     }
 
     /**
-     * Logs out on the current page and checks if logout was successful
+     * Logs out on the current page and checks if logout was successful.
      *
      * @return void
      */
@@ -208,7 +208,7 @@ final class SsoTest extends \VuFindTest\Integration\MinkTestCase
         $this->clickCss($page, '.logoutOptions a.logout');
 
         // Check that login link is back
-        $this->assertNotEmpty($this->findCss($page, '#loginOptions a'));
+        $this->findCss($page, '#loginOptions a');
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list ajax handler factory
+ * Reservation list ajax handler factory.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\AjaxHandler;
 use Psr\Container\ContainerInterface;
 
 /**
- * Reservation list ajax handler factory
+ * Reservation list ajax handler factory.
  *
  * @category VuFind
  * @package  AjaxHandler
@@ -43,7 +43,7 @@ use Psr\Container\ContainerInterface;
 class ReservationListFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

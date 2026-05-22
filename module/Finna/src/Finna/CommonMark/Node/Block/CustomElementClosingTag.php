@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element closing tag block node
+ * Custom element closing tag block node.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\CommonMark\Node\Block;
 use League\CommonMark\Node\Block\AbstractBlock;
 
 /**
- * Custom element closing tag block node
+ * Custom element closing tag block node.
  *
  * @category VuFind
  * @package  CommonMark
@@ -43,7 +43,7 @@ use League\CommonMark\Node\Block\AbstractBlock;
 class CustomElementClosingTag extends AbstractBlock
 {
     /**
-     * Custom element name
+     * Custom element name.
      *
      * @var string
      */
@@ -61,7 +61,7 @@ class CustomElementClosingTag extends AbstractBlock
     }
 
     /**
-     * Get custom element closing tag
+     * Get custom element closing tag.
      *
      * @return string
      */

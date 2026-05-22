@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database Migration Manager Test Class
+ * Database Migration Manager Test Class.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Db\Migration\MigrationManager;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * Database Migration Loader Test Class
+ * Database Migration Loader Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -106,7 +106,7 @@ class MigrationManagerTest extends \PHPUnit\Framework\TestCase
             array_keys($testData)
         );
         $loader->method('getMigrationsFromDir')->willReturnCallback(
-            fn ($version) => array_map(fn ($file) => "$version/$file.sql", $testData[$version])
+            fn (string $version): array => array_map(fn ($file) => "$version/$file.sql", $testData[$version])
         );
         $manager = $this->getMockMigrationManager(['getAppliedMigrations'], loader: $loader);
         $manager->method('getAppliedMigrations')->willReturn([]);

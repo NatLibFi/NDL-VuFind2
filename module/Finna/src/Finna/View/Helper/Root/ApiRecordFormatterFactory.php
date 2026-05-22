@@ -1,7 +1,7 @@
 <?php
 
 /**
- * API record formatter view helper factory
+ * API record formatter view helper factory.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * API record formatter view helper factory
+ * API record formatter view helper factory.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -47,7 +47,7 @@ use Psr\Container\ContainerInterface;
 class ApiRecordFormatterFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

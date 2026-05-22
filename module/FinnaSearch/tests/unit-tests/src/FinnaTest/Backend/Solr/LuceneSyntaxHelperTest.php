@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Unit tests for Lucene syntax helper
+ * Unit tests for Lucene syntax helper.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace FinnaTest\Backend\Solr;
 use FinnaSearch\Backend\Solr\LuceneSyntaxHelper;
 
 /**
- * Unit tests for Lucene syntax helper
+ * Unit tests for Lucene syntax helper.
  *
  * @category VuFind
  * @package  Search
@@ -259,7 +259,7 @@ class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test advanced query detection (default settings)
+     * Test advanced query detection (default settings).
      *
      * @return void
      */
@@ -303,7 +303,7 @@ class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test advanced query detection (with case insensitivity)
+     * Test advanced query detection (with case insensitivity).
      *
      * @return void
      */
@@ -325,7 +325,7 @@ class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test case insensitive range normalization
+     * Test case insensitive range normalization.
      *
      * @return void
      */
@@ -340,7 +340,7 @@ class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test colon normalization
+     * Test colon normalization.
      *
      * @return void
      */
@@ -367,7 +367,7 @@ class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test search term extraction
+     * Test search term extraction.
      *
      * @return void
      */
@@ -403,7 +403,7 @@ class LuceneSyntaxHelperTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test normalization of unquoted special characters
+     * Test normalization of unquoted special characters.
      *
      * @return void
      */

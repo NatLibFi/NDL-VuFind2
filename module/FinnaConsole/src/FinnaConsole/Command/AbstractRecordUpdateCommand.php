@@ -49,21 +49,21 @@ use VuFind\Db\Service\UserServiceInterface;
 abstract class AbstractRecordUpdateCommand extends Command
 {
     /**
-     * Table display name
+     * Table display name.
      *
      * @var string
      */
     protected $tableName = null;
 
     /**
-     * Command description
+     * Command description.
      *
      * @var string
      */
     protected $description = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserServiceInterface|UserListServiceInterface $dbService Database service
      */
@@ -132,7 +132,7 @@ abstract class AbstractRecordUpdateCommand extends Command
     }
 
     /**
-     * Update a record
+     * Update a record.
      *
      * @param EntityInterface $record Record
      *

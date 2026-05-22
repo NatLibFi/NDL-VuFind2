@@ -63,7 +63,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
     use DbServiceAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param EntityManager       $entityManager        Doctrine ORM entity manager
      * @param EntityPluginManager $entityPluginManager  Database entity plugin manager
@@ -96,7 +96,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
     }
 
     /**
-     * Mark comment as inappropriate
+     * Mark comment as inappropriate.
      *
      * @param ?UserEntityInterface $user      User object
      * @param int                  $commentId Comment ID
@@ -285,7 +285,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
     }
 
     /**
-     * Create a FinnaCommentsInappropriate entity
+     * Create a FinnaCommentsInappropriate entity.
      *
      * @return FinnaCommentsInappropriateEntityInterface
      */
@@ -295,7 +295,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
     }
 
     /**
-     * Create a FinnaCommentsRecord entity
+     * Create a FinnaCommentsRecord entity.
      *
      * @return FinnaCommentsRecordEntityInterface
      */

@@ -118,7 +118,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     }
 
     /**
-     * Fetch appropriate dedup child
+     * Fetch appropriate dedup child.
      *
      * @param EventInterface $event Event
      *
@@ -151,7 +151,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     }
 
     /**
-     * Append fields from dedup record to the selected local record
+     * Append fields from dedup record to the selected local record.
      *
      * @param array $localRecordData Local record data
      * @param array $dedupRecordData Dedup record data
@@ -197,7 +197,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     }
 
     /**
-     * Function that determines the priority for buildings
+     * Function that determines the priority for buildings.
      *
      * @param object $params Query parameters
      *
@@ -224,7 +224,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     }
 
     /**
-     * Function that determines the priority for sources
+     * Function that determines the priority for sources.
      *
      * @param array $recordSources Record sources defined in searches.ini
      *
@@ -278,7 +278,7 @@ class DeduplicationListener extends \VuFind\Search\Solr\DeduplicationListener
     }
 
     /**
-     * Fetch local records for all the found dedup records
+     * Fetch local records for all the found dedup records.
      *
      * @param EventInterface $event Event
      *

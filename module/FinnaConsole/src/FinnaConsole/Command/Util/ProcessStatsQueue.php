@@ -55,7 +55,7 @@ use function call_user_func;
 class ProcessStatsQueue extends AbstractUtilCommand
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaStatisticsServiceInterface $statisticsService Statistics service
      * @param \Credis_Client                  $redisClient       Redis client
@@ -101,7 +101,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process sessions
+     * Process sessions.
      *
      * @return void
      */
@@ -121,7 +121,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process page views
+     * Process page views.
      *
      * @return void
      */
@@ -143,7 +143,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process a queue
+     * Process a queue.
      *
      * @param string   $queueName Queue display name
      * @param string   $queueKey  Redis key
@@ -193,7 +193,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process record views
+     * Process record views.
      *
      * Writes normal stats entries as well as extended log entries that spread
      * multiple tables.

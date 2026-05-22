@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element block continue parser
+ * Custom element block continue parser.
  *
  * PHP version 8
  *
@@ -37,7 +37,7 @@ use League\CommonMark\Parser\Block\BlockContinueParserInterface;
 use League\CommonMark\Parser\Cursor;
 
 /**
- * Custom element block continue parser
+ * Custom element block continue parser.
  *
  * @category VuFind
  * @package  CommonMark
@@ -48,7 +48,7 @@ use League\CommonMark\Parser\Cursor;
 class CustomElementParser extends AbstractBlockContinueParser
 {
     /**
-     * The current block being parsed by this parser
+     * The current block being parsed by this parser.
      *
      * @var CustomElement
      */
@@ -65,7 +65,7 @@ class CustomElementParser extends AbstractBlockContinueParser
     }
 
     /**
-     * Return the current block being parsed by this parser
+     * Return the current block being parsed by this parser.
      *
      * @return CustomElement
      */
@@ -75,7 +75,7 @@ class CustomElementParser extends AbstractBlockContinueParser
     }
 
     /**
-     * Return whether we are parsing a container block
+     * Return whether we are parsing a container block.
      *
      * @return bool
      */
@@ -86,7 +86,7 @@ class CustomElementParser extends AbstractBlockContinueParser
 
     /**
      * Determine whether the current block being parsed can contain the given child
-     * block
+     * block.
      *
      * @param AbstractBlock $block Block
      *
@@ -98,7 +98,7 @@ class CustomElementParser extends AbstractBlockContinueParser
     }
 
     /**
-     * Attempt to parse the given line
+     * Attempt to parse the given line.
      *
      * @param Cursor                       $cursor            Cursor
      * @param BlockContinueParserInterface $activeBlockParser Parser

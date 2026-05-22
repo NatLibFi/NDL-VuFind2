@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Statistics event handler
+ * Statistics event handler.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\Statistics\Driver\DriverInterface;
 use VuFind\RecordDriver\AbstractBase as AbstractRecord;
 
 /**
- * Statistics event handler
+ * Statistics event handler.
  *
  * @category VuFind
  * @package  Statistics
@@ -44,63 +44,63 @@ use VuFind\RecordDriver\AbstractBase as AbstractRecord;
 class EventHandler
 {
     /**
-     * Request type bit indicating a crawler
+     * Request type bit indicating a crawler.
      *
      * @var int
      */
     public const REQUEST_TYPE_CRAWLER = 1;
 
     /**
-     * Request type bit indicating an API request
+     * Request type bit indicating an API request.
      *
      * @var int
      */
     public const REQUEST_TYPE_API = 2;
 
     /**
-     * Request type bit indicating a request from a monitoring system
+     * Request type bit indicating a request from a monitoring system.
      *
      * @var int
      */
     public const REQUEST_TYPE_MONITORING = 4;
 
     /**
-     * Institution code
+     * Institution code.
      *
      * @param string
      */
     protected $institution;
 
     /**
-     * View subpath
+     * View subpath.
      *
      * @param string
      */
     protected $view;
 
     /**
-     * Storage driver
+     * Storage driver.
      *
      * @var ?DriverInterface
      */
     protected $driver;
 
     /**
-     * User agent
+     * User agent.
      *
      * @var string
      */
     protected $userAgent;
 
     /**
-     * Whether the request comes from a monitoring system
+     * Whether the request comes from a monitoring system.
      *
      * @var bool
      */
     protected $monitoringSystem;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * Note that this must be called before any of the events to be handled is
      *
@@ -126,7 +126,7 @@ class EventHandler
     }
 
     /**
-     * Session start event
+     * Session start event.
      *
      * @param array $params Session data
      *
@@ -145,7 +145,7 @@ class EventHandler
     }
 
     /**
-     * Page view event
+     * Page view event.
      *
      * @param string $controller Controller
      * @param string $action     Action
@@ -166,7 +166,7 @@ class EventHandler
     }
 
     /**
-     * Record view event
+     * Record view event.
      *
      * @param AbstractRecord $record Record driver
      *
@@ -201,7 +201,7 @@ class EventHandler
     }
 
     /**
-     * Get request type as a bitmap
+     * Get request type as a bitmap.
      *
      * @return int
      */

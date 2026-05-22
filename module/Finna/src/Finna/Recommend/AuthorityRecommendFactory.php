@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Recommendation module plugin manager
+ * Recommendation module plugin manager.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Psr\Container\ContainerInterface;
 use VuFind\Search\Results\PluginManager as ResultsManager;
 
 /**
- * Recommendation module plugin manager
+ * Recommendation module plugin manager.
  *
  * @category VuFind
  * @package  Recommendations
@@ -47,7 +47,7 @@ use VuFind\Search\Results\PluginManager as ResultsManager;
 class AuthorityRecommendFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created

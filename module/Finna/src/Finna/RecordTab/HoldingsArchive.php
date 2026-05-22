@@ -46,21 +46,21 @@ use VuFind\View\Helper\Root\Record;
 class HoldingsArchive extends \VuFind\RecordTab\AbstractBase
 {
     /**
-     * OpenUrl helper
+     * OpenUrl helper.
      *
      * @var OpenUrl
      */
     protected $openUrlHelper;
 
     /**
-     * OpenUrl helper
+     * OpenUrl helper.
      *
      * @var Record
      */
     protected $recordHelper;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Record  $recordHelper  Record helper
      * @param OpenUrl $openUrlHelper OpenUrl helper

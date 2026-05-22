@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ajax Controller Module
+ * Ajax Controller Module.
  *
  * PHP version 8
  *
@@ -31,7 +31,7 @@
 namespace Finna\Controller;
 
 /**
- * This controller handles Finna AJAX functionality
+ * This controller handles Finna AJAX functionality.
  *
  * @category VuFind
  * @package  Controller
@@ -43,7 +43,7 @@ namespace Finna\Controller;
 class AjaxController extends \VuFind\Controller\AjaxController
 {
     /**
-     * Handle a file download with AJAX call
+     * Handle a file download with AJAX call.
      *
      * @return \Laminas\Http\Response
      */

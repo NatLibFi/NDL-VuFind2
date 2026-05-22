@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Holdings callnumber view helper
+ * Holdings callnumber view helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\LocationService\LocationService;
 use Finna\Wayfinder\WayfinderService;
 
 /**
- * Holdings callnumber view helper
+ * Holdings callnumber view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -58,7 +58,7 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
     protected $wayfinderService;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param LocationService  $locationService  Location Service
      * of Finland Location Service

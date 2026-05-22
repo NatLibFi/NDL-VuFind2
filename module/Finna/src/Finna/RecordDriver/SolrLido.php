@@ -57,15 +57,14 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\LoggerAwareInterface
+class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
-    use Feature\SolrFinnaTrait;
     use Feature\FinnaXmlReaderTrait;
     use Feature\FinnaUrlCheckTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * LIDO XML namespace
+     * LIDO XML namespace.
      *
      * @var string
      */
@@ -81,7 +80,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Image types array
+     * Image types array.
      *
      * @var array
      */
@@ -97,7 +96,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Model types array
+     * Model types array.
      *
      * @var array
      */
@@ -107,7 +106,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Audio types array
+     * Audio types array.
      *
      * @var array
      */
@@ -116,7 +115,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Video types array
+     * Video types array.
      *
      * @var array
      */
@@ -125,7 +124,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Document types array
+     * Document types array.
      *
      * @var array
      */
@@ -135,7 +134,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Supported audio formats
+     * Supported audio formats.
      *
      * @var array
      */
@@ -145,7 +144,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Supported video formats
+     * Supported video formats.
      *
      * @var array
      */
@@ -158,7 +157,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Description type mappings
+     * Description type mappings.
      *
      * @var array
      */
@@ -171,7 +170,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Measurement type mappings
+     * Measurement type mappings.
      *
      * @var array
      */
@@ -182,7 +181,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Measurement unit mappings
+     * Measurement unit mappings.
      *
      * @var array
      */
@@ -193,7 +192,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * PlaceID source mappings
+     * PlaceID source mappings.
      *
      * @var array
      */
@@ -203,7 +202,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Inscription type mappings
+     * Inscription type mappings.
      *
      * @var array
      */
@@ -219,35 +218,35 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Array of preferred title labels
+     * Array of preferred title labels.
      *
      * @var array
      */
     protected $preferredTitleLabels = ['preferred', 'http://terminology.lido-schema.org/lido00169'];
 
     /**
-     * Array of alternative title labels
+     * Array of alternative title labels.
      *
      * @var array
      */
     protected $alternativeTitleLabels = ['alternate', 'alternative', 'http://terminology.lido-schema.org/lido00170'];
 
     /**
-     * Array of web friendly model formats
+     * Array of web friendly model formats.
      *
      * @var array
      */
     protected $displayableModelFormats = ['gltf', 'glb'];
 
     /**
-     * Array of excluded classifications
+     * Array of excluded classifications.
      *
      * @var array
      */
     protected $excludedClassifications = ['language'];
 
     /**
-     * Array of excluded measurements
+     * Array of excluded measurements.
      *
      * @var array
      */
@@ -268,33 +267,33 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     protected $uniquePlaceIDTypes = ['uri', 'url'];
 
     /**
-     * Array of excluded subject types
+     * Array of excluded subject types.
      *
      * @var array
      */
     protected $excludedSubjectTypes = ['aihe', 'iconclass'];
 
     /**
-     * Array of types for linkResources to be displayed as external URL
+     * Array of types for linkResources to be displayed as external URL.
      */
     protected $displayExternalLinks = ['provided_3D'];
 
     /**
-     * Array of types displayed as download links with documents
+     * Array of types displayed as download links with documents.
      *
      * @var array
      */
     protected $displayDownloadLinks = ['provided_video'];
 
     /**
-     * Array of related work relation types for related publications
+     * Array of related work relation types for related publications.
      *
      * @var array
      */
     protected $relatedPulicationRelationTypes = ['is reproduced in', 'kirjallisuus', 'lähteet', 'julkaisu'];
 
     /**
-     * Array of related publication title labels excluded from search
+     * Array of related publication title labels excluded from search.
      *
      * @var array
      */
@@ -313,7 +312,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Events excluded from subjects
+     * Events excluded from subjects.
      *
      * @var array
      */
@@ -323,7 +322,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     ];
 
     /**
-     * Mapping from related work type to possible type attributes
+     * Mapping from related work type to possible type attributes.
      *
      * @var array
      */
@@ -405,19 +404,22 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      * - dateTaken   Photo date taken
      * - perspectives Image perspectives
      *
-     * @param string $language Language for textual information
+     * @param string $language   Language for textual information
+     * @param bool   $includePdf Whether to include first PDF file when no image
      *
      * @return array
      */
-    public function getAllImages($language = null)
+    public function getAllImages($language = null, $includePdf = false)
     {
         $language ??= $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_values(array_filter(array_column($representations, 'images')));
+        // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
+        // RecordImage::mergeModelDataToImages.
+        return array_filter(array_column($representations, 'images'));
     }
 
     /**
-     * Function to format given resourceMeasurementsSet to readable format
+     * Function to format given resourceMeasurementsSet to readable format.
      *
      * @param array[] $measurements Measurements nodes
      *
@@ -465,7 +467,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get 3D models
+     * Get 3D models.
      *
      * @return array
      */
@@ -473,13 +475,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     {
         $language = $this->getTranslatorLocale();
         $representations = $this->getRepresentations($language);
-        return array_values(
-            array_filter(array_column($representations, 'models'))
-        );
+        // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
+        // RecordImage::mergeModelDataToImages.
+        return array_filter(array_column($representations, 'models'));
     }
 
     /**
-     * Get audios
+     * Get audios.
      *
      * @return array
      */
@@ -493,7 +495,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get videos
+     * Get videos.
      *
      * @return array
      */
@@ -507,7 +509,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get documents
+     * Get documents.
      *
      * @return array
      */
@@ -522,7 +524,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 
     /**
      * Parse given representations and return them in proper
-     * associative array
+     * associative array.
      *
      * @param string $language language to get information
      *
@@ -719,11 +721,13 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                 }
                 // Representation is a video
                 if (in_array($type, $videoTypeKeys)) {
+                    $videoRights = $this->getResourceRights($resourceSet, $language, false);
                     if (
                         $video = $this->getVideo(
                             $url,
                             $format,
                             $description,
+                            $videoRights,
                             $reader->all($representation, 'resourceMeasurementsSet')
                         )
                     ) {
@@ -776,7 +780,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 
     /**
      * Return description as associative array
-     * - type Type of the description and text as the value
+     * - type Type of the description and text as the value.
      *
      * @param array  $resourceSet Set to get description from
      * @param string $language    Language to get
@@ -809,7 +813,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      * - relationTypes language specific relation types
      * - description   language specific description
      * - dateTaken     date taken
-     * - perspectives  language specific perspectives
+     * - perspectives  language specific perspectives.
      *
      * @param array  $resourceSet Current resource set
      * @param string $language    Language to information
@@ -859,7 +863,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      * Function to return model as associative array
      * - format Model format as key
      *   - type Model type preview_3d or provided_3d as key
-     *          url to model as value
+     *          url to model as value.
      *
      * @param string  $url          Model url
      * @param string  $format       Model format
@@ -901,7 +905,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      *      - format            Image format as key
      *          - data          Contains data like measurements
      *          - resourceID    ID to which resource belongs to
-     *          - url           Url of the image
+     *          - url           Url of the image.
      *
      * @param string  $url          Url of the resourceset
      * @param string  $type         Type of the image
@@ -953,7 +957,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      * - url    Url to audio file
      * - codec  Codec type of the audio
      * - type   Type what type is the audio file
-     * - embed  Type of embed is audio
+     * - embed  Type of embed is audio.
      *
      * @param string  $url          Url of the audio
      * @param string  $format       Format of the audio
@@ -996,10 +1000,12 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
      * - videosources
      *  - src           Different sources for the video
      *  - type          Codec type
+     * - downloadable   True if video is allowed to be downloaded.
      *
      * @param string  $url          Url of the video
      * @param string  $format       Format of the video
      * @param string  $description  Description of the video
+     * @param array   $rights       Array of video rights
      * @param array[] $measurements Measurements nodes
      *
      * @return array
@@ -1008,7 +1014,8 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         string $url,
         string $format,
         string $description,
-        array $measurements
+        array $rights,
+        array $measurements,
     ): array {
         $mediaType = $this->supportedVideoFormats[$format] ?? false;
         if ($this->maxAmountOfURLs()) {
@@ -1032,6 +1039,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
                     'src' => $url,
                     'type' => $mediaType,
                 ],
+                'downloadable' => $this->allowRecordImageDownload(compact('rights')),
             ],
         };
         if ($video && $measurements) {
@@ -1041,7 +1049,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Function to return document in associative array
+     * Function to return document in associative array.
      *
      * @param string $url         Url of the document
      * @param string $format      Format of the document
@@ -1081,7 +1089,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get rights from the given resourceSet
+     * Get rights from the given resourceSet.
      *
      * @param array  $resourceSet Given resourceSet from lido
      * @param string $language    Language to look for
@@ -1134,7 +1142,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Return model settings from config
+     * Return model settings from config.
      *
      * @return array settings
      */
@@ -1152,7 +1160,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Return all labels for the record
+     * Return all labels for the record.
      *
      * @return array
      */
@@ -1165,7 +1173,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * If record has 3D resources
+     * If record has 3D resources.
      *
      * @return bool
      */
@@ -1178,7 +1186,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Can model preview images be shown
+     * Can model preview images be shown.
      *
      * @return bool
      */
@@ -1189,13 +1197,23 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
+     * Get the full title of the record.
+     *
+     * @return string
+     */
+    public function getTitle()
+    {
+        return $this->fields[$this->getPrioritizedTitleField()] ?? '';
+    }
+
+    /**
      * Get an array of alternative titles for the record.
      *
      * @return array
      */
     public function getAlternativeTitles()
     {
-        return $this->fields['title_alt'] ?? [];
+        return $this->compareWithTitle($this->getAllTitles());
     }
 
     /**
@@ -1257,11 +1275,14 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get online URLs
+     * Get online URLs.
+     *
+     * @param bool  $raw          Whether to return raw data
+     * @param array $excludeTypes If set, will remove types of urls from result
      *
      * @return array
      */
-    public function getOnlineURLs(): array
+    public function getOnlineURLs($raw = false, $excludeTypes = []): array
     {
         return $this->getDocuments();
     }
@@ -1297,7 +1318,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     /**
      * Return attributes of an element as an associative array.
      * - id            Id attribute
-     * - source        Source attribute
+     * - source        Source attribute.
      *
      * @param array $conceptID The element to get attributes from
      *
@@ -1320,7 +1341,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     /**
      * Return attributes of any conceptID nodes of a node as an associative array.
      * - id            Id attribute
-     * - source        Source attribute
+     * - source        Source attribute.
      *
      * @param array $parentNode The node that contains conceptID nodes
      *
@@ -1364,7 +1385,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get archive type
+     * Get archive type.
      *
      * @return string
      */
@@ -1515,7 +1536,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
 
             $places = [];
             foreach ($reader->all($node, 'eventPlace') as $eventPlace) {
-                $displayPlace = trim($reader->firstValue($eventPlace, 'displayPlace') ?? '', ', \n\r\t\v\0');
+                $displayPlace = trim($reader->firstValue($eventPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
                 $placeId = $reader->first($eventPlace, 'place/placeID');
                 if (!$displayPlace) {
                     // Gather display name from placeNameSet:
@@ -1626,7 +1647,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -1835,7 +1856,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
@@ -1874,7 +1895,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent archives
+     * Get hierarchy parent archives.
      *
      * @return array
      */
@@ -1884,7 +1905,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent collections
+     * Get hierarchy parent collections.
      *
      * @return array
      */
@@ -1894,7 +1915,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent subcollections
+     * Get hierarchy parent subcollections.
      *
      * @return array
      */
@@ -1904,7 +1925,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent series
+     * Get hierarchy parent series.
      *
      * @return array
      */
@@ -1914,7 +1935,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent purchase batches
+     * Get hierarchy parent purchase batches.
      *
      * @return array
      *
@@ -1926,7 +1947,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent unclassified entities
+     * Get hierarchy parent unclassified entities.
      *
      * Returns entities not belonging to any of the separately handled classes.
      *
@@ -1938,7 +1959,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent works
+     * Get hierarchy parent works.
      *
      * @return array
      */
@@ -1948,7 +1969,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get an array of dates for results list display
+     * Get an array of dates for results list display.
      *
      * @return ?array Array of one or two dates or null if not available.
      * If date range is still continuing end year will be an empty string.
@@ -1959,7 +1980,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get subject actors
+     * Get subject actors.
      *
      * @param bool $extended Whether to return a keyed array with the following keys:
      * - name: name of the actor
@@ -1984,7 +2005,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get extended subject actors
+     * Get extended subject actors.
      *
      * @return array
      */
@@ -1994,7 +2015,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get subject dates
+     * Get subject dates.
      *
      * @return array
      */
@@ -2013,7 +2034,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get subject details
+     * Get subject details.
      *
      * @return array
      */
@@ -2031,7 +2052,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Return all subject headings
+     * Return all subject headings.
      *
      * @param bool $extended Whether to return a keyed array with the following
      * keys:
@@ -2138,7 +2159,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get extended subject information
+     * Get extended subject information.
      *
      * @return array
      */
@@ -2148,7 +2169,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get topics
+     * Get topics.
      *
      * @return array
      */
@@ -2206,7 +2227,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get subject places
+     * Get subject places.
      *
      * @param bool $extended    Whether to return a keyed array with the following
      * keys:
@@ -2227,7 +2248,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
         $results = [];
         $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace';
         foreach ($reader->all(path: $path) as $subjectPlace) {
-            $displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ', \n\r\t\v\0');
+            $displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
             if ('' === $displayPlace) {
                 $placeNames = $reader->allValues($subjectPlace, 'place/namePlaceSet/appellationValue');
                 foreach ($reader->all($subjectPlace, 'place/partOfPlace') as $part) {
@@ -2279,7 +2300,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get extended subject places
+     * Get extended subject places.
      *
      * @return array
      */
@@ -2380,7 +2401,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get identifiers by type
+     * Get identifiers by type.
      *
      * @param bool  $includeType Whether to include identifier type in parenthesis
      * @param array $include     Type and label attributes to include
@@ -2420,7 +2441,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get physical locations
+     * Get physical locations.
      *
      * @return array
      */
@@ -2431,7 +2452,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get physical locations and additional information
+     * Get physical locations and additional information.
      *
      * Returns a multidimensional array containing arrays with keys:
      *  - 'location'        string  Physical location
@@ -2495,7 +2516,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get a language-specific node from an array of nodes
+     * Get a language-specific node from an array of nodes.
      *
      * @param array  $nodeList Nodes to look in
      * @param string $language Language to look for
@@ -2533,7 +2554,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get a language-specific value from an array of nodes
+     * Get a language-specific value from an array of nodes.
      *
      * @param array  $nodeList Nodes to look in
      * @param string $language Language to look for
@@ -2547,7 +2568,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get a language-specific value from an array of nodes
+     * Get a language-specific value from an array of nodes.
      *
      * @param ?array $node     Parent node
      * @param string $path     Element path
@@ -2565,7 +2586,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get all fitting language-specific nodes from a node list
+     * Get all fitting language-specific nodes from a node list.
      *
      * @param array  $nodeList Array of nodes to look in
      * @param string $language Language to look for
@@ -2605,7 +2626,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get all fitting language-specific values from a node list
+     * Get all fitting language-specific values from a node list.
      *
      * @param array  $nodeList Array of nodes to look in
      * @param string $language Language to look for
@@ -2626,7 +2647,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get the displaysubject and description info to summary
+     * Get the displaysubject and description info to summary.
      *
      * @return array $results with summary from displaySubject or description field
      */
@@ -2811,7 +2832,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get hierarchy parent links by type
+     * Get hierarchy parent links by type.
      *
      * @param string $relatedWorkType Related work type to include, empty string for
      * "others"
@@ -2866,7 +2887,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get placeID type
+     * Get placeID type.
      *
      * @param array $placeID element
      *
@@ -2886,7 +2907,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Get actor's primary ID
+     * Get actor's primary ID.
      *
      * @param array $actor Actor
      *
@@ -2923,7 +2944,7 @@ class SolrLido extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\Logg
     }
 
     /**
-     * Lowercase a string (also handles null)
+     * Lowercase a string (also handles null).
      *
      * @param ?string $string String
      *

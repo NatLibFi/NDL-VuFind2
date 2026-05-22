@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CoverController test class
+ * CoverController test class.
  *
  * PHP version 8
  *
@@ -45,7 +45,7 @@ use VuFind\Session\Settings;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * CoverController test class
+ * CoverController test class.
  *
  * @category VuFind
  * @package  Tests
@@ -60,7 +60,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     use MockServicesTrait;
 
     /**
-     * Data provider for testing image piping
+     * Data provider for testing image piping.
      *
      * @return Generator
      */
@@ -207,7 +207,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test pipe functionality
+     * Test pipe functionality.
      *
      * @param array    $config           Main config
      * @param array    $datasourceConfig Datasource config
@@ -225,7 +225,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get cover controller for testing
+     * Get cover controller for testing.
      *
      * @param array $config           Main config
      * @param array $datasourceConfig Datasource config

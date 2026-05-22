@@ -48,7 +48,7 @@
       <?=$this->flashmessages()?>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header visually-hidden">
-      <?=$this->component('page-title', ['title' => $this->translate('saved_items'), 'headTitle' => $this->translate('saved_items')])?>
+      <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('saved_items'), 'headTitle' => $this->translate('saved_items')])?>
     </div>
   </div>
   <div class="useraccount-content">
@@ -61,6 +61,9 @@
       </div>
       <div class="useraccount-header">
         <h3 class="list-title"><span class="js-list-title"><?=$this->escapeHtml($list->getTitle())?></span><?=$this->icon('list-edit', ['class' => 'list-title-edit', 'aria-hidden' => 'false', 'aria-label' => $this->transEscAttr('edit')])?></h3>
+        <?php if (!$this->translationEmpty('tooltip_myaccount_mylist_favorites_html')): ?>
+          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?=$this->transEsc('tooltip_myaccount_mylist_favorites_html')?>"><?=$this->icon('help')?></button></span>
+        <?php endif; ?>
       </div>
       <?php if ($list && $user && $list->getUser()->getId() === $user->getId() && $list->isPublic()): ?>
         <div class="list-public-indicator">
@@ -115,13 +118,9 @@
           </div>
         </div>
       <?php endif; ?>
-      <?=$this->component('page-title', ['class' => 'list-title no-edit', 'title' => $this->translate('default_list_title'), 'headTitle' => $this->translate('saved_items')])?>
+      <?=$this->component('finna-page-title-with-tip', ['class' => 'list-title no-edit', 'title' => $this->translate('default_list_title'), 'headTitle' => $this->translate('saved_items')])?>
     <?php endif; ?>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/myresearch-favorites')): ?>
-      <div class="myresearch-favorites">
-        <?=$this->render($template)?>
-      </div>
-    <?php endif; ?>
+    <?=$this->component('finna-addition-template', ['template' => 'myresearch-favorites'])?>
     <div class="mylist-header">
       <?php if ($recordTotal > 0): ?>
         <div class="mylist-controls search-controls">
@@ -163,6 +162,7 @@
           <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
         </div>
       </div>
+      <?=$this->component('finna-addition-template', ['template' => 'myresearch-favorites-post-list'])?>
     <?php endif;?>
   </div>
   <?php if ($user && $list): ?>

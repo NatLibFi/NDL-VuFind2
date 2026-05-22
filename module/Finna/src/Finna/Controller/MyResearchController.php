@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MyResearch Controller
+ * MyResearch Controller.
  *
  * PHP version 8
  *
@@ -78,7 +78,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     use Feature\FinnaUserListTrait;
 
     /**
-     * Catalog Login Action
+     * Catalog Login Action.
      *
      * @return mixed
      */
@@ -112,7 +112,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Login Action
+     * Login Action.
      *
      * @return mixed
      */
@@ -349,7 +349,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Save historic loans to favorites
+     * Save historic loans to favorites.
      *
      * @return mixed
      */
@@ -536,7 +536,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send user's saved favorites from a particular list to the edit view
+     * Send user's saved favorites from a particular list to the edit view.
      *
      * @return mixed
      */
@@ -569,7 +569,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send user's saved favorites from a particular list to the view
+     * Send user's saved favorites from a particular list to the view.
      *
      * @return mixed
      */
@@ -615,7 +615,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Show user's own favorite list (max. 1000) to the view
+     * Show user's own favorite list (max. 1000) to the view.
      *
      * @return mixed
      */
@@ -691,7 +691,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Gather user profile data
+     * Gather user profile data.
      *
      * @return mixed
      */
@@ -726,8 +726,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $user->setEmail('');
                 $user->setHasUserProvidedEmail(true);
                 $userService->persistEntity($user);
-            } elseif ($values->email === $user->getEmail()) {
-                // No need to do anything
             } elseif ($validator->isValid($values->email)) {
                 $this->getAuthManager()->updateEmail($user, $values->email);
                 // If we have a pending change, we need to send a verification email:
@@ -765,6 +763,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             } elseif ($showSuccess) {
                 $this->flashMessenger()->addSuccessMessage('profile_update');
             }
+
+            // Redirect to verification if the user has a pending email change:
+            if ($user->getPendingEmail()) {
+                return $this->redirect()->toRoute('myresearch-verifyemail');
+            }
         }
 
         $view = parent::profileAction();
@@ -801,7 +804,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Library information address change form
+     * Library information address change form.
      *
      * @return mixed
      */
@@ -1010,7 +1013,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Messaging settings change form
+     * Messaging settings change form.
      *
      * @return mixed
      */
@@ -1116,7 +1119,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Save favorite custom order into DB
+     * Save favorite custom order into DB.
      *
      * @return mixed
      */
@@ -1149,7 +1152,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send list of storage retrieval requests to view
+     * Send list of storage retrieval requests to view.
      *
      * @return mixed
      */
@@ -1173,7 +1176,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send list of ill requests to view
+     * Send list of ill requests to view.
      *
      * @return mixed
      */
@@ -1197,7 +1200,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Send list of fines to view
+     * Send list of fines to view.
      *
      * @return mixed
      */
@@ -1319,7 +1322,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Download historic loans
+     * Download historic loans.
      *
      * @return     mixed
      * @deprecated Use AjaxHandler/GetCheckoutHistory
@@ -1329,7 +1332,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Returns template for downloading checkouts history
+     * Returns template for downloading checkouts history.
      *
      * @return mixed
      */
@@ -1362,7 +1365,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Action for sending all of a user's saved favorites to the view
+     * Action for sending all of a user's saved favorites to the view.
      *
      * @return mixed
      */
@@ -1456,7 +1459,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Save a feedback to database for library
+     * Save a feedback to database for library.
      *
      * @param array  $patron  Patron
      * @param array  $profile Patron profile
@@ -1546,7 +1549,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Function to get feedback message string from arrays
+     * Function to get feedback message string from arrays.
      *
      * @param array $userData   containing personal information
      * @param array $message    containing data about new values
@@ -1663,7 +1666,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
     }
 
     /**
-     * Check if nickname is available
+     * Check if nickname is available.
      *
      * @param string $nickname User nickname
      *

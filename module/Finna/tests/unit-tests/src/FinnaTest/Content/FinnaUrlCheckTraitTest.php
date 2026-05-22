@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FinnaUrlCheckTrait Test Class
+ * FinnaUrlCheckTrait Test Class.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace FinnaTest\Content;
 
 /**
- * FinnaUrlCheckTrait Test Class
+ * FinnaUrlCheckTrait Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -41,7 +41,7 @@ namespace FinnaTest\Content;
 class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * Test with empty configuration
+     * Test with empty configuration.
      *
      * @return void
      */
@@ -55,7 +55,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test with full configuration
+     * Test with full configuration.
      *
      * @return void
      */
@@ -110,7 +110,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test disallowed report only mode
+     * Test disallowed report only mode.
      *
      * @return void
      */
@@ -140,7 +140,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test allowed report only mode
+     * Test allowed report only mode.
      *
      * @return void
      */
@@ -169,7 +169,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test disallowed enforcing report mode
+     * Test disallowed enforcing report mode.
      *
      * @return void
      */
@@ -199,7 +199,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test allowed enforcing report mode
+     * Test allowed enforcing report mode.
      *
      * @return void
      */
@@ -242,35 +242,35 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             use \Finna\RecordDriver\Feature\FinnaUrlCheckTrait;
 
             /**
-             * Configuration
+             * Configuration.
              *
              * @var array
              */
             protected $config;
 
             /**
-             * IPv4 host to address map
+             * IPv4 host to address map.
              *
              * @var array
              */
             protected $ip4Map;
 
             /**
-             * IPv6 host to address map
+             * IPv6 host to address map.
              *
              * @var array
              */
             protected $ip6Map;
 
             /**
-             * Logged warning(s)
+             * Logged warning(s).
              *
              * @var string
              */
             protected $warning = '';
 
             /**
-             * Constructor
+             * Constructor.
              *
              * @param array $config Configuration
              * @param array $ip4Map IPv4 host to address map
@@ -284,7 +284,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             }
 
             /**
-             * Wrapper for isUrlLoadable for testing
+             * Wrapper for isUrlLoadable for testing.
              *
              * @param string $url URL
              * @param string $id  Record ID
@@ -297,7 +297,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             }
 
             /**
-             * Get any logged warning(s)
+             * Get any logged warning(s).
              *
              * @return string
              */
@@ -307,7 +307,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             }
 
             /**
-             * Get configuration
+             * Get configuration.
              *
              * @return \VuFind\Config\Config
              */
@@ -317,7 +317,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             }
 
             /**
-             * Get the IPv4 address for a host
+             * Get the IPv4 address for a host.
              *
              * @param string $host Host
              *
@@ -329,7 +329,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             }
 
             /**
-             * Get the IPv6 address for a host
+             * Get the IPv6 address for a host.
              *
              * @param string $host Host
              *
@@ -341,7 +341,7 @@ class FinnaUrlCheckTraitTest extends \PHPUnit\Framework\TestCase
             }
 
             /**
-             * Log a warning
+             * Log a warning.
              *
              * @param string $warning Warning message
              *

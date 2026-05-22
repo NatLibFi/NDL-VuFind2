@@ -43,7 +43,7 @@ use VuFind\Exception\ILS as ILSException;
 class NoILS extends \VuFind\ILS\Driver\NoILS
 {
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -69,7 +69,7 @@ class NoILS extends \VuFind\ILS\Driver\NoILS
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.

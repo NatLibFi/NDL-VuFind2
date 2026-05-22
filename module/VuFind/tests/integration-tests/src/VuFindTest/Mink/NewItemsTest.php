@@ -30,6 +30,7 @@
 namespace VuFindTest\Mink;
 
 use Behat\Mink\Element\Element;
+use Behat\Mink\Session;
 use VuFindTest\Feature\DemoDriverTestTrait;
 
 /**
@@ -46,6 +47,19 @@ class NewItemsTest extends \VuFindTest\Integration\MinkTestCase
     use DemoDriverTestTrait;
 
     /**
+     * Load the new item page.
+     *
+     * @param Session $session Mink session
+     *
+     * @return Element
+     */
+    protected function loadNewItemPage(Session $session): Element
+    {
+        $session->visit($this->getVuFindUrl() . '/Search/NewItem');
+        return $session->getPage();
+    }
+
+    /**
      * Submit a new item search and return the resulting page object.
      *
      * @param int    $buttonIndex    Index of range button to press
@@ -57,16 +71,14 @@ class NewItemsTest extends \VuFindTest\Integration\MinkTestCase
         int $buttonIndex = 1,
         string $expectedRanges = 'Yesterday Past 5 Days Past 30 Days'
     ): Element {
-        $session = $this->getMinkSession();
-        $session->visit($this->getVuFindUrl() . '/Search/NewItem');
-        $page = $session->getPage();
+        $page = $this->loadNewItemPage($this->getMinkSession());
         // Confirm custom ranges display correctly:
-        $this->assertEquals(
+        $this->assertSame(
             $expectedRanges,
             $this->findCssAndGetText($page, '.form-search-newitem .btn-group')
         );
         // Now perform a search:
-        $this->clickCss($page, '.form-search-newitem .btn-group .btn-primary', index: $buttonIndex);
+        $this->clickCss($page, '.form-search-newitem .btn-group .btn-outline-primary', index: $buttonIndex);
         $this->clickCss($page, '.form-search-newitem input[type="submit"]');
         $this->waitForPageLoad($page);
         return $page;
@@ -165,7 +177,7 @@ class NewItemsTest extends \VuFindTest\Integration\MinkTestCase
         $page = $this->submitNewItemSearch(expectedRanges: 'Yesterday Past 15 Days Past 60 Days');
 
         // Confirm that we've reached the custom results page:
-        $this->assertEquals(
+        $this->assertSame(
             'Showing 1 - 20 results of 20 New Items',
             $this->findCssAndGetText($page, '.search-stats')
         );
@@ -189,7 +201,7 @@ class NewItemsTest extends \VuFindTest\Integration\MinkTestCase
         $recordLink = $this->findAndAssertLink($page, $title);
         $recordLink->click();
         $this->waitForPageLoad($page);
-        $this->assertEquals($title, $this->findCssAndGetText($page, 'h1'));
+        $this->assertSame($title, $this->findCssAndGetText($page, 'h1'));
         $recordAuthorLink = $this->findAndAssertLink($page, 'Shakespeare, William 1564 - 1616');
         $this->assertStringEndsWith(
             '/Author/Home?author=Shakespeare,%20William%201564%20-%201616',
@@ -204,6 +216,35 @@ class NewItemsTest extends \VuFindTest\Integration\MinkTestCase
         $this->assertStringEndsWith(
             '/Search/Results?lookfor=&type=AllFields',
             $session->getCurrentUrl()
+        );
+    }
+
+    /**
+     * Test that when disabled a 'Page not found' message is shown and status
+     * code 404 is returned.
+     *
+     * @return void
+     */
+    public function testDisabledPage(): void
+    {
+        $this->changeConfigs(
+            [
+                'searches' => [
+                    'NewItem' => [
+                        'method' => 'disabled',
+                    ],
+                ],
+            ]
+        );
+        $session = $this->getMinkSession();
+        $page = $this->loadNewItemPage($session);
+        $this->assertEquals(
+            404,
+            $session->getStatusCode()
+        );
+        $this->assertStringContainsString(
+            'Page not found',
+            $this->findCssAndGetText($page, '#content')
         );
     }
 }

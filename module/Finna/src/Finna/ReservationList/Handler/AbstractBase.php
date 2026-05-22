@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Abstract handler
+ * Abstract handler.
  *
  * PHP Version 8
  *
@@ -41,7 +41,7 @@ use VuFind\Service\GetServiceTrait;
 use function in_array;
 
 /**
- * Abstract handler
+ * Abstract handler.
  *
  * @category VuFind
  * @package  ReservationList
@@ -69,112 +69,112 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     protected array $orderFormConfig = [];
 
     /**
-     * Singular item order form configuration
+     * Singular item order form configuration.
      *
      * @var array
      */
     protected array $singleOrderFormConfig = [];
 
     /**
-     * Title translations as lang code => translation
+     * Title translations as lang code => translation.
      *
      * @var array
      */
     protected array $titleTranslations = [];
 
     /**
-     * Description translations as lang code => translation
+     * Description translations as lang code => translation.
      *
      * @var array
      */
     protected array $descriptionTranslations = [];
 
     /**
-     * Address information
+     * Address information.
      *
      * @var array
      */
     protected array $addressInfo = [];
 
     /**
-     * Identifier
+     * Identifier.
      *
      * @var string
      */
     protected string $identifier;
 
     /**
-     * Library card sources
+     * Library card sources.
      *
      * @var array
      */
     protected array $libraryCardSources = [];
 
     /**
-     * Use database account for reservations
+     * Use database account for reservations.
      *
      * @var bool
      */
     protected bool $databaseAccountAllowed = false;
 
     /**
-     * Datasources
+     * Datasources.
      *
      * @var array
      */
     protected array $datasources = [];
 
     /**
-     * Recipient
+     * Recipient.
      *
      * @var array
      */
     protected array $recipient = [];
 
     /**
-     * Connection type
+     * Connection type.
      *
      * @var string
      */
     protected string $connectionType;
 
     /**
-     * Connection settings
+     * Connection settings.
      *
      * @var array
      */
     protected array $connectionSettings = [];
 
     /**
-     * Institution
+     * Institution.
      *
      * @var string
      */
     protected string $institution;
 
     /**
-     * Is the list enabled
+     * Is the list enabled.
      *
      * @var bool
      */
     protected bool $enabled;
 
     /**
-     * Specific type of the list
+     * Specific type of the list.
      *
      * @var string
      */
     protected string $listType;
 
     /**
-     * List configuration as an array
+     * List configuration as an array.
      *
      * @var array
      */
     protected array $listConfiguration;
 
     /**
-     * Is enabled
+     * Is enabled.
      *
      * @return bool
      */
@@ -184,7 +184,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get translation for title
+     * Get translation for title.
      *
      * @param string $language Language to get title for
      *
@@ -196,7 +196,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get translation for description
+     * Get translation for description.
      *
      * @param string $language Language to get description for
      *
@@ -208,7 +208,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get address information
+     * Get address information.
      *
      * @return array
      */
@@ -218,7 +218,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get recipient
+     * Get recipient.
      *
      * @return array
      */
@@ -238,7 +238,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Check if library card matches to allowed sources
+     * Check if library card matches to allowed sources.
      *
      * @param string $libraryCardSource Library card source
      *
@@ -250,7 +250,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Check if datasource matches to allowed sources
+     * Check if datasource matches to allowed sources.
      *
      * @param string $datasource Datasource
      *
@@ -262,7 +262,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get connection type
+     * Get connection type.
      *
      * @return string
      */
@@ -272,7 +272,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get connection settings
+     * Get connection settings.
      *
      * @return array
      */
@@ -282,7 +282,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get institution
+     * Get institution.
      *
      * @return string
      */
@@ -292,7 +292,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return string
      */
@@ -302,7 +302,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get all list properties
+     * Get all list properties.
      *
      * @return array
      */
@@ -312,7 +312,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get api url
+     * Get api url.
      *
      * @return string
      */
@@ -325,7 +325,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get api secret
+     * Get api secret.
      *
      * @return string
      */
@@ -335,7 +335,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get email sender name
+     * Get email sender name.
      *
      * @return string
      */
@@ -345,7 +345,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get email sender
+     * Get email sender.
      *
      * @return string
      */
@@ -355,7 +355,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get email sender
+     * Get email sender.
      *
      * @return string
      */
@@ -365,7 +365,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Use patron id to send information
+     * Use patron id to send information.
      *
      * @return bool
      */
@@ -375,7 +375,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ContainerInterface $serviceLocator Service locator used with GetServiceTrait
      */
@@ -411,7 +411,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Get values for placing single order form
+     * Get values for placing single order form.
      *
      * @param FinnaResourceListEntityInterface $list          List being ordered
      * @param UserEntityInterface              $user          User who owns the list
@@ -534,7 +534,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     }
 
     /**
-     * Places an order
+     * Places an order.
      *
      * @param array               $formValues Values gathered from submitted form
      * @param UserEntityInterface $user       User entity
@@ -558,7 +558,7 @@ abstract class AbstractBase implements HandlerInterface, \Psr\Log\LoggerAwareInt
     abstract public function getListStatus(FinnaResourceListEntityInterface $list): string;
 
     /**
-     * Initialize connection handler
+     * Initialize connection handler.
      *
      * @param string $institution List owner institution code
      * @param array  $config      List specific configuration as an array

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrEad3 Test Class
+ * SolrEad3 Test Class.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Finna\RecordDriver\SolrEad3;
 use Generator;
 
 /**
- * SolrEad3 Record Driver Test Class
+ * SolrEad3 Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -47,7 +47,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\TranslatorTrait;
 
     /**
-     * Get unit dates
+     * Get unit dates.
      *
      * @return void
      */
@@ -85,7 +85,36 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected other related material data
+     * Test related records.
+     *
+     * @return void
+     */
+    public function testGetRelatedRecords()
+    {
+        $driver = $this->getDriver('ead3_test.xml');
+        $relatedRecords = [
+            'see-also' => [
+                [
+                    'id' => '12345',
+                    'field' => 'identifier',
+                ],
+            ],
+            'separated' => [
+                [
+                    'id' => '54321',
+                    'field' => 'identifier',
+                ],
+                [
+                    'id' => '543210',
+                    'field' => 'identifier',
+                ],
+            ],
+        ];
+        $this->assertEquals($relatedRecords, $driver->getRelatedRecords());
+    }
+
+    /**
+     * Function to get expected other related material data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -125,7 +154,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getOtherRelatedMaterial
+     * Test getOtherRelatedMaterial.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -137,8 +166,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         string $language,
         array $expected
     ): void {
-        $driver = $this->getDriver('ead3_test.xml');
-        $driver->setPreferredLanguage($language);
+        $driver = $this->getDriver('ead3_test.xml', language: $language);
         $this->assertEquals(
             $expected,
             $driver->getOtherRelatedMaterial()
@@ -146,7 +174,79 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected author data
+     * Function to get expected related places data.
+     *
+     * @return \Iterator<(int | string), mixed>
+     */
+    public static function getRelatedPlacesData(): \Iterator
+    {
+        yield [
+            'fi',
+            [
+                'getSubjectPlacesExtended' => [
+                    [
+                    'heading' => ['Helsinki'],
+                    'id' => 'http://www.yso.fi/onto/yso/p94137',
+                    'source' => 'YSO',
+                    ],
+                ],
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
+                    ],
+                ],
+            ],
+        ];
+        yield [
+            'sv',
+            [
+                'getSubjectPlacesExtended' => [
+                    [
+                        'heading' => ['Helsingfors'],
+                        'id' => 'http://www.yso.fi/onto/yso/p94137',
+                        'source' => 'YSO',
+                    ],
+                ],
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test related places.
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getRelatedPlacesData')]
+    public function testRelatedPlaces(
+        string $language,
+        array $expected
+    ): void {
+        $driver = $this->getDriver('ead3_test.xml');
+        $driver->setPreferredLanguage($language);
+        foreach ($expected as $function => $result) {
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Function to get expected author data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -296,7 +396,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test authors
+     * Test authors.
      *
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
@@ -318,7 +418,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected subject headings data
+     * Function to get expected subject headings data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -432,7 +532,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getAllSubjectHeadingsExtended
+     * Test getAllSubjectHeadingsExtended.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -445,8 +545,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
-            $driver = $this->getDriver($file);
-            $driver->setPreferredLanguage($language);
+            $driver = $this->getDriver($file, language: $language);
             $this->assertEquals(
                 $result,
                 $driver->getAllSubjectHeadingsExtended()
@@ -455,7 +554,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected physical descriptions data
+     * Function to get expected physical descriptions data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -499,7 +598,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getPhysicalDescriptions
+     * Test getPhysicalDescriptions.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -512,8 +611,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
-            $driver = $this->getDriver($file);
-            $driver->setPreferredLanguage($language);
+            $driver = $this->getDriver($file, language: $language);
             $this->assertEquals(
                 $result,
                 $driver->getPhysicalDescriptions()
@@ -522,7 +620,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testGetImages
+     * Data provider for testGetImages.
      *
      * @return Generator
      */
@@ -579,7 +677,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test get images
+     * Test get images.
      *
      * @param string $xmlPath  Path for the record xml
      * @param array  $expected Return value to be expected
@@ -594,7 +692,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected general notes data
+     * Function to get expected general notes data.
      *
      * @return \Iterator<(int | string), mixed>
      */
@@ -623,7 +721,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getGeneralNotes
+     * Test getGeneralNotes.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
@@ -635,8 +733,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
         string $language,
         array $expected
     ): void {
-        $driver = $this->getDriver('ead3_test5.xml');
-        $driver->setPreferredLanguage($language);
+        $driver = $this->getDriver('ead3_test5.xml', language: $language);
         $this->assertEquals(
             $expected,
             $driver->getGeneralNotes()
@@ -644,28 +741,119 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test titles.
+     *
+     * @return void
+     */
+    public function testTitles(): void
+    {
+        $rawData = [
+            'title' => 'Otsikko suomeksi',
+            'title_fi_txt' => 'Otsikko suomeksi',
+            'title_en_txt' => 'Title in English',
+            'title_sv_txt' => 'Titel på svenska',
+            'title_alt' => [
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+        ];
+        $driver = $this->getDriver(
+            'ead3_test5.xml',
+            overrides: $rawData,
+            language: 'fi',
+            fallbackLanguages: 'fi,sv,en'
+        );
+        $this->assertSame(
+            'Otsikko suomeksi',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Titel på svenska',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getDriver('ead3_test3.xml', overrides: $rawData, language: 'sv');
+        $this->assertSame(
+            'Titel på svenska',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getDriver('ead3_test2.xml', overrides: $rawData, language: 'en');
+        $this->assertSame(
+            'Title in English',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+    }
+
+    /**
      * Get a record driver with fake data.
      *
-     * @param string $recordXml    Xml record to use for the test
-     * @param array  $overrides    Fixture fields to override.
-     * @param array  $searchConfig Search configuration.
+     * @param string $recordXml         Xml record to use for the test
+     * @param array  $overrides         Fixture fields to override.
+     * @param array  $searchConfig      Search configuration.
+     * @param string $language          Language
+     * @param string $fallbackLanguages Site fallback languages
      *
      * @return SolrEad3
      */
-    protected function getDriver(string $recordXml, $overrides = [], $searchConfig = []): SolrEad3
-    {
+    protected function getDriver(
+        string $recordXml,
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+        $fallbackLanguages = 'fi,en',
+    ): SolrEad3 {
         $fixture = $this->getFixture("ead3/$recordXml", 'Finna');
         $record = new SolrEad3(
             null,
             null,
             new \VuFind\Config\Config($searchConfig)
         );
+
         $record->setTranslator(
             $this->getMockTranslator(
-                ['default' => ['year_decade_or_century' => '%%year%%-luku']]
+                ['default' => ['year_decade_or_century' => '%%year%%-luku']],
+                $language,
             )
         );
+        $record->setPreferredLanguage($language);
         $record->setRawData(array_merge(['fullrecord' => $fixture], $overrides));
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => $fallbackLanguages,
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+                'se' => 'Northern Sámi',
+            ],
+        ];
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         return $record;
     }
 }

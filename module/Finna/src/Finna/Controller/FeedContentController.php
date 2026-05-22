@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Feed Content Controller
+ * Feed Content Controller.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ namespace Finna\Controller;
 use function in_array;
 
 /**
- * Loads feed content pages
+ * Loads feed content pages.
  *
  * @category VuFind
  * @package  Controller
@@ -50,7 +50,7 @@ class FeedContentController extends ContentController
     use Feature\DownloadTrait;
 
     /**
-     * Default action if none provided
+     * Default action if none provided.
      *
      * @return Laminas\View\Model\ViewModel
      */
@@ -85,7 +85,7 @@ class FeedContentController extends ContentController
     }
 
     /**
-     * Linked events action
+     * Linked events action.
      *
      * @return Laminas\View\Model\ViewModel
      */
@@ -98,7 +98,7 @@ class FeedContentController extends ContentController
     }
 
     /**
-     * Proxy load feed image
+     * Proxy load feed image.
      *
      * @return Laminas\View\Model\ViewModel
      */
@@ -152,7 +152,7 @@ class FeedContentController extends ContentController
     }
 
     /**
-     * Proxy load linked event image
+     * Proxy load linked event image.
      *
      * @return Laminas\View\Model\ViewModel
      */

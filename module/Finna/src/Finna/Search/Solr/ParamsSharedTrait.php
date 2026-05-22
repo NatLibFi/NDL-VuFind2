@@ -72,7 +72,7 @@ trait ParamsSharedTrait
     }
 
     /**
-     * Translate a hierarchical facet filter
+     * Translate a hierarchical facet filter.
      *
      * Translates each facet level and concatenates the result
      *

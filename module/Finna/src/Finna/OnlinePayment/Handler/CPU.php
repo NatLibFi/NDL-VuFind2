@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CPU payment handler
+ * CPU payment handler.
  *
  * PHP version 8
  *

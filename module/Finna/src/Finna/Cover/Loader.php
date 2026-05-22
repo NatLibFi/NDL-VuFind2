@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record image loader
+ * Record image loader.
  *
  * PHP version 8
  *
@@ -39,7 +39,7 @@ use function is_callable;
 use function strlen;
 
 /**
- * Record image loader
+ * Record image loader.
  *
  * @category VuFind
  * @package  Cover_Generator
@@ -53,70 +53,70 @@ use function strlen;
 class Loader extends \VuFind\Cover\Loader
 {
     /**
-     * Image URL
+     * Image URL.
      *
      * @var string
      */
     protected $url;
 
     /**
-     * Image parameters
+     * Image parameters.
      *
      * @var array
      */
     protected $imageParams = [];
 
     /**
-     * Record id
+     * Record id.
      *
      * @var string
      */
     protected $id;
 
     /**
-     * Invalid ISBN
+     * Invalid ISBN.
      *
      * @var string
      */
     protected $invalidIsbn = '';
 
     /**
-     * Image index
+     * Image index.
      *
      * @var int
      */
     protected $index;
 
     /**
-     * Image width
+     * Image width.
      *
      * @var int
      */
     protected $width = 100;
 
     /**
-     * Image height
+     * Image height.
      *
      * @var int
      */
     protected $height = 100;
 
     /**
-     * Image size to use
+     * Image size to use.
      *
      * @var bool
      */
     protected $size = 'medium';
 
     /**
-     * Datasource spesific cover image configuration
+     * Datasource spesific cover image configuration.
      *
      * @var string
      */
     protected $datasourceCoverConfig = null;
 
     /**
-     * Name for the unsized image used as a base for resizing new images
+     * Name for the unsized image used as a base for resizing new images.
      *
      * @var string
      */
@@ -437,7 +437,7 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Try to get the full size image to be used for scaling other images
+     * Try to get the full size image to be used for scaling other images.
      *
      * @param string $url URL to load image from
      *
@@ -611,7 +611,7 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Method for rotating the given image with exif orientation data
+     * Method for rotating the given image with exif orientation data.
      *
      * @param resource $image       Image to rotate
      * @param int      $orientation Orientation data of the original image
@@ -663,7 +663,7 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Check if a server has been temporarily blocked due to failures
+     * Check if a server has been temporarily blocked due to failures.
      *
      * @param string $host Host name
      *
@@ -698,7 +698,7 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Record a failure for a server
+     * Record a failure for a server.
      *
      * @param string $host Host name
      *
@@ -722,7 +722,7 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Record a success for a server
+     * Record a success for a server.
      *
      * @param string $host Host name
      *
@@ -738,7 +738,7 @@ class Loader extends \VuFind\Cover\Loader
     }
 
     /**
-     * Get status tracking file path for a host
+     * Get status tracking file path for a host.
      *
      * @param string $host Host name
      *

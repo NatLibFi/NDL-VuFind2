@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Controller for legacy Primo URLs
+ * Controller for legacy Primo URLs.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * Controller for legacy Primo URLs
+ * Controller for legacy Primo URLs.
  *
  * @category VuFind
  * @package  Controller
@@ -41,7 +41,7 @@ namespace Finna\Controller;
 class PCIController extends \VuFind\Controller\AbstractBase
 {
     /**
-     * Home action
+     * Home action.
      *
      * @return mixed
      */
@@ -51,7 +51,7 @@ class PCIController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Search action -- call standard results action
+     * Search action -- call standard results action.
      *
      * @return mixed
      */
@@ -78,7 +78,7 @@ class PCIController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Primo record action
+     * Primo record action.
      *
      * @return mixed
      */

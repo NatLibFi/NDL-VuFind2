@@ -120,7 +120,7 @@
         <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
       </div>
       <div id="useraccount-content-heading" class="useraccount-header">
-        <?=$this->component('page-title', ['title' => $this->translate('Your Fines') . " ($rowCount)", 'headTitle' => $this->translate('My Fines')]);?>
+        <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Your Fines') . " ($rowCount)", 'headTitle' => $this->translate('My Fines'), 'tooltip' => 'tooltip_myaccount_fines_html']);?>
       </div>
     </div>
     <?=$this->flashmessages()?>
@@ -208,9 +208,7 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/fines-pre-list')): ?>
-        <div class="fines-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['template' => 'fines-pre-list'])?>
       <?php if (empty($this->fines)): ?>
         <h3><?=$this->transEsc('You do not have any fines')?></h3>
       <?php else: ?>
@@ -297,9 +295,7 @@
               <div class="online-payment-note"><?=$this->render($template)?></div>
             <?php endif; ?>
           <?php endif; ?>
-          <?php if ($template = $this->content()->findTemplateForLng('content/Additions/fines-post-list')): ?>
-            <div class="fines-post-list"><?=$this->render($template)?></div>
-          <?php endif; ?>
+          <?=$this->component('finna-addition-template', ['template' => 'fines-post-list'])?>
         </div>
       <?php endif; ?>
     <?php endif; ?>

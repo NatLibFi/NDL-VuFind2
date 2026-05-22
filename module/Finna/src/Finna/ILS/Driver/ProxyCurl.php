@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Modified BeSimple Curl for VuFind HTTP Service
+ * Modified BeSimple Curl for VuFind HTTP Service.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use BeSimple\SoapClient\Curl;
 use VuFindHttp\HttpServiceInterface;
 
 /**
- * Modified BeSimple Curl for VuFind HTTP Service
+ * Modified BeSimple Curl for VuFind HTTP Service.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -44,42 +44,42 @@ use VuFindHttp\HttpServiceInterface;
 class ProxyCurl extends Curl
 {
     /**
-     * HTTP Service
+     * HTTP Service.
      *
      * @var \VuFindHttp\HttpServiceInterface
      */
     protected $httpService;
 
     /**
-     * Response
+     * Response.
      *
      * @var \Laminas\Http\Response
      */
     protected $response = null;
 
     /**
-     * Last error code
+     * Last error code.
      *
      * @var int
      */
     protected $lastErrorCode = 0;
 
     /**
-     * Last error message
+     * Last error message.
      *
      * @var string
      */
     protected $lastErrorMessage = '';
 
     /**
-     * Last request headers
+     * Last request headers.
      *
      * @var string
      */
     protected $requestHeaders = '';
 
     /**
-     * Options
+     * Options.
      *
      * @var array
      */
@@ -113,7 +113,7 @@ class ProxyCurl extends Curl
     }
 
     /**
-     * Set a cURL option
+     * Set a cURL option.
      *
      * @param string $curlOption      Option
      * @param string $curlOptionValue Value

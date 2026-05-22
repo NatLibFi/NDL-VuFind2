@@ -41,14 +41,14 @@ namespace FinnaConsole\Command\Util;
 trait EmailWithRetryTrait
 {
     /**
-     * Mailer
+     * Mailer.
      *
      * @var \VuFind\Mailer\Mailer
      */
     protected $mailer = null;
 
     /**
-     * Send an email message with retry on error
+     * Send an email message with retry on error.
      *
      * @param string|Address|AddressList $to      Recipient email address (or
      * delimited list)

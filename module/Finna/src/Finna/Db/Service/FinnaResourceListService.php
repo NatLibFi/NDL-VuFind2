@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Resource list service
+ * Resource list service.
  *
  * PHP version 8
  *
@@ -42,7 +42,7 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFind\Log\LoggerAwareTrait;
 
 /**
- * Resource list service
+ * Resource list service.
  *
  * @category VuFind
  * @package  Db_Service
@@ -81,7 +81,7 @@ class FinnaResourceListService extends AbstractDbService implements
     }
 
     /**
-     * Get lists which does contain given resource
+     * Get lists which does contain given resource.
      *
      * @param UserEntityInterface     $user           User entity object or ID
      * @param ResourceEntityInterface $resource       Resource entity to look for
@@ -131,7 +131,7 @@ class FinnaResourceListService extends AbstractDbService implements
     }
 
     /**
-     * Get resource lists for user
+     * Get resource lists for user.
      *
      * @param UserEntityInterface $user           User entity object or ID
      * @param string              $listIdentifier Identifier of the list used by institution
@@ -175,7 +175,7 @@ class FinnaResourceListService extends AbstractDbService implements
     }
 
     /**
-     * Get lists which does not contain given resource
+     * Get lists which does not contain given resource.
      *
      * @param UserEntityInterface     $user           User entity object or ID
      * @param ResourceEntityInterface $resource       Resource entity to look for

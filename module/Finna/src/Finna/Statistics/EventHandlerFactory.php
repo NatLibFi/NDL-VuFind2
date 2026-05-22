@@ -48,7 +48,7 @@ use VuFind\Net\IpAddressUtils;
 class EventHandlerFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -107,7 +107,7 @@ class EventHandlerFactory implements FactoryInterface
     }
 
     /**
-     * Check if the request should be excluded
+     * Check if the request should be excluded.
      *
      * @param IpAddressUtils $ipUtils  IP address utilities
      * @param string         $clientIp Client IP address
@@ -130,7 +130,7 @@ class EventHandlerFactory implements FactoryInterface
     }
 
     /**
-     * Check if the request comes from a monitoring system
+     * Check if the request comes from a monitoring system.
      *
      * @param IpAddressUtils $ipUtils  IP address utilities
      * @param string         $clientIp Client IP address

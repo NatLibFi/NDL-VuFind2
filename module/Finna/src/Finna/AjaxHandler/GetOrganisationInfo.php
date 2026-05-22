@@ -63,42 +63,42 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Organisation info
+     * Organisation info.
      *
      * @var OrganisationInfo
      */
     protected $organisationInfo;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Facet configuration
+     * Facet configuration.
      *
      * @var array
      */
     protected $facetConfig;
 
     /**
-     * Sorter
+     * Sorter.
      *
      * @var Sorter
      */
     protected $sorter;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings   $ss               Session settings
      * @param OrganisationInfo  $organisationInfo Organisation info
@@ -250,7 +250,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get consortium info and location selection snippet
+     * Get consortium info and location selection snippet.
      *
      * @param string  $id             Organisation id
      * @param ?string $locationId     Selected location id, if any
@@ -349,7 +349,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get location search results snippet
+     * Get location search results snippet.
      *
      * @param string $id       Organisation id
      * @param array  $sectors  Sectors
@@ -417,7 +417,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get location details snippet
+     * Get location details snippet.
      *
      * @param string $id         Organisation id
      * @param string $locationId Location id
@@ -446,7 +446,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get schedule snippet
+     * Get schedule snippet.
      *
      * @param string $id         Organisation id
      * @param string $locationId Location id
@@ -473,7 +473,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get widget
+     * Get widget.
      *
      * @param string  $id          Organisation id
      * @param ?string $locationId  Location id
@@ -518,7 +518,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get widget data for a location
+     * Get widget data for a location.
      *
      * @param string $id          Organisation id
      * @param string $locationId  Location id
@@ -566,7 +566,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get organisation page image and link
+     * Get organisation page image and link.
      *
      * @param string $id         Organisation id
      * @param array  $sectors    Sectors
@@ -600,7 +600,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get location name from organisation list
+     * Get location name from organisation list.
      *
      * @param ?string $locationId Location ID
      * @param array   $orgInfo    Organisation info
@@ -638,7 +638,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get distance between two points in meters
+     * Get distance between two points in meters.
      *
      * @param float $lat1 Latitude of first point
      * @param float $lon1 Longitude of first point

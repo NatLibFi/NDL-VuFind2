@@ -92,7 +92,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Get an array of formats/extents for the record
+     * Get an array of formats/extents for the record.
      *
      * @return array
      */
@@ -102,7 +102,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Return educational levels
+     * Return educational levels.
      *
      * @return array
      */
@@ -117,7 +117,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Get educational subjects
+     * Get educational subjects.
      *
      * @return array
      */
@@ -155,7 +155,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Get educational aim
+     * Get educational aim.
      *
      * @return array
      */
@@ -170,7 +170,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * Only returns non-presenter authors if they differ from the container record.
      * This is a strict comparison: even the same authors in a different order is

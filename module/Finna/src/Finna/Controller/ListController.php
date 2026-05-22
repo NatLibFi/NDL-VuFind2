@@ -1,7 +1,7 @@
 <?php
 
 /**
- * List Controller
+ * List Controller.
  *
  * PHP version 8
  *
@@ -56,7 +56,7 @@ class ListController extends \VuFind\Controller\AbstractBase
     use Feature\FinnaUserListTrait;
 
     /**
-     * Send user's saved favorites from a particular list to the view
+     * Send user's saved favorites from a particular list to the view.
      *
      * @return mixed
      */
@@ -137,7 +137,7 @@ class ListController extends \VuFind\Controller\AbstractBase
 
     /**
      * Save action - Allows the save template to appear,
-     *   passes containingLists & nonContainingLists
+     *   passes containingLists & nonContainingLists.
      *
      * @return mixed
      */
@@ -184,7 +184,7 @@ class ListController extends \VuFind\Controller\AbstractBase
                 . '<a href="' . $listUrl . '" class="gotolist">'
                 . $this->translate('go_to_list') . '</a>.',
             ];
-            $this->flashMessenger()->addMessage($message, 'success');
+            $this->flashMessenger()->addSuccessMessage($message);
             return $this->redirect()->toRoute('list-page', ['lid' => $sourceListId]);
         }
         $userListService = $this->getDbService(\VuFind\Db\Service\UserListServiceInterface::class);

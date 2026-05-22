@@ -3,6 +3,7 @@
   $isManyTabs = (count($searchTabs) > 2);
   $module = $this->layout()->templateDir;
   $hasSelectedTab = false;
+  $selectedTabLabel = 'default_empty_label';
 ?>
 <?php if (!$isManyTabs): ?>
   <div class="tabs-table">
@@ -14,6 +15,7 @@
         <?php if ($tab['selected']) {
           $this->layout()->currentTabId = $tab['id'];
           $hasSelectedTab = true;
+          $selectedTabLabel = $tab['label'];
         }
         $toggletipKeyHtml = 'tooltip_' . $tab['label'] . '_html';
         if ($this->layout()->templateName !== 'advanced' && !$this->translationEmpty($toggletipKeyHtml)) {
@@ -42,7 +44,11 @@
         </li>
       <?php endif; ?>
     </ul>
-    <?php if (!$this->translationEmpty("search_tab_tip_{$module}_html")) :?>
+    <?php if (!$this->translationEmpty("search_tab_tip_{$selectedTabLabel}_html")) :?>
+      <div class="search-tab-tip">
+        <?=$this->translate("search_tab_tip_{$selectedTabLabel}_html");?>
+      </div>
+    <?php elseif (!$this->translationEmpty("search_tab_tip_{$module}_html")) :?>
       <div class="search-tab-tip">
         <?=$this->translate("search_tab_tip_{$module}_html");?>
       </div>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Iframe helper
+ * Iframe helper.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\I18n\Translator\TranslatorAwareTrait;
 
 /**
- * Iframe helper
+ * Iframe helper.
  *
  * @category VuFind
  * @package  Content
@@ -46,14 +46,14 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     use TranslatorAwareTrait;
 
     /**
-     * Cookie consent configuration
+     * Cookie consent configuration.
      *
      * @var array
      */
     protected $consentConfig;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $consentConfig Cookie consent configuration
      */
@@ -63,7 +63,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Render a generic iframe or link box depending on cookie consent
+     * Render a generic iframe or link box depending on cookie consent.
      *
      * @param string $style             Element style attribute used for both iframe
      * and possible placeholder div if required consent categories are not accepted
@@ -108,7 +108,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Render a link box to a service
+     * Render a link box to a service.
      *
      * @param string $serviceUrl        URL to the service's own interface
      * @param array  $consentCategories Required cookie consent categories
@@ -140,7 +140,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Render a Vimeo iframe or link box depending on cookie consent
+     * Render a Vimeo iframe or link box depending on cookie consent.
      *
      * @param string  $videoId           Video ID
      * @param array   $consentCategories Required cookie consent categories
@@ -179,7 +179,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Render a YouTube iframe or link box depending on cookie consent
+     * Render a YouTube iframe or link box depending on cookie consent.
      *
      * @param string  $videoId           Video ID
      * @param array   $consentCategories Required cookie consent categories
@@ -219,7 +219,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Render an Icareus iframe or link box depending on cookie consent
+     * Render an Icareus iframe or link box depending on cookie consent.
      *
      * @param string $src               Icareus video source
      * @param array  $consentCategories Required cookie consent categories
@@ -276,7 +276,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Render a Twitter timeline iframe or link box depending on cookie consent
+     * Render a Twitter timeline iframe or link box depending on cookie consent.
      *
      * @param string $screenName        User's screen name
      * @param array  $consentCategories Required cookie consent categories
@@ -317,7 +317,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Get base URL for a service
+     * Get base URL for a service.
      *
      * @param string $serviceUrl Service URL
      *
@@ -340,7 +340,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Get translated consent categories
+     * Get translated consent categories.
      *
      * @param array $categories Categories to translate
      *
@@ -360,7 +360,7 @@ class Iframe extends \Laminas\View\Helper\AbstractHelper implements TranslatorAw
     }
 
     /**
-     * Check if user has consented to given categories
+     * Check if user has consented to given categories.
      *
      * @param array $categories Categories
      *

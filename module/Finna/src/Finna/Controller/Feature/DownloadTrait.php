@@ -1,7 +1,7 @@
 <?php
 
 /**
- * External data download feature trait
+ * External data download feature trait.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use Laminas\Http\Headers;
 use VuFind\Http\CachingDownloader;
 
 /**
- * External data download feature trait
+ * External data download feature trait.
  *
  * @category VuFind
  * @package  Controller
@@ -45,7 +45,7 @@ use VuFind\Http\CachingDownloader;
 trait DownloadTrait
 {
     /**
-     * Download an image using CachingDownloader
+     * Download an image using CachingDownloader.
      *
      * @param string $url Image URL
      *
@@ -76,7 +76,7 @@ trait DownloadTrait
     }
 
     /**
-     * Set headers for browsers to cache the response
+     * Set headers for browsers to cache the response.
      *
      * @param Headers $headers Headers
      * @param ?int    $ttl     Caching time (Time To Live) in seconds
@@ -98,7 +98,7 @@ trait DownloadTrait
     }
 
     /**
-     * Check if the content type is an image
+     * Check if the content type is an image.
      *
      * @param string $contentType Content type
      *

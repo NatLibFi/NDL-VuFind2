@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Permission Manager
+ * Permission Manager.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\Role;
 
 /**
- * Permission Manager
+ * Permission Manager.
  *
  * @category VuFind
  * @package  Authorization
@@ -41,7 +41,7 @@ namespace Finna\Role;
 class PermissionManager extends \VuFind\Role\PermissionManager
 {
     /**
-     * Get all active permissions
+     * Get all active permissions.
      *
      * @return array
      */

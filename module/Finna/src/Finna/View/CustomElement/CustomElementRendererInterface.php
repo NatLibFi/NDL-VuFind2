@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element renderer interface
+ * Custom element renderer interface.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\CustomElement;
 
 /**
- * Custom element renderer interface
+ * Custom element renderer interface.
  *
  * @category VuFind
  * @package  CustomElements

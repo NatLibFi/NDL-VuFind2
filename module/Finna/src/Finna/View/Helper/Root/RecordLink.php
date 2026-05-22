@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
+ * RecordLink view helper (DEPRECATED -- use RecordLinker instead).
  *
  * Note that RecordLink has been removed from upstream and the Finna version only
  * remains for compatibility with existing production views.
@@ -39,7 +39,7 @@ namespace Finna\View\Helper\Root;
 use function func_get_args;
 
 /**
- * RecordLink view helper (DEPRECATED -- use RecordLinker instead)
+ * RecordLink view helper (DEPRECATED -- use RecordLinker instead).
  *
  * @category   VuFind
  * @package    View_Helpers
@@ -54,14 +54,14 @@ use function func_get_args;
 class RecordLink extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Data source configuration
+     * Data source configuration.
      *
      * @var array
      */
     protected $datasourceConfig;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array $config Configuration for search box
      */
@@ -114,7 +114,7 @@ class RecordLink extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Return search URL for all versions
+     * Return search URL for all versions.
      *
      * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
      *
@@ -129,7 +129,7 @@ class RecordLink extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Returns 'data-embed-iframe' if url is vimeo or youtube url
+     * Returns 'data-embed-iframe' if url is vimeo or youtube url.
      *
      * @param string $url record url
      *
@@ -144,7 +144,7 @@ class RecordLink extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Returns url for video embedding if url is vimeo or youtube url
+     * Returns url for video embedding if url is vimeo or youtube url.
      *
      * @param string $url record url
      *

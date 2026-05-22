@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna survey view helper
+ * Finna survey view helper.
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Finna survey view helper
+ * Finna survey view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,14 +41,14 @@ namespace Finna\View\Helper\Root;
 class FinnaSurvey extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Configuration
+     * Configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config Configuration
      */
@@ -71,7 +71,7 @@ class FinnaSurvey extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Check if survey is enabled
+     * Check if survey is enabled.
      *
      * @return bool
      */

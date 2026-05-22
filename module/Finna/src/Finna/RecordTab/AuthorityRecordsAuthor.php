@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Authority records record tabs (author relation)
+ * Authority records record tabs (author relation).
  *
  * PHP version 8
  *
@@ -30,7 +30,7 @@
 namespace Finna\RecordTab;
 
 /**
- * Authority records record tabs (author relation)
+ * Authority records record tabs (author relation).
  *
  * @category VuFind
  * @package  RecordTabs
@@ -41,7 +41,7 @@ namespace Finna\RecordTab;
 class AuthorityRecordsAuthor extends AuthorityRecordsBase
 {
     /**
-     * Get record tab label
+     * Get record tab label.
      *
      * @return string
      */
@@ -51,7 +51,7 @@ class AuthorityRecordsAuthor extends AuthorityRecordsBase
     }
 
     /**
-     * Return index field used when listing records
+     * Return index field used when listing records.
      *
      * @return string
      */

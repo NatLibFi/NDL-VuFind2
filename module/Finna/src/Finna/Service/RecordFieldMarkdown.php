@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna record field Markdown service
+ * Finna record field Markdown service.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use League\CommonMark\Output\RenderedContentInterface;
 use League\CommonMark\Util\HtmlFilter;
 
 /**
- * Finna record field Markdown service
+ * Finna record field Markdown service.
  *
  * @category VuFind
  * @package  VuFind\Service

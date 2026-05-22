@@ -44,7 +44,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 interface CommentsServiceInterface extends \VuFind\Db\Service\CommentsServiceInterface
 {
     /**
-     * Mark comment as inappropriate
+     * Mark comment as inappropriate.
      *
      * @param UserEntityInterface $user      User object
      * @param int                 $commentId Comment ID

@@ -644,6 +644,27 @@
           </resourceRepresentation>
         </resourceSet>
         <resourceSet>
+          <resourceDescription type="displayLink">VideoTestiInC.mp4</resourceDescription>
+          <resourceRepresentation type="preview_video">
+            <linkResource formatResource="mp4">https://linkkiInCVideoon.fi</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementType lang="sv">storlek</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">byte</measurementUnit>
+              <measurementUnit lang="sv">byte</measurementUnit>
+              <measurementValue>74576596</measurementValue>
+            </resourceMeasurementsSet>
+          </resourceRepresentation>
+          <rightsResource>
+            <rightsType>
+              <conceptID>InC</conceptID>
+              <term lang="fi">Tässä on videoiden copyright.</term>
+            </rightsType>
+          </rightsResource>
+        </resourceSet>
+        <resourceSet>
           <resourceDescription type="displayLink">PDFTesti.pdf</resourceDescription>
           <resourceRepresentation type="provided_text">
             <linkResource formatResource="pdf">https://linkkiPDF.fi</linkResource>

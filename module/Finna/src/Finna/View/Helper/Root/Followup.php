@@ -52,7 +52,7 @@ class Followup extends \Laminas\View\Helper\AbstractHelper
     protected $followup;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FollowupPLugin $followup Followup controller plugin.
      */

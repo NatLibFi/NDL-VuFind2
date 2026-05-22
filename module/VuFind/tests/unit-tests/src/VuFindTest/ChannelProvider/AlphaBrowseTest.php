@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AlphaBrowse Test Class
+ * AlphaBrowse Test Class.
  *
  * PHP version 8
  *
@@ -34,7 +34,7 @@ use VuFindSearch\ParamBag;
 use VuFindTest\RecordDriver\TestHarness;
 
 /**
- * AlphaBrowse Test Class
+ * AlphaBrowse Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -268,7 +268,10 @@ class AlphaBrowseTest extends \PHPUnit\Framework\TestCase
                 'id' => 'foo_id'],
             ],
         ]];
-        return [$alpha, $expectedResult];
+        return [
+            $alpha,
+            $expectedResult,
+        ];
     }
 
     /**
@@ -294,7 +297,7 @@ class AlphaBrowseTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get a fake record driver
+     * Get a fake record driver.
      *
      * @param array $data Test data (solrField is only supported field)
      *
@@ -315,7 +318,7 @@ class AlphaBrowseTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get AlphaBrowse object
+     * Get AlphaBrowse object.
      *
      * @param array $options options for the provider
      *

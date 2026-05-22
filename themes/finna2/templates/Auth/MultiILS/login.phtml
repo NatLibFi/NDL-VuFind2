@@ -1,53 +1,64 @@
 <!-- START of: finna - Auth/MultiILS/login.phtml -->
-<?php $account = $this->auth()->getManager(); ?>
+<?php
+  $account = $this->auth()->getManager();
+  $preAuthenticationData = $account->getPreAuthenticationData() ?? [];
+?>
 <?php $sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home'))); ?>
 <?php if (!$sessionInitiator): // display default login form if no login URL provided ?>
-<div class="login-col">
-  <form method="post" class="form-vertical" action="<?=$this->url('myresearch-home')?>" name="loginForm" id="loginForm">
-    <?=$this->auth()->getLoginFields()?>
-    <?php if ($account->supportsPersistentLogin()): ?>
-      <div class="form-group">
-        <div class="remember-me-ils">
-          <label>
-            <input type="checkbox" name="remember_me"> <?=$this->transEsc('remember_me', ['%%days%%' => $account->getPersistentLoginLifetime()])?>
-          </label>
-          <div class="remember-me-info"><?=$this->transEsc('remember_me_info')?></div>
+  <?php if (!$preAuthenticationData): ?>
+    <div class="login-col">
+  <?php endif; ?>
+    <form method="post" class="form-vertical" action="<?=$this->url('myresearch-home')?>" name="loginForm" id="loginForm">
+      <?=$this->auth()->getLoginFields()?>
+      <?php if ($account->supportsPersistentLogin()): ?>
+        <div class="form-group">
+          <div class="remember-me-ils">
+            <label>
+              <input type="checkbox" name="remember_me"> <?=$this->transEsc('remember_me', ['%%days%%' => $account->getPersistentLoginLifetime()])?>
+            </label>
+            <div class="remember-me-info"><?=$this->transEsc('remember_me_info')?></div>
+          </div>
         </div>
+      <?php endif; ?>
+      <input type="hidden" name="auth_method" value="<?=$this->escapeHtmlAttr($account->getAuthMethod())?>">
+      <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($account->getCsrfHash())?>">
+      <div class="clearfix"></div>
+      <div class="form-group">
+        <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Login')?>">
       </div>
-    <?php endif; ?>
-    <input type="hidden" name="auth_method" value="<?=$this->escapeHtmlAttr($account->getAuthMethod())?>">
-    <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($account->getCsrfHash())?>">
+      <div class="form-group">
+        <?php if ($preAuthenticationData): ?>
+          <input class="btn btn-link cancel-link" type="submit" name="processCancel" value="<?=$this->transEscAttr('navigate_back')?>">
+        <?php else: ?>
+          <p>
+            <a id="login_library_card_register" class="btn btn-link" href="<?=$this->url('librarycards-register') ?>"><?=$this->transEsc('new_ils_account')?></a>
+          </p>
+        <?php endif; ?>
+        <p>
+          <a id="recovery_link" class="btn btn-link recover-account-link hidden" href="#"><?=$this->transEsc('Forgot Password')?></a>
+        </p>
+      </div>
+    </form>
+  <?php if (!$preAuthenticationData): ?>
+    </div>
+    <div class="login-col">
+      <?=$this->icon('info', 'login-info-icon') ?>
+      <div class="login-description">
+        <p class="login-info">
+          <?=$this->translate('login_desc_library_card_html') ?>
+        </p>
+      </div>
+      <div class="clearfix"></div>
+      <?php
+        $language = $this->layout()->userLang;
+        if (!in_array($language, ['fi', 'sv', 'en-gb', 'se'])) {
+          $language = 'en-gb';
+        }
+      ?>
+      <?=$this->partial("Auth/MultiILS/terms_$language.phtml") ?>
+    </div>
     <div class="clearfix"></div>
-    <div class="form-group">
-      <input class="btn btn-primary" type="submit" name="processLogin" value="<?=$this->transEscAttr('Login')?>">
-    </div>
-    <div class="form-group">
-      <p>
-        <a id="login_library_card_register" class="btn btn-link" href="<?=$this->url('librarycards-register') ?>"><?=$this->transEsc('new_ils_account')?></a>
-      </p>
-      <p>
-        <a id="recovery_link" class="btn btn-link recover-account-link hidden" href="#"><?=$this->transEsc('Forgot Password')?></a>
-      </p>
-    </div>
-  </form>
-</div>
-<div class="login-col">
-  <?=$this->icon('info', 'login-info-icon') ?>
-  <div class="login-description">
-    <p class="login-info">
-      <?=$this->translate('login_desc_library_card_html') ?>
-    </p>
-  </div>
-  <div class="clearfix"></div>
-  <?php
-    $language = $this->layout()->userLang;
-    if (!in_array($language, ['fi', 'sv', 'en-gb', 'se'])) {
-      $language = 'en-gb';
-    }
-  ?>
-  <?=$this->partial("Auth/MultiILS/terms_$language.phtml") ?>
-</div>
-  <div class="clearfix"></div>
+  <?php endif; ?>
 <?php else: ?>
   <a href="<?=$this->escapeHtmlAttr($sessionInitiator)?>" data-lightbox-ignore><?=$this->transEsc('Institutional Login')?></a>
 <?php endif; ?>

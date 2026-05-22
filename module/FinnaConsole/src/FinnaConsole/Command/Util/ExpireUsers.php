@@ -68,12 +68,12 @@ class ExpireUsers extends AbstractUtilCommand
     use \FinnaConsole\Command\Util\ConsoleLoggerTrait;
 
     /**
-     * Whether comments are deleted
+     * Whether comments are deleted.
      */
     protected $removeComments;
 
     /**
-     * Whether ratingd are deleted
+     * Whether ratingd are deleted.
      */
     protected $removeRatings;
 
@@ -85,7 +85,7 @@ class ExpireUsers extends AbstractUtilCommand
     protected $minAge = 180;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param UserServiceInterface       $userService        User database service
      * @param AuditEventServiceInterface $auditEventService  Audit event database service

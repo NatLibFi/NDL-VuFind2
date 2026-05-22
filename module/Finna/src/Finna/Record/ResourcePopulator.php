@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class for populating record rows in the resource table of the database
+ * Class for populating record rows in the resource table of the database.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
 /**
- * Class for populating record rows in the resource table of the database
+ * Class for populating record rows in the resource table of the database.
  *
  * @category VuFind
  * @package  Record

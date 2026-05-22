@@ -45,21 +45,21 @@ abstract class AbstractBase implements \Psr\Log\LoggerAwareInterface
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Datasource config as array
+     * Datasource config as array.
      *
      * @var array
      */
     protected $config;
 
     /**
-     * Source identifier
+     * Source identifier.
      *
      * @var string
      */
     protected $source;
 
     /**
-     * Array of required configuration settings
+     * Array of required configuration settings.
      *
      * @var array
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna-panel custom element
+ * Finna-panel custom element.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\View\CustomElement;
 use function in_array;
 
 /**
- * Finna-panel custom element
+ * Finna-panel custom element.
  *
  * @category VuFind
  * @package  CustomElements

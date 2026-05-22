@@ -217,7 +217,7 @@ class MultiILSTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mock ILS authenticator
+     * Get mock ILS authenticator.
      *
      * @param ?array $patron Logged in patron to simulate (null for none).
      *
@@ -298,7 +298,7 @@ class MultiILSTest extends \PHPUnit\Framework\TestCase
         $mockUserService->method('getUserByUsername')->willReturn($mockUser);
         $mockUserService->method('updateUserEmail')
             ->willReturnCallback(
-                function ($mockUser, $email): void {
+                function ($mockUser, string $email): void {
                     $mockUser->setEmail($email);
                 }
             );

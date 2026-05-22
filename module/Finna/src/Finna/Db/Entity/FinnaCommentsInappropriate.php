@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Entity model for finna_comments_inappropriate table
+ * Entity model for finna_comments_inappropriate table.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Feature\DateTimeTrait;
 
 /**
- * Entity model for finna_comments_inappropriate table
+ * Entity model for finna_comments_inappropriate table.
  *
  * @category VuFind
  * @package  Database

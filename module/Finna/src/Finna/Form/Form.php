@@ -71,42 +71,42 @@ class Form extends \VuFind\Form\Form
     public const ARCHIVE_MATERIAL_REQUEST = 'ArchiveRequest';
 
     /**
-     * Handlers that are considered safe for transmitting information about the user
+     * Handlers that are considered safe for transmitting information about the user.
      *
      * @var array
      */
     protected $secureHandlers = ['api', 'database'];
 
     /**
-     * Institution name
+     * Institution name.
      *
      * @var string
      */
     protected $institution = '';
 
     /**
-     * Institution email
+     * Institution email.
      *
      * @var string
      */
     protected $institutionEmail = '';
 
     /**
-     * User
+     * User.
      *
      * @var ?UserEntityInterface
      */
     protected $user = null;
 
     /**
-     * ILS Patron
+     * ILS Patron.
      *
      * @var array
      */
     protected $ilsPatron = null;
 
     /**
-     * User roles
+     * User roles.
      *
      * @var array
      */
@@ -135,28 +135,28 @@ class Form extends \VuFind\Form\Form
     protected $recordRequestFormsWithBarcode = [];
 
     /**
-     * Data source configuation
+     * Data source configuation.
      *
      * @var array
      */
     protected $dataSourceConfig = null;
 
     /**
-     * Record driver
+     * Record driver.
      *
      * @var DefaultRecord
      */
     protected $record = null;
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var \VuFind\Record\Loader
      */
     protected $recordLoader = null;
 
     /**
-     * Set form id
+     * Set form id.
      *
      * @param string $formId  Form id
      * @param array  $params  Additional form parameters.
@@ -182,7 +182,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set data to validate and/or populate elements
+     * Set data to validate and/or populate elements.
      *
      * Typically, also passes data on to the composed input filter.
      *
@@ -209,7 +209,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Sets name and email field values from preferred source
+     * Sets name and email field values from preferred source.
      *
      * @return static
      */
@@ -234,7 +234,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set institution
+     * Set institution.
      *
      * @param string $institution Institution
      *
@@ -246,7 +246,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set institution email
+     * Set institution email.
      *
      * @param string $email Email
      *
@@ -258,7 +258,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param UserEntityInterface $user      User
      * @param array               $roles     User roles
@@ -274,7 +274,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Get record driver
+     * Get record driver.
      *
      * @return ?DefaultRecord
      */
@@ -284,7 +284,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set record driver
+     * Set record driver.
      *
      * @param DefaultRecord $record Record
      *
@@ -309,7 +309,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set data source configuration
+     * Set data source configuration.
      *
      * @param array $config Data source configuration
      *
@@ -321,7 +321,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set record loader
+     * Set record loader.
      *
      * @param \VuFind\Record\Loader $loader Record loader
      *
@@ -333,7 +333,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Check if the form should report patron's barcode
+     * Check if the form should report patron's barcode.
      *
      * @return bool
      */
@@ -343,7 +343,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Check if the form should report patron's id
+     * Check if the form should report patron's id.
      *
      * @return bool
      */
@@ -614,7 +614,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Combine a translation key from two or three strings
+     * Combine a translation key from two or three strings.
      *
      * @param string $prefix The prefix/first part of translation key
      * @param string $middle The second part of translation key
@@ -636,7 +636,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Map request parameters to field values
+     * Map request parameters to field values.
      *
      * @param array $requestParams Request parameters
      *
@@ -714,7 +714,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Return API settings
+     * Return API settings.
      *
      * @return array
      */
@@ -740,7 +740,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Get form elements
+     * Get form elements.
      *
      * @param array $config Form configuration
      *
@@ -879,7 +879,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Get form configuration
+     * Get form configuration.
      *
      * @param string $formId Form id
      *

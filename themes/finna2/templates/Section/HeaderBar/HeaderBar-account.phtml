@@ -1,0 +1,125 @@
+<!-- START of: finna - header-account.phtml -->
+<?php
+    $user = $this->auth()->getUserObject();
+    $patron = $user ? $this->auth()->getILSPatron() : false;
+    $capabilityParams = $patron ? ['patron' => $patron] : [];
+    $account = $this->auth()->getManager();
+?>
+<?php if (is_object($account) && $account->loginEnabled()): ?>
+  <?php if ($user): ?>
+    <li class="nav-item logoutOptions">
+      <a href="#" class="btn nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+      <ul id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right dropdown-menu-end">
+        <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
+          <li>
+            <a <?=$this->url('myresearch-checkedout') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-checkedout')?>">
+              <?=$this->transEsc('Checked Out Items')?>
+              <span class="checkedout-status status hidden"><?=$this->icon('spinner') ?></span>
+            </a>
+          </li>
+          <li>
+            <a <?=$this->url('holds-list') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('holds-list')?>">
+              <?=$this->transEsc('Holds and Recalls')?>
+              <span class="holds-status status hidden"><?=$this->icon('spinner') ?></span>
+            </a>
+          </li>
+          <?php if ($this->ils()->checkFunction('StorageRetrievalRequests', $capabilityParams)): ?>
+            <li>
+              <a <?=$this->url('myresearch-storageretrievalrequests') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-storageretrievalrequests')?>">
+                <?=$this->transEsc('Storage Retrieval Requests')?>
+                <span class="storageretrievalrequests-status status hidden"><?=$this->icon('spinner') ?></span>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($this->ils()->checkFunction('ILLRequests', $capabilityParams)): ?>
+            <li role="none">
+              <a <?=$this->url('myresearch-illrequests') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-illrequests')?>">
+                <?=$this->transEsc('Interlibrary Loan Requests')?>
+                <span class="illrequests-status status hidden"><?=$this->icon('spinner') ?></span>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($this->reservationList()->isFunctionalityEnabled()): ?>
+            <li>
+              <a <?=$this->url('reservationlist-displaylists') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('reservationlist-displaylists')?>">
+                <?=$this->transEsc('ReservationList::reservation_lists_research_room')?>
+              </a>
+            </li>
+          <?php endif; ?>
+          <?php if ($this->ils()->checkCapability('getMyTransactionHistory', $capabilityParams)): ?>
+            <li role="none">
+              <a <?=$this->url('checkouts-history') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-historicloans')?>">
+                <?=$this->transEsc('Loan History')?>
+              </a>
+            </li>
+          <?php endif; ?>
+          <li>
+            <a <?=$this->url('myresearch-fines') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-fines')?>">
+              <?=$this->transEsc('Fines')?>
+              <span class="fines-status status hidden"><?=$this->icon('spinner') ?></span>
+            </a>
+          </li>
+        <?php endif; ?>
+        <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'loginMenu' => 'true', 'label' => 'Library Cards', 'limit' => 0]);?>
+        <li>
+          <a <?=$this->url('myresearch-profile') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-profile')?>">
+            <?=$this->transEsc('Profile')?>
+            <span class="profile-status status hidden"><?=$this->icon('spinner') ?></span>
+          </a>
+        </li>
+        <li>
+          <a <?=$this->url('search-history') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('search-history')?>?require_login">
+            <?=$this->transEsc('history_saved_searches')?>
+          </a>
+        </li>
+        <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+          <li>
+            <a <?=$this->url('myresearch-favorites') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-favorites')?>">
+              <?=$this->transEsc('saved_items')?>
+            </a>
+          </li>
+        <?php endif; ?>
+        <?php if ($this->accountCapabilities()->getUserContentTabs()): ?>
+          <li>
+            <a <?=($this->url('comments-userlist') === $_SERVER['REQUEST_URI'] || $this->url('ratings-userlist') === $_SERVER['REQUEST_URI']) ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-usercontent')?>">
+              <?=$this->transEsc('comments_and_ratings')?>
+            </a>
+          </li>
+        <?php endif; ?>
+        <li>
+          <a <?=$this->url('myresearch-logout') === $_SERVER['REQUEST_URI'] ? 'class="dropdown-item active" aria-current="page"' : 'class="dropdown-item"'?> href="<?=$this->url('myresearch-logout')?>" title="<?=$this->transEsc('Log Out')?>"><?=$this->transEsc('Log Out')?><?=$this->icon('sign-out', 'sign-out-icon float-end') ?></a>
+        </li>
+      </ul>
+    </li>
+  <?php endif; ?>
+  <li id="loginOptions" class="nav-item<?= $account->getUserObject() ? ' hidden' : '';?>">
+    <?php
+      $url = $this->url('myresearch-userlogin');
+      $linkAttrs = $this->htmlAttributes(
+          [
+              'href' => $url,
+              'role' => 'button',
+          ]
+      );
+      if ($url === $_SERVER['REQUEST_URI']) {
+        $linkAttrs->add('class', 'active');
+        $linkAttrs->add('aria-current', 'page');
+      }
+    ?>
+    <?php if ($sessionInitiator = $account->getSessionInitiator($this->serverUrl($this->url('myresearch-home')))): ?>
+      <a class="nav-link"<?=$linkAttrs?>><?=$this->icon('login', 'login-icon') ?> <?=$this->transEsc('Institutional Login')?></a>
+    <?php else: ?>
+      <?php if ($this->templateDir === 'myresearch' && $this->templateName === 'login'): ?>
+        <a role="button" class="btn btn-primary login-button"><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
+      <?php else: ?>
+        <?php
+          $linkAttrs->add('class', 'btn btn-primary login-button');
+          $linkAttrs->add('data-lightbox', '');
+          $linkAttrs->add('data-lightbox-onclose', 'window.location.href="' . $this->url('myresearch-home') . '"');
+        ?>
+        <a<?=$linkAttrs?>><?=$this->icon('login', 'login-icon') ?> <span class="login-text"><?=$this->transEsc('Login')?></span></a>
+      <?php endif; ?>
+    <?php endif; ?>
+  </li>
+<?php endif; ?>
+<!-- END of: finna - header-account.phtml -->

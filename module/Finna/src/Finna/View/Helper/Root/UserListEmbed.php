@@ -49,14 +49,14 @@ use function in_array;
 class UserListEmbed extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Counter used to ensure unique id attributes when several lists are displayed
+     * Counter used to ensure unique id attributes when several lists are displayed.
      *
      * @var int
      */
     protected $indexStart = 0;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Search\Favorites\Results $results         Results
      * @param UserListServiceInterface         $userListService User list database service

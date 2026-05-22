@@ -47,7 +47,7 @@ use function is_object;
 trait FinnaRecordPreviewSupportTrait
 {
     /**
-     * Any preview record validation result
+     * Any preview record validation result.
      *
      * @var ?int
      */

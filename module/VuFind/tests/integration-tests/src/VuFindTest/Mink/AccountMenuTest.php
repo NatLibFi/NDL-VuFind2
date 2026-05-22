@@ -82,7 +82,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Get associative array of storage state
+     * Get associative array of storage state.
      *
      * @return array
      */
@@ -116,7 +116,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Data provider for menu configuration tests
+     * Data provider for menu configuration tests.
      *
      * @return \Iterator
      */
@@ -235,7 +235,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Data provider for testAccountIcon
+     * Data provider for testAccountIcon.
      *
      * @return \Iterator
      */
@@ -314,7 +314,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Abstracted test to set storage and check if the icon is correct
+     * Abstracted test to set storage and check if the icon is correct.
      *
      * @param array  $storage    Array of storage values to test
      * @param string $checkClass Icon class to check
@@ -347,7 +347,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Test status badges
+     * Test status badges.
      *
      * @return void
      */
@@ -376,7 +376,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
             '1',
             $this->findCssAndGetText($checkoutsStatus, '.badge.account-info')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'Items due later: 1 ,',
             $this->findCssAndGetText($checkoutsStatus, '.visually-hidden')
         );
@@ -385,7 +385,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
             '2',
             $this->findCssAndGetText($checkoutsStatus, ' .badge.account-warning')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'Items due soon: 2 ,',
             $this->findCssAndGetText($checkoutsStatus, '.visually-hidden', null, 1)
         );
@@ -394,7 +394,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
             '3',
             $this->findCssAndGetText($checkoutsStatus, '.badge.account-alert')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'Items overdue: 3 ,',
             $this->findCssAndGetText($checkoutsStatus, '.visually-hidden', null, 2)
         );
@@ -405,7 +405,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
             '1',
             $this->findCssAndGetText($holdsStatus, '.badge.account-info')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'Available for Pickup: 1 ,',
             $this->findCssAndGetText($holdsStatus, '.visually-hidden')
         );
@@ -414,7 +414,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
             '2',
             $this->findCssAndGetText($holdsStatus, '.badge.account-warning')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'In Transit: 2 ,',
             $this->findCssAndGetText($holdsStatus, '.visually-hidden', null, 1)
         );
@@ -423,13 +423,13 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
             '3',
             $this->findCssAndGetText($holdsStatus, '.badge.account-none')
         );
-        $this->assertEquals(
+        $this->assertSame(
             'Other Status: 3 ,',
             $this->findCssAndGetText($holdsStatus, '.visually-hidden', null, 2)
         );
 
         // Fines
-        $this->assertEquals(
+        $this->assertSame(
             '$1.23',
             $this->findCssAndGetText($page, '.myresearch-menu .fines-status .badge.account-alert')
         );
@@ -446,7 +446,7 @@ final class AccountMenuTest extends \VuFindTest\Integration\MinkTestCase
     }
 
     /**
-     * Utility method to login
+     * Utility method to login.
      *
      * @param string $user     Username
      * @param string $password Password

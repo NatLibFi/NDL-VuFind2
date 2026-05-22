@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation List Controller
+ * Reservation List Controller.
  *
  * PHP version 8
  *
@@ -49,7 +49,7 @@ use VuFind\Exception\LoginRequired as LoginRequiredException;
 use VuFind\Exception\RecordMissing as RecordMissingException;
 
 /**
- * Reservation List Controller
+ * Reservation List Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -67,14 +67,14 @@ class ReservationListController extends AbstractBase
     use ListItemSelectionTrait;
 
     /**
-     * Error warning to display when reservation lists are disabled
+     * Error warning to display when reservation lists are disabled.
      *
      * @var string
      */
     protected const RESERVATION_LISTS_DISABLED = 'Reservation lists disabled';
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ServiceLocatorInterface $sm                           Service locator
      * @param ReservationListService  $reservationListService       Reservation list service
@@ -106,7 +106,7 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Validate CSRF from post request
+     * Validate CSRF from post request.
      *
      * @return bool
      */
@@ -191,7 +191,7 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Add a new list action
+     * Add a new list action.
      *
      * @return \Laminas\View\Model\ViewModel
      */
@@ -324,7 +324,7 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Handles ordering of reservation lists
+     * Handles ordering of reservation lists.
      *
      * @return mixed
      */
@@ -390,7 +390,7 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Handles ordering of a singular item
+     * Handles ordering of a singular item.
      *
      * @return mixed
      */
@@ -567,7 +567,7 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Action to display all users reservation lists
+     * Action to display all users reservation lists.
      *
      * @return \Laminas\View\Model\ViewModel
      */
@@ -626,7 +626,7 @@ class ReservationListController extends AbstractBase
     }
 
     /**
-     * Get the url parameters
+     * Get the url parameters.
      *
      * @param string $param          A key to check the url params for.
      * @param bool   $prioritizePost If true, check the POST params first

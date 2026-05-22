@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr record fallback loader
+ * Solr record fallback loader.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFindSearch\Command\SearchCommand;
 use VuFindSearch\Service;
 
 /**
- * Solr record fallback loader
+ * Solr record fallback loader.
  *
  * @category VuFind
  * @package  Record
@@ -46,7 +46,7 @@ use VuFindSearch\Service;
 class Solr extends \VuFind\Record\FallbackLoader\Solr
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ResourceServiceInterface $resourceService Resource database service
      * @param RecordIdUpdater          $recordIdUpdater Record ID updater service
@@ -120,7 +120,7 @@ class Solr extends \VuFind\Record\FallbackLoader\Solr
     }
 
     /**
-     * Try to load a record using its identifier field
+     * Try to load a record using its identifier field.
      *
      * @param string  $identifier Identifier (e.g. SUK77:2)
      * @param ?string $dataSource Optional data source filter
@@ -154,7 +154,7 @@ class Solr extends \VuFind\Record\FallbackLoader\Solr
     }
 
     /**
-     * Try to load a record using its old MetaLib ID
+     * Try to load a record using its old MetaLib ID.
      *
      * @param string $id Record ID (e.g. FIN12345)
      *

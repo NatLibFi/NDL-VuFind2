@@ -76,35 +76,35 @@ class NotifyCommand extends \VuFindConsole\Command\ScheduledSearch\NotifyCommand
     use \FinnaConsole\Command\Util\ViewPathTrait;
 
     /**
-     * Local configuration directory name
+     * Local configuration directory name.
      *
      * @var string
      */
     protected $confDir = 'local';
 
     /**
-     * View base directory
+     * View base directory.
      *
      * @var string
      */
     protected $viewBaseDir = '';
 
     /**
-     * View local configuration base directory
+     * View local configuration base directory.
      *
      * @var string
      */
     protected $baseDir = '';
 
     /**
-     * Schedule base url
+     * Schedule base url.
      *
      * @var string
      */
     protected $scheduleBaseUrl = '';
 
     /**
-     * VuFind local directory
+     * VuFind local directory.
      *
      * @var string
      */

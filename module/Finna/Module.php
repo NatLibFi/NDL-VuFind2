@@ -43,7 +43,7 @@ use Laminas\Mvc\MvcEvent;
 class Module
 {
     /**
-     * Get module configuration
+     * Get module configuration.
      *
      * @return array
      */
@@ -53,7 +53,7 @@ class Module
     }
 
     /**
-     * Bootstrap the module
+     * Bootstrap the module.
      *
      * @param MvcEvent $e Event
      *

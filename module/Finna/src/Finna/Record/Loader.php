@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record loader
+ * Record loader.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFindSearch\ParamBag;
 
 /**
- * Record loader
+ * Record loader.
  *
  * @category VuFind
  * @package  Record
@@ -49,7 +49,7 @@ use VuFindSearch\ParamBag;
 class Loader extends \VuFind\Record\Loader
 {
     /**
-     * Preferred language for display strings from RecordDriver
+     * Preferred language for display strings from RecordDriver.
      *
      * @var ?string
      */

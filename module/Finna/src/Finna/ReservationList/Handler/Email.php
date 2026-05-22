@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Email handler
+ * Email handler.
  *
  * PHP version 8
  *
@@ -35,7 +35,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Exception\Mail as MailException;
 
 /**
- * Email handler
+ * Email handler.
  *
  * @category VuFind
  * @package  ReservationList
@@ -46,7 +46,7 @@ use VuFind\Exception\Mail as MailException;
 class Email extends AbstractBase
 {
     /**
-     * Places an order
+     * Places an order.
      *
      * @param array               $formValues Values gathered from submitted form
      * @param UserEntityInterface $user       User entity

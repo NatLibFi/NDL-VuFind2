@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Record Data" AJAX handler
+ * "Get Record Data" AJAX handler.
  *
  * PHP version 8
  *
@@ -36,7 +36,7 @@ use Laminas\View\Renderer\RendererInterface;
 use VuFind\Record\Loader;
 
 /**
- * "Get Record Data" AJAX handler
+ * "Get Record Data" AJAX handler.
  *
  * Get record data elements.
  *
@@ -50,35 +50,35 @@ use VuFind\Record\Loader;
 class GetRecordData extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Framework configuration
+     * Framework configuration.
      *
      * @var array
      */
     protected $config;
 
     /**
-     * Request
+     * Request.
      *
      * @var Request
      */
     protected $request;
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param array             $config   Framework configuration
      * @param Request           $request  HTTP request

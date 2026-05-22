@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetFeed AJAX handler
+ * GetFeed AJAX handler.
  *
  * PHP version 8
  *
@@ -45,7 +45,7 @@ use VuFind\Record\Loader;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * GetFeed AJAX handler
+ * GetFeed AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -60,56 +60,56 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
     use FeedTrait;
 
     /**
-     * RSS configuration
+     * RSS configuration.
      *
      * @var Config
      */
     protected $config;
 
     /**
-     * Feed service
+     * Feed service.
      *
      * @var FeedService
      */
     protected $feedService;
 
     /**
-     * ILS connection
+     * ILS connection.
      *
      * @var Connection
      */
     protected $ils;
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * URL helper
+     * URL helper.
      *
      * @var Url
      */
     protected $url;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings   $ss           Session settings
      * @param Config            $config       RSS configuration
@@ -197,7 +197,7 @@ class GetFeed extends \VuFind\AjaxHandler\AbstractBase
     }
 
     /**
-     * Function to handle titlelist feeds
+     * Function to handle titlelist feeds.
      *
      * @param object $config Config of the titlelist
      *

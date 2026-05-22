@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CommentsService resource service factory
+ * CommentsService resource service factory.
  *
  * PHP version 8
  *
@@ -38,7 +38,7 @@ use Psr\Container\ContainerInterface;
 use VuFind\Db\Service\AbstractDbServiceFactory;
 
 /**
- * CommentsService resource service factory
+ * CommentsService resource service factory.
  *
  * @category VuFind
  * @package  Database
@@ -49,7 +49,7 @@ use VuFind\Db\Service\AbstractDbServiceFactory;
 class CommentsServiceFactory extends AbstractDbServiceFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
