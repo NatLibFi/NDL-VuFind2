@@ -1,5 +1,9 @@
 <?php //Don't add START and END comments ?>
 <?php if (!empty($data)):?>
-  <?php $colorSystem = $this->driver->getColorSystem(); ?>
-  <?=$this->escapeHtml($data) ?><?php if ($colorSystem): ?>, <?=$this->escapeHtml($colorSystem) ?><?php endif; ?>
+  <?php $colorSystem = $this->driver->tryMethod('getColorSystem'); ?>
+    <div class="truncate-field" data-rows="5">
+      <?php foreach ($data as $field): ?>
+        <?=$this->escapeHtml($field) ?><?php if (!empty($colorSystem)): ?>, <?=$this->escapeHtml($colorSystem) ?><?php endif; ?><br>
+      <?php endforeach; ?>
+    </div>
 <?php endif; ?>

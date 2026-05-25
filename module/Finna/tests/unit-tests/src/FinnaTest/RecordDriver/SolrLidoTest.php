@@ -1715,6 +1715,20 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getColors.
+     *
+     * @return void
+     */
+    public function testGetColors(): void
+    {
+        $driver = $this->getDriver('lido_test2.xml', rawData: ['color_str_mv' => ['punainen', 'valkoinen', 'musta']]);
+        $this->assertSame(
+            ['punainen', 'valkoinen', 'musta'],
+            $driver->getColors()
+        );
+    }
+
+    /**
      * Test getInscriptions.
      *
      * @return void

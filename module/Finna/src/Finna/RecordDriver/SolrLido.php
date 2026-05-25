@@ -243,7 +243,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      *
      * @var array
      */
-    protected $excludedClassifications = ['language'];
+    protected $excludedClassifications = ['language', 'colour content', 'color content'];
 
     /**
      * Array of excluded measurements.

@@ -160,6 +160,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Available Online',
             'child_records',
             'Collection',
+            'Color',
             'DOI',
             'Edition',
             'Events',
