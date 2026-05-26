@@ -139,21 +139,34 @@ button.list-group-item {
   }
 }
 
-// Record's sidebar content
+/* Record's sidebar content */
+
 .recordProvidedBy {
   .record-organisation {
+    &.organisation-page-link-visible > .organisation-name {
+        display: none;
+    }
     img.consortium-logo {
+      display: block;
+      max-width: 200px;
+      max-height: 110px;
       margin: 0.5em 0em 1.1em;
     }
-    li.organisation-page-link {
-      padding-top: 0.3em;
-      a {
-        display: block;
+    li {
+      line-height: 1.5;
+      &.organisation-page-link {
+        padding-top: 0.3em;
+        a {
+          display: block;
+        }
+        .organisation-name {
+          font-weight: 700;
+        }
       }
-    }
-    li.material-questions-feedback {
-      padding-top: 0.7em;
-      font-weight: 700;
+      &.material-questions-feedback {
+        padding-top: 0.7em;
+        font-weight: 700;
+      }
     }
   }
   .repository-library-request {
@@ -162,6 +175,20 @@ button.list-group-item {
   }
   .repository-library-request-order {
     margin-top: 0.3em;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .recordProvidedBy .record-organisation {
+    img.consortium-logo {
+      max-height: 70px;
+    }
+  }
+}
+@include media-breakpoint-between(sm, md) {
+  .recordProvidedBy .record-organisation {
+    img.consortium-logo {
+      max-height: 95px;
+    }
   }
 }
 

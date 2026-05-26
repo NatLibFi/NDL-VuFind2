@@ -1,44 +1,46 @@
-.template-name-profile {
-  .my-research-content {
-    @include media-breakpoint-up(md) {
-      width: 100%;
+.my-research-content .logged-in-as {
+  margin-bottom: 1.1em;
+  > div {
+    display: flex;
+    div {
+      padding-right: 1.6em;
+      word-wrap: anywhere;
     }
-    .logged-in-as {
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
-      > div {
-        display: flex;
-        flex-direction: row;
-        @include media-breakpoint-down(md) {
-          &:not(.display-name) {
-            flex-direction: column;
-          }
-        }
+  }
+  .profile-title {
+    font-weight: 700;
+  }
+}
+@include media-breakpoint-down(md) {
+.my-research-content .logged-in-as {
+  > div {
+      // .display-name display deprecated
+      &:not(.display-name) {
+        flex-direction: column;
       }
-      > div div {
-        padding-right: 20px;
-        @include media-breakpoint-down(md) {
-          padding: 0 0 5px 0;
-        }
-      }
-      .profile-title {
-        font-weight: bold;
+      div {
+        padding-bottom: 0.3em;
       }
     }
   }
 }
+@include media-breakpoint-up(md) {
+  .my-research-content {
+    width: 100%;
+  }
+}
 
 .myresearch-profile-list {
-  padding: 0px 6px 20px;
+  padding: 0em 0.5em 0.8em;
   &.library-card-holder {
-    padding: 0 0 20px;
+    padding-left: 0px;
     .select-card-label {
-      font-weight: bold;
+      font-weight: 700;
     }
   }
-  label, .profile-title {
-    padding-top: 7px;
+  label,
+  .profile-title {
+    padding-top: 0.5em;
   }
   .profile-title {
     clear: left;
@@ -46,11 +48,17 @@
   .clearfix {
     padding: 3px 0px;
   }
-  #email, #finna_nickname {
+  #email,
+  #finna_nickname {
     width: 100%;
-    margin-bottom: 5px;
-    @include media-breakpoint-down(sm) {
+  }
+}
+@include media-breakpoint-down(sm) {
+  .myresearch-profile-list {
+    #email,
+    #finna_nickname {
       max-width: 320px;
+      margin-bottom: 0.3em;
     }
   }
 }
@@ -58,163 +66,148 @@
 .myresearch-profile-header {
   background: $gray;
   background: $action-link-color;
-
   h3 {
-    color: $body-bg;
-    padding: 7px 10px;
+    padding: 0.3em 0.5em;
+    margin: 0px;
     font-size: $font-size-h3;
-    margin: 0;
     font-weight: 400;
+    color: $body-bg;
   }
 }
 
 .library-profile {
-  margin-bottom: 40px;
-  padding-left: 0;
-  padding-right: 0;
-  padding-bottom: 0;
-  border: 1px solid $gray-lighter;
-  box-shadow: 10px 15px 30px -25px $gray;
   display: inline-block;
   width: 100%;
-  &.export-holder {
-    padding: 10px 10px 0px 10px;
-  }
-  #profile_library_form {
-    & input {
-      min-width: 210px;
-    }
+  margin-bottom: 3em;
+  border: 1px solid $gray-lighter;
+  box-shadow: 10px 15px 30px -25px $gray;
+  #profile_library_form input {
+    min-width: 210px;
   }
   div {
-    padding: 8px;
+    padding: 0.6em;
     &.separator {
-      float:left;
+      float: left;
       width: 100%;
-      margin: 15px 0 10px;
       padding: 0px;
+      margin: 1.1em 0em 0.7em;
       border-top: 1px solid $btn-default-border;
     }
     &.my-profile-row {
       display: inline-block;
       width: 100%;
-      padding: 8px;
-      @include media-breakpoint-down(sm) {
-        padding: 10px 8px 8px;
-      }
-      >.my-profile-col {
-        padding: 0 8px 0 0;
+      > .my-profile-col {
+        padding: 0em 0.6em 0em 0em;
       }
     }
     &.profile-title {
+      font-weight: 700;
       line-height: 1.5;
-      font-weight: bold;
-      @include media-breakpoint-down(sm) {
-        padding-bottom: 0;
-      }
     }
     &.profile-text-value {
       line-height: 1.5;
-      padding-left: 0px;
-      @include media-breakpoint-down(sm) {
-        padding: 0px 8px 8px;
-      }
-    }
-    &.profile-xs {
-      padding: 0;
     }
     &.profile-long {
-      padding-bottom: 0;
-    }
-    &.profile-after-long {
-      padding-top: 16px;
-    }
-    &.library-profile-after-long {
-      padding-top: 0;
-    }
-    &.profile-info {
-      padding-top: 3px;
+      padding-bottom: 0px;
     }
     &.messaging-last {
       margin-bottom: 20px;
     }
     &.profile-group {
-      padding-top: 0;
+      padding-top: 0px;
       padding-left: 16px;
     }
   }
 }
-
-.my-research-content .my-profile {
-  background: $gray-ultralight;
-  border-radius: $border-radius-small;
-  margin-bottom: 2em;
-  padding: 5px 10px;
-}
-
-.my-profile-btn {
-  margin: 0px 5px 10px 0px;
-  display: inline-block;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  @include media-breakpoint-up(sm) {
-    max-width: 250px;
-  }
-  @include media-breakpoint-down(sm) {
-    width: 100%;
-    float: left;
-    display: block;
-    &.btn-danger {
-      margin-top: 15px;
+@include media-breakpoint-down(sm) {
+  .library-profile {
+    div {
+      &.my-profile-row {
+        padding: 0.7em 0.6em 0.6em;
+      }
+      &.profile-title {
+        padding-bottom: 0px;
+      }
     }
   }
 }
 
 @include media-breakpoint-up(sm) {
   .my-profile-col {
+    float: left;
     width: 33.33%;
-    float: left;
-    padding-right: 15px;
-  }
-  .password-col {
-    width: 66.6%;
-    float: left;
   }
 }
 
 .myresearch-profile-middle-header {
-  font-size: $font-size-h4;
-  font-weight: bold;
   display: block;
+  margin: 0px;
+  font-size: $font-size-h4;
+  font-weight: 700;
   line-height: 1.1em;
-  margin: 0;
 }
 
 #favorites-import-dialog {
-  #filename {
-    margin-right: 5px;
+  .form-group {
+    display: flex;
+    align-items: center;
+    gap: 0.4em;
+  }
+  .form-control {
+    max-width: 200px;
   }
   .alert {
     margin-top: $modal-title-padding;
   }
-  .form-control {
-    max-width: 200px;
+}
+
+.address-change-description,
+.messaging-settings-change-description {
+  padding: 2em;
+  padding-left: 2.5em;
+  margin-bottom: 1em;
+  background-color: $info-bg-subtle;
+}
+
+.my-research-content {
+  .message-body {
+    padding: 0.4em;
+  }
+  .login-tokens-section {
+    padding: 0.7em;
+    .login-tokens-table {
+      margin-bottom: 0px;
+      tbody > tr > td {
+        vertical-align: middle;
+      }
+    }
+    .delete-all-tokens {
+      margin: 0.7em;
+    }
+  }
+}
+
+.my-profile-btn {
+  display: inline-block;
+  margin: 0em 0.3em 0.6em 0em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@include media-breakpoint-down(sm) {
+  .my-profile-btn {
     float: left;
+    display: block;
+    width: 100%;
+    &.btn-danger {
+      margin-top: 1em;
+    }
   }
 }
-
-.myresearch-notification {
-  padding-left: 0;
-  @include media-breakpoint-down(sm) {
-    margin-top: 0;
+@include media-breakpoint-up(sm) {
+  .my-profile-btn {
+    max-width: 250px;
   }
-}
-
-.address-change-description, .messaging-settings-change-description {
-    background-color: $info-bg-subtle;
-    padding: 2em;
-    padding-left: 2.5em;
-    margin-bottom: 1em;
 }
 
 fieldset.profile-group {
@@ -225,19 +218,22 @@ fieldset.profile-group {
 }
 
 .profile-form {
-  legend.form-field {
-    font-size: ($font-size-base * 1.1);
-  }
-  legend.form-label, legend.control-label {
-    font-size: 100%;
-    font-weight: 700;
-    border: 0;
-    margin-bottom: 5px;
+  legend {
+    &.form-field {
+      font-size: ($font-size-base * 1.1);
+    }
+    &.form-label,
+    &.control-label {
+      margin-bottom: 5px;
+      font-size: 100%;
+      font-weight: 700;
+      border: 0;
+    }
   }
   .form-control[type="radio"] {
     display: inline-block;
-    margin: 0 .5em 0 0;
-    padding: 0;
     height: 1.5em;
+    padding: 0px;
+    margin: 0em 0.5em 0em 0em;
   }
 }

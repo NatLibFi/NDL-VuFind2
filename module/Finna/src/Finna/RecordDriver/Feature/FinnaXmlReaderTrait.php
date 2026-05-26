@@ -29,7 +29,7 @@
 
 namespace Finna\RecordDriver\Feature;
 
-use FinnaXml\XmlDoc;
+use VuFindXml\XmlDoc;
 
 /**
  * Functions for reading XML records.

@@ -33,7 +33,7 @@ namespace Finna\RecordDriver;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\LrmiDriverTrait;
-use FinnaXml\XmlDoc;
+use VuFindXml\XmlDoc;
 
 use function in_array;
 

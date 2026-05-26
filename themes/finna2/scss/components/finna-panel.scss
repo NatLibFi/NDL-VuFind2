@@ -1,6 +1,6 @@
 .finna-panel {
   .panel-heading {
-    padding: 0;
+    padding: 0px;
   }
   .finna-panel-heading-inner {
     display: inline-block;
@@ -16,6 +16,7 @@
     outline: 1px solid $gray-lighter;
     box-shadow: 1px 1px 1px 1px $gray-lighter;
     background-color: $gray-ultralight;
+    color: $gray-dark;
   }
   .finna-panel-heading-inner {
     padding: 10px;
@@ -45,7 +46,7 @@
   .panel-heading {
     border: 0;
     font-size: 1.1em;
-    letter-spacing: .3px;
+    letter-spacing: 0.3px;
     text-transform: uppercase;
     text-shadow: 1px 1px 3px rgba(1,1,1,0.3);
     color: $body-bg;
