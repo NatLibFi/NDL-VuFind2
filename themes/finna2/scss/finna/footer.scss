@@ -1,52 +1,60 @@
 footer {
+  padding: 1em 0em;
   background: $footer-background;
-  padding: 15px 0px;
-  & a {
+  a {
     line-height: 1em;
   }
-  & hr {
+  hr {
     border-top: none;
   }
-  @include media-breakpoint-down(sm) {
-    text-align: center;
-    padding-top: 35px;
-    padding-bottom: 50px;
-    & hr {
-      display: block;
-      border-top: 1px solid $gray-light;
-    }
-    & ul {
-      margin-bottom: 35px;
-    }
-  }
-  & a, p, h4 {
+  a,
+  p,
+  h4 {
     color: $footer-text-color;
   }
-  h2, h3, h4, h5, h6 {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    margin-bottom: 0.7em;
     font-size: 1em;
     text-transform: uppercase;
-    margin-bottom: 10px;
   }
-  & a:hover {
+  a:hover {
     color: $footer-text-color;
     text-decoration: underline;
   }
-  & li {
-    list-style-type:none;
-    margin-bottom: 10px;
+  li {
+    margin-bottom: 0.7em;
+    list-style-type: none;
   }
-  & img {
+  img {
     max-height: 45px;
   }
-  & img[src*="vufind-logo"] {
+  img[src*="vufind-logo"] {
     max-height: 65px;
+  }
+}
+@include media-breakpoint-down(sm) {
+  footer {
+    padding-top: 2.5em;
+    padding-bottom: 3.5em;
+    text-align: center;
+    hr {
+      display: block;
+      border-top: 1px solid $gray-light;
+    }
+    ul {
+      margin-bottom: 2.5em;
+    }
   }
 }
 @include media-breakpoint-up(sm) {
   .footer-container {
     display: flex;
-    width: 100%;
     gap: $grid-gutter-width;
+    width: 100%;
   }
   .footer-column {
     flex: 0 1 100%;

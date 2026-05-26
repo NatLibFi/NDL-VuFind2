@@ -152,7 +152,7 @@
   }
 }
 
-//Mobile menu - sidebar
+// Mobile menu - sidebar
 @include media-breakpoint-down(sm) {
   section.template-name-results .sidebar,
   section.template-name-search .sidebar,
@@ -171,7 +171,7 @@
   }
 }
 
-//Mobile menu - MyResearch
+// Mobile menu - MyResearch
 @include media-breakpoint-down(md) {
   .hidden-print.nav-tabs-personal.list-group {
     @include mobile-nav();
