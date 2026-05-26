@@ -116,7 +116,7 @@
   .mobile-nav-toggle {
     position: sticky;
     top: $navbar-height;
-    z-index: 500; //Change this also
+    z-index: $zindex-mobile-navbar;
     padding-top: 0.9em;
     padding-right: calc(#{$grid-gutter-width} / 2);
     padding-bottom: 0.9em;
