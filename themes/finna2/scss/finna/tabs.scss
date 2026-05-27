@@ -1,25 +1,27 @@
 .finna-main-tabs,
 .authority-recommend
 {
+  padding-bottom: 1.1em;
   background-color: transparent;
-  padding-bottom: 15px;
 
   ul.nav-tabs > li {
-    background-color: #EDEDED;
-    padding-bottom: 0;
     display: flex;
-
-    &.with-tooltip {
-      display: flex;
-      align-items: center;
-      > a {
-        padding-right: 2.5rem;
+    align-items: center;
+    padding-bottom: 0px;
+    background-color: #EDEDED;
+    &.with-tooltip > a {
+      padding-right: 2.5rem;
+    }
+    &.active {
+     .tooltip-tabs_local,
+     .tooltip-tabs_pci {
+        color: $gray;
       }
     }
     > a  {
       flex: 1;
-      padding: 10px 5px;
-      font-size: 1em;
+      padding: 0.7em 0.4em;
+      font-size: $font-size-base;
 
       // Disable isolation that would cover the tooltip button:
       &:hover {
@@ -28,11 +30,6 @@
     }
     &:not(.help-tab) > a {
       font-weight: 600;
-    }
-    &.active {
-     .tooltip-tabs_local, .tooltip-tabs_pci {
-        color: $gray;
-      }
     }
 
     > .finna-toggletip {
@@ -43,50 +40,43 @@
       &.tooltip-tabs_pci {
         display: $tooltip-tabs-pci;
       }
-
       > button {
-        margin-left: -2.5rem;
-        opacity: 1;
-        padding: .2em;
-        margin-top: 0.25rem;
-        color: $main-tabs-active-color;
         display: inline-block;
-        z-index: 200;
+        padding: 0.2em;
+        margin-top: 0.25rem;
+        margin-left: -2.5rem;
+        font-size: 1.3rem;
+        color: $main-tabs-active-color;
         background-color: transparent;
         border: none;
-        font-size: 1.3rem;
-        cursor: pointer;
-        .icon {
-          cursor: pointer;
-        }
+        opacity: 1;
       }
     }
   }
 }
 
 .search-tabs-recommendations {
+  padding-top: $padding-large-horizontal;
   border-top: 2px solid $primary;
   border-bottom: 2px solid $primary;
-  padding: $padding-large-horizontal 0 0 0;
-
   a.title {
     display: inline-block;
-    margin-bottom: 5px;
     .searchterms {
-      font-weight: bold;
-    }
-    @include media-breakpoint-down(sm) {
-      display: block;
+      font-weight: 700;
     }
   }
-
   .count {
     color: $text-muted;
   }
-
-  .tab-icon:before {
-    color: $gray-mid-light;
-    font-size: 2.5em;
+  div.result:first-of-type {
+    padding-top: 0px;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .search-tabs-recommendations {
+    a.title {
+      display: block;
+    }
   }
 }
 
@@ -100,123 +90,69 @@
 }
 
 // RSS-feed and Linked Events tabs
-.feed-tabs .nav-tabs, .linked-events-tabs .nav-tabs {
-  margin-left: 6px;
-  > li {
-    // Make the list-items overlay the bottom border
-    margin-bottom: -1px;
-    font-size: 1.1em;
-    font-weight: 500;
-    background-color: transparent;
-    color: $nav-tabs-text-color;
-    padding: .6em 0 0 0;
-    cursor: pointer;
-    @include media-breakpoint-only(sm) {
-      .icon {
-        display: block;
-        text-align: center;
+.feed-tabs,
+.linked-events-tabs {
+  .nav-tabs {
+    margin-left: 0.4em;
+    > li {
+      padding: 0.6em 0em 0em 0em;
+      // Make the list-items overlay the bottom border
+      margin-bottom: -1px;
+
+      font-size: 1.1em;
+      font-weight: 500;
+      color: $nav-tabs-text-color;
+      background-color: transparent;
+      cursor: pointer;
+      &:hover {
+        color: $nav-tabs-link-hover-color;
+        border-color: transparent;
       }
-    }
-    @include media-breakpoint-down(md) {
-      font-size: .9em;
-    }
-    &:hover {
-      color: $nav-tabs-link-hover-color;
-      border-color: transparent;
-    }
-    // Active state, and its :hover to override normal :hover
-    &.active {
-      cursor: initial;
-      &,
-      &:hover,
-      &:focus {
-        background-color: $body-bg;
-        color: $text-color;
-        margin-bottom: -1px;
-        border-bottom: none;
-        transition: 0s;
+      // Active state, and its :hover to override normal :hover
+      &.active {
+        cursor: initial;
+        &,
+        &:hover,
+        &:focus {
+          margin-bottom: -1px;
+          background-color: $body-bg;
+          color: $text-color;
+          border-bottom: none;
+          transition: 0s;
+        }
       }
-    }
-    a {
-      margin-right: 0px;
-      height: 100%;
+      a {
+        height: 100%;
+        margin-right: 0px;
+      }
     }
   }
 }
-
-
-.useraccount-nav.nav-tabs {
-  border-bottom: none;
-  // style 5 tabs to make sure they stay as tabs
-  > li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
-    @include media-breakpoint-only(sm) {
-      max-width: 100%;
-    }
-    @include media-breakpoint-only(md) {
-      max-width: 100%;
-    }
-  }
-  > li {
-    margin-bottom: 0;
-    > a {
-      border: none;
-      font-weight: 400;
-      &:hover {
-        border-bottom-color: $gray-lighter;
-      }
-      &.menu-parent {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+@include media-breakpoint-only(sm) {
+  .feed-tabs,
+  .linked-events-tabs {
+    .nav-tabs {
+      > li {
         .icon {
-          font-size: 0.8em;
+          display: block;
+          text-align: center;
         }
       }
     }
-    &:first-child > a {
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-    }
-    &:last-child > a {
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
-    }
-    &.active > a {
-      background-color: $gray-ultralight;
-      border-color: transparent;
-      border-bottom-color: $gray-lighter;
-      &,
-      &:hover,
-      &:focus {
-        border: 1px solid transparent;
-        border-top: 1px solid transparent;
-        cursor: auto;
-        font-weight: 600;
+  }
+}
+@include media-breakpoint-down(md) {
+  .feed-tabs,
+  .linked-events-tabs {
+    .nav-tabs {
+      > li {
+        font-size: 0.9em;
       }
     }
   }
-}
-
-.useraccount-nav .collapsing {
-  -webkit-transition-delay: -1s;
-  transition-delay: -1s;
-  visibility: hidden;
 }
 
 .recordTabs.nav {
-  .staff-view-icon {
-    line-height: 1em;
-  }
-  @media print {
-    .record-tab.versions {
-      display: none;
-    }
-    li.record-tab.active {
-      > a {
-        border-bottom-color: $nav-tabs-background-color;
-      }
-    }
-  }
   li.tab-right {
     flex: 1 0;
     display: flex;
@@ -224,63 +160,38 @@
   }
 }
 
-.record {
-  .recordTabs.nav {
-    > li {
-      > a {
-        color: $gray;
-      }
-    }
-  }
-  .details-tab {
-    table.citation {
-      td {
-        word-break: break-word;
-      }
-    }
-  }
-}
-
 .mobile-main-tabs {
   width: 100%;
   .dropdown-toggle {
-    line-height: 50px;
-    margin-top: 15px;
-    background-color: $main-tabs-active-color;
-    color: mix($main-tabs-active-color, contrast($main-tabs-active-color), 5%);
-    padding: 0 15px;
-    border-radius: 5px;
     display: flex;
+    align-items: center;
+    gap: 0.7em;
+    padding: 0.6em 1.2em;
+    margin-top: 1.2em;
+    color: mix($main-tabs-active-color, contrast($main-tabs-active-color), 5%);
+    background-color: $main-tabs-active-color;
+    border-radius: $border-radius-base;
     cursor: pointer;
     .tab-title {
+      flex-grow: 1;
+      overflow: hidden;
       font-size: $font-size-h2;
       font-weight: 500;
-      background: transparent;
       text-overflow: ellipsis;
       white-space: nowrap;
-      overflow: hidden;
-      flex-grow: 1;
-      margin-right: 10px;
+      background: transparent;
     }
     .more {
       display: flex;
       align-items: center;
+      gap: 0.4em;
       font-size: 85%;
-      padding-left: 10px;
       white-space: nowrap;
       .icon {
-        margin-left: 5px;
-        font-size: 20px;
+        font-size: 1.7em;
       }
     }
   }
-  .tooltip {
-    display: none;
-  }
-}
-
-.loginTabs a {
-  cursor: default;
 }
 
 /*

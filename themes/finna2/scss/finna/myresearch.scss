@@ -198,7 +198,7 @@
   }
 }
 
-// MyResearch sidebar/mobile navigation
+// MyResearch sidebar
 .useraccount-nav {
   z-index: 2;
   display: block;
@@ -239,27 +239,28 @@
           -moz-transform: rotate(180deg);
         }
       }
+      &.menu-parent {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        .icon {
+          font-size: 0.8em;
+        }
+      }
     }
   }
-}
-@include media-breakpoint-down(md) {
-  .useraccount-nav.nav-tabs-personal {
-    position: fixed;
-    z-index: $zindex-sidebar;
-    display: none;
-    width: 100%;
-    height: 100%;
-    padding-right: 0px;
-    padding-bottom: 40px;
-    padding-left: 0px;
-    overflow-y: scroll;
-    -webkit-overflow-scrolling: touch;
-    background: $body-bg;
-    transition: top 0.5s ease;
-    &.open {
-      top: 0%;
-      right: 0px;
-      display: block;
+  > li {
+    &:first-child > h1 {
+        border-top-left-radius: $border-radius-base;
+        border-top-right-radius: $border-radius-base;
+    }
+    &:last-child > a {
+        border-bottom-left-radius: $border-radius-base;
+        border-bottom-right-radius: $border-radius-base;
+    }
+    &.active > a {
+      background-color: $gray-ultralight;
+      font-weight: 600;
     }
   }
 }
