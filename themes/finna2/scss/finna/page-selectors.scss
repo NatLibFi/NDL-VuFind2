@@ -72,6 +72,12 @@
     }
     > a {
       border-radius: $border-radius-base;
+      &:hover,
+      &:focus {
+        color: $pagination-hover-color;
+        background-color: $pagination-hover-bg;
+        border-color: transparent;
+      }
     }
     &:first-child {
       > a,
@@ -80,17 +86,6 @@
       }
     }
   }
-
-  > li > a {
-    &:hover,
-    &:focus {
-      color: $pagination-hover-color;
-      background-color: $pagination-hover-bg;
-      border-color: transparent;
-    }
-  }
-
-
 }
 @include media-breakpoint-down(sm) {
   .pagination {
