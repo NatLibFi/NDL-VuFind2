@@ -277,3 +277,12 @@
     }
   }
 }
+
+// Tab content container
+.tab-content {
+  margin-bottom: 1.5em;
+  outline: 0;
+  &:focus-visible {
+    box-shadow: $focus-ring-box-shadow;
+  }
+}

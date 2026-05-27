@@ -1082,9 +1082,24 @@ finna-model-viewer .object-editor {
 
 // Comments
 .comment-wrapper {
+  padding: 0.7em;
+  padding-top: 0.4em;
+  margin-bottom: 0.7em;
   background-color: lighten($gray, 78%);
   border-radius: $border-radius-base;
+  .name {
+    padding-bottom: 0.3em;
+    border-bottom: 2px solid $gray-lighter;
+    .comment-rating {
+      display: inline-block;
+    }
+    .comment-info {
+      display: inline;
+      margin-left: 0.7em;
+    }
+  }
   .comment-text {
+    padding-top: 0.4em;
     // Display line breaks properly in comments:
     white-space: pre-line;
   }
@@ -1217,6 +1232,14 @@ finna-model-viewer .object-editor {
 .marc-row-007,
 .marc-row-008 {
   white-space: pre-wrap;
+}
+
+// Contents
+.toc-tab {
+  padding-left: 0.7em;
+  ul.toc {
+    padding-left: 0.7em;
+  }
 }
 
 // Record Preview Form

@@ -1,7 +1,6 @@
 .nav {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
-
   > li {
     > a {
       transition: background .2s ease-in-out;
@@ -9,115 +8,52 @@
   }
 }
 
-// TODO: clean up the tab styles below
 .nav-tabs {
   .nav-link {
-    border-top: 4px solid transparent;
     --#{$prefix}nav-tabs-border-radius: 0;
     --#{$prefix}nav-link-hover-color: #{$nav-tabs-text-color};
+
+    // aligns tab's text with active tab's
+    border-top: 4px solid transparent;
   }
-  // style 5 tabs to make sure they stay as tabs
-  > li {
-    > .nav-link {
-      font-weight: 500;
-      background-color: transparent;
-      color: $nav-tabs-text-color;
+  .nav-item {
+    .nav-link {
+      padding: 0.6em 0.5em;
       margin-right: 3px;
-      padding: .6em .5em;
+      font-weight: 500;
+      color: $nav-tabs-text-color;
+      background-color: transparent;
       border-radius: 0;
       transition: none;
-      @include media-breakpoint-only(sm) {
-        i {
+      &.active {
+        color: $text-color;
+        background-color: $body-bg;
+        border-top: 4px solid $nav-tabs-active-color;
+        border-right: 1px solid $nav-tabs-border-color;
+        border-left: 1px solid $nav-tabs-border-color;
+        transition: border 0.05s linear;
+      }
+    }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .nav-tabs {
+    text-align: center;
+    flex-wrap: nowrap;
+    .nav-item {
+      word-wrap: break-word;
+    }
+  }
+}
+@include media-breakpoint-only(sm) {
+  .nav-tabs {
+    .nav-item {
+      .nav-link {
+        .icon {
           display: block;
           text-align: center;
         }
       }
     }
-    // Active state
-    & > .nav-link.active {
-        background-color: $body-bg;
-        border-left: 1px solid $nav-tabs-border-color;
-        border-top: 4px solid $nav-tabs-active-color;
-        border-right: 1px solid $nav-tabs-border-color;
-        transition: border 0.05s linear;
-        color: $text-color;
-    }
-  }
-}
-
-@include media-breakpoint-down(sm) {
-  .nav-tabs {
-    text-align: center;
-    flex-wrap: nowrap;
-
-    #details {
-      display: none;
-    }
-    > li {
-      word-wrap: break-word;
-    }
-  }
-}
-
-.tab-content {
-  margin-bottom: 20px;
-  outline: 0;
-  &:focus-visible {
-    box-shadow: $focus-ring-box-shadow;
-  }
-
-  div.dataTables_info {
-    white-space: normal;
-  }
-  #commentList {
-    margin-bottom: 20px;
-  }
-  .comment-wrapper {
-    padding: 10px;
-    padding-top: 5px;
-    margin-bottom: 10px;
-    .name {
-      padding-bottom: 4px;
-      border-bottom: 2px solid $gray-lighter;
-    }
-    .comment-text {
-      padding-top: 5px;
-    }
-    .comment-rating {
-      display: inline-block;
-    }
-    .comment-info {
-      display: inline;
-      margin-left: 10px;
-    }
-  }
-  .usercomments-tab {
-    form.comment .rating-holder .info {
-      float: left;
-      margin-right: 5px;
-    }
-  }
-  .toc-tab, ul.toc {
-    margin-left: 10px;
-  }
-}
-
-// Specified Finna styles for navbar
-.nav.nav-absolute {
-  position: absolute;
-  margin:0;
-  line-height: $navbar-height;
-  top: 0px;
-  right: 15px;
-  flex-grow: 0;
-  flex-shrink: 0;
-  .dropdown-menu > li > a {
-    white-space: normal;
-  }
-}
-
-@include media-breakpoint-down(md) {
-  .nav.nav-absolute {
-    right: $navbar-right;
   }
 }
