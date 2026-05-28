@@ -47,8 +47,8 @@
 }
 @include media-breakpoint-only(sm) {
   .nav-tabs {
-    .nav-item {
-      .nav-link {
+    > .nav-item {
+      > .nav-link {
         .icon {
           display: block;
           text-align: center;
