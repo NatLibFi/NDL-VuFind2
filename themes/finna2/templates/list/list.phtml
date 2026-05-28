@@ -55,7 +55,7 @@ $this->assetManager()->prependScriptString("var listId = {$list->getId()}; var p
     <?=$this->render('search/list-' . $this->params->getView() . '.phtml') ?>
     <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', ['idPrefix' => 'bottom_', 'formAttr' => 'search-cart-form']) ?>
 </div>
-<div class="container-fluid pagination-background">
+<div class="container-fluid">
   <div class="container">
     <div class="text-center">
       <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'Helpers/pagination.phtml', ['params' => ['results' => $this->results]])?>
