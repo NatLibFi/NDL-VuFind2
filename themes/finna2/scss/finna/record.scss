@@ -1122,14 +1122,18 @@ finna-model-viewer .object-editor {
       margin-top: 1em;
       margin-left: 2em;
     }
-    @include media-breakpoint-up(md) {
+  }
+}
+@include media-breakpoint-up(md) {
+  .comment-form-wrapper {
+    .comment-form {
       .comment-info-icon {
         margin-top: 2.7em;
         margin-left: 1em;
       }
       .comment-col {
-          float: left;
-          width: 50%;
+        float: left;
+        width: 50%;
       }
       .comment-description {
         margin-top: 4em;
@@ -1143,8 +1147,8 @@ finna-model-viewer .object-editor {
 .record-tab-series-container {
   .list-scrollable__list-item {
     &.show-more {
-      color: $similar-carousel-no-image-color;
       width: 120px;
+      color: $similar-carousel-no-image-color;
 
       .list-scrollable__image {
         align-content: center;
@@ -1152,17 +1156,17 @@ finna-model-viewer .object-editor {
     }
 
     > .series {
-      display: flex;
-      font-size: 1.2rem;
-      background: rgba(255, 255, 255, 0.9);
       position: absolute;
-      left: 0;
       top: 0;
-      padding: 0.5rem;
-      width: 2.5rem;
-      height: 2.5rem;
+      left: 0;
+      display: flex;
       align-items: center;
       justify-content: center;
+      width: 2.5rem;
+      height: 2.5rem;
+      padding: 0.5rem;
+      font-size: 1.2rem;
+      background: rgba(255, 255, 255, 0.9);
     }
 
     .list-scrollable__image.iconlabel {
@@ -1185,10 +1189,6 @@ finna-model-viewer .object-editor {
       margin-top: 0.5rem;
     }
 
-    @include media-breakpoint-down(md) {
-      flex-flow: column;
-      align-items: flex-start;
-    }
     #series {
       flex-basis: 50%;
     }
@@ -1212,9 +1212,17 @@ finna-model-viewer .object-editor {
     place-content: center;
   }
   .series-record-format .iconlabel {
+    margin: 0;
     font-size: 0.9rem;
     color: $gray-dark;
-    margin: 0;
+  }
+}
+@include media-breakpoint-down(md) {
+  .record-tab-series-container {
+    .series-header {
+      flex-flow: column;
+      align-items: flex-start;
+    }
   }
 }
 
