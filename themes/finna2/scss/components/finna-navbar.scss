@@ -1,54 +1,51 @@
 // -component suffix added to avoid problems with non-component finna-navbar class.
-.finna-navbar-component {
-  @include media-breakpoint-down(md) {
+@include media-breakpoint-down(md) {
+  .finna-navbar-component {
     .navbar-header {
       display: flex;
-      align-items: center;
       flex: 1;
-    }
-    .navbar-toggler {
-      position: static;
-      display: flex;
-      justify-content: center;
       align-items: center;
     }
     .navbar-brand {
       flex-grow: 1;
-      height: auto;
       max-width: none;
+      height: auto;
       line-height: normal;
       text-decoration: none;
+    }
+    .navbar-toggler {
+      position: static;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .navbar-nav {
+      margin: 0px;
+      > li > a {
+        padding: 16px;
+        margin-top: 0px;
+        margin-bottom: 0px;
+      }
     }
     .navbar-collapse {
       .dropdown-toggle {
         width: 100%;
       }
-      & > ul > li {
+      > ul > li {
         border-bottom: 1px solid $gray-lighter;
       }
       .dropdown-menu {
+        margin-top: 0px;
         border: 0;
         box-shadow: none;
-        margin-top: 0;
-
         > li {
           border: 0;
         }
-
         .dropdown-item {
-          border: 0;
-          padding-left: 16px;
           padding-right: 16px;
+          padding-left: 16px;
+          border: 0;
         }
-      }
-    }
-    .navbar-nav {
-      margin: 0;
-
-      & > li > a {
-        margin-top: 0;
-        margin-bottom: 0;
-        padding: 16px;
       }
     }
   }
@@ -118,7 +115,8 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
         background-color: $finna-navbar-content-link-hover-bg;
       }
     }
-    > .active > a, a.active {
+    > .active > a,
+    a.active {
       &,
       &:hover,
       &:focus {
@@ -126,7 +124,8 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
         background-color: $finna-navbar-content-link-active-bg;
       }
     }
-    > .disabled > a, a.disabled {
+    > .disabled > a,
+    a.disabled {
       &,
       &:hover,
       &:focus {
@@ -137,7 +136,8 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
 
     // Dropdown menu items
     // Remove background color from open dropdown
-    > .open > a, a.open {
+    > .open > a,
+    a.open {
       &,
       &:hover,
       &:focus {
@@ -161,45 +161,7 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
   .navbar-collapse,
   .navbar-form {
     border-color: $finna-navbar-content-border;
-
-    // Finna-specific custom display when collapsed
-    @include media-breakpoint-down(md) {
-      color: $dropdown-link-color;
-      background-color: $dropdown-bg;
-      .navbar-nav,
-      .navbar-nav > .dropdown,
-      .open .dropdown-menu,
-      // This last selector is a non-component CSS compatibility hack
-      .open:not(.logoutOptions):not(.browsebar-dropdown):not(#language_menu) .dropdown-menu {
-        > li > a {
-          color: $dropdown-link-color;
-          background-color: $dropdown-bg;
-          &:hover,
-          &:focus {
-            color: $dropdown-link-hover-color;
-            background-color: $dropdown-link-hover-bg;
-          }
-        }
-        > .active > a, a.active {
-          &,
-          &:hover,
-          &:focus {
-            color: $dropdown-link-hover-color;
-            background-color: $dropdown-link-hover-bg;
-          }
-        }
-        > .disabled > a, a.disabled {
-          &,
-          &:hover,
-          &:focus {
-            color: $dropdown-link-color;
-            background-color: $dropdown-bg;
-          }
-        }
-      }
-    }
   }
-
 
   // Links in navbars
   //
@@ -223,6 +185,49 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
       &:hover,
       &:focus {
         color: $finna-navbar-content-link-disabled-color;
+      }
+    }
+  }
+}
+// Finna-specific custom display when collapsed
+@include media-breakpoint-down(md) {
+  .finna-navbar-content {
+    .navbar-collapse,
+    .navbar-form {
+      color: $dropdown-link-color;
+      background-color: $dropdown-bg;
+      .navbar-nav,
+      .navbar-nav > .dropdown,
+      .open .dropdown-menu,
+      // This last selector is a non-component CSS compatibility hack
+      .open:not(.logoutOptions):not(.browsebar-dropdown):not(#language_menu) .dropdown-menu {
+        > li > a {
+          color: $dropdown-link-color;
+          background-color: $dropdown-bg;
+          &:hover,
+          &:focus {
+            color: $dropdown-link-hover-color;
+            background-color: $dropdown-link-hover-bg;
+          }
+        }
+        > .active > a,
+        a.active {
+          &,
+          &:hover,
+          &:focus {
+            color: $dropdown-link-hover-color;
+            background-color: $dropdown-link-hover-bg;
+          }
+        }
+        > .disabled > a,
+        a.disabled {
+          &,
+          &:hover,
+          &:focus {
+            color: $dropdown-link-color;
+            background-color: $dropdown-bg;
+          }
+        }
       }
     }
   }
