@@ -16,8 +16,8 @@
     // aligns tab's text with active tab's
     border-top: 4px solid transparent;
   }
-  .nav-item {
-    .nav-link {
+  > .nav-item {
+    > .nav-link {
       padding: 0.6em 0.5em;
       margin-right: 3px;
       font-weight: 500;
