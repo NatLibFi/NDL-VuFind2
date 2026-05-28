@@ -80,15 +80,6 @@
   }
 }
 
-// add classes when there are too many tabs to fit on the screen
-.tabs-responsive {
-  width: 100%;
-  overflow-x: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
 // RSS-feed and Linked Events tabs
 .feed-tabs,
 .linked-events-tabs {
