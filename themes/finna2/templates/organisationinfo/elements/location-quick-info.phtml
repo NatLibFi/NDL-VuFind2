@@ -35,9 +35,10 @@
     <?php foreach ($orgInfo['links'] as $link): ?>
       <?php if (str_contains($link['name'], 'Facebook')): ?>
         <p class="location-links facebook info-element">
-        <a class="facebook" href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank">
-          <?=$this->icon('facebook') ?> <?=$this->escapeHtml($link['name'])?>
-        </a>
+          <a class="facebook" href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank">
+            <?=$this->icon('facebook') ?> <?=$this->escapeHtml($link['name'])?>
+          </a>
+        </p>
       <?php endif; ?>
     <?php endforeach; ?>
   </div>

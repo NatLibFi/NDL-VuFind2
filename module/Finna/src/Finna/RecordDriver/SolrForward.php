@@ -31,7 +31,7 @@
 
 namespace Finna\RecordDriver;
 
-use FinnaXml\XmlDoc;
+use VuFindXml\XmlDoc;
 
 use function in_array;
 use function is_array;

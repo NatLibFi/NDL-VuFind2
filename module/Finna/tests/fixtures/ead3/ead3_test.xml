@@ -45,6 +45,15 @@
     <relation arcrole="aihe" relationtype="cpfrelation">
       <relationentry localtype="Ensisijainen nimi">Aino Aihe</relationentry>
     </relation>
+    <relation arcrole="katso my&#xF6;s" encodinganalog="ahaa:AI30" href="12345" relationtype="resourcerelation">
+      <relationentry>Joku kiinnostava toinen arkisto</relationentry>
+    </relation>
+    <relation arcrole="Erotettu aineisto" encodinganalog="ahaa:AI30" href="54321" relationtype="resourcerelation">
+      <relationentry>Yksi kokonaisuudesta erotettu aineisto</relationentry>
+    </relation>
+    <relation arcrole="erotettu aineisto" encodinganalog="ahaa:AI30" href="543210" relationtype="resourcerelation">
+      <relationentry>Toinen kokonaisuudesta erotettu aineisto</relationentry>
+    </relation>
   </relations>
   <controlaccess>
     <geogname identifier="http://www.yso.fi/onto/yso/p94137" lang="fin" relator="Aihe" source="YSO">

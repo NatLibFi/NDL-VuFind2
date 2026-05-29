@@ -33,10 +33,10 @@ use Finna\Record\Loader;
 use Finna\RecordDriver\CuratedRecord;
 use Finna\RecordDriver\CuratedRecordList;
 use Finna\RecordDriver\PluginManager;
-use FinnaXml\XmlDoc;
 use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\ParamBag;
 use VuFindSearch\Response\RecordInterface;
+use VuFindXml\XmlDoc;
 
 use function count;
 use function is_callable;

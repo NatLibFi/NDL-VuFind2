@@ -33,8 +33,8 @@
 
 namespace Finna\RecordDriver;
 
-use FinnaXml\XmlDoc;
 use VuFind\I18n\TranslatableString;
+use VuFindXml\XmlDoc;
 
 use function boolval;
 use function call_user_func_array;

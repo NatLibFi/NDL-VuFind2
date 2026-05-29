@@ -32,7 +32,7 @@
 
 namespace Finna\RecordDriver;
 
-use FinnaXml\XmlDoc;
+use VuFindXml\XmlDoc;
 
 use function array_slice;
 use function count;

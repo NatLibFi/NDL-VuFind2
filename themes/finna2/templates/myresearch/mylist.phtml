@@ -85,14 +85,13 @@
             <?= $this->partial('mylist-tags.phtml', ['tags' => $listTags, 'editable' => false])?>
           </div>
           <div class="edit-tags">
-            <div class="toggle" title="<?=$this->transEscAttr('edit-list-tags')?>">
+            <div class="toggle" role="button" title="<?=$this->transEscAttr('edit-list-tags')?>">
               <span><?=$this->transEsc('edit-list-tags')?> </span><?=$this->icon('list-tag-edit') ?>
             </div>
             <div class="ui">
               <p class="info"><?=$this->icon('info') ?> <?=$this->transEsc('add-list-tag-note')?></p>
               <form>
                 <fieldset>
-                  <legend></legend>
                   <div class="add-new">
                     <input type="text" class="new-tag" name="new-tag" value="" aria-required="true" required aria-label="<?= $this->transEscAttr('list-tags-info')?>" placeholder="<?= $this->transEscAttr('list-tags-info')?>">
                     <button type="submit" class="btn btn-primary "><?=$this->transEsc('Save')?></button>
@@ -169,9 +168,9 @@
     <form class="float-start delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
       <ul class="dropdown-menu useraccount-confirm">
         <li class="disabled"><?=$this->transEsc('confirm_delete_list_text')?></li>
-        <li>
-          <a class="dropdown-item confirm" href="#"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-          <a class="dropdown-item cancel" href="#"><?=$this->transEsc('confirm_dialog_no')?></a>
+        <li class="useraccount-confirm-buttons">
+          <a class="dropdown-item confirm" href="#" role="button"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+          <a class="dropdown-item cancel" href="#" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
         </li>
       </ul>
     </form>

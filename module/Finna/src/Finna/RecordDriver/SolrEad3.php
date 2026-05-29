@@ -145,11 +145,11 @@ class SolrEad3 extends SolrEad
 
     // Relation type map
     public const RELATION_MAP = [
-        'On jatkoa' => self::RELATION_CONTINUED_FROM,
-        'Sisältyy' => self::RELATION_PART_OF,
-        'Sisältää' => self::RELATION_CONTAINS,
-        'Katso myös' => self::RELATION_SEE_ALSO,
-        'Erotettu aineisto' => self::RELATION_SEPARATED,
+        'on jatkoa' => self::RELATION_CONTINUED_FROM,
+        'sisältyy' => self::RELATION_PART_OF,
+        'sisältää' => self::RELATION_CONTAINS,
+        'katso myös' => self::RELATION_SEE_ALSO,
+        'erotettu aineisto' => self::RELATION_SEPARATED,
     ];
 
     // Relator attribute for archive origination
@@ -1819,7 +1819,8 @@ class SolrEad3 extends SolrEad
             if ((string)$attr->encodinganalog !== self::RELATION_RECORD) {
                 continue;
             }
-            $role = self::RELATION_MAP[(string)$attr->arcrole] ?? null;
+            $arcrole = trim((string)($attr->arcrole ?? ''));
+            $role = self::RELATION_MAP[mb_strtolower($arcrole, 'UTF-8')] ?? null;
             if (!$role) {
                 continue;
             }

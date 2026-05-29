@@ -73,12 +73,6 @@ finna.scrollableNav = (function finnaScrollableNav() {
 
       links.forEach(l => l.tabIndex = -1);
       activeOnLoad.tabIndex = 0;
-
-      activeOnLoad.scrollIntoView({
-        behavior: 'instant',
-        inline: 'center',
-        block: 'nearest'
-      });
     });
   }
 

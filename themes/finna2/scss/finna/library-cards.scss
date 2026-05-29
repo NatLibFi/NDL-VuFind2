@@ -1,14 +1,12 @@
 // select card dropdown styles
 .select-card-wrapper {
-  font-size: 14px;
+  font-size: $font-size-base;
   display: inline-block;
-  vertical-align: top;
-  margin-top: 6px;
+  margin-top: 0.4em;
   font-weight: 400;
   line-height: 2;
-
   > span {
-    margin-right: 5px;
+    margin-right: 0.4em;
   }
   #select-card-label-maincontent {
     display: none;
@@ -16,37 +14,58 @@
   .dropdown {
     display: inline-block;
     > a {
-      padding: 3px 7px;
-      color: black;
-      background-color: white;
+      padding: 0.2em 0.7em;
+      color: $text-color;
+      background-color: $body-bg;
       border: 1px solid $input-border-color;
       border-radius: $finna-button-radius;
       display: inline-block;
-      margin-top: -7px;
-      &:hover, &:focus {
+      &:hover,
+      &:focus {
         text-decoration: none;
-      }
-    }
-    .dropdown-menu {
-      @include media-breakpoint-down(md) {
-        right: 0;
-        left: auto;
       }
     }
   }
 }
-
-.useraccount-row {
-  margin-top: 5px;
-  margin-bottom: 5px;
-  line-height: 1.5;
-  font-weight: 600;
-  .select-card-wrapper {
-    .dropdown > a {
-      background: $body-bg;
-      color: $gray;
-      border: 1px solid $input-border-color;
+@include media-breakpoint-down(md) {
+  .select-card-wrapper .select-card .library_card {
+    li > a {
+      white-space: normal;
     }
+  }
+}
+
+// MyResearch
+
+.librarycard-barcode {
+  svg {
+    color-scheme: light only;
+    background-color: #fff;
+    padding: 0.1em;
+  }
+}
+@include media-breakpoint-up(sm) {
+  .librarycard-barcode {
+    margin-bottom: 0.5em;
+  }
+}
+
+.library-card-terms {
+  background-color: $info-bg-subtle;
+  padding: 2em;
+  padding-left: 2.5em;
+  margin-bottom: 1em;
+}
+
+.useraccount-table {
+  .library-card-actions a {
+    display: block;
+    margin: 0.3em 0em;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .useraccount-table.library-cards {
+    table-layout: fixed;
   }
 }
 
@@ -57,7 +76,7 @@
   .form-control[type="radio"] {
     display: inline-block;
     margin: -4px 0.5em 0 0;
-    padding: 0;
+    padding: 0px;
     height: 1.5em;
   }
   legend {

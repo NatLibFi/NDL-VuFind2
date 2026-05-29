@@ -85,6 +85,35 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test related records.
+     *
+     * @return void
+     */
+    public function testGetRelatedRecords()
+    {
+        $driver = $this->getDriver('ead3_test.xml');
+        $relatedRecords = [
+            'see-also' => [
+                [
+                    'id' => '12345',
+                    'field' => 'identifier',
+                ],
+            ],
+            'separated' => [
+                [
+                    'id' => '54321',
+                    'field' => 'identifier',
+                ],
+                [
+                    'id' => '543210',
+                    'field' => 'identifier',
+                ],
+            ],
+        ];
+        $this->assertEquals($relatedRecords, $driver->getRelatedRecords());
+    }
+
+    /**
      * Function to get expected other related material data.
      *
      * @return \Iterator<(int | string), mixed>

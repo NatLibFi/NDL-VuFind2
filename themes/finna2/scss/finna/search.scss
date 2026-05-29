@@ -353,34 +353,6 @@ h2.title {
   display: none;
 }
 
-.bulkActionButtons {
-  display: flex;
-  flex-flow: row wrap;
-  align-items: center;
-  margin: 0.5em 0em;
-  font-size: 0.9em;
-  > * {
-    margin-right: 0.3em;
-  }
-  .checkbox,
-  label {
-    display: inline-block;
-  }
-  .checkbox {
-    padding-left: 0px;
-    input[type="checkbox"] {
-      float: none;
-    }
-  }
-  label {
-    display: flex;
-    align-items: center;
-    input {
-      margin-right: 0.2em
-    }
-  }
-}
-
 .versions-tab .search-header {
   .search-controls {
     margin-top: 0px;

@@ -61,14 +61,6 @@
     font-weight: 500;
   }
 }
-
-.tooltip-myaccount {
-  margin-left: 10px;
-  color: $gray;
-  >.icon {
-    vertical-align: 0px !important;
-  }
-}
 .slider {
   .tooltip.top .tooltip-inner {
     min-width: initial;
@@ -86,4 +78,24 @@
   @media (pointer:coarse) {
       pointer-events: none;
   }
+}
+
+// Styles for specific tooltips
+
+.tooltip-myaccount,
+.tooltip-library-card-name {
+  background: initial;
+  border: none;
+}
+.useraccount-header .tooltip-myaccount {
+  color: $gray;
+  font-size: $font-size-h2;
+  padding-right: 0;
+  margin-top: 0.3em;
+  margin-bottom: 0.7em;
+}
+.useraccount-nav .tooltip-myaccount {
+  float: right;
+  padding: 0px;
+  margin: 0px;
 }
