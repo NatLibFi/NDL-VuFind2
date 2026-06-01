@@ -246,6 +246,17 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     protected $excludedClassifications = ['language', 'colour content', 'color content'];
 
     /**
+     * Materials/techniques and classification types which should be included in colors.
+     *
+     * @var array
+     */
+    protected $colorTypes = [
+        'color content', 'colour content',
+        'colour name', 'color name', 'väri',
+        'http://terminology.lido-schema.org/lido00479',
+    ];
+
+    /**
      * Array of excluded measurements.
      *
      * @var array
@@ -1310,6 +1321,47 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             if ($term = $reader->value($langNode)) {
                 $label = $reader->attr($langNode, 'label');
                 $results[] = $label ? compact('term', 'label') : $term;
+            }
+        }
+        return $results;
+    }
+
+    /**
+     * Get colors extended.
+     *
+     * @return array
+     */
+    public function getColorsExtended(): array
+    {
+        $reader = $this->getXmlReader();
+        $results = $nodes = [];
+        foreach (
+            [
+                'lido/descriptiveMetadata/objectClassificationWrap/classificationWrap/classification',
+                'lido/descriptiveMetadata/objectIdentificationWrap/objectMaterialsTechWrap/objectMaterialsTechSet/'
+                . 'materialsTech/termMaterialsTech',
+            ] as $path
+        ) {
+            $nodes = [
+                ...$nodes,
+                ...$reader->all(path: $path),
+            ];
+        }
+        $language = $this->getLocale();
+        foreach ($nodes as $node) {
+            if (in_array($reader->attr($node, 'type'), $this->colorTypes)) {
+                $id = $source = '';
+                if ($values = $this->getFirstConceptIdAttributes($node)) {
+                    $id = $values['id'];
+                    $source = $values['source'];
+                }
+                if ($langTerm = $this->getLanguageSpecificValueByPath($node, 'term', $language)) {
+                    $results[] = [
+                        'data' => $langTerm,
+                        'id' => $id,
+                        'source' => $source,
+                    ];
+                }
             }
         }
         return $results;

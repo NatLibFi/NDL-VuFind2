@@ -1715,16 +1715,74 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getColors.
+     * Function to get expected extended colors data.
+     *
+     * @return \Iterator
+     */
+    public static function getColorsExtendedData(): \Iterator
+    {
+        yield [
+            'fi',
+            [
+                [
+                    'data' => 'mustavalkoinen',
+                    'id' => '',
+                    'source' => '',
+                ],
+                [
+                    'data' => 'punainen',
+                    'id' => 'http://www.yso.fi/onto/koko/p54358',
+                    'source' => 'koko',
+                ],
+            ],
+        ];
+        yield [
+            'sv',
+            [
+                [
+                    'data' => 'svartvit',
+                    'id' => '',
+                    'source' => '',
+                ],
+                [
+                    'data' => 'punainen',
+                    'id' => 'http://www.yso.fi/onto/koko/p54358',
+                    'source' => 'koko',
+                ],
+            ],
+        ];
+        yield [
+            'en',
+            [
+                [
+                    'data' => 'mustavalkoinen',
+                    'id' => '',
+                    'source' => '',
+                ],
+                [
+                    'data' => 'red',
+                    'id' => 'http://www.yso.fi/onto/koko/p54358',
+                    'source' => 'koko',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test getColorsExtended.
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
      *
      * @return void
      */
-    public function testGetColors(): void
+    #[\PHPUnit\Framework\Attributes\DataProvider('getColorsExtendedData')]
+    public function testGetColorsExtended(string $language, array $expected): void
     {
-        $driver = $this->getDriver('lido_test2.xml', rawData: ['color_str_mv' => ['punainen', 'valkoinen', 'musta']]);
+        $driver = $this->getDriver('lido_test2.xml', language: $language);
         $this->assertSame(
-            ['punainen', 'valkoinen', 'musta'],
-            $driver->getColors()
+            $expected,
+            $driver->getColorsExtended()
         );
     }
 

@@ -592,6 +592,19 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     }
 
     /**
+     * Get colors extended.
+     *
+     * @return array
+     */
+    public function getColorsExtended(): array
+    {
+        if ($color = $this->getColor()) {
+            return [['data' => $color]];
+        }
+        return [];
+    }
+
+    /**
      * Get country.
      *
      * @return string

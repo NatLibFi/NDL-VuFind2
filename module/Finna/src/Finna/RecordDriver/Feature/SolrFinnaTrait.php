@@ -823,16 +823,6 @@ trait SolrFinnaTrait
     }
 
     /**
-     * Get colors.
-     *
-     * @return array
-     */
-    public function getColors(): array
-    {
-        return $this->fields['color_str_mv'] ?? [];
-    }
-
-    /**
      * Get array containing major genres.
      *
      * @return array

@@ -562,7 +562,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 ],
             ],
             'Color' => [
-                'getColors',
+                'getColorsExtended',
                 'data-color.phtml',
                 [
                     'context' => [

@@ -3,7 +3,15 @@
   <?php $colorSystem = $this->driver->tryMethod('getColorSystem'); ?>
     <div class="truncate-field" data-rows="5">
       <?php foreach ($data as $field): ?>
-        <?=$this->escapeHtml($field) ?><?php if (!empty($colorSystem)): ?>, <?=$this->escapeHtml($colorSystem) ?><?php endif; ?><br>
+        <?php
+            $id = $field['id'] ?? null;
+            $source = $field['source'] ?? null;
+          ?>
+        <?php if (!$id): ?>
+          <?=$this->escapeHtml($field['data']) ?><?php if (!empty($colorSystem)): ?>, <?=$this->escapeHtml($colorSystem) ?><?php endif; ?><br>
+        <?php else: ?>
+          <?=$this->record($this->driver)->getLinkedFieldElement($this->headingType ?? 'subject', $field['data'], ['name' => $field['data'], 'id' => $id, 'source' => $source], ['class' => ['backlink']])?><?php if (!empty($colorSystem)): ?>, <?=$this->escapeHtml($colorSystem) ?><?php endif; ?><br>
+        <?php endif; ?>
       <?php endforeach; ?>
     </div>
 <?php endif; ?>

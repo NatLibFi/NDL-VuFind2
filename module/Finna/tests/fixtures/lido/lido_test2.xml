@@ -24,6 +24,10 @@
             <term label="testimittari" lang="en">one</term>
             <term type="testimittari" lang="en">two</term>
           </classification>
+          <classification type="colour content">
+            <term lang="fi">mustavalkoinen</term>
+            <term lang="sv">svartvit</term>
+          </classification>
         </classificationWrap>
       </objectClassificationWrap>
       <objectIdentificationWrap>
@@ -130,6 +134,17 @@
               <extentMeasurements>  </extentMeasurements>
           </objectMeasurementsSet>
         </objectMeasurementsWrap>
+          <objectMaterialsTechWrap>
+            <objectMaterialsTechSet>
+              <materialsTech>
+                <termMaterialsTech type="color name">
+                  <conceptID type="URI" source="koko">http://www.yso.fi/onto/koko/p54358</conceptID>
+                  <term lang="fi">punainen</term>
+                  <term lang="en">red</term>
+                </termMaterialsTech>
+              </materialsTech>
+            </objectMaterialsTechSet>
+        </objectMaterialsTechWrap>
       </objectIdentificationWrap>
       <objectRelationWrap>
         <subjectWrap>
