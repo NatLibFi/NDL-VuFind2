@@ -16,6 +16,11 @@
     background: darken($finna-feedback-background, 10%);
   }
 }
+@include media-breakpoint-down(md) {
+  .floating-feedback-btn.fixed {
+    top: $navbar-height;
+  }
+}
 
 .dynamic-form {
   .form-control {
