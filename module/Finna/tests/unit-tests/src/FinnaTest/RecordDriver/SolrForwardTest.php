@@ -1130,6 +1130,24 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test colors.
+     *
+     * @return void
+     */
+    public function testGetColorsExtended()
+    {
+        $driver = $this->getDriver();
+        $this->assertSame(
+            [
+                [
+                    'color' => 'väri',
+                ],
+            ],
+            $driver->getColorsExtended()
+        );
+    }
+
+    /**
      * Test getXML.
      *
      * @return void

@@ -599,7 +599,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     public function getColorsExtended(): array
     {
         if ($color = $this->getColor()) {
-            return [['data' => $color]];
+            return [['color' => $color]];
         }
         return [];
     }

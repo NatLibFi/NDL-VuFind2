@@ -1725,12 +1725,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             'fi',
             [
                 [
-                    'data' => 'mustavalkoinen',
+                    'color' => 'mustavalkoinen',
                     'id' => '',
                     'source' => '',
                 ],
                 [
-                    'data' => 'punainen',
+                    'color' => 'punainen',
                     'id' => 'http://www.yso.fi/onto/koko/p54358',
                     'source' => 'koko',
                 ],
@@ -1740,12 +1740,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             'sv',
             [
                 [
-                    'data' => 'svartvit',
+                    'color' => 'svartvit',
                     'id' => '',
                     'source' => '',
                 ],
                 [
-                    'data' => 'punainen',
+                    'color' => 'punainen',
                     'id' => 'http://www.yso.fi/onto/koko/p54358',
                     'source' => 'koko',
                 ],
@@ -1755,12 +1755,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             'en',
             [
                 [
-                    'data' => 'mustavalkoinen',
+                    'color' => 'mustavalkoinen',
                     'id' => '',
                     'source' => '',
                 ],
                 [
-                    'data' => 'red',
+                    'color' => 'red',
                     'id' => 'http://www.yso.fi/onto/koko/p54358',
                     'source' => 'koko',
                 ],

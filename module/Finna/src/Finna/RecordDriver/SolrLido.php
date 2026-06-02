@@ -1357,7 +1357,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 }
                 if ($langTerm = $this->getLanguageSpecificValueByPath($node, 'term', $language)) {
                     $results[] = [
-                        'data' => $langTerm,
+                        'color' => $langTerm,
                         'id' => $id,
                         'source' => $source,
                     ];
