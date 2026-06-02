@@ -18,11 +18,13 @@
     <div class="login-description shibboleth">
       <?=$this->translate('login_desc_shibboleth_html') ?>
     </div>
-    <div class="login-description">
-      <p class="login-info">
-        <?=$this->translate('login_desc_general_html') ?>
-      </p>
-    </div>
+    <?php if (!$this->translationEmpty('login_desc_general_html')): ?>
+      <div class="login-description">
+        <p class="login-info">
+          <?=$this->translate('login_desc_general_html') ?>
+        </p>
+      </div>
+    <?php endif; ?>
   </div>
 </div>
 <div class="clearfix"></div>
