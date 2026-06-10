@@ -7,6 +7,8 @@ module.exports = function(grunt) {
   grunt.registerTask("finna:scss", function finnaScssFunc() {
     const config = getFinnaSassConfig({
       outputStyle: style,
+      sourceMap: true,
+      sourceMapContents: true,
       quietDeps: true,
       silenceDeprecations: [
         'import',
