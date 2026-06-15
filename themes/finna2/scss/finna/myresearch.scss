@@ -173,6 +173,7 @@
 .useraccount-confirm {
   max-width: 300px;
   > li {
+    display: flex;
     padding: 0.7em;
     border-bottom: none;
     a {
