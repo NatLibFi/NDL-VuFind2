@@ -163,9 +163,7 @@
           $contentElementId = 'useraccount-content-heading';
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
-        } elseif (!empty($this->layout()->finnaMainTabs)) {
-          $contentElementId = 'results-heading';
-        } elseif (!($this->layout()->finnaMainTabs)) {
+        } elseif (!empty($this->layout())) {
           $contentElementId = 'results-heading';
         } 
       ?>
