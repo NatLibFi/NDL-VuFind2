@@ -158,12 +158,12 @@
       <span class="visually-hidden"><?=$this->layout()->srmessage ?></span>
     <?php endif; ?>
       <?php
-        $contentElementId = 'main';
+        $contentElementId = 'results-heading';
         if (!empty($this->layout()->finnaUserAccountHeading)) {
           $contentElementId = 'useraccount-content-heading';
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
-        } elseif (!empty($this->layout())) {
+        } elseif (!empty($this->layout()->finnaMainTabs)) {
           $contentElementId = 'results-heading';
         } 
       ?>
