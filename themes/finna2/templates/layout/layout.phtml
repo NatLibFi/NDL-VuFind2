@@ -165,8 +165,8 @@
           $contentElementId = 'content-heading';
         } elseif (!empty($this->layout()->finnaMainTabs)) {
           $contentElementId = 'results-heading';
-        } elseif (!empty($this->layout())) {
-          $contentElementId = 'results-heading'; 
+        } elseif (!($this->layout()->finnaMainTabs)) {
+          $contentElementId = 'results-heading';
         } 
       ?>
       <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
