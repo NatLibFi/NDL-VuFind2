@@ -14,6 +14,9 @@
     $this->headLink()->appendAlternate($this->recordLinker()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
   }
 
+  // Set skip-link address
+  $this->layout()->finnaBasicView = 'results-heading';
+
   // Set up breadcrumbs:
   $this->breadcrumbs()->reset();
   if ($url = $this->searchMemory()->getLastSearchUrl()) {

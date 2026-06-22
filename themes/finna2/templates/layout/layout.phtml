@@ -158,14 +158,14 @@
       <span class="visually-hidden"><?=$this->layout()->srmessage ?></span>
     <?php endif; ?>
       <?php
-        $contentElementId = 'results-heading';
+        $contentElementId = 'main';
         if (!empty($this->layout()->finnaUserAccountHeading)) {
           $contentElementId = 'useraccount-content-heading';
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
-        } elseif (!empty($this->layout()->finnaMainTabs)) {
+        } elseif (!empty($this->layout()->finnaMainTabs) || (!empty($this->layout()->finnaBasicView))) {
           $contentElementId = 'results-heading';
-        }
+        } 
       ?>
       <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
       <?php if (isset($this->layout()->skiplink)): // additional skip links ?>
