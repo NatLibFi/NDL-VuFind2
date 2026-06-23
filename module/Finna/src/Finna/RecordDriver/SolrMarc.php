@@ -78,6 +78,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         '610' => 'corporate name',
         '611' => 'meeting name',
         '630' => 'uniform title',
+        '647' => 'named event',
         '648' => 'chronological',
         '650' => 'topic',
         '651' => 'geographic',
