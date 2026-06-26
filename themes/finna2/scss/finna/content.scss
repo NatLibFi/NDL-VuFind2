@@ -138,7 +138,7 @@ ul.nav-tabs.help-tabs {
     }
 }
 .template-name-content .finna-multi-level-nav-content {
-    margin-top: 3em;
+    margin-top: $spacer;
 }
 
 .example-image-area {
@@ -161,9 +161,9 @@ ul.nav-tabs.help-tabs {
 }
 
 .finna-aboutfinna-panel {
-    border: 1px solid $gray-lighter;
-    background: $gray-ultralight;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    border: 1px solid $border-color;
+    background: transparent;
+    box-shadow: $box-shadow-sm;
 }
 
 .finna-aboutfinna-nav {
@@ -178,6 +178,7 @@ ul.nav-tabs.help-tabs {
             &:focus {
                 color: #fff;
                 background: $primary;
+                text-decoration: none;
             }
         }
     }

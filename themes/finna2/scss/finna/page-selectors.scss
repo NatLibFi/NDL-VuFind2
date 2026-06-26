@@ -9,6 +9,9 @@
       .icon {
         color: $action-link-color;
         font-size: $font-size-icon-large;
+        &:hover {
+          color: darken($action-link-color, 10%);
+        }
       }
     }
   }
@@ -19,8 +22,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  font-size: 1.1em;
-
+  gap: (0.25 * $spacer);
   // paginate_button is used in DataTables
   > li.paginate_button {
     @extend .page-item;
@@ -30,7 +32,6 @@
     &.active > a {
       color: var(--#{$prefix}pagination-active-color);
       @include gradient-bg(var(--#{$prefix}pagination-active-bg));
-      border: none;
     }
     &.disabled > a {
       display: none;
@@ -44,31 +45,31 @@
   > li.paginate_button.next > a,
   > li.paginate_button.previous > a {
     padding: 0px;
+    min-width: 2rem;
     &:hover {
       background-color: transparent;
     }
     .icon {
+      font-size: $font-size-icon-large;
       margin-right: 0.1em;
       margin-left: 0.1em;
-      font-size: $font-size-icon-large;
       color: $action-link-color;
       transition: background 0.2s ease;
       &:hover {
-        color: darken($action-link-color, 5%);
+        color: darken($action-link-color, 10%);
       }
     }
   }
   > li {
     display: inline; // Remove list-style and block-level defaults
     a {
+      font-size: $font-size-large;
+      line-height: $line-height-sm;
       color: $action-link-color;
+      border-radius: $border-radius-small;
     }
     > a {
-      border-radius: $border-radius-base;
-      &:hover,
-      &:focus {
-        color: $pagination-hover-color;
-        background-color: $pagination-hover-bg;
+      &:hover {
         border-color: transparent;
       }
     }
@@ -77,6 +78,17 @@
       > span {
         margin-left: 0px;
       }
+    }
+  }
+  li.active > a {
+    border-color: transparent;
+  }
+  li.page-next-btn {
+    width: 100%;
+    margin-bottom: $spacer;
+    > a.page-link {
+      @extend .btn, .btn-primary, .btn-lg;
+      width: auto;
     }
   }
 }
@@ -88,5 +100,5 @@
         font-size: 1em;
       }
     }
-  } 
+  }
 }

@@ -12,7 +12,7 @@ $organisation-info-max-w: 400px !default;
         .panel-body {
             outline: 0;
         }
-    }    
+    }
     .location-is-open {
         color: #008000;
     }
@@ -49,11 +49,11 @@ $organisation-info-max-w: 400px !default;
             .date-rows {
                 padding: 0.35em;
                 &:not(:last-child) {
-                    border-bottom: 1px solid $gray-lighter;
+                    border-bottom: 1px solid $border-color;
                 }
                 &.today {
                     font-weight: 700;
-                    background: $gray-lighter;
+                    background: $light;
                 }
                 &.museum {
                     .time-row {
@@ -141,6 +141,9 @@ $organisation-info-max-w: 400px !default;
             .organisation-info-panel {
                 float: right;
                 width: 70%;
+                display: flex;
+                flex-direction: column;
+                gap: $spacer;
             }
             .consortium-search-usage {
                 .gauge-meter {
@@ -207,7 +210,7 @@ $organisation-info-max-w: 400px !default;
         .js-location-search-container {
             flex-basis: 60%;
             .js-location-search-toggle {
-                padding: 2px 8px;
+                  padding: $padding-base-vertical $padding-base-horizontal;
                 font-weight: 400;
 
                 &[aria-expanded=false] {
@@ -337,11 +340,25 @@ $organisation-info-max-w: 400px !default;
                             }
                         }
                     }
+                    .leaflet-popup-content p {
+                        margin: 0.5rem 0;
+                    }
+                    .leaflet-popup-close-button {
+                        width: 2rem;
+                        height: 2rem;
+                        font-size: 1rem;
+                        display: flex;
+                        align-items: center;
+                        align-content: center;
+                        align-items: center;
+                        justify-content: center;
+                        padding: 0;
+                        color: $dark;
+                    }
                     .map-bubble {
                         h3 {
                             min-width: 120px;
                             max-width: 200px;
-                            margin: 0.7em;
                             font-size: $font-size-base;
                         }
                     }
@@ -631,7 +648,7 @@ $organisation-info-max-w: 400px !default;
                     color: $gray-light;
                 }
             }
-            
+
         }
         > .dropdown-menu {
             max-height: 80vh;
@@ -690,7 +707,7 @@ $organisation-info-max-w: 400px !default;
     .services {
         margin-top: 0.4em;
         margin-bottom: 0.4em;
-    }   
+    }
 }
 @include media-breakpoint-up(md) {
     .organisation-info-widget {

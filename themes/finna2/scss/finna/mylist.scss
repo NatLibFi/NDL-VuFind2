@@ -40,14 +40,14 @@
     top: initial;
     left: initial;
     padding: 0px;
-    border-left: none;
-    border-right: none;
+    border: none;
+    border-radius: 0px;
     @include box-shadow(none);
     .active a {
       font-weight: 600;
       color: $dropdown-link-color;
       text-decoration: none;
-      background-color: $gray-ultralight;
+      background-color: $light;
     }
     > li {
       max-width: none;
@@ -56,11 +56,11 @@
         width: 100%;
       }
       > a {
-        padding: 0.2em 1.4em;
+        padding: $padding-small-vertical $padding-large-horizontal;
         &.active {
           font-weight: 700;
           color: $dropdown-link-color;
-          background-color: $gray-ultralight;
+          background-color: $light;
         }
       }
       .favorite-list-holder {
@@ -72,7 +72,7 @@
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          
+
         }
       }
     }
@@ -81,8 +81,8 @@
 
 .mylist-bar {
   .list-visibility {
-    padding: 0.2em 0.2em 1.4em 1.6em;
-    background-color: $gray-ultralight;
+    padding: 0 $padding-large-horizontal $padding-large-vertical $padding-large-horizontal;
+    background-color: $light;
     div:first-of-type {
       display: flex;
       gap: 0.7em;
@@ -100,18 +100,17 @@
       padding: 0.2em;
     }
   }
-  .favorites-menulist-item {
-    .vc-confirm-button {
-      margin-left: 1em;
-    }
+  .vc-confirm-button > a {
+    font-size: 0.9em;
   }
   .add-new-list-holder {
-    padding: 0em 1.4em;
-    margin: 0.4em 0em 0.7em 0em;
+    padding: $padding-large-vertical $padding-large-horizontal;
+    margin-top: (0.25 * $spacer);
+    margin-bottom: (0.5 * $spacer);
     .add-new-list {
       display: -webkit-flex;
       display: flex;
-      border: 1px solid $gray-lighter;
+      border: 1px solid $border-color;
       border-radius: $input-border-radius;
       input {
         width: 100%;
@@ -455,7 +454,7 @@
         white-space: nowrap;
         background: transparent;
         border: 2px solid $action-link-color;
-        border-radius: $border-radius-small;  
+        border-radius: $border-radius-small;
         span {
           font-weight: bold;
         }

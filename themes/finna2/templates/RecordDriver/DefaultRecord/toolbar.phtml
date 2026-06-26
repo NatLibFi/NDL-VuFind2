@@ -7,7 +7,7 @@
   $largeThumb = $this->record($this->driver)->getThumbnail('large');
 ?>
 <div class="hidden-xs record-toolbar">
-  <ul class="nav nav-pills hidden-print" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
+  <ul class="nav nav-toolbar hidden-print" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
   <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
     <li><a class="nav-link save-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a></li>
   <?php endif; ?>
@@ -17,7 +17,7 @@
     <li class="dropdown">
       <a class="nav-link export-toggle dropdown-toggle" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
         <?=$this->icon('export') ?>
-        <?=$this->transEsc('Export Record') ?>
+        <span><?=$this->transEsc('Export Record') ?></span>
       </a>
       <ul class="dropdown-menu" id="export-options">
         <?php foreach ($exportFormats as $exportFormat): ?>
@@ -33,7 +33,7 @@
   <?php if (count($this->driver->getCitationFormats()) > 0): ?>
     <li><a class="nav-link cite-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><?=$this->icon('cite') ?><span class="hidden-xs"> <?=$this->transEsc('Cite this')?></span></a></li>
   <?php endif; ?>
-  <li class="hidden-xs hidden-sm"><a class="nav-link print-record" role="button" href="#" data-trigger-print><?=$this->icon('print') ?> <?=$this->transEsc('Print')?></a></li>
+  <li class="hidden-xs hidden-sm"><a class="nav-link print-record" role="button" href="#" data-trigger-print><?=$this->icon('print') ?><span><?=$this->transEsc('Print')?></span></a></li>
   <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
   <?php if ($QRCode): ?>
   <li class="dropdown">

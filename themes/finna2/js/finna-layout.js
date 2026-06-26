@@ -118,8 +118,8 @@ finna.layout = (function finnaLayout() {
         var moreLabel = self.data('label') || VuFind.translate('show_more');
         var lessLabel = self.data('label') || VuFind.translate('show_less');
 
-        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + VuFind.icon('show-more') + '</button>');
-        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + VuFind.icon('show-less') + '</button>');
+        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + '<span>' + moreLabel + '</span>' + VuFind.icon('show-more') + '</button>');
+        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + '<span>' + lessLabel + '</span>' + VuFind.icon('show-less') + '</button>');
 
         if (self.attr('tabindex') === '-1') {
           moreLink.attr('tabindex', '-1');
@@ -321,13 +321,6 @@ finna.layout = (function finnaLayout() {
         scrollTop: $('.recordProvidedBy').offset().top
       }, 500);
     });
-    var feedbackBtn = $('.floating-feedback-btn');
-    if (feedbackBtn.length) {
-      var feedbackBtnOffset = feedbackBtn.offset().top;
-      $(window).on("scroll", function onScrollWindow(/*event*/) {
-        feedbackBtn.toggleClass('fixed', $(window).scrollTop() > feedbackBtnOffset);
-      });
-    }
     var backUp = $('.template-dir-record .back-to-up');
     if (backUp.length) {
       $(window).on('scroll', function onScrollWindow(/*event*/) {

@@ -269,13 +269,6 @@
       ?>
     </form>
     </div>
-    <?php if (!$browse && !$mainPage && $advSearch): ?>
-      <?php
-        $advSearchQuery = $results ? ['sid' => $results->getSearchId()] : $hiddenFilters;
-        $advSearchLink = $this->url($advSearch, [], ['query' => $advSearchQuery]);
-      ?>
-      <a href="<?=$advSearchLink?>" class="btn btn-link btn-advanced hidden-xs"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
-    <?php endif; ?>
     <?php
       $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'summon' => 'summon'];
       if (
@@ -292,6 +285,13 @@
           'class' => 'tooltip-button tooltip-search-' . $searchType, // for back-compatibility
         ])?>
       </div>
+    <?php endif; ?>
+    <?php if (!$browse && !$mainPage && $advSearch): ?>
+      <?php
+        $advSearchQuery = $results ? ['sid' => $results->getSearchId()] : $hiddenFilters;
+        $advSearchLink = $this->url($advSearch, [], ['query' => $advSearchQuery]);
+      ?>
+      <a href="<?=$advSearchLink?>" class="btn btn-link btn-advanced hidden-xs"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
     <?php endif; ?>
     <?php if ($module != 'record' && $module != 'collection'): ?>
       <?php if ($browse || $mainPage || ($module === 'authority' && $action === 'search')): ?>

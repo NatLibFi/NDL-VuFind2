@@ -9,7 +9,7 @@
       flex: 1;
     }
     .search-help-icon {
-      font-size: 1.9em;
+      font-size: 1.5rem;
     }
     .btn-advanced {
       margin-left: 10px;
@@ -75,6 +75,9 @@
       border-radius: none;
       .icon {
         font-size: 2em;
+        &:hover {
+          color: darken($action-link-color, 10%);
+        }
       }
     }
   }

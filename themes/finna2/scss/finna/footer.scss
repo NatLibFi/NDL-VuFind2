@@ -17,9 +17,9 @@ footer {
   h4,
   h5,
   h6 {
-    margin-bottom: 0.7em;
-    font-size: 1em;
-    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+    font-size: $font-size-h4;
+    font-weight: 500;
   }
   a:hover {
     color: $footer-text-color;
@@ -29,8 +29,8 @@ footer {
     margin-bottom: 0.7em;
     list-style-type: none;
   }
-  img {
-    max-height: 45px;
+  img[src*="powered-by-finna"] {
+    max-height: 50px;
   }
   img[src*="vufind-logo"] {
     max-height: 65px;
@@ -38,12 +38,12 @@ footer {
 }
 @include media-breakpoint-down(sm) {
   footer {
-    padding-top: 2.5em;
-    padding-bottom: 3.5em;
+    padding-top: 2rem;
+    padding-bottom: 6rem;
     text-align: center;
     hr {
       display: block;
-      border-top: 1px solid $gray-light;
+      border-top: 1px solid $border-color;
     }
     ul {
       margin-bottom: 2.5em;

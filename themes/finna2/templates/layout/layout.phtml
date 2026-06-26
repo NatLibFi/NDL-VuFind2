@@ -200,9 +200,6 @@
       </nav>
     </header>
     <section class="searchContent<?=$currentTabClass?>">
-      <?php if ($isLandingPage): ?>
-        <a class="btn btn-primary btn-uppercase floating-feedback-btn" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
-      <?php endif; ?>
       <h1 class="visually-hidden"><?=$this->transEsc('Search')?></h1>
       <?php if (!empty($this->layout()->infoMessage)): ?>
         <div class="alert alert-info street-info">

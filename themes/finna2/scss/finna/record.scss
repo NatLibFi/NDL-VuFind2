@@ -8,31 +8,17 @@
   .media-right {
     width: 25%;
   }
-  .nav > li:not(.share-buttons) a {
-    font-size: 1em;
-    font-weight: 600;
-    color: $action-link-color;
-    &:hover {
-      color: darken($action-link-color, 10%);
-    }
-    .icon {
-      padding-right: 3px;
-      padding-left: 3px;
-    }
-  }
   .record-title {
     margin: 0px 0px 3px 0px;
     font-size: $record-title-font-size;
-    line-height: 1.2;
+    line-height: 1.1;
+    font-weight: 600;
   }
   .recordURLs {
     padding-bottom: 10px;
     margin: 0px 0px 10px;
     > a {
       display: block;
-    }
-    a {
-      font-size: 15px;
     }
     .truncate-field.truncate-done {
       width: 100%;
@@ -90,7 +76,7 @@
       width: 100%;
     }
     .record-title {
-      margin-top: 10px;
+      margin-top: (0.5 * $spacer);
     }
   }
 }
@@ -104,14 +90,14 @@
 }
 @include media-breakpoint-down(md) {
   .record .record-title {
-    margin-bottom: 20px;
+    margin-bottom: $spacer;
   }
 }
 
 .record-main {
   .table-finna-record.record-details .info {
     font-size: $font-size-small;
-    color: $gray;
+    color: $dark;
   }
 }
 
@@ -120,21 +106,32 @@
   > ul {
     align-items: baseline;
   }
-  .nav-pills {
-    padding: 0px;
-    margin: 0px;
-    a:hover {
-      text-decoration: none;
-    }
-    > li:not(.share-buttons):not(.whatsapp) {
-      // Links rendered as pills
-      > a,
-      > .btn-bookbag-toggle > a {
-        padding: 0px;
-        border-radius: $nav-pills-border-radius;
+  .nav {
+    align-items: center;
+    margin-bottom: $spacer;
+    > li:not(.share-buttons) {
+      padding: 0px;
+      margin: 0px;
+      > a, > div > a, > span > a {
+        @extend .btn, .btn-sm, .btn-outline-dark;
+        align-items: center;
+        margin-top: ($spacer * 0.5);
+        margin-right: ($spacer * 0.75);
+        .icon, .fa {
+          color: $action-link-color;
+          margin-right: (0.25 * $spacer);
+        }
+        &:hover, &:focus-visible, &.show {
+          .icon {
+            color: inherit;
+          }
+        }
       }
-      &:not(.library-link) {
-        margin: 10px;
+    }
+    .btn-bookbag-toggle > a.cart-remove {
+      @extend .btn-dark;
+      .icon {
+        color: inherit;
       }
     }
     // QRCode in record view
@@ -152,10 +149,6 @@
         padding-left: 5px;
         display: inline-block;
       }
-    }
-
-    .dropdown-toggle {
-      display: initial;
     }
   }
 }
@@ -288,8 +281,6 @@
   margin-bottom: 10px;
 }
 
-.show-details-button,
-.hide-details-button,
 .toggle-image-information,
 .toggle-video-information,
 .toggle-audio-information {
@@ -301,13 +292,11 @@
 }
 .show-details-button,
 .hide-details-button {
-  width: 100%;
-  font-size: 0.9em;
-  color: $link-color;
-  &:hover,
-  &:focus {
-    color: $link-color;
-  }
+  @extend .btn-sm, .btn-outline-dark;
+  display: flex;
+  gap: 0.25rem;
+  align-items: baseline;
+  margin: auto;
 }
 
 .record-details {
@@ -483,22 +472,19 @@
     }
     .image-dimensions,
     .dropdown-menu .file-size {
-      font-size: 0.8em;
+      font-size: 0.9em;
       text-transform: initial;
     }
     .dropdown-toggle.download {
       padding: 2px 6px;
-      font-weight: 600;
-      color: $gray-light;
+      font-weight: 500;
       text-transform: uppercase;
     }
     .dropdown-menu.download {
-      padding: 2px 6px;
       border-radius: 5px;
       > li {
         border-bottom: none;
         > a {
-          padding: 2px 6px;
           white-space: initial;
           border-radius: 0px;
         }
@@ -524,7 +510,7 @@
   a span {
     color: $action-link-color;
     &:hover {
-      text-decoration: none;
+      text-decoration: $link-hover-decoration;
       color: $action-link-color;
     }
   }
@@ -566,6 +552,9 @@
     &:hover,
     &:focus {
       color: $action-link-color;
+    }
+    &:hover {
+      text-decoration: $link-hover-decoration;
     }
     &.collapsed {
       .hide-image-information,
@@ -762,6 +751,11 @@ finna-model-viewer .object-editor {
   /* Use display:inline-flex to prevent whitespace issues. Alternatively, you can put all the children of .rating-group on a single line. */
   display: inline-flex;
 
+  /* Show focus ring */
+  &:focus-within {
+    box-shadow: $focus-ring-box-shadow;
+  }
+
   /* Reset width */
   .rating__icon {
     width: initial;
@@ -802,7 +796,7 @@ finna-model-viewer .object-editor {
 
   /* If any input is checked, make its following siblings grey */
   .rating__input:checked ~ .rating__label .rating__icon--star {
-    color: #ddd;
+    color: $gray-lighter;
   }
 
   /* Make all stars highlight on rating group hover */
@@ -814,7 +808,7 @@ finna-model-viewer .object-editor {
     /* Make hovered input's following siblings grey on hover */
     .rating__input:hover ~ .rating__label .rating__icon--star,
     .rating__input:hover ~ .rating__label--half .rating__icon--star {
-      color: #ddd;
+      color: $gray-lighter;
     }
   }
 }
@@ -1107,7 +1101,7 @@ finna-model-viewer .object-editor {
 // Comment form
 .comment-form-wrapper {
   padding: 10px;
-  background-color: lighten($gray, 78%);
+  background-color: $light;
   border-radius: $border-radius-base;
   .comment-form {
     .comment-info-icon {

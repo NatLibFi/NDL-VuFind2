@@ -13,7 +13,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
   margin-bottom: 0.5rem;
   .alert {
     margin-bottom: 0px;
@@ -24,19 +24,22 @@
     color: $body-bg;
   }
   .button-label {
-    padding: 0.2em;
+    padding: 0.25em;
   }
   .control-container {
     display: flex;
-    margin-top: 0.4em;
-    margin-bottom: 0.4em;
-    gap: 0.3rem;
+    margin-top: (0.5 * $spacer);
+    margin-bottom: (0.5 * $spacer);
+    gap: 0.5rem;
     font-size: 0.9em;
   }
   .sort-option-container,
   .limit-option-container,
   .view-option-container {
     display: inline-block;
+  }
+  .view-option-container {
+    flex-grow: 1;
   }
 }
 @include media-breakpoint-down(xs) {
@@ -82,18 +85,8 @@
     display: inline-block;
     padding: 0.4em;
     font-size: 1em;
-    color: $action-link-color;
-    white-space: nowrap;
-    background: transparent;
-    border: 2px solid $action-link-color;
-    border-radius: $border-radius-base;
-    &:hover,
-    &:focus {
-      color: $body-bg;
-      text-decoration: none;
-      background: $action-link-color;
-      transition: background 0.2s linear;
-    }
+    font-weight: 600;
+    @extend .btn, .btn-outline-dark;
   }
   .dropdown-menu {
     padding: 0px;
@@ -101,7 +94,6 @@
     > li > a {
       padding-top: 0.7em;
       padding-bottom: 0.7em;
-      color: $gray;
       text-align: left;
     }
   }
@@ -110,17 +102,26 @@
 .view-option-container .view-button {
   display: inline-block;
   padding: 0.4em;
+  color: $dark;
+  border-radius: $finna-button-radius;
+  a {
+    color: inherit;
+  }
+  &:hover, &:focus-within {
+    background: $dark;
+    color: $light;
+  }
   &.selected {
-    border: 2px solid $action-link-color;
-    border-radius: $border-radius-base;
+    border: $btn-border-width solid $dark;
   }
 }
 
 .search-tab-tip, .search-sort-title {
   background-color: $search-tab-tip-bg;
   box-shadow: 2px 2px 4px #888888;
-  margin-bottom: 12px;
-  padding: 5px;
+  margin-top: $spacer;
+  margin-bottom: $spacer;
+  padding: $padding-small-vertical $padding-small-horizontal;
   position: relative;
   p {
     margin: 2px;

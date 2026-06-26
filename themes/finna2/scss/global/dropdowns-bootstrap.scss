@@ -1,4 +1,4 @@
-.caret {
+  .caret {
   display: initial;
   width: initial;
   height: initial;
@@ -14,30 +14,36 @@
 }
 
 .dropdown-menu {
-  padding: 0px 1px;
+  padding: 0px;
+  overflow: hidden;
   border: 1px solid $dropdown-border;
   border-radius: $border-radius-base;
   min-width: 0;
-  @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
-
+  box-shadow: $box-shadow;
   > li {
-    border-bottom: 1px solid $gray-lighter;
+    border-bottom: 1px solid $border-color;
     &:last-child > a,
     &:last-child {
       border-bottom: none;
     }
     > a {
-      padding: 7px 15px;
+      padding: $padding-base-vertical $padding-base-horizontal;
     }
   }
 }
 
 .dropdown-menu > li > a {
   display: block;
-
+  text-decoration: none;
   &:focus {
     // Hide focus effect so that menus look ok even if first item is automatically focused:
     background-color: inherit;
+    color: inherit;
+  }
+  &:focus-visible {
+    color: $dropdown-link-hover-color;
+    background-color: $dropdown-link-hover-bg;
+    box-shadow: none;
   }
   &.active:focus {
     // Make sure the active item is displayed properly:
@@ -46,7 +52,6 @@
   }
   &:hover,
   &:active {
-    text-decoration: none;
     color: $dropdown-link-hover-color;
     background-color: $dropdown-link-hover-bg;
   }

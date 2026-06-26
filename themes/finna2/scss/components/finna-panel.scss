@@ -13,15 +13,24 @@
   border: 0;
   box-shadow: none;
   .panel-heading {
-    outline: 1px solid $gray-lighter;
-    box-shadow: 1px 1px 1px 1px $gray-lighter;
-    background-color: $gray-ultralight;
-    color: $gray-dark;
+    border: 1px solid $border-color;
+    box-shadow: $box-shadow-sm;
+    background-color: $light;
+    color: $dark;
+    border-radius: $border-radius-base;
+    .panel-title {
+      font-size: $font-size-large;
+      font-weight: 500;
+    }
   }
   .finna-panel-heading-inner {
-    padding: 10px;
+    padding: $padding-large-vertical $padding-large-horizontal;
   }
   a.finna-panel-heading-inner {
+    &:hover {
+      background: darken($light, 10%);
+      text-decoration: none;
+    }
     &::before {
       font-family: finnaicons;
       content: '\e612';
@@ -33,10 +42,9 @@
   .panel-collapse,
   > .panel-body {
     margin-top: 2px;
-    outline: 1px solid $gray-lighter;
   }
   .panel-body {
-    padding: 10px;
+    padding: $padding-large-vertical $padding-large-horizontal;;
   }
 }
 
@@ -50,7 +58,7 @@
     text-transform: uppercase;
     text-shadow: 1px 1px 3px rgba(1,1,1,0.3);
     color: $body-bg;
-    background-color: $gray-light;
+    background-color: $light;
   }
   .finna-panel-heading-inner {
     padding: 10px;

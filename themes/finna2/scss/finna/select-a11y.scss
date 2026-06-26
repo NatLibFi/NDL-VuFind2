@@ -17,13 +17,13 @@
   position: relative;
   width: 100%;
   text-align: left;
-  background: #fff;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  padding: 2px 8px;
+  background: $body-bg;
+  border-radius: $border-radius-base;
+  border: 1px solid $dark;
+  padding: $padding-base-vertical $padding-base-horizontal;
   &:hover, &:active, &:focus {
-    background-color: #e6e6e6;
-    border-color: #adadad;
+    background-color: $dark;
+    color: $light;
   }
   &:focus {
     outline-offset: -2px;
@@ -66,7 +66,7 @@
   right: 0.5em;
 }
 .select-a11y__selected-item {
-  border: 1px solid #c3c4cc;
+  border: 1px solid $dark;
   padding: 0.2em 0.1em 0.2em 0.5em;
 }
 .select-a11y-delete__icon:before {
@@ -98,7 +98,7 @@
   // Styling alike .dropdown-menu:
   border: 1px solid $dropdown-border;
   @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
-  background: $gray-ultralight;
+  background: $light;
   font-size: 16px; // Avoid automatic zoom-in on mobile.
   @media screen {
     @include media-breakpoint-up(xs) {
@@ -108,19 +108,19 @@
 }
 .select-a11y__input {
   width: 100%;
-  padding: 0.25rem 0.5rem 0.25rem 0.5rem;
+  padding: $padding-base-vertical $padding-base-horizontal;
   // Styling alike .form-control:
-  border: 1px solid #666;
-  background: #fff;
-  color: #666;
+  border: 1px solid $dark;
+  background: $body-bg;
+  color: $dark;
 }
 .select-a11y-suggestions {
   max-height: 10em;
   overflow-y: auto;
   margin-top: 0.5em;
   // Styling alike .form-control:
-  border: 1px solid #666;
-  background: #fff;
+  border: 1px solid $dark;
+  background: $body-bg;
 }
 .select-a11y-suggestion {
   padding: 0.25rem 0.5rem 0.25rem 0.5rem;
@@ -130,18 +130,18 @@
   align-items: center;
 }
 .select-a11y-suggestion:focus, .select-a11y-suggestion:hover {
-  background-color: #666;
-  color: #fff;
+  background-color: $dark;
+  color: $light;
 }
 .select-a11y-suggestion:focus {
   outline: 1px  #666 !important;
   outline-offset: -1px;
-  color: #fff;
-  background-color: #666;
+  color: $light;
+  background-color: $dark;
 }
 .select-a11y-suggestion[aria-selected=true] {
-  color: #fff;
-  background-color: #666;
+  color: $light;
+  background-color: $dark;
   position: relative;
 }
 
@@ -167,13 +167,13 @@
   font-size: 14px;
 }
 .select-a11y-suggestion__helper {
-  background-color: #f6f6f6;
-  color: #666;
+  background-color: $light;
+  color: $dark;
   padding: 0.25rem;
 }
 .select-a11y__no-suggestion {
   padding: 0 0.5em;
-  color: #666;
+  color: $dark;
   text-align: left;
   margin: 0;
 }

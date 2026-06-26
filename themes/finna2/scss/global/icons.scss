@@ -368,8 +368,9 @@ table .iconlabel {
 
 /* Account */
 #account-icon {
-    position: relative;
-    left: 2px;
+    position: absolute;
+    width: 1rem;
+    height: 1rem;
 }
 
 /* Status styles */
@@ -646,28 +647,15 @@ table .iconlabel {
     display: flex;
     align-items: center;
     justify-content: space-around;
-    width: 26px;
-    height: 26px;
+    width: 2rem;
+    height: 2rem;
     border-radius: 50%;
-    &.facebook-icon {
-        background: #3a5795;
-        border: 2px solid #3a5795;
-        color: #fff;
-    }
-    &.pinterest-icon {
-        background: #cb2027;
-        border: 2px solid #cb2027;
-        color: #fff;
-    }
-    &.twitter-icon {
-        background: #00aced;
-        border: 2px solid #00aced;
-        color: #fff;
-    }
-    &.whatsapp-icon {
-        background: #64d448;
-        border: 2px solid #64d448;
-        color: #fff;
+    background: transparent;
+    border: 2px solid $dark;
+    color: $dark;
+    &:hover {
+        background: $dark;
+        color: $light;
     }
 }
 

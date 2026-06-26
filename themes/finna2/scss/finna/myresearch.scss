@@ -33,7 +33,7 @@
     flex-direction: row;
     align-items: center;
     padding: 0.5em 0.3em;
-    border-bottom: 1px solid $gray-lighter;
+    border-bottom: 1px solid $border-color;
     &.no-list-functions {
       align-items: center;
       justify-content: space-between;
@@ -147,18 +147,16 @@
 // Menu style
 .myresearch-menu,
 #my-info-dropdown-menu {
-  a {
+  a.list-group-item {
     display: flex;
     justify-content: space-between;
     &.flex {
       display: flex;
     }
-    &:hover {
+    &:hover, &:focus {
       text-decoration: none;
+      color: $dropdown-link-hover-color;
       background-color: $dropdown-link-hover-bg;
-    }
-    &:focus {
-      background-color: $nav-link-hover-bg;
     }
     &.user-list-link .icon {
       margin-left: 0.5rem;
@@ -202,10 +200,9 @@
 .useraccount-nav {
   z-index: 2;
   display: block;
-  margin-top: 1.2em;
+  margin-top: $spacer;
   border: $sidebar-border;
-  border-top: none;
-  box-shadow: 2px 2px 3px 0 $gray-lighter;
+  box-shadow: $box-shadow-sm;
   .status {
     margin-left: 0.4em;
   }
@@ -222,14 +219,16 @@
     }
     &.menu-header > h1 {
       display: block;
-      padding: 0.9em 0.8em 0.9em 0.6em;
+      font-size: $font-size-h4;
+      font-weight: 500;
       text-transform: none;
     }
     li > a {
       padding-left: 1.4em;
     }
-    a {
-      padding: 0.8em 0.6em;
+    a.list-group-item {
+      padding: $padding-large-vertical $padding-large-horizontal;
+      font-size: $font-size-base;
       margin-right: 0px;
       &:not(.collapsed) {
         > .icon.collapse-icon {
@@ -238,6 +237,9 @@
           -webkit-transform: rotate(180deg);
           -moz-transform: rotate(180deg);
         }
+      }
+      .favorite-list-holder {
+        font-size: $font-size-base;
       }
       &.menu-parent {
         display: flex;
@@ -251,16 +253,18 @@
   }
   > li {
     &:first-child > h1 {
-        border-top-left-radius: $border-radius-base;
-        border-top-right-radius: $border-radius-base;
+      padding: $spacer $padding-large-horizontal;
+      border-top-left-radius: $border-radius-base;
+      border-top-right-radius: $border-radius-base;
     }
     &:last-child > a {
-        border-bottom-left-radius: $border-radius-base;
-        border-bottom-right-radius: $border-radius-base;
+      border-bottom-left-radius: $border-radius-base;
+      border-bottom-right-radius: $border-radius-base;
     }
     &.active > a {
-      background-color: $gray-ultralight;
-      font-weight: 600;
+      background-color: $sidebar-active-background;
+      color: $sidebar-active-color;
+      font-weight: bold;
     }
   }
 }
@@ -290,22 +294,22 @@
       margin: 0.05em 0.15em;
       color: var(--#{$prefix}body-color);
       background-color: var(--#{$prefix}body-bg);
-      border: 1px solid $gray-lighter;
-      border-radius: 2px;
+      border: 1px solid $border-color;
+      border-radius: $border-radius-small;
       &.account-info {
         color: var(--#{$prefix}success-text-emphasis);
         background-color: var(--#{$prefix}success-bg-subtle);
-        border-color: var(--#{$prefix}success-border-subtle);
+        border-color: shade(var(--#{$prefix}success-bg-background), 70%);
       }
       &.account-warning {
         color: var(--#{$prefix}warning-text-emphasis);
         background-color: var(--#{$prefix}warning-bg-subtle);
-        border-color: var(--#{$prefix}warning-border-subtle);
+        border-color: shade(var(--#{$prefix}warning-bg-background), 70%);
       }
       &.account-alert {
         color: var(--#{$prefix}danger-text-emphasis);
         background-color: var(--#{$prefix}danger-bg-subtle);
-        border-color: var(--#{$prefix}danger-border-subtle);
+        border-color: shade(var(--#{$prefix}danger-bg-background), 70%);
       }
     }
   }
@@ -320,14 +324,14 @@
   }
   .sort-option-container {
     display: flex;
-    align-items: baseline;
+    align-items: center;
+    gap: (0.25 * $spacer);
     .button-label {
       margin-right: 0.3em;
     }
     a.dropdown-toggle {
       display: inline-flex;
       margin-bottom: 0px;
-      height: 30px;
       font-size: 0.9em;
     }
   }
@@ -460,13 +464,14 @@
 // Fines, search history, library cards
 
 .useraccount-table {
-  margin-top: 0.7em;
-  border: 1px solid $gray-lighter;
+  margin-top: (0.5 * $spacer);
+  border: 1px solid $border-color;
   border-collapse: separate;
-  box-shadow: 0 15px 30px -35px $gray;
+  box-shadow: $box-shadow-sm;
+  border-radius: $border-radius-base;
   .headers {
     color: $text-color;
-    background: $gray-ultralight;
+    background: $light;
     th {
       background: none;
       &:last-child {

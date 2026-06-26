@@ -149,16 +149,19 @@
 .record-holdings-url-table {
     margin: 20px 0px;
     border: 1px solid $record-holdings-border-color;
-    border-top: none;
+    border-radius: $record-holdings-border-radius;
+    box-shadow: $record-holdings-box-shadow;
+    overflow: hidden;
     @media print {
         display: none;
     }
     .headers {
         display: flex;
         width: 100%;
-        padding: 0 15px;
+        padding: 0px $padding-large-horizontal;
         background: $record-holdings-title-background;
         color: $record-holdings-title-color;
+        border-bottom: 1px solid $border-color;
         vertical-align: middle;
     }
     .holdings-urls {
@@ -168,22 +171,23 @@
     .holdings-url-title {
         @extend .h4;
         font-weight: 500;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        margin-right: 15px;
+        margin-top: (0.75 * $spacer);
+        margin-bottom: (0.75 * $spacer);
+        margin-right: (0.5 * $spacer);
         display: inline-block;
     }
 }
 
 .record-holdings-table {
-    margin: 20px 0px;
+    margin: $spacer 0px;
     border: 1px solid $record-holdings-border-color;
-    border-top: none;
-    @media print {
-        border-top: 1px solid $record-holdings-border-color;
-    }
-    h5 {
-        padding-left: 15px;
+    border-radius: $record-holdings-border-radius;
+    box-shadow: $record-holdings-box-shadow;
+    border-collapse: separate;
+    overflow: hidden;
+    p {
+        padding: $padding-base-vertical $padding-large-horizontal;
+        margin: 0px;
     }
     .holdings-group {
         .status-available {
@@ -203,7 +207,7 @@
         }
     }
     .holdings-group:not(.headers+.holdings-group) {
-        border-top: 2px solid $record-holdings-border-color;
+        border-top: 1px solid $record-holdings-border-color;
     }
     // Fix horizontal alignment of uncertain status icon:
     span.icon.fa-circle-o {
@@ -363,7 +367,7 @@
         @include clearfix();
 
         &:nth-child(odd):not(.group-heading) {
-            background-color: $gray-ultralight;
+            background-color: $light;
         }
         &:not(:first-child) {
             @media print {
@@ -410,11 +414,14 @@
     .headers {
         display: flex;
         width: 100%;
-        padding: 0 15px;
+        padding: 0px $padding-large-horizontal;
         background: $record-holdings-title-background;
         color: $record-holdings-title-color;
+        border-bottom: 1px solid $border-color;
         vertical-align: middle;
         .dedup-information {
+            display: inline-flex;
+            align-items: baseline;
             flex: 1;
             @include media-breakpoint-down(sm) {
                 flex-basis: 70%;
@@ -446,17 +453,16 @@
     }
     .dedup-select {
         max-width: 130px;
+        margin-left: $spacer;
         display: inline-block;
         word-wrap: initial;
-        margin: 3px 0px 7px;
     }
     .holdings-title {
-        @extend .h4;
+        font-size: $font-size-h4;
         font-weight: 500;
-        margin-top: 15px;
-        margin-bottom: 15px;
-        margin-right: 15px;
         display: inline-block;
+        margin-top: (0.75 * $spacer);
+        margin-bottom: (0.75 * $spacer);
     }
     .btn-primary {
         padding: 2px 6px;
@@ -490,6 +496,9 @@
     .holdings-container.collapsible > .header {
         cursor: pointer;
         padding: 1px 0px;
+        &:hover {
+            text-decoration: $link-hover-decoration;
+        }
         @include media-breakpoint-down(md) {
             padding: 3px 0px;
         }
