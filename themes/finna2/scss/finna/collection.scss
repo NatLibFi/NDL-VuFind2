@@ -1,9 +1,4 @@
 .template-dir-collection {
-  &.template-name-view {
-    .collection-title {
-      margin-top: 0px;
-    }
-  }
   .mobile-navigation {
     bottom: 44px;
   }
@@ -12,11 +7,7 @@
     width: 100%;
   }
 }
-.collectionlist-tab .finna-filters {
-  margin-bottom: 0.5em;
-  border-top: 1px solid $gray-lighter;
-  border-bottom: 1px solid $gray-lighter;
-}
+
 .collection-list-controls {
   display: flex;
   margin-bottom: 0.5em;

@@ -10,6 +10,21 @@
 
   $resultsTotal = $results->getResultTotal();
   $params = $results->getParams();
+
+  $options = $this->searchOptions($params->getSearchClassId());
+  $filterList = $params->getFilterList(true);
+  $checkboxFilters = $params->getCheckboxFacets();
+  $filterCount = $this->searchbox()->getFilterCount($checkboxFilters, $filterList);
+  $defaultFilters = $options->getDefaultFilters();
+  $onlyDefaultsApplied = count($defaultFilters) == $filterCount;
+  foreach ($defaultFilters as $currentDefault) {
+    if (!$params->hasFilter($currentDefault)) {
+      $onlyDefaultsApplied = false;
+      break;
+    }
+  }
+
+  $side = $this->config()->offcanvasSide();
 ?>
 <?php if ($resultsTotal > 0): ?>
   <?php
@@ -24,22 +39,35 @@
     // We also need to inform the helper about any special parameters used in place
     // of the suppressed query:
     $extraUrlFields = $results->getUrlQuery()->getParamsWithConfiguredDefaults();
+
+    $urlQueryFromResult = $results->getUrlQuery();
+    $resetLink = !$onlyDefaultsApplied && isset($urlQueryFromResult) ? $urlQueryFromResult->removeAllFilters()->resetDefaultFilters() : false;
   ?>
   <div class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
     <div class="mobile-navigation-header-container">
-      <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
+      <span class="visible-xs close-offcanvas btn btn-link">
+      <button class="visible-xs close-offcanvas btn btn-link" data-toggle="vufind-offcanvas">
+        <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
+        <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
+        <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
+      </button>
+      </span>
+      <h1 class="hidden-xs"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
+      <div class="hidden-xs">
         <?=$this->component(
-      'finna-toggletip',
-      [
-          'icon' => 'help',
-          'ariaLabel' => $this->translate('Help'),
-          'contentHtml' => $this->translate('tooltip_facet_html'),
-        ]
-  );
-        ?>
+          'finna-toggletip',
+          [
+            'icon' => 'help',
+            'ariaLabel' => $this->translate('Help'),
+            'contentHtml' => $this->translate('tooltip_facet_html'),
+          ]
+        ); ?>
+      </div>
       <?php endif; ?>
-      <button class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+      <?php if ($resetLink): ?>
+        <a class="btn btn-link reset-filters-btn visible-xs" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
+      <?php endif; ?>
     </div>
 <?php endif; ?>
 <?php $checkboxFilters = $params->getCheckboxFacets(); ?>

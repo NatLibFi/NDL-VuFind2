@@ -79,12 +79,10 @@
 
 .sidebar .mobile-navigation-header-container {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
   padding: 0.7em 1.1em;
-  color: $sidebar-header-text-color;
-  background-color: $sidebar-background;
   h1 {
     padding: 0px;
   }

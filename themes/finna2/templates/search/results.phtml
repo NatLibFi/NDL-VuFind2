@@ -112,12 +112,21 @@
 
 <h1 tabindex="-1" id="results-heading" class="visually-hidden"><?= $this->transEsc('Search Results'); ?></h1>
 <?php if ($recordTotal > 0): ?>
-  <div class="mobile-nav-toggle-trigger visible-xs hidden-print"></div>
-  <div class="mobile-nav-toggle visible-xs hidden-print">
-    <div role="button" id="narrow-search-filter-toggle" class="btn btn-primary btn-mobile-nav" tabindex="0">
-      <?=$this->transEsc('Narrow Search')?>
-      <?php if ($filterCount > 0): ?>
-        <span class="active-filter-count">(<?=$filterCount?>)</span>
+  <div class="mobile-functions-container hidden-print visible-xs">
+    <div class="mobile-functions-row">
+      <button id="narrow-search-filter-toggle" data-toggle="vufind-offcanvas" class="btn btn-primary btn-mobile-nav search-filter-toggle">
+        <span class="btn-elements">
+          <?= $this->icon('sliders'); ?>
+          <span class="btn-text">
+            <?=$this->transEsc('Narrow Search')?>
+            <?php if ($filterCount > 0): ?>
+              (<?=$filterCount?>)
+            <?php endif; ?>
+          </span>
+        </span>
+      </button>
+      <?php if (!empty($this->layout()->finnaFilters)): ?>
+        <?=$this->layout()->finnaFilters?>
       <?php endif; ?>
     </div>
   </div>

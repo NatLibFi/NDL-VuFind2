@@ -1,0 +1,220 @@
+// Offcanvas toggle button
+@include media-breakpoint-down(md) {
+  .mobile-functions-container {
+    position: sticky;
+    top: $navbar-height;
+    display: flex;
+    z-index: $zindex-mobile-navbar;
+    padding-top: 0.9em;
+    padding-bottom: 0.9em;
+    background: $body-bg;
+    border-bottom: 1px solid $border-color;
+    &.sticky {
+      box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
+    }
+    .btn-mobile-nav {
+      display: flex;
+      height: fit-content;
+      align-self: center;
+      white-space: nowrap;
+    }
+    .mobile-functions-row {
+      position: relative;
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      width: 100%;
+      max-width: 100%;
+    }
+  }
+}
+
+@keyframes displayBtnText {
+  from {
+    grid-template-columns: 0fr 0fr;
+  }
+  to {
+    grid-template-columns: 0fr 1fr;
+  }
+}
+@keyframes hideBtnText {
+  from {
+    grid-template-columns: 0fr 1fr;
+  }
+  to {
+    grid-template-columns: 0fr 0fr;
+  }
+}
+
+#narrow-search-filter-toggle {
+  
+  width: fit-content;
+  
+  .btn-elements {
+    display: grid;
+    grid-template-columns: 0fr 1fr;
+    justify-content: start;
+    align-items: center;
+    white-space: nowrap;
+    width: max-content; //to prevent animation not showing full text
+  }
+  .btn-text {
+    white-space: nowrap;
+    overflow: hidden;
+    padding-left: 4px;
+  }
+  &.show-text .btn-elements {
+    animation: displayBtnText 1s ease;
+  }
+  &.icon-only .btn-elements {
+    grid-template-columns: 0fr 0fr;
+    animation: hideBtnText 1s ease;
+  }
+}
+
+// Offcanvas
+@mixin vufind-offcanvas {
+  $offcanvas-offset: 80vw !default;  // Width of open menu
+
+  // Separate offcanvas sidebar from other sidebars (needed for collection list).
+  $classes: ".side-facets-container-ajax, .mobile-sidebar-container";
+
+  body.vufind-offcanvas {
+    overflow-x: hidden; /* Prevent scroll on narrow devices */
+    transition: margin 0.5s;
+  }
+  .vufind-offcanvas-overlay {
+    position: fixed;
+    top: 0px;
+    display: none;
+    z-index: $zindex-sidebar;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,.3);
+    opacity: 0;
+    transition: opacity .5s;
+    cursor: pointer;
+  }
+  &.vufind-offcanvas .vufind-offcanvas-overlay {
+    display: block;
+  }
+  &.vufind-offcanvas .close-offcanvas,
+  .search-filter-toggle {
+    display: inline-block;
+    white-space: nowrap;
+  }
+  &.vufind-offcanvas-left {
+    .vufind-offcanvas-overlay {
+      right: -100%;
+    }
+    .vufind-offcanvas-toggle {
+      left: 0px;
+    }
+  }
+  &.vufind-offcanvas-right {
+    .vufind-offcanvas-overlay {
+      left: -100%;
+    }
+    .vufind-offcanvas-toggle {
+      right: 0px;
+    }
+  }
+  &.vufind-offcanvas.active {
+    overflow-y: hidden;
+    &.vufind-offcanvas-left {
+      .vufind-offcanvas-overlay {
+        right: -$offcanvas-offset;
+      }
+      .vufind-offcanvas-toggle {
+        left: $offcanvas-offset;
+      }
+    }
+    &.vufind-offcanvas-right {
+      .vufind-offcanvas-overlay {
+        left: -$offcanvas-offset;
+      }
+      .vufind-offcanvas-toggle {
+        right: $offcanvas-offset;
+      }
+    }
+    .vufind-offcanvas-overlay {
+      opacity: 1;
+      transition: opacity .5s;
+    }
+  }
+  &.vufind-offcanvas .sidebar:has(#{$classes}) {
+    position: fixed;
+    z-index: $zindex-sidebar;
+    height: 100%;
+    top: 0;
+    width: $offcanvas-offset;
+    padding: 1rem;
+    padding-top: 0px;
+    overflow-y: auto;
+    scrollbar-width: none;
+    background-color: $body-bg;
+    transition: left .5s, right .5s;
+    .mobile-navigation-header-container {
+      padding-right: 0px;
+      padding-left: 0px;
+      background-color: $body-bg;
+    }
+  }
+  &.vufind-offcanvas-left .sidebar:has(#{$classes}) {
+    left: -$offcanvas-offset;
+  }
+  &.vufind-offcanvas-right .sidebar:has(#{$classes}) {
+    right: -$offcanvas-offset;
+  }
+  &.vufind-offcanvas.active {
+    overflow-y: hidden;
+    &.vufind-offcanvas-left .sidebar:has(#{$classes}) {
+      left: 0px;
+    }
+    &.vufind-offcanvas-right .sidebar:has(#{$classes}) {
+      right: 0px;
+    }
+    .vufind-offcanvas-overlay {
+      opacity: 1;
+      transition: opacity .5s;
+    }
+  }
+}
+
+// Mobile menu - results
+@include media-breakpoint-down(sm) {
+  .template-name-results,
+  .template-name-search,
+  .template-name-blended,
+  .template-dir-collection {
+    @include vufind-offcanvas();
+  }
+}
+@include media-breakpoint-down(sm) {
+  .template-dir-collection {
+    .vufind-offcanvas-overlay {
+      opacity: 1;
+      transition: opacity .5s;
+    }
+  }
+}
+
+// Mobile menu - MyResearch
+@include media-breakpoint-down(md) {
+  .template-dir-myresearch,
+  .template-dir-reservationlist {
+    @include vufind-offcanvas();
+    &.vufind-offcanvas.active {
+      .vufind-offcanvas-overlay {
+        opacity: 1;
+        transition: opacity .5s;
+      }
+    }
+    .useraccount-nav {
+      margin-top: 0px;
+    }
+  }
+  #myresearch-sidebar.nav-tabs {
+    border: none;
+  }
+}

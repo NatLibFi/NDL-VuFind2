@@ -177,108 +177,6 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Return the container for side facets
-   * @returns {Element} The side facet container
-   */
-  function getSideFacetsContainer() {
-    if (document.body.classList.contains('template-name-mylist')) {
-      return document.querySelector('.mylist-bar.mobile-sidebar-container');
-    } else if (document.body.classList.contains('template-name-displaylist')) {
-      return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
-    }
-    return document.querySelector('.side-facets-container-ajax, .mobile-sidebar-container');
-  }
-
-  /**
-   * Check and keep focus within the search facet list
-   * @param {object} e Event object
-   */
-  function onFocusOutOfFacetContainer(e) {
-    const container = getSideFacetsContainer();
-    if (e.relatedTarget && !container.contains(e.relatedTarget)) {
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      setTimeout(() => {
-        document.activeElement.blur();
-        container.focus();
-      },
-      200
-      );
-    }
-  }
-
-  /**
-   * Toggle visibility of sidebar on mobile
-   * @param {object} e Event object
-   */
-  function toggleMobileSidebar(e) {
-    e.stopImmediatePropagation();
-    const sidebar = !document.querySelector('.template-name-view') ? document.querySelector('.sidebar') : document.querySelector('.sidebar.search-facets');
-    if (sidebar) {
-      sidebar.classList.toggle('open');
-      const container = getSideFacetsContainer();
-      document.querySelector('body').classList.toggle('prevent-scroll');
-      if (container) {
-        if (sidebar.classList.contains('open')) {
-          container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
-          container.role = 'dialog';
-          container.ariaModal = true;
-          container.tabIndex = '-1';
-          container.querySelector('h1').tabIndex = '0';
-          document.activeElement.blur();
-          container.querySelector('h1').focus();
-        } else {
-          container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
-          container.removeAttribute('role');
-          container.removeAttribute('aria-modal');
-          container.removeAttribute('tabindex');
-          container.querySelector('h1').removeAttribute('tabindex');
-          document.activeElement.blur();
-          document.querySelector('.mobile-nav-toggle .btn-mobile-nav').focus();
-        }
-      }
-    }
-  }
-
-  /**
-   * On keypress of mobile sidebar
-   * @param {object} e Event object
-   */
-  function onKeyPressMobileSidebar(e) {
-    if (e.which === 32 || e.which === 13) {
-      e.preventDefault();
-      toggleMobileSidebar(e);
-    }
-  }
-
-  /**
-   * Initialize mobile narrow search
-   */
-  function initMobileNarrowSearch() {
-    const container = getSideFacetsContainer();
-    if (container) {
-      document.querySelectorAll('.mobile-nav-toggle .btn-mobile-nav, .sidebar .sidebar-close-btn').forEach(el => {
-        el.addEventListener('click', toggleMobileSidebar);
-        el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
-          onKeyPressMobileSidebar(e);
-        });
-      });
-    }
-    const narrowSearchMobileTrigger = document.querySelector('.mobile-nav-toggle-trigger');
-    const narrowSearchMobile = document.querySelector('.mobile-nav-toggle');
-    if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
-      const narrowSearchMobileObserver = new IntersectionObserver(
-        ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
-        {
-          threshold: [1],
-          rootMargin: '-' + narrowSearchMobile.offsetHeight + 'px',
-        }
-      );
-      narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
-    }
-  }
-
-  /**
    * Set my account header as sticky
    */
   function setStickyMyaccountHeader() {
@@ -685,7 +583,6 @@ finna.layout = (function finnaLayout() {
     VuFind.listen('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
       finna.dateRangeVis.init();
       initToolTips($('.sidebar'));
-      initMobileNarrowSearch();
       VuFind.lightbox.bind($('.sidebar'));
     }, {once: true});
   }
@@ -933,45 +830,63 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Initialize filters toggle button events
+   * Init the narrow search button animation.
+   */
+  function initMobileNavBtnAnimation() {
+    const container = document.querySelector('.mobile-functions-row .active-filters.finna-filters');
+    const scrollableBar = container.querySelector(':scope > div');
+    if (container && (scrollableBar.clientWidth / container.clientWidth) > 1.5) {
+      const target = container.querySelector('a.filter-value');
+      if (target) {
+        const btn = document.querySelector('#narrow-search-filter-toggle');
+        let isVisible = null;
+        const options = {
+          root: container,
+          threshold: 0.5,
+        }
+        const callBack = (entries) => {
+          isVisible = entries[0].isIntersecting;
+          if (isVisible === false) {
+            btn.classList.add('icon-only');
+            btn.classList.remove('show-text');
+          } else {
+            if (btn.classList.contains('icon-only')) {
+              btn.classList.add('show-text');
+            }
+            btn.classList.remove('icon-only');
+          }
+        };
+        const observer = new IntersectionObserver(callBack, options);
+
+        observer.observe(target);
+      }
+    }
+  }
+
+  /**
+   * Initialize scrollable filters narrow search toggle button animation
    */
   function initFiltersToggle () {
-    var win = $(window);
+    var win = window;
+    const filterElement = document.querySelector('.mobile-functions-row .active-filters.finna-filters');
+    const scrollableListClasses = ["list-scrollable", "list-scrollable__list", "flex-row", "flex-nowrap", "overflow-x-auto"];
 
-    if (win.width() <= 991) {
-      $('.finna-filters .filters').addClass('hidden');
-      $('.finna-filters .filters-toggle .toggle-text').html(VuFind.translate('show_filters'));
+    if (filterElement) {
+      if (win.innerWidth <= 768) {
+        filterElement.classList.add(...scrollableListClasses);
+        finna.scrollableList.initScrollableList(document.querySelector('.mobile-functions-container'));
+      }
+
+      win.addEventListener('throttled-resize.finna', function checkFiltersEnabled(e, data) {
+        if (data.innerWidth >= 768) {
+          filterElement.classList.remove(...scrollableListClasses);
+        } else {
+          filterElement.classList.add(...scrollableListClasses);
+          finna.scrollableList.initScrollableList(document.querySelector('.mobile-functions-container'));
+          initMobileNavBtnAnimation();
+        }
+      });
     }
-
-    win.on('throttled-resize.finna', function checkFiltersEnabled(e, data) {
-      var filters = $('.finna-filters .filters');
-      if (data.w > 991 && filters.hasClass('hidden')) {
-        filters.removeClass('hidden');
-      }
-
-    });
-
-    $('.filters-toggle').on('click', function filterToggleClicked() {
-      var button = $(this);
-      var filters = button.closest('.finna-filters').find('.filters');
-      button.toggleClass('open');
-
-      /**
-       * Set state of given text
-       * @param {boolean} setHidden Set text
-       * @param {string} text Set button text
-       */
-      function setState(setHidden, text) {
-        filters.toggleClass('hidden', setHidden);
-        button.find('.toggle-text').html(VuFind.translate(text));
-      }
-
-      if (filters.hasClass('hidden')) {
-        setState(false, 'hide_filters');
-      } else {
-        setState(true, 'show_filters');
-      }
-    });
   }
 
   /**
@@ -1158,7 +1073,6 @@ finna.layout = (function finnaLayout() {
     initLocationService: initLocationService,
     initBuildingFilter: initBuildingFilter,
     initJumpMenus: initJumpMenus,
-    initMobileNarrowSearch: initMobileNarrowSearch,
     initOrganisationPageLinks: initOrganisationPageLinks,
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
@@ -1173,7 +1087,6 @@ finna.layout = (function finnaLayout() {
       initAnchorNavigationLinks();
       initTruncate();
       initContentNavigation();
-      initMobileNarrowSearch();
       setStickyMyaccountHeader();
       initMobileCartIndicator();
       initToolTips();
@@ -1197,6 +1110,7 @@ finna.layout = (function finnaLayout() {
       initHelpTabs();
       initPrintTriggers();
       initSelectAllButtonListeners();
+      initMobileNavBtnAnimation();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

@@ -265,6 +265,11 @@
     }
   }
 }
+@include media-breakpoint-down(md) {
+  .useraccount-nav li {
+    border-top: none;
+  }
+}
 @include media-breakpoint-up(md) {
   .useraccount-nav.move-list {
     position: -webkit-sticky;

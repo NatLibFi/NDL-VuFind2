@@ -7,24 +7,51 @@
   $this->options = $options = $results->getOptions();
 
   $resultsTotal = $results->getResultTotal();
+
+  $params = $results->getParams();
+  $filterList = $params->getFilterList(true);
+  $checkboxFilters = $params->getCheckboxFacets();
+  $filterCount = $this->searchbox()->getFilterCount($checkboxFilters, $filterList);
+  $defaultFilters = $options->getDefaultFilters();
+  $onlyDefaultsApplied = count($defaultFilters) == $filterCount;
+  foreach ($defaultFilters as $currentDefault) {
+    if (!$params->hasFilter($currentDefault)) {
+      $onlyDefaultsApplied = false;
+      break;
+    }
+  }
+  $resetLink = !$onlyDefaultsApplied ? $results->getUrlQuery()->removeAllFilters()->resetDefaultFilters() : false;
+
+  $side = $this->config()->offcanvasSide();
 ?>
 <?php if ($resultsTotal > 0): ?>
   <div class="mobile-sidebar-container">
     <div class="mobile-navigation-header-container">
-      <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
+      <span class="visible-xs close-offcanvas btn btn-link">
+      <button class="visible-xs close-offcanvas btn btn-link" data-toggle="vufind-offcanvas">
+        <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
+        <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
+        <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
+      </button>
+      </span>
+      <h1 class="hidden-xs"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
-        <?=$this->component(
-          'finna-toggletip',
-          [
-            'icon' => 'help',
-            'aria-label' => $this->translate('Help'),
-            'contentHtml' => $this->translate('tooltip_facet_html'),
-          ]
-        );
-        ?>
+        <div class="hidden-xs">
+          <?=$this->component(
+            'finna-toggletip',
+            [
+              'icon' => 'help',
+              'aria-label' => $this->translate('Help'),
+              'contentHtml' => $this->translate('tooltip_facet_html'),
+            ]
+          );
+          ?>
+        </div>
       <?php endif; ?>
-      <button class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
       <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
+      <?php if ($resetLink): ?>
+        <a class="btn btn-link reset-filters-btn visible-xs" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
+      <?php endif; ?>
     </div>
 <?php endif; ?>
 <?php $checkboxFilters = $results->getParams()->getCheckboxFacets(); ?>

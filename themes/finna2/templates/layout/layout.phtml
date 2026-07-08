@@ -248,13 +248,6 @@
       <?php if (!empty($this->layout()->advSearchHeader)): ?>
         <?=$this->layout()->advSearchHeader; ?>
       <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaFilters)): ?>
-        <div class="search-filters" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
-          <div class="container filters-container">
-            <?=$this->layout()->finnaFilters?>
-          </div>
-        </div>
-      <?php endif; ?>
       <?php if (!empty($this->layout()->finnaStreetBar)): ?>
         <?=$this->layout()->finnaStreetBar?>
       <?php endif; ?>
@@ -269,6 +262,13 @@
         <div id="content-main-tabs" class="finna-main-tabs">
           <div class="container">
             <?=$this->layout()->finnaMainTabs?>
+          </div>
+        </div>
+      <?php endif; ?>
+       <?php if (!empty($this->layout()->finnaFilters)): ?>
+        <div class="search-filters <?php if ($this->layout()->templateName != 'view'): ?>hidden-xs<?php endif; ?>" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
+          <div class="container filters-container">
+            <?=$this->layout()->finnaFilters?>
           </div>
         </div>
       <?php endif; ?>
@@ -294,6 +294,7 @@
         </div>
       </div>
     <?php endif; ?>
+    <div class="vufind-offcanvas-overlay" data-toggle="vufind-offcanvas"></div>
 
     <?php if ($finnaSurvey): ?>
       <?=$this->finnaSurvey()->render()?>
