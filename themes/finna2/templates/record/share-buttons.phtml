@@ -1,29 +1,28 @@
 <?php // keep old addthis classes as they may have been used to hide these buttons ?>
-<li class="share-buttons addthis-share-buttons">
-  <div class="share-buttons-toolbox addthis_toolbox addthis_default_style">
+<li class="addthis-share-buttons">
     <a
-      class="share-button-facebook"
-      title="Facebook"
+      class="share-button-facebook dropdown-item"
       aria-label="<?=$this->escapeHtmlAttr($this->translate('socialmedia_share_in_facebook') . ' (' . $this->translate('Open in a new window') . ')')?>"
       href="https://www.facebook.com/sharer.php?u=<?=urlencode($shareUrl)?>&amp;title=<?=urlencode($title)?>"
       target="_blank">
-        <?=$this->icon('facebook', 'facebook-icon') ?>
+        <?=$this->icon('facebook', 'facebook-icon') ?> Facebook
     </a>
+</li>
+<li>
     <a
-      class="share-button-twitter"
-      title="Twitter"
-      aria-label="<?=$this->escapeHtmlAttr($this->translate('socialmedia_share_in_twitter') . ' (' . $this->translate('Open in a new window') . ')')?>"
+      class="share-button-twitter dropdown-item"
+      aria-label="<?=$this->escapeHtmlAttr($this->translate('socialmedia_share_in_linkedin') . ' (' . $this->translate('Open in a new window') . ')')?>"
       href="https://twitter.com/share?url=<?=urlencode($shareUrl)?>&amp;text=<?=urlencode($title)?>"
       target="_blank">
-        <?=$this->icon('twitter', 'twitter-icon') ?>
+        <?=$this->icon('twitter', 'twitter-icon') ?> Twitter
     </a>
+</li>
+<li>
     <a
-      class="share-button-pinterest"
-      title="Pinterest"
+      class="share-button-pinterest dropdown-item"
       aria-label="<?=$this->escapeHtmlAttr($this->translate('socialmedia_share_in_pinterest') . ' (' . $this->translate('Open in a new window') . ')')?>"
       href="https://pinterest.com/pin/create/bookmarklet/?url=<?=urlencode($shareUrl)?>&amp;is_video=0&amp;description=<?=urlencode($title)?>"
       target="_blank">
-        <?=$this->icon('pinterest', 'pinterest-icon') ?>
+        <?=$this->icon('pinterest', 'pinterest-icon') ?> Pinterest
     </a>
-  </div>
 </li>

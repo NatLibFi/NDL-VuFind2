@@ -6,16 +6,57 @@
   // Set up some variables for convenience:
   $largeThumb = $this->record($this->driver)->getThumbnail('large');
 ?>
-<div class="hidden-xs record-toolbar">
-  <ul class="nav nav-pills hidden-print" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
-  <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
-    <li><a class="nav-link save-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow"><?=$this->icon('favorite') ?><span class="hidden-xs"> <?=$this->transEsc('Add to favorites')?></span></a></li>
-  <?php endif; ?>
-    <li><a class="nav-link mail-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow"><?=$this->icon('email') ?><span class="hidden-xs"> <?=$this->transEsc('Email this')?></span></a></li>
+<div class="record-toolbar link-list list-scrollable">
+  <button class="list-scrollable__scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+    <?=$this->icon('scrollable-prev')?>
+  </button>
+  <ul class="list-scrollable__list flex-row flex-nowrap overflow-x-auto" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
+    <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
+      <li class="list-scrollable__list-item js-list-item">
+        <a class="save-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow">
+          <?=$this->icon('favorite') ?><span> <?=$this->transEsc('Add to favorites')?></span>
+        </a>
+      </li>
+    <?php endif; ?>
+    <li class="dropdown list-scrollable__list-item js-list-item">
+      <a class="dropdown-toggle" role="button" data-bs-toggle="dropdown">
+        <?=$this->icon('share');?> <span><?=$this->transEsc('Share')?></span>
+        <?=$this->icon('collapse');?>
+      </a>
+      <ul class="dropdown-menu">
+        <?php if (!empty($shareUrl)): ?>
+          <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
+        <?php endif; ?>
+        <li>
+          <a class="dropdown-item mail-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow">
+            <?=$this->icon('email') ?><span> <?=$this->transEsc('Email this')?></span>
+          </a>
+        </li>
+        <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
+        <?php if ($QRCode): ?>
+          <li>
+            <a class="dropdown-item qrcodeLink" data-lightbox-image href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow">
+              <?=$this->icon('qrcode') ?><span> <?=$this->transEsc('QR Code') ?></span>
+            </a>
+          </li>
+        <?php endif; ?>
+        <?php if ($this->config()->get('config')->Record->permanent_link ?? true): ?>
+          <li>
+            <?php  // Collect permalink data:
+              $link = $this->serverUrl() . $this->recordLinker()->getUrl($this->driver, ['excludeSearchId' => true]);
+            ?>
+            <div class="copy-to-clipboard-container visually-hidden">
+              <span id="permalink"><?=$this->escapeHtml($link)?></span>
+            </div>
+            <div class="dropdown-item permanent-link"><?=$this->copyToClipboardButton('#permalink', false);?></div>
+          </li>
+        <?php endif; ?>
+      </ul>
+    </li>
   <?php $exportFormats = $this->export()->getFormatsForRecord($this->driver); ?>
   <?php if (count($exportFormats) > 0): ?>
-    <li class="dropdown">
-      <a class="nav-link export-toggle dropdown-toggle" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
+    <li class="dropdown list-scrollable__list-item js-list-item">
+      <a class="export-toggle dropdown-toggle" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
         <?=$this->icon('export') ?>
         <?=$this->transEsc('Export Record') ?>
       </a>
@@ -31,36 +72,41 @@
     </li>
   <?php endif; ?>
   <?php if (count($this->driver->getCitationFormats()) > 0): ?>
-    <li><a class="nav-link cite-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow"><?=$this->icon('cite') ?><span class="hidden-xs"> <?=$this->transEsc('Cite this')?></span></a></li>
+    <li class="list-scrollable__list-item js-list-item">
+      <a class="cite-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow">
+        <?=$this->icon('cite') ?><span> <?=$this->transEsc('Cite this')?></span>
+      </a>
+    </li>
   <?php endif; ?>
-  <li class="hidden-xs hidden-sm"><a class="nav-link print-record" role="button" href="#" data-trigger-print><?=$this->icon('print') ?> <?=$this->transEsc('Print')?></a></li>
-  <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
-  <?php if ($QRCode): ?>
-  <li class="dropdown">
-    <a class="nav-link dropdown-toggle qrcodeLink" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow" aria-expanded="false"><?=$this->icon('qrcode') ?><span class="hidden-xs"> <?=$this->transEsc('QR Code') ?></span></a>
-    <ul class="dropdown-menu qrcode" role="presentation">
-      <li class="text-center" role="img" aria-label="<?=$this->transEsc('QR Code') ?>">
-        <script type="text/template" class="qrCodeImgTag">
-          <img src="<?=$this->escapeHtmlAttr($QRCode);?>" alt="" class="qrcode">
-        </script>
-      </li>
-    </ul>
+  <li class="list-scrollable__list-item js-list-item">
+    <a class="print-record" role="button" href="#" data-trigger-print>
+      <?=$this->icon('print') ?> <?=$this->transEsc('Print')?>
+    </a>
   </li>
-  <?php endif; ?>
   <?php if ($this->cart()->isActive()): ?>
-    <li>
+    <li class="list-scrollable__list-item js-list-item">
       <?=$this->render('record/cart-buttons.phtml', ['id' => $this->driver->getUniqueId(), 'source' => $this->driver->getSourceIdentifier(), 'inToolBar' => true]); ?>
     </li>
   <?php endif; ?>
   <?php if ($this->permission()->allowDisplay('access.finna.StaffUiLink') && ($staffLink = $this->recordLinker()->getStaffUiUrl($this->driver))): ?>
-    <li><a class="nav-link staff-ui-link" href="<?=$this->escapeHtmlAttr($staffLink) ?>" title="<?=$this->transEsc('Staff UI')?>" rel="nofollow" target="_blank"><?=$this->icon('staff-link') ?><span class="hidden-xs"> <?=$this->transEsc('Staff UI')?></span></a></li>
+    <li class="list-scrollable__list-item js-list-item">
+      <a class="staff-ui-link" href="<?=$this->escapeHtmlAttr($staffLink) ?>" title="<?=$this->transEsc('Staff UI')?>" rel="nofollow" target="_blank">
+        <?=$this->icon('staff-link') ?><span class="hidden-xs"> <?=$this->transEsc('Staff UI')?></span>
+      </a>
+    </li>
   <?php endif; ?>
   <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-toolbar-tools')): ?>
     <?=$this->render($template)?>
   <?php endif; ?>
-  <?php if (!empty($shareUrl)): ?>
-    <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
-  <?php endif; ?>
+    <button class="list-scrollable__scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+      <?=$this->icon('scrollable-next')?>
+    </button>
   </ul>
 </div>
+<?php
+  $script = <<<JS
+      finna.scrollableList.initScrollableList(document.querySelector('.record'));
+      JS;
+?>
+<?=$this->assetManager()->outputInlineScriptString($script);?>
 <!-- END of: finna - RecordDriver/DefaultRecord/toolbar.phtml -->

@@ -54,6 +54,10 @@
   & .alert-success {
     margin-top: $modal-title-padding;
   }
+  .lightbox-image {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 #modal .cart-controls .btn { margin-bottom: 4px; }
