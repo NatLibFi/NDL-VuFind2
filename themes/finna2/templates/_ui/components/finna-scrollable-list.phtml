@@ -3,13 +3,13 @@
  *
  * @param string    title           Visible title for list (optional).
  * @param int       headingLevel    Level of heading element, h2 as default.
- * @param string    attributes      Attributes applied to the container of scrollable element.
+ * @param string    attributes      Attributes applied to the container of scrollable list element.
  * @param array     items           Items (links) in scrollable list.
  *  @param string    type            'link' or 'dropdown' for dropdown menu button, 'link' as default.
  *  @param string    link            'href' attribute.
- *  @param string    label           String or translation key for link text.
+ *  @param string    label           Link text.
  *  @param string    icon            Icon on the left side of link text (optional).
- *  @param array     dropdownItems   Items (links) in a dropdown menu, only for type 'dropdown'.
+ *  @param array     dropdownItems   Items (links) in a dropdown menu, only applicable for type 'dropdown'.
  *
  * Params available for dropdownItems:
  * - link
@@ -20,17 +20,17 @@
    $__headingLevel = $headingLevel ?? 2;
 ?>
 <?php $__attributes = $this->htmlAttributes($containerClass ?? []); ?>
-<?php if ($__title): ?>
-    <h<?=$__headingLevel?>><?=$__title?></h<?=$__headingLevel?>>
-<?php endif; ?>
 <div<?= $__attributes->add('class', ['scrollable-list-container']) ?>>
+    <?php if ($__title): ?>
+        <h<?=$__headingLevel?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$__headingLevel?>>
+    <?php endif; ?>
     <div class="link-list list-scrollable">
         <button class="list-scrollable__scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
             <?=$this->icon('scrollable-prev')?>
         </button>
         <ul class="list-scrollable__list flex-row flex-nowrap overflow-x-auto">
             <?php foreach ($items ?? [] as $__item): ?>
-                <li class="list-scrollable__list-item js-list-item">
+                <li class="list-scrollable__list-item js-list-item scrollable-list-item">
                     <?php $__type = $__item['type'] ?? 'link'; ?>
                     <?php if ($__type === 'dropdown'): ?>
                         <a class="dropdown-toggle" data-bs-toggle="dropdown" href="<?=$__item['link'] ?? ''?>" role="button">

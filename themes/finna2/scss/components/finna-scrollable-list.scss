@@ -95,7 +95,14 @@
   }
 }
 
+.scrollable-list-container {
+  .scrollable-list-title {
+    margin-bottom: 0px;
+  }
+}
+
 .link-list.list-scrollable {
+  margin-bottom: 0.5rem;
   > ul {
     align-items: baseline;
     margin: 0px;
@@ -104,7 +111,6 @@
   .list-scrollable__list {
     gap: 0.5rem;
     padding: 0.5rem 0rem;
-    margin-bottom: 0.5rem;
   }
   .list-scrollable__list-item {
     position: static;
