@@ -115,7 +115,8 @@
   .list-scrollable__list-item {
     position: static;
     width: fit-content;
-    a {
+    a,
+    button {
       color: $link-color;
     }
     .dropdown-toggle {
