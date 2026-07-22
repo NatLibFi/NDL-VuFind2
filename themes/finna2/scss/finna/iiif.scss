@@ -6,7 +6,8 @@
 }
 
 #tify {
-    height: 65vh;
+    height: 75vh;
+    min-height: 340px;
     @include media-breakpoint-down(lg) {
         height: 60vh;
     }
