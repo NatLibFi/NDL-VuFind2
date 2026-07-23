@@ -58,15 +58,6 @@
         }
     }
 
-    // Hide button labels
-    .tify-header-button > span {
-        // In a narrow viewport, Tify wants to show these labels in a hamburger
-        // menu, so we allow it. On larger viewports, we want them hidden.
-        @include media-breakpoint-up(lg) {
-            @include visually-hidden;
-        }
-    }
-
     .tify-icon {
         height: 28px;
     }
