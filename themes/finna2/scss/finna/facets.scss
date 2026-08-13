@@ -84,7 +84,9 @@ div.facet {
     }
     .text .facet-value {
       overflow: hidden;
-      text-overflow: ellipsis;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      display: inline;
     }
   }
   .title {

@@ -56,8 +56,8 @@
 
       .facet-value {
         overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+        white-space: pre-wrap;
+        overflow-wrap: break-word;
         display: inline;
       }
     }
