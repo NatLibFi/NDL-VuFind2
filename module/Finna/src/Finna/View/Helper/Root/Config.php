@@ -30,6 +30,8 @@
 
 namespace Finna\View\Helper\Root;
 
+use VuFind\Db\Entity\UserEntityInterface;
+
 /**
  * Config view helper.
  *
@@ -94,5 +96,19 @@ class Config extends \VuFind\View\Helper\Root\Config
         //return $this->get('config')->Record->similar_carousel_display ?? '';
         // Disabled 12.1.2024 due to performance issues
         return '';
+    }
+
+    /**
+     * Get the maximum daily comment count for a user per record.
+     *
+     * @param UserEntityInterface $user User
+     *
+     * @return int
+     */
+    public function getMaximumDailyCommentCount(UserEntityInterface $user): ?int
+    {
+        $config = $this->get('config');
+        $limits = $config['Social']['daily_record_comment_limit'] ?? [];
+        return $limits[$user->getAuthMethod()] ?? $limits['*'] ?? null;
     }
 }

@@ -29,10 +29,13 @@
 
 namespace Finna\AjaxHandler;
 
+use Finna\Ratings\RatingsService;
+use Finna\Record\ResourcePopulator;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Config\ConfigManager;
 
 /**
  * Factory for CommentRecord AJAX handler.
@@ -66,7 +69,20 @@ class CommentRecordFactory extends \VuFind\AjaxHandler\CommentRecordFactory
         $requestedName,
         ?array $options = null
     ) {
-        $result = parent::__invoke($container, $requestedName, $options);
+        $servicePluginManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+        $controllerPluginManager = $container->get('ControllerPluginManager');
+        $capabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
+        $result = new $requestedName(
+            $container->get(ResourcePopulator::class),
+            $servicePluginManager->get(\VuFind\Db\Service\CommentsServiceInterface::class),
+            $controllerPluginManager->get(\VuFind\Controller\Plugin\Captcha::class),
+            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
+            $capabilities->getCommentSetting() !== 'disabled',
+            $container->get(\VuFind\Record\Loader::class),
+            $container->get(\VuFind\Config\AccountCapabilities::class),
+            $container->get(RatingsService::class),
+            $container->get(ConfigManager::class)->getConfigArray('config')
+        );
         $result->setSearchRunner($container->get(\VuFind\Search\SearchRunner::class));
         return $result;
     }
