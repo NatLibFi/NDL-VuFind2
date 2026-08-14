@@ -16,57 +16,57 @@
  * - label
  * - icon
  */
-   $__title = $title ?? '';
-   $__headingLevel = $headingLevel ?? 2;
+  $__title = $title ?? '';
+  $__headingLevel = $headingLevel ?? 2;
 ?>
 <?php $__attributes = $this->htmlAttributes($containerClass ?? []); ?>
 <div<?= $__attributes->add('class', ['scrollable-list-container']) ?>>
-    <?php if ($__title): ?>
-        <h<?=$__headingLevel?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$__headingLevel?>>
-    <?php endif; ?>
-    <div class="link-list list-scrollable">
-        <button class="list-scrollable__scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
-            <?=$this->icon('scrollable-prev')?>
-        </button>
-        <ul class="list-scrollable__list flex-row flex-nowrap overflow-x-auto">
-            <?php foreach ($items ?? [] as $__item): ?>
-                <li class="list-scrollable__list-item js-list-item scrollable-list-item">
-                    <?php $__type = $__item['type'] ?? 'link'; ?>
-                    <?php if ($__type === 'dropdown'): ?>
-                        <a class="dropdown-toggle" data-bs-toggle="dropdown" href="<?=$__item['link'] ?? ''?>" role="button">
-                            <?php if (isset($__item['icon'])): ?>
-                                <?= $this->icon($__item['icon']) ?>
-                            <?php endif; ?>
-                            <?= $this->transEsc($__item['label'] ?? ''); ?>
-                            <?= $this->icon('collapse'); ?>
-                        </a>
-                        <ul class="dropdown-menu">
-                            <?php foreach ($__item['dropdownItems'] ?? [] as $__dropdownItem): ?>
-                                <li>
-                                    <a class="dropdown-item" href="<?=$__dropdownItem['link'] ?? ''?>" >
-                                        <?php if (isset($__dropdownItem['icon'])): ?>
-                                            <?= $this->icon($__dropdownItem['icon']) ?>
-                                        <?php endif; ?>
-                                        <?= $this->transEsc($__dropdownItem['label'] ?? ''); ?>
-                                    </a>
-                                </li>
-                            <?php endforeach; ?>
-                        </ul>
-                    <?php else: ?>
-                        <a href="<?=$__item['link'] ?? ''?>">
-                            <?php if (isset($__item['icon'])): ?>
-                                <?= $this->icon($__item['icon']) ?>
-                            <?php endif; ?>
-                            <?= $this->transEsc($__item['label'] ?? ''); ?>
-                        </a>
+  <?php if ($__title): ?>
+    <h<?=$__headingLevel?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$__headingLevel?>>
+  <?php endif; ?>
+  <div class="link-list list-scrollable">
+    <button class="list-scrollable__scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+      <?=$this->icon('scrollable-prev')?>
+    </button>
+    <ul class="list-scrollable__list flex-row flex-nowrap overflow-x-auto">
+      <?php foreach ($items ?? [] as $__item): ?>
+        <li class="list-scrollable__list-item js-list-item scrollable-list-item">
+          <?php $__type = $__item['type'] ?? 'link'; ?>
+          <?php if ($__type === 'dropdown'): ?>
+            <a class="dropdown-toggle" data-bs-toggle="dropdown" href="<?=$__item['link'] ?? ''?>" role="button">
+              <?php if (isset($__item['icon'])): ?>
+                <?= $this->icon($__item['icon']) ?>
+              <?php endif; ?>
+              <?= $this->transEsc($__item['label'] ?? ''); ?>
+              <?= $this->icon('collapse'); ?>
+            </a>
+            <ul class="dropdown-menu">
+              <?php foreach ($__item['dropdownItems'] ?? [] as $__dropdownItem): ?>
+                <li>
+                  <a class="dropdown-item" href="<?=$__dropdownItem['link'] ?? ''?>" >
+                    <?php if (isset($__dropdownItem['icon'])): ?>
+                      <?= $this->icon($__dropdownItem['icon']) ?>
                     <?php endif; ?>
+                    <?= $this->transEsc($__dropdownItem['label'] ?? ''); ?>
+                  </a>
                 </li>
-            <?php endforeach; ?>
-        </ul>
-        <button class="list-scrollable__scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
-            <?=$this->icon('scrollable-next')?>
-        </button>
-    </div>
+              <?php endforeach; ?>
+            </ul>
+          <?php else: ?>
+            <a href="<?=$__item['link'] ?? ''?>">
+              <?php if (isset($__item['icon'])): ?>
+                <?= $this->icon($__item['icon']) ?>
+              <?php endif; ?>
+              <?= $this->transEsc($__item['label'] ?? ''); ?>
+            </a>
+          <?php endif; ?>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+    <button class="list-scrollable__scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+      <?=$this->icon('scrollable-next')?>
+    </button>
+  </div>
 </div>
 <?php
   $script = <<<JS
