@@ -210,7 +210,7 @@
           $this->assetManager()->appendStyleLink('vendor/simple-keyboard/index.css');
           ?>
           <div class="keyboard-selection dropdown">
-            <button class="btn btn-primary dropdown-toggle" type="button" id="keyboard-selection-button" data-bs-toggle="dropdown" aria-expanded="false">
+            <button class="btn btn-primary dropdown-toggle" type="button" id="keyboard-selection-button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="<?= $this->transEsc('keyboard_selection_button') ?>">
               <?=$this->icon('keyboard-o') ?>
               <?=$this->icon('caret-down') ?>
             </button>
