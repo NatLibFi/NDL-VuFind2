@@ -116,8 +116,15 @@
     position: static;
     width: fit-content;
     a,
+    a .iconlabel,
     button {
       color: $link-color;
+    }
+    a .iconlabel {
+      margin: 0px;
+      &:before {
+        padding: 0px;
+      }
     }
     .dropdown-toggle {
       .show--open,

@@ -36,6 +36,8 @@
             <a class="dropdown-toggle" data-bs-toggle="dropdown" href="<?=$__item['link'] ?? ''?>" role="button">
               <?php if (isset($__item['icon'])): ?>
                 <?= $this->icon($__item['icon']) ?>
+              <?php elseif (isset($__item['iconLabel'])): ?>
+                <span class="iconlabel <?= $__item['iconLabel'] ?>"></span>
               <?php endif; ?>
               <?= $this->transEsc($__item['label'] ?? ''); ?>
               <?= $this->icon('collapse'); ?>
@@ -46,6 +48,8 @@
                   <a class="dropdown-item" href="<?=$__dropdownItem['link'] ?? ''?>" >
                     <?php if (isset($__dropdownItem['icon'])): ?>
                       <?= $this->icon($__dropdownItem['icon']) ?>
+                    <?php elseif (isset($__dropdownItem['iconLabel'])): ?>
+                     <span class="iconlabel <?= $__dropdownItem['iconLabel'] ?>"></span>
                     <?php endif; ?>
                     <?= $this->transEsc($__dropdownItem['label'] ?? ''); ?>
                   </a>
