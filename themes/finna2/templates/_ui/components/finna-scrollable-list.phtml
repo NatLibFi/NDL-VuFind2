@@ -8,13 +8,15 @@
  *  @param string    type            'link' or 'dropdown' for dropdown menu button, 'link' as default.
  *  @param string    link            'href' attribute.
  *  @param string    label           Link text.
- *  @param string    icon            Icon on the left side of link text (optional).
+ *  @param string    icon            Icon on the left side of link text, using iconHelper (optional).
+ *  @param string    iconElement     Icon on the left side of link text, using i-element (optional).
  *  @param array     dropdownItems   Items (links) in a dropdown menu, only applicable for type 'dropdown'.
  *
  * Params available for dropdownItems:
  * - link
  * - label
  * - icon
+ * - iconElement
  */
   $__title = $title ?? '';
   $__headingLevel = $headingLevel ?? 2;
@@ -36,8 +38,8 @@
             <a class="dropdown-toggle" data-bs-toggle="dropdown" href="<?=$__item['link'] ?? ''?>" role="button">
               <?php if (isset($__item['icon'])): ?>
                 <?= $this->icon($__item['icon']) ?>
-              <?php elseif (isset($__item['iconLabel'])): ?>
-                <span class="iconlabel <?= $__item['iconLabel'] ?>"></span>
+              <?php elseif (isset($__item['iconElement'])): ?>
+                <i class="icon icon--font <?= $__item['iconElement'] ?>" aria-hidden="true"></i>
               <?php endif; ?>
               <?= $this->transEsc($__item['label'] ?? ''); ?>
               <?= $this->icon('collapse'); ?>
@@ -48,8 +50,8 @@
                   <a class="dropdown-item" href="<?=$__dropdownItem['link'] ?? ''?>" >
                     <?php if (isset($__dropdownItem['icon'])): ?>
                       <?= $this->icon($__dropdownItem['icon']) ?>
-                    <?php elseif (isset($__dropdownItem['iconLabel'])): ?>
-                     <span class="iconlabel <?= $__dropdownItem['iconLabel'] ?>"></span>
+                    <?php elseif (isset($__dropdownItem['iconElement'])): ?>
+                      <i class="icon icon--font <?= $__dropdownItem['iconElement'] ?>" aria-hidden="true"></i>
                     <?php endif; ?>
                     <?= $this->transEsc($__dropdownItem['label'] ?? ''); ?>
                   </a>
@@ -60,6 +62,8 @@
             <a href="<?=$__item['link'] ?? ''?>">
               <?php if (isset($__item['icon'])): ?>
                 <?= $this->icon($__item['icon']) ?>
+              <?php elseif (isset($__item['iconElement'])): ?>
+                <i class="icon icon--font <?= $__item['iconElement'] ?>" aria-hidden="true"></i>
               <?php endif; ?>
               <?= $this->transEsc($__item['label'] ?? ''); ?>
             </a>
