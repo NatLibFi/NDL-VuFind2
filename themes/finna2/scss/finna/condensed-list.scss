@@ -14,7 +14,7 @@
     background: $gray-ultralight;
     .condensed-expand,
     .condensed-collapse {
-        margin-left: -1.2em;
+        margin-left: 0em;
         font-size: 1.2em;
         line-height: 1em;
         color: $gray-light;
@@ -50,12 +50,14 @@
             background: transparent;
         }
         .condensed-body {
-            .collapse-invisible-button {
+            .collapse-transparent-icon-button {
                 background: transparent; 
                 border: none; 
                 color: transparent; 
-                width: 0px; 
-                padding: 0px;
+                width: 1.2em; 
+                padding: 0em;
+                margin-left: -1.2em;
+                z-index: 1;
             }
         }
         .condensed-links,
