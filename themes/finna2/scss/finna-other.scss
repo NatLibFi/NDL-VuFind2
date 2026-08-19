@@ -1,5 +1,6 @@
 // finna/common contains mixins used in other files, so import it first
 @import "finna/common";
+@import "finna/offcanvas.scss";
 @import "finna/accordion";
 @import "finna/advanced-search";
 @import "finna/autocomplete";
@@ -54,7 +55,6 @@
 @import "finna/record";
 @import "finna/primo";
 @import "finna/filters";
-@import "finna/mobile-toolbar";
 @import "finna/mobile-table";
 @import "finna/audio-player";
 @import 'finna/feed-styles';

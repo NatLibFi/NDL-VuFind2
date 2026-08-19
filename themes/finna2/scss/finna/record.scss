@@ -3,6 +3,43 @@
     display: none;
   }
 }
+
+.record-toolbar {
+  &.link-list.list-scrollable {
+    .list-scrollable__list {
+      gap: 0rem;
+    }
+    .list-scrollable__scroll-next-btn {
+      right: -0.5rem;
+    }
+    .list-scrollable__scroll-prev-btn {
+      left: -0.5rem;
+    }
+  }
+  a,
+  .copy-to-clipboard-button {
+    @extend .btn, .btn-sm, .btn-outline-dark;
+    .icon {
+      color: $action-link-color;
+    }
+    &:hover,
+    &:focus-visible {
+      .icon {
+        color: inherit;
+      }
+    }
+    &.dropdown-item {
+      text-align: left;
+      border: none;
+      border-radius: 0;
+    }
+  }
+  .copy-to-clipboard-button {
+    padding: 0.5rem;
+    border: none;
+  }
+}
+
 .record {
   .media-left,
   .media-right {
@@ -99,59 +136,8 @@
     font-size: $font-size-small;
     color: $dark;
   }
-}
-
-.record-toolbar,
-.mobile-toolbar {
-  > ul {
-    align-items: baseline;
-  }
-  .nav {
-    align-items: center;
-    margin-bottom: $spacer;
-    > li:not(.share-buttons) {
-      padding: 0px;
-      margin: 0px;
-      > a, > div > a, > span > a {
-        @extend .btn, .btn-sm, .btn-outline-dark;
-        align-items: center;
-        margin-top: ($spacer * 0.5);
-        margin-right: ($spacer * 0.75);
-        .icon, .fa {
-          color: $action-link-color;
-          margin-right: (0.25 * $spacer);
-        }
-        &:hover, &:focus-visible, &.show {
-          .icon {
-            color: inherit;
-          }
-        }
-      }
-    }
-    .btn-bookbag-toggle > a.cart-remove {
-      @extend .btn-dark;
-      .icon {
-        color: inherit;
-      }
-    }
-    // QRCode in record view
-    img.qrcode {
-      border-radius: 8px;
-      min-width: 150px;
-    }
-    // Share buttons
-    > li.share-buttons {
-      display: flex;
-      flex-grow: 1;
-      justify-content: end;
-      padding-top: 5px;
-      .share-buttons-toolbox a {
-        padding-left: 5px;
-        display: inline-block;
-      }
-    }
-  }
-}
+}   
+  
 .record-alt-titles {
   color: $gray-slightly-lighter;
   margin-bottom: 12px;

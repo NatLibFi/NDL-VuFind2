@@ -51,20 +51,19 @@
 .search-filters {
   position: relative;
   background: $filterContent-background;
-  border-top: 1px solid $filterContent-border-color;
-  border-bottom: 1px solid $filterContent-border-color;
+  &:not(.list-scrollable) {
+    border-bottom: 1px solid $filterContent-border-color;
+  }
 }
 
 .finna-filters,
 .results .noresults {
-  display: inline-flex;
   align-items: baseline;
-  flex-wrap: wrap;
-  width: 100%;
   padding: 0.4em 0em;
   color: $filterContent-text-color;
   .filter-options {
     display: flex;
+    margin-right: 0.7em;
     .filters-toggle {
       display: flex;
       gap: 0.4em;
@@ -87,21 +86,12 @@
       }
     }
   }
-  .filters {
-    display: inline-flex;
-    flex: 1;
-    flex-wrap: wrap;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
-  }
   .filters-term {
     margin-left: 0.4em;
   }
 
   .filter-title-group {
     display: inline-flex;
-    flex-wrap: wrap;
     align-items: center;
     max-width: 100%;
   }
@@ -128,6 +118,20 @@
   }
   .title-value-pair {
     margin-left: 0.7em;
+    .operator-and-term {
+      white-space: nowrap;
+    }
+  }
+}
+@include media-breakpoint-up(sm) {
+  .finna-filters,
+  .results .noresults {
+    display: inline-flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
   }
 }
 @include media-breakpoint-down(md) {
@@ -148,7 +152,6 @@
   .results .noresults {
     .filter-options {
       align-items: flex-start;
-      padding-right: 0.7em;
     }
   }
 }
@@ -162,6 +165,14 @@
     &:focus {
       text-decoration: line-through;
       background-color: $state-danger-text;
+    }
+  }
+  &.list-scrollable {
+    max-width: 100%;
+    scrollbar-width: none;
+    > div {
+      display: flex;
+      gap: 0.5em;
     }
   }
 }
@@ -181,15 +192,11 @@
 @include media-breakpoint-down(md) {
   .filters {
     width: 100%;
-    font-size: 80%;
     // Reset specific font sizes
     .btn,
     .dropdown-menu {
       font-size: 100%;
     }
-  }
-  .filter-value {
-    max-width: 95%;
   }
 }
 
@@ -222,8 +229,12 @@
   }
 }
 
+.reset-filters-btn {
+  white-space: nowrap;
+}
+
 // Active filters on record page
-.template-name-view .filters-container .finna-filters {
+.template-name-view :not(.tab-content) .filters-container .finna-filters {
   .filter-value {
     color: $text-color;
     background: $gray-ultralight;

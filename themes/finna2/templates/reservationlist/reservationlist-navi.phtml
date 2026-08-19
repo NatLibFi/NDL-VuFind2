@@ -11,11 +11,19 @@
      }
   }
   $lists = array_column($lists, 'list_entity');
+
+  $side = $this->config()->offcanvasSide();
 ?>
 <ul class="dropdown-menu subtabs collapse show" role="presentation">
   <li class="mobile-navigation-header-container visible-xs visible-sm">
     <h1 class="mobile-navigation-header"><?=$this->transEsc('ReservationList::All hold requests')?></h1>
-    <button class="sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+    <span class="visible-xs visible-sm close-offcanvas">
+      <button class="close-offcanvas btn btn-link" data-toggle="vufind-offcanvas">
+        <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
+        <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
+        <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
+      </button>
+    </span>
   </li>
   <?php $active = empty($activeId); ?>
   <li>
