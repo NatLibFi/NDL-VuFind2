@@ -2550,7 +2550,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $displayPlace = $this->getLanguageSpecificValueByPath($placeNode, 'displayPlace', $language);
         $displayPlace = trim($displayPlace, ", \n\r\t\v\0");
         if ('' === $displayPlace) {
-            // Gather display name from placeNameSet:
+            // Gather display name from namePlaceSet:
             $partOfPlaceName = [];
             foreach ($reader->all($placeNode, 'place/namePlaceSet') as $nameSet) {
                 $value = $this->getLanguageSpecificValueByPath($nameSet, 'appellationValue', $language) ?? '';
