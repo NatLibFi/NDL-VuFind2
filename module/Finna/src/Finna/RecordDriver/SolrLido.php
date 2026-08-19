@@ -1588,31 +1588,11 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 
             $places = [];
             foreach ($reader->all($node, 'eventPlace') as $eventPlace) {
-                $displayPlace = trim($reader->firstValue($eventPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
-                $placeId = $reader->first($eventPlace, 'place/placeID');
+                $displayPlace = $this->getPlaceName($eventPlace);
                 if (!$displayPlace) {
-                    // Gather display name from placeNameSet:
-                    $partOfPlaceName = [];
-                    foreach ($reader->all($eventPlace, 'place/namePlaceSet') as $nameSet) {
-                        $value = $reader->firstValue($nameSet, 'appellationValue') ?? '';
-                        if ('' !== $value) {
-                            $partOfPlaceName[] = $value;
-                        }
-                    }
-                    foreach ($reader->all($eventPlace, 'place/partOfPlace') as $part) {
-                        while ($part) {
-                            $appellationValue = $reader->firstValue($part, 'namePlaceSet/appellationValue') ?? '';
-                            if ('' !== $appellationValue) {
-                                $partOfPlaceName[] = $appellationValue;
-                            }
-                            $part = $reader->first($part, 'partOfPlace');
-                        }
-                    }
-                    if (!$partOfPlaceName) {
-                        continue;
-                    }
-                    $displayPlace = implode(', ', $partOfPlaceName);
+                    continue;
                 }
+                $placeId = $reader->first($eventPlace, 'place/placeID');
                 if ($placeId) {
                     $placeData = [
                         'placeName' => $displayPlace,
@@ -2300,19 +2280,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $results = [];
         $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace';
         foreach ($reader->all(path: $path) as $subjectPlace) {
-            $displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
-            if ('' === $displayPlace) {
-                $placeNames = $reader->allValues($subjectPlace, 'place/namePlaceSet/appellationValue');
-                foreach ($reader->all($subjectPlace, 'place/partOfPlace') as $part) {
-                    while ($part) {
-                        if ($partName = $reader->firstValue($part, 'namePlaceSet/appellationValue')) {
-                            $placeNames[] = $partName;
-                        }
-                        $part = $reader->first($part, 'partOfPlace');
-                    }
-                }
-                $displayPlace = implode(', ', $placeNames);
-            }
+            $displayPlace = $this->getPlaceName($subjectPlace);
             if (!$displayPlace) {
                 continue;
             }
@@ -2565,6 +2533,47 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             }
         }
         return $results;
+    }
+
+    /**
+     * Get place name from a place node.
+     *
+     * @param ?array $placeNode Place node
+     *
+     * @return string
+     */
+    public function getPlaceName(?array $placeNode): string
+    {
+        $reader = $this->getXmlReader();
+        $language = $this->getLocale();
+
+        $displayPlace = $this->getLanguageSpecificValueByPath($placeNode, 'displayPlace', $language);
+        $displayPlace = trim($displayPlace, ", \n\r\t\v\0");
+        if ('' === $displayPlace) {
+            // Gather display name from placeNameSet:
+            $partOfPlaceName = [];
+            foreach ($reader->all($placeNode, 'place/namePlaceSet') as $nameSet) {
+                $value = $this->getLanguageSpecificValueByPath($nameSet, 'appellationValue', $language) ?? '';
+                if ('' !== $value) {
+                    $partOfPlaceName[] = $value;
+                }
+            }
+            foreach ($reader->all($placeNode, 'place/partOfPlace') as $part) {
+                while ($part) {
+                    $appellationValue = $this->getLanguageSpecificValueByPath(
+                        $part,
+                        'namePlaceSet/appellationValue',
+                        $language
+                    ) ?? '';
+                    if ('' !== $appellationValue) {
+                        $partOfPlaceName[] = $appellationValue;
+                    }
+                    $part = $reader->first($part, 'partOfPlace');
+                }
+            }
+            $displayPlace = implode(', ', $partOfPlaceName);
+        }
+        return $displayPlace;
     }
 
     /**
