@@ -23,8 +23,8 @@
 
   $this->headMeta()->appendName('format-detection', 'telephone=no');
 
-    // Set skip-link address
-  $this->layout()->finnaBasicView = 'results-heading';
+  // Set skip-link address
+  $this->layout()->finnaSkipLinkTarget='results-heading';
 
   // Set page title.
   $title = $this->truncate($this->driver->getTitle(), 180);
