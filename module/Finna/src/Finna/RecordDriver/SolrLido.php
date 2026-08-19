@@ -2542,7 +2542,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      *
      * @return string
      */
-    public function getPlaceName(?array $placeNode): string
+    protected function getPlaceName(?array $placeNode): string
     {
         $reader = $this->getXmlReader();
         $language = $this->getLocale();
