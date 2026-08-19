@@ -2547,13 +2547,15 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $reader = $this->getXmlReader();
         $language = $this->getLocale();
 
-        $displayPlace = $this->getLanguageSpecificValueByPath($placeNode, 'displayPlace', $language);
-        $displayPlace = trim($displayPlace, ", \n\r\t\v\0");
+        $displayPlace = trim(
+            $this->getLanguageSpecificValueByPath($placeNode, 'displayPlace', $language),
+            ", \n\r\t\v\0"
+        );
         if ('' === $displayPlace) {
             // Gather display name from namePlaceSet:
             $partOfPlaceName = [];
             foreach ($reader->all($placeNode, 'place/namePlaceSet') as $nameSet) {
-                $value = $this->getLanguageSpecificValueByPath($nameSet, 'appellationValue', $language) ?? '';
+                $value = $this->getLanguageSpecificValueByPath($nameSet, 'appellationValue', $language);
                 if ('' !== $value) {
                     $partOfPlaceName[] = $value;
                 }
@@ -2564,7 +2566,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                         $part,
                         'namePlaceSet/appellationValue',
                         $language
-                    ) ?? '';
+                    );
                     if ('' !== $appellationValue) {
                         $partOfPlaceName[] = $appellationValue;
                     }
