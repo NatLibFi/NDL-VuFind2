@@ -176,7 +176,7 @@ trait MockLoadersTrait
      */
     public function getFinnaFileLoader(array $urls = []): FileLoader
     {
-        $mockedGuzzle = $this->getMockBuilder(GuzzleService::class)->onlyMethods(['createClient'])
+        $mockedGuzzle = $this->getMockBuilder(GuzzleService::class)->onlyMethods(['createGuzzleClient'])
             ->disableOriginalConstructor()->getMock();
         $mockedGuzzleClient = $this->getMockBuilder(Client::class)->onlyMethods(['request'])
             ->disableOriginalConstructor()->getMock();
@@ -188,7 +188,7 @@ trait MockLoadersTrait
                 return new Response(404);
             }
         );
-        $mockedGuzzle->expects($this->any())->method('createClient')->willReturn($mockedGuzzleClient);
+        $mockedGuzzle->expects($this->any())->method('createGuzzleClient')->willReturn($mockedGuzzleClient);
         $mockedCacheManager = $this->getMockBuilder(Manager::class)->onlyMethods([])
             ->disableOriginalConstructor()->getMock();
 

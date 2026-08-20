@@ -44,9 +44,8 @@ use VuFind\Http\GuzzleService;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
-class Loader implements \VuFindHttp\HttpServiceAwareInterface
+class Loader
 {
-    use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
@@ -99,21 +98,30 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         $result = true;
         $error = '';
         if (!file_exists($path) || time() - filemtime($path) > $maxAge * 60) {
-            $client = $this->httpService->createClient(
+            $fileStream = new FileStream($path);
+            $client = $this->guzzleService->createGuzzleClient($url, 300);
+            $response = $client->request(
+                'GET',
                 $url,
-                \Laminas\Http\Request::METHOD_GET,
-                300
+                [
+                    RequestOptions::SINK => $fileStream,
+                    RequestOptions::ON_HEADERS => function (ResponseInterface $response) use (
+                        &$fileStream,
+                    ): void {
+                        // Start output when the headers and correct status code are received:
+                        if ($response->getStatusCode() === 200) {
+                            $fileStream->setOutputActive(true);
+                        }
+                    },
+                ],
             );
-            $client->setStream($path);
-            $client->setOptions(['useragent' => 'VuFind']);
-            $adapter = new \Laminas\Http\Client\Adapter\Curl();
-            $client->setAdapter($adapter);
-            $response = $client->send();
 
-            if (!$response->isSuccess()) {
-                $error = "Failed to retrieve file from $url: "
-                    . $response->getStatusCode() . ' ' . $response->getReasonPhrase();
-                $this->debug($error);
+            if ($response->getStatusCode() !== 200) {
+                $this->logError(
+                    "Failed to retrieve file from $url: " . $response->getStatusCode() . ' '
+                    . $response->getReasonPhrase()
+                );
+                $this->logError($error);
                 $result = false;
             }
         }
@@ -136,7 +144,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         string $format
     ): bool {
         $stdoutStream = new StdoutStream();
-        $client = $this->guzzleService->createClient($url, 300);
+        $client = $this->guzzleService->createGuzzleClient($url, 300);
         $response = $client->request(
             'GET',
             $url,
