@@ -448,11 +448,15 @@
     .event-search-container {
         flex: 0;
         width: 100%;
+        .event-text-search {
+            height: $input-height;
+        }
     }
     .event-date-container {
         display: flex;
         flex: 0;
-        gap: 10px;
+        gap: $spacer;
+        align-items: last baseline;
         .input-field {
             width: 100px;
             @include media-breakpoint-up(sm) {
@@ -477,9 +481,8 @@
         }
     }
     .linked-event-search {
-        margin: 0;
-        padding: $padding-base-vertical $padding-base-horizontal;
         height: $input-height-base;
+        margin: 0;
     }
     .event-geolocation {
         text-transform: uppercase;
