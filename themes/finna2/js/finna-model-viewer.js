@@ -543,7 +543,6 @@ class ModelViewerClass extends HTMLElement {
       head.append(...scripts);
     } else {
       this.setDependenciesLoaded();
-      this.dependenciesLoaded = true;
     }
   }
 
