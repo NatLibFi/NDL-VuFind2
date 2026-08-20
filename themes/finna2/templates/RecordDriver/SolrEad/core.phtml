@@ -52,7 +52,7 @@
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 class="record-title hidden-xs" id="results-heading"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       <?php if ($results = $this->driver->getAlternativeTitles()): ?>
         <div class="recordAltTitles record-alt-titles">
           <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
