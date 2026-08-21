@@ -155,13 +155,14 @@
   .control-container {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
   }
 }
 @include media-breakpoint-down(md) {
   .mylist-controls {
     .sort-option-container {
       a.dropdown-toggle {
+        max-width: max-content;
         white-space: initial;
       }
     }

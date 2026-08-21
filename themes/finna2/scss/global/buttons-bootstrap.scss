@@ -13,10 +13,6 @@
     color: $btn-default-color;
   }
 }
-.btn-sm {
-  border-width: 1px;
-}
-
 .btn-default {
   @extend .btn, .btn-outline-dark;
 }

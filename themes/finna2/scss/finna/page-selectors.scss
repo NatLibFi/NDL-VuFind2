@@ -1,10 +1,11 @@
 .pagination-simple {
   margin: 0px;
-  font-size: 0.9em;
+  font-size: $font-size-small;
   li {
     display: inline-block;
     vertical-align: middle;
     list-style-type: none;
+    margin-right: (0.5 * $spacer);
     a {
       .icon {
         color: $action-link-color;
@@ -23,6 +24,7 @@
   align-items: center;
   justify-content: center;
   gap: (0.25 * $spacer);
+  margin: $spacer 0;
   // paginate_button is used in DataTables
   > li.paginate_button {
     @extend .page-item;
@@ -89,16 +91,6 @@
     > a.page-link {
       @extend .btn, .btn-primary, .btn-lg;
       width: auto;
-    }
-  }
-}
-@include media-breakpoint-down(sm) {
-  .pagination {
-    > li {
-      > a {
-        padding: calc(#{$padding-base-horizontal}/1.5);
-        font-size: 1em;
-      }
     }
   }
 }

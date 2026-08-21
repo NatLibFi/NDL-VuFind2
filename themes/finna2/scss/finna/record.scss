@@ -21,11 +21,13 @@
       left: -0.5rem;
     }
   }
-  a,
-  .copy-to-clipboard-button {
+  > ul > li > a[role="button"], .btn-bookbag-toggle > a {
     @extend .btn, .btn-sm, .btn-outline-dark;
-    .icon {
+    &:not(.show) .icon {
       color: $action-link-color;
+    }
+    :not(.show--open) .icon, :not(.show--closed) .icon {
+      color: inherit;
     }
     &:hover,
     &:focus-visible {
@@ -42,6 +44,7 @@
   .copy-to-clipboard-button {
     padding: 0.5rem;
     border: none;
+    font-weight: inherit;
   }
 }
 

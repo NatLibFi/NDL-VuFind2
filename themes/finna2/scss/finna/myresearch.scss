@@ -220,7 +220,7 @@
     &.menu-header > h1 {
       display: block;
       font-size: $font-size-h4;
-      font-weight: 500;
+      font-weight: 600;
       text-transform: none;
     }
     li > a {
@@ -264,7 +264,7 @@
     &.active > a {
       background-color: $sidebar-active-background;
       color: $sidebar-active-color;
-      font-weight: bold;
+      font-weight: 700;
     }
   }
 }

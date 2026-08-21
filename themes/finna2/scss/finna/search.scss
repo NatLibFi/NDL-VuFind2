@@ -193,11 +193,12 @@ $thumbnail-width-large:  200px !default;
 }
 
 h2.search-title,
-h2.title {
+h2.title,
+.result-body h3 {
   padding: 0px;
   margin: 0px;
   font-size: $font-size-h4;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.1em;
 }
 .browse-title {
@@ -265,8 +266,6 @@ h2.title {
 .add-to-favorite-col {
   a {
     @extend .btn, .btn-sm, .btn-outline-dark;
-
-    margin-bottom: (0.5 * $spacer);
     width: 100%;
     .icon {
       color: $action-link-color;
@@ -293,6 +292,7 @@ h2.title {
       background-color: $body-bg;
       align-items: center;
       gap: 0;
+      width: auto;
       .icon {
         color: $action-link-color;
         margin-right: (0.25 * $spacer);
@@ -312,6 +312,7 @@ h2.title {
     right: 0px;
     a {
       text-align: center;
+      margin-bottom: (0.5 * $spacer);
     }
   }
 }

@@ -15,7 +15,6 @@
 
 .dropdown-menu {
   padding: 0px;
-  overflow: hidden;
   border: 1px solid $dropdown-border;
   border-radius: $border-radius-base;
   min-width: 0;
@@ -39,11 +38,6 @@
     // Hide focus effect so that menus look ok even if first item is automatically focused:
     background-color: inherit;
     color: inherit;
-  }
-  &:focus-visible {
-    color: $dropdown-link-hover-color;
-    background-color: $dropdown-link-hover-bg;
-    box-shadow: none;
   }
   &.active:focus {
     // Make sure the active item is displayed properly:

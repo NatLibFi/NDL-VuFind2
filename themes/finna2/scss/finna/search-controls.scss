@@ -11,9 +11,9 @@
 .search-controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
   margin-bottom: 0.5rem;
   .alert {
     margin-bottom: 0px;
@@ -31,8 +31,7 @@
     margin-top: (0.5 * $spacer);
     margin-bottom: (0.5 * $spacer);
     gap: 0.5rem;
-    font-size: 0.9em;
-    width: 100%;
+    font-size: $font-size-small;
   }
   .sort-option-container,
   .limit-option-container,
@@ -49,7 +48,7 @@
     .view-dropdown {
       .dropdown-toggle {
         display: inline-block;
-        max-width: 150px;
+        max-width: 200px;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
@@ -67,6 +66,7 @@
   }
   .search-controls {
     text-align: right;
+    margin-top: 0px;
   }
 }
 
@@ -90,8 +90,7 @@
   .dropdown-toggle {
     display: inline-block;
     padding: 0.4em;
-    font-size: 1em;
-    font-weight: 600;
+    font-size: $font-size-small;
     @extend .btn, .btn-outline-dark;
   }
   .dropdown-menu {

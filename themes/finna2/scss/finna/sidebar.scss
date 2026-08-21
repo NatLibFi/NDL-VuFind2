@@ -68,7 +68,7 @@
   padding: $padding-large-vertical $padding-base-horizontal;
   margin: 0px;
   font-size: $font-size-h4;
-  font-weight: 500;
+  font-weight: 600;
   color: $sidebar-header-text-color;
   background-color: $sidebar-background;
   word-wrap: break-word;
@@ -95,7 +95,8 @@
     color: inherit;
   }
   .finna-toggletip button {
-    font-size: $font-size-large;
+    font-size: $font-size-icon-large;
+    margin-right: 0.25rem;
   }
 }
 @include media-breakpoint-down(md) {
