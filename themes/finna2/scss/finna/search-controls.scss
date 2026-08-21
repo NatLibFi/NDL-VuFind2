@@ -32,6 +32,7 @@
     margin-bottom: (0.5 * $spacer);
     gap: 0.5rem;
     font-size: 0.9em;
+    width: 100%;
   }
   .sort-option-container,
   .limit-option-container,
@@ -74,6 +75,11 @@
   .view-options,
   .view-dropdown {
     display: inline-block;
+  }
+  .search-controls {
+    .control-container {
+      width: auto;
+    }
   }
 }
 

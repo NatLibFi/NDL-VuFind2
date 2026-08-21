@@ -109,6 +109,7 @@
 @include media-breakpoint-down(sm) {
   .record {
     .media-body {
+      display: block;
       width: 100%;
     }
     .media-left,
@@ -141,8 +142,8 @@
     font-size: $font-size-small;
     color: $dark;
   }
-}   
-  
+}
+
 .record-alt-titles {
   color: $gray-slightly-lighter;
   margin-bottom: 12px;
