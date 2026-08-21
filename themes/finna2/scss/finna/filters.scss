@@ -51,7 +51,7 @@
 .search-filters {
   position: relative;
   background: $filterContent-background;
-  &:not(.list-scrollable) {
+  &:not(.list-scrollable) .finna-filters {
     border-bottom: 1px solid $filterContent-border-color;
   }
 }
@@ -123,6 +123,22 @@
     }
   }
 }
+@include media-breakpoint-down(sm) {
+  .finna-filters,
+  .results .noresults {
+    .filter-options {
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      .filters-toggle {
+        font-size: 80%;
+      }
+    }
+    .title-value-pair {
+      margin-left: 0px;
+    }
+  }
+}
 @include media-breakpoint-up(sm) {
   .finna-filters,
   .results .noresults {
@@ -144,6 +160,9 @@
       .filters-toggle {
         font-size: 80%;
       }
+    }
+    .title-value-pair {
+      margin-left: 0px;
     }
   }
 }
@@ -230,6 +249,8 @@
 }
 
 .reset-filters-btn {
+  color: $text-color;
+  text-decoration: underline;
   white-space: nowrap;
 }
 

@@ -263,7 +263,7 @@
         </div>
       <?php endif; ?>
       <?php if (!empty($this->layout()->finnaFilters)): ?>
-        <div class="search-filters <?php if ($this->layout()->templateName != 'view'): ?>hidden-xs<?php endif; ?>" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
+        <div class="search-filters <?php if ($this->layout()->templateName != 'view'): ?>hidden-xs hidden-sm<?php endif; ?>" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
           <div class="container filters-container">
             <?=$this->layout()->finnaFilters?>
           </div>

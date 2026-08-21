@@ -24,22 +24,11 @@
         <?=$this->icon('collapse');?>
       </a>
       <ul class="dropdown-menu">
-        <?php if (!empty($shareUrl)): ?>
-          <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
-        <?php endif; ?>
         <li>
           <a class="dropdown-item mail-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Email')) ?>" title="<?=$this->transEsc('Email this')?>" rel="nofollow">
             <?=$this->icon('email') ?><span> <?=$this->transEsc('Email this')?></span>
           </a>
         </li>
-        <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
-        <?php if ($QRCode): ?>
-          <li>
-            <a class="dropdown-item qrcodeLink" data-lightbox-image href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow">
-              <?=$this->icon('qrcode') ?><span> <?=$this->transEsc('QR Code') ?></span>
-            </a>
-          </li>
-        <?php endif; ?>
         <?php if ($this->config()->get('config')->Record->permanent_link ?? true): ?>
           <li>
             <?php  // Collect permalink data:
@@ -50,6 +39,17 @@
             </div>
             <div class="dropdown-item permanent-link"><?=$this->copyToClipboardButton('#permalink', false);?></div>
           </li>
+        <?php endif; ?>
+        <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>
+        <?php if ($QRCode): ?>
+          <li>
+            <a class="dropdown-item qrcodeLink" data-lightbox-image href="<?=$this->escapeHtmlAttr($QRCode);?>" rel="nofollow">
+              <?=$this->icon('qrcode') ?><span> <?=$this->transEsc('QR Code') ?></span>
+            </a>
+          </li>
+        <?php endif; ?>
+        <?php if (!empty($shareUrl)): ?>
+          <?=$this->partial('record/share-buttons.phtml', ['shareUrl' => $shareUrl, 'title' => $this->driver->tryMethod('getTitle', [], '')]);?>
         <?php endif; ?>
       </ul>
     </li>

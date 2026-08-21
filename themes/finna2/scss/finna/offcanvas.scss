@@ -193,16 +193,20 @@
   }
 }
 
-// Mobile menu - results
-@include media-breakpoint-down(sm) {
+// Mobile menu - apply offcanvas
+@include media-breakpoint-down(md) {
   .template-name-results,
   .template-name-search,
   .template-name-blended,
-  .template-dir-collection {
+  .template-dir-collection,
+  .template-dir-myresearch,
+  .template-dir-reservationlist {
     @include vufind-offcanvas();
   }
 }
-@include media-breakpoint-down(sm) {
+
+// Mobile menu - results
+@include media-breakpoint-down(md) {
   .template-dir-collection {
     .vufind-offcanvas-overlay {
       opacity: 1;
@@ -215,7 +219,6 @@
 @include media-breakpoint-down(md) {
   .template-dir-myresearch,
   .template-dir-reservationlist {
-    @include vufind-offcanvas();
     &.vufind-offcanvas.active {
       .vufind-offcanvas-overlay {
         opacity: 1;

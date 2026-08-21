@@ -826,33 +826,39 @@ finna.layout = (function finnaLayout() {
    * Init the narrow search button animation.
    */
   function initMobileNavBtnAnimation() {
-    const container = document.querySelector('.mobile-functions-row .active-filters.finna-filters');
+    const container = document.querySelector('.mobile-functions-row');
     if (container) {
-      const scrollableBar = container.querySelector(':scope > div');
-      if (scrollableBar && (scrollableBar.clientWidth / container.clientWidth) > 1.5) {
-        const target = container.querySelector('a.filter-value');
-        if (target) {
-          const btn = document.querySelector('#narrow-search-filter-toggle');
-          let isVisible = null;
-          const options = {
-            root: container,
-            threshold: 0.5,
-          }
-          const callBack = (entries) => {
-            isVisible = entries[0].isIntersecting;
-            if (isVisible === false) {
-              btn.classList.add('icon-only');
-              btn.classList.remove('show-text');
-            } else {
-              if (btn.classList.contains('icon-only')) {
-                btn.classList.add('show-text');
+      const filters = container.querySelector('.active-filters.finna-filters');
+      if (filters) {
+        const scrollableBar = filters.querySelector(':scope > div');
+        const toggleBtn = container.querySelector('#narrow-search-filter-toggle');
+        if (scrollableBar && toggleBtn) {
+          if ((scrollableBar.clientWidth / (filters.clientWidth + toggleBtn.clientWidth)) > 1.5) {
+            const target = container.querySelector('a.filter-value');
+            if (target) {
+              const btn = document.querySelector('#narrow-search-filter-toggle');
+              let isVisible = null;
+              const options = {
+                root: container,
+                threshold: 0.5,
               }
-              btn.classList.remove('icon-only');
-            }
-          };
-          const observer = new IntersectionObserver(callBack, options);
+              const callBack = (entries) => {
+                isVisible = entries[0].isIntersecting;
+                if (isVisible === false) {
+                  btn.classList.add('icon-only');
+                  btn.classList.remove('show-text');
+                } else {
+                  if (btn.classList.contains('icon-only')) {
+                    btn.classList.add('show-text');
+                  }
+                  btn.classList.remove('icon-only');
+                }
+              };
+              const observer = new IntersectionObserver(callBack, options);
 
-          observer.observe(target);
+              observer.observe(target);
+            }
+          }
         }
       }
     }
@@ -867,12 +873,12 @@ finna.layout = (function finnaLayout() {
     const scrollableListClasses = ["list-scrollable", "list-scrollable__list", "flex-row", "flex-nowrap", "overflow-x-auto"];
 
     if (filterElement) {
-      if (win.innerWidth <= 768) {
+      if (win.innerWidth <= 992) {
         filterElement.classList.add(...scrollableListClasses);
         finna.scrollableList.initScrollableList(document.querySelector('.mobile-functions-container'));
       }
       win.addEventListener('throttled-resize.finna', function checkFiltersEnabled(e, data) {
-        if (data.innerWidth >= 768) {
+        if (data.innerWidth >= 992) {
           filterElement.classList.remove(...scrollableListClasses);
         } else {
           filterElement.classList.add(...scrollableListClasses);

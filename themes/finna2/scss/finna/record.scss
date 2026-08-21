@@ -9,6 +9,11 @@
     .list-scrollable__list {
       gap: 0rem;
     }
+    .list-scrollable__scroll-prev-btn,
+    .list-scrollable__scroll-next-btn {
+      background-color: $body-bg;
+      box-shadow: 0 .125rem .25rem rgba(0,0,0, .25);
+    }
     .list-scrollable__scroll-next-btn {
       right: -0.5rem;
     }
