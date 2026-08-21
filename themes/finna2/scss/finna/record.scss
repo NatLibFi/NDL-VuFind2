@@ -21,7 +21,7 @@
       left: -0.5rem;
     }
   }
-  > ul > li > a[role="button"], .btn-bookbag-toggle > a {
+  > ul > li > a, .btn-bookbag-toggle > a {
     @extend .btn, .btn-sm, .btn-outline-dark;
     &:not(.show) .icon {
       color: $action-link-color;
