@@ -5,17 +5,18 @@
 }
 
 .record-toolbar {
-  gap: 1rem;
-  .nav > li:not(.share-buttons) a {
-    font-size: 1em;
-    font-weight: 600;
-    color: $action-link-color;
-    &:hover {
-      color: darken($action-link-color, 20%);
-    }
-    .icon {
-      padding-right: 3px;
-      padding-left: 3px;
+  .nav {
+    gap: 1rem;
+    > li:not(.share-buttons) a {
+      font-size: 1em;
+      font-weight: 600;
+      color: $action-link-color;
+      &:hover {
+        color: darken($action-link-color, 20%);
+      }
+      .icon {
+        padding: 0 3px;
+      }
     }
   }
   &.link-list.list-scrollable {
