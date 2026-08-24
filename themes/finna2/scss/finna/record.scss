@@ -5,6 +5,19 @@
 }
 
 .record-toolbar {
+  .nav > li:not(.share-buttons) a {
+    font-size: 1em;
+    font-weight: 600;
+    color: $action-link-color;
+    gap: 1rem;
+    &:hover {
+      color: darken($action-link-color, 20%);
+    }
+    .icon {
+      padding-right: 3px;
+      padding-left: 3px;
+    }
+  }
   &.link-list.list-scrollable {
     .list-scrollable__list {
       margin-top: (0.5 * $spacer);
@@ -64,18 +77,6 @@
   .media-left,
   .media-right {
     width: 25%;
-  }
-  .nav > li:not(.share-buttons) a {
-    font-size: 1em;
-    font-weight: 600;
-    color: $action-link-color;
-    &:hover {
-      color: darken($action-link-color, 20%);
-    }
-    .icon {
-      padding-right: 3px;
-      padding-left: 3px;
-    }
   }
   .record-title {
     margin: 0px 0px 3px 0px;
