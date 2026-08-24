@@ -289,7 +289,7 @@ h2.title,
 @include media-breakpoint-down(sm) {
   .add-to-favorite-col {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.75rem;
     margin: $spacer 0rem;
     flex-direction: row;
     flex-wrap: wrap;
