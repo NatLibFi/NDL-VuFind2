@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2023.
+ * Copyright (C) The National Library of Finland 2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -39,8 +39,8 @@ use Psr\Container\ContainerInterface;
 /**
  * Finna Code Sets library factory.
  *
- * Constructs FinnaCodeSets to use the 'codesets' cache with a fixed time to live
- * setting of 0 (maximum possible).
+ * Constructs FinnaCodeSets with the 'codesets-defaults' cache using global defaults
+ * for caches from config.ini.
  *
  * @category Finna
  * @package  Cache
@@ -48,7 +48,7 @@ use Psr\Container\ContainerInterface;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Page
  */
-class CodeSetsFactory implements FactoryInterface
+class CodeSetsDefaultsFactory implements FactoryInterface
 {
     /**
      * Create an object.
@@ -72,10 +72,10 @@ class CodeSetsFactory implements FactoryInterface
         if (!empty($options)) {
             throw new \Exception('Unexpected options sent to factory.');
         }
-        return new $requestedName(
+        return new \NatLibFi\FinnaCodeSets\FinnaCodeSets(
             null, // @todo Pass VuFind HTTP client when PSR-18 compliant
             new CodeSetsCacheItemPoolDecorator(
-                $container->get(\Finna\Cache\Manager::class)->getCache('codesets')
+                $container->get(\Finna\Cache\Manager::class)->getCache('codesets-defaults')
             )
         );
     }

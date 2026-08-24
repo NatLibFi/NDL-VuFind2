@@ -127,6 +127,13 @@
         </div>
         <?php endif; ?>
 
+        <?php if ($this->driver->getFeedbackEmail()): ?>
+          <div>
+            <?= $this->transEsc('Aipa::questions_feedback') ?>
+            <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Feedback'))?>" data-lightbox><?=$this->transEsc('Send feedback on record')?></a>
+          </div>
+        <?php endif; ?>
+
         <?php if ($this->searchOptions($this->driver->getSourceIdentifier())->getVersionsAction()): ?>
           <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
         <?php endif; ?>

@@ -423,7 +423,10 @@ $config = [
             'Finna\Video\Handler\PluginManager' => 'VuFind\ServiceManager\AbstractPluginManagerFactory',
             'Finna\Video\Video' => 'Finna\Video\VideoFactory',
             'Finna\Wayfinder\WayfinderService' => 'Finna\Wayfinder\WayfinderServiceFactory',
+            // FinnaCodeSets with a cache that should live for as long as possible.
             'NatLibFi\FinnaCodeSets\FinnaCodeSets' => 'Finna\RecordDriver\CodeSetsFactory',
+            // FinnaCodeSets with a cache that uses global defaults for caches from config.ini.
+            'FinnaCodeSetsDefaults' => 'Finna\RecordDriver\CodeSetsDefaultsFactory',
 
             // Factory overrides for non-Finna classes:
             'VuFind\Config\PathResolver' => 'Finna\Config\PathResolverFactory',

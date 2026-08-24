@@ -58,14 +58,17 @@ class Manager extends \VuFind\Cache\Manager
      * @var array
      */
     protected $finnaCacheSpecs = [
+        // Codesets cache that should live for as long as possible.
         'codesets' => [
             'directory' => 'codesets',
             'options' => [
-                // Code sets cache should live for as long as possible.
-                // Refreshing of the cache is based on a separate setting to safeguard
-                // against API unavailability or errors.
                 'ttl' => 0,
             ],
+            'persistent' => true,
+        ],
+        // Codesets cache that uses global defaults for caches from config.ini.
+        'codesets-defaults' => [
+            'directory' => 'codesets-defaults',
             'persistent' => true,
         ],
         'description' => [
