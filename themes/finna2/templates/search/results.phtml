@@ -81,16 +81,23 @@
 
       // Set up filters
       $filterCount = $this->search()->getFilterCount($checkboxFilters, $filterList);
+      $filterSettingsArray = [
+        'filterList' => $filterList,
+        'checkboxFilters' => $checkboxFilters,
+        'defaultSortApplied' => $defaultSortApplied,
+        'options' => $options,
+        'urlQuery' => $results->getUrlQuery(),
+        'params' => $params,
+      ];
       $this->layout()->finnaFilters = $this->context($this)->renderInContext(
           'search/filters.phtml',
-          [
-              'filterList' => $filterList,
-              'checkboxFilters' => $checkboxFilters,
-              'defaultSortApplied' => $defaultSortApplied,
-              'options' => $options,
-              'urlQuery' => $results->getUrlQuery(),
-              'params' => $params,
-          ]
+          $filterSettingsArray,
+      );
+      $this->layout()->finnaMobileFilters = $this->context($this)->renderInContext(
+          'search/filters.phtml',
+          $filterSettingsArray[] = [
+            'dropdown' => false
+          ],
       );
   }
 
@@ -125,8 +132,8 @@
           </span>
         </span>
       </button>
-      <?php if (!empty($this->layout()->finnaFilters)): ?>
-        <?=$this->layout()->finnaFilters?>
+      <?php if (!empty($this->layout()->finnaMobileFilters)): ?>
+        <?=$this->layout()->finnaMobileFilters?>
       <?php endif; ?>
     </div>
   </div>

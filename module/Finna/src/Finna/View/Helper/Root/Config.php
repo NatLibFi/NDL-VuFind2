@@ -95,4 +95,17 @@ class Config extends \VuFind\View\Helper\Root\Config
         // Disabled 12.1.2024 due to performance issues
         return '';
     }
+
+    /**
+     * Get offcanvas sidebar side.
+     *
+     * @return ?string 'left', 'right'
+     */
+    public function offcanvasSide(): ?string
+    {
+        $config = $this->get('config');
+        return ($config->Site->sidebarOnLeft ?? false)
+            ? 'left'
+            : 'right';
+    }
 }
