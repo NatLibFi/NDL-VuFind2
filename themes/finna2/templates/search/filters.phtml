@@ -198,7 +198,7 @@
         ?>
         <div class="filter-options hidden-xs hidden-sm">
           <?php if ($resetLink && $options->shouldDisplayResetFilters()): ?>
-            <a class="btn btn-link reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
+            <a class="btn btn-link reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
           <?php endif; ?>
         </div>
       <?php endif; ?>
