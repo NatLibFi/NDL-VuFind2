@@ -833,7 +833,7 @@ finna.layout = (function finnaLayout() {
         const scrollableBar = filters.querySelector(':scope > div');
         const toggleBtn = container.querySelector('#narrow-search-filter-toggle');
         if (scrollableBar && toggleBtn) {
-          if ((scrollableBar.clientWidth / (filters.clientWidth + toggleBtn.clientWidth)) > 1.5) {
+          if ((scrollableBar.clientWidth / (filters.clientWidth + toggleBtn.clientWidth)) > 1.2) {
             const target = container.querySelector('a.filter-value');
             if (target) {
               const btn = document.querySelector('#narrow-search-filter-toggle');

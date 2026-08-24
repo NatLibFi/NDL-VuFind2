@@ -53,15 +53,17 @@
       </span>
       <h1 class="hidden-xs hidden-sm"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
-        <?=$this->component(
-          'finna-toggletip',
-          [
-            'icon' => 'help',
-            'ariaLabel' => $this->translate('Help'),
-            'contentHtml' => $this->translate('tooltip_facet_html'),
-          ]
-        );
-        ?>
+        <div class="hidden-xs hidden-sm">
+          <?=$this->component(
+            'finna-toggletip',
+            [
+              'icon' => 'help',
+              'ariaLabel' => $this->translate('Help'),
+              'contentHtml' => $this->translate('tooltip_facet_html'),
+            ]
+          );
+          ?>
+        </div>
       <?php endif; ?>
       <?php if ($resetLink): ?>
         <a class="btn btn-link reset-filters-btn visible-xs visible-sm" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>

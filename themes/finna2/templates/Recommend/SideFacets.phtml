@@ -35,16 +35,18 @@
       </button>
       </span>
       <h1 class="hidden-xs hidden-sm"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
-      <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
-        <?=$this->component(
-          'finna-toggletip',
-          [
-            'icon' => 'help',
-            'aria-label' => $this->translate('Help'),
-            'contentHtml' => $this->translate('tooltip_facet_html'),
-          ]
-        );
-        ?>
+      <div class="hidden-xs hidden-sm">
+        <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
+          <?=$this->component(
+            'finna-toggletip',
+            [
+              'icon' => 'help',
+              'aria-label' => $this->translate('Help'),
+              'contentHtml' => $this->translate('tooltip_facet_html'),
+            ]
+          );
+          ?>
+      </div>
       <?php endif; ?>
       <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
       <?php if ($resetLink): ?>
