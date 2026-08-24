@@ -11,7 +11,7 @@ $aAttrsBase = [
 ];
 $aAttributes = $this->htmlAttributes($aAttrsBase);
 $aAttributes->add('class', 'show-info');
-$aAttributes->add('aria-label', $this->title ?: $this->label . $this->escapeHtmlAttr(' ') . $this->translate('field_info_link_title'));
+$aAttributes->add('aria-label', $this->title ?: ($this->label . ' ' . $this->translate('field_info_link_title')));
 $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
 <div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" role="group">
@@ -21,7 +21,7 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
   <?php endif; ?>
   <div class="field-info field-popover" id="field-popover-<?=$this->escapeHtmlAttr($fieldId)?>" aria-labelledby="field-anchor-<?=$this->escapeHtmlAttr($fieldId)?>" >
     <div class="content">
-      <h2 tabindex="0"><?=$this->escapeHtml($this->label)?></h2>
+      <h2><?=$this->escapeHtml($this->label)?></h2>
       <?php foreach ($this->fieldLinks as $link): ?>
         <span class="<?=$this->escapeHtmlAttr($link['linkType'])?>">
           <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a>
