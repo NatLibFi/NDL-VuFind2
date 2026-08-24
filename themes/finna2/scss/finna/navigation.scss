@@ -74,6 +74,8 @@ header {
   position: relative;
   display: flex;
   flex-direction: row;
+  // Adds space between menu items:
+  gap: 0.5rem;
   // Counter the responsive menu behavior for non-expandable items:
   .dropdown-menu {
     position: absolute;

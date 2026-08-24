@@ -5,8 +5,8 @@
     top: $navbar-height;
     display: flex;
     z-index: $zindex-mobile-navbar;
-    padding-top: $padding-large-vertical;
-    padding-bottom: $padding-large-vertical;
+    padding-top: $padding-base-vertical;
+    padding-bottom: $padding-base-vertical;
     background: $body-bg;
     border-bottom: 1px solid $border-color;
     &.sticky {
@@ -22,7 +22,7 @@
       position: relative;
       display: flex;
       flex-direction: row;
-      gap: 1rem;
+      gap: 0.5rem;
       width: 100%;
       max-width: 100%;
     }
@@ -61,7 +61,6 @@
 }
 
 #narrow-search-filter-toggle {
-  font-size: $font-size-large;
   width: fit-content;
   .btn-elements {
     display: grid;

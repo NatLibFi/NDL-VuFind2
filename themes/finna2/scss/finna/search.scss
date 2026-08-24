@@ -229,7 +229,6 @@ h2.title,
   @extend .alert;
   @extend .alert-info;
   display: none;
-  margin-bottom: 0px;
   ul {
     margin-bottom: 0px;
   }
@@ -279,6 +278,13 @@ h2.title,
   .qrcode {
     min-width: 110px;
   }
+  // Highlight cart item.
+  .btn-bookbag-toggle > a.cart-remove {
+    @extend .btn-dark;
+      .icon {
+        color: inherit;
+      }
+  }
 }
 @include media-breakpoint-down(sm) {
   .add-to-favorite-col {
@@ -289,7 +295,6 @@ h2.title,
     flex-wrap: wrap;
     a {
       display: inline-flex;
-      background-color: $body-bg;
       align-items: center;
       gap: 0;
       width: auto;
@@ -313,6 +318,7 @@ h2.title,
     a {
       text-align: center;
       margin-bottom: (0.5 * $spacer);
+      width: 2rem;
     }
   }
 }
@@ -416,8 +422,6 @@ table.search-history-table {
 
 .searchtools-background {
   background: $finna-searchtools-background;
-  border-top: 1px solid $finna-searchtools-border-color;
-  border-bottom: 1px solid $finna-searchtools-border-color;
   .searchtools {
     display: flex;
     flex-wrap: wrap;
@@ -425,23 +429,11 @@ table.search-history-table {
     padding-top: $padding-large-vertical;
     padding-bottom: $padding-large-vertical;
     a {
-      transition: none;
-      @extend .btn;
-      // Button styles adapt based on the container's background color
-      @if (lightness($finna-searchtools-background) > 50) {
-        @extend .btn-outline-dark;
-      } @else {
-        @extend .btn-outline-light;
-        .icon {
-           color: $light;
-        }
-      }
-      &:hover {
-        .icon {
-          background: var(--bs-btn-hover-bg);
-          color: var(--bs-btn-hover-color);
-        }
-      }
+      color: $finna-searchtools-color;
+      padding: 0rem 0.5rem;
+      white-space: nowrap;
+      font-size: $font-size-large;
+      font-weight: 600;
     }
   }
 }

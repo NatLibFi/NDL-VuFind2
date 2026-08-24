@@ -106,9 +106,8 @@ $filterContent-border-color: color.mix($filterContent-background, contrast($filt
 $filterContent-text-color: $text-color !default;
 
 //== Search tools
-$finna-searchtools-background: $body-bg !default;
-$finna-searchtools-color: $text-color !default; // obsolete
-$finna-searchtools-border-color: color.mix($finna-searchtools-background, contrast($finna-searchtools-background), 60%) !default;
+$finna-searchtools-background: $primary !default;
+$finna-searchtools-color: $body-bg !default;
 
 //== Browsebar
 $finna-browsebar-background: $primary !default;

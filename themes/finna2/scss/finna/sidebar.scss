@@ -86,9 +86,9 @@
   justify-content: space-between;
   width: 100%;
   overflow: hidden;
-  color: $sidebar-header-text-color;
-  background-color: $sidebar-background;
-  border-bottom: 1px solid $sidebar-header-border-color;
+  color: $text-color;
+  background-color: $light;
+  border-bottom: 1px solid $border-color;
   > h1 {
     line-height: 1.5em;
     background: transparent;
@@ -107,7 +107,14 @@
     padding: 0.5rem;
     margin-bottom: 0px;
     .btn-link {
-      color: $sidebar-header-text-color;
+      color: $text-color;
+      font-weight: 600;
+      .icon {
+        text-decoration: none;
+      }
+      .btn-link__label {
+        text-decoration: underline;
+      }
     }
     .sidebar-close-btn {
       border: none;

@@ -3,7 +3,7 @@
 {
   background-color: transparent;
 
-  ul.nav-tabs > li {
+    ul.nav-tabs > li {
     display: flex;
     align-items: center;
     padding-bottom: 0px;
@@ -140,9 +140,10 @@
   .dropdown-toggle {
     display: flex;
     align-items: center;
-    gap: 0.7em;
+    gap: 0.5rem;
     padding: 0.6em 1.2em;
-    margin-top: 1.2em;
+    margin-top: $spacer;
+    margin-bottom: $spacer;
     color: mix($main-tabs-active-color, contrast($main-tabs-active-color), 5%);
     background-color: $main-tabs-active-color;
     border-radius: $border-radius-base;

@@ -170,7 +170,7 @@
     }
     .holdings-url-title {
         @extend .h4;
-        font-weight: 500;
+        font-weight: 600;
         margin-top: (0.75 * $spacer);
         margin-bottom: (0.75 * $spacer);
         margin-right: (0.5 * $spacer);
@@ -459,7 +459,7 @@
     }
     .holdings-title {
         font-size: $font-size-h4;
-        font-weight: 500;
+        font-weight: 600;
         display: inline-block;
         margin-top: (0.75 * $spacer);
         margin-bottom: (0.75 * $spacer);

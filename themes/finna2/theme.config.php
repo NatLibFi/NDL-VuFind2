@@ -306,7 +306,7 @@ return [
             'back-to-up' => 'FontAwesome:arrow-up',
             'browse-selected' => 'FontAwesome:chevron-up',
             'browse-unselected' => 'FontAwesome:chevron-down',
-            'cart' => 'FontAwesome:suitcase',
+            'cart' => 'FontAwesome:basket-shopping',
             'cart-add' => 'Alias:cart',
             'cart-email' => 'Alias:email',
             'cart-empty' => 'FontAwesome:remove',

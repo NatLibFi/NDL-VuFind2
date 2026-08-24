@@ -21,7 +21,7 @@
       left: -0.5rem;
     }
   }
-  > ul > li > a, .btn-bookbag-toggle > a {
+  .btn-record-toolbar {
     @extend .btn, .btn-sm, .btn-outline-dark;
     &:not(.show) .icon {
       color: $action-link-color;
@@ -40,6 +40,13 @@
       border: none;
       border-radius: 0;
     }
+  }
+  // Highlight cart item.
+  .cart-remove.btn-record-toolbar{
+      @extend .btn-dark;
+      .icon {
+        color: inherit;
+      }
   }
   .copy-to-clipboard-button {
     padding: 0.5rem;
@@ -291,7 +298,10 @@
   display: flex;
   gap: 0.25rem;
   align-items: baseline;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .record-details {

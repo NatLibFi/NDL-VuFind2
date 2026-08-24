@@ -6,7 +6,7 @@
 <?php if ($cart->isActive()): ?>
   <?php $cartId = $this->source . '|' . $this->id; ?>
   <div class="btn-bookbag-toggle" data-cart-id="<?=$this->escapeHtmlAttr($this->id)?>" data-cart-source="<?=$this->escapeHtmlAttr($this->source)?>">
-    <a class="nav-link cart-add hidden<?php if (!$cart->contains($cartId)): ?> correct<?php endif ?>" role="button" href="#" aria-label="<?=$this->transEsc('Add to Book Bag') ?>">
+    <a class="cart-add<?php if ($inToolbar): ?> btn-record-toolbar<?php endif; ?> hidden<?php if (!$cart->contains($cartId)): ?> correct<?php endif ?>" role="button" href="#" aria-label="<?=$this->transEsc('Add to Book Bag') ?>">
       <?=$this->icon('cart-add') ?>
       <?php if ($inToolbar): ?>
         <?=$this->transEsc('Add to Book Bag')?>
@@ -14,13 +14,13 @@
         <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Add to Book Bag') ?></span>
       <?php endif; ?>
     </a>
-    <a class="nav-link cart-remove hidden<?php if ($cart->contains($cartId)): ?> correct<?php endif ?>" role="button" href="#" aria-label="<?=$this->transEsc('Remove from Book Bag') ?>">
+    <a class="cart-remove<?php if ($inToolbar): ?> btn-record-toolbar<?php endif; ?> hidden<?php if ($cart->contains($cartId)): ?> correct<?php endif ?>" role="button" href="#" aria-label="<?=$this->transEsc('Remove from Book Bag') ?>">
       <?=$this->icon('cart-remove') ?>
       <?php if ($inToolbar): ?>
         <?=$this->transEsc('Remove from Book Bag')?>
       <?php else: ?>
         <span class="hidden-sm hidden-md hidden-lg"><?=$this->transEsc('Remove from Book Bag') ?></span>
-      <?php endif; ?> 
+      <?php endif; ?>
     </a>
   </div>
 <?php endif; ?>

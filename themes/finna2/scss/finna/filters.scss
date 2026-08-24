@@ -51,6 +51,8 @@
   position: relative;
   background: $filterContent-background;
   &:not(.list-scrollable) .finna-filters {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
     border-bottom: 1px solid $filterContent-border-color;
   }
 }
@@ -58,11 +60,11 @@
 .finna-filters,
 .results .noresults {
   align-items: baseline;
-  padding: 0.4em 0em;
+  padding: 0px;
   color: $filterContent-text-color;
   .filter-options {
     display: flex;
-    margin-right: 0.7em;
+    margin-right: 0.5rem;
     .filters-toggle {
       display: flex;
       gap: 0.4em;
@@ -97,13 +99,13 @@
   .filter-value {
     display: inline-flex;
     align-items: center;
-    padding: 0.35em 0.8em;
+    padding: $btn-padding-y $btn-padding-x;
     margin: 0.4em 0em 0.4em 0.4em;
-    font-weight: 600;
+    font-weight: $btn-font-weight;
     color: $filters-text-color;
     white-space: nowrap;
     background: $filters-background-color;
-    border-radius: $border-radius-small;
+    border-radius: $btn-border-radius;
     .text {
       flex-grow: 1;
       margin: 0em 0.5em 0em 0em;
@@ -113,6 +115,11 @@
     }
     &.dropdown-item {
       width: initial;
+    }
+    &:hover {
+      background: $danger;
+      color: #fff;
+      text-decoration: none;
     }
   }
   .title-value-pair {
@@ -251,12 +258,15 @@
   color: $text-color;
   text-decoration: underline;
   white-space: nowrap;
+  &:hover {
+    color: $danger;
+  }
 }
 
 // Active filters on record page
 .template-name-view :not(.tab-content) .filters-container .finna-filters {
   .filter-value {
     color: $text-color;
-    background: $gray-ultralight;
+    background: $light;
   }
 }

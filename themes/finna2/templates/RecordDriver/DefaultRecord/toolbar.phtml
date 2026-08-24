@@ -13,13 +13,13 @@
   <ul class="list-scrollable__list flex-row flex-nowrap overflow-x-auto" aria-label="<?=$this->transEsc('ajaxview_label_tools'); ?>">
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
       <li class="list-scrollable__list-item js-list-item">
-        <a class="save-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow">
+        <a class="save-record btn-record-toolbar" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" title="<?=$this->transEsc('Add to favorites')?>" rel="nofollow">
           <?=$this->icon('favorite') ?><span> <?=$this->transEsc('Add to favorites')?></span>
         </a>
       </li>
     <?php endif; ?>
     <li class="dropdown list-scrollable__list-item js-list-item">
-      <a class="dropdown-toggle" role="button" data-bs-toggle="dropdown">
+      <a class="dropdown-toggle btn-record-toolbar" role="button" data-bs-toggle="dropdown">
         <?=$this->icon('share');?> <span><?=$this->transEsc('Share')?></span>
         <?=$this->icon('collapse');?>
       </a>
@@ -56,7 +56,7 @@
     <?php $exportFormats = $this->export()->getFormatsForRecord($this->driver); ?>
     <?php if (count($exportFormats) > 0): ?>
       <li class="dropdown list-scrollable__list-item js-list-item">
-        <a class="export-toggle dropdown-toggle" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
+        <a class="export-toggle dropdown-toggle btn-record-toolbar" role="button" data-bs-toggle="dropdown" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Export', [], '', ['excludeSearchId' => true]))?>" rel="nofollow" aria-expanded="false" aria-controls="export-options">
           <?=$this->icon('export') ?>
           <span><?=$this->transEsc('Export Record') ?></span>
           <?=$this->icon('collapse');?>
@@ -74,13 +74,13 @@
     <?php endif; ?>
     <?php if (count($this->driver->getCitationFormats()) > 0): ?>
       <li class="list-scrollable__list-item js-list-item">
-        <a class="cite-record" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow">
+        <a class="cite-record btn-record-toolbar" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Cite')) ?>" title="<?=$this->transEsc('Cite this')?>" rel="nofollow">
           <?=$this->icon('cite') ?><span> <?=$this->transEsc('Cite this')?></span>
         </a>
       </li>
     <?php endif; ?>
     <li class="list-scrollable__list-item js-list-item">
-      <a class="print-record" role="button" href="#" data-trigger-print>
+      <a class="print-record btn-record-toolbar" role="button" href="#" data-trigger-print>
         <?=$this->icon('print') ?> <?=$this->transEsc('Print')?>
       </a>
     </li>
@@ -91,7 +91,7 @@
     <?php endif; ?>
     <?php if ($this->permission()->allowDisplay('access.finna.StaffUiLink') && ($staffLink = $this->recordLinker()->getStaffUiUrl($this->driver))): ?>
       <li class="list-scrollable__list-item js-list-item">
-        <a class="staff-ui-link" href="<?=$this->escapeHtmlAttr($staffLink) ?>" title="<?=$this->transEsc('Staff UI')?>" rel="nofollow" target="_blank">
+        <a class="staff-ui-link btn-record-toolbar" href="<?=$this->escapeHtmlAttr($staffLink) ?>" title="<?=$this->transEsc('Staff UI')?>" rel="nofollow" target="_blank">
           <?=$this->icon('staff-link') ?><span class="hidden-xs"> <?=$this->transEsc('Staff UI')?></span>
         </a>
       </li>
