@@ -7,7 +7,12 @@
 .record-toolbar {
   &.link-list.list-scrollable {
     .list-scrollable__list {
-      gap: 0rem;
+      margin-top: (0.5 * $spacer);
+      margin-bottom: (0.5 * $spacer);
+      gap: 0.5rem;
+    }
+    .list-scrollable__list-item {
+      margin: 0px;
     }
     .list-scrollable__scroll-prev-btn,
     .list-scrollable__scroll-next-btn {
@@ -59,6 +64,18 @@
   .media-left,
   .media-right {
     width: 25%;
+  }
+  .nav > li:not(.share-buttons) a {
+    font-size: 1em;
+    font-weight: 600;
+    color: $action-link-color;
+    &:hover {
+      color: darken($action-link-color, 20%);
+    }
+    .icon {
+      padding-right: 3px;
+      padding-left: 3px;
+    }
   }
   .record-title {
     margin: 0px 0px 3px 0px;
