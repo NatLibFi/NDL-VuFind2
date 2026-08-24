@@ -51,8 +51,9 @@
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
-  <div class="media-body record-information">
-      <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+  <div class="media-body record-information" id="record-skip-link-target">
+      <div role="heading" aria-level="1" aria-label="<?=$this->escapeHtml($this->driver->getTitle())?>" class="visually-hidden"></div>
+      <h1 class="record-title hidden-xs" aria-hidden="true"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       <?php if ($results = $this->driver->getAlternativeTitles()): ?>
         <div class="recordAltTitles record-alt-titles">
           <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>

@@ -17,8 +17,6 @@
       }
     }
   }
-  
-  $skipLinkPosition = 'id="results-heading"';
 
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
@@ -79,8 +77,8 @@
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
-    <div class="media-body record-information" <?=$skipLinkPosition ?>>
-      <div role="heading" aria-level="1" aria-label="<?=$this->escapeHtml($this->driver->getTitle())?>" visually-hidden></div>
+    <div class="media-body record-information" id="record-skip-link-target">
+      <div role="heading" aria-level="1" aria-label="<?=$this->escapeHtml($this->driver->getTitle())?>" class="visually-hidden"></div>
       <h1 class="record-title hidden-xs" aria-hidden="true"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
       <?php if ($results = $this->driver->getAlternativeTitles()): ?>
         <div class="recordAltTitles record-alt-titles">
