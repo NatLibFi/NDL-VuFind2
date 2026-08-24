@@ -5,11 +5,11 @@
 }
 
 .record-toolbar {
+  gap: 1rem;
   .nav > li:not(.share-buttons) a {
     font-size: 1em;
     font-weight: 600;
     color: $action-link-color;
-    gap: 1rem;
     &:hover {
       color: darken($action-link-color, 20%);
     }
