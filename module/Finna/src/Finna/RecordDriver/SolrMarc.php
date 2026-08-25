@@ -963,66 +963,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
-     *
-     * This is not particularly beautiful, but the aim is to do the work with the
-     * least effort.
-     * Legacy method, use getFilteredXMLElement instead.
-     *
-     * @return \SimpleXMLElement
-     */
-    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
-    {
-        $collection = new \DOMDocument();
-        $collection->preserveWhiteSpace = false;
-        $collection->loadXML($this->getMarcReader()->toFormat('MARCXML'));
-        $record = $collection->getElementsByTagName('record')->item(0);
-        $fieldsToRemove = [];
-        $componentPartIds = [];
-        foreach ($record->getElementsByTagName('datafield') as $field) {
-            $tag = $field->getAttribute('tag');
-            // Delete 520 (summary etc. may contain material under copyright) and
-            // 979 (we will add a new one with just component part ids):
-            if ('520' === $tag) {
-                $fieldsToRemove[] = $field;
-            } elseif ('979' === $tag) {
-                foreach ($field->getElementsByTagName('subfield') as $subfield) {
-                    if ('a' === $subfield->getAttribute('code')) {
-                        $componentPartIds[] = $subfield->textContent;
-                    }
-                }
-                $fieldsToRemove[] = $field;
-            }
-        }
-        foreach ($fieldsToRemove as $field) {
-            $record->removeChild($field);
-        }
-        if ($componentPartIds) {
-            $field = $collection->createElement('datafield');
-            $tag = $collection->createAttribute('tag');
-            $tag->value = '979';
-            $field->appendChild($tag);
-            $ind1 = $collection->createAttribute('ind1');
-            $ind1->value = ' ';
-            $field->appendChild($ind1);
-            $ind2 = $collection->createAttribute('ind2');
-            $ind2->value = ' ';
-            $field->appendChild($ind2);
-            foreach ($componentPartIds as $id) {
-                $subfield = $collection->createElement('subfield');
-                $code = $collection->createAttribute('code');
-                $code->value = 'a';
-                $subfield->appendChild($code);
-                $subfield->appendChild($collection->createTextNode($id));
-                $field->appendChild($subfield);
-            }
-            $record->appendChild($field);
-        }
-
-        return simplexml_import_dom($collection);
-    }
-
-    /**
      * Return full record as filtered XML for public APIs.
      *
      * @return string

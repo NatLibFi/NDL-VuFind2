@@ -1368,6 +1368,19 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
+     * Return full record as a filtered XmlDoc for public APIs.
+     *
+     * This is not particularly beautiful, but the aim is to do the work with the
+     * least effort.
+     *
+     * @return XmlDoc
+     */
+    public function getFilteredXMLElement(): XmlDoc
+    {
+        return $this->getXmlDoc();
+    }
+
+    /**
      * Return attributes of an element as an associative array.
      * - id            Id attribute
      * - source        Source attribute.

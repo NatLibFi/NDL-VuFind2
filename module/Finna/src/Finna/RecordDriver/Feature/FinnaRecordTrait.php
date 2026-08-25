@@ -34,6 +34,7 @@ namespace Finna\RecordDriver\Feature;
 use Finna\Db\Entity\UserEntityInterface;
 use Finna\Db\Service\CommentsServiceInterface;
 use Finna\RecordDriver\RenderContext;
+use Finna\Xml\NamespacelessXmlRenderer;
 
 use function count;
 use function in_array;
@@ -569,9 +570,9 @@ trait FinnaRecordTrait
      */
     public function getFilteredXMLLegacy()
     {
-        $filteredXml = $this->tryMethod('getFilteredXMLElementLegacy');
+        $filteredXml = $this->tryMethod('getFilteredXMLElement');
         if ($filteredXml) {
-            return $filteredXml->asXML();
+            return (new NamespacelessXmlRenderer($filteredXml->export(), null, null))->render();
         }
         return '';
     }
