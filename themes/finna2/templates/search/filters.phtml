@@ -153,7 +153,7 @@
                 </a>
               <?php else: ?>
                 <span
-                  class="filter-value filters-<?=$operatorClass?>
+                  class="filter-value filters-<?=$operatorClass?>"
                   <?php if (isset($urlQuery)): ?>
                     data-filter="<?=$this->escapeHtmlAttr($urlQuery->formatFilterString($value['field'], $value['value'], $value['operator']))?>"
                   <?php endif; ?>
@@ -198,7 +198,7 @@
         ?>
         <div class="filter-options hidden-xs hidden-sm">
           <?php if ($resetLink && $options->shouldDisplayResetFilters()): ?>
-            <a class="btn btn-link reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
+            <a class="reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
           <?php endif; ?>
         </div>
       <?php endif; ?>

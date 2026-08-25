@@ -49,9 +49,7 @@
       </div>
       <?php endif; ?>
       <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
-      <?php if ($resetLink): ?>
-        <a class="btn btn-link reset-filters-btn visible-xs visible-sm" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
-      <?php endif; ?>
+
     </div>
 <?php endif; ?>
 <?php $checkboxFilters = $results->getParams()->getCheckboxFacets(); ?>

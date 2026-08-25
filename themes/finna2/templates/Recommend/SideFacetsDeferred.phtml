@@ -45,11 +45,11 @@
   <div class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
     <div class="mobile-navigation-header-container">
       <span class="visible-xs visible-sm close-offcanvas">
-      <button class="visible-xs visible-sm close-offcanvas btn btn-link" data-toggle="vufind-offcanvas">
+      <a class="visible-xs visible-sm close-offcanvas-btn" role="button" data-toggle="vufind-offcanvas">
         <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
         <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
         <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
-      </button>
+      </a>
       </span>
       <h1 class="hidden-xs hidden-sm"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
@@ -66,7 +66,7 @@
         </div>
       <?php endif; ?>
       <?php if ($resetLink): ?>
-        <a class="btn btn-link reset-filters-btn visible-xs visible-sm" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
+        <a class="reset-filters-btn visible-xs visible-sm" role="button" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
       <?php endif; ?>
     </div>
 <?php endif; ?>

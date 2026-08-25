@@ -168,6 +168,21 @@
     }
   }
 }
+@include media-breakpoint-down(md) {
+  .mylist-bar.mobile-sidebar-container {
+    .mobile-navigation-header-container {
+      border-bottom: $sidebar-border;
+      .mobile-navigation-header {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+    }
+  }
+}
+
+.btn-sort-order {
+  padding: 0.4em;
+}
 
 .own-favorite-list-button-area {
   width: 100%;

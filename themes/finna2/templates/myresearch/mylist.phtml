@@ -55,7 +55,7 @@
     <?php if ($list): ?>
       <div class="mobile-functions-container visible-xs visible-sm hidden-print">
         <button id="narrow-search-filter-toggle" data-toggle="vufind-offcanvas" class="btn btn-mobile-nav search-filter-toggle" tabindex="0">
-          <?=$this->transEsc('Favourite lists')?>
+          <?=$this->icon('favorite') ?> <span><?=$this->transEsc('Favourite lists')?></span>
         </button>
       </div>
       <div class="useraccount-header">
@@ -127,7 +127,7 @@
           </div>
           <div class="control-container hidden-print">
             <?php if ($list): ?>
-              <a class="btn btn-primary btn-sort-order" href="<?=$this->url('sortList', ['id' => $list->getId()]) ?>" data-backdrop=”static” data-lightbox><span class="fa fa-sort" aria-hidden="true"></span> <span class="hidden-xs"><?=$this->transEsc('Sort manually');?></span></a>
+              <a class="btn btn-sm btn-primary btn-sort-order" href="<?=$this->url('sortList', ['id' => $list->getId()]) ?>" data-backdrop=”static” data-lightbox><span class="fa fa-sort" aria-hidden="true"></span> <span class="hidden-xs"><?=$this->transEsc('Sort manually');?></span></a>
             <?php endif; ?>
             <?=$this->render('search/controls/sort.phtml')?>
             <?=$this->render('search/controls/limit.phtml')?>

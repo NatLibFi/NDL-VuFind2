@@ -200,9 +200,6 @@
 .useraccount-nav {
   z-index: 2;
   display: block;
-  margin-top: $spacer;
-  border: $sidebar-border;
-  box-shadow: $box-shadow-sm;
   .status {
     margin-left: 0.4em;
   }
@@ -274,6 +271,11 @@
   }
 }
 @include media-breakpoint-up(md) {
+  .useraccount-nav {
+    margin-top: $spacer;
+    border: $sidebar-border;
+    box-shadow: $box-shadow-sm;
+  }
   .useraccount-nav.move-list {
     position: -webkit-sticky;
     position: sticky;

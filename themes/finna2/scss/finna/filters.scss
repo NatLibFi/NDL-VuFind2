@@ -51,11 +51,10 @@
   position: relative;
   background: $filterContent-background;
   &:not(.list-scrollable) .finna-filters {
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
     border-bottom: 1px solid $filterContent-border-color;
   }
 }
+
 
 .finna-filters,
 .results .noresults {

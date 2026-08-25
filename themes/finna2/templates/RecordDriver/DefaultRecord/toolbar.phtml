@@ -99,10 +99,10 @@
     <?php if ($template = $this->content()->findTemplateForLng('content/Additions/record-toolbar-tools')): ?>
       <?=$this->render($template)?>
     <?php endif; ?>
-    <button class="list-scrollable__scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
-      <?=$this->icon('scrollable-next')?>
-    </button>
   </ul>
+  <button class="list-scrollable__scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+    <?=$this->icon('scrollable-next')?>
+  </button>
 </div>
 <?php
   $script = <<<JS

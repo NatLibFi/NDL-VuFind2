@@ -106,8 +106,11 @@
     z-index: $zindex-navbar;
     padding: 0.5rem;
     margin-bottom: 0px;
-    .btn-link {
+    background: $light;
+    color: $text-color;
+    .close-offcanvas-btn, .reset-filters-btn {
       color: $text-color;
+      padding: $btn-padding-y $btn-padding-x;
       font-weight: 600;
       .icon {
         text-decoration: none;
