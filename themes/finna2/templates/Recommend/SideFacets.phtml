@@ -28,11 +28,11 @@
   <div class="mobile-sidebar-container">
     <div class="mobile-navigation-header-container">
       <span class="visible-xs visible-sm close-offcanvas">
-      <button class="visible-xs visible-sm close-offcanvas btn btn-link" data-toggle="vufind-offcanvas">
-        <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
-        <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
-        <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
-      </button>
+        <button class="visible-xs visible-sm close-offcanvas btn btn-link" data-toggle="vufind-offcanvas">
+          <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
+          <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
+          <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
+        </button>
       </span>
       <h1 class="hidden-xs hidden-sm"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <div class="hidden-xs hidden-sm">
@@ -49,8 +49,11 @@
       </div>
       <?php endif; ?>
       <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
-
+      <?php if ($resetLink): ?>
+        <a class="reset-filters-btn visible-xs visible-sm" role="button" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
+      <?php endif; ?>
     </div>
+  </div>
 <?php endif; ?>
 <?php $checkboxFilters = $results->getParams()->getCheckboxFacets(); ?>
 <?php $checkboxesShown = false; ?>
