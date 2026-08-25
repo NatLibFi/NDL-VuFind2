@@ -6,6 +6,15 @@
   $searchTabArray = [];
 ?>
 <?php if (!empty($searchTabs)): ?>
+  <?php if (!$this->translationEmpty("search_tab_tip_{$selectedTabLabel}_html")) :?>
+    <div class="search-tab-tip">
+      <?=$this->translate("search_tab_tip_{$selectedTabLabel}_html");?>
+    </div>
+  <?php elseif (!$this->translationEmpty("search_tab_tip_{$module}_html")) :?>
+    <div class="search-tab-tip">
+      <?=$this->translate("search_tab_tip_{$module}_html");?>
+    </div>
+  <?php endif; ?>
   <div role="navigation" aria-label="<?=$this->transEscAttr('Search Tabs')?>">
     <?php foreach ($searchTabs as $tab): ?>
       <?php if ($tab['selected']) {

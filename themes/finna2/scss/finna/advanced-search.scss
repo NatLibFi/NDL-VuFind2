@@ -26,6 +26,9 @@
       bottom: -15px;
       left: 15px;
       width: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       background: $primary;
       color: white;
       line-height: 64px;
@@ -354,6 +357,8 @@
     }
     .container {
       position: relative;
+      display: flex;
+      align-items: center;
     }
   }
   .content-header {

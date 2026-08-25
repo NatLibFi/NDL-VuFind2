@@ -13,7 +13,7 @@
 // Brand Colors
 
 $logo-color: #fff !default;
-$aoe-brand-primary: #ccf5e7 !default;
+$aoe-brand-primary: #ccf5e7 !default; // Obsolete
 $action-link-color: $primary !default;
 
 $alert-default-bg: #f5f5f5 !default;
@@ -341,7 +341,7 @@ $bazaar-browse-bar-color: #fff !default;
 
 
 $accordion-details-display:   none !default;
-$search-tab-tip-bg: #CCF5E7 !default;
+$search-tab-tip-bg: #ccf5e7 !default;
 
 // Airplay icon
 $icon-airplay--default:             url('../../finna2/images/videojs/ic_airplay_white_24px.svg') !default;

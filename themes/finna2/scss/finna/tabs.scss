@@ -39,8 +39,9 @@
   }
 }
 
-.finna-main-tabs .nav {
+.finna-main-tabs .nav-scrollable > .nav {
   margin-bottom: 0px;
+  border-bottom: none;
 }
 
 .search-tabs-recommendations {
