@@ -40,7 +40,9 @@ finna.scrollableNav = (function finnaScrollableNav() {
       }
 
       // Add keyboard navigation
-      links.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigate(link); }));
+      if (!list.classList.contains('link-tabs')) {
+        links.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigate(link); }));
+      }
 
       list.addEventListener('keydown', (e) => {
         const idx = Array.from(links).indexOf(document.activeElement);

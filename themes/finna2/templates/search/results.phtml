@@ -93,11 +93,10 @@
           'search/filters.phtml',
           $filterSettingsArray,
       );
+      $filterSettingsArray['dropdown'] = false;
       $this->layout()->finnaMobileFilters = $this->context($this)->renderInContext(
           'search/filters.phtml',
-          $filterSettingsArray[] = [
-            'dropdown' => false,
-          ],
+          $filterSettingsArray,
       );
   }
 

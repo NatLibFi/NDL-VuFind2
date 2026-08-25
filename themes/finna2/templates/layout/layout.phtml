@@ -199,6 +199,15 @@
         <?=$this->render('navibar.phtml')?>
       </nav>
     </header>
+    <?php if (!empty($this->layout()->finnaMainTabs && $this->templateName !== 'advanced')): ?>
+      <section>
+        <div id="content-main-tabs" class="finna-main-tabs">
+          <div class="container">
+            <?=$this->layout()->finnaMainTabs?>
+          </div>
+        </div>
+      </section>
+    <?php endif; ?>
     <section class="searchContent<?=$currentTabClass?>">
       <h1 class="visually-hidden"><?=$this->transEsc('Search')?></h1>
       <?php if (!empty($this->layout()->infoMessage)): ?>
@@ -252,13 +261,6 @@
         <div id="content-heading" class="finna-main-header">
           <div class="container">
             <?=$this->layout()->finnaMainHeader?>
-          </div>
-        </div>
-      <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaMainTabs)): ?>
-        <div id="content-main-tabs" class="finna-main-tabs">
-          <div class="container">
-            <?=$this->layout()->finnaMainTabs?>
           </div>
         </div>
       <?php endif; ?>

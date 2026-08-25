@@ -39,6 +39,10 @@
   }
 }
 
+.finna-main-tabs .nav {
+  margin-bottom: 0px;
+}
+
 .search-tabs-recommendations {
   padding-top: $padding-large-horizontal;
   border-top: 2px solid $primary;
@@ -132,41 +136,6 @@
     flex: 1 0;
     display: flex;
     justify-content: end;
-  }
-}
-
-.mobile-main-tabs {
-  width: 100%;
-  .dropdown-toggle {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.6em 1.2em;
-    margin-top: $spacer;
-    margin-bottom: $spacer;
-    color: mix($main-tabs-active-color, contrast($main-tabs-active-color), 5%);
-    background-color: $main-tabs-active-color;
-    border-radius: $border-radius-base;
-    cursor: pointer;
-    .tab-title {
-      flex-grow: 1;
-      overflow: hidden;
-      font-size: $font-size-h2;
-      font-weight: 500;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      background: transparent;
-    }
-    .more {
-      display: flex;
-      align-items: center;
-      gap: 0.4em;
-      font-size: 85%;
-      white-space: nowrap;
-      .icon {
-        font-size: 1.7em;
-      }
-    }
   }
 }
 
