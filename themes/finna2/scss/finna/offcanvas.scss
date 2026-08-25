@@ -91,7 +91,7 @@
   $zindex-offcanvas-overlay: 2000;
   $offcanvas-offset: 80vw !default;  // Width of open menu
 
-  // Separate offcanvas sidebar from other sidebars (needed for collection list).
+  // To separate offcanvas sidebar from other sidebars (needed for collection list).
   $classes: ".side-facets-container-ajax, .mobile-sidebar-container";
 
   body.vufind-offcanvas {
@@ -200,6 +200,7 @@
   .template-name-search,
   .template-name-blended,
   .template-dir-collection,
+  .template-dir-record,
   .template-dir-myresearch,
   .template-dir-reservationlist {
     @include vufind-offcanvas();
