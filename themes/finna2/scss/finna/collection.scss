@@ -40,6 +40,13 @@
     margin: auto 0px auto 5px;
   }
 }
+@include media-breakpoint-down(sm) {
+  .template-dir-collection {
+    .result .list-view a.no-image {
+      display: none;
+    }
+  }
+}
 @include media-breakpoint-down(xs) {
   .collection-list-controls {
     flex-direction: column;
