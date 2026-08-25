@@ -378,6 +378,13 @@ $breadcrumb-padding-x         : 0 !default;
 $well-bg:                     color.mix($body-bg, contrast($body-bg), 95%) !default;
 $well-border:                 color.mix($body-bg, contrast($body-bg), 80%) !default;
 
+// Alerts
+//
+//##
+
+$alert-padding-y:               (0.5 * $spacer) !default;
+$alert-padding-x:               (0.5 * $spacer) !default;
+
 
 //== Miscellaneous
 //

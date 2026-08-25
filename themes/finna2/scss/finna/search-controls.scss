@@ -1,12 +1,3 @@
-.search-tab-tip {
-  position: relative;
-  padding: 0.4em;
-  background-color: $search-tab-tip-bg;
-  p {
-    margin: 0.2em;
-  }
-}
-
 // All search control buttons
 .search-controls {
   display: flex;
@@ -122,13 +113,13 @@
 
 .search-tab-tip, .search-sort-title {
   background-color: $search-tab-tip-bg;
-  box-shadow: 2px 2px 4px #888888;
   margin-top: $spacer;
   margin-bottom: $spacer;
-  padding: $padding-small-vertical $padding-small-horizontal;
+  border-radius: $alert-border-radius;
+  padding: $alert-padding-y $alert-padding-x;
   position: relative;
   p {
-    margin: 2px;
+    margin: 0.2em;
   }
 }
 

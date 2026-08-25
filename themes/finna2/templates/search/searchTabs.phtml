@@ -5,6 +5,15 @@
   $selectedTabLabel = 'default_empty_label';
 ?>
 <?php if (!empty($searchTabs)): ?>
+    <?php if (!$this->translationEmpty("search_tab_tip_{$selectedTabLabel}_html")) :?>
+    <div class="search-tab-tip">
+      <?=$this->translate("search_tab_tip_{$selectedTabLabel}_html");?>
+    </div>
+  <?php elseif (!$this->translationEmpty("search_tab_tip_{$module}_html")) :?>
+    <div class="search-tab-tip">
+      <?=$this->translate("search_tab_tip_{$module}_html");?>
+    </div>
+  <?php endif; ?>
   <div role="navigation" class="nav-scrollable" aria-label="<?=$this->transEscAttr('Search Tabs')?>">
     <button class="arrow-btn scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
       <?=$this->icon('tabs-prev')?>
@@ -46,15 +55,6 @@
         </li>
       <?php endif; ?>
     </ul>
-    <?php if (!$this->translationEmpty("search_tab_tip_{$selectedTabLabel}_html")) :?>
-      <div class="search-tab-tip">
-        <?=$this->translate("search_tab_tip_{$selectedTabLabel}_html");?>
-      </div>
-    <?php elseif (!$this->translationEmpty("search_tab_tip_{$module}_html")) :?>
-      <div class="search-tab-tip">
-        <?=$this->translate("search_tab_tip_{$module}_html");?>
-      </div>
-    <?php endif; ?>
   </div>
 <?php endif; ?>
 <!-- END of: finna - search/searchTabs.phtml -->
