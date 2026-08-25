@@ -7,7 +7,7 @@ finna.scrollableNav = (function finnaScrollableNav() {
     document.querySelectorAll('.nav-scrollable').forEach((scrollable) => {
       const list = scrollable.querySelector('.nav');
       const items = [...list.querySelectorAll('.nav-item')];
-      const links = [...list.querySelectorAll('.nav-link')];
+      const links = [...list.querySelectorAll('button.nav-link')];
 
       const prevBtn = scrollable.querySelector('.js-scroll-prev');
       const nextBtn = scrollable.querySelector('.js-scroll-next');
@@ -40,9 +40,7 @@ finna.scrollableNav = (function finnaScrollableNav() {
       }
 
       // Add keyboard navigation
-      if (!list.classList.contains('link-tabs')) {
-        links.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigate(link); }));
-      }
+      links.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigate(link); }));
 
       list.addEventListener('keydown', (e) => {
         const idx = Array.from(links).indexOf(document.activeElement);

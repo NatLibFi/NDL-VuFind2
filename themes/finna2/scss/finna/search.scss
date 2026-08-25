@@ -89,9 +89,6 @@ $thumbnail-width-large:  200px !default;
   }
   .empty-list {
     width: 75%;
-    .checkbox-filters {
-      display: none;
-    }
   }
   .record-image-container {
     position: relative;
@@ -114,6 +111,12 @@ $thumbnail-width-large:  200px !default;
 
 .no-results {
   margin-bottom: 1.7em;
+}
+
+.empty-list {
+  .checkbox-filters {
+    display: none;
+  }
 }
 
 .js-result-list {

@@ -9,6 +9,7 @@
    * @param array  $tabContentClasses Extra classes for the tab content container (optional)
    * @param array  $tabPaneClasses    Extra classes for the tab pane (optional)
    * @param bool   $scrollable        Whether to enable horizontally scrollable tabs
+   * @param bool   $links             Whether tab bar uses link elements instead of buttons
    */
 
   $tabNavClasses = array_merge($this->scrollable ? ['nav'] : ['nav', 'nav-tabs'], $this->tabNavClasses ?? []);
@@ -16,6 +17,7 @@
   $idSuffix = $this->idSuffix ?? '';
   $getPaneId = fn (string $tabName): string => 'tab-pane-' . $tabName . $idSuffix;
   $getButtonId = fn (string $tabName): string => 'tab-button-' . $tabName . $idSuffix;
+  $useLinkElement = $this->links ?? false;
 ?>
 <?php if ($this->scrollable): ?>
   <?php // Note: the tablist and tab panel must be under the same parent. Otherwise e.g. Chrome + VoiceOver will lose focus. ?>
@@ -44,16 +46,31 @@
       if (isset($tab['icon'])) {
         $buttonLiAttributes->add('class', 'tab-right');
       }
+      if (isset($tab['toggletip'])) {
+        $buttonLiAttributes->add('class', 'with-tooltip');
+      }
 
-      $buttonAttributes = $this->htmlAttributes([
-        'id' => $getButtonId($tabName),
-        'class' => 'nav-link ' . $tabName . '-tab-button',
-        'role' => 'tab',
-        'type' => 'button',
-        'aria-controls' => $paneId,
-        'data-bs-toggle' => 'tab',
-        'data-bs-target' => '#' . $paneId,
-      ]);
+      if (!$useLinkElement) {
+        $buttonAttributes = $this->htmlAttributes([
+          'id' => $getButtonId($tabName),
+          'class' => 'nav-link ' . $tabName . '-tab-button',
+          'role' => 'tab',
+          'type' => 'button',
+          'aria-controls' => $paneId,
+          'data-bs-toggle' => 'tab',
+          'data-bs-target' => '#' . $paneId,
+        ]);
+      } else {
+        $buttonAttributes = $this->htmlAttributes([
+          'id' => $getButtonId($tabName),
+          'class' => 'nav-link ' . $tabName . '-tab-button',
+          'role' => 'tab',
+          'href' => $tab['data-tab-url'],
+        ]);
+        if ($this->activeTab == $tabName) {
+          unset($buttonAttributes['href']);
+        }
+      }
       if ($this->activeTab == $tabName) {
         $buttonAttributes->add('class', 'active');
         $buttonAttributes->add('aria-selected', 'true');
@@ -64,36 +81,48 @@
       $tabDescription = $tab['description'];
     ?>
     <li<?=$buttonLiAttributes?>>
-      <button<?=$buttonAttributes?>>
+      <?php if (!$useLinkElement): ?>
+        <button<?=$buttonAttributes?>>
+      <?php else: ?>
+        <a<?= $buttonAttributes ?>>
+      <?php endif; ?>
         <?=$this->transEsc($tab['description'])?><?php if (isset($tab['icon'])): ?><?=$this->icon($tab['icon']['name'], $tab['icon']['class'] ?? null)?><?php endif; ?>
         <?php if (isset($tab['count'])): ?> (<span class="count"><?=$this->escapeHtml($tab['count']) ?></span>)<?php endif; ?>
         <i class="icon"></i>
-      </button>
+      <?php if (!$useLinkElement): ?>
+        </button>
+      <?php else: ?>
+        </a>
+      <?php endif; ?>
+      <?php if (isset($tab['toggletip'])): ?>
+        <?=$this->component('finna-toggletip', $tab['toggletip'])?>
+      <?php endif; ?>
     </li>
   <?php endforeach; ?>
 </ul>
-
-<div class="<?=implode(' ', $tabContentClasses)?>">
-  <?php foreach ($this->tabs as $tabName => $tab): ?>
-    <?php
-      $tabPaneAttributes = $this->htmlAttributes([
-        'id' => $getPaneId($tabName),
-        'class' => ['tab-pane', $tabName . '-tab'] + ($this->tabPaneClasses ?? []),
-        'role' => 'tabpanel',
-        'aria-labelledby' => $getButtonId($tabName),
-        'data-tab-name' => $tabName,
-        'tabindex' => '0',
-      ]);
-      if ($this->activeTab == $tabName) {
-          $tabPaneAttributes->add('class', 'active');
-      }
-      $tabPaneAttributes->merge($tab['paneAttributes'] ?? []);
-    ?>
-    <div<?=$tabPaneAttributes?>>
-      <?=$tab['content']?>
-    </div>
-  <?php endforeach; ?>
-</div>
+<?php if (!$useLinkElement): ?>
+  <div class="<?=implode(' ', $tabContentClasses)?>">
+    <?php foreach ($this->tabs as $tabName => $tab): ?>
+      <?php
+        $tabPaneAttributes = $this->htmlAttributes([
+          'id' => $getPaneId($tabName),
+          'class' => ['tab-pane', $tabName . '-tab'] + ($this->tabPaneClasses ?? []),
+          'role' => 'tabpanel',
+          'aria-labelledby' => $getButtonId($tabName),
+          'data-tab-name' => $tabName,
+          'tabindex' => '0',
+        ]);
+        if ($this->activeTab == $tabName) {
+            $tabPaneAttributes->add('class', 'active');
+        }
+        $tabPaneAttributes->merge($tab['paneAttributes'] ?? []);
+      ?>
+      <div<?=$tabPaneAttributes?>>
+        <?=$tab['content']?>
+      </div>
+    <?php endforeach; ?>
+  </div>
+<?php endif; ?>
 <?php if ($this->scrollable): ?>
   </div>
 <?php endif; ?>
