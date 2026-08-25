@@ -19,9 +19,9 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
   <?php if (!empty($this->description)): ?>
     <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span>
   <?php endif; ?>
-  <div class="field-info field-popover" id="field-popover-<?=$this->escapeHtmlAttr($fieldId)?>" aria-labelledby="field-anchor-<?=$this->escapeHtmlAttr($fieldId)?>" >
+  <div class="field-info field-popover" id="field-popover-<?=$this->escapeHtmlAttr($fieldId)?>">
     <div class="content">
-      <h2><?=$this->escapeHtml($this->label)?></h2>
+      <h2 tabindex="0"><?=$this->escapeHtml($this->label)?></h2>
       <?php foreach ($this->fieldLinks as $link): ?>
         <span class="<?=$this->escapeHtmlAttr($link['linkType'])?>">
           <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a>
@@ -46,7 +46,7 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
           </div>
         <?php endif; ?>
       <?php endif; ?>
-    </div>
-    <a href="#" class="hide-info" role="button"><span class="link-text"><?=$this->translate('field_hide_info')?></span></a>
+      </div>
+      <a href="#" class="hide-info" role="button" class="link-text"><?=$this->translate('field_hide_info')?></a>
   </div>
 </div>
