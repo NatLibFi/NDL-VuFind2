@@ -228,27 +228,25 @@ button.list-group-item {
   h2 {
     border-bottom: 1px solid $border-color;
   }
-
-  .record-organisation-box {
+  .list-group.organisations {
     padding: $padding-large-vertical $padding-base-horizontal;
+    background: $list-group-bg;
+    .record-organisation {
+      background: $body-bg;
+      margin-bottom: $spacer;
+    }
+  }
+  .record-organisation-box {
     .record-type.organisations {
       margin-bottom: 0px;
       font-size: 1em;
     }
-    .list-group.organisations {
-      background: $list-group-bg;
-      .record-organisation {
-        background: $body-bg;
-        margin-bottom: $spacer;
-      }
-      .other-organisation-links a {
-        display: block;
-        overflow: hidden;
-        font-weight: 600;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
-
+    .other-organisation-links a {
+      display: block;
+      overflow: hidden;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 }
