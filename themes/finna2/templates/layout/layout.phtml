@@ -163,8 +163,8 @@
           $contentElementId = 'useraccount-content-heading';
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
-        } elseif (!empty($this->layout()->finnaMainTabs)) {
-          $contentElementId = 'content-main-tabs';
+        } elseif (!empty($this->layout()->finnaMainTabs) || (!empty($this->layout()->skipLinkTarget)) || (!empty($this->layout()->content))) {
+          $contentElementId = 'record-skip-link-target';
         }
       ?>
       <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
