@@ -12,12 +12,12 @@
    * @param bool   $links             Whether tab bar uses link elements instead of buttons
    */
 
-  $tabNavClasses = array_merge($this->scrollable ? ['nav'] : ['nav', 'nav-tabs'], $this->tabNavClasses ?? []);
+  $useLinkElement = $this->links ?? false;
+  $tabNavClasses = array_merge($this->scrollable ? ['nav'] : ['nav', 'nav-tabs'], $useLinkElement ? ['link-tabs'] : [], $this->tabNavClasses ?? []);
   $tabContentClasses = array_merge(['tab-content'], $this->tabContentClasses ?? []);
   $idSuffix = $this->idSuffix ?? '';
   $getPaneId = fn (string $tabName): string => 'tab-pane-' . $tabName . $idSuffix;
   $getButtonId = fn (string $tabName): string => 'tab-button-' . $tabName . $idSuffix;
-  $useLinkElement = $this->links ?? false;
 ?>
 <?php if ($this->scrollable): ?>
   <?php // Note: the tablist and tab panel must be under the same parent. Otherwise e.g. Chrome + VoiceOver will lose focus. ?>

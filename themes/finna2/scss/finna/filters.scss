@@ -92,6 +92,7 @@
 
   .filter-title-group {
     display: inline-flex;
+    flex-wrap: wrap;
     align-items: center;
     max-width: 100%;
   }
@@ -164,6 +165,9 @@
     .filters-term,
     .filter-options {
       display: none;
+    }
+    .filter-title-group {
+      flex-wrap: nowrap;
     }
   }
 }
