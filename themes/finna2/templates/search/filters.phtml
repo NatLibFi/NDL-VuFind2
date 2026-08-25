@@ -86,7 +86,7 @@
         <?php endif; ?>
       <?php else: ?>
         <div class="filter-title-group">
-          <span class="filters-title hidden-xs hidden-sm"><?=$this->transEsc($field)?>:</span>
+          <span class="filters-title"><?=$this->transEsc($field)?>:</span>
           <?php if (count($data) > 3 && (!isset($this->dropdown) || $this->dropdown)): ?>
             <div class="search-filter-dropdown dropdown">
               <?php $dropdown = true; ?>
@@ -123,7 +123,7 @@
               $desc = $this->escapeHtml($value['displayText']);
             ?>
             <span class="operator-and-term">
-              <span class="filters-term filters-<?=$operatorClass?> hidden-xs hidden-sm">
+              <span class="filters-term filters-<?=$operatorClass?>">
                 <?=($index > 0 || 'NOT' === $value['operator']) ? $join : '' ?>
               </span>
               <?php
@@ -196,7 +196,7 @@
           $resetLink = !$onlyDefaultsApplied && isset($urlQuery)
             ? $urlQuery->removeAllFilters()->resetDefaultFilters() : false;
         ?>
-        <div class="filter-options hidden-xs hidden-sm">
+        <div class="filter-options">
           <?php if ($resetLink && $options->shouldDisplayResetFilters()): ?>
             <a class="reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
           <?php endif; ?>

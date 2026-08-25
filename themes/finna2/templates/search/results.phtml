@@ -172,6 +172,11 @@
 <?php endif; ?>
 <div class="results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">
   <?php if ($recordTotal < 1): ?>
+    <?php if (!empty($this->layout()->finnaFilters)): ?>
+      <div class="visible-xs visible-sm no-results">
+        <?=$this->layout()->finnaFilters?>
+      </div>
+    <?php endif; ?>
     <p>
       <?php if (null !== $this->slot('empty-message')->get()): ?>
         <p><?=$this->slot('empty-message')->get()?></p>

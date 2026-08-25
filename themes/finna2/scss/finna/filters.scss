@@ -144,17 +144,6 @@
     }
   }
 }
-@include media-breakpoint-up(sm) {
-  .finna-filters,
-  .results .noresults {
-    display: inline-flex;
-    flex: 1;
-    flex-wrap: wrap;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
-  }
-}
 @include media-breakpoint-down(md) {
   .finna-filters,
   .results .noresults {
@@ -168,6 +157,13 @@
     }
     .title-value-pair {
       margin-left: 0px;
+    }
+  }
+ .mobile-functions-container .active-filters {
+    .filters-title,
+    .filters-term,
+    .filter-options {
+      display: none;
     }
   }
 }
@@ -198,6 +194,16 @@
       display: flex;
       gap: 0.5em;
     }
+  }
+}
+@include media-breakpoint-up(sm) {
+  .finna-filters {
+    display: inline-flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
