@@ -35,8 +35,8 @@
         </a>
       </span>
       <h1 class="hidden-xs hidden-sm"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
-      <div class="hidden-xs hidden-sm">
-        <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
+      <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
+        <div class="hidden-xs hidden-sm">
           <?=$this->component(
             'finna-toggletip',
             [
@@ -46,7 +46,7 @@
             ]
           );
           ?>
-      </div>
+        </div>
       <?php endif; ?>
       <span class="visually-hidden"><?=$this->transEsc('page_reload_on_select_hint') ?></span>
       <?php if ($resetLink): ?>
