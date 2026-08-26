@@ -9,6 +9,7 @@
     padding-bottom: $padding-base-vertical;
     background: $body-bg;
     border-bottom: 1px solid $border-color;
+    margin-bottom: $spacer;
     &.sticky {
       box-shadow: 0 3px 3px rgba(0, 0, 0, 0.3);
     }
