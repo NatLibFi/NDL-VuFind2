@@ -146,7 +146,7 @@
     }
     &.vufind-offcanvas-right {
       .vufind-offcanvas-overlay {
-        left: -$offcanvas-offset;
+        left: 0;
       }
       .vufind-offcanvas-toggle {
         right: 0;
