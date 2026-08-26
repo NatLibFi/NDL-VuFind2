@@ -90,12 +90,10 @@ input, input.form-control {
   border: 1px solid $border-color;
   border-radius: $border-radius-base;
   padding: $padding-small-horizontal $padding-small-vertical;
-  box-shadow: $box-shadow-sm;
   .form-control.search-query {
-    display: inline-block !important;
     flex: 1 1 auto;
     height: 48px;
-    padding-left: 10px;
+    margin-right: 0.5rem;
     color: $gray;
     background: transparent;
     border: none;

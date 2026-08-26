@@ -239,7 +239,8 @@ $input-bg: #fff !default;
 
 $dropdown-bg: $body-bg !default;
 $dropdown-border: $dark;
-$dropdown-divider-bg: $light !default;
+$dropdown-border-radius: $border-radius-base !default;
+$dropdown-divider-bg: $gray-mid-light !default;
 $dropdown-link-active-color: $dark !default;
 $dropdown-link-active-bg: $light !default;
 $dropdown-link-color: $dark !default;
