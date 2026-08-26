@@ -35,7 +35,6 @@ namespace Finna\RecordDriver;
 use VuFindXml\XmlDoc;
 
 use function array_slice;
-use function count;
 use function in_array;
 
 /**
@@ -562,35 +561,6 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             }
         );
         return $xml;
-    }
-
-    /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
-     * Legacy method, use getFilteredXmlElement instead.
-     *
-     * @return \SimpleXMLElement
-     */
-    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
-    {
-        $record = clone $this->getXmlRecord();
-        while ($record->abstract) {
-            unset($record->abstract[0]);
-        }
-        // Try to filter out any summary or abstract fields
-        $filterTerms = [
-            'tiivistelmä', 'abstract', 'abstracts', 'abstrakt', 'sammandrag',
-            'sommario', 'summary', 'аннотация',
-        ];
-        for ($i = count($record->description) - 1; $i >= 0; $i--) {
-            $node = $record->description[$i];
-            $description = mb_strtolower((string)$node, 'UTF-8');
-            $firstWords = array_slice(preg_split('/\s/', $description), 0, 5);
-            if (array_intersect($firstWords, $filterTerms)) {
-                unset($record->description[$i]);
-            }
-        }
-
-        return $record;
     }
 
     /**

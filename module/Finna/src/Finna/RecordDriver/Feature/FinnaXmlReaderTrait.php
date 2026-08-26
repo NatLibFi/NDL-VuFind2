@@ -47,9 +47,11 @@ trait FinnaXmlReaderTrait
     /**
      * The XML namespace.
      *
+     * Note: this is a property instead of a constant to make use of it in strings cleaner.
+     *
      * @var string
      */
-    protected $xmlNs = 'http://www.w3.org/2000/xmlns/';
+    protected string $nsXml = 'http://www.w3.org/XML/1998/namespace';
 
     /**
      * XML record. Access only via getXmlRecord() as this is initialized lazily.
@@ -117,6 +119,6 @@ trait FinnaXmlReaderTrait
     protected function getLangAttr(array $node): ?string
     {
         $xml = $this->getXmlReader();
-        return $xml->attr($node, '{{$this->xmlNs}}lang') ?? $xml->attr($node, 'lang');
+        return $xml->attr($node, "{{$this->nsXml}}lang") ?? $xml->attr($node, 'lang');
     }
 }

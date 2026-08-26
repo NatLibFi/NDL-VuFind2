@@ -23,9 +23,10 @@
             'metalness' => 'metalness',
             'roughness' => 'roughness',
             'envmapintensity' => 'env_map_intensity',
+            'error_occurred' => 'An error has occurred',
         ];
     $translations = [];
     foreach ($from as $k => $t) {
-        $translations[$k] = $this->translate("model_{$t}");
+        $translations[$k] = $this->translate("model_{$t}", [], $this->translate($t));
     }
     echo json_encode($translations);

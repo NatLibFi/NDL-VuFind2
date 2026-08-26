@@ -6,7 +6,8 @@
 }
 
 #tify {
-    height: 65vh;
+    height: 75vh;
+    min-height: 340px;
     @include media-breakpoint-down(lg) {
         height: 60vh;
     }
@@ -58,15 +59,6 @@
         button:hover {
             background-color: $action-link-color;
             color: $body-bg;
-        }
-    }
-
-    // Hide button labels
-    .tify-header-button > span {
-        // In a narrow viewport, Tify wants to show these labels in a hamburger
-        // menu, so we allow it. On larger viewports, we want them hidden.
-        @include media-breakpoint-up(lg) {
-            @include visually-hidden;
         }
     }
 

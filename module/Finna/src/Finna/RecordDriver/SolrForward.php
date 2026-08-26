@@ -34,7 +34,6 @@ namespace Finna\RecordDriver;
 use VuFindXml\XmlDoc;
 
 use function in_array;
-use function is_array;
 
 /**
  * Model for FORWARD records in Solr.
@@ -1012,34 +1011,6 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
         $main = new XmlDoc();
         $main->import($container->export($container->first()));
         return $main;
-    }
-
-    /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
-     * Legacy method, use getFilteredXMLElement instead.
-     *
-     * @return \SimpleXMLElement
-     */
-    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
-    {
-        $xml = new \SimpleXMLElement($this->fields['fullrecord']);
-        $records = (array)$xml->children();
-        $records = reset($records);
-        $record = is_array($records) ? $records[0] : $records;
-        $remove = [];
-        foreach ($record->ProductionEvent as $event) {
-            $attributes = $event->attributes();
-            if (
-                isset($attributes->{'elonet-tag'})
-                && 'lehdistoarvio' === (string)$attributes->{'elonet-tag'}
-            ) {
-                $remove[] = $event;
-            }
-        }
-        foreach ($remove as $node) {
-            unset($node[0]);
-        }
-        return $record;
     }
 
     /**

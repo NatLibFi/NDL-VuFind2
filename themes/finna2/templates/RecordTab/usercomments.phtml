@@ -36,15 +36,21 @@
             </div>
           <?php endif; ?>
           <textarea name="comment" class="form-control" rows="4" cols="37" maxlength="8000" required></textarea><br>
+          <?php if (null !== ($maximumCount = $this->config()->getMaximumDailyCommentCount($user))): ?>
+            <div class="alert alert-info">
+              <?=$this->transEsc('comment_daily_limit', ['count' => $maximumCount], useIcuFormatter: true) ?>
+            </div>
+          <?php endif; ?>
         </div>
         <?php if ($this->tab->isCaptchaActive()): ?>
           <?=$this->captcha()->html(true, false) ?>
         <?php endif; ?>
         <input class="btn btn-primary save" data-label-new="<?=$this->transEscAttr('Add your comment') ?>" data-label-edit="<?=$this->transEscAttr('Save') ?>" data-loading-text="<?=$this->transEscAttr('Submitting') ?><?=$this->transEscAttr('eol_ellipsis')?>" type="submit" value="<?=$this->transEscAttr('Add your comment')?>">
         <input class="btn btn-primary cancel hide" type="submit" value="<?=$this->transEscAttr('Reset')?>">
+        <div class="loading-spinner js-loading-spinner hidden"><?=$this->icon('spinner') ?> <?=$this->translate('loading_ellipsis')?></div>
       </div>
       <div class="comment-col">
-          <?=$this->icon('info', 'comment-info-icon') ?>
+        <?=$this->icon('info', 'comment-info-icon') ?>
         <div class="comment-description">
           <?=$this->translate('user_comment_description_html', ['%%url%%' => $this->url('content-page', ['page' => 'help-comments-ratings'])]);?>
         </div>

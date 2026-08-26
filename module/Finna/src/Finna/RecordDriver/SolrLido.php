@@ -807,7 +807,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $reader = $this->getXmlReader();
         foreach ($reader->all($resourceSet, 'resourceDescription') as $description) {
             if ($type = $reader->attr($description, 'type')) {
-                if ($lang = $reader->attr($description, 'lang')) {
+                if ($lang = $this->getLangAttr($description)) {
                     $results[$type][$lang] = $reader->value($description);
                 } else {
                     $results[$type][] = $reader->value($description);
@@ -1368,6 +1368,19 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
+     * Return full record as a filtered XmlDoc for public APIs.
+     *
+     * This is not particularly beautiful, but the aim is to do the work with the
+     * least effort.
+     *
+     * @return XmlDoc
+     */
+    public function getFilteredXMLElement(): XmlDoc
+    {
+        return $this->getXmlDoc();
+    }
+
+    /**
      * Return attributes of an element as an associative array.
      * - id            Id attribute
      * - source        Source attribute.
@@ -1520,7 +1533,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                         'id' => $id,
                         'source' => $source,
                     ];
-                    $lang = $reader->attr($term, 'lang');
+                    $lang = $this->getLangAttr($term);
                     if ($lang === $language) {
                         $langMethodsExtended[] = [
                             'data' => $termStr,
@@ -1558,7 +1571,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                                 continue;
                             }
                             $label = null;
-                            $lang = $reader->attr($term, 'lang');
+                            $lang = $this->getLangAttr($term);
                             // Musketti
                             $label = $reader->attr($term, 'label');
                             if (!$label) {
@@ -1588,31 +1601,11 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 
             $places = [];
             foreach ($reader->all($node, 'eventPlace') as $eventPlace) {
-                $displayPlace = trim($reader->firstValue($eventPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
-                $placeId = $reader->first($eventPlace, 'place/placeID');
+                $displayPlace = $this->getPlaceName($eventPlace);
                 if (!$displayPlace) {
-                    // Gather display name from placeNameSet:
-                    $partOfPlaceName = [];
-                    foreach ($reader->all($eventPlace, 'place/namePlaceSet') as $nameSet) {
-                        $value = $reader->firstValue($nameSet, 'appellationValue') ?? '';
-                        if ('' !== $value) {
-                            $partOfPlaceName[] = $value;
-                        }
-                    }
-                    foreach ($reader->all($eventPlace, 'place/partOfPlace') as $part) {
-                        while ($part) {
-                            $appellationValue = $reader->firstValue($part, 'namePlaceSet/appellationValue') ?? '';
-                            if ('' !== $appellationValue) {
-                                $partOfPlaceName[] = $appellationValue;
-                            }
-                            $part = $reader->first($part, 'partOfPlace');
-                        }
-                    }
-                    if (!$partOfPlaceName) {
-                        continue;
-                    }
-                    $displayPlace = implode(', ', $partOfPlaceName);
+                    continue;
                 }
+                $placeId = $reader->first($eventPlace, 'place/placeID');
                 if ($placeId) {
                     $placeData = [
                         'placeName' => $displayPlace,
@@ -2248,7 +2241,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     if ('' === ($str = $reader->value($term) ?? '')) {
                         continue;
                     }
-                    $langAttr = $reader->attr($term, 'lang');
+                    $langAttr = $this->getLangAttr($term);
                     if ($id !== '') {
                         $topics[] = [
                             'data' => $str,
@@ -2300,19 +2293,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $results = [];
         $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject/subjectPlace';
         foreach ($reader->all(path: $path) as $subjectPlace) {
-            $displayPlace = trim($reader->firstValue($subjectPlace, 'displayPlace') ?? '', ", \n\r\t\v\0");
-            if ('' === $displayPlace) {
-                $placeNames = $reader->allValues($subjectPlace, 'place/namePlaceSet/appellationValue');
-                foreach ($reader->all($subjectPlace, 'place/partOfPlace') as $part) {
-                    while ($part) {
-                        if ($partName = $reader->firstValue($part, 'namePlaceSet/appellationValue')) {
-                            $placeNames[] = $partName;
-                        }
-                        $part = $reader->first($part, 'partOfPlace');
-                    }
-                }
-                $displayPlace = implode(', ', $placeNames);
-            }
+            $displayPlace = $this->getPlaceName($subjectPlace);
             if (!$displayPlace) {
                 continue;
             }
@@ -2568,6 +2549,49 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     }
 
     /**
+     * Get place name from a place node.
+     *
+     * @param ?array $placeNode Place node
+     *
+     * @return string
+     */
+    protected function getPlaceName(?array $placeNode): string
+    {
+        $reader = $this->getXmlReader();
+        $language = $this->getLocale();
+
+        $displayPlace = trim(
+            $this->getLanguageSpecificValueByPath($placeNode, 'displayPlace', $language),
+            ", \n\r\t\v\0"
+        );
+        if ('' === $displayPlace) {
+            // Gather display name from namePlaceSet:
+            $partOfPlaceName = [];
+            foreach ($reader->all($placeNode, 'place/namePlaceSet') as $nameSet) {
+                $value = $this->getLanguageSpecificValueByPath($nameSet, 'appellationValue', $language);
+                if ('' !== $value) {
+                    $partOfPlaceName[] = $value;
+                }
+            }
+            foreach ($reader->all($placeNode, 'place/partOfPlace') as $part) {
+                while ($part) {
+                    $appellationValue = $this->getLanguageSpecificValueByPath(
+                        $part,
+                        'namePlaceSet/appellationValue',
+                        $language
+                    );
+                    if ('' !== $appellationValue) {
+                        $partOfPlaceName[] = $appellationValue;
+                    }
+                    $part = $reader->first($part, 'partOfPlace');
+                }
+            }
+            $displayPlace = implode(', ', $partOfPlaceName);
+        }
+        return $displayPlace;
+    }
+
+    /**
      * Get a language-specific node from an array of nodes.
      *
      * @param array  $nodeList Nodes to look in
@@ -2595,8 +2619,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 if (null === $firstNode && '' !== $contents) {
                     $firstNode = $node;
                 }
-                $langAttr = $reader->attr($node, "{{$this->xmlNs}}lang") ?? $reader->attr($node, 'lang');
-                if ($langAttr === $lng && '' !== $contents) {
+                if ('' !== $contents && $this->getLangAttr($node) === $lng) {
                     return $node;
                 }
             }
@@ -2664,7 +2687,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $reader = $this->getXmlReader();
         foreach ($nodeList as $node) {
             if ('' !== ($reader->value($node))) {
-                $lang = $reader->attr($node, 'lang') ?? 'no_locale';
+                $lang = $this->getLangAttr($node) ?? 'no_locale';
                 $first = $first ?: $lang;
                 if (in_array($lang, $languages)) {
                     $items[] = $node;
@@ -2829,7 +2852,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 continue;
             }
             foreach ($reader->all($objectDescriptionSet, 'descriptiveNoteValue') as $node) {
-                if (in_array($reader->attr($node, 'lang'), $preferredLanguages)) {
+                if (in_array($this->getLangAttr($node), $preferredLanguages)) {
                     if ('' !== ($term = $reader->value($node))) {
                         $results[] = $term;
                     }

@@ -25,17 +25,23 @@ if ($iiifHelp = $this->content()->findTemplateForLng('content/iiif')) {
 </span>
 <ul class="dropdown-menu <?=$r?>">
   <li>
+    <span class="dropdown-header fs-4<?=$dropHeaderExtraClasses ?? ''?>">
+      <?=$this->transEsc('iiif_tools_dropdown_header')?>
+    </span>
+  </li>
+  <?php if ($iiifHelp): ?>
+    <li>
+      <a class="icon-link"
+        href="<?=$this->url('content-page', ['page' => 'iiif']) ?>"
+      >
+        <?=$this->icon('help', 'icon-link__icon')?>
+        <?=$this->transEsc('what does iiif mean')?>
+      </a>
+    </li>
+  <?php endif; ?>
+  <li>
     <span class="dropdown-header fs-5<?=$dropHeaderExtraClasses ?? ''?>">
-      <?=$this->transEsc('iiif_manifest')?>
-      <?php if ($iiifHelp): ?>
-        <a class="icon-link ms-auto"
-          href="<?=$this->url('content-page', ['page' => 'iiif']) ?>"
-          aria-label="<?=$this->transEsc('what does iiif mean')?>"
-          title="<?=$this->transEsc('what does iiif mean')?>"
-        >
-          <?=$this->icon('help', 'icon-link__icon')?>
-        </a>
-      <?php endif; ?>
+      <?=$this->transEsc('iiif_manifest_actions')?>
     </span>
   </li>
   <li>

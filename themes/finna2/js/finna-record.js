@@ -366,15 +366,32 @@ finna.record = (function finnaRecord() {
   }
 
   /**
-   * Initialize record navigation hash update event listener when window hash changes
+   * Initialize record navigation URL update event listener when window hash changes
    */
-  function initRecordNaviHashUpdate() {
-    $(window).on('hashchange', function onHashChange() {
-      $('.pager a').each(function updateHash(i, a) {
-        a.hash = window.location.hash;
+  function initRecordNaviUrlUpdate() {
+    /**
+     * Update all pager links from current URL
+     */
+    function updatePagerLinks() {
+      // Extract tab from current location:
+      const path = window.location.pathname;
+      let parts = path.match(/\/(Record|Collection|PrimoRecord|EdsRecord)\/[^/]+\/([^/]+)/);
+      if (parts) {
+        const tabName = parts[2];
+        document.querySelectorAll('.pager a').forEach((pagerLink) => {
+          const linkParts = pagerLink.href.split('?', 2);
+          linkParts[0] = linkParts[0].replace(/\/(Record|Collection|PrimoRecord|EdsRecord)\/([^/]+)((\/[^/]+)|$)/, "/$1/$2/" + tabName);
+          pagerLink.href = linkParts.join('?');
+        });
+      }
+    };
+    updatePagerLinks();
+    document.querySelectorAll('.record-tab-button')
+      .forEach((tabButton) => {
+        tabButton.addEventListener('show.bs.tab', () => {
+          updatePagerLinks();
+        });
       });
-    });
-    $(window).trigger('hashchange');
   }
 
   /**
@@ -672,7 +689,7 @@ finna.record = (function finnaRecord() {
   function init() {
     initHideDetails();
     initDescription();
-    initRecordNaviHashUpdate();
+    initRecordNaviUrlUpdate();
     initRecordAccordion();
     initAudioAccordion();
     applyRecordAccordionHash(initialToggle);

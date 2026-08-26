@@ -370,8 +370,8 @@
               </date>
             </eventDate>
             <eventPlace>
-              <displayPlace lang="fi">Bulevardi, Helsinki</displayPlace>
-              <displayPlace lang="en">Bulevardi, Helsinki</displayPlace>
+              <displayPlace lang="fi">Bulevardi, Helsinki, Suomi</displayPlace>
+              <displayPlace lang="en">Bulevardi, Helsinki, Finland</displayPlace>
               <place>
                 <placeID type="URI">http://www.yso.fi/onto/yso/p202484</placeID>
                 <namePlaceSet>
@@ -384,6 +384,24 @@
                   <partOfPlace>
                     <namePlaceSet>
                       <appellationValue lang="fi">Suomi</appellationValue>
+                    </namePlaceSet>
+                  </partOfPlace>
+                </partOfPlace>
+              </place>
+            </eventPlace>
+            <eventPlace>
+              <place>
+                <namePlaceSet>
+                  <appellationValue lang="fi">Ruttopuisto</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue lang="fi">Helsinki</appellationValue>
+                  </namePlaceSet>
+                  <partOfPlace>
+                    <namePlaceSet>
+                      <appellationValue lang="fi">Suomi</appellationValue>
+                      <appellationValue lang="en">Finland</appellationValue>
                     </namePlaceSet>
                   </partOfPlace>
                 </partOfPlace>

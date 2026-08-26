@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2017-2025.
+ * Copyright (C) The National Library of Finland 2017-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -88,7 +88,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     /**
      * Whether to use location in addition to library when grouping holdings.
      *
-     * @param bool
+     * @var bool
      */
     protected $groupHoldingsByLocation;
 
@@ -126,6 +126,17 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @var array
      */
     protected $nonPayableStatuses = [];
+
+    /**
+     * Patron fields always required in patron update.
+     *
+     * @var array
+     */
+    protected $requiredPatronFields = [
+        'surname',
+        'library_id',
+        'category_id',
+    ];
 
     /**
      * Initialize the driver.
@@ -1335,12 +1346,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $result = $this->makeRequest(['v1', 'patrons', $patron['id']]);
 
-        $request = $result['data'];
-        // Unset read-only fields
-        unset($request['anonymized']);
-        unset($request['restricted']);
-        unset($request['expired']);
-
+        // Koha's patron PUT method actually works like PATCH, but the schema includes mandatory fields that we need to
+        // take from the existing patron information:
+        $request = array_filter(
+            $result['data'],
+            fn ($key) => in_array($key, $this->requiredPatronFields),
+            ARRAY_FILTER_USE_KEY
+        );
+        // Merge the requested changes:
         $request = array_merge($request, $fields);
 
         $result = $this->makeRequest(

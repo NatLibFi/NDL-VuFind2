@@ -167,7 +167,8 @@
           <subjectSet>
             <subject>
               <subjectPlace>
-                <displayPlace>Etelä-Suomi</displayPlace>
+                <displayPlace lang="fi">Etelä-Suomi</displayPlace>
+                <displayPlace lang="en">Southern Finland</displayPlace>
                 <place>
                   <!--For URIs, get place type from type-->
                   <placeID type="URI" source="YSO">http://www.yso.fi/onto/yso/p105917</placeID>
@@ -222,7 +223,8 @@
                       </namePlaceSet>
                       <partOfPlace>
                         <namePlaceSet>
-                          <appellationValue>Suomi</appellationValue>
+                          <appellationValue lang="fi">Suomi</appellationValue>
+                          <appellationValue lang="en">Finland</appellationValue>
                         </namePlaceSet>
                       </partOfPlace>
                     </partOfPlace>

@@ -703,7 +703,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'id' => 'http://urn.fi/URN:NBN:fi:au:finaf:000211029',
             ],
             [
-                'heading' => ['Etelä-Suomi'],
+                'heading' => ['Southern Finland'],
                 'type' => 'URI',
                 'id' => 'http://www.yso.fi/onto/yso/p105917',
                 'ids' => [
@@ -736,7 +736,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
             [
-                'heading' => ['Kauppakatu 5, Lohja, Uusimaa, Suomi'],
+                'heading' => ['Kauppakatu 5, Lohja, Uusimaa, Finland'],
             ],
         ];
         $this->assertEquals($expected, $driver->getAllSubjectHeadings(true));
@@ -746,11 +746,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
             ['morot'],
             ['juures'],
             ['Jussi, Jänö'],
-            ['Etelä-Suomi'],
+            ['Southern Finland'],
             ['Rakennus'],
             ['Rakennus2'],
             ['Lohja'],
-            ['Kauppakatu 5, Lohja, Uusimaa, Suomi'],
+            ['Kauppakatu 5, Lohja, Uusimaa, Finland'],
         ];
         $this->assertEquals($expected, $driver->getAllSubjectHeadings());
     }
@@ -1205,7 +1205,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ],
                             'places' => [
                                 [
-                                    'placeName' => 'Bulevardi, Helsinki',
+                                    'placeName' => 'Bulevardi, Helsinki, Suomi',
                                     'type' => 'URI',
                                     'id' => 'http://www.yso.fi/onto/yso/p202484',
                                     'ids' => [
@@ -1213,6 +1213,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     ],
                                     'details' => ['place_id_type_URI'],
                                 ],
+                                'Ruttopuisto, Helsinki, Suomi',
                             ],
                             'actors' => [
                                 [
@@ -1294,7 +1295,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                             ],
                             'places' => [
                                 [
-                                    'placeName' => 'Bulevardi, Helsinki',
+                                    'placeName' => 'Bulevardi, Helsinki, Finland',
                                     'type' => 'URI',
                                     'id' => 'http://www.yso.fi/onto/yso/p202484',
                                     'ids' => [
@@ -1302,6 +1303,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                     ],
                                     'details' => ['place_id_type_URI'],
                                 ],
+                                'Ruttopuisto, Helsinki, Finland',
                             ],
                             'actors' => [
                                 [

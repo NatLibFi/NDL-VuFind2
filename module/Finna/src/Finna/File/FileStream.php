@@ -1,7 +1,7 @@
 <?php
 
 /**
- * STDOUT stream.
+ * File stream.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@ namespace Finna\File;
 use function strlen;
 
 /**
- * STDOUT stream.
+ * File stream.
  *
  * @category VuFind
  * @package  File
@@ -40,8 +40,20 @@ use function strlen;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
-class StdoutStream extends AbstractOutputStream
+class FileStream extends AbstractOutputStream
 {
+    /**
+     * Constructor.
+     *
+     * @param string $filename Output filename
+     */
+    public function __construct(protected string $filename)
+    {
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
+    }
+
     /**
      * Write data to the stream.
      *
@@ -54,7 +66,7 @@ class StdoutStream extends AbstractOutputStream
     public function write(string $string): int
     {
         if ($this->outputActive) {
-            echo $string;
+            file_put_contents($this->filename, $string, FILE_APPEND);
         }
         return strlen($string);
     }
