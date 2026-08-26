@@ -30,6 +30,7 @@
 
 namespace Finna\RecordDriver;
 
+use Exception;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\LrmiDriverTrait;
@@ -397,11 +398,14 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getFeedbackOrganization(): ?OrganisationInterface
     {
-        if (
-            ($id = $this->getXmlReader()->firstValue(path: "{{$this->aipaNs}}feedbackOrganization"))
-            && ($organization = $this->codeSets?->getOrganisation($id))
-        ) {
-            return $organization;
+        try {
+            if (
+                ($id = $this->getXmlReader()->firstValue(path: "{{$this->aipaNs}}feedbackOrganization"))
+                && ($organization = $this->codeSets?->getOrganisation($id))
+            ) {
+                return $organization;
+            }
+        } catch (Exception) {
         }
         return null;
     }
