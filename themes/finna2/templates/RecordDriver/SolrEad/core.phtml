@@ -47,12 +47,12 @@
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media">
-  <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+  <h1 class="record-title visible-xs" aria-hidden="true"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <?=$this->partial('layout/skiplink-core-heading.phtml') ?>
       <?php if ($results = $this->driver->getAlternativeTitles()): ?>
         <div class="recordAltTitles record-alt-titles">
           <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>

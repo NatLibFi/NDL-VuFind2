@@ -85,8 +85,7 @@
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media">
-  <h1 class="record-title visible-xs" aria-hidden="true" ><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-
+  <h1 class="record-title visible-xs" aria-hidden="true"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if (!empty($this->extraControls)): ?>
     <?=$this->extraControls['actionControls'] ?? ''?>
     <?=$this->extraControls['availabilityInfo'] ?? ''?>
