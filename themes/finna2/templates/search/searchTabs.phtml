@@ -1,7 +1,6 @@
 <!-- START of: finna - search/searchTabs.phtml -->
 <?php
   $module = $this->layout()->templateDir;
-  $hasSelectedTab = false;
   $selectedTabLabel = 'default_empty_label';
   $searchTabArray = [];
 ?>
@@ -9,6 +8,7 @@
   <div role="navigation" aria-label="<?=$this->transEscAttr('Search Tabs')?>">
     <?php foreach ($searchTabs as $tab): ?>
       <?php if ($tab['selected']) {
+        $this->layout()->currentTabId = $tab['id'];
         $selectedTab = $tab['id'];
       }
       $toggletipKeyHtml = 'tooltip_' . $tab['label'] . '_html';
@@ -43,7 +43,7 @@
       'tabs',
       [
         'tabs' => $searchTabArray,
-        'activeTab' => $selectedTab,
+        'activeTab' => $selectedTab ?? '',
         'tabNavClasses' => ['nav-tabs'],
         'scrollable' => true,
         'links' => true,

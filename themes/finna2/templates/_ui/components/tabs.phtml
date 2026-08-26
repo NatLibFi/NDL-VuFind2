@@ -68,7 +68,7 @@
           'href' => $tab['data-tab-url'],
         ]);
         if ($this->activeTab == $tabName) {
-          unset($buttonAttributes['href']);
+          $buttonAttributes['href'] = '#';
         }
       }
       if ($this->activeTab == $tabName) {
