@@ -149,12 +149,14 @@ if ($img):
         </div>
         <?php if (!$this->driver->isCollection()): ?>
           <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
-            <?php if (!empty($snippet['caption'])): ?>
-              <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
-            <?php endif; ?>
-            <?php if (!empty($snippet['snippet'])): ?>
-              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
-            <?php endif; ?>
+            <div class="truncate-field" data-rows="5">
+              <?php if (!empty($snippet['caption'])): ?>
+                <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
+              <?php endif; ?>
+              <?php if (!empty($snippet['snippet'])): ?>
+                <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
+              <?php endif; ?>
+            </div>
           <?php endif; ?>
         <?php endif; ?>
 
