@@ -6,7 +6,6 @@ $aAttrsBase = [
   'href' => '#',
   'id' => "field-anchor-$fieldId",
   'aria-expanded' => 'false',
-  'aria-haspopup' => 'true',
   'role' => 'button',
 ];
 $aAttributes = $this->htmlAttributes($aAttrsBase);
@@ -15,13 +14,13 @@ $aAttributes->add('aria-label', $this->title ?: ($this->label . ' ' . $this->tra
 $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
 <div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" role="group">
-  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span><?php if ($this->date): ?><span class="author-date"> (<?=$this->escapeHtml($this->date)?>)</span><?php endif; ?> <?=$this->icon('popover-expand', 'expand') ?><?=$this->icon('popover-collapse', 'collapse') ?></a><?=$additionalDataElem?>
+  <a<?=$aAttributes?>><span class="field-label" role="button"><?=$this->escapeHtml($this->label)?></span><?php if ($this->date): ?><span class="author-date"> (<?=$this->escapeHtml($this->date)?>)</span><?php endif; ?> <?=$this->icon('popover-expand', 'expand') ?><?=$this->icon('popover-collapse', 'collapse') ?></a><?=$additionalDataElem?>
   <?php if (!empty($this->description)): ?>
     <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span>
   <?php endif; ?>
   <div class="field-info field-popover" id="field-popover-<?=$this->escapeHtmlAttr($fieldId)?>">
     <div class="content">
-      <h2 tabindex="0"><?=$this->escapeHtml($this->label)?></h2>
+      <h2><?=$this->escapeHtml($this->label)?></h2>
       <?php foreach ($this->fieldLinks as $link): ?>
         <span class="<?=$this->escapeHtmlAttr($link['linkType'])?>">
           <a href="<?=$link['escapedUrl']?>"><?=$this->transEsc($link['linkText'])?></a>
@@ -47,6 +46,6 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
         <?php endif; ?>
       <?php endif; ?>
       </div>
-      <a href="#" class="hide-info" role="button" class="link-text"><?=$this->translate('field_hide_info')?></a>
+      <a href="#" class="hide-info" role="button" tabindex="0"><?=$this->translate('field_hide_info')?></a>
   </div>
 </div>
