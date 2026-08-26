@@ -37,7 +37,7 @@
             <div class="copy-to-clipboard-container visually-hidden">
               <span id="permalink"><?=$this->escapeHtml($link)?></span>
             </div>
-            <div class="dropdown-item permanent-link"><?=$this->copyToClipboardButton('#permalink', false);?></div>
+            <?=$this->copyToClipboardButton('#permalink', false);?>
           </li>
         <?php endif; ?>
         <?php $QRCode = $this->record($this->driver)->getQRCode('core'); ?>

@@ -51,6 +51,7 @@
       }
 
       if (!$useLinkElement) {
+        $buttonElem = 'button';
         $buttonAttributes = $this->htmlAttributes([
           'id' => $getButtonId($tabName),
           'class' => 'nav-link ' . $tabName . '-tab-button',
@@ -61,6 +62,7 @@
           'data-bs-target' => '#' . $paneId,
         ]);
       } else {
+        $buttonElem = 'a';
         $buttonAttributes = $this->htmlAttributes([
           'id' => $getButtonId($tabName),
           'class' => 'nav-link ' . $tabName . '-tab-button',
@@ -81,19 +83,11 @@
       $tabDescription = $tab['description'];
     ?>
     <li<?=$buttonLiAttributes?>>
-      <?php if (!$useLinkElement): ?>
-        <button<?=$buttonAttributes?>>
-      <?php else: ?>
-        <a<?= $buttonAttributes ?>>
-      <?php endif; ?>
+      <<?= $buttonElem ?><?=$buttonAttributes?>>
         <?=$this->transEsc($tab['description'])?><?php if (isset($tab['icon'])): ?><?=$this->icon($tab['icon']['name'], $tab['icon']['class'] ?? null)?><?php endif; ?>
         <?php if (isset($tab['count'])): ?> (<span class="count"><?=$this->escapeHtml($tab['count']) ?></span>)<?php endif; ?>
         <i class="icon"></i>
-      <?php if (!$useLinkElement): ?>
-        </button>
-      <?php else: ?>
-        </a>
-      <?php endif; ?>
+      </<?= $buttonElem ?>>
       <?php if (isset($tab['toggletip'])): ?>
         <?=$this->component('finna-toggletip', $tab['toggletip'])?>
       <?php endif; ?>

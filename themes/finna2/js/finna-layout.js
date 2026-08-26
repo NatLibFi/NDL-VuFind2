@@ -848,6 +848,7 @@ finna.layout = (function finnaLayout() {
                   btn.classList.add('icon-only');
                   btn.classList.remove('show-text');
                 } else {
+                  // Check to prevent '.show-text' animation triggering first
                   if (btn.classList.contains('icon-only')) {
                     btn.classList.add('show-text');
                   }
@@ -883,7 +884,6 @@ finna.layout = (function finnaLayout() {
         } else {
           filterElement.classList.add(...scrollableListClasses);
           finna.scrollableList.initScrollableList(document.querySelector('.mobile-functions-container'));
-          initMobileNavBtnAnimation();
         }
       });
     }

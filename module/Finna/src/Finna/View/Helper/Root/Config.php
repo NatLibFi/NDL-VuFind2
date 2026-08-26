@@ -115,6 +115,8 @@ class Config extends \VuFind\View\Helper\Root\Config
     /**
      * Get offcanvas sidebar side.
      *
+     * Finna: force off-canvas enabled.
+     *
      * @return ?string 'left', 'right'
      */
     public function offcanvasSide(): ?string

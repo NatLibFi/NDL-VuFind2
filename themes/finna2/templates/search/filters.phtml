@@ -87,7 +87,7 @@
       <?php else: ?>
         <div class="filter-title-group">
           <span class="filters-title"><?=$this->transEsc($field)?>:</span>
-          <?php if (count($data) > 3 && (!isset($this->dropdown) || $this->dropdown)): ?>
+          <?php if (count($data) > 3 && ($this->dropdown ?? true)): ?>
             <div class="search-filter-dropdown dropdown">
               <?php $dropdown = true; ?>
               <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $field); ?>
