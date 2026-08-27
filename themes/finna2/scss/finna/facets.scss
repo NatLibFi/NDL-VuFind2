@@ -33,7 +33,6 @@
     }
   }
   .more-less-btn-wrapper {
-    padding: $padding-small-vertical $padding-base-horizontal;
     .icon + span {
       padding-left: ($spacer * 0.25);
     }
@@ -42,7 +41,7 @@
   a.more-narrow-toggle {
     display: flex;
     align-items: baseline;
-    padding: 0px;
+    padding: 0.25rem 0.5rem;
     font-size: $font-size-small;
     font-weight: 700;
     color: $dark;

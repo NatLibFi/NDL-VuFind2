@@ -150,7 +150,6 @@
     margin: 20px 0px;
     border: 1px solid $record-holdings-border-color;
     border-radius: $record-holdings-border-radius;
-    box-shadow: $record-holdings-box-shadow;
     overflow: hidden;
     @media print {
         display: none;
@@ -182,7 +181,6 @@
     margin: $spacer 0px;
     border: 1px solid $record-holdings-border-color;
     border-radius: $record-holdings-border-radius;
-    box-shadow: $record-holdings-box-shadow;
     border-collapse: separate;
     overflow: hidden;
     p {

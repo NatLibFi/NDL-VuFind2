@@ -14,8 +14,8 @@
   box-shadow: none;
   .panel-heading {
     border: 1px solid $border-color;
-    box-shadow: $box-shadow-sm;
     background-color: $light;
+    overflow: hidden;
     color: $dark;
     border-radius: $border-radius-base;
     .panel-title {

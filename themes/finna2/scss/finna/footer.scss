@@ -29,10 +29,10 @@ footer {
     margin-bottom: 0.7em;
     list-style-type: none;
   }
-  img[src*="powered-by-finna"] {
-    max-height: 50px;
+  img[src*="powered-by-finna"], img.powered-by-finna {
+    max-height: 60px;
   }
-  img[src*="vufind-logo"] {
+  img[src*="vufind-logo"], img.vufind-logo {
     max-height: 65px;
   }
 }

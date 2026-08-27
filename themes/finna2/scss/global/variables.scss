@@ -56,7 +56,6 @@ $record-holdings-title-background: $light !default;
 $record-holdings-title-color: color.mix($record-holdings-title-background, contrast($record-holdings-title-background), 5%) !default;
 $record-holdings-border-color: $border-color !default;
 $record-holdings-border-radius: $border-radius-large !default;
-$record-holdings-box-shadow: unset !default;
 
 //== Finna home page
 $introduction-text-color: #fff !default;
@@ -79,7 +78,6 @@ $sidebar-background: $light !default;
 $sidebar-border-color: $border-color !default;
 $sidebar-border: 1px solid $sidebar-border-color !default;
 $sidebar-border-radius: $border-radius-lg;
-$sidebar-box-shadow: unset;
 $sidebar-header-border-color: $border-color !default;
 $sidebar-header-text-color: color.mix($sidebar-background, contrast($sidebar-background), 5%) !default;
 $sidebar-header-icon-color: $dark !default; // The variable is no longer in use

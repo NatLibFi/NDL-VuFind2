@@ -6,7 +6,6 @@
   @include media-breakpoint-up(md) {
     border: 1px solid $sidebar-border-color;
     border-radius: $sidebar-border-radius;
-    box-shadow: $sidebar-box-shadow;
     overflow: hidden;
   }
   // Checkbox filters
@@ -223,7 +222,6 @@ button.list-group-item {
   margin-bottom: $spacer;
   border: $sidebar-border;
   border-radius: $sidebar-border-radius;
-  box-shadow: $sidebar-box-shadow;
   overflow: hidden;
   h2 {
     border-bottom: 1px solid $border-color;
@@ -258,7 +256,6 @@ button.list-group-item {
 .work-expressions {
   border: $sidebar-border;
   border-radius: $sidebar-border-radius;
-  box-shadow: $sidebar-box-shadow;
   overflow: hidden;
   margin-bottom: $spacer;
   border-bottom: 1px solid $border-color;

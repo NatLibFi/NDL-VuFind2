@@ -7,11 +7,10 @@
     padding: $padding-large-vertical $padding-large-horizontal;
     margin-bottom: (0.5 * $spacer);
     font-size: 1em;
-    font-weight: 500;
+    font-weight: 600;
     background-color: $light;
     border: 1px solid $border-color;
     border-radius: $border-radius-base;
-    box-shadow: $box-shadow-sm;
     @include media-breakpoint-up(md) {
       display: none;
     }
