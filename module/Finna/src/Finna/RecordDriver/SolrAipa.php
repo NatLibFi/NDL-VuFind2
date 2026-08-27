@@ -92,7 +92,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function attachCodeSetsLibrary(FinnaCodeSets $codeSets): void
     {
-        if (!$apiBaseUrl = $this->mainConfig['Finna']['finna_admin_api_base_url'] ?? false) {
+        if (!($apiBaseUrl = $this->mainConfig['Finna']['finna_admin_api_base_url'] ?? null)) {
             return;
         }
         // Configure and set FinnaAdmin source for organizations.
