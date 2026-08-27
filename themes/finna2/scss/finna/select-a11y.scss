@@ -96,7 +96,7 @@
   padding: 0.5em;
   z-index: 10;
   // Styling alike .dropdown-menu:
-  border: 1px solid $dropdown-border;
+  border: 1px solid $dropdown-border-color;
   @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
   background: $light;
   font-size: 16px; // Avoid automatic zoom-in on mobile.
@@ -110,7 +110,7 @@
   width: 100%;
   padding: $padding-base-vertical $padding-base-horizontal;
   // Styling alike .form-control:
-  border: 1px solid $dark;
+  border: 1px solid $dropdown-border-color;
   background: $body-bg;
   color: $dark;
 }

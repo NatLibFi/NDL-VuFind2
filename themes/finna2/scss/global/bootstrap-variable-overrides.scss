@@ -16,7 +16,7 @@ $gray-darker:           #000 !default;
 $gray-dark:             #121212 !default;
 $gray-light:            #595959 !default;
 $gray-slightly-lighter: #757575 !default;
-$gray-mid-light:        #919191 !default;
+$gray-mid-light:        #949494 !default;
 $gray-lighter:          #d1d1d1 !default;
 $gray-ultralight:       #f2f2f2 !default;
 
@@ -238,7 +238,7 @@ $input-bg: #fff !default;
 //## Dropdown menu container and contents.
 
 $dropdown-bg: $body-bg !default;
-$dropdown-border: $dark;
+$dropdown-border-color: $border-color !default;
 $dropdown-border-radius: $border-radius-base !default;
 $dropdown-divider-bg: $gray-mid-light !default;
 $dropdown-link-active-color: $dark !default;
@@ -250,6 +250,7 @@ $dropdown-link-disabled-color: $gray-light !default;
 $dropdown-header-color: $dark!default;
 $dropdown-caret-color: $dark!default;
 $dropdown-fallback-border: none !default;
+$dropdown-padding-y: 0 !default;
 $dropdown-item-padding-x: 0 !default;
 $dropdown-item-padding-y: 0 !default;
 $dropdown-header-padding-x: $spacer !default;

@@ -232,11 +232,11 @@ $organisation-info-max-w: 400px !default;
                 max-width: calc(100% - 2em);
                 margin-right: 1em;
                 background: $gray-ultralight;
-                border: 1px solid $dropdown-border;
+                border: 1px solid $dropdown-border-color;
                 @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
                 .js-location-search-fields {
                     padding: 1.5rem 1rem 0.5rem;
-                    border-bottom: 1px solid $gray-lighter;
+                    border-bottom: 1px solid $gray-mid-light;
                     .input-row {
                         display: flex;
                         flex-wrap: wrap;
