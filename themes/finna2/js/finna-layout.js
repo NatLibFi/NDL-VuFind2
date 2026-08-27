@@ -823,6 +823,90 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
+   * Return the offcanvas container
+   * @returns {Element} The offcanvas container
+   */
+  function getOffcanvasContainer() {
+    if (document.body.classList.contains('template-name-mylist')) {
+      return document.querySelector('.mylist-bar.mobile-sidebar-container');
+    } else if (document.body.classList.contains('template-name-displaylist')) {
+      return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
+    }
+    return document.querySelector('.side-facets-container-ajax, .mobile-sidebar-container');
+  }
+
+  /**
+   * Check and keep focus within the offcanvas container
+   * @param {object} e Event object
+   */
+  function onFocusOutOfContainer(e) {
+    const offcanvas = getOffcanvasContainer();
+    if (e.relatedTarget && !offcanvas.contains(e.relatedTarget)) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      setTimeout(() => {
+        document.activeElement.blur();
+        offcanvas.focus();
+      },
+      200
+      );
+    }
+  } 
+
+  /**
+   * 
+   * @param {HTMLElement} offcanvas The element shown as offcanvas
+   * @param {boolean} open If the offcanvas is opened.
+   */
+  function handleOffcanvasAttributes(offcanvas, open) {
+    if (open) {
+      offcanvas.setAttribute('role', 'dialog');
+      offcanvas.setAttribute('aria-modal', 'true');
+      offcanvas.setAttribute('aria-hidden', 'false');
+      document.activeElement.blur();
+      offcanvas.focus();
+      offcanvas.addEventListener('focusout', onFocusOutOfContainer);
+    } else {
+      offcanvas.removeAttribute('role');
+      offcanvas.removeAttribute('aria-modal');
+      offcanvas.setAttribute('aria-hidden', 'true');
+      offcanvas.removeEventListener('focusout', onFocusOutOfContainer);
+      document.activeElement.blur();
+      document.getElementById('narrow-search-filter-toggle').focus();
+    }
+  }
+
+  /**
+   * Set offcanvas accessibility functionality and attributes
+   */
+  function initOffcanvas() {
+    const body = document.querySelector('body.vufind-offcanvas');
+    const offcanvas = getOffcanvasContainer();
+    if (offcanvas) {
+      offcanvas.setAttribute('tabIndex', '-1');
+      if (body) {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (
+              mutation.type === 'attributes' &&
+              mutation.attributeName === 'class'
+            ) {
+              if (body.classList.contains('active')) {
+                handleOffcanvasAttributes(offcanvas, true);
+              } else {
+                handleOffcanvasAttributes(offcanvas, false);
+              }
+            }
+          });
+        });
+        observer.observe(body, {
+          attributes: true
+        });
+      }
+    }
+  }
+
+  /**
    * Init the narrow search button animation.
    */
   function initMobileNavBtnAnimation() {
@@ -1110,6 +1194,7 @@ finna.layout = (function finnaLayout() {
       initHelpTabs();
       initPrintTriggers();
       initSelectAllButtonListeners();
+      initOffcanvas();
       initMobileNavBtnAnimation();
     },
     showPostLoginLightbox: showPostLoginLightbox

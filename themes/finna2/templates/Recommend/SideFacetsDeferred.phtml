@@ -45,7 +45,7 @@
   <div class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
     <div class="mobile-navigation-header-container">
       <span class="visible-xs visible-sm close-offcanvas">
-      <a class="visible-xs visible-sm close-offcanvas-btn" role="button" data-toggle="vufind-offcanvas">
+      <a class="visible-xs visible-sm close-offcanvas-btn" href="#" role="button" data-toggle="vufind-offcanvas">
         <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
         <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
         <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
