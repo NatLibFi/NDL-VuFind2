@@ -41,6 +41,7 @@
 
 .finna-main-tabs .nav-scrollable > .nav {
   margin-bottom: 0px;
+  overscroll-behavior-y: none;
   border-bottom: none;
 }
 

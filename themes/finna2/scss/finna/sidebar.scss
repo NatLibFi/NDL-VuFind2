@@ -103,13 +103,13 @@
     position: sticky;
     top: 0px;
     z-index: $zindex-navbar;
-    padding: 0.5rem;
+    padding: 1rem;
     margin-bottom: 0px;
     background: $light;
     color: $text-color;
     .close-offcanvas-btn, .reset-filters-btn {
       color: $text-color;
-      padding: $btn-padding-y $btn-padding-x;
+      padding: 0px $padding-large-horizontal;
       font-weight: 600;
       .icon {
         text-decoration: none;
