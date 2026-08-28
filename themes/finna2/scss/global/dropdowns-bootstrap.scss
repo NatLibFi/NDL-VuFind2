@@ -17,6 +17,7 @@
   overflow: hidden;
   min-width: 0;
   > li {
+    border-bottom: 1px solid $dropdown-divider-bg;
     &:first-child .dropdown-item {
       border-top-left-radius: $dropdown-border-radius;
       border-top-right-radius: $dropdown-border-radius;
@@ -30,7 +31,6 @@
       border-bottom: none;
     }
     > a {
-      border-bottom: 1px solid $dropdown-divider-bg;
       padding: $padding-base-vertical $padding-base-horizontal;
     }
   }
