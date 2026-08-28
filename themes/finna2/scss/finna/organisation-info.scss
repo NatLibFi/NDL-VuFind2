@@ -607,9 +607,9 @@ $organisation-info-max-w: 400px !default;
             width: 100%;
             padding: 0.35em;
             margin-right: 0.1em;
-            color: $gray;
-            border: 1px solid $gray-lighter;
-            border-radius: 10px;
+            color: $text-color;
+            border: 1px solid $border-color;
+            border-radius: $btn-border-radius;
             transition: background .1s linear, color .2s linear;
             &[disabled] {
                 background-color: $body-bg;
@@ -624,11 +624,11 @@ $organisation-info-max-w: 400px !default;
             &:hover,
             &:active,
             &:focus {
-                color: #000;
+                color: $text-color;
                 text-decoration: none;
                 background: $gray-lighter;
                 .icon {
-                    color: #000;
+                    color: $text-color;
                 }
             }
             .js-aria {
@@ -688,13 +688,13 @@ $organisation-info-max-w: 400px !default;
         margin-top: 0.2em;
         margin-right: 0.1em;
         color: $body-bg;
-        font-size: 1.6em;
+        font-size: $font-size-large;
         font-weight: 400;
         line-height: 35px;
         background: $link-color;
         border-radius: 0px;
         &:hover {
-            background: darken($link-color, 10%);
+            background: darken($link-color, 20%);
         }
         &.btn-round {
             border-radius: 50%;
