@@ -207,7 +207,7 @@ header {
       > a,
       .barcode-container {
         display: flex;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $dropdown-divider-bg;
         color: $text-color;
         span {
           padding: 3px 0px;

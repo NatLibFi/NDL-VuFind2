@@ -87,7 +87,7 @@
   overflow: hidden;
   color: $sidebar-header-text-color;
   background-color: $sidebar-background;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid $gray-mid-light;
   > h1 {
     line-height: 1.5em;
     background: transparent;
@@ -224,7 +224,7 @@ button.list-group-item {
   border-radius: $sidebar-border-radius;
   overflow: hidden;
   h2 {
-    border-bottom: 1px solid $border-color;
+    border-bottom: 1px solid $gray-mid-light;
   }
   > .record-organisation-box, > .list-group.organisations {
     padding: $padding-large-vertical $padding-base-horizontal;

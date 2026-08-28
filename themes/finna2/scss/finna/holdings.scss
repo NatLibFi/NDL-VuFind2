@@ -160,7 +160,7 @@
         padding: 0px $padding-large-horizontal;
         background: $record-holdings-title-background;
         color: $record-holdings-title-color;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $gray-mid-light;
         vertical-align: middle;
     }
     .holdings-urls {
@@ -415,7 +415,7 @@
         padding: 0px $padding-large-horizontal;
         background: $record-holdings-title-background;
         color: $record-holdings-title-color;
-        border-bottom: 1px solid $border-color;
+        border-bottom: 1px solid $gray-mid-light;
         vertical-align: middle;
         .dedup-information {
             display: inline-flex;
