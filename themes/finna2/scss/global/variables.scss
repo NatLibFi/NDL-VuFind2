@@ -91,7 +91,7 @@ $facet-header-color: color.mix($facet-header-background, contrast($facet-header-
 $facet-header-hover-color: color.mix($facet-header-color, contrast($facet-header-color), 5%) !default;
 $facet-text-color: $text-color !default;
 $facet-toggle-icon-color: $facet-text-color !default;
-$facet-border-color: $border-color !default;
+$facet-border-color: $gray-mid-light !default;
 
 $display-checkbox-facet-amount: inline-block !default; // set to none or inline-block
 
