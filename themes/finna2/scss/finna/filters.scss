@@ -160,7 +160,8 @@
       margin-left: 0px;
     }
   }
- .mobile-functions-container .active-filters {
+ .mobile-functions-container .active-filters,
+ .mobile-filters.search-filters .active-filters {
     .filters-title,
     .filters-term,
     .filter-options {

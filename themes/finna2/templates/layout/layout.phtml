@@ -252,7 +252,7 @@
     <?php $finnaFilters = ''; ?>
     <?php if (!empty($this->layout()->finnaFilters)): ?>
       <?php ob_start(); ?>
-        <div class="search-filters <?php if ($this->layout()->templateName != 'view'): ?>hidden-xs hidden-sm<?php endif; ?>" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
+        <div class="search-filters hidden-xs hidden-sm" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
           <div class="container filters-container">
             <?=$this->layout()->finnaFilters?>
           </div>
@@ -274,6 +274,15 @@
             <?=$this->layout()->finnaMainHeader?>
           </div>
         </div>
+      <?php elseif ($this->templateName == 'view'): ?>
+        <?=  $finnaFilters ?>
+        <?php if (!empty($this->layout()->finnaMobileFilters)): ?>
+          <div class="mobile-filters search-filters visible-xs visible-sm" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
+            <div class="container filters-container">
+              <?= $this->layout()->finnaMobileFilters; ?>
+            </div>
+          </div>
+        <?php endif; ?>
       <?php else: ?>
         <?=  $finnaFilters ?>
       <?php endif; ?>
