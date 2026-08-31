@@ -36,10 +36,14 @@ $light:                 $gray-ultralight !default;
 $dark:                  $gray-dark !default;
 $white:                 #fff !default;
 
-// Box shadows
+//== Box shadows
 $box-shadow: 0 .5rem 1rem rgba($gray, .15);
 $box-shadow-sm: 0 .25rem 0.125rem rgba($gray, .15);
 $box-shadow-lg: 0 1rem 3rem rgba($gray, .2);
+
+//== Custom Finna divider (not in Bootstrap 5)
+$divider-color: $gray-mid-light;
+$divider-border: 1px solid $divider-color;
 
 //== Custom Finna styling
 $background-color:      $gray-light !default;
@@ -241,7 +245,7 @@ $dropdown-bg: $body-bg !default;
 $dropdown-border-color: $border-color !default;
 $dropdown-border: $dropdown-border-color !default;
 $dropdown-border-radius: $border-radius-base !default;
-$dropdown-divider-bg: $gray-mid-light !default;
+$dropdown-divider-bg: $divider-color !default;
 $dropdown-link-active-color: $dark !default;
 $dropdown-link-active-bg: $light !default;
 $dropdown-link-color: $dark !default;
