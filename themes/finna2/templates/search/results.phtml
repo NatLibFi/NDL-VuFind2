@@ -300,7 +300,7 @@
         }?>
       <?php endforeach; ?>
       <?php if (($template = $this->content()->findTemplateForLng('content/Additions/search-post-facets')) && ($recordTotal > 0)): ?>
-        <div>
+        <div class="search-post-facets">
             <?=$this->render($template)?>
         </div>
       <?php endif; ?>
