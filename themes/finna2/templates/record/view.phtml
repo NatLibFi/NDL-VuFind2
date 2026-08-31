@@ -59,14 +59,14 @@
             'params' => $params,
           ];
           $this->layout()->finnaFilters = $this->context($this)->renderInContext(
-            'search/filters.phtml',
-            $filterSettingsArray,
+              'search/filters.phtml',
+              $filterSettingsArray,
           );
           $filterSettingsArray['dropdown'] = false;
           $this->layout()->finnaMobileFilters = $this->context($this)->renderInContext(
-            'search/filters.phtml',
-            $filterSettingsArray,
-        );
+              'search/filters.phtml',
+              $filterSettingsArray,
+          );
       }
   }
 
