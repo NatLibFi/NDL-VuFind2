@@ -77,11 +77,11 @@
     padding-left: 4px;
   }
   &.show-text .btn-elements {
-    animation: displayBtnText 0.5s ease;
+    animation: displayBtnText 0.3s ease;
   }
   &.icon-only .btn-elements {
     grid-template-columns: 0fr 0fr;
-    animation: hideBtnText 0.5s ease;
+    animation: hideBtnText 0.3s ease;
   }
 }
 

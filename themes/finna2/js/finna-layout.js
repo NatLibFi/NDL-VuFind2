@@ -924,7 +924,7 @@ finna.layout = (function finnaLayout() {
               let isVisible = null;
               const options = {
                 root: container,
-                threshold: 1,
+                threshold: 0.8,
               }
               const callBack = (entries) => {
                 isVisible = entries[0].isIntersecting;
