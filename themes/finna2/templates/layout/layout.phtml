@@ -209,6 +209,11 @@
       </section>
     <?php endif; ?>
     <section class="searchContent<?=$currentTabClass?>">
+      <?php if ($isLandingPage): ?>
+        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/frontpage-searchContent-pre')): ?>
+          <?=$this->render($template)?>
+        <?php endif; ?>
+      <?php endif; ?>
       <h1 class="visually-hidden"><?=$this->transEsc('Search')?></h1>
       <?php if (!empty($this->layout()->infoMessage)): ?>
         <div class="alert alert-info street-info">
@@ -266,7 +271,7 @@
         <?=  $finnaFilters ?>
       <?php elseif (!empty($this->layout()->finnaStreetBar)): ?>
         <?=$this->layout()->finnaStreetBar; ?>
-        <?=  $finnaFilters ?>        
+        <?=  $finnaFilters ?>
       <?php elseif (!empty($this->layout()->finnaMainHeader)): ?>
         <?=  $finnaFilters ?>
         <div id="content-heading" class="finna-main-header">

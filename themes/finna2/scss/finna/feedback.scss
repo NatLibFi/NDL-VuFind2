@@ -1,10 +1,11 @@
-.floating-feedback-btn {
+.feedback-btn {
   position: absolute;
   top: auto;
   right: 0;
   z-index: 1001;
-  margin-top: 15px;
-  margin-right: 15px;
+  margin-top: 1rem;
+  margin-right: 1rem;
+  text-transform: uppercase;
   color: $finna-feedback-color;
   background: $finna-feedback-background;
   &.fixed {
@@ -13,7 +14,7 @@
   }
   &:hover {
     color: $finna-feedback-color;
-    background: darken($finna-feedback-background, 10%);
+    background: darken($finna-feedback-background, 20%);
   }
 }
 
