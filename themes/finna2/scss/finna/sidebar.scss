@@ -87,7 +87,7 @@
   overflow: hidden;
   color: $sidebar-header-text-color;
   background-color: $sidebar-background;
-  border-bottom: 1px solid $gray-mid-light;
+  border-bottom: $divider-border;
   > h1 {
     line-height: 1.5em;
     background: transparent;
@@ -224,7 +224,7 @@ button.list-group-item {
   border-radius: $sidebar-border-radius;
   overflow: hidden;
   h2 {
-    border-bottom: 1px solid $gray-mid-light;
+    border-bottom: $divider-border;
   }
   > .record-organisation-box, > .list-group.organisations {
     padding: $padding-large-vertical $padding-base-horizontal;
@@ -263,7 +263,7 @@ button.list-group-item {
     display: none;
   }
   .list-group-item {
-    border-top: 1px solid $gray-mid-light;
+    border-top: $divider-border;
   }
   .details {
     color: $text-color;

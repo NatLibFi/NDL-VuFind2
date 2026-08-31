@@ -130,7 +130,7 @@
             margin-top: 10px;
             padding-top: 10px;
             background-color: $body-bg;
-            border-top: 1px solid $gray-mid-light;
+            border-top: 1px solid $border-color;
         }
         .menu-label {
             display: none;
@@ -151,7 +151,7 @@
     }
     .next-articles {
         .next-articles-header {
-            border-top: 1px solid $gray-lighter;
+            border-top: $divider-border;
             margin-top: 1em;
             padding-top: 1em;
             padding-bottom: 1em;
