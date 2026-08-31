@@ -43,6 +43,9 @@
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = false;
+
+  // Add Finna skip link target
+  $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
 ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>

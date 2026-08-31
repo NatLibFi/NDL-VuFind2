@@ -161,10 +161,14 @@
         $contentElementId = 'main';
         if (!empty($this->layout()->finnaUserAccountHeading)) {
           $contentElementId = 'useraccount-content-heading';
+        } elseif ($isLandingPage) {
+          $contentElementId = 'main';
+        } elseif ((!empty($this->layout()->finnaSkipLinkTarget))) {
+          $contentElementId = 'record-skip-link-target';
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
-        } elseif (!empty($this->layout()->finnaMainTabs) || (!empty($this->layout()->skipLinkTarget)) || (!empty($this->layout()->content))) {
-          $contentElementId = 'record-skip-link-target';
+        } elseif (!empty($this->layout()->finnaMainTabs)) {
+          $contentElementId = 'content-main-tabs';
         }
       ?>
       <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>

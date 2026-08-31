@@ -13,6 +13,9 @@
   $binding = $this->driver->tryMethod('getBinding');
   $iiifManifests = $this->driver->tryMethod('getIiifManifests');
 
+  // Add Finna skip link target
+  $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
+
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
     $renderedURLs[] = [
       'url' => $url['url'],

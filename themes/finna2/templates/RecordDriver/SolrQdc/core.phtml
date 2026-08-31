@@ -43,6 +43,10 @@
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+
+  // Add Finna skip link target
+  $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
+
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
 
