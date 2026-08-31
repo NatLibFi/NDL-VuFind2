@@ -52,15 +52,21 @@
     $showFilters = $filterDetails && ($results || $options->getRetainFilterSetting());
 
     // Set up filters
+    $filterSettingsArray = [
+      'filterList' => $filterList,
+      'checkboxFilters' => $checkboxFilters,
+      'defaultSortApplied' => $defaultSortApplied,
+      'options' => $options,
+      'params' => $params,
+    ];
     $this->layout()->finnaFilters = $showFilters ? $this->context($this)->renderInContext(
         'search/filters.phtml',
-        [
-            'filterList' => $filterList,
-            'checkboxFilters' => $checkboxFilters,
-            'defaultSortApplied' => $defaultSortApplied,
-            'options' => $options,
-            'params' => $params,
-        ]
+        $filterSettingsArray,
+    ) : '';
+    $filterSettingsArray['dropdown'] = false;
+    $this->layout()->finnaMobileFilters = $showFilters ? $this->context($this)->renderInContext(
+        'search/filters.phtml',
+        $filterSettingsArray,
     ) : '';
 
     $searchTabs = $this->searchtabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $hiddenFilters, $this->layout()->savedTabs);
