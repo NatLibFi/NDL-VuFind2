@@ -209,10 +209,7 @@
       </section>
     <?php endif; ?>
     <section class="searchContent<?=$currentTabClass?>">
-      <?php if ($isLandingPage
-        && ($template = $this->content()->findTemplateForLng(
-          'content/Additions/frontpage-searchContent-pre'
-        ))): ?>
+      <?php if ($isLandingPage && ($template = $this->content()->findTemplateForLng('content/Additions/frontpage-searchContent-pre'))): ?>
         <?= $this->render($template) ?>
       <?php endif; ?>
       <h1 class="visually-hidden"><?=$this->transEsc('Search')?></h1>
