@@ -77,10 +77,16 @@
   .facet {
     display: flex;
     padding: $padding-small-vertical $padding-base-horizontal;
+    align-items: first baseline;
     .main-link,
     .text {
       flex-grow: 1;
       overflow: hidden;
+      align-items: first baseline;
+      .facet-value {
+        hyphens: auto;
+        white-space: pre-wrap;
+      }
       &:hover {
         text-decoration-thickness: 0.1em;
         text-underline-offset: 0.2em;
