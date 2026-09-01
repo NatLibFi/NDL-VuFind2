@@ -87,8 +87,8 @@
 
 // Offcanvas
 @mixin vufind-offcanvas {
-  $zindex-sidebar: 2001;
-  $zindex-offcanvas-overlay: 2000;
+  $zindex-sidebar: 1036;
+  $zindex-offcanvas-overlay: 1035;
   $offcanvas-offset: 80vw !default;  // Width of open menu
 
   // To separate offcanvas sidebar from other sidebars (needed for collection list).
