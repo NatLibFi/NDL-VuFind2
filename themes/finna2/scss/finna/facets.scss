@@ -136,8 +136,8 @@
 }
 @include media-breakpoint-up(sm) {
   .facet-group {
-    &:not(:last-child) {
-      border-bottom: 1px solid $facet-border-color;
+    &:last-child {
+      border-bottom: none;
     }
   }
 }
