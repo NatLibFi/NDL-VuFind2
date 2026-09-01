@@ -1,4 +1,4 @@
-.feedback-btn {
+.template-name-home .searchContent > .feedback-btn {
   position: absolute;
   top: auto;
   right: 0;
@@ -14,7 +14,7 @@
   }
   &:hover {
     color: $finna-feedback-color;
-    background: darken($finna-feedback-background, 20%);
+    background: darken($finna-feedback-background, 10%);
   }
 }
 
