@@ -920,8 +920,7 @@ finna.layout = (function finnaLayout() {
           if ((scrollableBar.clientWidth / (filters.clientWidth + 50)) > 1) {
             const target = document.createElement('div');
             const firstFilter = container.querySelector('a.filter-value');
-            const btn = document.querySelector('#narrow-search-filter-toggle');
-            if (btn && target && firstFilter) {
+            if (target && firstFilter) {
               target.setAttribute('id', 'animationTarget');
               scrollableBar.insertBefore(target, firstFilter);
               let isVisible = null;
@@ -931,14 +930,14 @@ finna.layout = (function finnaLayout() {
               const callBack = (entries) => {
                 isVisible = entries[0].isIntersecting;
                 if (isVisible === false) {
-                  btn.classList.add('icon-only');
-                  btn.classList.remove('show-text');
+                  toggleBtn.classList.add('icon-only');
+                  toggleBtn.classList.remove('show-text');
                 } else {
                   // Check to prevent '.show-text' animation triggering first
-                  if (btn.classList.contains('icon-only')) {
-                    btn.classList.add('show-text');
+                  if (toggleBtn.classList.contains('icon-only')) {
+                    toggleBtn.classList.add('show-text');
                   }
-                  btn.classList.remove('icon-only');
+                  toggleBtn.classList.remove('icon-only');
                 }
               };
               const observer = new IntersectionObserver(callBack, options);
