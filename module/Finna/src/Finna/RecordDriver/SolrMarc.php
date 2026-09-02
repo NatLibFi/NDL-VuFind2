@@ -2167,10 +2167,21 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                         false
                     );
                     if ($name) {
-                        $currentArray = [
-                            'name' =>
-                                $this->stripTrailingPunctuation(array_shift($name)),
-                        ];
+                        if ($field == '800') {
+                            $nameSubfields = ['a', 'd', 't'];
+                            $name800 = $this->getSubfieldArray(
+                                $currentField,
+                                $nameSubfields,
+                                false
+                            );
+                            $name = array_diff($name, $name800);
+                            $currentArray['name'] = $this->stripTrailingPunctuation(implode(' ', $name800));
+                        } else {
+                            $currentArray = [
+                                'name' =>
+                                    $this->stripTrailingPunctuation(array_shift($name)),
+                            ];
+                        }
                         $currentArray['additional'] = implode(' ', $name);
 
                         // Can we find an ISSN in subfield x? (Note that ISSN is
