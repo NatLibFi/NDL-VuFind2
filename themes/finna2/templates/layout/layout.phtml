@@ -199,6 +199,11 @@
         <?=$this->render('navibar.phtml')?>
       </nav>
     </header>
+    <?php if ($isLandingPage && $template = $this->content()->findTemplateForLng('content/Additions/frontpage-header-post')): ?>
+      <section>
+        <?=$this->render($template)?>
+      </section>
+    <?php endif; ?>
     <?php if (!empty($this->layout()->finnaMainTabs && $this->templateName !== 'advanced')): ?>
       <section>
         <div id="content-main-tabs" class="finna-main-tabs">
