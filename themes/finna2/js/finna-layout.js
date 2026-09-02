@@ -917,14 +917,16 @@ finna.layout = (function finnaLayout() {
         const scrollableBar = filters.querySelector(':scope > div');
         const toggleBtn = container.querySelector('#narrow-search-filter-toggle');
         if (scrollableBar && toggleBtn) {
-          if ((scrollableBar.clientWidth / (filters.clientWidth + toggleBtn.clientWidth)) > 1) {
-            const target = container.querySelector('a.filter-value');
-            if (target) {
-              const btn = document.querySelector('#narrow-search-filter-toggle');
+          if ((scrollableBar.clientWidth / (filters.clientWidth + 50)) > 1) {
+            const target = document.createElement('div');
+            const firstFilter = container.querySelector('a.filter-value');
+            const btn = document.querySelector('#narrow-search-filter-toggle');
+            if (btn && target && firstFilter) {
+              target.setAttribute('id', 'animationTarget');
+              scrollableBar.insertBefore(target, firstFilter);
               let isVisible = null;
               const options = {
                 root: container,
-                threshold: 0.7,
               }
               const callBack = (entries) => {
                 isVisible = entries[0].isIntersecting;
