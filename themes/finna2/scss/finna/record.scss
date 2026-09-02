@@ -790,6 +790,8 @@ finna-model-viewer .object-editor {
     /* Display only half of the star and ensure that the remainder cannot be hovered over */
     .rating__icon--star {
       width: 0.5rem;
+      overflow-x: clip;
+      overflow-clip-margin: 1px;
     }
   }
 
