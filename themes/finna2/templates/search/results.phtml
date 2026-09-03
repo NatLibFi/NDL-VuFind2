@@ -12,6 +12,9 @@
   $searchType = $this->params->getSearchType();
   $geoFilter = '';
 
+  // Add Finna skip link target
+  $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
+
   // Store search id:
   $this->layout()->searchId = $this->results->getSearchId();
 
@@ -110,7 +113,8 @@
   $recommendations = $this->results->getRecommendations('side');
 ?>
 
-<h1 tabindex="-1" id="results-heading" class="visually-hidden"><?= $this->transEsc('Search Results'); ?></h1>
+<h1 tabindex="-1" id="results-heading" class="visually-hidden" aria-hidden="true"><?= $this->transEsc('Search Results'); ?></h1>
+<div id="<?=$finnaSkipLinkTarget ?>" role="heading" aria-level="1" class="visually-hidden" ><?= $this->transEsc('Search Results'); ?></div>
 <?php if ($recordTotal > 0): ?>
   <div class="mobile-nav-toggle-trigger visible-xs hidden-print"></div>
   <div class="mobile-nav-toggle visible-xs hidden-print">

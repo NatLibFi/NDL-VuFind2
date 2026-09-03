@@ -21,6 +21,10 @@
   $img = $this->recordImage($this->record($this->driver));
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+
+  // Add Finna skip link target
+  $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
+
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
     <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
@@ -47,12 +51,12 @@
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media">
-  <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+  <h1 class="record-title visible-xs" aria-hidden="true"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-      <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+      <?=$this->partial('layout/skiplink-core-heading.phtml') ?>
       <?php if ($results = $this->driver->getAlternativeTitles()): ?>
         <div class="recordAltTitles record-alt-titles">
           <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
