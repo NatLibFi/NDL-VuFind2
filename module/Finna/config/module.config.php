@@ -369,9 +369,12 @@ $config = [
         'factories' => [
             'Finna\View\Helper\Root\BiblioworksChatbot' =>
                 'Finna\View\Helper\Root\BiblioworksChatbotFactory',
+            'Finna\View\Helper\Root\BrowseBar' =>
+                'Finna\View\Helper\Root\BrowseBarFactory',
         ],
         'aliases' => [
             'biblioworksChatbot' => 'Finna\View\Helper\Root\BiblioworksChatbot',
+            'browseBar' => 'Finna\View\Helper\Root\BrowseBar',
         ],
     ],
     'service_manager' => [

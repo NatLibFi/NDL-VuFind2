@@ -1,0 +1,40 @@
+# This file configures the BrowseBar plugin, which renders the browse bar element.
+# The browse bar will be called in the template by the specified name within these settings.
+#
+# The format of this configuration is as follows:
+#
+# Array keys for every group are:
+#   - title: Title of the browse bar (optional)
+#   - headingLevel: The level of the heading element <h?> (optional)
+#   - attributes: additional attributes for the browse bar container's <div> tag (optional)
+#   - items: items shown in the browse bar - required
+#
+# Array keys for every browse bar item could be:
+#   - type: 'link' or 'dropdown' for dropdown menu button, 'link' by default
+#   - label: translation key or item label
+#   - link: href of the link <a> element
+#   - icon: icon used for the item, using the icon helper
+#   - iconElement: icon used for the item, using font awesome
+#   - dropdownItems: items to be shown in a dropdown menu. Dropdown menu items can use the same keys as items, excluding type.
+#
+
+"@parent_yaml": false
+
+BrowseBar:
+  attributes:
+    class: browse-bar-scrollable-list
+  items:
+    - link: Search/Results?lookfor=&amp;type=AllFields&amp;filter%5B%5D=~format_ext_str_mv%3A%220%2FImage%2F%22&amp;filter%5B%5D=free_online_boolean%3A1
+      label: format_Image_plural
+    - link: Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FBook%2F%22
+      label: browse_literature
+    - link: Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FPhysicalObject%2F%22&amp;filter%5B%5D=free_online_boolean%3A1
+      label: format_PhysicalObject_plural
+    - link: Search/Results?type=AllFields&amp;filter%5B%5D=~format%3A%220%2FVideo%2F%22
+      label: format_Video_plural
+    - link: Search/Results?type=AllFields&amp;view=grid&amp;filter%5B%5D=free_online_boolean%3A1&amp;filter%5B%5D=~format%3A%220%2FWorkOfArt%2F%22
+      label: format_WorkOfArt_plural
+    - link: L1/Results?type=AllFields
+      label: browse_learning_materials
+    - link: Search/Results?limit=50&view=grid&filter%5B%5D=free_online_boolean%3A%221%22&filter%5B%5D=%7Eusage_rights_ext_str_mv%3A%220%2FA+Free%2F%22&filter%5B%5D=%7Eusage_rights_ext_str_mv%3A%220%2FB+BY%2F%22&type=AllFields
+      label: unrestricted_collections
