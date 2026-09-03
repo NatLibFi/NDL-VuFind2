@@ -1,0 +1,23 @@
+<?php
+  /**
+   * Component for rendering a holdings styled table.
+   * @param ?string class HTMLElement class. Default is 'record-holdings-table vc-finna-holdings-table'.
+   * @param ?string header Header to display in top of table if provided.
+   * @param ?array  contents Elements to render inside the table as contents.
+   */
+  $divAttrs = [
+    'class' => trim(($this->class ?? 'record-holdings-table') . " $this->_componentClass"),
+  ];
+  $header = $this->header ?? '';
+  $contents = $this->contents ?? [];
+?>
+<div<?=$this->htmlAttributes($divAttrs)?>>
+  <?php if ($header): ?>
+    <div class="headers">
+      <span class="holdings-title"><?=$this->escapeHtml($header)?></span>
+    </div>
+  <?php endif; ?>
+  <?php foreach ($contents as $content): ?>
+    <?=$content?>
+  <?php endforeach; ?>
+</div>

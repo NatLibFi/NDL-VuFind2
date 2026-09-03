@@ -1,12 +1,14 @@
 <!-- START of: finna - RecordTab/holdingsarchive.phtml -->
-<?php if ($user = $this->auth()->getUserObject()): ?>
-  <?= $this->reservationList($user)->renderReserveTemplate($driver); ?>
-<?php else: ?>
-  <div class="text-right">
-    <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
-  </div>
+<?php $user = $this->auth()->getUserObject(); ?>
+<?php if ($this->reservationList($user)->getAvailableListsForRecord($this->driver)): ?>
+  <?php if ($user): ?>
+    <?= $this->reservationList($user)->renderReserveTemplate($driver); ?>
+  <?php else: ?>
+    <div class="text-right">
+      <a href="<?=$this->url('myresearch-userlogin') ?>" class="btn btn-primary" data-lightbox><span><?=$this->transEsc('archive_request_login')?></span></a>
+    </div>
+  <?php endif; ?>
 <?php endif; ?>
-
 
 <?= $this->render('RecordTab/holdings-record-urls'); ?>
 
