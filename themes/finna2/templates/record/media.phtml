@@ -1,0 +1,33 @@
+<?php
+  $recordHelper = $this->record($this->driver);
+  $imageHelper = $this->recordImage($recordHelper);
+  $scrollData = $this->scrollData ?? $this->layout()->scrollData ?? [];
+?>
+<div class="d-flex flex-row">
+  <div class="flex-fill">
+    <?=$imageHelper->renderImage(
+      'record',
+        [
+          'small' => ['w' => 100, 'h' => 100],
+          'medium' => ['w' => 250, 'h' => 250],
+        ],
+        [
+          'disableModal' => true,
+        ]
+    );?>
+  </div>
+  <div class="flex-fill">
+    <?=$this->record($this->driver)->renderTemplate(
+      'popup-information.phtml',
+      $this->vars()->getArrayCopy()
+    );?>
+  </div>
+</div>
+<?=$this->render('record/prev-next-media.phtml', compact('scrollData')); ?>
+<?php
+$skipText = $this->transEsc('skip_confirm');
+$script = <<<JS
+    finna.layout.initImagePaginators();
+    JS;
+?>
+<?=$this->assetManager()->outputInlineScriptString($script);

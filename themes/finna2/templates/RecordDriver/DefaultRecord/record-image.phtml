@@ -1,40 +1,72 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/record-image.phtml -->
 <?php
-  $isList = $type == 'list' || $type === 'list grid';
+  $isList = $type === 'list' || $type === 'list grid';
   $formats = $this->driver->tryMethod('getFormats');
+  $hideImageClass = empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium'])
+    ? 'hide-image'
+    : '';
+  $rec = $this->record($this->driver);
 ?>
-<div class="record-image-container <?= empty($images[0]['urls']['large']) && empty($images[0]['urls']['medium']) ? 'hide-image' : ''?>" aria-hidden="true">
-  <div class="recordcover-holder paginate"  data-format="<?=$this->transEsc(end($formats))?>" data-noimage="<?=$this->transEsc('no_image')?>">
-    <?=
-      $this->record($this->driver)->renderTemplate(
-          'record-image-paginator.phtml',
-          [
-              'images' => $images,
-              'type' => $type,
-              'formats' => $formats,
-              'numOfImages' => $numOfImages ?? null,
-              'displayIcon' => $displayIcon ?? false,
-              'models' => $models ?? [],
-              'renderContext' => $this->renderContext ?? \Finna\RecordDriver\RenderContext::RECORD,
+<div class="record-image-container <?=$hideImageClass?>" aria-hidden="true">
+  <?php if ($this->leafletViewer): ?>
+
+  <?php else: ?>
+    <div class="recordcover-holder paginate"
+      data-format="<?=$this->transEsc(end($formats))?>"
+      data-noimage="<?=$this->transEsc('no_image')?>"
+    >
+      <?=
+        $this->record($this->driver)->renderTemplate(
+            'record-image-paginator.phtml',
+            [
+            'images' => $images,
+            'type' => $type,
+            'formats' => $formats,
+            'numOfImages' => $numOfImages ?? null,
+            'displayIcon' => $displayIcon ?? false,
+            'models' => $models ?? [],
+            'renderContext' => $this->renderContext ?? \Finna\RecordDriver\RenderContext::RECORD,
           ]
-      )
-    ?>
-  </div>
-  <?php if (!$isList): ?>
-    <?php $ind = 0; ?>
-    <?php foreach ($images as $image): ?>
-      <?php $rights = $image['rights']; ?>
-      <div class="image-details-container text-left hidden" data-img-index="<?=$ind?>">
+        )
+      ?>
+    </div>
+  <?php endif;
+  if (!$isList):
+    $i = 0;
+    foreach ($images as $image):
+      $rights = $image['rights']; ?>
+      <div class="image-details-container text-left hidden" data-img-index="<?=$i?>">
         <?php if (!empty($image['models'])): ?>
-          <?=$this->record($this->driver)->renderTemplate('model-download.phtml', ['index' => $ind, 'models' => $image['models']]);?>
+          <?=$rec->renderTemplate(
+            'model-download.phtml',
+            ['index' => $i, 'models' => $image['models']]
+          );?>
         <?php endif; ?>
-        <?=$this->record($this->driver)->renderTemplate('image-download.phtml', ['index' => $ind, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false])?>
-        <?=$this->record($this->driver)->renderTemplate('image-information.phtml', ['index' => $ind, 'image' => $image]);?>
-        <?=$this->record($this->driver)->renderTemplate('image-rights.phtml', ['imageRightsLabel' => $imageRightsLabel, 'rights' => $rights, 'truncateLicense' => $ind === 0]);?>
+        <?=$rec->renderTemplate(
+              'image-download.phtml',
+              [
+            'index' => $i,
+            'rights' => $rights,
+            'image' => $image,
+            'hiRes' => $image['highResolution'] ?? false,
+          ]
+          )?>
+        <?=$rec->renderTemplate(
+              'image-information.phtml',
+              ['index' => $i, 'image' => $image]
+          );?>
+        <?=$rec->renderTemplate(
+              'image-rights.phtml',
+              [
+            'imageRightsLabel' => $imageRightsLabel,
+            'rights' => $rights,
+            'truncateLicense' => $i === 0,
+          ]
+          );?>
       </div>
-      <?php $ind++; ?>
-    <?php endforeach; ?>
-  <?php endif; ?>
+      <?php $i++;
+    endforeach;
+  endif; ?>
 </div>
 
 <!-- END of: finna - RecordDriver/DefaultRecord/record-image.phtml -->
