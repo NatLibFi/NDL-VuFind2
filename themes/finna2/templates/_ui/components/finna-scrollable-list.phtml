@@ -21,7 +21,7 @@
   $__title = $title ?? '';
   $__headingLevel = $headingLevel ?? 2;
 ?>
-<?php $__attributes = $this->htmlAttributes($containerClass ?? []); ?>
+<?php $__attributes = $this->htmlAttributes($attributes ?? []); ?>
 <div<?= $__attributes->add('class', ['scrollable-list-container']) ?>>
   <?php if ($__title): ?>
     <h<?=$__headingLevel?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$__headingLevel?>>
