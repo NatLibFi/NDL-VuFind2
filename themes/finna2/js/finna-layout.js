@@ -919,10 +919,9 @@ finna.layout = (function finnaLayout() {
         if (scrollableBar && toggleBtn) {
           if ((scrollableBar.clientWidth / (filters.clientWidth + 50)) > 1) {
             const target = document.createElement('div');
-            const firstFilter = container.querySelector('a.filter-value');
-            if (target && firstFilter) {
+            if (target) {
               target.setAttribute('id', 'animationTarget');
-              scrollableBar.insertBefore(target, firstFilter);
+              scrollableBar.insertBefore(target, scrollableBar.firstChild);
               let isVisible = null;
               const options = {
                 root: container,
