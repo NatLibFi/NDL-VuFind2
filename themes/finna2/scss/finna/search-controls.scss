@@ -80,8 +80,8 @@
   .dropdown-toggle {
     display: inline-block;
     padding: 0.4em;
-    font-size: $font-size-small;
     @extend .btn, .btn-outline-dark;
+    font-size: $font-size-small;
   }
   .dropdown-menu {
     padding: 0px;

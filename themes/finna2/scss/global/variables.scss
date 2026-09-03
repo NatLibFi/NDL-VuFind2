@@ -80,7 +80,7 @@ $sidebar-border: 1px solid $sidebar-border-color !default;
 $sidebar-border-radius: $border-radius-lg;
 $sidebar-header-border-color: $border-color !default;
 $sidebar-header-text-color: color.mix($sidebar-background, contrast($sidebar-background), 5%) !default;
-$sidebar-header-icon-color: $dark !default; // The variable is no longer in use
+$sidebar-header-icon-color: $dark !default;
 $sidebar-active-color: $text-color !default;
 $sidebar-active-background: transparent !default;
 
@@ -90,9 +90,11 @@ $facet-header-hover-background: color.mix($facet-header-background, contrast($fa
 $facet-header-color: color.mix($facet-header-background, contrast($facet-header-background), 5%) !default;
 $facet-header-hover-color: color.mix($facet-header-color, contrast($facet-header-color), 5%) !default;
 $facet-text-color: $text-color !default;
-$facet-toggle-icon-color: $facet-text-color !default;
+$facet-toggle-background: $body-bg !default;
+$facet-toggle-hover-background: color.mix($facet-toggle-background, contrast($facet-toggle-background), 5%) !default;
+$facet-toggle-color: $facet-text-color !default;
+$facet-toggle-hover-color: color.mix($facet-toggle-color, contrast($facet-toggle-color), 5%) !default;
 $facet-border-color: $divider-color !default;
-
 $display-checkbox-facet-amount: inline-block !default; // set to none or inline-block
 
 //== Applied filters

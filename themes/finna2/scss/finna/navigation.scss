@@ -10,6 +10,7 @@ header {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    outline: none;
     padding: $padding-small-vertical $padding-base-horizontal;
     --#{$prefix}nav-link-color: #{$header-text-color};
     --#{$prefix}nav-link-hover-color: #{$header-text-hover-color};
@@ -272,8 +273,3 @@ header {
 /* <#SCSS */
 
 /* End of Finna breadcrumbs */
-
-// content-navigation-menu
-.main.template-dir-content.template-name-content .content-navigation-menu {
-  margin: 1.3em 0em;
-}

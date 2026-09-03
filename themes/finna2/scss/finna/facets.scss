@@ -15,9 +15,9 @@
     background: $facet-header-background;
     border: 1px solid transparent;
     .icon {
-      color: $facet-toggle-icon-color;
+      color: $facet-toggle-color;
     }
-    &:hover, &:focus {
+    &:hover, &:focus-visible {
       background: $facet-header-hover-background;
       color: $facet-header-hover-color;
       box-shadow: none;
@@ -44,7 +44,7 @@
     padding: 0.25rem 0.5rem;
     font-size: $font-size-small;
     font-weight: 700;
-    color: $dark;
+    color: $text-color;
     background: transparent;
     text-transform: uppercase;
     text-decoration: none;
@@ -233,13 +233,13 @@
     border-bottom: none;
     .facet-tree__toggle-expanded {
       border-radius: $border-radius-small;
-      color: $facet-toggle-icon-color;
+      color: $facet-toggle-color;
       .icon {
         padding: 0px;
       }
       &:hover {
-        background: $dark;
-        color: $light;
+        background: $facet-toggle-hover-background;
+        color: $facet-toggle-hover-color;
       }
     }
     // Child items:

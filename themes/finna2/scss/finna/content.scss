@@ -8,6 +8,15 @@
     }
 }
 
+// content-navigation-menu
+.main.template-dir-content.template-name-content .content-navigation-menu {
+  margin: 0.5rem 0em;
+  p {
+    padding: 0px;
+    margin-bottom: 1rem;
+  }
+}
+
 // Typography for content pages
 // -------------------------------
 h1.content-header {
@@ -51,7 +60,6 @@ h1.content-header {
     p, ul:not(.nav-tabs), ol {
         font-size: $content-font-size-base;
         line-height: $content-line-height-base;
-        margin-bottom: 15px;
     }
 
     .odd-fluid {
