@@ -142,16 +142,15 @@ class AipaLrmi extends SolrLrmi implements
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = false)
+    public function getAllImages($includePdf = false)
     {
         // AIPA LRMI records do not directly contain PDF files.
-        return parent::getAllImages($language, false);
+        return parent::getAllImages(false);
     }
 
     /**

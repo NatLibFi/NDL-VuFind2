@@ -161,15 +161,17 @@ trait SolrCommonFinnaTrait
      * Return URL to copyright information.
      *
      * @param string $copyright Copyright
-     * @param string $language  Language
      *
      * @return mixed URL or false if no URL for the given copyright
      */
-    public function getRightsLink($copyright, $language)
+    public function getRightsLink($copyright)
     {
         $copyright = mb_strtoupper($copyright, 'UTF-8');
-        if (isset($this->mainConfig['ImageRights'][$language][$copyright])) {
-            return $this->mainConfig['ImageRights'][$language][$copyright];
+        $languages = 'en' === $this->preferredLanguage ? ['en', 'en-gb'] : [$this->preferredLanguage];
+        foreach ($languages as $lang) {
+            if (isset($this->mainConfig['ImageRights'][$lang][$copyright])) {
+                return $this->mainConfig['ImageRights'][$lang][$copyright];
+            }
         }
         return false;
     }
@@ -186,13 +188,12 @@ trait SolrCommonFinnaTrait
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
         return [];
     }
@@ -374,7 +375,7 @@ trait SolrCommonFinnaTrait
         string $default = '',
     ): array {
         $languages = [
-            $this->getTranslatorLocale(),
+            $this->preferredLanguage,
             ...$primary,
             ...$this->localeSettings?->getFallbackLocales() ?? [],
         ];

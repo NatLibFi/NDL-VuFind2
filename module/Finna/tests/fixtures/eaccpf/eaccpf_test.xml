@@ -72,6 +72,23 @@
       </nameEntryParallel>
     </identity>
     <description>
+      <occupations>
+        <occupation>
+          <term vocabularySource="http://urn.fi/URN:NBN:fi:au:mts:m3294" lang="eng">history scholar</term>
+        </occupation>
+        <occupation>
+          <term vocabularySource="http://urn.fi/URN:NBN:fi:au:mts:m3294" lang="fin">historiantutkija</term>
+        </occupation>
+        <occupation>
+          <term vocabularySource="http://urn.fi/URN:NBN:fi:au:mts:m3294" lang="swe">historiker (forskare)</term>
+        </occupation>
+        <occupation>
+          <term vocabularySource="http://urn.fi/URN:NBN:fi:au:mts:m3817" lang="fin">filosofian tohtori</term>
+        </occupation>
+        <occupation>
+          <term vocabularySource="http://urn.fi/URN:NBN:fi:au:mts:m3817" lang="swe">filosofie doktor</term>
+        </occupation>
+      </occupations>      
       <localDescriptions>
         <localDescription localType="TJ17">
           <citation href="https://kansallisbiografia.fi/">Kansallisbiografia</citation>

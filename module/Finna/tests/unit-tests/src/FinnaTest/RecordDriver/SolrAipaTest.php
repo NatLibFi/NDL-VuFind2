@@ -234,26 +234,28 @@ class SolrAipaTest extends TestCase
      */
     public function testGetAccessRestrictionsType(): void
     {
-        $driver = $this->getSolrAipaDriver();
+        $driver = $this->getSolrAipaDriver('en');
         $this->assertSame(
             [
                 'copyright' => 'CC BY 4.0',
                 'link' => 'http://creativecommons.org/licenses/by/4.0/deed.en',
             ],
-            $driver->getAccessRestrictionsType('en-gb')
+            $driver->getAccessRestrictionsType()
         );
+        $driver = $this->getSolrAipaDriver('fi');
         $this->assertSame(
             [
                 'copyright' => 'CC BY 4.0',
                 'link' => 'http://creativecommons.org/licenses/by/4.0/deed.fi',
             ],
-            $driver->getAccessRestrictionsType('fi')
+            $driver->getAccessRestrictionsType()
         );
+        $driver = $this->getSolrAipaDriver('foo');
         $this->assertSame(
             [
                 'copyright' => 'CC BY 4.0',
             ],
-            $driver->getAccessRestrictionsType('foo')
+            $driver->getAccessRestrictionsType()
         );
     }
 
@@ -282,10 +284,13 @@ class SolrAipaTest extends TestCase
     /**
      * Get an AIPA record driver with fake data.
      *
+     * @param string $language Language
+     *
      * @return SolrAipa
      */
-    protected function getSolrAipaDriver(): SolrAipa
-    {
+    protected function getSolrAipaDriver(
+        $language = 'en',
+    ): SolrAipa {
         $fixture = $this->getFixture('aipa/aipa_test.xml', 'Finna');
         $record = new SolrAipa(
             new Config(
@@ -310,6 +315,7 @@ class SolrAipaTest extends TestCase
             'fullrecord' => $fixture,
             'description' => "First line of a long description.\n\nSecond line of a long description.",
         ]);
+        $record->setPreferredLanguage($language);
         return $record;
     }
 

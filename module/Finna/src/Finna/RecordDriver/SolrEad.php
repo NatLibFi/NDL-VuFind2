@@ -99,14 +99,12 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $record = $this->getXmlRecord();
         $restrict = $record->userestrict->p ?? $record->accessrestrict->p ?? '';
@@ -116,7 +114,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $data = [];
         $data['copyright'] = $copyright
             = $this->getMappedRights($restrict);
-        if ($link = $this->getRightsLink($copyright, $language)) {
+        if ($link = $this->getRightsLink($copyright)) {
             $data['link'] = $link;
         }
         return $data;
@@ -134,22 +132,21 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
-        $cacheKey = __FUNCTION__ . "/$language/" . ($includePdf ? '1' : '0');
+        $cacheKey = __FUNCTION__ . ($includePdf ? '1' : '0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
 
         $result = [];
         // All images have same rights..
-        $rights = $this->getImageRights($language, true);
+        $rights = $this->getImageRights(true);
         foreach ($this->getXmlRecord()->xpath('did/daogrp') as $daogrp) {
             $urls = [];
             foreach ($daogrp->daoloc as $daoloc) {
@@ -260,8 +257,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Return image rights.
      *
-     * @param string $language       Language
-     * @param bool   $skipImageCheck Whether to check that images exist
+     * @param bool $skipImageCheck Whether to check that images exist
      *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0') (optional)
@@ -269,7 +265,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      *   'link'        Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language, $skipImageCheck = false)
+    public function getImageRights($skipImageCheck = false)
     {
         if (!$skipImageCheck && !$this->getAllImages()) {
             return false;
@@ -277,24 +273,11 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 
         $rights = [];
 
-        if ($type = $this->getAccessRestrictionsType($language)) {
+        if ($type = $this->getAccessRestrictionsType()) {
             $rights['copyright'] = $type['copyright'];
             if (isset($type['link'])) {
                 $rights['link'] = $type['link'];
             }
-        }
-
-        [$language] = explode('-', $language);
-        switch ($language) {
-            case 'fi':
-                $language = 'fin';
-                break;
-            case 'sv':
-                $language = 'swe';
-                break;
-            case 'en':
-                $language = 'eng';
-                break;
         }
 
         $desc = $this->getAccessRestrictions();
@@ -303,7 +286,7 @@ class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             // First try with the language code
             foreach ($desc as $p) {
                 $lang = (string)$p->attributes()->lang;
-                if ($lang == $language) {
+                if ($lang === $this->preferredLanguage) {
                     $description[] = (string)$p;
                 }
             }

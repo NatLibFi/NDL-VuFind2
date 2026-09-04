@@ -79,6 +79,8 @@ class SolrDefaultFactory extends \VuFind\RecordDriver\SolrDefaultWithoutSearchSe
         );
         $driver->attachVideoHandler($container->get(\Finna\Video\Video::class));
         $driver->attachLocaleSettings($container->get(\VuFind\I18n\Locale\LocaleSettings::class));
+        $locale = $container->get(\VuFind\I18n\Locale\LocaleSettings::class)->getUserLocale();
+        $driver->tryMethod('setPreferredLanguage', [$locale]);
         return $driver;
     }
 }

@@ -60,7 +60,7 @@ trait FinnaRecordTrait
      *
      * @var string
      */
-    protected $preferredLanguage = null;
+    protected $preferredLanguage = '';
 
     /**
      * Search settings.
@@ -364,7 +364,8 @@ trait FinnaRecordTrait
      */
     public function setPreferredLanguage($language)
     {
-        $this->preferredLanguage = $language;
+
+        $this->preferredLanguage = substr($language, 0, 2);
     }
 
     /**

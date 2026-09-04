@@ -1,9 +1,9 @@
 <!-- START of: finna - RecordDriver/AipaLrmi/core.phtml -->
 <?php
-  $rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang);
+  $rights = $this->driver->getAccessRestrictionsType();
   $summary = $this->driver->getSummary();
   $externalLink = $this->driver->getExternalLink();
-  $materials = $this->driver->getMaterials($this->layout()->userLang);
+  $materials = $this->driver->getMaterials();
   $dateCreated = $this->driver->getDateCreated();
   $dateModified = $this->driver->getDateModified();
   $img = $this->recordImage($this->record($this->driver));

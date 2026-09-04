@@ -1551,7 +1551,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetIntroduction(): void
     {
-        $driver = $this->getDriver('lido_test.xml');
+        $driver = $this->getDriver('lido_test.xml', language: 'fi');
         $this->assertSame(
             [
                 'Vain introductionissa!',
@@ -1931,18 +1931,12 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $record->setTranslator($translator);
 
         $dateConverter = new \VuFind\Date\Converter([
             'displayDateFormat' => 'd-m-Y',
         ]);
         $record->attachDateConverter($dateConverter);
+        $record->setPreferredLanguage($language);
         return $record;
     }
 }
