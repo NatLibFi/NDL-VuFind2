@@ -1,4 +1,4 @@
-.caret {
+  .caret {
   display: initial;
   width: initial;
   height: initial;
@@ -14,30 +14,35 @@
 }
 
 .dropdown-menu {
-  padding: 0px 1px;
-  border: 1px solid $dropdown-border;
-  border-radius: $border-radius-base;
+  overflow: hidden;
   min-width: 0;
-  @include box-shadow(0 6px 12px rgba(0, 0, 0, .275));
-
   > li {
-    border-bottom: 1px solid $gray-lighter;
+    border-bottom: 1px solid $dropdown-divider-bg;
+    &:first-child .dropdown-item {
+      border-top-left-radius: $dropdown-border-radius;
+      border-top-right-radius: $dropdown-border-radius;
+    }
+    &:last-child .dropdown-item {
+      border-bottom-left-radius: $dropdown-border-radius;
+      border-bottom-right-radius: $dropdown-border-radius;
+    }
     &:last-child > a,
     &:last-child {
       border-bottom: none;
     }
     > a {
-      padding: 7px 15px;
+      padding: $padding-base-vertical $padding-base-horizontal;
     }
   }
 }
 
 .dropdown-menu > li > a {
   display: block;
-
+  text-decoration: none;
   &:focus {
     // Hide focus effect so that menus look ok even if first item is automatically focused:
     background-color: inherit;
+    color: inherit;
   }
   &.active:focus {
     // Make sure the active item is displayed properly:
@@ -46,8 +51,15 @@
   }
   &:hover,
   &:active {
-    text-decoration: none;
     color: $dropdown-link-hover-color;
     background-color: $dropdown-link-hover-bg;
+  }
+}
+@include media-breakpoint-down(sm) {
+  .dropdown-menu {
+    max-height: 85dvh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
   }
 }

@@ -10,11 +10,19 @@
         }
      }
   }
+
+  $side = $this->config()->offcanvasSide();
 ?>
 <ul class="dropdown-menu subtabs collapse show" role="presentation">
   <li class="mobile-navigation-header-container visible-xs visible-sm">
     <h1 class="mobile-navigation-header"><?=$this->transEsc('Favourite lists')?></h1>
-    <button class="sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+    <span class="visible-xs visible-sm close-offcanvas">
+      <a class="close-offcanvas-btn" href="#" data-toggle="vufind-offcanvas" role="button">
+        <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
+        <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
+        <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
+      </a>
+    </span>
   </li>
   <?php foreach ($lists as $current): ?>
     <?php

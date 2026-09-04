@@ -10,7 +10,7 @@
         }
         if ($finnaImage):
       ?>
-        <img src="<?=$finnaImage?>" alt="">
+        <img class="powered-by-finna" src="<?=$finnaImage?>" alt="">
       <?php endif; ?>
       <span class="visually-hidden"><?=$this->transEsc('About Finna')?></span>
     </a>
@@ -18,7 +18,7 @@
   </div>
   <div class="footer-column">
     <a href="https://vufind.org/" title="<?=$this->transEscAttr('About VuFind')?>">
-      <img src="<?=$this->imageLink('vufind-logo-black.svg')?>" alt="">
+      <img class="vufind-logo" src="<?=$this->imageLink('vufind-logo-black.svg')?>" alt="">
       <span class="visually-hidden"><?=$this->transEsc('About VuFind')?></span>
     </a>
   </div>

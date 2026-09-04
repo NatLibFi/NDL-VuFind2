@@ -66,7 +66,7 @@ $thumbnail-width-large:  200px !default;
     float: right;
   }
 }
-@include media-breakpoint-up(sm) {
+@include media-breakpoint-up(md) {
   .mainbody {
     width: 75%;
     &.left{
@@ -89,9 +89,6 @@ $thumbnail-width-large:  200px !default;
   }
   .empty-list {
     width: 75%;
-    .checkbox-filters {
-      display: none;
-    }
   }
   .record-image-container {
     position: relative;
@@ -116,13 +113,19 @@ $thumbnail-width-large:  200px !default;
   margin-bottom: 1.7em;
 }
 
+.empty-list {
+  .checkbox-filters {
+    display: none;
+  }
+}
+
 .js-result-list {
   position: relative;
 
   // Loading spinner
   .loading-overlay {
     align-items: flex-start;
-
+    z-index: $zindex-loading-overlay;
     @include loading-overlay();
   }
 }
@@ -152,7 +155,7 @@ $thumbnail-width-large:  200px !default;
   }
   .list-view {
     .more-link,
-    .less-link, 
+    .less-link,
     .less-link-top {
       padding-bottom: 0px;
     }
@@ -172,10 +175,10 @@ $thumbnail-width-large:  200px !default;
 }
 @include media-breakpoint-down(sm) {
   .result {
-    border-bottom: 1px solid $gray-lighter;
+    border-bottom: 1px solid $border-color;
     &#result0,
     &:first-child {
-      border-top: 1px solid $gray-lighter;
+      border-top: 1px solid $border-color;
     }
   }
 }
@@ -188,16 +191,17 @@ $thumbnail-width-large:  200px !default;
     position: relative;
     float: left;
     width: 100%;
-    padding-right: 1.5rem;
+    padding-right: 2.5rem;
   }
 }
 
 h2.search-title,
-h2.title {
+h2.title,
+.result-body h3 {
   padding: 0px;
   margin: 0px;
-  font-size: 1.333em;
-  font-weight: 400;
+  font-size: $font-size-h4;
+  font-weight: 600;
   line-height: 1.1em;
 }
 .browse-title {
@@ -218,7 +222,7 @@ h2.title {
 
 .highlight {
   padding: 0px;
-  font-size: 1.03em;
+  font-size: 1em;
   font-weight: bold;
   color: inherit;
   background: none;
@@ -228,7 +232,6 @@ h2.title {
   @extend .alert;
   @extend .alert-info;
   display: none;
-  margin-bottom: 0px;
   ul {
     margin-bottom: 0px;
   }
@@ -239,10 +242,9 @@ h2.title {
 
 .available-online-links,
 .recordURLs {
-  margin-top: 10px;
   .online-source {
     font-size: 0.9em;
-    color: $gray-light;
+    color: $dark;
   }
   a {
     padding-left: 0.1em;
@@ -258,40 +260,58 @@ h2.title {
   font-weight: 400;
   letter-spacing: 0.2px;
   word-break: break-all;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 .result-citation-links {
   margin: 0.5rem 0rem;
 }
 
 .add-to-favorite-col {
-  .save-record,
-  .cart-add,
-  .cart-remove,
-  .qrcodeLink {
-    font-size: 1.2em;
-  }
-  a,
-  a:focus {
-    color: $action-link-color;
-  }
-  a:hover {
-    color: darken($action-link-color, 10%);
+  a {
+    @extend .btn, .btn-sm, .btn-outline-dark;
+    width: 100%;
+    .icon {
+      color: $action-link-color;
+    }
+    &:hover, &:focus-visible {
+      .icon {
+        color: inherit;
+      }
+    }
   }
   .qrcode {
     min-width: 110px;
   }
+  // Highlight cart item.
+  .btn-bookbag-toggle > a.cart-remove {
+    @extend .btn-dark;
+      .icon {
+        color: inherit;
+      }
+  }
 }
 @include media-breakpoint-down(sm) {
   .add-to-favorite-col {
-    margin-top: 0.7em;
-    .save-record,
-    .cart-add,
-    .cart-remove {
-      float: none;
-      margin-top: 0.7em;
-      font-size: 1em;
-      font-weight: 600;
-      text-transform: uppercase;
+    display: flex;
+    gap: 0.75rem;
+    margin: $spacer 0rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    a {
+      display: inline-flex;
+      align-items: center;
+      gap: 0;
+      width: auto;
+      .icon {
+        color: $action-link-color;
+        margin-right: (0.25 * $spacer);
+      }
+      &:hover {
+        .icon {
+          color: inherit;
+        }
+      }
     }
   }
 }
@@ -302,6 +322,8 @@ h2.title {
     right: 0px;
     a {
       text-align: center;
+      margin-bottom: (0.5 * $spacer);
+      width: 2rem;
     }
   }
 }
@@ -387,7 +409,7 @@ table.search-history-table {
 
   @media screen {
     @include media-breakpoint-up(sm) {
-      border: 1px solid $gray-lighter;
+      border: 1px solid $border-color;
       tbody > tr > td {
         vertical-align: middle;
       }
@@ -397,7 +419,7 @@ table.search-history-table {
     }
     @include media-breakpoint-down(sm) {
       tbody > tr {
-        border: 1px solid $gray-lighter;
+        border: 1px solid $border-color;
       }
     }
   }
@@ -406,17 +428,31 @@ table.search-history-table {
 .searchtools-background {
   background: $finna-searchtools-background;
   .searchtools {
-    padding-top: 1.4em;
-    padding-bottom: 1.4em;
+    display: flex;
+    flex-wrap: wrap;
+    gap: ($spacer * 0.75);
+    padding-top: $padding-large-vertical;
+    padding-bottom: $padding-large-vertical;
     a {
-      display: inline-block;
-      padding: 0rem 0.5rem;
-      margin-right: 1em;
-      font-size: 1.1em;
-      font-weight: 600;
       color: $finna-searchtools-color;
-      text-transform: uppercase;
+      padding: 0rem 0.5rem;
       white-space: nowrap;
+      font-size: $font-size-large;
+      font-weight: 600;
     }
+  }
+}
+
+.active-filters > div {
+  .filter-options {
+    width: fit-content;
+  }
+}
+@include media-breakpoint-up(md) {
+  .active-filters > div {
+    display: flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: baseline;
   }
 }

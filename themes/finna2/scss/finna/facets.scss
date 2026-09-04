@@ -1,25 +1,29 @@
 // Finna Facet styling
-div.facet {
-  ul {
-    margin-bottom: 0px;
-  }
-}
-
 .list-group.facet,
 .list-group.facets {
+  .facet-load-indicator {
+    padding-left: $padding-base-horizontal;
+    padding-bottom: $padding-base-vertical;
+  }
   // style Finna facet headers
   .list-group-item.title {
-    padding: 0.7em;
-    margin-bottom: 0.1em;
-    font-size: $font-size-base;
-    font-weight: 600;
+    padding: $padding-large-vertical $padding-base-horizontal;
+    font-size: $font-size-large;
+    font-weight: 500;
     color: $facet-text-color;
     text-align: left;
-    text-transform: uppercase;
     background: $facet-header-background;
-    border: 1px solid  $facet-border-color;
+    border: 1px solid transparent;
     .icon {
-      color: $action-link-color;
+      color: $facet-toggle-color;
+    }
+    &:hover, &:focus-visible {
+      background: $facet-header-hover-background;
+      color: $facet-header-hover-color;
+      box-shadow: none;
+      .icon  {
+        color: $facet-header-hover-color;
+      }
     }
   }
   a {
@@ -29,25 +33,25 @@ div.facet {
     }
   }
   .more-less-btn-wrapper {
-    padding: 0.1em;
     .icon + span {
-      margin-left: 0.3em;
+      padding-left: ($spacer * 0.25);
     }
   }
   .more-less-btn-wrapper .btn,
   a.more-narrow-toggle {
     display: flex;
     align-items: baseline;
-    padding: 0em 0em 0em 0.3em;
-    margin: 0.3em;
+    padding: 0.25rem 0.5rem;
     font-size: $font-size-small;
     font-weight: 700;
-    color: $gray;
+    color: $text-color;
+    background: transparent;
     text-transform: uppercase;
     text-decoration: none;
-    background: transparent;
-    border-radius: 0px;
     box-shadow: none;
+    &:hover span:not(.icon) {
+      text-decoration: $link-hover-decoration;
+    }
     &:focus-visible {
       box-shadow: $focus-ring-box-shadow;
     }
@@ -60,11 +64,6 @@ div.facet {
 @include media-breakpoint-down(sm) {
   .list-group.facet,
   .list-group.facets {
-    // tablet mobile facet adjustments
-    .facet:not(.facet-group) {
-      font-size: 1.15em;
-      line-height: 1.15em;
-    }
     .narrow-toggle .text,
     .more-less-btn-wrapper {
       font-size: $font-size-small;
@@ -74,17 +73,29 @@ div.facet {
 
 .facet-group {
   margin-bottom: 1rem;
+  border-bottom: 1px solid $facet-border-color;
   .facet {
     display: flex;
-    padding: 0.2em 0.2em 0.15em 0.6em;
+    padding: $padding-small-vertical $padding-base-horizontal;
+    align-items: first baseline;
     .main-link,
     .text {
       flex-grow: 1;
       overflow: hidden;
+      align-items: first baseline;
+      .facet-value {
+        hyphens: auto;
+        white-space: pre-wrap;
+      }
+      &:hover {
+        text-decoration-thickness: 0.1em;
+        text-underline-offset: 0.2em;
+      }
     }
     .text .facet-value {
       overflow: hidden;
       text-overflow: ellipsis;
+
     }
   }
   .title {
@@ -126,9 +137,17 @@ div.facet {
   .active {
     font-weight: bold;
     color: $action-link-color;
-    background: $list-group-bg;
+    background: transparent;
   }
 }
+@include media-breakpoint-up(sm) {
+  .facet-group {
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+}
+
 .facet-group .facet-title {
   flex: 1 1 0%;
   align-self: center;
@@ -163,12 +182,13 @@ div.facet {
   }
   .facet-info {
     padding: 0.4em;
-    margin-bottom: 0.8em;
+    margin: (0.5 * $spacer);
     font-size: 0.9em;
     .icon {
       display: table-cell;
       font-size: 1.2em;
-      color: $primary;
+      line-height: 1em;
+      color: $dark;
       vertical-align: baseline;
     }
     .info {
@@ -190,19 +210,44 @@ div.facet {
   }
 }
 
+/* ------ List Facets ------ */
+.facet__list {
+  margin-bottom: ($spacer * 0.5);
+  li {
+    padding: 0px $padding-small-horizontal;
+  }
+}
+
 /* ------ Hierarchical Facets ------ */
 .facet-tree {
-  .facet {
-    padding-left: 0.1rem;
+    margin-bottom: ($spacer * 0.5);
+    & > li, .more-less-btn-wrapper {
+      border-bottom: none;
+  }
+    > li {
+    padding-left: $padding-small-horizontal;
+    padding-right: $padding-small-horizontal;
   }
   li {
-    align-items: baseline;
+    padding-left: $padding-small-horizontal;
     border-bottom: none;
     .facet-tree__toggle-expanded {
-      // Fix focus ring:
-      margin-top: 0.5em;
-      margin-right: 0.3em;   
-      color: $link-color;
+      border-radius: $border-radius-small;
+      color: $facet-toggle-color;
+      .icon {
+        padding: 0px;
+      }
+      &:hover {
+        background: $facet-toggle-hover-background;
+        color: $facet-toggle-hover-color;
+      }
+    }
+    // Child items:
+    ul {
+      .facet {
+        padding-top: $padding-small-vertical;
+        padding-bottom: $padding-small-vertical;
+      }
     }
   }
 }
@@ -355,9 +400,10 @@ div.facet {
 
 .list-group.facet {
   .geofacet-header {
-    margin: 0.6em;
+    margin: (0.5 * $spacer);
     h5,
     a {
+      font-size: $font-size-small;
       display: inline-block;
       padding: 0px;
       margin: 0px;
@@ -366,6 +412,9 @@ div.facet {
       float: right;
       font-size: 0.9em;
       color: $gray-mid-light;
+    }
+    .facet-info {
+      margin: 0 (0.5 * $spacer);
     }
   }
   .geographic-facet a:hover {
@@ -395,4 +444,8 @@ div.facet {
       line-height: 1.15em;
     }
   }
+}
+
+.search-post-facets {
+  padding: $padding-base-vertical $padding-large-vertical;
 }

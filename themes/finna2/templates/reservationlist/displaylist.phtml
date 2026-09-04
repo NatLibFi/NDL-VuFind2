@@ -16,11 +16,10 @@
 
 <div class="<?=$this->layoutClass('mainbody-myresearch')?> reservation-list-body">
   <div class="my-research-content">
-    <div class="mobile-nav-toggle-trigger visible-xs visible-sm hidden-print"></div>
-    <div class="mobile-nav-toggle visible-xs visible-sm hidden-print">
-      <div id="mobile-navigation" class="btn btn-primary btn-mobile-nav" role="button" tabindex="0">
-        <?=$this->transEsc('ReservationList::All hold requests')?> <?=$this->icon('collapse-open', 'expand-icon') ?>
-      </div>
+    <div class="mobile-functions-container visible-xs visible-sm hidden-print">
+      <button id="narrow-search-filter-toggle" data-toggle="vufind-offcanvas" class="btn btn-mobile-nav search-filter-toggle">
+        <?=$this->transEsc('ReservationList::All hold requests')?>
+      </button>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header">
       <?=$this->component('page-title', ['title' => $pageTitle]);?>

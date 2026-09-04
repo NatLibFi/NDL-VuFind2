@@ -1,9 +1,5 @@
 .btn {
   border-radius: $finna-button-radius;
-  border: 0;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  font-weight: 500;
   @include transition(background .1s ease-in-out);
   &.disabled,
   &[disabled],
@@ -17,9 +13,6 @@
     color: $btn-default-color;
   }
 }
-
 .btn-default {
-  border-radius: $finna-button-radius;
-  border: 1px solid $btn-default-border;
-  color: $text-color;
+  @extend .btn, .btn-outline-dark;
 }

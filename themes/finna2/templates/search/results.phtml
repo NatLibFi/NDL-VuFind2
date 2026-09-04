@@ -81,16 +81,22 @@
 
       // Set up filters
       $filterCount = $this->search()->getFilterCount($checkboxFilters, $filterList);
+      $filterSettingsArray = [
+        'filterList' => $filterList,
+        'checkboxFilters' => $checkboxFilters,
+        'defaultSortApplied' => $defaultSortApplied,
+        'options' => $options,
+        'urlQuery' => $results->getUrlQuery(),
+        'params' => $params,
+      ];
       $this->layout()->finnaFilters = $this->context($this)->renderInContext(
           'search/filters.phtml',
-          [
-              'filterList' => $filterList,
-              'checkboxFilters' => $checkboxFilters,
-              'defaultSortApplied' => $defaultSortApplied,
-              'options' => $options,
-              'urlQuery' => $results->getUrlQuery(),
-              'params' => $params,
-          ]
+          $filterSettingsArray,
+      );
+      $filterSettingsArray['dropdown'] = false;
+      $this->layout()->finnaMobileFilters = $this->context($this)->renderInContext(
+          'search/filters.phtml',
+          $filterSettingsArray,
       );
   }
 
@@ -112,12 +118,21 @@
 
 <h1 tabindex="-1" id="results-heading" class="visually-hidden"><?= $this->transEsc('Search Results'); ?></h1>
 <?php if ($recordTotal > 0): ?>
-  <div class="mobile-nav-toggle-trigger visible-xs hidden-print"></div>
-  <div class="mobile-nav-toggle visible-xs hidden-print">
-    <div role="button" id="narrow-search-filter-toggle" class="btn btn-primary btn-mobile-nav" tabindex="0">
-      <?=$this->transEsc('Narrow Search')?>
-      <?php if ($filterCount > 0): ?>
-        <span class="active-filter-count">(<?=$filterCount?>)</span>
+  <div class="mobile-functions-container hidden-print visible-xs visible-sm">
+    <div class="mobile-functions-row">
+      <button id="narrow-search-filter-toggle" data-toggle="vufind-offcanvas" class="btn btn-mobile-nav search-filter-toggle">
+        <span class="btn-elements">
+          <?= $this->icon('sliders'); ?>
+          <span class="btn-text">
+            <?=$this->transEsc('Narrow Search')?>
+            <?php if ($filterCount > 0): ?>
+              (<?=$filterCount?>)
+            <?php endif; ?>
+          </span>
+        </span>
+      </button>
+      <?php if (!empty($this->layout()->finnaMobileFilters)): ?>
+        <?=$this->layout()->finnaMobileFilters?>
       <?php endif; ?>
     </div>
   </div>
@@ -157,6 +172,11 @@
 <?php endif; ?>
 <div class="results result-view-<?=$this->escapeHtmlAttr($this->params->getView())?>">
   <?php if ($recordTotal < 1): ?>
+    <?php if (!empty($this->layout()->finnaFilters)): ?>
+      <div class="visible-xs visible-sm no-results">
+        <?=$this->layout()->finnaFilters?>
+      </div>
+    <?php endif; ?>
     <p>
       <?php if (null !== $this->slot('empty-message')->get()): ?>
         <p><?=$this->slot('empty-message')->get()?></p>
@@ -280,7 +300,7 @@
         }?>
       <?php endforeach; ?>
       <?php if (($template = $this->content()->findTemplateForLng('content/Additions/search-post-facets')) && ($recordTotal > 0)): ?>
-        <div>
+        <div class="search-post-facets">
             <?=$this->render($template)?>
         </div>
       <?php endif; ?>
@@ -294,17 +314,15 @@
 <div class="container-fluid searchtools-background">
   <div class="container">
     <div class="searchtools hidden-print">
-      <a href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><?=$this->icon('rss-feed') ?> <?=$this->transEsc('Get RSS Feed')?></a>
-
-      <a href="<?=$this->url('search-email')?>" class="mailSearch" role="button" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('email') ?> <?=$this->transEsc('Email this Search')?></a>
-
       <?php if (is_numeric($this->results->getSearchId()) && (is_object($account) && $account->loginEnabled())): ?>
         <?php if ($this->results->isSavedSearch()): ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-delete') ?> <?=$this->transEsc('save_search_remove')?></a>
+          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-delete') ?> <span><?=$this->transEsc('save_search_remove')?></span></a>
         <?php else: ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-save') ?> <?=$this->transEsc('save_search')?></a>
+          <a href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-save') ?> <span><?=$this->transEsc('save_search')?></span></a>
         <?php endif; ?>
       <?php endif; ?>
+      <a href="<?=$this->url('search-email')?>" class="mailSearch" role="button" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('email') ?> <span><?=$this->transEsc('Email this Search')?></span></a>
+      <a href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><?=$this->icon('rss-feed') ?> <span><?=$this->transEsc('Get RSS Feed')?></span></a>
       <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-post-tools')): ?>
         <?=$this->render($template, ['results' => $this->results])?>
       <?php endif; ?>

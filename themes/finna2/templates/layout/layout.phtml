@@ -199,9 +199,23 @@
         <?=$this->render('navibar.phtml')?>
       </nav>
     </header>
+    <?php if ($isLandingPage && $template = $this->content()->findTemplateForLng('content/Additions/frontpage-header-post')): ?>
+      <section>
+        <?=$this->render($template)?>
+      </section>
+    <?php endif; ?>
+    <?php if (!empty($this->layout()->finnaMainTabs)): ?>
+      <section>
+        <div id="content-main-tabs" class="finna-main-tabs">
+          <div class="container">
+            <?=$this->layout()->finnaMainTabs?>
+          </div>
+        </div>
+      </section>
+    <?php endif; ?>
     <section class="searchContent<?=$currentTabClass?>">
-      <?php if ($isLandingPage): ?>
-        <a class="btn btn-primary btn-uppercase floating-feedback-btn" href="<?=$this->url('feedback-home') ?>"><?=$this->transEsc('Feedback')?></a>
+      <?php if ($isLandingPage && ($template = $this->content()->findTemplateForLng('content/Additions/frontpage-searchContent-pre'))): ?>
+        <?= $this->render($template) ?>
       <?php endif; ?>
       <h1 class="visually-hidden"><?=$this->transEsc('Search')?></h1>
       <?php if (!empty($this->layout()->infoMessage)): ?>
@@ -243,34 +257,42 @@
     <?php endif; ?>
     </section>
     <?=$this->breadcrumbs()->render(); ?>
-    <?php // TODO: get rid of template-dir-* and template-name-* here ?>
-    <section id="main" role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
-      <?php if (!empty($this->layout()->advSearchHeader)): ?>
-        <?=$this->layout()->advSearchHeader; ?>
-      <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaFilters)): ?>
-        <div class="search-filters" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
+    <?php $finnaFilters = ''; ?>
+    <?php if (!empty($this->layout()->finnaFilters)): ?>
+      <?php ob_start(); ?>
+        <div class="search-filters hidden-xs hidden-sm" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
           <div class="container filters-container">
             <?=$this->layout()->finnaFilters?>
           </div>
         </div>
-      <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaStreetBar)): ?>
-        <?=$this->layout()->finnaStreetBar?>
-      <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaMainHeader)): ?>
+      <?php $finnaFilters = ob_get_clean(); ?>
+    <?php endif; ?>
+    <?php // TODO: get rid of template-dir-* and template-name-* here ?>
+    <section id="main" role="main" class="main template-dir-<?=$this->templateDir?> template-name-<?=$this->templateName?><?=$this->browse ? ' browse' : '' ?><?=$currentTabClass?>">
+      <?php if (!empty($this->layout()->advSearchHeader)): ?>
+        <?=$this->layout()->advSearchHeader; ?>
+        <?=  $finnaFilters ?>
+      <?php elseif (!empty($this->layout()->finnaStreetBar)): ?>
+        <?=$this->layout()->finnaStreetBar; ?>
+        <?=  $finnaFilters ?>
+      <?php elseif (!empty($this->layout()->finnaMainHeader)): ?>
+        <?=  $finnaFilters ?>
         <div id="content-heading" class="finna-main-header">
           <div class="container">
             <?=$this->layout()->finnaMainHeader?>
           </div>
         </div>
-      <?php endif; ?>
-      <?php if (!empty($this->layout()->finnaMainTabs)): ?>
-        <div id="content-main-tabs" class="finna-main-tabs">
-          <div class="container">
-            <?=$this->layout()->finnaMainTabs?>
+      <?php elseif ($this->templateName == 'view'): ?>
+        <?=  $finnaFilters ?>
+        <?php if (!empty($this->layout()->finnaMobileFilters)): ?>
+          <div class="mobile-filters search-filters visible-xs visible-sm" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
+            <div class="container filters-container">
+              <?= $this->layout()->finnaMobileFilters; ?>
+            </div>
           </div>
-        </div>
+        <?php endif; ?>
+      <?php else: ?>
+        <?=  $finnaFilters ?>
       <?php endif; ?>
       <div id="content" class="container main-content">
         <?=$this->layout()->content ?>
@@ -294,6 +316,7 @@
         </div>
       </div>
     <?php endif; ?>
+    <div class="vufind-offcanvas-overlay" data-toggle="vufind-offcanvas"></div>
 
     <?php if ($finnaSurvey): ?>
       <?=$this->finnaSurvey()->render()?>

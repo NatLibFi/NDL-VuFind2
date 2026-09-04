@@ -3,36 +3,88 @@
     display: none;
   }
 }
+
+.record-toolbar {
+  .nav {
+    gap: 1rem;
+    > li:not(.share-buttons) a {
+      font-size: 1em;
+      font-weight: 600;
+      color: $action-link-color;
+      &:hover {
+        color: darken($action-link-color, 20%);
+      }
+      .icon {
+        padding: 0 3px;
+      }
+    }
+  }
+  &.link-list.list-scrollable {
+    .list-scrollable__list {
+      margin-top: (0.5 * $spacer);
+      margin-bottom: (0.5 * $spacer);
+      gap: 0.75rem;
+    }
+    .list-scrollable__list-item {
+      margin: 0px;
+    }
+    .list-scrollable__scroll-prev-btn,
+    .list-scrollable__scroll-next-btn {
+      background-color: $body-bg;
+      box-shadow: 0 .125rem .25rem rgba(0,0,0, .25);
+    }
+    .list-scrollable__scroll-next-btn {
+      right: -0.5rem;
+    }
+    .list-scrollable__scroll-prev-btn {
+      left: -0.5rem;
+    }
+  }
+  .btn-record-toolbar {
+    @extend .btn, .btn-sm, .btn-outline-dark;
+    &:not(.show) .icon {
+      color: $action-link-color;
+    }
+    :not(.show--open) .icon, :not(.show--closed) .icon {
+      color: inherit;
+    }
+    &:hover,
+    &:focus-visible {
+      .icon {
+        color: inherit;
+      }
+    }
+    &.dropdown-item {
+      text-align: left;
+      border: none;
+      border-radius: 0;
+    }
+  }
+  // Highlight cart item.
+  .cart-remove.btn-record-toolbar {
+      @extend .btn-dark;
+      .icon {
+        color: inherit;
+      }
+  }
+}
+
 .record {
   .media-left,
   .media-right {
     width: 25%;
   }
-  .nav > li:not(.share-buttons) a {
-    font-size: 1em;
-    font-weight: 600;
-    color: $action-link-color;
-    &:hover {
-      color: darken($action-link-color, 10%);
-    }
-    .icon {
-      padding-right: 3px;
-      padding-left: 3px;
-    }
-  }
   .record-title {
     margin: 0px 0px 3px 0px;
     font-size: $record-title-font-size;
-    line-height: 1.2;
+    line-height: 1.1;
+    font-weight: 600;
   }
   .recordURLs {
     padding-bottom: 10px;
     margin: 0px 0px 10px;
     > a {
       display: block;
-    }
-    a {
-      font-size: 15px;
     }
     .truncate-field.truncate-done {
       width: 100%;
@@ -81,6 +133,7 @@
 @include media-breakpoint-down(sm) {
   .record {
     .media-body {
+      display: block;
       width: 100%;
     }
     .media-left,
@@ -90,7 +143,7 @@
       width: 100%;
     }
     .record-title {
-      margin-top: 10px;
+      margin-top: (0.5 * $spacer);
     }
   }
 }
@@ -104,61 +157,17 @@
 }
 @include media-breakpoint-down(md) {
   .record .record-title {
-    margin-bottom: 20px;
+    margin-bottom: $spacer;
   }
 }
 
 .record-main {
   .table-finna-record.record-details .info {
     font-size: $font-size-small;
-    color: $gray;
+    color: $dark;
   }
 }
 
-.record-toolbar,
-.mobile-toolbar {
-  > ul {
-    align-items: baseline;
-  }
-  .nav-pills {
-    padding: 0px;
-    margin: 0px;
-    a:hover {
-      text-decoration: none;
-    }
-    > li:not(.share-buttons):not(.whatsapp) {
-      // Links rendered as pills
-      > a,
-      > .btn-bookbag-toggle > a {
-        padding: 0px;
-        border-radius: $nav-pills-border-radius;
-      }
-      &:not(.library-link) {
-        margin: 10px;
-      }
-    }
-    // QRCode in record view
-    img.qrcode {
-      border-radius: 8px;
-      min-width: 150px;
-    }
-    // Share buttons
-    > li.share-buttons {
-      display: flex;
-      flex-grow: 1;
-      justify-content: end;
-      padding-top: 5px;
-      .share-buttons-toolbox a {
-        padding-left: 5px;
-        display: inline-block;
-      }
-    }
-
-    .dropdown-toggle {
-      display: initial;
-    }
-  }
-}
 .record-alt-titles {
   color: $gray-slightly-lighter;
   margin-bottom: 12px;
@@ -288,8 +297,6 @@
   margin-bottom: 10px;
 }
 
-.show-details-button,
-.hide-details-button,
 .toggle-image-information,
 .toggle-video-information,
 .toggle-audio-information {
@@ -301,13 +308,14 @@
 }
 .show-details-button,
 .hide-details-button {
-  width: 100%;
-  font-size: 0.9em;
-  color: $link-color;
-  &:hover,
-  &:focus {
-    color: $link-color;
-  }
+  @extend .btn-sm, .btn-outline-dark;
+  display: flex;
+  gap: 0.25rem;
+  align-items: baseline;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .record-details {
@@ -483,22 +491,19 @@
     }
     .image-dimensions,
     .dropdown-menu .file-size {
-      font-size: 0.8em;
+      font-size: 0.9em;
       text-transform: initial;
     }
     .dropdown-toggle.download {
       padding: 2px 6px;
-      font-weight: 600;
-      color: $gray-light;
+      font-weight: 500;
       text-transform: uppercase;
     }
     .dropdown-menu.download {
-      padding: 2px 6px;
       border-radius: 5px;
       > li {
         border-bottom: none;
         > a {
-          padding: 2px 6px;
           white-space: initial;
           border-radius: 0px;
         }
@@ -524,7 +529,7 @@
   a span {
     color: $action-link-color;
     &:hover {
-      text-decoration: none;
+      text-decoration: $link-hover-decoration;
       color: $action-link-color;
     }
   }
@@ -566,6 +571,9 @@
     &:hover,
     &:focus {
       color: $action-link-color;
+    }
+    &:hover {
+      text-decoration: $link-hover-decoration;
     }
     &.collapsed {
       .hide-image-information,
@@ -762,6 +770,11 @@ finna-model-viewer .object-editor {
   /* Use display:inline-flex to prevent whitespace issues. Alternatively, you can put all the children of .rating-group on a single line. */
   display: inline-flex;
 
+  /* Show focus ring */
+  &:focus-within {
+    box-shadow: $focus-ring-box-shadow;
+  }
+
   /* Reset width */
   .rating__icon {
     width: initial;
@@ -802,7 +815,7 @@ finna-model-viewer .object-editor {
 
   /* If any input is checked, make its following siblings grey */
   .rating__input:checked ~ .rating__label .rating__icon--star {
-    color: #ddd;
+    color: $gray-lighter;
   }
 
   /* Make all stars highlight on rating group hover */
@@ -814,7 +827,7 @@ finna-model-viewer .object-editor {
     /* Make hovered input's following siblings grey on hover */
     .rating__input:hover ~ .rating__label .rating__icon--star,
     .rating__input:hover ~ .rating__label--half .rating__icon--star {
-      color: #ddd;
+      color: $gray-lighter;
     }
   }
 }
@@ -1107,7 +1120,7 @@ finna-model-viewer .object-editor {
 // Comment form
 .comment-form-wrapper {
   padding: 10px;
-  background-color: lighten($gray, 78%);
+  background-color: $light;
   border-radius: $border-radius-base;
   .comment-form {
     .comment-info-icon {

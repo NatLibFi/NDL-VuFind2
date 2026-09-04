@@ -1,16 +1,16 @@
 .accordion {
-  list-style-type: none;
-  cursor: pointer;
+  &:hover:not(.active) {
+    cursor: pointer;
+  }
   .accordion-toggle {
-    padding: 15px 10px;
-    margin-bottom: 5px;
+    list-style-type: none;
+    padding: $padding-large-vertical $padding-large-horizontal;
+    margin-bottom: (0.5 * $spacer);
     font-size: 1em;
-    font-weight: 500;
-    background-color: $gray-ultralight;
-    border-top: 1px solid $gray-lighter;
-    border-right: 1px solid $gray-lighter;
-    border-bottom: 1px solid $gray-lighter;
-    border-left: 4px solid $gray-lighter;
+    font-weight: 600;
+    background-color: $light;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-base;
     @include media-breakpoint-up(md) {
       display: none;
     }
@@ -35,14 +35,10 @@
     cursor: inherit;
     .title {
       flex: 1;
-      font-size: $font-size-h2;
+      font-size: $font-size-h4;
     }
-    .icon:after {
-      font-family: finnaicons;
-      font-size: 24px;
-      content: "\e91a";
-      color: $action-link-color;
-      font-style: normal;
+    &:hover {
+      text-decoration: none;
     }
   }
   &.accordion-details {
@@ -58,8 +54,7 @@
   &.active {
     cursor: default;
     .accordion-toggle {
-      border-left: 4px solid $action-link-color;
-      .icon:after {
+      .icon {
         display: none;
       }
       @media print {

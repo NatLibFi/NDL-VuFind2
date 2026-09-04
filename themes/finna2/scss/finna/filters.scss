@@ -17,8 +17,7 @@
     }
     button[type=submit] {
       height: $input-height-base;
-      padding: $padding-base-vertical $padding-base-horizontal;
-      margin-left: 0.7em;
+      margin-left: 0.5rem;
     }
   }
 }
@@ -28,7 +27,7 @@
       flex-direction: column;
       align-items: flex-start;
       button[type=submit] {
-        margin-top: 0.3em;
+        margin-top: 0.5rem;
         margin-left: 0px;
       }
     }
@@ -53,26 +52,27 @@
   background: $filterContent-background;
   border-top: 1px solid $filterContent-border-color;
   border-bottom: 1px solid $filterContent-border-color;
+  padding-top: $padding-base-vertical;
+  padding-bottom: $padding-base-vertical;
 }
 
 .finna-filters,
 .results .noresults {
-  display: inline-flex;
-  flex-wrap: wrap;
-  width: 100%;
-  padding: 0.4em 0em;
+  align-items: baseline;
+  padding: 0px;
   color: $filterContent-text-color;
   .filter-options {
     display: flex;
+    margin-right: 0.5rem;
     .filters-toggle {
       display: flex;
-      align-items: center;
       gap: 0.4em;
       height: 3.5em;
       padding: 0px;
       font-weight: 700;
       color: $filterContent-text-color;
       text-transform: uppercase;
+      align-items: center;
       .icon.collapse {
         display: none;
       }
@@ -85,14 +85,6 @@
         }
       }
     }
-  }
-  .filters {
-    display: inline-flex;
-    flex: 1;
-    flex-wrap: wrap;
-    align-items: center;
-    width: 100%;
-    max-width: 100%;
   }
   .filters-term {
     margin-left: 0.4em;
@@ -107,13 +99,13 @@
   .filter-value {
     display: inline-flex;
     align-items: center;
-    padding: 0.35em 0.8em;
+    padding: $btn-padding-y $btn-padding-x;
     margin: 0.4em 0em 0.4em 0.4em;
-    font-weight: 600;
+    font-weight: $btn-font-weight;
     color: $filters-text-color;
     white-space: nowrap;
     background: $filters-background-color;
-    border-radius: $border-radius-small;
+    border-radius: $btn-border-radius;
     .text {
       flex-grow: 1;
       margin: 0em 0.5em 0em 0em;
@@ -124,9 +116,33 @@
     &.dropdown-item {
       width: initial;
     }
+    &:hover {
+      background: $danger;
+      color: #fff;
+      text-decoration: none;
+    }
   }
   .title-value-pair {
     margin-left: 0.7em;
+    .operator-and-term {
+      white-space: nowrap;
+    }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .finna-filters,
+  .results .noresults {
+    .filter-options {
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      .filters-toggle {
+        font-size: 80%;
+      }
+    }
+    .title-value-pair {
+      margin-left: 0px;
+    }
   }
 }
 @include media-breakpoint-down(md) {
@@ -140,6 +156,20 @@
         font-size: 80%;
       }
     }
+    .title-value-pair {
+      margin-left: 0px;
+    }
+  }
+ .mobile-functions-container .active-filters,
+ .mobile-filters.search-filters .active-filters {
+    .filters-title,
+    .filters-term,
+    .filter-options {
+      display: none;
+    }
+    .filter-title-group {
+      flex-wrap: nowrap;
+    }
   }
 }
 @include media-breakpoint-up(md) {
@@ -147,7 +177,6 @@
   .results .noresults {
     .filter-options {
       align-items: flex-start;
-      padding-right: 0.7em;
     }
   }
 }
@@ -162,6 +191,25 @@
       text-decoration: line-through;
       background-color: $state-danger-text;
     }
+  }
+  &.list-scrollable {
+    max-width: 100%;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    > div {
+      display: flex;
+      gap: 0.5em;
+    }
+  }
+}
+@include media-breakpoint-up(sm) {
+  .finna-filters {
+    display: inline-flex;
+    flex: 1;
+    flex-wrap: wrap;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
   }
 }
 
@@ -180,15 +228,11 @@
 @include media-breakpoint-down(md) {
   .filters {
     width: 100%;
-    font-size: 80%;
     // Reset specific font sizes
     .btn,
     .dropdown-menu {
       font-size: 100%;
     }
-  }
-  .filter-value {
-    max-width: 95%;
   }
 }
 
@@ -221,10 +265,20 @@
   }
 }
 
+.reset-filters-btn {
+  margin-left: 1rem;
+  color: $text-color;
+  text-decoration: underline;
+  white-space: nowrap;
+  &:hover {
+    color: $danger;
+  }
+}
+
 // Active filters on record page
-.template-name-view .filters-container .finna-filters {
+.template-name-view :not(.tab-content) .filters-container .finna-filters {
   .filter-value {
     color: $text-color;
-    background: $gray-ultralight;
+    background: $light;
   }
 }
