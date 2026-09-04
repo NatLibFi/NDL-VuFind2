@@ -5,7 +5,7 @@
 
     ul.nav-tabs > li {
     display: flex;
-    align-items: center;
+    align-items: last baseline;
     padding-bottom: 0px;
     &.with-tooltip > a {
       padding-right: 2.5rem;
@@ -43,6 +43,13 @@
   margin-bottom: 0px;
   overscroll-behavior-y: none;
   border-bottom: none;
+  text-align: center;
+  @include media-breakpoint-down(sm) {
+    .nav-link {
+      max-width: 18em;
+      text-wrap: auto;
+    }
+  }
 }
 
 .search-tabs-recommendations {

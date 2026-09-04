@@ -4,6 +4,9 @@
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
   margin: (0.5 * $spacer) 0px;
   font-size: 0.9em;
   > * {
