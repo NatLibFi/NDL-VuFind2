@@ -15,8 +15,9 @@
 
 .template-name-advanced {
   h1.content-header {
-    padding-left: 75px;
-    font-weight: 500;
+    padding-left: 50px;
+    font-weight: 600;
+    font-size: $content-headings-font-size-h3;
     color: $text-color;
     &::before {
       font-family: finnaicons;
@@ -25,22 +26,15 @@
       top: -15px;
       bottom: -15px;
       left: 15px;
-      width: 60px;
+      width: 35px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: $primary;
-      color: white;
-      line-height: 64px;
+      color: $text-color;
+      line-height: 50px;
       text-align: center;
-      font-size: 32px;
-      @include media-breakpoint-down(sm) {
-        top: -7px;
-        bottom: -7px;
-        width: 48px;
-        font-size: $font-size-base * 1.5;
-        line-height: 48px;
-      }
+      font-size: 2rem;
+
     }
   }
   .header-container {
@@ -49,15 +43,16 @@
     margin-bottom: 20px;
     font-size: 18px;
     h2 {
+      font-size: $content-headings-font-size-h2;
       position: relative;
       display: inline;
     }
-    button {
-      padding: 6px;
-
+    .finna-toggletip__button {
+      padding-top: 0.5rem;
       @include media-breakpoint-down(xs) {
+        padding-top: 0px;
         .icon {
-          font-size: 24px;
+          font-size: $font-size-icon-large;
         }
         .finna-toggletip__label {
           display: none;
@@ -69,9 +64,19 @@
     margin-top: 20px;
   }
   .adv-search-bar {
-    padding-bottom: 20px;
-    padding-top: 10px;
-    margin-top: -10px;
+    display: flex;
+    align-items: center;
+    padding: $padding-large-vertical 0px;
+    .limit-container {
+      display: flex;
+      flex: 1;
+      gap: 0.5rem;
+      align-items: baseline;
+      font-size: $font-size-small;
+      select {
+        font-size: $font-size-small;;
+      }
+    }
     background-color: $body-bg;
     position: -webkit-sticky;
     position: sticky;
@@ -108,7 +113,7 @@
       }
     }
     .responsive-field {
-      max-width: 49%;
+      max-width: 48%;
     }
     .match {
       @include media-breakpoint-down(sm) {
@@ -127,8 +132,7 @@
       }
     }
     .adv-search, .primo-advanced-search-fields {
-      margin-bottom: 0px;
-      padding-top: 3px;
+      margin-bottom: 0.5rem;
       select, input {
         margin-bottom: 3px;
       }
@@ -142,6 +146,7 @@
     .primo-advanced-search-fields {
       .responsive-field {
         min-width: inherit;
+        height: $input-height;
       }
     }
     .primo-add-search {
@@ -168,6 +173,9 @@
     #groupJoinOptions {
       margin-bottom: -56px;
     }
+  }
+  .adv-term-remove {
+    padding: $padding-base-vertical $padding-base-horizontal;
   }
   .slider.slider-horizontal {
     margin-top: 6px;
@@ -297,7 +305,7 @@
     position: relative;
     width: 100%;
     float: left;
-    margin-top: 30px;
+    margin-top: 1rem;
   }
   .well.map {
     background: $body-bg;
@@ -322,7 +330,7 @@
     &::before {
       padding-left: 5px;
       font-size: 1.5em;
-      color: $primary;
+      color: $text-color;
       display: block;
       font-family: finnaicons;
       content: "\e00f";
@@ -352,9 +360,6 @@
   .finna-main-header {
     background-color: $well-bg;
     color: $gray;
-    @include media-breakpoint-down(sm) {
-      padding: 7px 0;
-    }
     .container {
       position: relative;
       display: flex;
@@ -381,9 +386,6 @@
         margin: 0;
       }
     }
-  }
-  .finna-main-tabs {
-    padding-top: 15px;
   }
   @include media-breakpoint-down(sm) {
     .well, .adv-group__blender {
@@ -552,7 +554,7 @@
 .advanced-search,
 .advanced-search .input-group {
   width: 100%;
-  @include media-breakpoint-up(md) {
+  @include media-breakpoint-up(lg) {
     width: 75%;
   }
 }

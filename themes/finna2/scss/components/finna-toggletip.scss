@@ -8,6 +8,10 @@
     .finna-toggletip__icon {
       cursor: pointer;
     }
+
+    .finna-toggletip__label:hover {
+      text-decoration: $link-hover-decoration;
+    }
   }
 
   .finna-toggletip__bubble {
