@@ -38,7 +38,9 @@ $header-link-underline: true;
 $footer-background: $light !default;
 $footer-text-color: $gray !default;
 $finna-search-background: color.mix($body-bg, contrast($body-bg), 95%) !default; // Background color of finna searchbox section
-$finna-search-link-color: $text-color !default;
+$finna-search-color: $text-color !default;
+$finna-search-link-color: $finna-search-color !default;
+$finna-search-tooltip-color: $finna-search-color !default;
 $finna-main-header-background: $body-bg !default; // Color of page header background and search results tabs
 $finna-searchbox-link-color: $body-bg !default; // style searchbox link text color contrast with background
 $finna-searchbox-link-background: rgba(1,1,1,0.6) !default; // style searchbox links (advanced search etc.) background contrast with background
@@ -216,8 +218,11 @@ $table-finna-record-cell-padding:  3px 0px !default;
 //
 //##
 
+$search-input-color: $text-color !default;
 $search-input-bg: #fff !default;
-
+$search-input-border-color: $border-color;
+$search-input-border: 1px solid $search-input-border-color;
+$search-input-border-radius: $border-radius-large;
 
 //-- Finna Z-index list
 //
