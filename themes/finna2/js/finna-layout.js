@@ -911,40 +911,27 @@ finna.layout = (function finnaLayout() {
    */
   function initMobileNavBtnAnimation() {
     const container = document.querySelector('.mobile-functions-row');
-    if (container) {
-      const filters = container.querySelector('.active-filters.finna-filters');
-      if (filters) {
-        const scrollableBar = filters.querySelector(':scope > div');
-        const toggleBtn = container.querySelector('#narrow-search-filter-toggle');
-        if (scrollableBar && toggleBtn) {
-          if ((scrollableBar.clientWidth / (filters.clientWidth + 50)) > 1) {
-            const target = document.createElement('div');
-            if (target) {
-              target.setAttribute('id', 'animationTarget');
-              scrollableBar.insertBefore(target, scrollableBar.firstChild);
-              let isVisible = null;
-              const options = {
-                root: container,
-              }
-              const callBack = (entries) => {
-                isVisible = entries[0].isIntersecting;
-                if (isVisible === false) {
-                  toggleBtn.classList.add('icon-only');
-                  toggleBtn.classList.remove('show-text');
-                } else {
-                  // Check to prevent '.show-text' animation triggering first
-                  if (toggleBtn.classList.contains('icon-only')) {
-                    toggleBtn.classList.add('show-text');
-                  }
-                  toggleBtn.classList.remove('icon-only');
-                }
-              };
-              const observer = new IntersectionObserver(callBack, options);
+    if (!container) {
+      return;
+    }
+    
+    const filters = container.querySelector('.active-filters.finna-filters');
+    const btn = container.querySelector('#narrow-search-filter-toggle');
+    if (!filters || !btn) {
+      return;
+    }
 
-              observer.observe(target);
-            }
-          }
-        }
+    const scrollableBar = filters.querySelector(':scope > div');
+    const btnText = btn.querySelector('.btn-text');
+    if (scrollableBar && btnText) {
+      // The full scrollable bar should be over the amount the button minimizes to
+      if ((scrollableBar.clientWidth / (filters.clientWidth + btnText.clientWidth + 20)) > 1) {
+        filters.addEventListener('scroll', () => {
+          btn.classList.toggle(
+            'collapsed',
+            filters.scrollLeft > 50
+          );
+        });
       }
     }
   }
