@@ -4,9 +4,6 @@
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: thin;
   margin: (0.5 * $spacer) 0px;
   font-size: 0.9em;
   > * {
@@ -30,6 +27,10 @@
     }
   }
   .btn-group {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
     .btn {
       border: 1px solid $border-color;
       background: $light;
