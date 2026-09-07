@@ -2047,4 +2047,32 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $client->setOptions(['keepalive' => false]);
         return $client;
     }
+
+    /**
+     * Get item status code for NotForLoan or Lost status.
+     *
+     * @param string $code Status code
+     * @param array  $data Status data
+     * @param array  $item Item
+     *
+     * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @todo Revert when upstream version is fixed.
+     */
+    protected function getStatusCodeItemNotForLoanOrLost($code, $data, $item)
+    {
+        // NotForLoan and Lost are special: status has a library-specific
+        // status number. Allow mapping of different status numbers
+        // separately (e.g. Item::NotForLoan with status number 4
+        // is mapped with key Item::NotForLoan4):
+        $statusKey = $code . ($data['status'] ?? '-');
+        // Replace ':' in status key if used as status since ':' is
+        // the namespace separator in translatable strings:
+        if (null !== ($status = $this->itemStatusMappings[$statusKey] ?? null)) {
+            return $status;
+        }
+        return $this->getPrefixedMessage($data['code'] ?? str_replace(':', '_', $statusKey));
+    }
 }
