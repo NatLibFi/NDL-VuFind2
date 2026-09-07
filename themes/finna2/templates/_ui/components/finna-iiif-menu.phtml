@@ -45,7 +45,7 @@ if ($iiifHelp = $this->content()->findTemplateForLng('content/iiif')) {
     </span>
   </li>
   <li>
-    <a class="dropdown-item btn toolbar-btn icon-link"
+    <a class="dropdown-item"
        href="<?=$this->escapeHtmlAttr($manifest)?>"
       target="_blank" rel="nofollow" class="iiif-manifest-url-link">
       <?=$this->icon('external-link', 'icon-link__icon')?>
@@ -55,7 +55,7 @@ if ($iiifHelp = $this->content()->findTemplateForLng('content/iiif')) {
     </a>
   </li>
   <li class="iiif-manifest-url-list-item">
-    <span class="dropdown-item">
+    <span>
       <?=$this->copyToClipboardButton("#$urlContainerId", false);?>
     </span>
   </li>

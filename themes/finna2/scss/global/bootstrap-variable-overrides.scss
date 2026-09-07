@@ -256,9 +256,10 @@ $dropdown-header-color: $dark!default;
 $dropdown-caret-color: $dark!default;
 $dropdown-fallback-border: none !default;
 $dropdown-padding-y: 0 !default;
-$dropdown-item-padding-x: 0 !default;
-$dropdown-item-padding-y: 0 !default;
-$dropdown-header-padding-x: $spacer !default;
+$dropdown-item-padding-x: $padding-base-horizontal !default;
+$dropdown-item-padding-y: $padding-base-vertical !default;
+$dropdown-header-padding-x: $padding-base-horizontal !default;
+$dropdown-header-padding-y: $padding-base-vertical !default;
 
 
 //== Pagination
