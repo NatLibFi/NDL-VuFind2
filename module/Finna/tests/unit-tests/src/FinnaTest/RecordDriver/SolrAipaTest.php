@@ -242,6 +242,14 @@ class SolrAipaTest extends TestCase
             ],
             $driver->getAccessRestrictionsType()
         );
+        $driver = $this->getSolrAipaDriver('en-gb');
+        $this->assertSame(
+            [
+                'copyright' => 'CC BY 4.0',
+                'link' => 'http://creativecommons.org/licenses/by/4.0/deed.en',
+            ],
+            $driver->getAccessRestrictionsType()
+        );
         $driver = $this->getSolrAipaDriver('fi');
         $this->assertSame(
             [
