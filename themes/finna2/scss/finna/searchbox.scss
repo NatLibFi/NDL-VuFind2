@@ -5,14 +5,12 @@
   .searchbox-flex {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     .search {
       flex: 1;
     }
     .search-help-icon {
       font-size: 1.5rem;
-    }
-    .btn-advanced {
-      margin-left: 10px;
     }
     .btn-link {
       font-size: 1em;
