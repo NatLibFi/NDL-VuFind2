@@ -62,31 +62,29 @@
       <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
     </div>
     <div class="js-location-quick-information info-element hidden"></div>
-
-
-<?php 
-  $nowOpen = $this->transEsc('organisation_info_is_open_now'); 
-  $nowClosed = $this->transEsc('organisation_info_is_closed_now');
-  $noInfo = $this->transEsc('organisation_info_no_schedule');
-?>  
+<?php
+  $nowOpen = $this->transEsc('organisation_info_is_open_now');
+  $nowClosed = $this->transEsc('organisation_info_is_closed_now') . ' ' . $this->transEsc('music_composition_or') . ' ' . $this->transEsc('organisation_info_no_schedule')
+?>
 <div>
-<div id="location_select_screendeader" ><?= $this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div> 
+<div id="location_select_screenreader"><?= $this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div>
 
-<?php for ($i = 1; $i <= 3; $i++) if ($locationCount > 1): ?>
-          <div>
-          <div style="text-decoration: underline; font-weight: bold;"><?php if ($i === 1)  echo $this->escapeHtml($nowOpen); 
-              elseif ($i === 2) echo $this->escapeHtml($nowClosed);
-              elseif ($i === 3) echo $this->escapeHtml($noInfo); ?>
-          </div>
-          <div style="line-height:1.5em; width:50em;">
+<?php if ($locationCount > 1): ?>
+<?php for ($i = 1; $i <= 2; $i++): ?>
+  <div><b><u>
+    <?php if ($i == 1) {
+    echo htmlspecialchars($this->escapeHtml($nowOpen));
+    } elseif ($i == 2) {
+    echo htmlspecialchars($this->escapeHtml($nowClosed));
+    } ?>
+    </u></b>
             <?php foreach ($orgInfo['list'] as $item): ?>
               <?php
                 $name = $item['name'];
                 $area = $item['address']['area'];
                 $city = $item['address']['city'];
                 $isOpen = $item['openNow'];
-                $isUnknown = $item['isAlwaysClosed'];
-                
+                if ($isOpen ? $isOpen = 'open' : $isOpen = 'closed');
                 if ($area === $city) {
                   $area = '';
                 }
@@ -96,17 +94,14 @@
                   $name .= ", $area$city";
                 }
                 if ($i === 1) {
-                if (!$isOpen && $isUnknown) $name = '';
+                if ($isOpen == 'open' ?: $name = '');
                 } elseif ($i === 2) {
-                  if ($isOpen && !$isUnknown) $name = '';
-                } elseif ($i === 3) {
-                  if (!$isUnknown) $name = '';
-                } 
-                
+                  if ($isOpen == 'closed' ?: $name = '');
+                }
               ?>
-              <div><?=$this->escapeHtml($name)?></div>
+              <div><?=$this->escapeHtml($name) ?></div>
             <?php endforeach; ?>
-            </div>
+ <?php endfor; ?>
  <?php endif; ?>
 </div>
 
