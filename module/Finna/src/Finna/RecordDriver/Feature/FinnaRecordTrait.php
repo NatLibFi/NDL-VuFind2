@@ -56,7 +56,7 @@ use function is_callable;
 trait FinnaRecordTrait
 {
     /**
-     * Preferred language for display strings.
+     * Preferred language (two-character code) for display strings.
      *
      * @var string
      */
