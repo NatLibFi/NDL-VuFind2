@@ -231,6 +231,11 @@
     padding: 0.8em 0em;
     .mylist-functions.btn-group {
       text-align: right;
+      padding-left: 1px;
+      padding-right: 1px;
+      button {
+        white-space: nowrap;
+      }
       #button_email {
         border-radius: 4px 0px 0px 4px;
       }
@@ -250,12 +255,10 @@
     }
     // Like .bulkActionButtons .btn-group .btn
     .clear-selection {
+      @extend .btn, .btn-outline-dark;
+      background: $light;
       font-size: 0.9em;
-      font-weight: 500;
-      color: $text-color;
-      background: $gray-ultralight;
-      border: 1px solid $gray-lighter;
-      border-radius: $border-radius-base;
+      padding: $padding-small-vertical $padding-base-horizontal;
     }
   }
 }
