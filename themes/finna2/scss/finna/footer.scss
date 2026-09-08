@@ -40,7 +40,8 @@ footer {
     text-align: center;
     hr {
       display: block;
-      border-top: 1px solid $border-color;
+      border-top: 1px solid $footer-text-color;
+      opacity: 1;
     }
     ul {
       margin-bottom: 2.5em;
