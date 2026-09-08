@@ -8,8 +8,7 @@ footer {
     border-top: none;
   }
   a,
-  p,
-  h4 {
+  p {
     color: $footer-text-color;
   }
   h2,
@@ -19,6 +18,7 @@ footer {
   h6 {
     margin-bottom: 0.5rem;
     font-size: $font-size-h4;
+    color: $footer-text-color;
     font-weight: 600;
   }
   a:hover {
