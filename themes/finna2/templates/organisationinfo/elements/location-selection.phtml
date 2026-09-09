@@ -63,48 +63,54 @@
     </div>
     <div class="js-location-quick-information info-element hidden"></div>
 
-<div> <!-- map information about open and closed libraries for the screenreaders starts here -->
-  <?php
-  $nowOpen = $this->transEsc('organisation_info_is_open_now');
-  $nowClosed = $this->transEsc('organisation_info_is_closed_now') . ' ' . $this->transEsc('music_composition_or') . ' ' . $this->transEsc('organisation_info_no_schedule')
-  ?>
-  <div id="location_select_screenreader" role="heading" aria-level="3" class="visually-hidden"><?= $this->transEsc('Location Service') . ' ' . $this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div>
-  <?php if ($locationCount > 1): ?>
-    <?php for ($i = 1; $i <= 2; $i++): ?>
-      <div role="heading" aria-level="3" class="visually-hidden">
-        <?php if ($i == 1) {
-          echo htmlspecialchars($this->escapeHtml($nowOpen));
-        } elseif ($i == 2) {
-          echo htmlspecialchars($this->escapeHtml($nowClosed));
-        } ?></div>
-      <?php foreach ($orgInfo['list'] as $item): ?>
-        <?php
-        $name = $item['name'];
-        $area = $item['address']['area'];
-        $city = $item['address']['city'];
-        $isOpen = $item['openNow'];
-        if ($isOpen ? $isOpen = 'open' : $isOpen = 'closed');
-        if ($area === $city) {
-          $area = '';
-        }
-        if ('' !== $area && '' !== $city) {
-          $name .= ", $area ($city)";
-        } elseif ('' !== $area || '' !== $city) {
-          $name .= ", $area$city";
-        }
-        if ($i === 1) {
-          if ($isOpen == 'open' ?: $name = '');
-        } elseif ($i === 2) {
-          if ($isOpen == 'closed' ?: $name = '');
-        }
-        ?>
-        <div class="visually-hidden"><?= $this->escapeHtml($name) ?></div>
-      <?php endforeach; ?>
-    <?php endfor; ?>
-  <?php endif; ?>
-</div> <!-- map information about open and closed libraries for the screenreaders ends here -->
+    <div class="visually-hidden"> <!-- map information about open and closed libraries for the screenreaders starts here -->
+      <?php
+      $nowOpen = $this->transEsc('organisation_info_is_open_now');
+      $nowClosed = $this->transEsc('organisation_info_is_closed_now');
+      $nowMobile = $this->transEsc('organisation_info_no_schedule');
+      ?>
+      <div id="location_select_screenreader" role="heading" aria-level="3"><?= $this->transEsc('Location Service') . ' ' . $this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div>
+      <?php if ($locationCount > 1): ?>
+        <?php for ($i = 1; $i <= 3; $i++): ?>
+          <div role="heading" aria-level="4">
+            <?php if ($i == 1) {
+              echo htmlspecialchars($this->escapeHtml($nowOpen));
+            } elseif ($i == 2) {
+              echo htmlspecialchars($this->escapeHtml($nowClosed));
+            } elseif ($i == 3) {
+              echo htmlspecialchars($this->escapeHtml($nowMobile));
+            } ?></div>
+          <?php foreach ($orgInfo['list'] as $item): ?>
+            <?php
+            $name = $item['name'];
+            $area = $item['address']['area'];
+            $city = $item['address']['city'];
+            $isOpen = $item['openNow'];
+            $isMobile = $item['mobile'];
 
-<div class="js-location-info-map hidden">
+            if ($area === $city) {
+              $area = '';
+            }
+            if ('' !== $area && '' !== $city) {
+              $name .= ", $area ($city)"; 
+            } elseif ('' !== $area || '' !== $city) {
+              $name .= ", $area$city";
+            }
+            if ($i === 1) {
+              if (!$isOpen) $name = '';
+            } elseif ($i === 2) {
+              if ($isOpen || $isMobile) $name = '';
+            } elseif ($i === 3) {
+              if (!$isMobile) $name = '';
+            }
+            ?>
+            <?php if ($name != '') echo '<div>' . ($this->escapeHtml($name)) . '</div>' ?>
+          <?php endforeach; ?>
+        <?php endfor; ?>
+      <?php endif; ?>
+    </div> <!-- map information about open and closed libraries for the screenreaders ends here -->
+
+    <div class="js-location-info-map hidden">
       <template class="js-map-attribution">
         <span class="map-marker-text">
           <?=$this->icon('map-marker', 'map-marker-icon open')?>&nbsp;<?=$this->transEsc('organisation_info_is_open_now')?>
