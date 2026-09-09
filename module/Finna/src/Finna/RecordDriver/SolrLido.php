@@ -408,7 +408,6 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     {
         $reader = $this->getXmlReader();
         $path = 'lido/administrativeMetadata/resourceWrap/resourceSet/rightsResource/rightsType';
-
         foreach ($reader->all(path: $path) as $rightsType) {
             if ($copyright = $this->getFirstConceptIdAttributes($rightsType)) {
                 $copyright = $this->getMappedRights($copyright['id']);
@@ -831,7 +830,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      * - identifier    resourceset id
      * - type          language specific type
      * - relationTypes language specific relation types
-     * - descriptions   language specific descriptions
+     * - descriptions  language specific descriptions
      * - dateTaken     date taken
      * - perspectives  language specific perspectives.
      *
