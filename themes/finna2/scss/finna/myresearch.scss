@@ -475,22 +475,28 @@
   margin-top: (0.5 * $spacer);
   border: 1px solid $border-color;
   border-collapse: separate;
-  box-shadow: $box-shadow-sm;
+  border-spacing: 0;
   border-radius: $border-radius-base;
+
   .headers {
     color: $text-color;
-    background: $light;
     th {
-      background: none;
+      background: $light;
+      &:first-child {
+        border-top-left-radius: $border-radius-base;
+      }
       &:last-child {
         border-right: none;
+        border-top-right-radius: $border-radius-base;
       }
     }
   }
+
   th {
-    font-size: 1.1em;
+    font-size: 1em;
     vertical-align: middle;
   }
+
   td {
     vertical-align: middle;
     border-right: 1px solid $body-bg;
