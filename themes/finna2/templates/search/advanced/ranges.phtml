@@ -17,10 +17,10 @@
              <input type="hidden" name="<?=$this->escapeHtmlAttr($current['field']) ?>_type" value="<?=$this->escapeHtmlAttr($current['rangeType']) ?>">
           <?php endif ?>
           <label for="<?=$escField?>from" class="visually-hidden"><?=$this->transEsc('year_from');?></label>
-          <input id="<?=$escField?>from" type="number" class="form-control form-inline input-year" value="<?=isset($current['values'][0]) ? $this->escapeHtmlAttr($current['values'][0]) : ''?>" size="5">
+          <input id="<?=$escField?>from" type="text" inputmode="numeric" pattern="[0-9]*" class="form-control form-inline input-year" value="<?=isset($current['values'][0]) ? $this->escapeHtmlAttr($current['values'][0]) : ''?>" size="5">
           <span class="divider"> - </span>
           <label for="<?=$escField?>to" class="visually-hidden"><?=$this->transEsc('year_to');?></label>
-          <input id="<?=$escField?>to" type="number" class="form-control form-inline input-year" value="<?=isset($current['values'][1]) ? $this->escapeHtmlAttr($current['values'][1]) : ''?>" size="5">
+          <input id="<?=$escField?>to" type="text" inputmode="numeric" pattern="[0-9]*" class="form-control form-inline input-year" value="<?=isset($current['values'][1]) ? $this->escapeHtmlAttr($current['values'][1]) : ''?>" size="5">
         </div>
         <div class="information"><p class="information-text"><?=$this->transEsc('advanced_search_information_text_range')?></p></div>
       </div>
