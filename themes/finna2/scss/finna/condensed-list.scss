@@ -14,7 +14,7 @@
     background: $gray-ultralight;
     .condensed-expand,
     .condensed-collapse {
-        margin-left: -1.2em;
+        margin-left: 0em;
         font-size: 1.2em;
         line-height: 1em;
         color: $gray-light;
@@ -54,6 +54,15 @@
         .condensed-col-title,
         .condensed-col-link {
             width: 50%;
+            .collapse-transparent-icon-button {
+                background: transparent; 
+                border: none; 
+                color: transparent; 
+                width: 1.2em; 
+                padding: 0em;
+                margin-left: -1.2em;
+                z-index: 1;
+            }
         }
         .condensed-col-hierarchy {
             width: 25%;
