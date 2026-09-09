@@ -1,0 +1,716 @@
+<?xml version="1.0"?>
+<lido:lidoWrap xmlns:lido="http://www.lido-schema.org" xmlns:skos="http://www.w3.org/2004/02/skos/core#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+  <lido:lido>
+    <lido:lidoRecID lido:type="Test">knp-247394</lido:lidoRecID>
+    <lido:objectPublishedID lido:type="URI" lido:label="not isbn">12345678</lido:objectPublishedID>
+    <lido:objectPublishedID lido:type="URI" lido:label="isbn">URN:ISBN:951-771-872-1</lido:objectPublishedID>
+    <lido:descriptiveMetadata xml:lang="fi">
+      <lido:objectClassificationWrap>
+        <lido:objectWorkTypeWrap>
+          <lido:objectWorkType>
+            <lido:term> rakennetun ympäristön kohde </lido:term>
+          </lido:objectWorkType>
+        </lido:objectWorkTypeWrap>
+        <lido:classificationWrap>
+          <lido:classification lido:type="language">
+            <lido:term>fi</lido:term>
+          </lido:classification>
+          <lido:classification lido:type="language">
+            <lido:term>sv</lido:term>
+          </lido:classification>
+          <lido:classification lido:type="muu luokitus">
+            <lido:term xml:lang="en">buildings</lido:term>
+            <lido:term xml:lang="en">department stores</lido:term>
+            <lido:term xml:lang="fi">rakennukset</lido:term>
+          </lido:classification>
+          <lido:classification>
+            <lido:term xml:lang="sv">byggnader</lido:term>
+          </lido:classification>
+        </lido:classificationWrap>
+      </lido:objectClassificationWrap>
+      <lido:objectIdentificationWrap>
+        <lido:repositoryWrap>
+          <lido:repositorySet>
+            <lido:workID>Primary id</lido:workID>
+            <lido:workID lido:type="http://terminology.lido-schema.org/lido00113">000001</lido:workID>
+            <lido:workID lido:type="http://terminology.lido-schema.org/lido00113" lido:label="inventaarionumero">000002</lido:workID>
+            <lido:workID lido:type="esinenumero">000003</lido:workID>
+            <lido:workID lido:type="isbn">978-3-16-148410-0</lido:workID>
+            <lido:workID lido:type="issn">2049-3630</lido:workID>
+          </lido:repositorySet>
+          <lido:repositorySet>
+            <lido:displayRepository xml:lang="fi">Tätä paikkaa ei näytetä</lido:displayRepository>
+            <lido:repositoryLocation>
+              <lido:namePlaceSet>
+                <lido:appellationValue lido:label="tarkempi paikka">Stockmann</lido:appellationValue>
+              </lido:namePlaceSet>
+              <lido:partOfPlace>
+                <lido:namePlaceSet>
+                  <lido:appellationValue lido:label="katuosoite">Aleksanterinkatu 52</lido:appellationValue>
+                </lido:namePlaceSet>
+                <lido:partOfPlace>
+                  <lido:namePlaceSet>
+                    <lido:appellationValue lido:label="kunta/kaupunki">Helsinki</lido:appellationValue>
+                  </lido:namePlaceSet>
+                </lido:partOfPlace>
+              </lido:partOfPlace>
+            </lido:repositoryLocation>
+          </lido:repositorySet>
+          <lido:repositorySet lido:type="Current location">
+            <lido:displayRepository xml:lang="fi">Teos on nähtävissä kirjaston aukioloaikoina.</lido:displayRepository>
+            <lido:displayRepository xml:lang="en">The object can be accessed when the library is open.</lido:displayRepository>
+            <lido:repositoryLocation>
+              <lido:namePlaceSet>
+                <lido:appellationValue lido:label="tarkempi paikka">Kansalliskirjaston kupolisali</lido:appellationValue>
+              </lido:namePlaceSet>
+              <lido:partOfPlace>
+                <lido:namePlaceSet>
+                  <lido:appellationValue lido:label="katuosoite">Unioninkatu 36</lido:appellationValue>
+                </lido:namePlaceSet>
+                <lido:partOfPlace>
+                  <lido:namePlaceSet>
+                    <lido:appellationValue lido:label="kunta/kaupunki">Helsinki</lido:appellationValue>
+                  </lido:namePlaceSet>
+                </lido:partOfPlace>
+              </lido:partOfPlace>
+              <lido:placeID lido:type="URI">http://urn.fi/URN:NBN:fi:au:finaf:000034269</lido:placeID>
+            </lido:repositoryLocation>
+          </lido:repositorySet>
+        </lido:repositoryWrap>
+        <lido:objectDescriptionWrap>
+          <lido:objectDescriptionSet lido:type="introduction">
+            <lido:descriptiveNoteValue xml:lang="fi" lido:label="esittely">Vain introductionissa!</lido:descriptiveNoteValue>
+          </lido:objectDescriptionSet>
+          <lido:objectDescriptionSet lido:type="description">
+            <lido:descriptiveNoteValue xml:lang="fi" lido:label="kuvaus">Näkyy description typed.</lido:descriptiveNoteValue>
+          </lido:objectDescriptionSet>
+          <lido:objectDescriptionSet lido:type="description">
+            <lido:descriptiveNoteValue xml:lang="en" lido:label="description">Visible description.</lido:descriptiveNoteValue>
+          </lido:objectDescriptionSet>
+          <lido:objectDescriptionSet>
+              <lido:descriptiveNoteValue lido:label="CAPTION">Ei näy description untyped.</lido:descriptiveNoteValue>
+          </lido:objectDescriptionSet>
+        </lido:objectDescriptionWrap>
+        <lido:objectMeasurementsWrap>
+          <lido:objectMeasurementsSet>
+            <lido:displayObjectMeasurements lido:label="extent" xml:lang="fi">1001 neliömetriä</lido:displayObjectMeasurements>
+            <lido:displayObjectMeasurements lido:label="extent" xml:lang="en">1001 square meters</lido:displayObjectMeasurements>
+            <lido:objectMeasurements>
+              <lido:measurementsSet>
+                <lido:measurementType>
+                  <lido:conceptID lido:type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</lido:conceptID>
+                  <lido:term xml:lang="en">extent</lido:term>
+                </lido:measurementType>
+                <lido:measurementUnit>m2</lido:measurementUnit>
+                <lido:measurementValue>1002</lido:measurementValue>
+              </lido:measurementsSet>
+            </lido:objectMeasurements>
+          </lido:objectMeasurementsSet>
+          <lido:objectMeasurementsSet>
+            <lido:displayObjectMeasurements xml:lang="fi">pituus 73.0 cm, leveys 14 cm</lido:displayObjectMeasurements>
+            <lido:displayObjectMeasurements xml:lang="en">height 73.0 cm, width 14 cm</lido:displayObjectMeasurements>
+            <lido:objectMeasurements>
+              <lido:measurementsSet>
+                <lido:measurementType>pituus</lido:measurementType>
+                <lido:measurementUnit>m</lido:measurementUnit>
+                <lido:measurementValue>2</lido:measurementValue>
+              </lido:measurementsSet>
+              <lido:measurementsSet>
+                <lido:measurementType>leveys</lido:measurementType>
+                <lido:measurementUnit>m</lido:measurementUnit>
+                <lido:measurementValue>1</lido:measurementValue>
+              </lido:measurementsSet>
+              <lido:extentMeasurements xml:lang="fi">kohde 2</lido:extentMeasurements>
+              <lido:extentMeasurements xml:lang="fi">kohde 3</lido:extentMeasurements>
+              <lido:extentMeasurements xml:lang="en">subjects 2 and 3</lido:extentMeasurements>
+            </lido:objectMeasurements>
+          </lido:objectMeasurementsSet>
+        </lido:objectMeasurementsWrap>
+        <lido:displayStateEditionWrap>
+          <lido:displayEdition>1.</lido:displayEdition>
+        </lido:displayStateEditionWrap>
+        <lido:inscriptionsWrap>
+          <lido:inscriptions>
+            <lido:inscriptionDescription lido:type="annotated">
+              <lido:descriptiveNoteValue lido:label="Annotation">
+                No huhhuh
+              </lido:descriptiveNoteValue>
+            </lido:inscriptionDescription>
+          </lido:inscriptions>
+        </lido:inscriptionsWrap>
+      </lido:objectIdentificationWrap>
+       <lido:objectRelationWrap>
+        <lido:subjectWrap>
+          <lido:subjectSet>
+            <lido:displaySubject xml:lang="en" lido:label="aihe">Visible subject labeled.</lido:displaySubject>
+            <lido:displaySubject xml:lang="fi" lido:label="aihe">Näkyy subject labeled.</lido:displaySubject>
+            <lido:displaySubject xml:lang="sv" lido:label="aihe">Synas subject labeled.</lido:displaySubject>
+            <lido:displaySubject lido:label="">Ei näy subject unlabeled.</lido:displaySubject>
+            <lido:displaySubject>Ei näy, no label.</lido:displaySubject>
+          </lido:subjectSet>
+          <lido:subjectSet>
+            <lido:subject>
+              <lido:subjectActor>
+                <lido:actor>
+                  <lido:actorID lido:type="URI" lido:source="KANTO">http://urn.fi/URN:NBN:fi:au:finaf:000229728</lido:actorID>
+                  <lido:nameActorSet>
+                    <lido:appellationValue>Pukki, Joulu</lido:appellationValue>
+                  </lido:nameActorSet>
+                </lido:actor>
+              </lido:subjectActor>
+              <lido:subjectActor>
+                <lido:actor>
+                  <lido:nameActorSet>
+                    <lido:appellationValue>Punakuono, Petteri</lido:appellationValue>
+                  </lido:nameActorSet>
+                </lido:actor>
+              </lido:subjectActor>
+              <lido:subjectConcept>
+                <lido:conceptID lido:source="sanaston nimi">Yleinen suomalainen asiasanasto</lido:conceptID>
+                <lido:term lido:label="asiasana">sohvat</lido:term>
+                <lido:conceptID lido:type="URI"/>
+                <lido:term lido:label="asiasana"/>
+                <lido:conceptID lido:source="asiasanateksti"/>
+                <lido:term lido:label="asiasana"/>
+              </lido:subjectConcept>
+              <lido:subjectConcept>
+                <lido:conceptID lido:type="URI"/>
+                <lido:term lido:label="asiasana"/>
+              </lido:subjectConcept>
+            </lido:subject>
+          </lido:subjectSet>
+          <lido:subjectSet>
+            <lido:subject>
+              <lido:subjectConcept>
+                <lido:conceptID lido:type="URI">http://www.yso.fi/onto/koko/p31096</lido:conceptID>
+                <lido:term lido:label="asiasana">maalaukset</lido:term>
+                <lido:conceptID lido:source="asiasanateksti"/>
+                <lido:term lido:label="asiasana"/>
+              </lido:subjectConcept>
+              <lido:subjectConcept>
+                <skos:Concept rdf:about="http://www.yso.fi/onto/koko/p31096"/>
+                <lido:term lido:label="asiasana">maalaukset, ei pilkottu</lido:term>
+              </lido:subjectConcept>
+              <lido:subjectConcept>
+                <lido:conceptID lido:type="URI"></lido:conceptID>
+                <lido:term lido:label="asiasana">maalaukset, pilkottuna</lido:term>
+              </lido:subjectConcept>
+              <lido:subjectConcept>
+                <lido:conceptID lido:type="URI"/>
+                <lido:term lido:label="asiasana"/>
+              </lido:subjectConcept>
+            </lido:subject>
+          </lido:subjectSet>
+        </lido:subjectWrap>
+        <lido:relatedWorksWrap>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject lido:label="Julkaistu teoksessa">Helsinki = Empirekaupungin synty 1550-1850, Helsinki, s. 89</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">URN:ISBN:951-746-543-2</lido:objectID>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is reproduced in</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>Multiple titles in one field; Should be discarded from search</lido:displayObject>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is reproduced in</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject lido:label="Verkkojulkaisu">Online publication, discarded from search</lido:displayObject>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is reproduced in</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>This is a very long title and for better result, only the first 30 words should be included in search title, which means that its last word should be this. The rest of the title should be included only in display title.</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">URN:ISBN:951-772-866-2</lido:objectID>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>julkaisu</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>A publication with no valid ISBN</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">12345678</lido:objectID>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>kirjallisuus</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>Parent Archive</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">12345678</lido:objectID>
+                <lido:objectNote lido:type="objectWorkType">archive</lido:objectNote>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is part of</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>Parent Collection</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">23456789</lido:objectID>
+                <lido:objectNote lido:type="objectWorkType">collection</lido:objectNote>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is part of</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>Parent Subcollection 1</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">s1</lido:objectID>
+                <lido:objectNote lido:type="objectWorkType">subcollection</lido:objectNote>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is part of</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>Parent Subcollection 2</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">s2</lido:objectID>
+                <lido:objectNote lido:type="objectWorkType">subcollection</lido:objectNote>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is part of</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+          <lido:relatedWorkSet>
+            <lido:relatedWork>
+              <lido:displayObject>Parent Series</lido:displayObject>
+              <lido:object>
+                <lido:objectWebResource/>
+                <lido:objectID lido:type="URI">series</lido:objectID>
+                <lido:objectNote lido:type="objectWorkType">series</lido:objectNote>
+              </lido:object>
+            </lido:relatedWork>
+            <lido:relatedWorkRelType>
+              <lido:term>is part of</lido:term>
+            </lido:relatedWorkRelType>
+          </lido:relatedWorkSet>
+        </lido:relatedWorksWrap>
+      </lido:objectRelationWrap>
+      <lido:eventWrap>
+        <lido:eventSet>
+          <lido:event>
+            <lido:eventType>
+              <lido:term>valmistus</lido:term>
+              <lido:term xml:lang="en">Creation</lido:term>
+            </lido:eventType>
+            <lido:eventActor>
+              <lido:actorInRole>
+                <lido:actor>
+                  <lido:actorID lido:type="URI" lido:source="ISNI">https://isni.org/isni/0000000109136025</lido:actorID>
+                  <lido:nameActorSet>
+                    <lido:appellationValue>  Mattilainen, Meikä   </lido:appellationValue>
+                  </lido:nameActorSet>
+                  <lido:vitalDatesActor>
+                    <lido:earliestDate>1951</lido:earliestDate>
+                    <lido:latestDate>2019</lido:latestDate>
+                  </lido:vitalDatesActor>
+                </lido:actor>
+                <lido:roleActor>
+                  <lido:term>haaveilija</lido:term>
+                </lido:roleActor>
+              </lido:actorInRole>
+            </lido:eventActor>
+            <lido:eventActor>
+              <lido:actorInRole>
+                <lido:actor>
+                  <lido:actorID lido:type="URI" lido:source="ISNI">https://isni.org/isni/0000000474486306</lido:actorID>
+                  <lido:actorID lido:type="URI" lido:source="finaf">http://urn.fi/URN:NBN:fi:au:finaf:000016723</lido:actorID>
+                  <lido:nameActorSet>
+                    <lido:appellationValue>  Tiistai, Nietos  </lido:appellationValue>
+                  </lido:nameActorSet>
+                </lido:actor>
+                <lido:roleActor>
+                  <lido:term>Työntekijä</lido:term>
+                </lido:roleActor>
+              </lido:actorInRole>
+            </lido:eventActor>
+            <lido:culture>
+              <lido:term>kulttuuri</lido:term>
+            </lido:culture>
+            <lido:eventDate>
+              <lido:displayDate xml:lang="fi">valmistusaika noin 1910–1920</lido:displayDate>
+              <lido:displayDate xml:lang="en">created ca 1910–1920</lido:displayDate>
+              <lido:date>
+                <lido:earliestDate>1910</lido:earliestDate>
+                <lido:latestDate>1920</lido:latestDate>
+              </lido:date>
+            </lido:eventDate>
+            <lido:eventPlace>
+              <lido:displayPlace xml:lang="fi">Bulevardi, Helsinki, Suomi</lido:displayPlace>
+              <lido:displayPlace xml:lang="en">Bulevardi, Helsinki, Finland</lido:displayPlace>
+              <lido:place>
+                <lido:placeID lido:type="URI">http://www.yso.fi/onto/yso/p202484</lido:placeID>
+                <lido:namePlaceSet>
+                  <lido:appellationValue xml:lang="fi">Bulevardi</lido:appellationValue>
+                </lido:namePlaceSet>
+                <lido:partOfPlace>
+                  <lido:namePlaceSet>
+                    <lido:appellationValue xml:lang="fi">Helsinki</lido:appellationValue>
+                  </lido:namePlaceSet>
+                  <lido:partOfPlace>
+                    <lido:namePlaceSet>
+                      <lido:appellationValue xml:lang="fi">Suomi</lido:appellationValue>
+                    </lido:namePlaceSet>
+                  </lido:partOfPlace>
+                </lido:partOfPlace>
+              </lido:place>
+            </lido:eventPlace>
+            <lido:eventPlace>
+              <lido:place>
+                <lido:namePlaceSet>
+                  <lido:appellationValue xml:lang="fi">Ruttopuisto</lido:appellationValue>
+                </lido:namePlaceSet>
+                <lido:partOfPlace>
+                  <lido:namePlaceSet>
+                    <lido:appellationValue xml:lang="fi">Helsinki</lido:appellationValue>
+                  </lido:namePlaceSet>
+                  <lido:partOfPlace>
+                    <lido:namePlaceSet>
+                      <lido:appellationValue xml:lang="fi">Suomi</lido:appellationValue>
+                      <lido:appellationValue xml:lang="en">Finland</lido:appellationValue>
+                    </lido:namePlaceSet>
+                  </lido:partOfPlace>
+                </lido:partOfPlace>
+              </lido:place>
+            </lido:eventPlace>
+            <lido:eventMethod>
+              <lido:conceptID lido:type="http://terminology.lido-schema.org/lido00099" lido:source="koko">http://www.yso.fi/onto/koko/p72845</lido:conceptID>
+              <lido:term xml:lang="fi">tekniikka: ompelu</lido:term>
+              <lido:term xml:lang="en">technique: sewing</lido:term>
+            </lido:eventMethod>
+            <lido:eventMaterialsTech>
+              <lido:materialsTech>
+                <lido:termMaterialsTech>
+                  <skos:Concept rdf:about="http://www.yso.fi/onto/koko/p33150"/>
+                  <lido:term xml:lang="fi">materiaali: villa</lido:term>
+                  <lido:term xml:lang="en">material: wool</lido:term>
+                </lido:termMaterialsTech>
+              </lido:materialsTech>
+            </lido:eventMaterialsTech>
+            <lido:eventMaterialsTech>
+              <lido:displayMaterialsTech xml:lang="fi">vuori: sarka</lido:displayMaterialsTech>
+              <lido:displayMaterialsTech xml:lang="en">lining: frieze</lido:displayMaterialsTech>
+                <lido:materialsTech>
+                  <lido:termMaterialsTech>
+                    <skos:Concept rdf:about="http://www.yso.fi/onto/koko/p30796"/>
+                    <lido:term xml:lang="fi">sarka</lido:term>
+                  </lido:termMaterialsTech>
+                </lido:materialsTech>
+            </lido:eventMaterialsTech>
+            <lido:eventDescriptionSet>
+              <lido:descriptiveNoteValue xml:lang="fi">valmistusprosessin kuvaus</lido:descriptiveNoteValue>
+              <lido:descriptiveNoteValue xml:lang="en">description of the production process</lido:descriptiveNoteValue>
+            </lido:eventDescriptionSet>
+          </lido:event>
+        </lido:eventSet>
+         <lido:eventSet>
+          <lido:event>
+            <lido:eventType>
+              <lido:term>suunnittelu</lido:term>
+            </lido:eventType>
+            <lido:eventActor>
+              <lido:actorInRole>
+                <lido:actor>
+                  <lido:actorID lido:type="Local Identifier">12345678</lido:actorID>
+                  <lido:actorID lido:type="URI" lido:source="finaf">http://urn.fi/URN:NBN:fi:au:finaf:000228701</lido:actorID>
+                  <lido:nameActorSet>
+                    <lido:appellationValue>Puu, Teisto</lido:appellationValue>
+                  </lido:nameActorSet>
+                </lido:actor>
+                <lido:roleActor>
+                  <lido:term>suunnittelija</lido:term>
+                </lido:roleActor>
+              </lido:actorInRole>
+            </lido:eventActor>
+            <lido:eventDate>
+              <lido:displayDate xml:lang="fi">suunnittelu noin 1910</lido:displayDate>
+              <lido:displayDate xml:lang="en">design ca 1910</lido:displayDate>
+              <lido:date>
+                <lido:earliestDate>1910</lido:earliestDate>
+                <lido:latestDate>1910</lido:latestDate>
+              </lido:date>
+            </lido:eventDate>
+          </lido:event>
+        </lido:eventSet>
+         <lido:eventSet>
+          <lido:event>
+            <lido:eventType>
+              <lido:term>outo tapahtuma</lido:term>
+            </lido:eventType>
+            <lido:eventDate>
+              <lido:date>
+                <lido:earliestDate>1900</lido:earliestDate>
+                <lido:latestDate>1909</lido:latestDate>
+              </lido:date>
+            </lido:eventDate>
+            <lido:eventPlace>
+              <lido:place>
+                <lido:placeID lido:type="local" lido:source="lähde">outo</lido:placeID>
+                <lido:placeID lido:type="URI">http://localhost/outo_id</lido:placeID>
+                <lido:namePlaceSet>
+                  <lido:appellationValue>Outo kumpu</lido:appellationValue>
+                </lido:namePlaceSet>
+                <lido:partOfPlace>
+                  <lido:namePlaceSet>
+                    <lido:appellationValue>Outo kaupunki</lido:appellationValue>
+                  </lido:namePlaceSet>
+                  <lido:partOfPlace>
+                    <lido:namePlaceSet>
+                      <lido:appellationValue>Outo maa</lido:appellationValue>
+                    </lido:namePlaceSet>
+                  </lido:partOfPlace>
+                </lido:partOfPlace>
+              </lido:place>
+            </lido:eventPlace>
+          </lido:event>
+          <lido:event>
+            <lido:eventType>
+              <lido:term>toinen outo tapahtuma</lido:term>
+            </lido:eventType>
+            <lido:eventDate>
+              <lido:date>
+                <lido:earliestDate>1900-10-02</lido:earliestDate>
+                <lido:latestDate>1909-11-13</lido:latestDate>
+              </lido:date>
+            </lido:eventDate>
+          </lido:event>
+        </lido:eventSet>
+      </lido:eventWrap>
+    </lido:descriptiveMetadata>
+    <lido:administrativeMetadata>
+      <lido:resourceWrap>
+        <lido:resourceSet>
+          <lido:resourceID lido:type="ID">607642</lido:resourceID>
+          <lido:resourceDescription>Kuvan selitys</lido:resourceDescription>
+          <lido:resourceRepresentation lido:type="image_large">
+            <lido:linkResource>https://largekuvanlinkki.com</lido:linkResource>
+          </lido:resourceRepresentation>
+          <lido:resourceRepresentation lido:type="image_original">
+            <lido:linkResource lido:formatResource="tif">https://originalKuvanLinkkiTif.com</lido:linkResource>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">koko</lido:measurementType>
+              <lido:measurementType xml:lang="en">size</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">tavua</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">bytes</lido:measurementUnit>
+              <lido:measurementValue>123</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">leveys</lido:measurementType>
+              <lido:measurementType xml:lang="en">width</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">pikseli</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">pixel</lido:measurementUnit>
+              <lido:measurementValue>123</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">korkeus</lido:measurementType>
+              <lido:measurementType xml:lang="en">height</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">pikseli</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">pixel</lido:measurementUnit>
+              <lido:measurementValue>123</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+          </lido:resourceRepresentation>
+          <lido:rightsResource>
+            <lido:rightsType>
+              <lido:conceptID>CC BY 4.0</lido:conceptID>
+              <lido:term xml:lang="fi">Ei näytetä.</lido:term>
+            </lido:rightsType>
+            <lido:rightsHolder>
+              <lido:legalBodyName>
+                <lido:appellationValue>Holder, Rights</lido:appellationValue>
+              </lido:legalBodyName>
+              <lido:legalBodyWeblink>http://localhost/rightsholder</lido:legalBodyWeblink>
+            </lido:rightsHolder>
+            <lido:creditLine xml:lang="en">Credit: Holder, Rights</lido:creditLine>
+            <lido:creditLine lido:label="usage" xml:lang="fi">Kuvien käyttöoikeuskuvaus.</lido:creditLine>
+            <lido:creditLine lido:label="usage" xml:lang="en">Usage instructions.</lido:creditLine>
+          </lido:rightsResource>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceID lido:type="ID">607643</lido:resourceID>
+          <lido:resourceDescription lido:type="displayLink" xml:lang="en">Image name</lido:resourceDescription>
+          <lido:resourceDescription lido:type="displayLink" xml:lang="fi">Kuvan nimi</lido:resourceDescription>
+          <lido:resourceRepresentation lido:type="image_thumb">
+            <lido:linkResource>https://thumbkuvanlinkki2.com</lido:linkResource>
+          </lido:resourceRepresentation>
+          <lido:resourceRepresentation lido:type="image_large">
+            <lido:linkResource>https://largekuvanlinkki2.com</lido:linkResource>
+          </lido:resourceRepresentation>
+          <lido:resourceRepresentation lido:type="image_master">
+            <lido:linkResource>https://masterkuvanlinkki2.com</lido:linkResource>
+          </lido:resourceRepresentation>
+          <lido:resourceRepresentation lido:type="image_original">
+            <lido:linkResource lido:formatResource="tif">https://originalKuvanLinkkiTif.com</lido:linkResource>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">koko</lido:measurementType>
+              <lido:measurementType xml:lang="en">size</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">tavua</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">bytes</lido:measurementUnit>
+              <lido:measurementValue>5</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">leveys</lido:measurementType>
+              <lido:measurementType xml:lang="en">width</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">pikseli</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">pixel</lido:measurementUnit>
+              <lido:measurementValue>5</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">korkeus</lido:measurementType>
+              <lido:measurementType xml:lang="en">height</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">pikseli</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">pixel</lido:measurementUnit>
+              <lido:measurementValue>5</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+          </lido:resourceRepresentation>
+          <lido:rightsResource>
+            <lido:rightsType>
+              <lido:conceptID>InC</lido:conceptID>
+              <lido:term xml:lang="fi">Tässä on kuvien copyright.</lido:term>
+            </lido:rightsType>
+          </lido:rightsResource>
+          <lido:resourceType>
+            <lido:term>Type Term</lido:term>
+          </lido:resourceType>
+          <lido:resourceRelType>
+            <lido:term>Relation Type</lido:term>
+          </lido:resourceRelType>
+          <lido:resourceDateTaken>
+            <lido:displayDate>20.1.2026</lido:displayDate>
+          </lido:resourceDateTaken>
+          <lido:resourcePerspective>
+            <lido:term>Vääristynyt</lido:term>
+          </lido:resourcePerspective>
+          <lido:resourcePerspective>
+            <lido:term>Suoristettu</lido:term>
+          </lido:resourcePerspective>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceRepresentation lido:type="preview_3D">
+            <lido:linkResource lido:formatResource="glTF">https://gltfmalli.gltf</lido:linkResource>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">koko</lido:measurementType>
+              <lido:measurementType xml:lang="en">size</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">tavua</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">bytes</lido:measurementUnit>
+              <lido:measurementValue>60840000</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+          </lido:resourceRepresentation>
+          <lido:resourceRepresentation lido:type="preview_3D">
+            <lido:linkResource lido:formatResource="glb">https://glbmalli.glb</lido:linkResource>
+          </lido:resourceRepresentation>
+          <lido:resourceRepresentation lido:type="provided_3D">
+            <lido:linkResource lido:formatResource="text/html">https://sketchfab.com/test</lido:linkResource>
+          </lido:resourceRepresentation>
+          <lido:rightsResource>
+            <lido:rightsType>
+              <skos:Concept rdf:about="https://rightsstatements.org/vocab/InC/1.0/"/>
+              <lido:term xml:lang="fi">Tässä on mallien copyright.</lido:term>
+            </lido:rightsType>
+          </lido:rightsResource>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceDescription lido:type="displayLink">AudioTesti.mp3</lido:resourceDescription>
+          <lido:resourceRepresentation lido:type="preview_audio">
+            <lido:linkResource lido:formatResource="mp3">https://linkkiaudioon.fi</lido:linkResource>
+          </lido:resourceRepresentation>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceDescription lido:type="displayLink">VideoTesti.mp4</lido:resourceDescription>
+          <lido:resourceRepresentation lido:type="preview_video">
+            <lido:linkResource lido:formatResource="mp4">https://linkkivideoon.fi</lido:linkResource>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">koko</lido:measurementType>
+              <lido:measurementType xml:lang="en">size</lido:measurementType>
+              <lido:measurementType xml:lang="sv">storlek</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">tavua</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">byte</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="sv">byte</lido:measurementUnit>
+              <lido:measurementValue>74576596</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+          </lido:resourceRepresentation>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceDescription lido:type="displayLink">VideoTestiInC.mp4</lido:resourceDescription>
+          <lido:resourceRepresentation lido:type="preview_video">
+            <lido:linkResource lido:formatResource="mp4">https://linkkiInCVideoon.fi</lido:linkResource>
+            <lido:resourceMeasurementsSet>
+              <lido:measurementType xml:lang="fi">koko</lido:measurementType>
+              <lido:measurementType xml:lang="en">size</lido:measurementType>
+              <lido:measurementType xml:lang="sv">storlek</lido:measurementType>
+              <lido:measurementUnit xml:lang="fi">tavua</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="en">byte</lido:measurementUnit>
+              <lido:measurementUnit xml:lang="sv">byte</lido:measurementUnit>
+              <lido:measurementValue>74576596</lido:measurementValue>
+            </lido:resourceMeasurementsSet>
+          </lido:resourceRepresentation>
+          <lido:rightsResource>
+            <lido:rightsType>
+              <lido:conceptID>InC</lido:conceptID>
+              <lido:term xml:lang="fi">Tässä on videoiden copyright.</lido:term>
+            </lido:rightsType>
+          </lido:rightsResource>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceDescription lido:type="displayLink">PDFTesti.pdf</lido:resourceDescription>
+          <lido:resourceRepresentation lido:type="provided_text">
+            <lido:linkResource lido:formatResource="pdf">https://linkkiPDF.fi</lido:linkResource>
+          </lido:resourceRepresentation>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceDescription lido:type="displayLink">DocxTesti.docx</lido:resourceDescription>
+          <lido:resourceRepresentation lido:type="provided_text">
+            <lido:linkResource lido:formatResource="docx">https://linkkiDocx.fi</lido:linkResource>
+          </lido:resourceRepresentation>
+          <lido:rightsResource>
+            <lido:rightsType>
+              <lido:conceptID>CC BY 4.0</lido:conceptID>
+              <lido:term xml:lang="fi">Tekstitiedoston tarkempi käyttöoikeuskuvaus</lido:term>
+            </lido:rightsType>
+          </lido:rightsResource>
+        </lido:resourceSet>
+        <lido:resourceSet>
+          <lido:resourceID lido:type="ID">607644</lido:resourceID>
+          <lido:resourceRepresentation>
+            <lido:linkResource>https://kaikkilinkit.com</lido:linkResource>
+          </lido:resourceRepresentation>
+        </lido:resourceSet>
+      </lido:resourceWrap>
+    </lido:administrativeMetadata>
+  </lido:lido>
+</lido:lidoWrap>
