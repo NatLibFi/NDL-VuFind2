@@ -886,7 +886,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Get usage description from resourceSet.
      *
-     * @param array  $resourceSet Given resourceSet
+     * @param array $resourceSet Given resourceSet
      *
      * @return string
      */
@@ -894,6 +894,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         array $resourceSet,
     ) {
         $reader = $this->getXmlReader();
+        $language = $this->preferredLanguage;
         $creditNodes = $reader->all($resourceSet, 'rightsResource/creditLine');
         $descriptions = [];
         foreach ($creditNodes as $creditNode) {
@@ -902,8 +903,8 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             }
         }
         // For backward compatibility: Also check rightsType/term for usage description
-        return $this->getLanguageSpecificValue($descriptions, $this->preferredLanguage)
-            ?: $this->getLanguageSpecificValueByPath($resourceSet, 'rightsResource/rightsType/term', $this->preferredLanguage);
+        return $this->getLanguageSpecificValue($descriptions, $language)
+            ?: $this->getLanguageSpecificValueByPath($resourceSet, 'rightsResource/rightsType/term', $language);
     }
 
     /**
