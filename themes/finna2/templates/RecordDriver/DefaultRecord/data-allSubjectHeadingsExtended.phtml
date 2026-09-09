@@ -13,7 +13,8 @@
     foreach ($field['heading'] as $subfield): ?>
       <?php
         $first = $i++ === 0;
-        if (($namedEvent = (($field['type'] ?? null) === 'named event')) && !$first) {
+        $namedEvent = ($field['type'] ?? null) === 'named event';
+        if ($namedEvent && !$first) {
           continue;
         }
         $id = $first && isset($field['id']) ? $field['id'] : null;
