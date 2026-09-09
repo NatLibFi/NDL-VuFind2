@@ -500,8 +500,12 @@
   td {
     vertical-align: middle;
     border-right: 1px solid $body-bg;
+    &:first-child {
+      border-bottom-left-radius: $border-radius-base;
+    }
     &:last-child {
       border-right: none;
+      border-bottom-right-radius: $border-radius-base;
     }
   }
 }
