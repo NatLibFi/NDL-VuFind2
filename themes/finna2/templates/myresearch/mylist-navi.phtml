@@ -23,7 +23,7 @@
     ?>
     <?php $active = ($list && $list->getId() === $activeId); ?>
     <li role="none" class="favorites-menulist-item">
-      <a role="menuitem" href="<?= $active ? '#' : $this->url('userList', ['id' => $list->getId()])?>?limit=<?=$currentLimit;?>" class="dropdown-item<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
+      <a role="menuitem" href="<?= $active ? '#' : $this->url('userList', ['id' => $list->getId()])?>?limit=<?=$currentLimit;?><?= !empty($this->allListsSortList['active']) ? '&allListsSort=' . $this->allListsSortList['active'] : ''; ?>" class="dropdown-item<?=$list && $active ? ' active' : ''?>" aria-current="<?=$active ? 'page' : 'false' ?>">
         <div class="favorite-list-holder">
           <div class="float-start favorite-list-title"><?=$this->escapeHtml($list->getTitle())?></div>
           <?php if ($list->isPublic()): ?>
@@ -51,9 +51,34 @@
     </li>
   <?php endforeach; ?>
   <li class="add-new-list-holder favorites-menulist-item">
-    <div class="list-group-item add-new-list">
-      <input type="text" class="new-list-input" placeholder="<?=$this->transEsc('Create a List') ?>">
-      <button id="add-new-list-item-btn" aria-label="<?=$this->transEsc('Create a List') ?>"><?=$this->icon('list-add', 'list-add-icon') ?></button>
+    <div class="mylist-actions-container">
+      <div class="list-group-item add-new-list">
+        <input type="text" class="new-list-input" placeholder="<?=$this->transEsc('Create a List') ?>">
+        <button id="add-new-list-item-btn" aria-label="<?=$this->transEsc('Create a List') ?>"><?=$this->icon('list-add', 'list-add-icon') ?></button>
+      </div>
+      <div class="mylist-controls">
+        <div class="control-container sort-lists-control">
+          <div class="dropdown sort-button">
+            <button class="btn dropdown-toggle mylists-sort" type="button" id="my-lists-sort" title="<?=$this->transEsc('Sort')?>" data-bs-toggle="dropdown" aria-hidden="true" tabindex="-1">
+              <?=$this->icon('ui-menu')?>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="my-lists-sort">
+              <?php foreach ($this->allListsSortList['sortList'] as $sortOption => $options): ?>
+                <li>
+                  <?php if ($sortOption === 'custom_order' && !$this->userlist()->customOrderAvailableForLists($this->user)):?>
+                    <a class="dropdown-item" href="<?=$this->url('myresearch-sortalllists')?>" data-lightbox><?= $this->transEsc($options['desc']) ?></a>
+                  <?php else: ?>
+                    <a class="dropdown-item <?=$options['selected'] ? 'selected' : ''?>" href="?allListsSort=<?=$sortOption?>"><?= $this->transEsc($options['desc']); ?></a>
+                  <?php endif;?>
+                </li>
+              <?php endforeach; ?>
+              <li>
+                <a class="dropdown-item sort-all-lists" href="<?=$this->url('myresearch-sortalllists')?>" data-backdrop=”static” data-lightbox><span aria-hidden="true"></span> <span class="hidden-xs"><?=$this->transEsc('Sort manually')?></span></a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
     </div>
   </li>
 </ul>

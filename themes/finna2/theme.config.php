@@ -77,6 +77,7 @@ return [
             'Finna\View\Helper\Root\Translation' => 'Finna\View\Helper\Root\TranslationFactory',
             'Finna\View\Helper\Root\TruncateUrl' => 'Laminas\ServiceManager\Factory\InvokableFactory',
             'Finna\View\Helper\Root\UserAgent' => 'Finna\View\Helper\Root\UserAgentFactory',
+            'Finna\View\Helper\Root\UserList' => 'VuFind\View\Helper\Root\UserListFactory',
             'Finna\View\Helper\Root\UserListEmbed' => 'Finna\View\Helper\Root\UserListEmbedFactory',
             'Finna\View\Helper\Root\UserPublicName' => 'Laminas\ServiceManager\Factory\InvokableFactory',
 
@@ -165,6 +166,7 @@ return [
             'VuFind\View\Helper\Root\ResultFeed' => 'Finna\View\Helper\Root\ResultFeed',
             'VuFind\View\Helper\Root\SearchTabs' => 'Finna\View\Helper\Root\SearchTabs',
             'VuFind\View\Helper\Root\Summon' => 'Finna\View\Helper\Root\Summon',
+            'VuFind\View\Helper\Root\UserList' => 'Finna\View\Helper\Root\UserList',
             'VuFind\View\Helper\Bootstrap5\LayoutClass' => 'Finna\View\Helper\Root\LayoutClass',
 
             // Aliases for non-standard cases

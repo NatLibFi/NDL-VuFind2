@@ -1250,6 +1250,7 @@ $staticRoutes = [
     'Cover/Pipe',
     'MetaLib/Home', 'MetaLib/Search', 'MetaLib/Advanced',
     'MyResearch/SaveCustomOrder', 'MyResearch/SaveHistoricLoans',
+    'MyResearch/SortAllLists',
     'MyResearch/DownloadCheckoutHistory',
     'OrganisationInfo/Home',
     'PCI/Home', 'PCI/Search', 'PCI/Record',

@@ -154,14 +154,38 @@
 .list-public-indicator {
   padding-left: 0.3em;
 }
-
-.mylist-controls {
+.mylist-actions-container {
+  display: flex;
+  .mylist-controls {
+    flex-basis: 20%;
   .control-container {
     display: flex;
     align-items: center;
     gap: 0.6rem;
+    &.sort-lists-control {
+      justify-content: right;
+    }
+    .dropdown.sort-button li {
+        border: none;
+        &:last-child {
+          border-top: 1px solid $gray-lighter;
+        }
+        .dropdown-item.selected {
+          background: $gray-lighter;
+        }
+      }
+    }
+    .mylists-sort {
+      color: $black;
+      border-color: $black;
+      &:hover {
+        color: white;
+        background-color: $black;
+      }
+    }
   }
 }
+
 @include media-breakpoint-down(md) {
   .mylist-controls {
     .sort-option-container {
