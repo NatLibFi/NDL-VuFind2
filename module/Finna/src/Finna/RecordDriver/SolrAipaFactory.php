@@ -68,6 +68,9 @@ class SolrAipaFactory extends \Finna\RecordDriver\SolrDefaultFactory
         $driver->attachRecordDriverManager(
             $container->get(\Finna\RecordDriver\PluginManager::class)
         );
+        $driver->attachCodeSetsLibrary(
+            $container->get('FinnaCodeSetsDefaults')
+        );
 
         return $driver;
     }

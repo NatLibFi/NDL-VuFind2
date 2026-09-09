@@ -886,8 +886,7 @@ class SolrEad3 extends SolrEad
      */
     public function getManifestationData()
     {
-        $locale = $this->getLocale();
-        $images = $this->getImagesAsAssoc($locale);
+        $images = $this->getImagesAsAssoc();
         $physicalItems = $this->getPhysicalItems();
 
         $result = [];
@@ -918,17 +917,14 @@ class SolrEad3 extends SolrEad
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages(
-        $language = 'fi',
-        $includePdf = false
-    ) {
-        $result = $this->getImagesAsAssoc($language, $includePdf);
+    public function getAllImages($includePdf = false)
+    {
+        $result = $this->getImagesAsAssoc($includePdf);
         return $result['displayImages'] ?? [];
     }
 
@@ -938,20 +934,17 @@ class SolrEad3 extends SolrEad
      * - ocr           Ocr images.
      * - fullres       Fullres images.
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
     protected function getImagesAsAssoc(
-        string $language = 'fi',
         bool $includePdf = false
     ) {
         // Do not include pdf bool to cachekey as it does not change results
-        $cacheKey = __FUNCTION__ . "/$language";
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
         }
         $result = [
             'displayImages' => [],
@@ -988,7 +981,7 @@ class SolrEad3 extends SolrEad
             return false;
         };
         // All images have same lazy-fetched rights.
-        $rights = $this->getImageRights($language, true);
+        $rights = $this->getImageRights(true);
         $images = [];
         $ocrImages = [];
         $fullResImages = [];
@@ -1125,7 +1118,7 @@ class SolrEad3 extends SolrEad
         $images = [];
         $fullResImages = [];
         $ocrImages = [];
-        return $this->cache[$cacheKey] = $result;
+        return $this->cache[__FUNCTION__] = $result;
     }
 
     /**
@@ -1411,14 +1404,12 @@ class SolrEad3 extends SolrEad
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $xml = $this->getXmlRecord();
         $restrictions = [];
@@ -1461,7 +1452,7 @@ class SolrEad3 extends SolrEad
         $copyright = $this->getMappedRights($restrictions[0]);
         $data = [];
         $data['copyright'] = $copyright;
-        if ($link = $this->getRightsLink($copyright, $language)) {
+        if ($link = $this->getRightsLink($copyright)) {
             $data['link'] = $link;
         }
         return $data;
@@ -1470,8 +1461,7 @@ class SolrEad3 extends SolrEad
     /**
      * Return image rights.
      *
-     * @param string $language       Language
-     * @param bool   $skipImageCheck Whether to check that images exist
+     * @param bool $skipImageCheck Whether to check that images exist
      *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0') (optional)
@@ -1479,15 +1469,15 @@ class SolrEad3 extends SolrEad
      *   'link'        Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language, $skipImageCheck = false)
+    public function getImageRights($skipImageCheck = false)
     {
-        if (!$skipImageCheck && !$this->getAllImages($language)) {
+        if (!$skipImageCheck && !$this->getAllImages()) {
             return false;
         }
 
         $rights = [];
 
-        if ($type = $this->getAccessRestrictionsType($language)) {
+        if ($type = $this->getAccessRestrictionsType()) {
             $rights['copyright'] = $type['copyright'];
             if (isset($type['link'])) {
                 $rights['link'] = $type['link'];
@@ -1943,7 +1933,7 @@ class SolrEad3 extends SolrEad
             if (!in_array((string)$attr->level, $levels)) {
                 continue;
             }
-            $preferredTitleField = 'title_' . substr($this->getLocale(), 0, 2);
+            $preferredTitleField = 'title_' . substr($this->preferredLanguage, 0, 2);
             $result[] = [
                 'id' => $this->getDatasource() . '.' . (string)$attr->id,
                 'title' => (string)($attr->$preferredTitleField ?? (string)$attr->title),
@@ -1997,7 +1987,7 @@ class SolrEad3 extends SolrEad
         if ($parents = $this->getHierarchyParents($levels)) {
             return array_map(
                 function ($parent) {
-                    $preferredTitleField = 'title_' . substr($this->getLocale(), 0, 2);
+                    $preferredTitleField = 'title_' . substr($this->preferredLanguage, 0, 2);
                     return $parent[$preferredTitleField] ?? $parent['title'];
                 },
                 $parents
@@ -2014,7 +2004,7 @@ class SolrEad3 extends SolrEad
     public function getHierarchyTopTitle()
     {
         $xml = $this->getXmlRecord();
-        $preferredTitleField = 'title_' . substr($this->getLocale(), 0, 2);
+        $preferredTitleField = 'title_' . substr($this->preferredLanguage, 0, 2);
         if ($title = (string)($xml->{'add-data'}->archive->attributes()->$preferredTitleField ?? '')) {
             return [$title];
         }
@@ -2543,7 +2533,7 @@ class SolrEad3 extends SolrEad
     protected function mapLanguageCode($languageCode)
     {
         $langMap
-            = ['fi' => ['fi','fin'], 'sv' => ['sv','swe'], 'en-gb' => ['en','eng']];
+            = ['fi' => ['fi','fin'], 'sv' => ['sv','swe'], 'en' => ['en','eng']];
         return $langMap[$languageCode] ?? [$languageCode];
     }
 

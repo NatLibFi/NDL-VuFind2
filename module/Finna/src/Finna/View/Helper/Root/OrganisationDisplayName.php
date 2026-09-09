@@ -56,12 +56,11 @@ class OrganisationDisplayName extends \Laminas\View\Helper\AbstractHelper
     {
         $translate = $this->getView()->plugin('translate');
 
-        $locale = $translate->getTranslatorLocale();
-        $institutions = (array)$record->tryMethod('getInstitutions', [$locale]);
+        $institutions = (array)$record->tryMethod('getInstitutions');
         $institution = reset($institutions);
 
         // Case 1: only one building level
-        $buildings = $record->tryMethod('getBuilding', [$locale]);
+        $buildings = $record->tryMethod('getBuilding');
         $building = $buildings[0] ?? '';
         $displayName = $translate($building);
 

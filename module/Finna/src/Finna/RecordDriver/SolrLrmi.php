@@ -111,20 +111,18 @@ class SolrLrmi extends SolrQdc
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $xml = $this->getXmlRecord();
         $rights = [];
         if (!empty($xml->rights)) {
             $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
-            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
+            if ($link = $this->getRightsLink($rights['copyright'])) {
                 $rights['link'] = $link;
             }
             return $rights;
@@ -232,7 +230,7 @@ class SolrLrmi extends SolrQdc
             $recordId = substr($recordId, (strrpos($recordId, '.') + 1));
             return str_replace(
                 ['{materialId}', '{lang}'],
-                [$recordId, $this->getLocale()],
+                [$recordId, $this->preferredLanguage],
                 $link
             );
         }
@@ -331,13 +329,12 @@ class SolrLrmi extends SolrQdc
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
         $xml = $this->getXmlRecord();
         $uniqueId = $this->getUniqueID();
@@ -418,7 +415,6 @@ class SolrLrmi extends SolrQdc
     {
         $xml = $this->getXmlRecord();
         $materials = [];
-        $locale = $this->getLocale();
         foreach ($xml->material as $material) {
             if (isset($material->format)) {
                 $mime = (string)$material->format;
@@ -439,8 +435,7 @@ class SolrLrmi extends SolrQdc
                     }
                 }
 
-                $titles = $this->getMaterialTitles($material->name);
-                $title = $titles[$locale] ?? $titles['default'];
+                $title = $this->getMaterialTitle($material->name);
                 $position = (int)$material->position ?? 0;
                 $filesize = (string)$material->filesize ?? null;
                 $materials[] = compact(
@@ -465,21 +460,21 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get material titles in an assoc array.
+     * Get material title.
      *
      * @param object $names to look for
      *
-     * @return array
+     * @return string
      */
-    public function getMaterialTitles($names)
+    public function getMaterialTitle($names)
     {
-        $titles = ['default' => (string)$names];
-
         foreach ($names as $name) {
-            $attr = $name->attributes();
-            $titles[(string)$attr->lang] = (string)$name;
+            $lang = trim((string)$name['lang']) ?? self::NO_LOCALE;
+            if ($lang === $this->preferredLanguage) {
+                return (string)$name;
+            }
         }
-        return $titles;
+        return (string)$names;
     }
 
     /**
