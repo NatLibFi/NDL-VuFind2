@@ -85,12 +85,12 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     protected string $rdfNs = 'http://www.w3.org/1999/02/22-rdf-syntax-ns#';
 
     /**
-     * Map from site locale to Lido language codes.
+     * Map from Finna language codes to Lido language codes.
      */
     public const LANGUAGE_CODES = [
         'fi' => ['fi','fin'],
         'sv' => ['sv','swe'],
-        'en-gb' => ['en','eng'],
+        'en' => ['en','eng'],
     ];
 
     /**
@@ -382,16 +382,14 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Return access restriction notes for the record.
      *
-     * @param string $language Optional primary language to look for
-     *
      * @return array
      */
-    public function getAccessRestrictions($language = '')
+    public function getAccessRestrictions()
     {
         $restrictions = [];
         $reader = $this->getXmlReader();
         foreach ($reader->all(path: 'lido/administrativeMetadata/resourceWrap/resourceSet') as $set) {
-            if ($restriction = $this->getUsageDescription($set, $language)) {
+            if ($restriction = $this->getUsageDescription($set)) {
                 $restrictions[] = $restriction;
             }
         }
@@ -401,14 +399,12 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $reader = $this->getXmlReader();
         $path = 'lido/administrativeMetadata/resourceWrap/resourceSet/rightsResource/rightsType';
@@ -418,7 +414,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 $copyright = $this->getMappedRights($copyright['id']);
                 $data = compact('copyright');
 
-                if ($link = $this->getRightsLink($copyright, $language)) {
+                if ($link = $this->getRightsLink($copyright)) {
                     $data['link'] = $link;
                 }
                 return $data;
@@ -446,15 +442,13 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      * - dateTaken   Photo date taken
      * - perspectives Image perspectives
      *
-     * @param string $language   Language for textual information
-     * @param bool   $includePdf Whether to include first PDF file when no image
+     * @param bool $includePdf Whether to include first PDF file when no image
      *
      * @return array
      */
-    public function getAllImages($language = null, $includePdf = false)
+    public function getAllImages($includePdf = false)
     {
-        $language ??= $this->getTranslatorLocale();
-        $representations = $this->getRepresentations($language);
+        $representations = $this->getRepresentations();
         // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
         // RecordImage::mergeModelDataToImages.
         return array_filter(array_column($representations, 'images'));
@@ -515,8 +509,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      */
     public function getModels(): array
     {
-        $language = $this->getTranslatorLocale();
-        $representations = $this->getRepresentations($language);
+        $representations = $this->getRepresentations();
         // Note: Do not reindex the results e.g. with array_values, the keys are important! See FINNA-3933 and
         // RecordImage::mergeModelDataToImages.
         return array_filter(array_column($representations, 'models'));
@@ -529,8 +522,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      */
     protected function getAudios(): array
     {
-        $language = $this->getTranslatorLocale();
-        $representations = $this->getRepresentations($language);
+        $representations = $this->getRepresentations();
         return array_values(
             array_filter(array_column($representations, 'audios'))
         );
@@ -543,8 +535,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      */
     protected function getVideos(): array
     {
-        $language = $this->getTranslatorLocale();
-        $representations = $this->getRepresentations($language);
+        $representations = $this->getRepresentations();
         return array_values(
             array_filter(array_column($representations, 'videos'))
         );
@@ -557,8 +548,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      */
     public function getDocuments(): array
     {
-        $language = $this->getTranslatorLocale();
-        $representations = $this->getRepresentations($language);
+        $representations = $this->getRepresentations();
         return array_values(
             array_filter(array_column($representations, 'documents'))
         );
@@ -568,18 +558,15 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      * Parse given representations and return them in proper
      * associative array.
      *
-     * @param string $language language to get information
-     *
      * @return array
      */
-    protected function getRepresentations(string $language): array
+    protected function getRepresentations(): array
     {
-        $cacheKey = __FUNCTION__ . "/$language";
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
         }
 
-        $defaultRights = $this->getImageRights($language, true);
+        $defaultRights = $this->getImageRights(true);
 
         $imageTypeKeys = array_keys($this->imageTypes);
         $modelTypeKeys = array_keys($this->modelTypes);
@@ -617,7 +604,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         foreach ($reader->all(path: 'lido/administrativeMetadata/resourceWrap/resourceSet') as $resourceSet) {
             // Process rights first since we may need to duplicate them if there
             // are multiple representations in the set (non-standard)
-            if (!($rights = $this->getResourceRights($resourceSet, $language))) {
+            if (!($rights = $this->getResourceRights($resourceSet))) {
                 $rights = $defaultRights;
             }
 
@@ -628,7 +615,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             $documentUrls = [];
             $highResolution = [];
 
-            $descriptions = $this->getResourceDescriptions($resourceSet, $language);
+            $descriptions = $this->getResourceDescriptions($resourceSet);
             foreach ($reader->all($resourceSet, 'resourceRepresentation') as $representation) {
                 if (!$linkResource = $reader->first($representation, 'linkResource')) {
                     continue;
@@ -659,12 +646,10 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     continue;
                 }
 
-                // If there is a description set for the representation
-                // Try to find one with correct language, else get the first
                 $description = '';
                 if ($key = $this->descriptionTypeMappings[$type] ?? '') {
                     if ($foundDescriptions = $descriptions[$key] ?? []) {
-                        $description = $foundDescriptions[$language] ?? reset($foundDescriptions);
+                        $description = reset($foundDescriptions);
                     }
                 }
                 // Representation is a document or wanted to be displayed also as an document
@@ -690,7 +675,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                             $host
                         );
                     }
-                    $documentRights = $this->getResourceRights($resourceSet, $language, false);
+                    $documentRights = $this->getResourceRights($resourceSet, false);
                     if (
                         $document = $this->getDocument(
                             $url,
@@ -709,7 +694,6 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     $image = $this->getImage(
                         $url,
                         $type,
-                        $language,
                         $reader->firstValue($resourceSet, 'resourceID') ?? '',
                         $format,
                         $reader->all($representation, 'resourceMeasurementsSet')
@@ -755,7 +739,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                         )
                     ) {
                         $audioUrls = array_merge($audioUrls, $audio);
-                        if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
+                        if ($extraDetails = $this->getExtraDetails($resourceSet)) {
                             $audioUrls = array_merge($audioUrls, $extraDetails);
                         }
                     }
@@ -763,7 +747,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 }
                 // Representation is a video
                 if (in_array($type, $videoTypeKeys)) {
-                    $videoRights = $this->getResourceRights($resourceSet, $language, false);
+                    $videoRights = $this->getResourceRights($resourceSet, false);
                     if (
                         $video = $this->getVideo(
                             $url,
@@ -774,7 +758,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                         )
                     ) {
                         $videoUrls = array_merge($videoUrls, $video);
-                        if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
+                        if ($extraDetails = $this->getExtraDetails($resourceSet)) {
                             $videoUrls = array_merge($videoUrls, $extraDetails);
                         }
                     }
@@ -796,7 +780,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     'highResolution' => $highResolution,
                 ];
 
-                if ($extraDetails = $this->getExtraDetails($resourceSet, $language)) {
+                if ($extraDetails = $this->getExtraDetails($resourceSet)) {
                     $imageResult = array_merge($imageResult, $extraDetails);
                 }
             }
@@ -816,7 +800,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             );
         }
 
-        $this->cache[$cacheKey] = $results;
+        $this->cache[__FUNCTION__] = $results;
         return $results;
     }
 
@@ -824,25 +808,19 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      * Return description as associative array
      * - type Type of the description and text as the value.
      *
-     * @param array  $resourceSet Set to get description from
-     * @param string $language    Language to get
+     * @param array $resourceSet Set to get description from
      *
      * @return array
      */
     protected function getResourceDescriptions(
         array $resourceSet,
-        string $language
     ): array {
-        // TODO: Why is $language not used?
         $results = [];
         $reader = $this->getXmlReader();
-        foreach ($reader->all($resourceSet, 'resourceDescription') as $description) {
+        $descriptions = $reader->all($resourceSet, 'resourceDescription');
+        foreach ($this->getAllLanguageSpecificNodes($descriptions, $this->preferredLanguage) as $description) {
             if ($type = $reader->attr($description, 'type')) {
-                if ($lang = $this->getLangAttr($description)) {
-                    $results[$type][$lang] = $reader->value($description);
-                } else {
-                    $results[$type][] = $reader->value($description);
-                }
+                $results[$type][] = $reader->value($description);
             }
         }
         return $results;
@@ -857,17 +835,15 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      * - dateTaken     date taken
      * - perspectives  language specific perspectives.
      *
-     * @param array  $resourceSet Current resource set
-     * @param string $language    Language to information
+     * @param array $resourceSet Current resource set
      *
      * @return array
      */
-    protected function getExtraDetails(
-        array $resourceSet,
-        string $language
-    ): array {
+    protected function getExtraDetails(array $resourceSet): array
+    {
         $result = [];
         $reader = $this->getXmlReader();
+        $language = $this->preferredLanguage;
         if ($resourceID = $reader->firstValue($resourceSet, 'resourceID')) {
             $result['identifier'] = $resourceID;
         }
@@ -911,13 +887,11 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      * Get usage description from resourceSet.
      *
      * @param array  $resourceSet Given resourceSet
-     * @param string $language    Optional primary language to look for
      *
      * @return string
      */
     protected function getUsageDescription(
         array $resourceSet,
-        $language = '',
     ) {
         $reader = $this->getXmlReader();
         $creditNodes = $reader->all($resourceSet, 'rightsResource/creditLine');
@@ -928,8 +902,8 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             }
         }
         // For backward compatibility: Also check rightsType/term for usage description
-        return $this->getLanguageSpecificValue($descriptions, $language)
-            ?: $this->getLanguageSpecificValueByPath($resourceSet, 'rightsResource/rightsType/term', $language);
+        return $this->getLanguageSpecificValue($descriptions, $this->preferredLanguage)
+            ?: $this->getLanguageSpecificValueByPath($resourceSet, 'rightsResource/rightsType/term', $this->preferredLanguage);
     }
 
     /**
@@ -982,7 +956,6 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      *
      * @param string  $url          Url of the resourceset
      * @param string  $type         Type of the image
-     * @param string  $language     Language to get information
      * @param string  $id           ID of the resourceset
      * @param string  $format       Format of the image
      * @param array[] $measurements Measurements nodes
@@ -992,7 +965,6 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     protected function getImage(
         string $url,
         string $type,
-        string $language,
         string $id = '',
         string $format = '',
         array $measurements = []
@@ -1164,15 +1136,13 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Get rights from the given resourceSet.
      *
-     * @param array  $resourceSet Given resourceSet from lido
-     * @param string $language    Language to look for
-     * @param bool   $useDefault  Use default rights as fallback, default true
+     * @param array $resourceSet Given resourceSet from lido
+     * @param bool  $useDefault  Use default rights as fallback, default true
      *
      * @return array
      */
     protected function getResourceRights(
         array $resourceSet,
-        string $language,
         bool $useDefault = true
     ): array {
         $rights = [];
@@ -1180,7 +1150,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         foreach ($reader->all($resourceSet, 'rightsResource/rightsType') as $rightsType) {
             if ($copyright = $this->getFirstConceptIdAttributes($rightsType)) {
                 $rights['copyright'] ??= $this->getMappedRights($copyright['id']);
-                if ($link = $this->getRightsLink($rights['copyright'], $language)) {
+                if ($link = $this->getRightsLink($rights['copyright'])) {
                     $rights['link'] ??= $link;
                 }
             }
@@ -1201,10 +1171,10 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 $creditLines[] = $creditNode;
             }
         }
-        if ($creditLine = $this->getLanguageSpecificValue($creditLines, $language)) {
+        if ($creditLine = $this->getLanguageSpecificValue($creditLines, $this->preferredLanguage)) {
             $rights['creditLine'] = $creditLine;
         }
-        $description = $this->getUsageDescription($resourceSet, $language);
+        $description = $this->getUsageDescription($resourceSet);
         // Do not include description matching concept identifier
         if ($description && (($rights['copyright'] ?? null) !== $description)) {
             $rights['description'][] = $description;
@@ -1213,7 +1183,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         if ($rights) {
             return $rights;
         }
-        return $useDefault ? ($this->getImageRights($language, true) ?: []) : [];
+        return $useDefault ? ($this->getImageRights(true) ?: []) : [];
     }
 
     /**
@@ -1378,7 +1348,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 ];
             }
         }
-        $langNodes = $this->getAllLanguageSpecificNodes($langNodes, $this->getLocale(), true);
+        $langNodes = $this->getAllLanguageSpecificNodes($langNodes, $this->preferredLanguage, true);
         foreach ($langNodes as $langNode) {
             if ($term = $reader->value($langNode)) {
                 $label = $reader->attr($langNode, 'label');
@@ -1409,7 +1379,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 ...$reader->all(path: $path),
             ];
         }
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         foreach ($nodes as $node) {
             if (in_array($reader->attr($node, 'type'), $this->colorTypes)) {
                 $id = $source = '';
@@ -1516,7 +1486,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 }
             }
         }
-        return $this->getAllLanguageSpecificValues($results, $this->getLocale());
+        return $this->getAllLanguageSpecificValues($results, $this->preferredLanguage);
     }
 
     /**
@@ -1537,7 +1507,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     public function getEvents()
     {
         $events = [];
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         $reader = $this->getXmlReader();
         foreach ($reader->all(path: 'lido/descriptiveMetadata/eventWrap/eventSet/event') as $node) {
             $name = $reader->firstValue($node, 'eventName/appellationValue') ?? '';
@@ -1779,8 +1749,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Return image rights.
      *
-     * @param string $language       Language
-     * @param bool   $skipImageCheck Whether to check that images exist
+     * @param bool $skipImageCheck Whether to check that images exist
      *
      * @return mixed array with keys:
      *   'copyright'  Copyright (e.g. 'CC BY 4.0') (optional)
@@ -1788,14 +1757,14 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      *   'link'       Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language, $skipImageCheck = false)
+    public function getImageRights($skipImageCheck = false)
     {
         if (!$skipImageCheck && !$this->getAllImages()) {
             return false;
         }
 
-        $rights = $this->getAccessRestrictionsType($language) ?: [];
-        $desc = $this->getAccessRestrictions($language);
+        $rights = $this->getAccessRestrictionsType() ?: [];
+        $desc = $this->getAccessRestrictions();
         if ($desc && count($desc)) {
             $description = [];
             foreach ($desc as $p) {
@@ -1940,7 +1909,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     ): array {
         $results = [];
         $exclude = $include ? [] : $this->excludedMeasurements;
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         $reader = $this->getXmlReader();
         $objectMeasurementsSets = $reader->all(
             path: 'lido/descriptiveMetadata/objectIdentificationWrap/objectMeasurementsWrap/objectMeasurementsSet'
@@ -2009,7 +1978,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $reader = $this->getXmlReader();
         $authors = [];
         $index = 0;
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         foreach ($reader->all(path: 'lido/descriptiveMetadata/eventWrap/eventSet/event') as $event) {
             $eventType = $this->toLower($reader->firstValue($event, 'eventType/term') ?? '');
             $priority = $this->authorEvents[$eventType] ?? null;
@@ -2167,7 +2136,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     {
         $reader = $this->getXmlReader();
         $results = [];
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         $path = 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject';
         foreach ($reader->all(path: $path) as $node) {
             if ($term = $this->getLanguageSpecificValueByPath($node, 'subjectDate/displayDate', $language)) {
@@ -2254,7 +2223,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     {
         $headings = [];
         $headings = $this->getTopics();
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
 
         $headings = array_merge(
             $headings,
@@ -2322,7 +2291,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $reader = $this->getXmlReader();
         $topics = [];
         $langTopics = [];
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         foreach (
             $reader->all(path: 'lido/descriptiveMetadata/objectRelationWrap/subjectWrap/subjectSet/subject') as $subject
         ) {
@@ -2474,7 +2443,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $reader = $this->getXmlReader();
         $path = 'lido/descriptiveMetadata/objectRelationWrap/relatedWorksWrap/relatedWorkSet/relatedWork';
         $results = [];
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         foreach ($reader->all(path: $path) as $work) {
             $url = $this->getLanguageSpecificValueByPath($work, 'object/objectWebResource', $language);
             if (!$url || $this->urlBlocked($url)) {
@@ -2635,7 +2604,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     'locationAsLink' => true,
                 ];
             }
-            $lang = $this->getLocale();
+            $lang = $this->preferredLanguage;
             if ($display = $this->getLanguageSpecificValueByPath($repository, 'displayRepository', $lang)) {
                 $results[] = [
                     'location' => $display,
@@ -2657,7 +2626,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     protected function getPlaceName(?array $placeNode): string
     {
         $reader = $this->getXmlReader();
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
 
         $displayPlace = trim(
             $this->getLanguageSpecificValueByPath($placeNode, 'displayPlace', $language),
@@ -2833,7 +2802,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $descriptionsUntyped = [];
         $subjectsLabeled = [];
         $subjectsUnlabeled = [];
-        $language = $this->getLocale();
+        $language = $this->preferredLanguage;
         // Collect all fitting description objects
         $reader = $this->getXmlReader();
         $path = 'lido/descriptiveMetadata/objectIdentificationWrap/objectDescriptionWrap/objectDescriptionSet';

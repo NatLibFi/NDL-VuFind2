@@ -103,7 +103,6 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
         $imageHelper = $this->helperManager->get('recordImage');
         $translate = $this->helperManager->get('translate');
         $images = $imageHelper(($this->helperManager->get('record'))($record))->getAllImagesAsCoverLinks(
-            $this->locale,
             [],
             false,
             false
@@ -173,7 +172,7 @@ class RecordFormatter extends \VuFindApi\Formatter\RecordFormatter
      */
     protected function getImageRights($record)
     {
-        $rights = $record->tryMethod('getImageRights', [$this->locale]);
+        $rights = $record->tryMethod('getImageRights');
         return $rights ? $rights : null;
     }
 

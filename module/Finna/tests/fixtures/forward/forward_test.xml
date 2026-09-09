@@ -295,6 +295,11 @@
       <Language>fi</Language>
     </ContentDescription>
     <ContentDescription>
+      <DescriptionType>Synopsis</DescriptionType>
+      <DescriptionText>This is synopsis.</DescriptionText>
+      <Language>en</Language>
+    </ContentDescription>
+    <ContentDescription>
       <DescriptionType>Content description</DescriptionType>
       <DescriptionText>Tämä on sisällön kuvaus.</DescriptionText>
       <Language>fi</Language>

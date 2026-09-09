@@ -164,11 +164,7 @@
         <?php if ($abstracts = $this->driver->getAbstracts()): ?>
           <div class="truncate-field wide">
             <p class="summary">
-            <?php if (isset($abstracts[$this->layout()->userLang])): ?>
-                <?=$this->escapeHtml($abstracts[$this->layout()->userLang])?>
-              <?php else: ?>
-                <?=implode('', array_map([$this, 'escapeHtml'], $abstracts))?>
-              <?php endif; ?>
+              <?=implode('', array_map([$this, 'escapeHtml'], $abstracts))?>
             </p>
           </div>
         <?php else: ?>

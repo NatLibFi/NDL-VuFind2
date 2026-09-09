@@ -56,11 +56,11 @@ use function is_callable;
 trait FinnaRecordTrait
 {
     /**
-     * Preferred language for display strings.
+     * Preferred language (two-character code) for display strings.
      *
      * @var string
      */
-    protected $preferredLanguage = null;
+    protected $preferredLanguage = '';
 
     /**
      * Search settings.
@@ -364,7 +364,8 @@ trait FinnaRecordTrait
      */
     public function setPreferredLanguage($language)
     {
-        $this->preferredLanguage = $language;
+
+        $this->preferredLanguage = substr($language, 0, 2);
     }
 
     /**
