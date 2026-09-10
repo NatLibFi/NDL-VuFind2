@@ -92,25 +92,33 @@
               $area = '';
             }
             if ('' !== $area && '' !== $city) {
-              $name .= ", $area ($city)"; 
+              $name .= ", $area ($city)";
             } elseif ('' !== $area || '' !== $city) {
               $name .= ", $area$city";
             }
             if ($i === 1) {
-              if (!$isOpen) $name = '';
+              if (!$isOpen) {
+              $name = '';
+              }
             } elseif ($i === 2) {
-              if ($isOpen || $isMobile) $name = '';
+              if ($isOpen || $isMobile) {
+              $name = '';
+              }
             } elseif ($i === 3) {
-              if (!$isMobile) $name = '';
+              if (!$isMobile) {
+                 $name = '';
+              }
             }
             ?>
-            <?php if ($name != '') echo '<div>' . ($this->escapeHtml($name)) . '</div>' ?>
+            <?php if ($name != '') {
+            echo '<div>' . ($this->escapeHtml($name)) . '</div>';
+            } ?>
           <?php endforeach; ?>
         <?php endfor; ?>
       <?php endif; ?>
     </div> <!-- map information about open and closed libraries for the screenreaders ends here -->
 
-    <div class="js-location-info-map hidden">
+    <div class="js-location-info-map hidden" aria-hidden="true">
       <template class="js-map-attribution">
         <span class="map-marker-text">
           <?=$this->icon('map-marker', 'map-marker-icon open')?>&nbsp;<?=$this->transEsc('organisation_info_is_open_now')?>
@@ -129,8 +137,8 @@
         </div>
       </template>
 
-      <div class="location-map" aria-hidden="true">
-        <div class="js-map-controls">
+      <div class="location-map">
+        <div class="js-map-controls" aria-hidden="true">
           <?php if ($locationCount > 1): ?>
             <button class="btn btn-link js-show-location" type="button" disabled><?=$this->transEsc('zoom_center')?></button>
             <button class="btn btn-link js-show-all" type="button"><?=$this->transEsc('organisation_info_page_map_show_all')?></button>
