@@ -2,6 +2,8 @@
 <lidoWrap schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
   <lido>
     <lidoRecID type="Test">knp-247394</lidoRecID>
+    <objectPublishedID type="URI" label="not isbn">12345678</objectPublishedID>
+    <objectPublishedID type="URI" label="isbn">URN:ISBN:951-771-872-1</objectPublishedID>
     <descriptiveMetadata lang="fi">
       <objectClassificationWrap>
         <objectWorkTypeWrap>
@@ -186,7 +188,7 @@
                 <term label="asiasana"/>
               </subjectConcept>
               <subjectConcept>
-                <conceptID type="URI">http://www.yso.fi/onto/koko/p31096</conceptID>
+                <Concept about="http://www.yso.fi/onto/koko/p31096"/>
                 <term label="asiasana">maalaukset, ei pilkottu</term>
               </subjectConcept>
               <subjectConcept>
@@ -426,7 +428,7 @@
               <displayMaterialsTech lang="en">lining: frieze</displayMaterialsTech>
                 <materialsTech>
                   <termMaterialsTech>
-                    <conceptID type="URI">http://www.yso.fi/onto/koko/p30796</conceptID>
+                    <Concept about="http://www.yso.fi/onto/koko/p30796"/>
                     <term lang="fi">sarka</term>
                   </termMaterialsTech>
                 </materialsTech>
@@ -546,7 +548,7 @@
           <rightsResource>
             <rightsType>
               <conceptID>CC BY 4.0</conceptID>
-              <term lang="fi">Tässä on kuvien copyright.</term>
+              <term lang="fi">Ei näytetä.</term>
             </rightsType>
             <rightsHolder>
               <legalBodyName>
@@ -554,7 +556,9 @@
               </legalBodyName>
               <legalBodyWeblink>http://localhost/rightsholder</legalBodyWeblink>
             </rightsHolder>
-            <creditLine>Credit: Holder, Rights</creditLine>
+            <creditLine lang="en">Credit: Holder, Rights</creditLine>
+            <creditLine label="usage" lang="fi">Kuvien käyttöoikeuskuvaus.</creditLine>
+            <creditLine label="usage" lang="en">Usage instructions.</creditLine>
           </rightsResource>
         </resourceSet>
         <resourceSet>
@@ -635,7 +639,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID>InC</conceptID>
+              <Concept about="https://rightsstatements.org/vocab/InC/1.0/"/>
               <term lang="fi">Tässä on mallien copyright.</term>
             </rightsType>
           </rightsResource>
