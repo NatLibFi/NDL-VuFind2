@@ -1,3 +1,4 @@
+
 header {
   position: relative;
   z-index: $zindex-header;
@@ -9,9 +10,20 @@ header {
     display: flex;
     align-items: center;
     gap: 0.25rem;
+    outline: none;
+    padding: $padding-base-vertical $padding-large-horizontal;
     --#{$prefix}nav-link-color: #{$header-text-color};
     --#{$prefix}nav-link-hover-color: #{$header-text-hover-color};
     --#{$prefix}navbar-active-color: #{$header-text-active-color};
+    &:hover {
+      @if $header-link-underline {
+        :not(.icon) {
+          text-decoration: underline;
+          text-decoration-thickness: 0.15em;
+          text-underline-offset: 0.3em;
+        }
+      }
+    }
   }
 }
 /* Mobile navbar */
@@ -27,9 +39,9 @@ header {
     border-width: 0 0 1px;
     box-shadow: 0 0 3px 3px rgba(0,0,0,0.1);
 
-    .nav > li > a {
-      padding-right: 6px;
-      padding-left: 6px;
+    .navbar-main .nav-item > .nav-link {
+      font-size: $font-size-h4;
+      padding: $padding-large-vertical $padding-large-horizontal;
     }
     .navbar-collapse {
       &.show {
@@ -41,7 +53,7 @@ header {
         width: 100%;
       }
       .navbar-nav .nav-item {
-        border-bottom: 1px solid $gray-lighter;
+        border-bottom: 1px solid $border-color;
         &:last-child,
         .dropdown-menu li {
           border-bottom: none;
@@ -61,11 +73,10 @@ header {
 .header-navbar-right {
   // This is required for proper positioning of dropdown menus:
   position: relative;
-
   display: flex;
   flex-direction: row;
-  align-items: baseline;
-
+  // Adds space between menu items:
+  gap: 0.5rem;
   // Counter the responsive menu behavior for non-expandable items:
   .dropdown-menu {
     position: absolute;
@@ -129,7 +140,6 @@ header {
     .username {
       display: inline-block;
       max-width: 150px;
-      overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
       vertical-align: top;
@@ -160,16 +170,6 @@ header {
     max-width: 80px;
   }
 }
-
-.finna-navbar {
-  // #loginOptions .btn-uppercase included for back-compatibility
-  .login-button,
-  #loginOptions .btn-uppercase {
-    display: block;
-    text-transform: uppercase;
-  }
-}
-
 #my-info-dropdown-menu {
   width: 280px;
   > li a {
@@ -177,6 +177,9 @@ header {
     .sign-out-icon {
       font-size: 1.2em;
       line-height: 1em;
+    }
+    &.active {
+      font-weight: bold;
     }
   }
   > li:last-child > a,
@@ -187,14 +190,14 @@ header {
     .library-card {
       display: flex;
       flex-direction: row;
-      min-height: 35px;
-      padding: 0 15px;
+      min-height: 2rem;
+      padding: 0 $padding-large-horizontal;
       word-wrap: anywhere;
       white-space: wrap;
       .selected-icon {
         width: 10px;
         align-self: center;
-        padding-right: 15px;
+        padding-right: 1.5rem;
         color: $primary;
       }
       .card-name span {
@@ -204,7 +207,8 @@ header {
       }
       > a,
       .barcode-container {
-        border-bottom: 1px solid $gray-lighter;
+        display: flex;
+        border-bottom: 1px solid $dropdown-divider-bg;
         color: $text-color;
         span {
           padding: 3px 0px;
@@ -214,7 +218,6 @@ header {
         display: flex;
         align-items: center;
         height: auto;
-        width: 20%;
         a {
           justify-content: center;
         }
@@ -270,8 +273,3 @@ header {
 /* <#SCSS */
 
 /* End of Finna breadcrumbs */
-
-// content-navigation-menu
-.main.template-dir-content.template-name-content .content-navigation-menu {
-  margin: 1.3em 0em;
-}

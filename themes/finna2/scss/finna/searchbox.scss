@@ -1,18 +1,16 @@
 .searchbox {
   @extend .clearfix;
-  margin: 12px 0px;
+  padding: 1rem 0px;
 
   .searchbox-flex {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     .search {
       flex: 1;
     }
     .search-help-icon {
-      font-size: 1.9em;
-    }
-    .btn-advanced {
-      margin-left: 10px;
+      font-size: 1.5rem;
     }
     .btn-link {
       font-size: 1em;
@@ -21,8 +19,8 @@
     }
     .search-tooltip {
       button {
-        margin-left: 30px;
-        color: $tooltip-button-color;
+        margin-left: 1rem;
+        color: $finna-search-tooltip-color;
       }
     }
   }
@@ -75,6 +73,9 @@
       border-radius: none;
       .icon {
         font-size: 2em;
+        &:hover {
+          color: darken($action-link-color, 10%);
+        }
       }
     }
   }

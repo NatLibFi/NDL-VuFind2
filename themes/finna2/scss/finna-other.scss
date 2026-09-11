@@ -1,5 +1,6 @@
 // finna/common contains mixins used in other files, so import it first
 @import "finna/common";
+@import "finna/offcanvas.scss";
 @import "finna/accordion";
 @import "finna/advanced-search";
 @import "finna/autocomplete";
@@ -54,7 +55,6 @@
 @import "finna/record";
 @import "finna/primo";
 @import "finna/filters";
-@import "finna/mobile-toolbar";
 @import "finna/mobile-table";
 @import "finna/audio-player";
 @import 'finna/feed-styles';
@@ -76,7 +76,6 @@ html {
 ::-ms-clear {
   display: none;
 }
-
 iframe {
   border: none;
 }
@@ -96,14 +95,16 @@ body {
   }
 }
 section.main.template-dir-search.template-name-results,
+section.main.template-dir-l1.template-name-results,
+section.main.template-dir-blender.template-name-results,
 section.main.template-dir-primo.template-name-search,
 section.main.template-dir-eds.template-name-search,
 section.main.template-dir-authority.template-name-search,
 section.main.template-dir-feedback.template-name-response {
   & >.container.main-content {
-    margin-top: 10px;
-    padding-bottom: 25px;
-    @include media-breakpoint-down(sm) {
+    margin-top: 1rem;
+    padding-bottom: 2rem;
+    @include media-breakpoint-down(md) {
       margin-top: 0px;
     }
   }
@@ -287,14 +288,15 @@ label.list-group-item {
 // Truncate
 .truncate-done {
   overflow-y: hidden;
-  // Add a bit of padding for focus rings:
-  padding-top: 2px;
-  padding-bottom: 2px;
 }
 
 //Finna mixins
 .truncate-field {
   display: none;
+  // Focus-visible style for links within truncate-field
+  a:focus-visible {
+    box-shadow: 0 0 $focus-ring-blur (0.75 * $focus-ring-width) $focus-ring-color inset;
+  }
   &.truncate-done {
     display: block;
   }
@@ -310,6 +312,9 @@ label.list-group-item {
   }
 }
 .more-link, .less-link, .less-link-top {
+  display: flex;
+  align-content: center;
+  align-items: center;
   cursor: pointer;
   font-weight: 600;
   text-transform: uppercase;
@@ -320,9 +325,15 @@ label.list-group-item {
   color: $text-color;
   background-color: transparent;
   padding: 0;
+  &:hover span:not(.icon) {
+    text-decoration: $link-hover-decoration;
+  }
   &.link-buttons {
     color: $link-color;
     font-weight: 400;
+    &:hover {
+      text-decoration: $link-hover-decoration;
+    }
   }
 }
 
@@ -373,7 +384,7 @@ label.list-group-item {
 
 .well {
   background-color: mix($body-bg, contrast($body-bg), 95%);
-  border: 1px solid mix($body-bg, contrast($body-bg), 85%);
+  border: 1px solid mix($body-bg, contrast($body-bg), 80%);
 }
 
 // Virtual keyboard
@@ -385,10 +396,18 @@ label.list-group-item {
 
 .keyboard-selection {
   margin-top: 0;
+  button.dropdown-toggle {
+    &:hover {
+      color: $input-color;
+      background-color: $light;
+    }
+  }
 }
 
 #keyboard-selection-button {
+  margin-left: (0.5 * $spacer);
   height: 48px;
+  border-radius: $border-radius-base;
 }
 
 /* ------ Responsive table for small screen size ------ */
@@ -463,7 +482,6 @@ label.list-group-item {
     &:focus-visible {
       box-shadow: $focus-ring-box-shadow;
     }
-
     .hierarchy-tree__children, li:not(.hierarchy-tree__collection)  {
       padding-left: 0.7rem;
     }
@@ -474,6 +492,9 @@ label.list-group-item {
         border-radius: 4px;
       }
     }
+  }
+  .hierarchy-tree-toggle-full {
+    margin-bottom: 0.5rem;
   }
   div.alert {
     margin-top: 10px;

@@ -69,8 +69,8 @@ a.authority-link {
     padding: 10px;
     margin-bottom: 20px;
     overflow: hidden;
-    background-color: $gray-ultralight;
-    border: 1px solid $gray-lighter;
+    border: 1px solid $border-color;
+    border-radius: $border-radius-small;
     div:first-child {
       padding-right: 0.3em;
     }

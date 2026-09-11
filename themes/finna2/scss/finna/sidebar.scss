@@ -1,54 +1,62 @@
-//== Styling Finna sidebar checkbox filters
-#sidebar .checkbox-filters {
-  padding: 0px;
-  margin: 0.3em 0em 0.6em;
-
-  @extend .checkbox-container;
-
-  .checkbox {
-    display: flex;
-    gap: 0.6em;
-    margin: 0.6em 0em;
-    > div {
+/* Finna search sidebar */
+.sidebar > .side-facets-container-ajax, .sidebar > .mobile-sidebar-container {
+  border: none;
+  box-shadow: none;
+  border-radius: 0px;
+  @include media-breakpoint-up(md) {
+    border: 1px solid $sidebar-border-color;
+    border-radius: $sidebar-border-radius;
+    overflow: hidden;
+  }
+  // Checkbox filters
+  .checkbox-filters {
+    padding: 0.3em 0em 0.6em;
+    border-bottom: 1px solid $facet-border-color;
+    @extend .checkbox-container;
+    .checkbox {
       display: flex;
-      justify-content: space-between;
-      width: 100%;
-      margin-left: 0px;
-      &:before {
-        margin-right: 0.3em;
-        margin-left: -22px;
+      gap: 0.6em;
+      margin: 0.6em 0em;
+      > div {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-left: 0px;
+        &:before {
+          margin-right: 0.3em;
+          margin-left: -22px;
+        }
       }
     }
-  }
-  // Checkbox facet badges
-  .badge.cb-facet {
-    display: $display-checkbox-facet-amount;
-    margin-top: 0.2em;
-    margin-right: 0.8em;
-  }
-  input[type="checkbox"] {
-    min-width: 16px;
-  }
-}
-@include media-breakpoint-between(sm, md) {
-  #sidebar .checkbox-filters {
-    .badge {
-      max-width: 100px;
-      overflow: hidden;
-      text-overflow: ellipsis;
+    // Checkbox facet badges
+    .badge.cb-facet {
+      display: $display-checkbox-facet-amount;
+      margin-top: 0.2em;
+      margin-right: 0.8em;
     }
-    .checkbox > div {
-      flex-wrap: wrap;
+    input[type="checkbox"] {
+      min-width: 1rem;
+    }
+  }
+  @include media-breakpoint-between(sm, md) {
+    #sidebar .checkbox-filters {
+      .badge {
+        max-width: 100px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .checkbox > div {
+        flex-wrap: wrap;
+      }
     }
   }
 }
 
 /* Sidebar container and header */
-
 .sidebar {
   margin-bottom: 2em;
 }
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
   .sidebar {
     clear: both;
   }
@@ -56,54 +64,70 @@
 
 .sidebar h1,
 .sidebar h2 {
-  padding: 0.9em;
-  margin-top: 0px;
-  margin-bottom: 0px;
-  font-size: 1.2rem;
-  font-weight: 500;
+  padding: $padding-large-vertical $padding-base-horizontal;
+  margin: 0px;
+  font-size: $font-size-h4;
+  font-weight: 600;
   color: $sidebar-header-text-color;
-  text-transform: uppercase;
+  background-color: $sidebar-background;
   word-wrap: break-word;
-  background: $sidebar-background;
   .icon {
     color: $sidebar-header-icon-color;
   }
 }
-
-.results,
-.record-tabs {
-  .sidebar .mobile-navigation-header-container {
-    margin-bottom: 0.4em;
-  }
+.sidebar p {
+  padding: $padding-large-vertical $padding-base-horizontal;
 }
 
 .sidebar .mobile-navigation-header-container {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: 0.7em 1.1em;
+  overflow: hidden;
   color: $sidebar-header-text-color;
   background-color: $sidebar-background;
-  h1 {
-    padding: 0px;
+  border-bottom: $divider-border;
+  > h1 {
+    line-height: 1.5em;
+    background: transparent;
+    color: inherit;
   }
-  button {
-    font-size: 1.2rem;
-    color: $sidebar-header-text-color;
-    background-color: $sidebar-background;
-    border: none;
+  .finna-toggletip button {
+    font-size: $font-size-icon-large;
+    margin-right: 0.25rem;
   }
 }
-@include media-breakpoint-down(sm) {
+@include media-breakpoint-down(md) {
   .sidebar .mobile-navigation-header-container {
     position: sticky;
     top: 0px;
     z-index: $zindex-navbar;
+    padding: 1rem;
     margin-bottom: 0px;
+    background: $light;
+    color: $text-color;
+    .close-offcanvas-btn, .reset-filters-btn {
+      color: $text-color;
+      padding: 0px $padding-large-horizontal;
+      font-weight: 600;
+      .icon {
+        text-decoration: none;
+      }
+      .btn-link__label {
+        text-decoration: underline;
+      }
+    }
+    .sidebar-close-btn {
+      border: none;
+      background: transparent;
+    }
     .finna-toggletip {
       padding-left: 0.7em;
       margin-right: auto;
+      > span {
+        position: fixed;
+      }
     }
   }
 }
@@ -118,11 +142,12 @@
 /* Sidebar content */
 
 .list-group {
-  margin-bottom: 0.4em;
+  margin-bottom: 0px;
 }
 
 .list-group-item,
 button.list-group-item {
+  padding: $padding-large-vertical $padding-base-horizontal;
   position: relative;
   font-size: 1em;
   vertical-align: middle;
@@ -150,7 +175,6 @@ button.list-group-item {
       display: block;
       max-width: 200px;
       max-height: 110px;
-      margin: 0.5em 0em 1.1em;
     }
     li {
       line-height: 1.5;
@@ -160,18 +184,19 @@ button.list-group-item {
           display: block;
         }
         .organisation-name {
-          font-weight: 700;
+          font-size: $font-size-large;
+          font-weight: 600;
         }
       }
       &.material-questions-feedback {
-        padding-top: 0.7em;
-        font-weight: 700;
+        padding-top: $padding-large-vertical;
+        font-weight: 600;
       }
     }
   }
   .repository-library-request {
     padding-top: 0.7em;
-    font-weight: 700;
+    font-weight: 600;
   }
   .repository-library-request-order {
     margin-top: 0.3em;
@@ -194,41 +219,33 @@ button.list-group-item {
 
 .sidebar .recordProvidedBy {
   margin-top: 0px;
-  border-top: none;
+  margin-bottom: $spacer;
+  border: $sidebar-border;
+  border-radius: $sidebar-border-radius;
+  overflow: hidden;
+  h2 {
+    border-bottom: $divider-border;
+  }
+  > .record-organisation-box, > .list-group.organisations {
+    padding: $padding-large-vertical $padding-base-horizontal;
+  }
   .record-organisation-box {
-    margin-bottom: 1em;
-    border: $sidebar-border;
     .record-type.organisations {
-      padding: 1.1em;
       margin-bottom: 0px;
       font-size: 1em;
     }
     .list-group.organisations {
-      padding: 0px;
-      margin-bottom: 0.7em;
       background: $list-group-bg;
-      a {
-        line-height: 1em;
-      }
       .record-organisation {
-        padding: 0.3em 0.7em;
         background: $body-bg;
+        margin-bottom: $spacer;
       }
       .other-organisation-links a {
         display: block;
-        padding: 0.4em 0.7em;
         overflow: hidden;
-        font-weight: 700;
+        font-weight: 600;
         text-overflow: ellipsis;
         white-space: nowrap;
-      }
-      .more-link,
-      .less-link,
-      .less-link-top {
-        padding-left: 0.8em;
-      }
-      .more-link {
-        margin-top: 0.5rem;
       }
     }
   }
@@ -237,13 +254,16 @@ button.list-group-item {
 .similar-records,
 .related-records,
 .work-expressions {
-  margin-bottom: 1em;
+  border: $sidebar-border;
+  border-radius: $sidebar-border-radius;
+  overflow: hidden;
+  margin-bottom: $spacer;
+  border-bottom: 1px solid $border-color;
   @media print {
     display: none;
   }
   .list-group-item {
-    border: $sidebar-border;
-    border-top: none;
+    border-top: $divider-border;
   }
   .details {
     color: $text-color;

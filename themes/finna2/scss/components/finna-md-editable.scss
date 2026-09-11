@@ -30,15 +30,15 @@
     .editor-toolbar-close {
       position: absolute;
       right: 0;
-      top: 0.8rem;
+      top: 0.25rem;
       border: none;
-      color: $gray !important;
-      font-size: 1.6rem;
+      color: $dark !important;
+      font-size: 1.5rem;
 
       &:hover,
       &:active {
         background: white;
-        color: $gray !important;
+        color: $dark !important;
       }
     }
   }
@@ -56,7 +56,7 @@
       background: #fafafa;
       height: 300px;
       overflow-y: auto;
-      border: 1px solid $gray-lighter;
+      border: 1px solid $border-color;
       .preview {
         position: absolute;
         right: 40px;

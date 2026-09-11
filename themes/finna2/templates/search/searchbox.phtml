@@ -52,15 +52,21 @@
     $showFilters = $filterDetails && ($results || $options->getRetainFilterSetting());
 
     // Set up filters
+    $filterSettingsArray = [
+      'filterList' => $filterList,
+      'checkboxFilters' => $checkboxFilters,
+      'defaultSortApplied' => $defaultSortApplied,
+      'options' => $options,
+      'params' => $params,
+    ];
     $this->layout()->finnaFilters = $showFilters ? $this->context($this)->renderInContext(
         'search/filters.phtml',
-        [
-            'filterList' => $filterList,
-            'checkboxFilters' => $checkboxFilters,
-            'defaultSortApplied' => $defaultSortApplied,
-            'options' => $options,
-            'params' => $params,
-        ]
+        $filterSettingsArray,
+    ) : '';
+    $filterSettingsArray['dropdown'] = false;
+    $this->layout()->finnaMobileFilters = $showFilters ? $this->context($this)->renderInContext(
+        'search/filters.phtml',
+        $filterSettingsArray,
     ) : '';
 
     $searchTabs = $this->searchtabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $hiddenFilters, $this->layout()->savedTabs);
@@ -269,13 +275,6 @@
       ?>
     </form>
     </div>
-    <?php if (!$browse && !$mainPage && $advSearch): ?>
-      <?php
-        $advSearchQuery = $results ? ['sid' => $results->getSearchId()] : $hiddenFilters;
-        $advSearchLink = $this->url($advSearch, [], ['query' => $advSearchQuery]);
-      ?>
-      <a href="<?=$advSearchLink?>" class="btn btn-link btn-advanced hidden-xs"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
-    <?php endif; ?>
     <?php
       $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'summon' => 'summon'];
       if (
@@ -292,6 +291,13 @@
           'class' => 'tooltip-button tooltip-search-' . $searchType, // for back-compatibility
         ])?>
       </div>
+    <?php endif; ?>
+    <?php if (!$browse && !$mainPage && $advSearch): ?>
+      <?php
+        $advSearchQuery = $results ? ['sid' => $results->getSearchId()] : $hiddenFilters;
+        $advSearchLink = $this->url($advSearch, [], ['query' => $advSearchQuery]);
+      ?>
+      <a href="<?=$advSearchLink?>" class="btn btn-link btn-advanced hidden-xs"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
     <?php endif; ?>
     <?php if ($module != 'record' && $module != 'collection'): ?>
       <?php if ($browse || $mainPage || ($module === 'authority' && $action === 'search')): ?>

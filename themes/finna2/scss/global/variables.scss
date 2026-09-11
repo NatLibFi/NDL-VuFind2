@@ -13,7 +13,7 @@
 // Brand Colors
 
 $logo-color: #fff !default;
-$aoe-brand-primary: #ccf5e7 !default;
+$aoe-brand-primary: #ccf5e7 !default; // Obsolete
 $action-link-color: $primary !default;
 
 $alert-default-bg: #f5f5f5 !default;
@@ -34,10 +34,13 @@ $header-background-color: $body-bg !default; // Color of navigation bar top
 $header-text-color: $navbar-default-link-color !default;
 $header-text-active-color: $header-text-color !default;
 $header-text-hover-color: $header-text-color !default;
-$footer-background: $gray-ultralight !default;
+$header-link-underline: true;
+$footer-background: $light !default;
 $footer-text-color: $gray !default;
 $finna-search-background: color.mix($body-bg, contrast($body-bg), 95%) !default; // Background color of finna searchbox section
-$finna-search-link-color: $text-color !default;
+$finna-search-color: $text-color !default;
+$finna-search-link-color: $finna-search-color !default;
+$finna-search-tooltip-color: $finna-search-color !default;
 $finna-main-header-background: $body-bg !default; // Color of page header background and search results tabs
 $finna-searchbox-link-color: $body-bg !default; // style searchbox link text color contrast with background
 $finna-searchbox-link-background: rgba(1,1,1,0.6) !default; // style searchbox links (advanced search etc.) background contrast with background
@@ -51,9 +54,10 @@ $finna-search-input-width: 0.655 !default; //== THIS is percentage Change this i
 $finna-button-radius: $border-radius-base !default; // Defines all button radiuses
 $finna-header-font-size: 1.6em !default;
 $record-title-font-size: 1.65em !default;
-$record-holdings-title-background: $primary !default;
+$record-holdings-title-background: $light !default;
 $record-holdings-title-color: color.mix($record-holdings-title-background, contrast($record-holdings-title-background), 5%) !default;
-$record-holdings-border-color: $gray-lighter !default;
+$record-holdings-border-color: $border-color !default;
+$record-holdings-border-radius: $border-radius-large !default;
 
 //== Finna home page
 $introduction-text-color: #fff !default;
@@ -71,28 +75,41 @@ $infobox-border: none !default;
 $infobox-text-color: $gray !default;
 $infobox-box-shadow: none !default;
 
-//== Finna facets
-$sidebar-background: $primary !default;
-$sidebar-header-text-color: color.mix($sidebar-background, contrast($sidebar-background), 5%) !default;
-$sidebar-header-icon-color: #fff !default;
-$sidebar-border-color: color.mix($body-bg, contrast($body-bg), 80%) !default;
+//== Sidebar
+$sidebar-background: $light !default;
+$sidebar-border-color: $border-color !default;
 $sidebar-border: 1px solid $sidebar-border-color !default;
-$facet-header-background: $gray-ultralight !default;
-$facet-text-color: color.mix($facet-header-background, contrast($facet-header-background), 5%) !default;
-$facet-border-color: color.mix($facet-header-background, contrast($facet-header-background), 80%) !default;
+$sidebar-border-radius: $border-radius-lg;
+$sidebar-header-border-color: $border-color !default;
+$sidebar-header-text-color: color.mix($sidebar-background, contrast($sidebar-background), 5%) !default;
+$sidebar-header-icon-color: $dark !default;
+$sidebar-active-color: $text-color !default;
+$sidebar-active-background: transparent !default;
 
-$display-checkbox-facet-amount: inline-block !default;    // set to none or inline-block
-// Applied filters
+//== Finna facets
+$facet-header-background: $body-bg !default;
+$facet-header-hover-background: color.mix($facet-header-background, contrast($facet-header-background), 5%) !default;
+$facet-header-color: color.mix($facet-header-background, contrast($facet-header-background), 5%) !default;
+$facet-header-hover-color: color.mix($facet-header-color, contrast($facet-header-color), 5%) !default;
+$facet-text-color: $text-color !default;
+$facet-toggle-background: $body-bg !default;
+$facet-toggle-hover-background: color.mix($facet-toggle-background, contrast($facet-toggle-background), 5%) !default;
+$facet-toggle-color: $facet-text-color !default;
+$facet-toggle-hover-color: color.mix($facet-toggle-color, contrast($facet-toggle-color), 5%) !default;
+$facet-border-color: $divider-color !default;
+$display-checkbox-facet-amount: inline-block !default; // set to none or inline-block
+
+//== Applied filters
 $filters-background-color: $action-link-color !default;
 $filters-text-color: $body-bg !default;
 $filters-icon-color: $body-bg !default;
 $filterContent-background: $body-bg !default;
-$filterContent-border-color: color.mix($filterContent-background, contrast($filterContent-background), 80%) !default;
+$filterContent-border-color: color.mix($filterContent-background, contrast($filterContent-background), 60%) !default;
 $filterContent-text-color: $text-color !default;
-//Search tools
-$finna-searchtools-background: $primary !default;
-$finna-searchtools-color: $body-bg !default;
 
+//== Search tools
+$finna-searchtools-background: $gray-light !default;
+$finna-searchtools-color: $body-bg !default;
 
 //== Browsebar
 $finna-browsebar-background: $primary !default;
@@ -154,13 +171,18 @@ $finna-infobox-bg: color.adjust($primary, $lightness: 70% /*, $space: hsl*/) !de
 $finna-infobox-border: 4px solid $primary !default;
 $finna-infobox-color: $primary !default;
 
+// Record cover no image
+$record-cover-no-image-background: $light !default;
+$record-cover-no-image-color: $dark !default;
+$record-cover-no-image-border-radius: $border-radius-xl !default;
+$record-cover-no-image-border-color: transparent;
 
 //== Typography
 //
 
-$font-size-root: 14px !default;
-$font-size-icon-tiny: 0.7rem !default;
-$font-size-icon-small: 14px !default;
+$font-size-root: 16px;
+$font-size-icon-tiny: 0.75rem !default;
+$font-size-icon-small: 1rem !default;
 $font-size-icon-large: 1.5em !default;
 
 
@@ -196,8 +218,11 @@ $table-finna-record-cell-padding:  3px 0px !default;
 //
 //##
 
+$search-input-color: $text-color !default;
 $search-input-bg: #fff !default;
-
+$search-input-border-color: $border-color;
+$search-input-border: 1px solid $search-input-border-color;
+$search-input-border-radius: $border-radius-large;
 
 //-- Finna Z-index list
 //
@@ -212,6 +237,7 @@ $zindex-header:            1035 !default;
 $zindex-sidebar:           1036 !default;
 $zindex-skip-link:         1037 !default;
 $zindex-datepicker:        1038 !default;
+$zindex-loading-overlay:   1039 !default;
 $zindex-spinner-overlay:   1100 !default;
 
 
@@ -223,7 +249,7 @@ $zindex-spinner-overlay:   1100 !default;
 $navbar-right:                     64px !default;
 
 // Navbar links
-$navbar-font-size:                         1.1em !default; // Font-size of navbar links
+$navbar-font-size:                         $font-size-root !default; // Font-size of navbar links
 $navbar-font-weight:                       500 !default; // Font weight for navbar texts
 
 
@@ -236,7 +262,10 @@ $navbar-font-weight:                       500 !default; // Font weight for navb
 $nav-tabs-active-color:                     $action-link-color !default;
 $nav-tabs-background-color:                 $body-bg !default;
 $nav-tabs-text-color:                       $text-color !default;
-$nav-tabs-link-hover-color:                 $nav-tabs-active-link-hover-color !default;
+$nav-tabs-link-hover-background:            inherit !default;
+$nav-tabs-link-hover-color:                 inherit !default;
+$nav-tabs-link-focus-background:            $light !default;
+$nav-tabs-link-focus-color:                 inherit !default;
 $tabs-border-radius:                        4px !default;
 
 //== Feed nav pills styles
@@ -276,7 +305,7 @@ $tooltip-local-advanced:      inline !default;
 $tooltip-pci-advanced:        inline !default;
 $tooltip-eds-advanced:        inline !default;
 $tooltip-summon-advanced:     inline !default;
-$tooltip-button-color:        $action-link-color !default;
+$tooltip-button-color:        $dark !default;
 
 $tooltip-min-width:           150px !default;
 
@@ -284,7 +313,7 @@ $tooltip-min-width:           150px !default;
 //== Modals
 //
 //##
-$modal-header-background: $primary !default;
+$modal-header-background: $light !default;
 $modal-header-color: color.mix($modal-header-background, contrast($modal-header-background), 5%) !default;
 
 
@@ -308,13 +337,16 @@ $breadcrumb-separator:          "|" !default;
 $bazaar-browse-bar-background-color: $gray-light !default;
 $bazaar-browse-bar-color: #fff !default;
 
+//== Finna panel
+
+
 //== Miscellaneous
 //
 //##
 
 
 $accordion-details-display:   none !default;
-$search-tab-tip-bg: #CCF5E7 !default;
+$search-tab-tip-bg: #ccf5e7 !default;
 
 // Airplay icon
 $icon-airplay--default:             url('../../finna2/images/videojs/ic_airplay_white_24px.svg') !default;

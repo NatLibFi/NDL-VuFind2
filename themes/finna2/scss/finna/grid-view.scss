@@ -55,8 +55,8 @@
     h2.title {
       // Position: relative makes ellipsis work with absolute elements in Chrome
       position: relative;
-      font-size: 1.15em;
-      font-weight: 700;
+      font-size: $font-size-base;
+      font-weight: 600;
       line-height: 1.5;
       text-overflow: ellipsis;
       white-space: nowrap;
@@ -64,6 +64,7 @@
     }
     .dateyeartype {
       display: inline;
+      font-size: $font-size-small;
       p {
         margin-top: 0px;
         margin-bottom: 0px;
@@ -109,6 +110,7 @@
     height: 250px;
     overflow: hidden;
     background-color: $gray-ultralight;
+    border-radius: $border-radius-small;
     .record-image-container {
       position: initial;
       display: flex;
@@ -163,7 +165,7 @@
     width: 100%;
     font-size: 0.9em;
     color: $gray-light;
-    content: attr(data-format); 
+    content: attr(data-format);
   }
   .recordcover-holder:after {
     position: absolute;
@@ -177,6 +179,6 @@
   }
   .iconlabel:before {
     top: 50%;
-    color: $gray-mid-light;
+    color: $dark;
   }
 }

@@ -8,7 +8,7 @@
 <?php if (is_object($account) && $account->loginEnabled()): ?>
   <?php if ($user): ?>
     <li class="nav-item logoutOptions">
-      <a href="#" class="btn nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+      <a href="#" class="btn nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false"><span id="account-icon"></span><?=$this->icon('my-account', 'my-account-icon') ?> <span class="username login-text nav-link-label"><?=$this->transEsc('Your Account')?></span> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
       <ul id="my-info-dropdown-menu" class="dropdown-menu dropdown-menu-right dropdown-menu-end">
         <?php if ($this->libraryCards()->getCardsForUser($user)): ?>
           <li>

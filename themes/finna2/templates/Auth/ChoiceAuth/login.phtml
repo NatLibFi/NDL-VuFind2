@@ -24,7 +24,7 @@
         <div class="accordion-toggle">
           <a href="#" data-tab="<?=$this->escapeHtmlAttr($method)?>" class="accordion-title">
             <span class="title"><?=$this->transEsc('login_method_tab_' . strtolower($method))?></span>
-            <i class="icon" aria-hidden="true"></i>
+            <?=$this->icon('accordion-expand'); ?>
           </a>
         </div>
       </div>

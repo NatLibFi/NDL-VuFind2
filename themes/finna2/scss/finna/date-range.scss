@@ -21,11 +21,12 @@
         background-color: $gray-ultralight;
         .daterange-vis,
         > form {
-            padding-top: 0.3em;
+            padding-top: 0.5rem;
         }
         .year-range {
             float: left;
-            margin-bottom: 0.7em;
+            margin-bottom: 0.5rem;
+            margin-right: 0.5rem;
             .year-separator,
             .spacer {
                 color: $gray;
@@ -35,13 +36,11 @@
             }
         }
         .submit {
-            padding: 0.5em 0.6em;
-            margin-top: 0px;
-            margin-left: 1.1em;
             font-size: 1em;
-            background-color: $btn-primary-bg;
+            height: $input-height;
+            margin-bottom: 0.5rem;
             .icon {
-                margin-right: 0.3em;
+                margin-right: 0.25rem;
             }
         }
     }

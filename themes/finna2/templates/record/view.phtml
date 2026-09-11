@@ -51,16 +51,21 @@
           $options = $this->searchOptions($this->searchClassId);
           $defaultSortApplied = !isset($params) || $lastSort == $options->getDefaultSortByHandler($params->getSearchHandler());
           // Set up filters
+          $filterSettingsArray = [
+            'filterList' => $filterList,
+            'checkboxFilters' => $checkboxFilters,
+            'defaultSortApplied' => $params->hasDefaultsApplied(),
+            'options' => $options,
+            'params' => $params,
+          ];
           $this->layout()->finnaFilters = $this->context($this)->renderInContext(
               'search/filters.phtml',
-              [
-                  'filterList' => $filterList,
-                  'checkboxFilters' => $checkboxFilters,
-                  'hasDefaultsApplied' => $params->hasDefaultsApplied(),
-                  'defaultSortApplied' => $defaultSortApplied,
-                  'options' => $options,
-                  'params' => $params,
-              ]
+              $filterSettingsArray,
+          );
+          $filterSettingsArray['dropdown'] = false;
+          $this->layout()->finnaMobileFilters = $this->context($this)->renderInContext(
+              'search/filters.phtml',
+              $filterSettingsArray,
           );
       }
   }
@@ -139,7 +144,7 @@
           [
             'tabs' => $this->recordTabs()->getTabs($this->driver, $this->tabs, $this->activeTab),
             'activeTab' => $this->activeTab,
-            'tabNavClasses' => ['recordTabs'],
+            'tabNavClasses' => ['nav-tabs recordTabs'],
             'scrollable' => true,
           ]
         )?>
@@ -165,6 +170,4 @@
       <?=$this->render('RecordTab/channels.phtml', ['tab' => $this->record($this->driver)->getChannelsTab()])?>
     </div>
   <?php endif; ?>
-
-<?=$this->record($this->driver)->renderTemplate('toolbar_mobile.phtml') ?>
 <!-- END of: finna - record/view.phtml -->

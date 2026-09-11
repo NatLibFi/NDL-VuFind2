@@ -60,18 +60,14 @@ input, input.form-control {
   justify-content: center;
   width: 48px;
   height: 48px;
-  padding: 6px 0px;
+  padding: $padding-small-vertical $padding-small-horizontal;
   margin: 0px;
   color: $btn-primary-color;
   background: $btn-primary-bg;
-  border: none;
-  border-radius: 0px;
+  border-radius: $border-radius-base;
   transition: background 0.1s ease-in-out;
-  &:not(:focus-visible) {
-    box-shadow: 0px 0px 5px rgba(100, 100, 100, 0.3);
-  }
   &:hover {
-    background: darken($btn-primary-bg, 5%);
+    background: darken($btn-primary-bg, 10%);
   }
   .icon {
     font-size: 28px;
@@ -89,21 +85,20 @@ input, input.form-control {
 .searchForm {
   display: flex;
   width: 100%;
-  padding: 0px;
   margin: 0px;
   background-color: $search-input-bg;
-  border-top: 0px;
-  border-bottom: 0px;
-  border-radius: 0px;
-  box-shadow: 0px 0px 3px rgba(100, 100, 100, 0.5);
+  border: $search-input-border;
+  border-radius: $search-input-border-radius;
+  padding: $padding-small-horizontal $padding-small-vertical;
   .form-control.search-query {
-    display: inline-block !important;
     flex: 1 1 auto;
     height: 48px;
-    padding-left: 10px;
-    color: $gray;
+    padding-left: 0.5rem;
+    margin-right: 0.5rem;
+    color: $search-input-color;
     background: transparent;
     border: none;
+    border-radius: 1px;
     box-shadow: none;
     &:focus-visible {
       box-shadow: $focus-ring-box-shadow;
@@ -115,7 +110,7 @@ input, input.form-control {
     width: 85%;
   }
   #searchForm-reset {
-    margin: auto 5px;
+    margin: auto 0.5rem;
     color: $gray-light;
     background: transparent;
     border: none;
@@ -148,20 +143,27 @@ input, input.form-control {
   display: inline-block;
   height: 48px;
   margin: auto;
-  color: $gray;
+  color: $dark;
   background: transparent;
   border: none;
   box-shadow: none;
-  a {
-    color: #000;
-  }
   .dropdown-toggle {
+    color: $dropdown-link-color;
     display: inline-flex;
     align-content: center;
     justify-content: end;
     height: inherit;
     min-width: 110px;
     padding: 6px 0px;
+    text-decoration: none;
+    &:hover {
+      span:first-child {
+        text-decoration: underline;
+      }
+      .icon {
+        text-decoration: none;
+      }
+    }
   }
   li {
     min-width: 110px;

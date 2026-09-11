@@ -54,6 +54,12 @@ class LayoutClass extends \VuFind\View\Helper\Bootstrap5\LayoutClass
      */
     public function __invoke($class, $hasSidebar = true)
     {
+        if ('offcanvas-row' === $class) {
+            return $this->sidebarOnLeft
+                ? 'vufind-offcanvas vufind-offcanvas-left'
+                : 'vufind-offcanvas vufind-offcanvas-right';
+        }
+
         // Special styles for MyResearch to keep menu on left
         if ('mainbody-myresearch' === $class) {
             return 'mainbody right myresearch-body';

@@ -332,9 +332,6 @@ finna.myList = (function finnaMyList() {
   function initEditComponents() {
     var isDefaultList = typeof getActiveListId() == 'undefined';
 
-    //Init mobile navigation collapse after list has been reloaded
-    finna.layout.initMobileNarrowSearch();
-
     if (!isDefaultList) {
       toggleTitleEditable(true);
 
