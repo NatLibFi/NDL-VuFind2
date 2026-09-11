@@ -633,14 +633,9 @@ finna.layout = (function finnaLayout() {
 
     var target = null;
     var identifier = decodeURIComponent(window.location.hash);
-    if (identifier === '') {
-      // Scroll to search box
-      if ($(window).height() < 960 && $(window).scrollTop() === 0) {
-        target = $('.search-form-container');
-      }
-    } else {
-      // Scroll to record
-      var result = $('.hiddenId[value="' + identifier.substr(1) + '"]');
+    // Scroll to record
+    if (identifier !== '') {
+      const result = $('.hiddenId[value="' + identifier.substr(1) + '"]');
       if (result.length) {
         target = result.closest('.result');
       }
@@ -851,10 +846,10 @@ finna.layout = (function finnaLayout() {
       200
       );
     }
-  } 
+  }
 
   /**
-   * 
+   *
    * @param {HTMLElement} offcanvas The element shown as offcanvas
    * @param {boolean} open If the offcanvas is opened.
    */
@@ -914,7 +909,7 @@ finna.layout = (function finnaLayout() {
     if (!container) {
       return;
     }
-    
+
     const filters = container.querySelector('.active-filters.finna-filters');
     const btn = container.querySelector('#narrow-search-filter-toggle');
     if (!filters || !btn) {
