@@ -67,6 +67,8 @@
     display: flex;
     align-items: center;
     padding: $padding-large-vertical 0px;
+    gap: 1rem;
+    flex-wrap: wrap;
     .limit-container {
       display: flex;
       flex: 1;
