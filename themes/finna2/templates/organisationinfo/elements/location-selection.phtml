@@ -58,12 +58,7 @@
   <?php endif; ?>
 
   <div class="location-information">
-    <div role="status" class="js-location-loader hidden">
-      <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
-    </div>
-    <div class="js-location-quick-information info-element hidden"></div>
-
-    <div class="visually-hidden"> <!-- map information about open and closed libraries for the screenreaders starts here -->
+      <div class="visually-hidden"> <!-- map information about open and closed libraries for the screenreaders starts here -->
       <?php
       $nowOpen = $this->transEsc('organisation_info_is_open_now');
       $nowClosed = $this->transEsc('organisation_info_is_closed_now');
@@ -111,12 +106,17 @@
             }
             ?>
             <?php if ($name != '') {
-            echo '<div>' . ($this->escapeHtml($name)) . '</div>';
+            echo '<div><a href="#'. $this->escapeHtmlAttr($item['id']).'">'.($this->escapeHtml($name)).'</a></div>';
             } ?>
           <?php endforeach; ?>
         <?php endfor; ?>
       <?php endif; ?>
     </div> <!-- map information about open and closed libraries for the screenreaders ends here -->
+
+    <div role="status" class="js-location-loader hidden">
+      <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
+    </div>
+    <div class="js-location-quick-information info-element hidden"></div>
 
     <div class="js-location-info-map hidden">
       <template class="js-map-attribution">
