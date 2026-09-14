@@ -8,6 +8,7 @@
     flex-wrap: wrap;
     .search {
       flex: 1;
+      margin-right: 1rem;
     }
     .search-help-icon {
       font-size: 1.5rem;
@@ -18,8 +19,8 @@
       color: $finna-search-link-color;
     }
     .search-tooltip {
+      margin-right: 1rem;
       button {
-        margin-left: 1rem;
         color: $finna-search-tooltip-color;
       }
     }
@@ -151,6 +152,11 @@
 @include media-breakpoint-up(md) {
   .searchbox-flex .search {
     max-width: 70%;
+  }
+}
+@include media-breakpoint-up(md) {
+  .searchbox-flex .search-links {
+    width: 100%;
   }
 }
 @include media-breakpoint-down(lg) {
