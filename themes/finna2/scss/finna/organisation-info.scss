@@ -210,8 +210,11 @@ $organisation-info-max-w: 400px !default;
         .js-location-search-container {
             flex-basis: 60%;
             .js-location-search-toggle {
-                  padding: $padding-base-vertical $padding-base-horizontal;
+                padding: $padding-base-vertical $padding-base-horizontal;
                 font-weight: 400;
+                &:hover, &:active, &:focus {
+                    background-color: $light;
+                }
 
                 &[aria-expanded=false] {
                     .search-collapse {

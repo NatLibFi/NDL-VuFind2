@@ -22,8 +22,7 @@
   border: 1px solid $dark;
   padding: $padding-base-vertical $padding-base-horizontal;
   &:hover, &:active, &:focus {
-    background-color: $dark;
-    color: $light;
+    background-color: $light;
   }
   &:focus {
     outline-offset: -2px;

@@ -15,7 +15,6 @@
   .panel-heading {
     border: 1px solid $border-color;
     background-color: $light;
-    overflow: hidden;
     color: $dark;
     border-radius: $border-radius-base;
     .panel-title {
@@ -27,7 +26,9 @@
     padding: $padding-large-vertical $padding-large-horizontal;
   }
   a.finna-panel-heading-inner {
-    &:hover {
+    border-radius: $border-radius-base;
+    &:hover,
+    &:active {
       background: darken($light, 10%);
       text-decoration: none;
     }
