@@ -428,17 +428,16 @@ table.search-history-table {
 .searchtools-background {
   background: $finna-searchtools-background;
   .searchtools {
-    display: flex;
-    flex-wrap: wrap;
-    gap: ($spacer * 0.75);
     padding-top: $padding-large-vertical;
     padding-bottom: $padding-large-vertical;
     a {
-      color: $finna-searchtools-color;
+      display: inline-block;
       padding: 0rem 0.5rem;
-      white-space: nowrap;
+      margin-right: 1em;
       font-size: $font-size-large;
       font-weight: 600;
+      color: $finna-searchtools-color;
+      white-space: nowrap;
     }
   }
 }
