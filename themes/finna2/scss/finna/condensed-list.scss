@@ -1,7 +1,7 @@
 .result.compact-list-view,
 .result.condensed-list-view {
-    padding-top: 0.4em;
-    padding-bottom: 0.4em;
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
     padding-left: 2em;
     margin-bottom: 0.2em;
     transition: background .1s linear;
@@ -43,6 +43,7 @@
     .condensed-collapse-toggle {
         display: flex;
         flex-flow: wrap;
+        
         &:hover {
             cursor: pointer;
         }
@@ -58,9 +59,9 @@
                 background: transparent; 
                 border: none; 
                 color: transparent; 
-                width: 1.2em; 
+                width: 1.7em; 
                 padding: 0em;
-                margin-left: -1.2em;
+                margin-left: -1.8em;
                 z-index: 1;
             }
         }
@@ -80,6 +81,7 @@
         }
         .resultOtherLinks {
             @include date-and-year();
+            margin-bottom: 0px;
         }
         .available-online-links {
             margin-top: 0px;
