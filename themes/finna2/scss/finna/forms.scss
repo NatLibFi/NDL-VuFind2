@@ -60,11 +60,10 @@ input, input.form-control {
   justify-content: center;
   width: 48px;
   height: 48px;
-  padding: $padding-small-vertical $padding-small-horizontal;
   margin: 0px;
   color: $btn-primary-color;
   background: $btn-primary-bg;
-  border-radius: $border-radius-base;
+  border-radius: $search-input-border-radius;
   transition: background 0.1s ease-in-out;
   &:hover {
     background: darken($btn-primary-bg, 10%);
@@ -81,6 +80,7 @@ input, input.form-control {
   font-size: 1.2em;
 }
 
+$search-input-padding: calc(#{$focus-ring-width} + 2px) !default; // Ensure the focus ring fits within the search form
 .navbar-form,
 .searchForm {
   display: flex;
@@ -88,8 +88,8 @@ input, input.form-control {
   margin: 0px;
   background-color: $search-input-bg;
   border: $search-input-border;
-  border-radius: $search-input-border-radius;
-  padding: $padding-small-horizontal $padding-small-vertical;
+  padding: $search-input-padding;
+  border-radius: calc(#{$search-input-border-radius} + #{$search-input-padding} + #{$search-input-border-width});
   .form-control.search-query {
     flex: 1 1 auto;
     height: 48px;
@@ -98,7 +98,7 @@ input, input.form-control {
     color: $search-input-color;
     background: transparent;
     border: none;
-    border-radius: 1px;
+    border-radius: $search-input-border-radius;
     box-shadow: none;
     &:focus-visible {
       box-shadow: $focus-ring-box-shadow;
@@ -154,7 +154,10 @@ input, input.form-control {
     justify-content: end;
     height: inherit;
     min-width: 110px;
-    padding: 6px 0px;
+    padding: 0.5rem 0.25rem;
+    margin-right: 0.25rem;
+    margin-left: 0.25rem;
+    border-radius: $search-input-border-radius;
     text-decoration: none;
     &:hover {
       span:first-child {
