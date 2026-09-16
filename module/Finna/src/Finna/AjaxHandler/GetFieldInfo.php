@@ -291,37 +291,25 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             if (!in_array('skos:Concept', (array)($item['type'] ?? []))) {
                 continue;
             }
+            if (($item['uri'] ?? null) !== $id) {
+                continue;
+            }
 
-            if ($item['uri'] === $id) {
-                foreach ($item['prefLabel'] ?? [] as $label) {
-                    if (!($value = $label['value'] ?? '')) {
-                        continue;
-                    }
-                    $lng = $label['lang'] ?? '-';
-                    // Try to determine the language of the display label:
-                    if ($value === $displayLabel) {
-                        $labelLang = $lng;
-                    } else {
-                        $pref[$lng][] = $value;
-                    }
-                }
-
-                $altLabels = isset($item['altLabel']['value'])
-                    ? [$item['altLabel']] : ($item['altLabel'] ?? []);
-
-                foreach ($altLabels as $label) {
-                    if (!($value = $label['value'] ?? '')) {
-                        continue;
-                    }
-                    $lng = $label['lang'] ?? '-';
-                    $alt[$lng][] = $value;
+            foreach ($this->getLabels($item) as $lng => $values) {
+                // Try to determine the language of the display label:
+                if (in_array($displayLabel, $values)) {
+                    $labelLang = $lng;
+                } else {
+                    $pref[$lng] = [...($pref[$lng] ?? []), ...$values];
                 }
             }
 
+            foreach ($this->getLabels($item, 'altLabel') as $lng => $values) {
+                $alt[$lng] = [...($alt[$lng] ?? []), ...$values];
+            }
+
             foreach ($item['exactMatch'] ?? [] as $exactMatch) {
-                $matchId = is_array($exactMatch)
-                    ? ($exactMatch['uri'] ?? null)
-                    : $exactMatch;
+                $matchId = is_array($exactMatch) ? ($exactMatch['uri'] ?? null) : $exactMatch;
                 if (!$matchId) {
                     continue;
                 }
@@ -347,20 +335,12 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
                         continue;
                     }
 
-                    foreach ($item['prefLabel'] ?? [] as $label) {
-                        if (!($value = $label['value'] ?? '')) {
-                            continue;
-                        }
-                        $lng = $label['lang'] ?? '-';
-                        $pref[$lng][] = $value;
+                    foreach ($this->getLabels($matchItem) as $lng => $values) {
+                        $pref[$lng] = [...($pref[$lng] ?? []), ...$values];
                     }
 
-                    foreach ($item['altLabel'] ?? [] as $label) {
-                        if (!($value = $label['value'] ?? '')) {
-                            continue;
-                        }
-                        $lng = $label['lang'] ?? '-';
-                        $alt[$lng][] = $value;
+                    foreach ($this->getLabels($matchItem, 'altLabel') as $lng => $values) {
+                        $alt[$lng] = [...($alt[$lng] ?? []), ...$values];
                     }
                 }
             }
@@ -403,5 +383,32 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         }
 
         return $result;
+    }
+
+    /**
+     * Get labels from a graph item.
+     *
+     * @param array  $item      Graph item
+     * @param string $labeltype Label type
+     *
+     * @return array
+     */
+    protected function getLabels(
+        array $item,
+        string $labeltype = 'prefLabel',
+    ): array {
+        $results = [];
+        // A label either is an array with lang and value keys or contains sub arrays with lang and value keys
+        $labels = isset($item[$labeltype]['value'])
+            ? [$item[$labeltype]] : ($item[$labeltype] ?? []);
+
+        foreach ($labels as $label) {
+            if (!($value = $label['value'] ?? '')) {
+                continue;
+            }
+            $lng = $label['lang'] ?? '-';
+            $results[$lng][] = $value;
+        }
+        return $results;
     }
 }
