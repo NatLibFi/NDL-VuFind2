@@ -7,21 +7,27 @@
 finna.jsRecordContainer = (() => {
   /**
    * Load contents to a record specific container i.e similar or record driver related
-   * @param {string} selector String selector for element to load contents for
+   * @param {string} selector String selector for element(s) to load contents for
    */
   function loadContents(selector)
   {
-    const element = document.querySelector(selector);
-    if (!element) {
+    const elements = document.querySelectorAll(selector);
+    if (!elements) {
       return;
     }
-    const method = element.dataset.method;
+    if (elements[0].dataset.loaded) {
+      return;
+    }
+    // Mark loaded all elements using the shared data selector:
+    document.querySelectorAll(selector).forEach(el => el.dataset.loaded = '1');
+
+    const method = elements[0].dataset.method;
     if (method) {
       const urlParams = {
-        id: element.dataset.recordId,
+        id: elements[0].dataset.recordId,
         method: method,
       };
-      const dataSource = element.dataset.source;
+      const dataSource = elements[0].dataset.source;
       if (dataSource) {
         urlParams.source = dataSource;
       }
@@ -29,8 +35,10 @@ finna.jsRecordContainer = (() => {
         .then(response => response.json())
         .then(result => {
           if (result.data && result.data.html) {
-            VuFind.setInnerHtml(element, VuFind.updateCspNonce(result.data.html));
-            element.classList.add('initialized');
+            document.querySelectorAll(selector).forEach(element => {
+              VuFind.setInnerHtml(element, VuFind.updateCspNonce(result.data.html));
+              element.classList.add('initialized');
+            });
           }
         });
     }
