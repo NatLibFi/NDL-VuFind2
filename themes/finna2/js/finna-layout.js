@@ -1021,6 +1021,7 @@ finna.layout = (function finnaLayout() {
     // Accordion
     $('.login-accordion .accordion-toggle').on('click', function accordionClicked() {
       _activateLoginTab($(this).find('a').data('tab'));
+      return false;
     });
     // Call activation to position the initial content properly
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
