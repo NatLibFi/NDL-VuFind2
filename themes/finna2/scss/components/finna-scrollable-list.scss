@@ -1,18 +1,26 @@
 // Scrollable list
-.list-scrollable {
+@mixin list-scrollable {
   position: relative;
   width: 100%;
   display: flex;
   align-items: center;
+}
+
+@mixin list-scrollable__list {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 1rem 0.5rem 1rem 0.5rem;
+  list-style: none;
+  overscroll-behavior-x: contain;
+}
+
+.list-scrollable {
+  @include list-scrollable;
 
   .list-scrollable__list {
-    display: flex;
-    gap: 1rem;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding: 1rem 0.5rem 1rem 0.5rem;
-    list-style: none;
-    overscroll-behavior-x: contain;
+    @include list-scrollable__list;
   }
 
   /* Arrow buttons */
@@ -137,6 +145,23 @@
     }
     .dropdown-menu {
       z-index: $zindex-dropdown;
+    }
+  }
+}
+
+// Active filters on narrow search
+@include media-breakpoint-down(md) {
+  .mobile-functions-row .active-filters.finna-filters,
+  .mobile-filters.search-filters .filters-container .active-filters.finna-filters {
+    @include list-scrollable;
+    @include list-scrollable__list;
+    max-width: 100%;
+    padding: 0px;
+    scrollbar-width: none;
+    scroll-behavior: smooth;
+    > div {
+      display: flex;
+      gap: 0.5em;
     }
   }
 }

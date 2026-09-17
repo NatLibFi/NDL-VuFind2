@@ -192,15 +192,6 @@
       background-color: $state-danger-text;
     }
   }
-  &.list-scrollable {
-    max-width: 100%;
-    scrollbar-width: none;
-    scroll-behavior: smooth;
-    > div {
-      display: flex;
-      gap: 0.5em;
-    }
-  }
 }
 @include media-breakpoint-up(sm) {
   .finna-filters {

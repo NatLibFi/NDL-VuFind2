@@ -932,32 +932,6 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Initialize scrollable filters narrow search toggle button animation
-   */
-  function initFiltersToggle () {
-    var win = window;
-    const filterElements = document.querySelectorAll('.mobile-functions-row .active-filters.finna-filters, .mobile-filters.search-filters .filters-container .active-filters.finna-filters');
-    const scrollableListClasses = ["list-scrollable", "list-scrollable__list", "flex-row", "flex-nowrap", "overflow-x-auto"];
-
-    if (filterElements) {
-      filterElements.forEach(filterElement => {
-        if (win.innerWidth <= 992) {
-          filterElement.classList.add(...scrollableListClasses);
-          finna.scrollableList.initScrollableList(document.querySelector('.mobile-functions-container, .mobile-filters.search-filters'));
-        }
-        win.addEventListener('throttled-resize.finna', function checkFiltersEnabled(e, data) {
-          if (data.innerWidth >= 992) {
-            filterElement.classList.remove(...scrollableListClasses);
-          } else {
-            filterElement.classList.add(...scrollableListClasses);
-            finna.scrollableList.initScrollableList(document.querySelector('.mobile-functions-container'));
-          }
-        });
-      });
-    }
-  }
-
-  /**
    * Toggle login accordion.
    * The accordion has a delicate relationship with the tabs. Handle with care!
    * @param {string} tabId Current tab id
@@ -1173,7 +1147,6 @@ finna.layout = (function finnaLayout() {
       initOrganisationPageLinks();
       initAudioButtons();
       initPriorityNav();
-      initFiltersToggle();
       setImagePaginatorTranslations();
       initImagePaginators();
       initHelpTabs();
