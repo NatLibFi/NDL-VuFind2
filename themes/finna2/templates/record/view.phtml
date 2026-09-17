@@ -160,15 +160,15 @@
   <?php endif; ?>
 </div>
 
-  <?php if (!$fullWidthLayout): ?>
-    <?php // This sidebar is used for smaller screens and always in large image layout, but never in full width layout ?>
-    <div class="sidebar left large-image-sidebar <?php if (!$largeImageLayout): ?> visible-xs visible-sm<?php endif; ?>">
-      <?= $this->render('record/sidebar-contents.phtml'); ?>
-    </div>
-  <?php endif; ?>
-  <?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs' && $this->driver->getSourceIdentifier() === 'Solr'): ?>
-    <div class="similar-bottom container">
-      <?=$this->render('RecordTab/channels.phtml', ['tab' => $this->record($this->driver)->getChannelsTab()])?>
-    </div>
-  <?php endif; ?>
+<?php if (!$fullWidthLayout): ?>
+  <?php // This sidebar is used for smaller screens and always in large image layout, but never in full width layout ?>
+  <div class="sidebar left large-image-sidebar <?php if (!$largeImageLayout): ?> visible-xs visible-sm<?php endif; ?>">
+    <?= $this->render('record/sidebar-contents.phtml'); ?>
+  </div>
+<?php endif; ?>
+<?php if ($this->config()->getSimilarRecordsCarouselLocation() === 'after_tabs' && $this->driver->getSourceIdentifier() === 'Solr'): ?>
+  <div class="similar-bottom container">
+    <?=$this->render('RecordTab/channels.phtml', ['tab' => $this->record($this->driver)->getChannelsTab()])?>
+  </div>
+<?php endif; ?>
 <!-- END of: finna - record/view.phtml -->
