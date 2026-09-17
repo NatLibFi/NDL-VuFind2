@@ -127,26 +127,7 @@ if ($otherTitles):?>
       </a>
     </div>
   <?php endif; ?>
-  <?=$this->context($this)->renderInContext(
-    'RecordDriver/DefaultRecord/image-download.phtml',
-    [
-      'index' => $this->index,
-      'rights' => $rights,
-      'image' => $image,
-      'hiRes' => $image['highResolution'] ?? false,
-    ]
-  );?>
-  <?=$this->record($this->driver)->renderTemplate(
-      'image-information.phtml',
-      ['index' => 'popup', 'image' => $image]
-  );?>
 </div>
-<?php if ($this->driver->getSourceIdentifier() !== 'SolrAuth'): ?>
-  <?=$this->context($this)->renderInContext(
-    'RecordDriver/DefaultRecord/image-rights.phtml',
-    ['rights' => $rights, 'truncateLicense' => true]
-  );?>
-<?php endif ?>
 <?=$this->render('record/record-organisation-menu.phtml')?>
 <div style="clear: both;"></div>
 <?=

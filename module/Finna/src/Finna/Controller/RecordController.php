@@ -936,7 +936,6 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         } else {
             $scrollData = null;
         }
-
         return $this
             ->createViewModel(compact('index', 'format', 'scrollData'))
             ->setTemplate('record/media');

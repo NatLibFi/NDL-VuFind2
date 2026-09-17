@@ -45,11 +45,11 @@
         <?=$rec->renderTemplate(
               'image-download.phtml',
               [
-            'index' => $i,
-            'rights' => $rights,
-            'image' => $image,
-            'hiRes' => $image['highResolution'] ?? false,
-          ]
+                'index' => $i,
+                'rights' => $rights,
+                'image' => $image,
+                'hiRes' => $image['highResolution'] ?? false,
+              ]
           )?>
         <?=$rec->renderTemplate(
               'image-information.phtml',
