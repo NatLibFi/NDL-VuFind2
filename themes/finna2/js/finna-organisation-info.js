@@ -269,6 +269,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     map = finna.organisationMap;
     map.init(mapWidget, mapTileUrl, mapAttributionTemplate.innerHTML);
+    mapWidget.setAttribute('aria-hidden', 'true'); // prevent screenreaders to accientally enter map area
 
     /**
      * Hide map marker from mapTooltip
@@ -298,6 +299,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     let showLocationEl = mapContainer.querySelector('.js-map-controls .js-show-location');
     if (showLocationEl) {
+      showLocationEl.setAttribute('aria-hidden', 'true'); 
       showLocationEl.addEventListener('click', (ev) => {
         let id = getLocationFromURLHash();
         if (id && id in mapData) {
@@ -306,17 +308,20 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
         ev.preventDefault();
       });
+      showLocationEl.tabIndex = 0;
     }
 
     let showAllEl = mapContainer.querySelector('.js-map-controls .js-show-all');
     if (showAllEl) {
       showAllEl.removeAttribute('disabled');
+      showAllEl.setAttribute('aria-hidden', 'true');
       showAllEl.addEventListener('click', (ev) => {
         map.resize();
         map.reset();
         updateSelectedLocation(null, true);
         ev.preventDefault();
       });
+      showAllEl.tabIndex = 0;
     }
 
     for (const id in mapData) {

@@ -5,7 +5,10 @@ $organisation-info-max-w: 400px !default;
     background-color: $gray-ultralight;
     color: $gray-dark;
 }
-
+.column-list {
+        column-count: 4;
+        column-span: all;
+}
 .organisation-info {
     .finna-panel {
         .panel-collapse,
