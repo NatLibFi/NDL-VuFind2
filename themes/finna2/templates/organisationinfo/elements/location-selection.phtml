@@ -58,62 +58,7 @@
   <?php endif; ?>
 
   <div class="location-information">
-      <div class="visually-hidden"> <!-- map information about open and closed libraries for the screenreaders starts here -->
-      <?php
-      $nowOpen = $this->transEsc('organisation_info_is_open_now');
-      $nowClosed = $this->transEsc('organisation_info_is_closed_now');
-      $nowMobile = $this->transEsc('organisation_info_no_schedule');
-      ?>
-      <div id="location_select_screenreader" role="heading" aria-level="3"><?= $this->transEsc('Location Service') . ' ' . $this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div>
-      <?php if ($locationCount > 1): ?>
-        <?php for ($i = 1; $i <= 3; $i++): ?>
-          <div role="heading" aria-level="4">
-            <?php if ($i == 1) {
-              echo htmlspecialchars($this->escapeHtml($nowOpen));
-            } elseif ($i == 2) {
-              echo htmlspecialchars($this->escapeHtml($nowClosed));
-            } elseif ($i == 3) {
-              echo htmlspecialchars($this->escapeHtml($nowMobile));
-            } ?></div>
-          <?php foreach ($orgInfo['list'] as $item): ?>
-            <?php
-            $name = $item['name'];
-            $area = $item['address']['area'];
-            $city = $item['address']['city'];
-            $isOpen = $item['openNow'];
-            $isMobile = $item['mobile'];
-
-            if ($area === $city) {
-              $area = '';
-            }
-            if ('' !== $area && '' !== $city) {
-              $name .= ", $area ($city)";
-            } elseif ('' !== $area || '' !== $city) {
-              $name .= ", $area$city";
-            }
-            if ($i === 1) {
-              if (!$isOpen) {
-              $name = '';
-              }
-            } elseif ($i === 2) {
-              if ($isOpen || $isMobile) {
-              $name = '';
-              }
-            } elseif ($i === 3) {
-              if (!$isMobile) {
-                 $name = '';
-              }
-            }
-            ?>
-            <?php if ($name != '') {
-            echo '<div><a href="#' . $this->escapeHtmlAttr($item['id']) . '">' . ($this->escapeHtml($name)) . '</a></div>';
-            } ?>
-          <?php endforeach; ?>
-        <?php endfor; ?>
-      <?php endif; ?>
-    </div> <!-- map information about open and closed libraries for the screenreaders ends here -->
-
-    <div role="status" class="js-location-loader hidden">
+        <div role="status" class="js-location-loader hidden">
       <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>
     </div>
     <div class="js-location-quick-information info-element hidden"></div>
@@ -151,5 +96,69 @@
       </div>
     </div>
   </div>
+    <div > <!-- map information about open and closed libraries in writing starts here -->
+      <?php
+        $nowOpen = $this->transEsc('organisation_info_is_open_now');
+        $nowClosed = $this->transEsc('organisation_info_is_closed_now');
+        $nowMobile = $this->transEsc('organisation_info_no_schedule');
+
+        $openList = [];
+        $closedList = [];
+        $mobileList = [];
+
+        // categorize organisations
+        foreach ($orgInfo['list'] as $item) {
+            $name = $item['name'];
+            $area = $item['address']['area'];
+            $city = $item['address']['city'];
+            $isOpen = $item['openNow'];
+            $isMobile = $item['mobile'];
+
+            if ($area === $city) {
+                $area = '';
+            }
+            if ('' !== $area && '' !== $city) {
+                $name .= ", $area ($city)";
+            } elseif ('' !== $area || '' !== $city) {
+                $name .= ", $area$city";
+            }
+
+            // Add to respective categories
+            if ($isOpen) {
+                $openList[] = $name;
+            } elseif ($isMobile) {
+                $mobileList[] = $name;
+            } else {
+                $closedList[] = $name;
+            }
+        }
+        ?> <!-- display categorised organisations -->
+        <div id="location_select_screenreader" role="heading" aria-level="3"><?= $this->transEsc('Location Service') . ' ' . $this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div>
+
+        <?php if ($locationCount > 1): ?>
+            <div role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowOpen)); ?></div>
+            <?php foreach ($openList as $name): ?>
+                <?php if ($name != ''): ?>
+                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($name) ?></a></div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <div role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowClosed)); ?></div>
+            <?php foreach ($closedList as $name): ?>
+                <?php if ($name != ''): ?>
+                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($name) ?></a></div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+
+            <div role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowMobile)); ?></div>
+            <?php foreach ($mobileList as $name): ?>
+                <?php if ($name != ''): ?>
+                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($name) ?></a></div>
+                <?php endif; ?>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div> <!-- map information about open and closed libraries in writing ends here -->
+
+
 </div>
 <!-- END of: finna - organisationinfo/elements/location-selection.phtml -->
