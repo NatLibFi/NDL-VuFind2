@@ -96,8 +96,8 @@
       </div>
     </div>
   </div>
-    <div > <!-- map information about open and closed libraries in writing starts here -->
-      <?php
+    <div> <!-- map information about open and closed libraries for the screenreaders starts here -->
+        <?php
         $nowOpen = $this->transEsc('organisation_info_is_open_now');
         $nowClosed = $this->transEsc('organisation_info_is_closed_now');
         $nowMobile = $this->transEsc('organisation_info_no_schedule');
@@ -106,7 +106,7 @@
         $closedList = [];
         $mobileList = [];
 
-        // categorize organisations
+        // categorise organisations
         foreach ($orgInfo['list'] as $item) {
             $name = $item['name'];
             $area = $item['address']['area'];
@@ -123,42 +123,43 @@
                 $name .= ", $area$city";
             }
 
-            // Add to respective categories
+            // Add to respective categories with IDs
             if ($isOpen) {
-                $openList[] = $name;
+                $openList[] = ['name' => $name, 'id' => $item['id']];
             } elseif ($isMobile) {
-                $mobileList[] = $name;
+                $mobileList[] = ['name' => $name, 'id' => $item['id']];
             } else {
-                $closedList[] = $name;
+                $closedList[] = ['name' => $name, 'id' => $item['id']];
             }
         }
-        ?> <!-- display categorised organisations -->
-        <div id="location_select_screenreader" role="heading" aria-level="3"><?= $this->transEsc('Location Service') . ' ' . $this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div>
+
+        // display categorised organisations
+        ?>
+        <h3><?= $this->transEsc('Location Service') ?></h3> 
+        <div class="visually-hidden"> <?=$this->transEsc('organisation_info_navi_service') . ' ' . $this->transEsc('Total') . ' ' . $locationCount ?></div>
 
         <?php if ($locationCount > 1): ?>
-            <div role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowOpen)); ?></div>
-            <?php foreach ($openList as $name): ?>
-                <?php if ($name != ''): ?>
-                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($name) ?></a></div>
+            <h4><?= htmlspecialchars($this->escapeHtml($nowOpen)); ?></h4>
+            <?php foreach ($openList as $item): ?>
+                <?php if ($item['name'] != ''): ?>
+                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a></div>
                 <?php endif; ?>
             <?php endforeach; ?>
 
-            <div role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowClosed)); ?></div>
-            <?php foreach ($closedList as $name): ?>
-                <?php if ($name != ''): ?>
-                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($name) ?></a></div>
+            <h4 role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowClosed)); ?></h4>
+            <?php foreach ($closedList as $item): ?>
+                <?php if ($item['name'] != ''): ?>
+                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a></div>
                 <?php endif; ?>
             <?php endforeach; ?>
 
-            <div role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowMobile)); ?></div>
-            <?php foreach ($mobileList as $name): ?>
-                <?php if ($name != ''): ?>
-                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($name) ?></a></div>
+            <h4 role="heading" aria-level="4"><?= htmlspecialchars($this->escapeHtml($nowMobile)); ?></h4>
+            <?php foreach ($mobileList as $item): ?>
+                <?php if ($item['name'] != ''): ?>
+                    <div><a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a></div>
                 <?php endif; ?>
             <?php endforeach; ?>
         <?php endif; ?>
-    </div> <!-- map information about open and closed libraries in writing ends here -->
-
-
+    </div> <!-- map information about open and closed libraries for the screenreaders ends here -->
 </div>
 <!-- END of: finna - organisationinfo/elements/location-selection.phtml -->
