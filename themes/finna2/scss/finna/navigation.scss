@@ -165,11 +165,7 @@ header {
     }
   }
 }
-@include media-breakpoint-down(md) {
-  .finna-navbar .navbar-nav .logoutOptions .username {
-    max-width: 80px;
-  }
-}
+
 #my-info-dropdown-menu {
   width: 280px;
   > li a {
