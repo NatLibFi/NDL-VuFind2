@@ -1,0 +1,38 @@
+<!-- START of: finna - record/media.phtml -->
+ <?php
+  $recordHelper = $this->record($this->driver);
+  $imageHelper = $this->recordImage($recordHelper);
+  $scrollData = $this->scrollData ?? $this->layout()->scrollData ?? [];
+?>
+<div class="d-flex justify-content-center media-modal-pager">
+  <?php if ($scrollData): ?>
+    <?=$this->render('record/prev-next.phtml', compact('scrollData')); ?>
+  <?php endif; ?>
+</div>
+<div id="media-modal-content" class="d-flex flex-row gap-2" data-lightbox-ignore>
+  <?=$imageHelper->renderImage(
+    'record',
+      [
+        'small' => ['w' => 100, 'h' => 100],
+        'medium' => ['w' => 250, 'h' => 250],
+      ],
+      [
+        'disableModal' => true,
+      ]
+  );?>
+  <div class="flex-column w-50">
+    <?=$this->record($this->driver)->renderTemplate(
+      'popup-information.phtml',
+      $this->vars()->getArrayCopy()
+    );?>
+  </div>
+</div>
+
+<?php
+$skipText = $this->transEsc('skip_confirm');
+$script = <<<JS
+    finna.layout.initImagePaginators();
+    JS;
+?>
+<?=$this->assetManager()->outputInlineScriptString($script);?>
+<!-- END of: finna - record/media.phtml -->
