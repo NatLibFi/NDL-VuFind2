@@ -338,6 +338,15 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     ];
 
     /**
+     * Array of related publication types not to be used as display label.
+     *
+     * @var array
+     */
+    protected $relatedPublicationTypesExcludedFromLabels = [
+        'is reproduced in', 'on toisinnettu', 'julkaisu',
+    ];
+
+    /**
      * Array of related publication title labels excluded from search.
      *
      * @var array
@@ -827,12 +836,13 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 
     /**
      * Returns associative array for images extra details
-     * - identifier    resourceset id
-     * - type          language specific type
-     * - relationTypes language specific relation types
-     * - descriptions  language specific descriptions
-     * - dateTaken     date taken
-     * - perspectives  language specific perspectives.
+     * - identifier            resourceset id
+     * - type                  language specific type
+     * - relationTypes         language specific relation types
+     * - resourceDescriptions  language specific descriptions
+     * - resourceName          language specific resource name
+     * - dateTaken             date taken
+     * - perspectives          language specific perspectives.
      *
      * @param array $resourceSet Current resource set
      *
@@ -1280,7 +1290,7 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                     continue;
                 }
                 $label = $reader->attr($reader->first($node, 'relatedWork/displayObject'), 'label') ?? '';
-                $term = !in_array($termLC, ['julkaisu', 'is reproduced in', 'on toisinnettu']) ? $term : '';
+                $term = !in_array($termLC, $this->relatedPublicationTypesExcludedFromLabels) ? $term : '';
                 // Check if title can be used as search link.
                 // Discard titles that are extremely long as they usually contain excessive information
                 // or contain semicolons which are commonly used to combine multiple titles in one field.
@@ -3109,8 +3119,8 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     protected function formatISBN(string $isbn): string
     {
         $trimmed = trim(preg_replace('/\s+/', ' ', $isbn));
-        if (preg_match('{^(URN:ISBN:)(.*)}', $trimmed, $matches)) {
-            return trim($matches[2]);
+        if (preg_match('{^URN:ISBN:(.+)}', $trimmed, $matches)) {
+            return trim($matches[1]);
         }
         return '';
     }
