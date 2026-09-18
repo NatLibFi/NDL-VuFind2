@@ -23,10 +23,11 @@
 .dropdown-menu {
   min-width: 0;
   > li {
-    border-bottom: 1px solid $dropdown-divider-bg;
-    &:last-child > a,
-    &:last-child {
-      border-bottom: none;
+    > a {
+      border-top: 1px solid $dropdown-divider-bg;
+    }
+    &:first-child > a {
+      border-top: none;
     }
     > a {
       padding: $padding-base-vertical $padding-base-horizontal;
