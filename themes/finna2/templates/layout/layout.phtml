@@ -161,6 +161,10 @@
         $contentElementId = 'main';
         if (!empty($this->layout()->finnaUserAccountHeading)) {
           $contentElementId = 'useraccount-content-heading';
+        } elseif ($isLandingPage) {
+          $contentElementId = 'main';
+        } elseif ((!empty($this->layout()->finnaSkipLinkTarget))) {
+          $contentElementId = 'record-skip-link-target';
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
         } elseif (!empty($this->layout()->finnaMainTabs)) {

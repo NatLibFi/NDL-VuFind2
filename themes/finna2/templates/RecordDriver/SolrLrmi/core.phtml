@@ -10,6 +10,10 @@
   $thumbnail = false;
   $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $formats = $this->driver->getFormats();
+
+  // Add Finna skip link target
+  $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
+
   ob_start(); ?>
   <div class="media-<?=$thumbnailAlignment?>">
     <?= $this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'imageClick' => 'none']) ?>
@@ -25,12 +29,12 @@
   <?php $thumbnail = ob_get_contents(); ?>
 <?php ob_end_clean(); ?>
 <div class="media">
-  <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+  <h1 class="record-title visible-xs" aria-hidden="true"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
   <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-    <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
+    <?=$this->partial('layout/skiplink-core-heading.phtml') ?>
     <?php if ($results = $this->driver->getAlternativeTitles()): ?>
       <div class="recordAltTitles record-alt-titles">
         <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>
