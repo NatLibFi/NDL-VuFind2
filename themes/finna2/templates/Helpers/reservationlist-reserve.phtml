@@ -2,46 +2,52 @@
 <?php
   $user = $this->auth()->getManager()->getUserObject();
 ?>
-<div class="record-holdings-table reservation-request-table">
-  <div class="headers">
-    <span class="holdings-title"><?=$this->transEsc('ReservationList::Place hold on this title')?></span>
-  </div>
-  <?php if (empty($this->listHandlers)): ?>
-    <div class="alert alert-info no-ils-support">
-      <?=$this->transEsc('no_ils_support_description');?>
-    </div>
-  <?php else: ?>
-    <?php foreach ($this->listHandlers as $listHandler): ?>
-      <div class="holdings-group">
-        <div class="holdings-container-heading">
-          <?php // TODO: create a component which handles the defaulting into prettier form ?>
-          <div class="location">
-            <?php if ($title = $listHandler->getTitle($this->layout()->userLang)): ?>
-              <?= $this->escapeHtml($title); ?>
-            <?php else: ?>
-              <?= $this->transEscWithPrefix('source_', $listHandler->getInstitution()) . ': ' . $this->escapeHtml($listHandler->getIdentifier()); ?>
-            <?php endif; ?>
-          </div>
-          <div class="location-link text-right">
-            <a href="<?=$this->escapeHtmlAttr($this->url('reservationlist-placeorderoptions', [], ['query' => ['recordId' => $this->driver->getUniqueID(), 'source' => $this->driver->getSourceIdentifier(), 'institution' => $listHandler->getInstitution(), 'listIdentifier' => $listHandler->getIdentifier()]]))?>" data-lightbox><?= $this->icon('save') . ' ' . $this->transEsc(['ReservationList', 'Place hold on this title'])?></a>
-          </div>
-        </div>
-      </div>
-    <?php endforeach; ?>
-    <?php if ($listsContainingRecord = $this->reservationList($user)->getListsContainingRecord($this->driver)): ?>
-      <div class="holdings-group saved-reservation-lists">
-        <div class="alert alert-info savedLists loaded">
-          <strong><?=$this->transEsc('Saved in')?>:</strong><br>
-          <ul>
-            <?php foreach ($listsContainingRecord as $listEntity): ?>
-              <li>
-                <a href="<?= $this->url('reservationlist-displaylist', ['listId' => $listEntity->getId()]) ?>"><?= $this->escapeHtml($listEntity->getTitle()); ?></a><br>
-              </li>
-            <?php endforeach; ?>
-          </ul>
-        </div>
-      </div>
-    <?php endif; ?>
-  <?php endif; ?>
-</div>
+
+<?php
+  $contents = array_map(
+    function ($listHandler) {
+      $location = $listHandler->getTitle($this->layout()->userLang);
+      if (!$location) {
+        $location = $this->transEscWithPrefix('source_', $listHandler->getInstitution()) . ': ' . $listHandler->getIdentifier();
+      }
+      $href = $this->url(
+          'reservationlist-placeorderoptions',
+          [],
+          [
+          'query' => [
+            'recordId' => $this->driver->getUniqueID(),
+            'source' => $this->driver->getSourceIdentifier(),
+            'institution' => $listHandler->getInstitution(),
+            'listIdentifier' => $listHandler->getIdentifier(),
+          ],
+        ]
+      );
+      $linkLabel = $this->translate(['ReservationList', 'Place hold on this title']);
+      return $this->component('finna-holdings/location-and-link', compact('href', 'location', 'linkLabel'));
+    },
+    $this->listHandlers
+  );
+?>
+<?=
+  $this->component(
+      'finna-holdings/table',
+      [
+      'header' => $this->translate('ReservationList::Place hold on this title'),
+      'contents' => $contents,
+    ]
+  );
+?>
+<?php
+  if ($listsContainingRecord = $this->reservationList($user)->getListsContainingRecord($this->driver)):
+    $lists = array_map(
+        function ($listEntity) {
+        $title = $listEntity->getTitle();
+        $href = $this->url('reservationlist-displaylist', ['listId' => $listEntity->getId()]);
+        return compact('title', 'href');
+      },
+        $listsContainingRecord
+    );
+?>
+  <?= $this->component('finna-list/saved-in', ['class' => 'loaded', 'lists' => $lists])?>
+<?php endif; ?>
 <!-- END of: finna - Helpers/reservationlist-reserve.phtml -->
