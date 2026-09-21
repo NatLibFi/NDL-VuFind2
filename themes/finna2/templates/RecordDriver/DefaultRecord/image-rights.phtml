@@ -16,7 +16,7 @@
           ?>
           <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright]);?>
           <?php if ($hasLink): ?>
-            <a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>">
+            <a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?> <?=$this->transEsc($labelEsc) ?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>">
               <span class="copyright-label"><?=$labelEsc?></span>
             </a>
           <?php else: ?>
@@ -26,7 +26,7 @@
           <?php foreach ($descriptions as $item): ?>
             <?=$this->partial('Helpers/copyright-icons.phtml', ['copyright' => $item])?>
             <?php if ($hasLink): ?>
-              <a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>">
+              <a target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?> <?=$this->escapeHtml($item) ?>" href="<?=$this->escapeHtmlAttr($rights['link']) ?>">
                 <?=$this->escapeHtml($item)?></span>
               </a>
             <?php else: ?>
@@ -38,7 +38,7 @@
       </span>
       <p class="copyright-meaning hidden-print">
         <?php $urlEsc = $hasLink ? $this->escapeHtmlAttr($rights['link']) : $this->url('content-page', ['page' => 'terms']) ?>
-        <a target="_blank"<?php if ($hasLink): ?> aria-label="<?=$this->transEscAttr('external_online_link')?>"<?php endif; ?> href="<?=$urlEsc?>">
+        <a target="_blank"<?php if ($hasLink): ?> aria-label="<?=$this->transEscAttr('external_online_link')?> <?=$this->transEsc('usage_meaning')?>"<?php endif; ?> href="<?=$urlEsc?>">
           <?=$this->transEsc('usage_meaning') ?>
         </a>
       </p>
