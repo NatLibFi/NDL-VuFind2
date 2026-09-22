@@ -4,7 +4,7 @@
     aria-label="<?=$this->escapeHtmlAttr($this->translate('socialmedia_share_in_facebook') . ' (' . $this->translate('Open in a new window') . ')')?>"
     href="https://www.facebook.com/sharer.php?u=<?=urlencode($shareUrl)?>&amp;title=<?=urlencode($title)?>"
     target="_blank">
-    <?=$this->icon('facebook', 'facebook-icon') ?> Facebook
+    <?=$this->icon('facebook', 'facebook-icon') ?> <?= $this->transEsc('socialmedia_share_in_facebook') ?>
   </a>
 </li>
 <li>
@@ -13,7 +13,7 @@
     aria-label="<?=$this->escapeHtmlAttr($this->translate('socialmedia_share_in_twitter') . ' (' . $this->translate('Open in a new window') . ')')?>"
     href="https://twitter.com/share?url=<?=urlencode($shareUrl)?>&amp;text=<?=urlencode($title)?>"
     target="_blank">
-    <?=$this->icon('twitter', 'twitter-icon') ?> Twitter
+    <?=$this->icon('twitter', 'twitter-icon') ?> <?= $this->transEsc('socialmedia_share_in_twitter') ?>
   </a>
 </li>
 <li>
@@ -22,6 +22,6 @@
     aria-label="<?=$this->escapeHtmlAttr($this->translate('socialmedia_share_in_pinterest') . ' (' . $this->translate('Open in a new window') . ')')?>"
     href="https://pinterest.com/pin/create/bookmarklet/?url=<?=urlencode($shareUrl)?>&amp;is_video=0&amp;description=<?=urlencode($title)?>"
     target="_blank">
-    <?=$this->icon('pinterest', 'pinterest-icon') ?> Pinterest
+    <?=$this->icon('pinterest', 'pinterest-icon') ?> <?= $this->transEsc('socialmedia_share_in_pinterest') ?>
   </a>
 </li>
