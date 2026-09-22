@@ -13,7 +13,7 @@
   $binding = $this->driver->tryMethod('getBinding');
   $iiifManifests = $this->driver->tryMethod('getIiifManifests');
 
-  // Add Finna skip link target
+  // Add Finna skip link target to avoid landing into finnaMainTabs
   $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
@@ -98,7 +98,7 @@
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-    <?=$this->partial('layout/skiplink-core-heading.phtml') ?>
+    <?=$this->partial('RecordDriver/DefaultRecord/record-title-skiplink.phtml') ?>
     <?php foreach ($this->driver->tryMethod('getFullTitlesAltScript', [], []) as $altTitle): ?>
       <div class="record-title-alt-script">
         <?=$this->escapeHtml($altTitle)?>

@@ -34,7 +34,7 @@
     <?=$thumbnail ?>
   <?php endif; ?>
   <div class="media-body record-information">
-    <?=$this->partial('layout/skiplink-core-heading.phtml') ?>
+    <?=$this->partial('RecordDriver/DefaultRecord/record-title-skiplink.phtml') ?>
     <?php if ($results = $this->driver->getAlternativeTitles()): ?>
       <div class="recordAltTitles record-alt-titles">
         <?=implode('<br>', array_map([$this, 'escapeHtml'], $results))?>

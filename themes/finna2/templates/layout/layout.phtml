@@ -164,7 +164,7 @@
         } elseif ($isLandingPage) {
           $contentElementId = 'main';
         } elseif ((!empty($this->layout()->finnaSkipLinkTarget))) {
-          $contentElementId = 'record-skip-link-target';
+          $contentElementId = $finnaSkipLinkTarget;
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
         } elseif (!empty($this->layout()->finnaMainTabs)) {
