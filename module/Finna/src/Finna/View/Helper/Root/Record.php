@@ -1143,6 +1143,50 @@ class Record extends \VuFind\View\Helper\Root\Record
         return $this->renderTemplate('birth_death.phtml', compact('birth', 'death'));
     }
 
+    public function getPresentations()
+    {
+        $images = ($this->getView()->plugin('recordImage'))($this)->getAllImagesAsCoverLinks();
+        $openUrl = $this->getView()->plugin('openUrl')($this->driver, 'record');
+        $openUrlActive = $openUrl->isActive();
+        // Account for replace_other_urls setting
+        $urls = $this->getLinkDetails($openUrlActive);
+        $onlineUrls = $this->driver->tryMethod('getOnlineURLs');
+
+        $renderedURLs = [];
+        $videos = [];
+        $audios = [];
+        $others = [];
+        $models = $this->driver->tryMethod('getModels', default: []);
+
+        $allUrls = [...$urls, ...$onlineUrls];
+        $recordLinker = $this->getView()->plugin('recordLinker');
+        foreach ($allUrls as $url) {
+            foreach ($renderedURLs as $renderedURL) {
+                $urlDescription = $url['desc'] ?? $url['text'] ?? '';
+                if ($url['url'] === $renderedURL['url'] && $urlDescription === $renderedURL['desc']) {
+                    continue 2;
+                }
+            }
+            switch ($url['embed'] ?? '') {
+                case 'audio':
+                    $audios[] = $url;
+                    break;
+                case 'video':
+                    $videos[] = $url;
+                    break;
+                default:
+                    $embeddedVideo = ($recordLinker)()->getEmbeddedVideo($url['url']);
+                    if (!empty($url['videoSources']) || $embeddedVideo === 'data-embed-iframe') {
+                        $videos[] = $url;
+                    } else {
+                        $others[] = $url;
+                    }
+                    break;
+            }
+        }
+        return compact('images', 'audios', 'videos', 'models', 'others');
+    }
+
     /**
      * Return number of linked biblio records for an authority record.
      * Returns an array with keys 'author' and 'topic'

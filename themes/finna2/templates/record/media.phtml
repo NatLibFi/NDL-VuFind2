@@ -1,0 +1,40 @@
+<!-- START of: finna - record/media.phtml -->
+ <?php
+  $recordHelper = $this->record($this->driver);
+  $presentations = $recordHelper->getPresentations();
+  $imageHelper = $this->recordImage($recordHelper);
+  $scrollData = $this->scrollData ?? $this->layout()->scrollData ?? [];
+?>
+<div class="d-flex justify-content-center media-modal-pager">
+  <?php if ($scrollData): ?>
+    <?=$this->render('record/prev-next.phtml', compact('scrollData')); ?>
+  <?php endif; ?>
+</div>
+<div id="media-modal-content" class="d-flex flex-row gap-2" data-lightbox-ignore>
+  <?= $this->render('record/presentations.phtml', ['driver' => $this->driver]) ?>
+  <?php if ($recordHelper->getImagePopupZoom() && $recordHelper->hasLargeImageLayout()): ?>
+    <?php
+      $manifestUrl = $this->recordLinker()->getGeneratedIiifManifestUrl($this->driver);
+    ?>
+    <!-- START of: finna - RecordDriver/DefaultRecord/iiif-viewer.phtml -->
+    <?=$this->component('finna-iiif-viewer', ['manifestUrls' => [['url' => $manifestUrl]], 'pages' => $this->pages ?? null]);?>
+    <!-- END of: finna - RecordDriver/DefaultRecord/iiif-viewer.phtml -->
+  <?php else: ?>
+
+  <?php endif; ?>
+  <div class="flex-column w-50">
+    <?=$this->record($this->driver)->renderTemplate(
+      'popup-information.phtml',
+      $this->vars()->getArrayCopy()
+    );?>
+  </div>
+</div>
+
+<?php
+$skipText = $this->transEsc('skip_confirm');
+$script = <<<JS
+    finna.layout.initImagePaginators();
+    JS;
+?>
+<?=$this->assetManager()->outputInlineScriptString($script);?>
+<!-- END of: finna - record/media.phtml -->

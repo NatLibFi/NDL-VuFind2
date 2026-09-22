@@ -1,0 +1,10 @@
+<?=$this->recordImage($this->record($this->driver))->renderImage(
+  'record',
+    [
+      'small' => ['w' => 100, 'h' => 100],
+      'medium' => ['w' => 250, 'h' => 250],
+    ],
+    [
+      'disableModal' => true,
+    ]
+);?>

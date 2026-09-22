@@ -917,4 +917,29 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         }
         return $response;
     }
+
+    /**
+     * Display record as modal content.
+     *
+     * @return \Laminas\View\Model\ViewModel
+     */
+    public function mediaAction(): \Laminas\View\Model\ViewModel
+    {
+        $index  = $this->params()->fromQuery('index', 0);
+        $format = $this->params()->fromQuery('format');
+        $type   = $this->params()->fromQuery('type');
+        // Set up next/previous record links (if appropriate)
+        if ($this->getSearchMemory()->getCurrentSearch()?->getOptions()?->resultScrollerActive()) {
+            $scrollData = $this->resultScroller()->getScrollData(
+                $this->loadRecord()
+            );
+        } else {
+            $scrollData = null;
+        }
+        // Modify current image index to a format for tify-viewer
+        $pages = [$index + 1];
+        return $this
+            ->createViewModel(compact('index', 'format', 'scrollData', 'pages'))
+            ->setTemplate('record/media');
+    }
 }

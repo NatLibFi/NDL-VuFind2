@@ -1,0 +1,42 @@
+<?php
+  $tabs = $this->record($this->driver)->getPresentations();
+  $navigation = [];
+  $content = [];
+  $active = true;
+  foreach ($tabs as $name => $tab) {
+    if (!$tab) {
+      continue;
+    }
+    $navTab = [
+      'active' => $active,
+      'ariaCurrent' => $active,
+      'description' => 'Presentations of ' . $name,
+      'label' => $name,
+      'link' => '#record-presentation-' . $name,
+      '__linkAttributes' => [
+        'data-bs-target' => '#record-presentation-' . $name,
+        'data-bs-toggle' => 'tab',
+      ],
+    ];
+    $navContent = $this->render("record/$name.phtml", ['driver' => $this->driver]);
+    $active = false;
+    $navigation[] = [
+      'tab' => $navTab,
+      'content' => $navContent,
+    ];
+  }
+?>
+<div class="w-50">
+  <?= $this->component('finna-tabs-nav', ['items' => array_column($navigation, 'tab')]) ?>
+  <div class="tab-content">
+    <?php foreach ($navigation as $i => $values):?>
+      <?php
+        $tab = $values['tab'];
+      ?>
+      <?php $active = $i == 0 ? ' active' : ''?>
+      <div class="tab-content tab-pane fade show<?=$active?>" id="record-presentation-<?= $tab['label'] ?>">
+        <?= $values['content'] ?>
+      </div>
+    <?php endforeach;?>
+  </div>
+</div>
