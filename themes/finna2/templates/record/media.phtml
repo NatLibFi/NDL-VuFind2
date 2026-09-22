@@ -1,6 +1,7 @@
 <!-- START of: finna - record/media.phtml -->
  <?php
   $recordHelper = $this->record($this->driver);
+  $presentations = $recordHelper->getPresentations();
   $imageHelper = $this->recordImage($recordHelper);
   $scrollData = $this->scrollData ?? $this->layout()->scrollData ?? [];
 ?>
@@ -10,7 +11,8 @@
   <?php endif; ?>
 </div>
 <div id="media-modal-content" class="d-flex flex-row gap-2" data-lightbox-ignore>
-  <?php if ($recordHelper->getImagePopupZoom()): ?>
+  <?= $this->render('record/presentations.phtml', ['driver' => $this->driver]) ?>
+  <?php if ($recordHelper->getImagePopupZoom() && $recordHelper->hasLargeImageLayout()): ?>
     <?php
       $manifestUrl = $this->recordLinker()->getGeneratedIiifManifestUrl($this->driver);
     ?>
@@ -18,16 +20,7 @@
     <?=$this->component('finna-iiif-viewer', ['manifestUrls' => [['url' => $manifestUrl]], 'pages' => $this->pages ?? null]);?>
     <!-- END of: finna - RecordDriver/DefaultRecord/iiif-viewer.phtml -->
   <?php else: ?>
-  <?=$imageHelper->renderImage(
-    'record',
-      [
-        'small' => ['w' => 100, 'h' => 100],
-        'medium' => ['w' => 250, 'h' => 250],
-      ],
-      [
-        'disableModal' => true,
-      ]
-  );?>
+
   <?php endif; ?>
   <div class="flex-column w-50">
     <?=$this->record($this->driver)->renderTemplate(
