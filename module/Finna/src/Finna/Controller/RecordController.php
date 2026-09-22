@@ -936,8 +936,10 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         } else {
             $scrollData = null;
         }
+        // Modify current image index to a format for tify-viewer
+        $pages = [$index + 1];
         return $this
-            ->createViewModel(compact('index', 'format', 'scrollData'))
+            ->createViewModel(compact('index', 'format', 'scrollData', 'pages'))
             ->setTemplate('record/media');
     }
 }

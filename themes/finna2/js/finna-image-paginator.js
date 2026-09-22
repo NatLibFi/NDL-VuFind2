@@ -541,6 +541,9 @@ FinnaPaginator.prototype.setRecordIndex = function setRecordIndex() {
 FinnaPaginator.prototype.changeTriggerImage = function changeTriggerImage(imagePopup) {
   var _ = this;
   var img = _.trigger.find('img');
+  const triggerUrl = new URL(_.trigger.prop('href'));
+  triggerUrl.searchParams.set('index', imagePopup.attr('index'));
+  _.trigger.attr('href', triggerUrl);
   img.attr('data-src', imagePopup.attr('href'));
   img.attr('alt', imagePopup.data('alt'));
   if (_.openImageIndex !== imagePopup.attr('index')) {

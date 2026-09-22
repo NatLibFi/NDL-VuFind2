@@ -10,6 +10,14 @@
   <?php endif; ?>
 </div>
 <div id="media-modal-content" class="d-flex flex-row gap-2" data-lightbox-ignore>
+  <?php if ($recordHelper->getImagePopupZoom()): ?>
+    <?php
+      $manifestUrl = $this->recordLinker()->getGeneratedIiifManifestUrl($this->driver);
+    ?>
+    <!-- START of: finna - RecordDriver/DefaultRecord/iiif-viewer.phtml -->
+    <?=$this->component('finna-iiif-viewer', ['manifestUrls' => [['url' => $manifestUrl]], 'pages' => $this->pages ?? null]);?>
+    <!-- END of: finna - RecordDriver/DefaultRecord/iiif-viewer.phtml -->
+  <?php else: ?>
   <?=$imageHelper->renderImage(
     'record',
       [
@@ -20,6 +28,7 @@
         'disableModal' => true,
       ]
   );?>
+  <?php endif; ?>
   <div class="flex-column w-50">
     <?=$this->record($this->driver)->renderTemplate(
       'popup-information.phtml',
