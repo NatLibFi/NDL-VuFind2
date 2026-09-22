@@ -81,6 +81,20 @@
         height: $icon-size;
         width: $icon-size;
     }
+
+    .dropdown-menu > li > a {
+        border-top: none;
+    }
+
+    .dropdown-header {
+        font-weight: 600;
+        &.fs-4 {
+            font-size: $font-size-large;
+        }
+        &.fs-5 {
+            font-size: $font-size-base;
+        }
+    }
 }
 
 .iiif-menu-button-badge {
