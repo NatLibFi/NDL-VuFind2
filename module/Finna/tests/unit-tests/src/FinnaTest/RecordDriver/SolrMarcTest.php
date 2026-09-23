@@ -56,25 +56,55 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     public static function driverMethodsProvider(): \Iterator
     {
         yield [
+            'marc_test.xml',
             'getAlternativeTitles',
             [
                 'Proboscidea : Elephantidae and their ancestors',
             ],
+        ];
+        yield [
+            'marc_test.xml',
+            'getSummary',
+            [
+                'Asiaa norsueläimistä.',
+                'Om elefantdjur.',
+                'Hobotnye.',
+                'Хоботные.',
+            ],
+        ];
+        yield [
+            'marc_test_lang.xml',
+            'getSummary',
+            [
+                'Asiaa norsueläimistä.',
+                'Lisää asiaa norsueläimistä.',
+            ],
+            'fi',
+        ];
+        yield [
+            'marc_test_lang.xml',
+            'getSummary',
+            [
+                'Om elefantdjur.',
+            ],
+            'sv',
         ];
     }
 
     /**
      * Test driver methods.
      *
-     * @param string $method   Method
-     * @param mixed  $expected Expected result
+     * @param string  $fixture  Fixture
+     * @param string  $method   Method
+     * @param mixed   $expected Expected result
+     * @param ?string $lang     Language
      *
      * @return void
      */
     #[DataProvider('driverMethodsProvider')]
-    public function testDriverMethods(string $method, $expected): void
+    public function testDriverMethods(string $fixture, string $method, $expected, ?string $lang = null): void
     {
-        $driver = $this->getDriver('marc_test.xml');
+        $driver = $this->getDriver($fixture, language: $lang);
         $this->assertSame(
             $expected,
             $driver->$method()
@@ -607,6 +637,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
      * @param ?string $recordXml   Xml record to use for the test
      * @param array   $recordArray Array to use as record for the test
      * @param array   $dsConfig    Datasource config
+     * @param ?string $language    Preferred language
      *
      * @return SolrMarc
      */
@@ -614,6 +645,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
         ?string $recordXml,
         array $recordArray = [],
         array $dsConfig = [],
+        ?string $language = null,
     ): SolrMarc {
         $fixture = $recordXml ? $this->getFixture("marc/$recordXml", 'Finna') : json_encode($recordArray);
         $config = new \VuFind\Config\Config([
@@ -630,6 +662,23 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         );
         $record->attachDatasourceSettings($dsConfig);
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => 'fi,en',
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+                'se' => 'Northern Sámi',
+            ],
+        ];
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
+        $record->setPreferredLanguage($language ?? 'fi');
         return $record;
     }
 }
