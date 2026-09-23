@@ -411,6 +411,7 @@
     }
     .headers {
         display: flex;
+        flex-wrap: wrap;
         width: 100%;
         padding: 0px $padding-large-horizontal;
         background: $record-holdings-title-background;
@@ -419,7 +420,7 @@
         vertical-align: middle;
         .dedup-information {
             display: inline-flex;
-            align-items: baseline;
+            align-items: center;
             flex: 1;
             @include media-breakpoint-down(sm) {
                 flex-basis: 70%;
@@ -431,16 +432,19 @@
             gap: 0 2rem;
             align-self: center;
             margin-left: 1rem;
+            font-size: $font-size-small;
             @media print {
                 flex: 0 52%;
             }
             @include media-breakpoint-down(sm) {
-                flex-basis: 30%;
-                text-align: right;
+                flex-basis: 100%;
+                margin-bottom: 1rem;
+                margin-left: 0;
             }
         }
         .shelf-location {
             align-self: center;
+            font-size: $font-size-small;
             @include media-breakpoint-down(sm) {
                 display: none;
             }
