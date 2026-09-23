@@ -24,6 +24,7 @@
  * @package  Tests
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
@@ -41,6 +42,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  * @package  Tests
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
