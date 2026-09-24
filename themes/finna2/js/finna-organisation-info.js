@@ -269,8 +269,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     map = finna.organisationMap;
     map.init(mapWidget, mapTileUrl, mapAttributionTemplate.innerHTML);
-    mapWidget.setAttribute('aria-hidden', 'true'); // prevent screenreaders to accientally enter map area
-
     /**
      * Hide map marker from mapTooltip
      */

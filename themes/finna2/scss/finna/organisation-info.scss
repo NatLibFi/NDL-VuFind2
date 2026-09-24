@@ -1,15 +1,26 @@
 // *** Common styles for organisation info page and widget ***
 $organisation-info-max-w: 400px !default;
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 .panel-heading {
     background-color: $gray-ultralight;
     color: $gray-dark;
 }
-.column-list {
+.organisation-info {
+    .organisation-status-columns {
         column-count: 4;
         column-span: all;
-}
-.organisation-info {
+    }
     .finna-panel {
         .panel-collapse,
         .panel-body {
