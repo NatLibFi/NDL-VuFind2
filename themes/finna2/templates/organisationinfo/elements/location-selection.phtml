@@ -57,7 +57,71 @@
     </div>
   <?php endif; ?>
 
-  <div class="location-information">
+  <?php if (!$this->userAgent()->isBot()): ?>
+    <div> <!-- map information about open and closed libraries for the screenreaders starts here -->
+      <?php
+      $openList = [];
+      $closedList = [];
+      $mobileList = [];
+      // categorise organisations - open - closed - mobile
+      foreach ($orgInfo['list'] as $item) {
+        $name = $item['name'];
+        $area = $item['address']['area'];
+        $city = $item['address']['city'];
+        $isOpen = $item['openNow'];
+        $isMobile = $item['mobile'];
+
+        if ($area === $city) {
+          $area = '';
+        }
+        if ('' !== $area && '' !== $city) {
+          $name .= ", $area ($city)";
+        } elseif ('' !== $area || '' !== $city) {
+          $name .= ", $area$city";
+        }
+
+        // Add to respective categories with IDs
+        if ($isOpen) {
+          $openList[] = ['name' => $name, 'id' => $item['id']];
+        } elseif ($isMobile) {
+          $mobileList[] = ['name' => $name, 'id' => $item['id']];
+        } else {
+          $closedList[] = ['name' => $name, 'id' => $item['id']];
+        }
+      }
+      ?> <!-- display categorised organisations -->
+      <?php if ($locationCount > 1): ?>
+        <h4><?=$this->transEsc('organisation_info_is_open_now') ?></h4>
+        <div class="organisation-info organisation-status-columns">
+          <?php foreach ($openList as $item): ?>
+            <?php if ($item['name'] != ''): ?>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        </div>
+        <h4><?=$this->transEsc('organisation_info_is_closed_now') ?></h4>
+        <div class="organisation-info organisation-status-columns">
+          <?php foreach ($closedList as $item): ?>
+            <?php if ($item['name'] != ''): ?>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        </div>
+        <h4><?=$this->transEsc('organisation_info_no_schedule') ?></h4>
+        <div class="organisation-info organisation-status-columns">
+          <?php foreach ($mobileList as $item): ?>
+            <?php if ($item['name'] != ''): ?>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
+            <?php endif; ?>
+          <?php endforeach; ?>
+        </div>
+      <?php endif; ?>
+    </div> <!-- map information about open and closed libraries for the screenreaders ends here -->
+  <?php endif; ?>
+</div>
+<br><hr>
+<!-- END of: finna - organisationinfo/elements/location-selection.phtml -->
+   <div class="location-information">
     <div role="status" class="js-location-loader hidden">
       <?= $this->icon('spinner') ?> <?= $this->transEsc('loading_ellipsis') ?>
     </div>
@@ -96,67 +160,3 @@
       </div>
     </div>
   </div>
-  <?php if (!$this->userAgent()->isBot()): ?>
-    <div> <!-- map information about open and closed libraries for the screenreaders starts here -->
-      <?php
-      $openList = [];
-      $closedList = [];
-      $mobileList = [];
-      // categorise organisations - open - closed - mobile
-      foreach ($orgInfo['list'] as $item) {
-        $name = $item['name'];
-        $area = $item['address']['area'];
-        $city = $item['address']['city'];
-        $isOpen = $item['openNow'];
-        $isMobile = $item['mobile'];
-
-        if ($area === $city) {
-          $area = '';
-        }
-        if ('' !== $area && '' !== $city) {
-          $name .= ", $area ($city)";
-        } elseif ('' !== $area || '' !== $city) {
-          $name .= ", $area$city";
-        }
-
-        // Add to respective categories with IDs
-        if ($isOpen) {
-          $openList[] = ['name' => $name, 'id' => $item['id']];
-        } elseif ($isMobile) {
-          $mobileList[] = ['name' => $name, 'id' => $item['id']];
-        } else {
-          $closedList[] = ['name' => $name, 'id' => $item['id']];
-        }
-      }
-      ?> <!-- display categorised organisations -->
-      <h3 aria-label="<?= $this->transEsc(1 === $locationCount ? 'organisation_info_navi_service_single' : 'organisation_info_navi_service') ?> <?=$this->transEsc('Total') . ' ' . $locationCount ?>"><?= $this->transEsc(1 === $locationCount ? 'organisation_info_navi_service_single' : 'organisation_info_navi_service') ?></h3> <!-- only aria-label will read this without announcing clickable -->
-      <?php if ($locationCount > 1): ?>
-        <h4><?=$this->transEsc('organisation_info_is_open_now') ?></h4>
-        <div class="organisation-info organisation-status-columns">
-          <?php foreach ($openList as $item): ?>
-            <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
-            <?php endif; ?>
-          <?php endforeach; ?>
-        </div>
-        <h4><?=$this->transEsc('organisation_info_is_closed_now') ?></h4>
-        <div class="organisation-info organisation-status-columns">
-          <?php foreach ($closedList as $item): ?>
-            <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
-            <?php endif; ?>
-          <?php endforeach; ?>
-        </div>
-        <h4><?=$this->transEsc('organisation_info_no_schedule') ?></h4>
-        <div class="organisation-info organisation-status-columns">
-          <?php foreach ($mobileList as $item): ?>
-            <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
-            <?php endif; ?>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
-    </div> <!-- map information about open and closed libraries for the screenreaders ends here -->
-  <?php endif; ?>
-</div>
-<!-- END of: finna - organisationinfo/elements/location-selection.phtml -->
