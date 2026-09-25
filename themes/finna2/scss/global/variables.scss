@@ -82,7 +82,7 @@ $sidebar-border: 1px solid $sidebar-border-color !default;
 $sidebar-border-radius: $border-radius-lg;
 $sidebar-header-border-color: $border-color !default;
 $sidebar-header-text-color: color.mix($sidebar-background, contrast($sidebar-background), 5%) !default;
-$sidebar-header-icon-color: $dark !default;
+$sidebar-header-icon-color: $sidebar-header-text-color !default;
 $sidebar-active-color: $text-color !default;
 $sidebar-active-background: transparent !default;
 

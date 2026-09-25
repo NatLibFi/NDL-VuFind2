@@ -96,6 +96,7 @@
   .finna-toggletip button {
     font-size: $font-size-icon-large;
     margin-right: 0.25rem;
+    color: $sidebar-header-icon-color;
   }
 }
 @include media-breakpoint-down(md) {
