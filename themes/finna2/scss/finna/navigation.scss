@@ -131,7 +131,7 @@ header {
     .dropdown-menu {
       left: auto;
       > li > a {
-        width: 250px;
+        width: 280px;
         .icon {
           padding-top: 3px;
         }
@@ -167,9 +167,7 @@ header {
 }
 
 #my-info-dropdown-menu {
-  width: 280px;
   > li a {
-    width: 100%;
     .sign-out-icon {
       font-size: 1.2em;
       line-height: 1em;
@@ -206,6 +204,9 @@ header {
         display: flex;
         border-bottom: 1px solid $dropdown-divider-bg;
         color: $text-color;
+        &.card-name {
+          flex: 1;
+        }
         span {
           padding: 3px 0px;
         }
