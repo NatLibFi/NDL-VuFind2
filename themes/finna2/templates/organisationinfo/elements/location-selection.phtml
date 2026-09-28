@@ -135,7 +135,7 @@
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($openList as $item): ?>
             <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a><br>
             <?php endif; ?>
           <?php endforeach; ?>
         </div>
@@ -143,7 +143,7 @@
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($closedList as $item): ?>
             <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a><br>
             <?php endif; ?>
           <?php endforeach; ?>
         </div>
@@ -151,7 +151,7 @@
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($mobileList as $item): ?>
             <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($item['name']) ?></a><br>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a><br>
             <?php endif; ?>
           <?php endforeach; ?>
         </div>

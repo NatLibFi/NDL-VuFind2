@@ -313,6 +313,24 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
+   * Move focus to the top of the page on organisation selection page
+   */
+  function moveFocusToTopOnMapPage() {
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('#jump-to-top')) return;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => {
+        const t = document.getElementById('map-info');
+        if (!t) return;
+        t.setAttribute('tabindex', '-1');
+        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try { t.focus({ preventScroll: true }); } catch (err) { void err; t.focus(); }
+        setTimeout(() => { if (t.getAttribute('tabindex') === '-1') t.removeAttribute('tabindex'); }, 700);
+      }, 500);
+    });
+  }
+
+  /**
    * Set scroll links
    */
   function initScrollLinks() {
@@ -1197,6 +1215,7 @@ finna.layout = (function finnaLayout() {
       initHelpTabs();
       initPrintTriggers();
       initSelectAllButtonListeners();
+      moveFocusToTopOnMapPage()
     },
     showPostLoginLightbox: showPostLoginLightbox
   };
