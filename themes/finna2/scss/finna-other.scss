@@ -419,9 +419,13 @@ label.list-group-item {
 
       @include table-responsive;
 
-      // Prevent rounded corners on table cells
       tbody > tr {
         th, td {
+          // Add space inside table cells
+          &:before {
+            margin-right: 0.5rem;
+          }
+          // Prevent rounded corners on table cells
           &:first-child,
           &:last-child {
             border-radius: 0;
