@@ -1215,7 +1215,7 @@ finna.layout = (function finnaLayout() {
       initHelpTabs();
       initPrintTriggers();
       initSelectAllButtonListeners();
-      moveFocusToTopOnMapPage()
+      moveFocusToTopOnMapPage();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };
