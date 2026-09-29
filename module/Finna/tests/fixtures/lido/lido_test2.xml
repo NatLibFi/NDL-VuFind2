@@ -93,21 +93,22 @@
                 <measurementValue>1200</measurementValue>
               </measurementsSet>
               <measurementsSet>
-                <measurementType>
-                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
-                  <term lang="en">extent</term>
-                </measurementType>
+                <measurementType>extent</measurementType>
                 <measurementUnit>yksikköä</measurementUnit>
                 <measurementValue>12</measurementValue>
               </measurementsSet>
               <measurementsSet>
-                <measurementType lang="fi">syvyys</measurementType>
+                <measurementType>
+                  <term lang="fi">syvyys</term>
+                </measurementType>
                 <measurementType lang="en">depth</measurementType>
                 <measurementUnit>cm</measurementUnit>
                 <measurementValue>50</measurementValue>
               </measurementsSet>
               <extentMeasurements lang="fi">kohde 1</extentMeasurements>
               <extentMeasurements lang="en">subject 1</extentMeasurements>
+              <qualifierMeasurements lang="fi">arvio</qualifierMeasurements>
+              <qualifierMeasurements lang="en">estimate</qualifierMeasurements>
             </objectMeasurements>
           </objectMeasurementsSet>
           <objectMeasurementsSet>

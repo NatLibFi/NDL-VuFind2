@@ -25,13 +25,12 @@
       <?php $this->assetManager()->appendScriptLink('openurl.js'); ?>
       <?php $haveRecommendationHolder = true; ?>
     <?php endif; ?>
-    <div<?php if (empty($this->excludeResultIds)): ?> id="result<?=$i++ ?>"<?php endif; ?> class="result clearfix <?=$this->record($this->driver)->getContainerJsClasses()?>">
+    <div aria-label="<?=$this->transEsc('Search Result');?> <?=$recordNumber ?>" <?php if (empty($this->excludeResultIds)): ?> id="result<?=$i++ ?>"<?php endif; ?> class="result clearfix <?=$this->record($this->driver)->getContainerJsClasses()?>">
         <?php if ($showCheckboxes): ?>
           <div class="record-checkbox">
             <?=$this->record($current)->getCheckbox('', 'search-cart-form')?>
           </div>
         <?php endif; ?>
-        <span class="visually-hidden"><?=$this->transEsc('Search Result');?> <?=$recordNumber ?></span>
       <?=$this->record($current)->getSearchResult('list', $this->results)?>
     </div>
   <?php endforeach; ?>

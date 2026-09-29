@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns='http://www.loc.gov/MARC21/slim'>
+
+    <record
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+        xmlns="http://www.loc.gov/MARC21/slim"
+        type="Bibliographic">
+        <leader>00000cam a22000004i 4500</leader>
+        <controlfield tag="001">123</controlfield>
+        <controlfield tag="003">   FI-MELINDA    </controlfield>
+        <controlfield tag="008">021122s2020    en            000 0 eng d</controlfield>
+        <datafield tag="245" ind1="0" ind2="0">
+            <subfield code="a">Proboscidea</subfield>
+        </datafield>
+        <datafield tag="520" ind1="3">
+            <subfield code="a">Asiaa norsueläimistä.</subfield>
+        </datafield>
+        <datafield tag="520" ind1="3">
+            <subfield code="a">Om elefantdjur.</subfield>
+        </datafield>
+        <datafield tag="520" ind1="3">
+            <subfield code="6">880-01</subfield>
+            <subfield code="a">Hobotnye.</subfield>
+        </datafield>
+        <datafield tag="246" ind1="3" ind2="1">
+            <subfield code="a">Proboscidea :</subfield>
+            <subfield code="b">Elephantidae and their ancestors</subfield>
+        </datafield>
+        <datafield tag="774" ind1="0">
+            <subfield code="i">Yhteensidottuna:</subfield>
+            <subfield code="t">Studies towards an elephant utopia</subfield>
+            <subfield code="w">997807363506253</subfield>
+            <subfield code="9">unrelated</subfield>
+        </datafield>
+        <datafield tag="774" ind1="0">
+            <subfield code="i">Yhteensidottuna:</subfield>
+            <subfield code="t">On the sources of mighty mammoths</subfield>
+            <subfield code="w">997807363506253</subfield>
+            <subfield code="9">unrelated</subfield>
+        </datafield>
+        <datafield tag="880" ind1="3">
+            <subfield code="6">520-01</subfield>
+            <subfield code="a">Хоботные.</subfield>
+        </datafield>
+    </record>
+</collection>

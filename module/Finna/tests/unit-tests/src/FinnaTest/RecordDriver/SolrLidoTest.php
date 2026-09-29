@@ -98,7 +98,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     'rights' => [
                         'copyright' => 'CC BY 4.0',
                         'description' => [
-                            'Tässä on kuvien copyright.',
+                            'Kuvien käyttöoikeuskuvaus.',
                         ],
                         'rightsHolders' => [
                             [
@@ -133,7 +133,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     ],
                     'identifier' => '607642',
                     'downloadable' => true,
-                    'resourceDescription' => 'Kuvan selitys',
+                    'resourceDescriptions' => [
+                        'Kuvan selitys',
+                    ],
                     'cacheSizes' => [
                         'small' => 'large',
                         'medium' => 'large',
@@ -210,10 +212,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                     'rights' => [
                         'copyright' => 'CC BY 4.0',
                         'description' => [
-                            0 => 'Tässä on kuvien copyright.',
-                            1 => 'Tässä on mallien copyright.',
-                            2 => 'Tässä on videoiden copyright.',
-                            3 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
+                            0 => 'Kuvien käyttöoikeuskuvaus.',
+                            1 => 'Tässä on kuvien copyright.',
+                            2 => 'Tässä on mallien copyright.',
+                            3 => 'Tässä on videoiden copyright.',
+                            4 => 'Tekstitiedoston tarkempi käyttöoikeuskuvaus',
                         ],
                     ],
                     'highResolution' => [],
@@ -337,12 +340,14 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $function,
         array $expected
     ): void {
-        $driver = $this->getDriver('lido_test.xml', language: 'fi');
-        $this->assertTrue(is_callable([$driver, $function], true));
-        $this->assertEquals(
-            $expected,
-            $driver->$function()
-        );
+        foreach (['lido_test.xml', 'lido_test_ns.xml'] as $fixture) {
+            $driver = $this->getDriver($fixture, language: 'fi');
+            $this->assertTrue(is_callable([$driver, $function], true));
+            $this->assertEquals(
+                $expected,
+                $driver->$function()
+            );
+        }
 
         $driver = $this->getDriver('lido_test.xml', language: 'fi-FI');
         $this->assertTrue(is_callable([$driver, $function], true));
@@ -457,7 +462,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)',
                     ],
                     'lido_test2.xml' => [
-                        'syvyys 50 cm (kohde 1)',
+                        'syvyys 50 cm (kohde 1, arvio)',
                         'pituus 0.73 m',
                     ],
                 ],
@@ -470,7 +475,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'pituus 73.0 cm, leveys 14 cm (kohde 2, kohde 3)',
                     ],
                     'lido_test2.xml' => [
-                        'syvyys 50 cm (kohde 1)',
+                        'syvyys 50 cm (kohde 1, arvio)',
                         'pituus 0.73 m',
                     ],
                 ],
@@ -483,7 +488,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         'height 73.0 cm, width 14 cm (subjects 2 and 3)',
                     ],
                     'lido_test2.xml' => [
-                        'depth 50 cm (subject 1)',
+                        'depth 50 cm (subject 1, estimate)',
                         'pituus 0.73 m',
                     ],
                 ],
@@ -496,8 +501,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         '1001 neliömetriä',
                     ],
                     'lido_test2.xml' => [
-                        '1200 kpl (kohde 1)',
-                        '12 yksikköä (kohde 1)',
+                        '1200 kpl (kohde 1, arvio)',
+                        '12 yksikköä (kohde 1, arvio)',
                         '100 hyllymetriä',
                     ],
                 ],
@@ -510,8 +515,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         '1001 neliömetriä',
                     ],
                     'lido_test2.xml' => [
-                        '1200 kpl (kohde 1)',
-                        '12 yksikköä (kohde 1)',
+                        '1200 kpl (kohde 1, arvio)',
+                        '12 yksikköä (kohde 1, arvio)',
                         '100 hyllymetriä',
                     ],
                 ],
@@ -524,8 +529,8 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                         '1001 square meters',
                     ],
                     'lido_test2.xml' => [
-                        '1200 pcs (subject 1)',
-                        '12 yksikköä (subject 1)',
+                        '1200 pcs (subject 1, estimate)',
+                        '12 yksikköä (subject 1, estimate)',
                         '100 hyllymetriä',
                     ],
                 ],
@@ -1370,11 +1375,13 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         string $language,
         array $expected
     ): void {
-        $driver = $this->getDriver('lido_test.xml', language: $language);
-        $this->assertEquals(
-            $expected,
-            $driver->getEvents()
-        );
+        foreach (['lido_test.xml', 'lido_test_ns.xml'] as $fixture) {
+            $driver = $this->getDriver($fixture, language: $language);
+            $this->assertEquals(
+                $expected,
+                $driver->getEvents()
+            );
+        }
     }
 
     /**
@@ -1674,6 +1681,7 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
         $driver = $this->getDriver('lido_test.xml');
         $this->assertSame(
             [
+                '951-771-872-1',
                 '978-3-16-148410-0',
             ],
             $driver->getISBNs()
@@ -1894,6 +1902,9 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                 'previewImages' => [
                     'test' => true,
                 ],
+            ],
+            'RightsMap' => [
+                'HTTPS://RIGHTSSTATEMENTS.ORG/VOCAB/INC/1.0/' => 'InC',
             ],
         ];
         $config = new \VuFind\Config\Config($config);

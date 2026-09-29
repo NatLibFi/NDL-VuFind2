@@ -53,11 +53,10 @@
   </div>
   <div class="useraccount-content">
     <?php if ($list): ?>
-      <div class="mobile-nav-toggle-trigger visible-xs visible-sm hidden-print"></div>
-      <div class="mobile-nav-toggle visible-xs visible-sm hidden-print">
-        <div id="mobile-navigation" class="btn btn-primary btn-mobile-nav" role="button" tabindex="0">
-          <?=$this->transEsc('Favourite lists')?> <?=$this->icon('collapse-open', 'expand-icon') ?>
-        </div>
+      <div class="mobile-functions-container visible-xs visible-sm hidden-print">
+        <button id="narrow-search-filter-toggle" data-toggle="vufind-offcanvas" class="btn btn-mobile-nav search-filter-toggle" tabindex="0">
+          <?=$this->icon('favorite') ?> <span><?=$this->transEsc('Favourite lists')?></span>
+        </button>
       </div>
       <div class="useraccount-header">
         <h3 class="list-title"><span class="js-list-title"><?=$this->escapeHtml($list->getTitle())?></span><?=$this->icon('list-edit', ['class' => 'list-title-edit', 'aria-hidden' => 'false', 'aria-label' => $this->transEscAttr('edit')])?></h3>
@@ -112,7 +111,7 @@
       <?php if ($recordTotal > 0): ?>
         <div class="mobile-nav-toggle-trigger visible-xs visible-sm hidden-print"></div>
         <div class="mobile-nav-toggle visible-xs visible-sm hidden-print">
-          <div id="mobile-navigation" class="btn btn-primary btn-mobile-nav" role="button" tabindex="0">
+          <div id="mobile-navigation" class="btn btn-mobile-nav" role="button" tabindex="0">
             <?=$this->transEsc('Favourite lists')?> <?=$this->icon('collapse-open', 'expand-icon') ?>
           </div>
         </div>

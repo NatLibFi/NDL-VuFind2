@@ -573,7 +573,15 @@ trait FinnaRecordTrait
     {
         $filteredXml = $this->tryMethod('getFilteredXMLElement');
         if ($filteredXml) {
-            return (new NamespacelessXmlRenderer($filteredXml->export(), null, null))->render();
+            $result = (new NamespacelessXmlRenderer($filteredXml->export(), null, null))->render();
+            // We need to hack the xsi namespace back in for back-compatibility:
+            $result = str_replace(
+                '<collection xmlns="http://www.loc.gov/MARC21/slim" schemaLocation',
+                '<collection xmlns="http://www.loc.gov/MARC21/slim"'
+                    . ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation',
+                $result
+            );
+            return $result;
         }
         return '';
     }

@@ -58,7 +58,7 @@
 }
 
 .useraccount-table {
-  .library-card-actions a {
+  .library-card-actions a:not(.dropdown-item) {
     display: block;
     margin: 0.3em 0em;
   }

@@ -30,6 +30,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Composer\Semver\Comparator;
 use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
@@ -279,6 +280,23 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getMyHolds($patron)
     {
+        $embedBiblios = Comparator::greaterThanOrEqualTo($this->kohaVersion, '23.11');
+        $embedItems = Comparator::greaterThanOrEqualTo($this->kohaVersion, '25.11');
+
+        $embed = [];
+        if ($embedBiblios) {
+            $embed[] = 'biblio';
+        }
+        if ($embedItems) {
+            $embed[] = 'item';
+        }
+        if ($this->config['Holds']['displayHoldShelf'] ?? false) {
+            $embed[] = 'hold_pickup_shelf';
+        }
+        $headers = $embed ? [
+            'x-koha-embed' => implode(',', $embed),
+        ] : [];
+
         $request = [
             'path' => 'v1/holds',
             'query' => [
@@ -286,19 +304,17 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 '_match' => 'exact',
                 '_per_page' => -1,
             ],
+            'headers' => $headers,
         ];
-        if ($this->config['Holds']['displayHoldShelf'] ?? false) {
-            $request['headers']['x-koha-embed'] = 'hold_pickup_shelf';
-        }
         $result = $this->makeRequest($request);
 
         $holds = [];
         foreach ($result['data'] as $entry) {
-            $biblio = $this->getBiblio($entry['biblio_id']);
+            $biblio = $embedBiblios ? $entry['biblio'] : $this->getBiblio($entry['biblio_id']);
             $frozen = !empty($entry['suspended']);
             $volume = '';
             if ($entry['item_id'] ?? null) {
-                $item = $this->getItem($entry['item_id']);
+                $item = $embedItems ? $entry['item'] : $this->getItem($entry['item_id']);
                 $volume = $item['serial_issue_number'];
             }
             $available = !empty($entry['waiting_date']);

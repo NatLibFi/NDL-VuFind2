@@ -27,6 +27,7 @@
     }
   }
 
+  $collectionFilters = isset($isCollectionTab) && $isCollectionTab;
   $advancedSearch = $params->getSearchType() === 'advanced';
 ?>
 <?php ob_start(); ?>
@@ -40,7 +41,7 @@
         $ariaLabel = $this->escapeHtmlAttr($this->translate('Remove filter') . ' ' . $desc);
       ?>
       <?php if ($removeLink): ?>
-        <a class="filter-value" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>" data-filter="<?=$this->escapeHtmlAttr($filter['filter'])?>">
+        <a class="filter-value js-list-link" aria-label="<?=$ariaLabel?>" href="<?=$removeLink?>" data-filter="<?=$this->escapeHtmlAttr($filter['filter'])?>">
           <span class="visually-hidden">
             <?=$this->translate('Remove filter') ?>
           </span>
@@ -48,7 +49,7 @@
           <?=$this->icon('search-filter-remove') ?>
         </a>
       <?php else: ?>
-        <span class="filter-value" data-filter="<?=$this->escapeHtmlAttr($filter['filter'])?>">
+        <span class="filter-value js-list-link" data-filter="<?=$this->escapeHtmlAttr($filter['filter'])?>">
           <span class="text"><?=$desc // HTML ?></span>
         </span>
       <?php endif; ?>
@@ -56,7 +57,7 @@
   <?php endforeach; ?>
 
   <?php foreach ($filterList as $field => $data): ?>
-    <div class="title-value-pair">
+    <div class="title-value-pair js-list-link">
       <?php if (is_callable([$params, 'isGeographicFilter']) && $params->isGeographicFilter($data)): ?>
         <?php
           $removeLink = isset($urlQuery) ? $urlQuery->removeFacet($data[0]['field'], $data[0]['value'], $data[0]['operator']) : null;
@@ -86,7 +87,7 @@
       <?php else: ?>
         <div class="filter-title-group">
           <span class="filters-title"><?=$this->transEsc($field)?>:</span>
-          <?php if (count($data) > 3): ?>
+          <?php if (count($data) > 3 && ($this->dropdown ?? true)): ?>
             <div class="search-filter-dropdown dropdown">
               <?php $dropdown = true; ?>
               <?php $safeId = preg_replace('/[^a-zA-Z0-9]/', '', $field); ?>
@@ -152,7 +153,7 @@
                 </a>
               <?php else: ?>
                 <span
-                  class="filter-value filters-<?=$operatorClass?>
+                  class="filter-value filters-<?=$operatorClass?>"
                   <?php if (isset($urlQuery)): ?>
                     data-filter="<?=$this->escapeHtmlAttr($urlQuery->formatFilterString($value['field'], $value['value'], $value['operator']))?>"
                   <?php endif; ?>
@@ -184,25 +185,23 @@
 <?php ob_end_clean(); ?>
 
 <?php if ($filters): ?>
-  <div class="active-filters finna-filters">
-    <?php if (!isset($isCollectionTab) || !$isCollectionTab): ?>
-      <?php $defaultFilterState = $hasDefaultsApplied || $options->getRetainFilterSetting() || !($defaultSortApplied ?? true) ? ' checked="checked"' : ''; ?>
-      <?php
-        $resetLink = !$onlyDefaultsApplied && isset($urlQuery)
-          ? $urlQuery->removeAllFilters()->resetDefaultFilters() : false;
-      ?>
-      <div class="filter-options">
-        <button type="button" class="btn-unstyled filters-toggle visible-xs visible-sm">
-          <span class="toggle-text"><?=$this->transEsc('show_filters')?></span>
-          <span class="active-filter-count">(<?=$filterCount?>)</span><?=$this->icon('filter-expand', 'expand') ?><?=$this->icon('filter-collapse', 'collapse') ?>
-        </button>
-        <?php if ($resetLink && $options->shouldDisplayResetFilters()): ?>
-          <a class="btn btn-default reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?></a>
-        <?php endif; ?>
-      </div>
-    <?php endif; ?>
-    <div class="filters">
-      <?=$filters ?>
+  <div class="active-filters finna-filters" role="region" aria-label="<?=$this->transEscAttr('Search Filters')?>">
+    <div>
+      <?php if (!$collectionFilters || ($collectionFilters && $this->params instanceof Finna\Search\SolrCollection\Params)): ?>
+        <?=$filters ?>
+      <?php endif; ?>
+      <?php if (!$collectionFilters): ?>
+        <?php $defaultFilterState = $hasDefaultsApplied || $options->getRetainFilterSetting() || !($defaultSortApplied ?? true) ? ' checked="checked"' : ''; ?>
+        <?php
+          $resetLink = !$onlyDefaultsApplied && isset($urlQuery)
+            ? $urlQuery->removeAllFilters()->resetDefaultFilters() : false;
+        ?>
+        <div class="filter-options">
+          <?php if ($resetLink && $options->shouldDisplayResetFilters()): ?>
+            <a class="reset-filters-btn" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
+          <?php endif; ?>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
 <?php endif; ?>
