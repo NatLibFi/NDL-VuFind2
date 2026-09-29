@@ -18,7 +18,7 @@
         'data-bs-toggle' => 'tab',
       ],
     ];
-    $navContent = $this->render("record/$name.phtml", ['driver' => $this->driver]);
+    $navContent = $this->render("record/$name.phtml", [...$this->vars()->getArrayCopy(), ...$tabs]);
     $active = false;
     $navigation[] = [
       'tab' => $navTab,
@@ -26,7 +26,7 @@
     ];
   }
 ?>
-<div class="w-50">
+<div class="record-media-container">
   <?= $this->component('finna-tabs-nav', ['items' => array_column($navigation, 'tab')]) ?>
   <div class="tab-content">
     <?php foreach ($navigation as $i => $values):?>

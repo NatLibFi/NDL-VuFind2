@@ -106,6 +106,9 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
      */
     public function homeAction()
     {
+        if ($this->inLightbox()) {
+            return $this->mediaAction();
+        }
         $result = parent::homeAction();
         $this->triggerStatsRecordView($result->driver ?? null);
         $this->addValidationResultMessage();

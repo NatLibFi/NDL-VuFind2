@@ -495,14 +495,16 @@
 
 #media-modal-content {
     flex-direction: row;
-    .record-image-container {
+    .record-information-simple,
+    .record-media-container {
         width: 50%;
     }
 }
 @include media-breakpoint-down(sm) {
     #media-modal-content {
         flex-direction: column;
-        .record-image-container {
+        .record-information-simple,
+        .record-media-container {
             width: 100%;
             .image-popup-trigger {
                 max-height: 300px;

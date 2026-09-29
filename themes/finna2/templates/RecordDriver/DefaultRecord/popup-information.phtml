@@ -11,7 +11,7 @@
 ?>
 <div id="popup-content-collapse" class="content">
   <h3 id="popup-image-title" class="title">
-    <?=$this->escapeHtml($this->driver->getTitle())?>
+    <?=$this->escapeHtml($this->truncate($this->driver->getTitle(), 180));?>
   </h3>
 <?php
 $otherTitles = array_merge(

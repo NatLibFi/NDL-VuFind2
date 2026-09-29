@@ -871,8 +871,9 @@ finna.layout = (function finnaLayout() {
       'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
       'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
     };
-    $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
+    $('.audio-accordion .audio-item-wrapper:not(.done)').each(function initAudioPlayer() {
       var self = $(this);
+      self.addClass('done');
       var play = self.find('.play');
       var source = self.find('source');
       play.one('click', function onPlay() {
@@ -911,6 +912,7 @@ finna.layout = (function finnaLayout() {
         $(this).trigger('click');
       }
     });
+
   }
 
   /**
@@ -1198,6 +1200,7 @@ finna.layout = (function finnaLayout() {
       initPrintTriggers();
       initSelectAllButtonListeners();
     },
+    initAudioButtons:initAudioButtons,
     showPostLoginLightbox: showPostLoginLightbox
   };
 
