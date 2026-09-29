@@ -6,6 +6,11 @@ override_full_sections = "UpdateAddress"
 ; An optional catalog id that is used in the translation string when translating
 ; location names and opac messages (e.g. location_{id}_ADU)
 id = "outi"
+; Koha version. This is required to adapt for newer API features. E.g. Koha 25.11
+; allows faster retrieval of holds and their associated item and biblio records.
+; Format for the setting should follow Koha's major.minor version numbering. Valid
+; values are e.g. "25.05" and "25.11". Default is compatibility with Koha 20.05.
+;kohaVersion = "25.05"
 ; The API address without any version such as v1
 host = "http://koha-server/api"
 ; OAuth2 client ID

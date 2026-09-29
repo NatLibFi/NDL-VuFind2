@@ -152,11 +152,7 @@
 
       <?php if ($abstracts = $this->driver->getAbstracts()): ?>
         <div class="wide summary recordSummary">
-          <?php if (isset($abstracts[$this->layout()->userLang])): ?>
-            <?= $this->recordFieldMarkdown()->toHTML(($abstracts[$this->layout()->userLang]), "\n") ?>
-          <?php else: ?>
-            <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $abstracts), "\n") ?>
-          <?php endif; ?>
+          <?= $this->recordFieldMarkdown()->toHTML(implode("\n\n", $abstracts), "\n") ?>
         </div>
       <?php endif; ?>
       <?php

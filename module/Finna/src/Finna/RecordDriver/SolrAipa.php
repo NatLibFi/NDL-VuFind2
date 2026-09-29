@@ -125,15 +125,14 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = false)
+    public function getAllImages($includePdf = false)
     {
-        $cacheKey = __FUNCTION__ . "/$language" . ($includePdf ? '/1' : '/0');
+        $cacheKey = __FUNCTION__ . ($includePdf ? '/1' : '/0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -276,8 +275,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         string $headingType = 'subject',
         ?string $requiredType = null
     ) {
-        $lang = $this->getLocale();
-        $lang = $lang === 'en-gb' ? 'en' : $lang;
+        $lang = $this->preferredLanguage;
         $xml = $this->getXmlReader();
         $elements = [];
         foreach ($this->getElements($xmlElementName) as $xmlElement) {
@@ -314,14 +312,12 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         if (!($elements = $this->getElements('rights'))) {
             return false;
@@ -333,7 +329,7 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         $rights = [
             'copyright' => $this->getMappedRights($value),
         ];
-        if ($link = $this->getRightsLink($rights['copyright'], $language)) {
+        if ($link = $this->getRightsLink($rights['copyright'])) {
             $rights['link'] = $link;
         }
         return $rights;

@@ -63,18 +63,6 @@ class Loader extends \VuFind\Record\Loader
     protected $recordRedirectionRules = [];
 
     /**
-     * Set preferred language for display strings from RecordDriver.
-     *
-     * @param string $language Language
-     *
-     * @return void
-     */
-    public function setPreferredLanguage($language)
-    {
-        $this->preferredLanguage = $language;
-    }
-
-    /**
      * Set record redirection rules.
      *
      * @param array $rules Rules.
@@ -163,10 +151,6 @@ class Loader extends \VuFind\Record\Loader
             throw new RecordMissingException(
                 'Record ' . $source . ':' . $id . ' does not exist.'
             );
-        }
-
-        if ($this->preferredLanguage) {
-            $result->tryMethod('setPreferredLanguage', [$this->preferredLanguage]);
         }
 
         return $result;

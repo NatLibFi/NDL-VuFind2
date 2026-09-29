@@ -65,10 +65,6 @@ class LoaderFactory extends \VuFind\Record\LoaderFactory
         ?array $options = null
     ) {
         $loader = parent::__invoke($container, $requestedName, $options);
-        $loader->setPreferredLanguage(
-            $container->get(\VuFind\I18n\Locale\LocaleSettings::class)
-                ->getUserLocale()
-        );
         $redirectSources
             = $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('config')
             ->Record->missing_record_redirect ?? null;

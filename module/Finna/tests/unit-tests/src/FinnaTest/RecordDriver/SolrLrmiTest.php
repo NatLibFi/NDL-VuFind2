@@ -338,13 +338,7 @@ class SolrLrmiTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $record->setTranslator($translator);
+        $record->setPreferredLanguage($language);
         $defaultData = [
             'fullrecord' => $fixture,
         ];

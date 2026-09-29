@@ -422,19 +422,17 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $events = $this->getProductionEvents();
         foreach ($events['accessRestrictions'] ?? [] as $type) {
             $result = ['copyright' => $type];
-            if ($link = $this->getRightsLink($type, $language)) {
+            if ($link = $this->getRightsLink($type)) {
                 $result['link'] = $link;
             }
             return $result;
@@ -622,9 +620,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getDescription()
     {
-        $locale = $this->getLocale();
+        $language = $this->preferredLanguage;
         $results = $this->getDescriptionData();
-        return $results['contentDescription'][$locale]
+        return $results['contentDescription'][$language]
             ?? $results['contentDescription']['all']
             ?? [];
     }
@@ -665,8 +663,7 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
     /**
      * Return image rights.
      *
-     * @param string $language       Language
-     * @param bool   $skipImageCheck Whether to check that images exist
+     * @param bool $skipImageCheck Whether to check that images exist
      *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0') (optional)
@@ -674,14 +671,14 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      *   'link'        Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language, $skipImageCheck = false)
+    public function getImageRights($skipImageCheck = false)
     {
-        if (!$skipImageCheck && !$this->getAllImages($language)) {
+        if (!$skipImageCheck && !$this->getAllImages()) {
             return false;
         }
 
         $rights = [];
-        if ($type = $this->getAccessRestrictionsType($language)) {
+        if ($type = $this->getAccessRestrictionsType()) {
             $rights['copyright'] = $type['copyright'];
             if (isset($type['link'])) {
                 $rights['link'] = $type['link'];
@@ -986,9 +983,9 @@ class SolrForward extends \VuFind\RecordDriver\SolrDefault implements \Psr\Log\L
      */
     public function getSummary()
     {
-        $locale = $this->getLocale();
+        $language = $this->preferredLanguage;
         $results = $this->getDescriptionData();
-        return $results['synopsis'][$locale]
+        return $results['synopsis'][$language]
             ?? $results['synopsis']['all']
             ?? [];
     }

@@ -1,9 +1,8 @@
 <?php foreach (array_values($documents) as $i => $document): ?>
     <?php
-        $language = $this->layout()->userLang;
         if (!isset($document['rights'])) {
-            $rights = $this->driver->getAccessRestrictionsType($language);
-            $rightsDescription = $this->driver->getAccessRestrictions($language);
+            $rights = $this->driver->getAccessRestrictionsType();
+            $rightsDescription = $this->driver->getAccessRestrictions();
         } else {
             $rights = $document['rights'];
             $rightsDescription = $rights['description'] ?? [];
