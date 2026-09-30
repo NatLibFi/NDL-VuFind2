@@ -33,7 +33,8 @@
         <?php $aAttrs = [
             'href' => $this->proxyUrl($document['url']),
             'target' => '_blank',
-            'aria-label' => $this->translate('Download the file') . ' ' . (!empty($description) ? $description : ''),
+            'aria-label' => $this->translate('Download the file') . (trim((string)$description) !== '' ? ' ' . trim((string)$description) : ''),
+
         ];
         if ($posterUrl = $document['posterUrl'] ?? null) {
             $aAttrs['data-poster-url'] = $posterUrl;
