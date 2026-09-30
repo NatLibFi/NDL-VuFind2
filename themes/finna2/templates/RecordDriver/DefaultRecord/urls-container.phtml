@@ -1,0 +1,42 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/thumbnail.phtml -->
+<?php
+  $medias = $this->record($this->driver)->getMedias();
+  $onlineURLs = $medias['onlineURLs'];
+  $otherURLs = $medias['otherURLs'];
+  $mergedURLs = $medias['mergedURLs'];
+
+  $identifierLinks = $this->identifierLinker($this->driver, 'record');
+  $openUrl = $this->openUrl($this->driver, 'record');
+?>
+
+<div class="recordURLs local-available-online-record">
+  <div class="fulltextField url-template hidden">
+    <a class="fulltext" href="HREF" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
+      <?=$this->icon('external-link') ?> DESC
+      <span class="online-source">SOURCE</span>
+    </a>
+    <?php if (!empty($url['part'])): ?>
+      <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?>
+    <?php endif; ?>
+  </div>
+
+  <?php foreach ($onlineURLs['urls'] as $url): ?>
+    <?= $this->component('finna-fulltext-url', $url) ?>
+  <?php endforeach; ?>
+  <?php foreach ($otherURLs['urls'] as $url): ?>
+    <?= $this->component('finna-fulltext-url', $url) ?>
+  <?php endforeach; ?>
+  <?php if ($mergedURLs['count']): ?>
+    <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $mergedURLs['count']])?>">
+      <?php foreach ($mergedURLs['urls'] as $url): ?>
+        <?= $this->component('finna-fulltext-url', $url) ?>
+      <?php endforeach; ?>
+    </div>
+  <?php endif; ?>
+
+  <?=$identifierLinks?>
+  <?php if ($openUrl->isActive()): ?>
+    <?=$openUrl->renderTemplate()?><br>
+  <?php endif; ?>
+</div>
+<!-- END of: finna - RecordDriver/DefaultRecord/thumbnail.phtml -->

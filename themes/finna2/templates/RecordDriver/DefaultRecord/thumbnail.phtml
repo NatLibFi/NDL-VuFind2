@@ -1,0 +1,33 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/thumbnail.phtml -->
+<?php
+  if ($this->driver->tryMethod('getIiifManifests')) {
+    return '';
+  }
+  $medias = $this->record($this->driver)->getMedias();
+  $audioURLs = $medias['audioURLs'];
+  $videoURLs = $medias['videoURLs'];
+
+  $img = $this->recordImage($this->record($this->driver));
+
+  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+?>
+<div class="media-<?=$thumbnailAlignment ?><?=$audioURLs['count'] ? ' audio' : ''?>">
+
+  <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
+  <?php if ($videoURLs['count']): ?>
+    <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoURLs['urls']]);?>
+  <?php endif; ?>
+
+  <?php if ($audioURLs['count']): ?>
+    <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioURLs['urls']]);?>
+  <?php endif; ?>
+
+  <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+    <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+    </div>
+  <?php endif; ?>
+
+  <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
+</div>
+<!-- END of: finna - RecordDriver/DefaultRecord/thumbnail.phtml -->

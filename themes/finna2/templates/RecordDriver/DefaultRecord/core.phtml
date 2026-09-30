@@ -1,87 +1,10 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/core.phtml -->
 <?php
-  $openUrl = $this->openUrl($this->driver, 'record');
-  $openUrlActive = $openUrl->isActive();
-  // Account for replace_other_urls setting
-  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $onlineURLs = $this->driver->tryMethod('getOnlineURLs');
-  $mergedData = $this->driver->tryMethod('getMergedRecordData');
-  $renderedURLs = [];
-  $videoUrls = [];
-  $audioUrls = [];
-  $otherUrls = [];
   $binding = $this->driver->tryMethod('getBinding');
-  $iiifManifests = $this->driver->tryMethod('getIiifManifests');
 
-  $addRenderedUrl = function (array $url) use (&$renderedURLs) {
-    $renderedURLs[] = [
-      'url' => $url['url'],
-      'desc' => $url['desc'] ?? $url['text'] ?? '',
-    ];
-  };
-
-  $isRendered = function (array $url) use (&$renderedURLs) {
-    foreach ($renderedURLs as $renderedURL) {
-      if ($url['url'] === $renderedURL['url'] && ($url['desc'] ?? $url['text'] ?? '') === $renderedURL['desc']) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  if (!empty($urls)) {
-    foreach ($urls as $url) {
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
-        $videoUrls[] = $url;
-      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
-        $audioUrls[] = $url;
-      } else {
-        $otherUrls[] = $url;
-      }
-    }
-  }
-
-  if (!empty($onlineURLs)) {
-    $tempUrlArray = [];
-    foreach ($onlineURLs as $url) {
-      if (!empty($url['embed']) && $url['embed'] == 'audio') {
-        $audioUrls[] = $url;
-      } else {
-        $tempUrlArray[] = $url;
-      }
-    }
-    $onlineURLs = $tempUrlArray;
-  }
-
-  $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  $img = $this->recordImage($this->record($this->driver));
-
-  $thumbnail = false;
-  if (!$iiifManifests):
-    $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
-    ob_start(); ?>
-    <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
-
-      <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
-      <?php if (!empty($videoUrls)): ?>
-        <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls]);?>
-      <?php endif; ?>
-
-      <?php if (!empty($audioUrls)): ?>
-        <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
-      <?php endif; ?>
-
-      <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-        <div class="organisation-menu">
-            <?=$this->render('record/record-organisation-menu.phtml') ?>
-        </div>
-      <?php endif; ?>
-
-      <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
-    </div>
-    <?php $thumbnail = ob_get_contents(); ?>
-    <?php ob_end_clean();
-  endif ?>
+  $thumbnail = $this->record($this->driver)->renderTemplate('thumbnail.phtml');
+  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media">
@@ -124,82 +47,7 @@
       $formats = $this->driver->getFormats();
     ?>
 
-    <?php // Include the recordURLs div as a placeholder for URLs from holdings too ?>
-    <div class="recordURLs local-available-online-record">
-      <?php // The following template is used in finna-record.js to pull links from real-time holdings ?>
-      <div class="fulltextField url-template hidden">
-        <a class="fulltext" href="HREF" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
-          <?=$this->icon('external-link') ?> DESC
-          <span class="online-source">SOURCE</span>
-        </a>
-        <?php if (!empty($url['part'])): ?>
-          <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?>
-        <?php endif; ?>
-      </div>
-
-      <?php foreach ($otherUrls ?? [] as $url): ?>
-        <?php
-          if ($isRendered($url)) {
-            continue;
-          }
-
-          $desc = $url['desc'] ?? $url['url'];
-          if ($desc === $url['url']) {
-            $desc = $this->truncateUrl($desc);
-          }
-          $icon = 'external-link';
-          if (!empty($url['desc'])) {
-            $map = ['Database Guide' => 'database-info', 'Database Interface' => 'database-browse'];
-            if (isset($map[$url['desc']])) {
-              $icon = $map[$url['desc']];
-            }
-          }
-        ?>
-        <div class="fulltextField">
-          <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
-            <?=$this->icon($icon) ?> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
-          </a>
-          <?php if (!empty($url['note'])): ?> <span class="url-public-note"><?=$this->escapeHtml($url['note'])?></span><?php endif; ?>
-          <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
-        </div>
-        <?php $addRenderedUrl($url); ?>
-      <?php endforeach; ?>
-      <?php foreach ($onlineURLs ?? [] as $url): ?>
-        <?php if ($isRendered($url)) {
-          continue;
-        } ?>
-        <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
-          <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
-          <?php if ($url['source']): ?>
-            <span class="online-source">(<?=$this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>
-          <?php endif; ?>
-        </div>
-        <?php $addRenderedUrl($url); ?>
-      <?php endforeach; ?>
-      <?php if (!empty($mergedData['urls'])): ?>
-        <?php
-          $filteredMergedURLs = array_filter($mergedData['urls'], function ($url) use ($isRendered) {
-            return !$isRendered($url);
-          });
-          $count = count($filteredMergedURLs);
-        ?>
-        <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $count])?>">
-          <?php foreach ($filteredMergedURLs as $url): ?>
-            <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
-              <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
-              <?php if ($url['source']): ?>
-                <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>
-              <?php endif; ?>
-            </div>
-            <?php $addRenderedUrl($url); ?>
-          <?php endforeach; ?>
-        </div>
-      <?php endif; ?>
-      <?=$this->identifierLinker($this->driver, 'record')?>
-      <?php if ($openUrlActive): ?>
-        <?=$openUrl->renderTemplate()?>
-      <?php endif; ?>
-    </div>
+    <?= $this->record($this->driver)->renderTemplate('urls-container.phtml'); ?>
 
     <div class="record-core-metadata">
       <?php $formats = $this->driver->getFormats();
@@ -228,7 +76,7 @@
         </div>
       <?php endif; ?>
 
-      <?=$this->record($driver)->renderTemplate('container-links.phtml', ['inRecordInfo' => true]); ?>
+      <?=$this->record($this->driver)->renderTemplate('container-links.phtml', ['inRecordInfo' => true]); ?>
       <?php $publications = $this->driver->getPublicationDetails();
       if (!empty($publications)): ?>
         <span class="recordPublications">

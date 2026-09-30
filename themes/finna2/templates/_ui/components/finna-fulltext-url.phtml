@@ -1,0 +1,27 @@
+<?php
+  $divAttrs = [
+    'class' => trim($this->_componentClass . ' ' . $this->class ?? ''),
+  ];
+  $url = $this->url ?? '';
+  $ariaLabel = $this->ariaLabel ?? 'external_online_link';
+  $icon = $this->icon ?? '';
+  $desc = $this->desc ?? $this->text ?? '';
+  $note = $this->note ?? '';
+  $part = $this->part ?? '';
+  $source = $this->source ?? '';
+  $onlineSourceDesc = '';
+  if ($source) {
+    $onlineSourceDesc = is_array($source) ? : $this->transEsc('default::source_' . $source, null, $source);
+  }
+?>
+
+<div<?=$this->htmlAttributes($divAttrs);?>>
+  <?php if ($url): ?>
+    <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url)) ?>" target="_blank" aria-label="<?=$this->transEscAttr($ariaLabel)?>">
+      <?php if ($icon):?><?= $this->icon($icon) ?> <?php endif;?><?=$this->transEsc('default::link_' . $desc, null, $desc)?>
+    </a>
+    <?php if ($source): ?> <span class="online-source">(<?= $onlineSourceDesc ?>)</span><?php endif; ?>
+  <?php endif; ?>
+  <?php if ($note): ?> <span class="url-public-note"><?=$this->escapeHtml($note)?></span><?php endif; ?>
+  <?php if ($part): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $part, null, $part) ?><?php endif; ?>
+</div>
