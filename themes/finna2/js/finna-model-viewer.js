@@ -697,6 +697,8 @@ class ModelViewerClass extends HTMLElement {
         }
         this.loadInfo.style.display = 'none';
         this.loaded = true;
+        this.getSize();
+        this.updateScale();
       },
       (xhr) => {
         let loaded;

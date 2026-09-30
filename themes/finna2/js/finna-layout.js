@@ -756,8 +756,9 @@ finna.layout = (function finnaLayout() {
       'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
       'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
     };
-    $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
+    $('.audio-accordion .audio-item-wrapper:not(.done)').each(function initAudioPlayer() {
       var self = $(this);
+      self.addClass('done');
       var play = self.find('.play');
       var source = self.find('source');
       play.one('click', function onPlay() {
@@ -796,6 +797,26 @@ finna.layout = (function finnaLayout() {
         $(this).trigger('click');
       }
     });
+
+  }
+
+  function initModelButtons() {
+    const modelViewer = document.getElementById('model-viewer');
+    let firstSrc = '';
+    document.querySelectorAll('.model-button:not(.done)').forEach((button) => {
+      let src = `${VuFind.path}/AJAX/JSON?${button.dataset.params}`;
+      button.addEventListener('click', (e) => {
+        document.getElementById('model-viewer').setAttribute('src', src);
+      });
+      if (!firstSrc) {
+        firstSrc = src;
+      }
+    });
+
+    modelViewer.src = firstSrc;
+    modelViewer.texture = `${VuFind.path}/themes/finna2/images/`;
+    modelViewer.scripts = `${VuFind.path}/themes/finna2/js/vendor/`;
+
   }
 
   /**
@@ -1155,6 +1176,8 @@ finna.layout = (function finnaLayout() {
       initOffcanvas();
       initMobileNavBtnAnimation();
     },
+    initAudioButtons:initAudioButtons,
+    initModelButtons: initModelButtons,
     showPostLoginLightbox: showPostLoginLightbox
   };
 

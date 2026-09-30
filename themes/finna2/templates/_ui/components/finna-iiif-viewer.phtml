@@ -2,9 +2,11 @@
 /**
  * Viewer for IIIF manifests and collections.
  *
- * @param array    manifestUrls   URLs of IIIF manifests to load
+ * @param array       manifestUrls   URLs of IIIF manifests to load
+ * @param ?array<int> pages          Pages to display on the viewer on initial load.
  */
 $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThemes: true);
+$pages = $this->pages ?? null;
 ?>
 
 <div class="record-viewer-container container">
@@ -34,7 +36,7 @@ $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThem
 
 <?php
 $tifyJsPath = json_encode($this->scriptSrc('vendor/tify/tify.min.js'));
-$tifyConfig = json_encode([
+$tifyConfig = [
   'container' => '#tify',
   'manifestUrl' => $this->manifestUrls[0]['url'],
   'language' => substr($this->layout()->userLang, 0, 2) ?? 'fi',
@@ -43,8 +45,13 @@ $tifyConfig = json_encode([
   // prevent mismatching colors.
   'colorMode' => 'light',
   'optionsResetOnPageChange' => ['pan', 'rotation', 'zoom'],
-  'urlQueryKey' => 'view',
-  'urlQueryParams' => [
+];
+
+if ($pages) {
+  $tifyConfig['pages'] = $pages;
+} else {
+  $tifyConfig['urlQueryKey'] = 'view';
+  $tifyConfig['urlQueryParams'] = [
     'annotationId',
     'annotationsVisible',
     'layers',
@@ -53,8 +60,9 @@ $tifyConfig = json_encode([
     'pan',
     'rotation',
     'zoom',
-  ],
-]);
+  ];
+}
+$tifyConfig = json_encode($tifyConfig);
 
 $js = <<<JS
     import Tify from $tifyJsPath;

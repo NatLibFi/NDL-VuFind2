@@ -377,7 +377,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      *
      * @return array
      */
-    protected function getAllModelsAsRepresentations(): array
+    public function getAllModelsAsRepresentations(): array
     {
         $models = $this->record->getDriver()->tryMethod('getModels', [], []);
         if (!$models) {

@@ -1,0 +1,4 @@
+<div class="inline-video-container">
+  <div class="inline-video" id="inline-video"></div>
+  <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $this->videos, 'inlineVideo' => true]);?>
+</div>
