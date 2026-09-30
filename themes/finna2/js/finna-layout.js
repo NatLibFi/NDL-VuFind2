@@ -800,6 +800,25 @@ finna.layout = (function finnaLayout() {
 
   }
 
+  function initModelButtons() {
+    const modelViewer = document.getElementById('model-viewer');
+    let firstSrc = '';
+    document.querySelectorAll('.model-button:not(.done)').forEach((button) => {
+      let src = `${VuFind.path}/AJAX/JSON?${button.dataset.params}`;
+      button.addEventListener('click', (e) => {
+        document.getElementById('model-viewer').setAttribute('src', src);
+      });
+      if (!firstSrc) {
+        firstSrc = src;
+      }
+    });
+
+    modelViewer.src = firstSrc;
+    modelViewer.texture = `${VuFind.path}/themes/finna2/images/`;
+    modelViewer.scripts = `${VuFind.path}/themes/finna2/js/vendor/`;
+
+  }
+
   /**
    * Initialize priority navigation
    */
@@ -1158,6 +1177,7 @@ finna.layout = (function finnaLayout() {
       initMobileNavBtnAnimation();
     },
     initAudioButtons:initAudioButtons,
+    initModelButtons: initModelButtons,
     showPostLoginLightbox: showPostLoginLightbox
   };
 

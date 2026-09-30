@@ -1143,7 +1143,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         return $this->renderTemplate('birth_death.phtml', compact('birth', 'death'));
     }
 
-    public function getPresentations()
+    public function getMedias()
     {
         $images = ($this->getView()->plugin('recordImage'))($this)->getAllImagesAsCoverLinks();
         $openUrl = $this->getView()->plugin('openUrl')($this->driver, 'record');
@@ -1156,7 +1156,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $videos = [];
         $audios = [];
         $others = [];
-        $models = $this->driver->tryMethod('getModels', default: []);
+        $models = ($this->getView()->plugin('recordImage'))($this)->getAllModelsAsRepresentations();
 
         $allUrls = [...$urls, ...$onlineUrls];
         $recordLinker = $this->getView()->plugin('recordLinker');

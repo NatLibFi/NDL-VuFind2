@@ -1,7 +1,6 @@
 <!-- START of: finna - record/media.phtml -->
  <?php
   $recordHelper = $this->record($this->driver);
-  $presentations = $recordHelper->getPresentations();
   $imageHelper = $this->recordImage($recordHelper);
   $scrollData = $this->scrollData ?? $this->layout()->scrollData ?? [];
 ?>

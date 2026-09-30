@@ -1,0 +1,20 @@
+<?php $translations = $this->partial('Helpers/modeljs-translations.phtml'); ?>
+
+<finna-model-viewer
+  id="model-viewer"
+  style="width:400px;height:400px"
+>
+</finna-model-viewer>
+
+<?php foreach ($this->models as $i => $presentation): ?>
+  <?php foreach ($presentation['models'] as $model): ?>
+    <button class="btn btn-primary model-button" data-params="<?= $model['params'] ?>"><?= "model_$i" ?></button>
+  <?php endforeach; ?>
+<?php endforeach; ?>
+
+<?php
+  $script = <<<JS
+      finna.layout.initModelButtons();
+      JS;
+?>
+<?=$this->assetManager()->outputInlineScriptString($script) ?>
