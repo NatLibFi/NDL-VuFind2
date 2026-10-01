@@ -22,7 +22,7 @@
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
       <?=$this->record($this->driver)->getLabelList() ?>
 
-      <?= $this->record($this->driver)->renderTemplate('urls-container.phtml') ?>
+      <?= $recordMedia->renderURLs(); ?>
 
       <div class="record-core-metadata">
         <?php $formats = $this->driver->getFormats();

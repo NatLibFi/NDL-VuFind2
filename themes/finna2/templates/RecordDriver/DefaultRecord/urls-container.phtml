@@ -5,7 +5,7 @@
 ?>
 
 <div class="recordURLs local-available-online-record">
-  <div class="fulltextField url-template hidden">
+    <div class="fulltextField url-template hidden">
     <a class="fulltext" href="HREF" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
       <?=$this->icon('external-link') ?> DESC
       <span class="online-source">SOURCE</span>
@@ -14,24 +14,25 @@
       <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?>
     <?php endif; ?>
   </div>
+  <div class="truncate-field">
+    <?php foreach ($this->onlineURLs['urls'] as $url): ?>
+      <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
+    <?php endforeach; ?>
+    <?php foreach ($this->otherURLs['urls'] as $url): ?>
+      <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
+    <?php endforeach; ?>
+    <?php if ($this->mergedURLs['count']): ?>
+      <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $mergedURLs['count']])?>">
+        <?php foreach ($this->mergedURLs['urls'] as $url): ?>
+          <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
+        <?php endforeach; ?>
+      </div>
+    <?php endif; ?>
 
-  <?php foreach ($this->onlineURLs['urls'] as $url): ?>
-    <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
-  <?php endforeach; ?>
-  <?php foreach ($this->otherURLs['urls'] as $url): ?>
-    <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
-  <?php endforeach; ?>
-  <?php if ($this->mergedURLs['count']): ?>
-    <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $mergedURLs['count']])?>">
-      <?php foreach ($this->mergedURLs['urls'] as $url): ?>
-        <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
-      <?php endforeach; ?>
-    </div>
-  <?php endif; ?>
-
-  <?=$identifierLinks?>
-  <?php if ($openUrl->isActive()): ?>
-    <?=$openUrl->renderTemplate()?><br>
-  <?php endif; ?>
+    <?=$identifierLinks?>
+    <?php if ($openUrl->isActive()): ?>
+      <?=$openUrl->renderTemplate()?><br>
+    <?php endif; ?>
+  </div>
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/thumbnail.phtml -->

@@ -8,7 +8,7 @@
   $replace = [
       $this->escapeHtmlAttr($this->proxyUrl($this->url)),
       $this->transEscAttr('external_online_link'),
-      $this->transEsc('default::link_' . $this->text ?? $this->desc, null, $this->text ?? $this->desc),
+      $this->transEsc('default::link_' . $this->text ?: $this->desc, null, $this->text ?: $this->desc),
   ];
 
   // Start the link with wrapping div

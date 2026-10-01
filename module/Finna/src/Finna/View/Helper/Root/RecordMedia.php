@@ -57,7 +57,26 @@ class RecordMedia extends AbstractHelper
      */
     protected ?AbstractRecord $driver = null;
 
+    /**
+     * Already processed URLs. Used to avoid duplicate URLs.
+     *
+     * @var array
+     */
     protected array $renderedURLs = [];
+
+    /**
+     * All the cache keys to store urls in proper caches
+     *
+     * @var array
+     */
+    protected array $cacheKeys = [
+        'videoURLs',
+        'audioURLs',
+        'otherURLs',
+        'onlineURLs',
+        'mergedURLs',
+        'iiifManifests'
+    ];
 
     /**
      * Runtime cache.
@@ -67,8 +86,9 @@ class RecordMedia extends AbstractHelper
     protected array $cache = [];
 
     protected array $externalIconMap = [
-      'Database Guide' => 'database-info',
-      'Database Interface' => 'database-browse',
+        'Database Guide' => 'database-info',
+        'Database Interface' => 'database-browse',
+        'proxy-link' => 'download',
     ];
 
     /**
@@ -87,22 +107,33 @@ class RecordMedia extends AbstractHelper
     }
 
     /**
+     * Returns true if the record.
+     */
+    public function hasURLs(): bool
+    {
+        foreach (['onlineURLs', 'otherURLs', 'mergedURLs'] as $key) {
+            if ($this->cache[$key]['count']) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Render template containing media for the record.
      *
      * @return string
      */
     public function renderMedia(): string
     {
-        $template = 'RecordDriver/%s/media.phtml';
-        $className = get_class($this->driver);
         return $this->renderClassTemplate(
-            $template,
-            $className,
+            'RecordDriver/%s/media.phtml',
+            get_class($this->driver),
             $context ?? [
-              'driver' => $this->driver,
-              'videoURLs' => $this->cache['videoURLs'],
-              'audioURLs' => $this->cache['audioURLs'],
-              'iiifManifests' => $this->cache['iiifManifests'],
+                'driver' => $this->driver,
+                'videoURLs' => $this->cache['videoURLs'],
+                'audioURLs' => $this->cache['audioURLs'],
+                'iiifManifests' => $this->cache['iiifManifests'],
             ]
         );
     }
@@ -114,11 +145,9 @@ class RecordMedia extends AbstractHelper
      */
     public function renderURLs(): string
     {
-        $template = 'RecordDriver/%s/urls-container.phtml';
-        $className = get_class($this->driver);
         return $this->renderClassTemplate(
-            $template,
-            $className,
+            'RecordDriver/%s/urls-container.phtml',
+            get_class($this->driver),
             [
               'driver' => $this->driver,
               'otherURLs' => $this->cache['otherURLs'],
@@ -143,13 +172,14 @@ class RecordMedia extends AbstractHelper
         $driverOnlineURLs = $this->driver->tryMethod('getOnlineURLs', [['images']], []);
         $mergedData = $this->driver->tryMethod('getMergedRecordData', default: []);
 
-        $iiifManifests = $this->driver->tryMethod('getIiifManifests');
+        $iiifManifests = $this->driver->tryMethod('getIiifManifests', default: []);
 
         $this->cache['iiifManifests']['count'] = count($iiifManifests);
         $this->cache['iiifManifests']['urls'] = $iiifManifests;
 
         foreach ($driverOnlineURLs as $url) {
             $url = json_decode($url, true);
+            $this->supplementURL($url);
             if ($this->deduplicateURL($url)) {
                 continue;
             }
@@ -157,7 +187,7 @@ class RecordMedia extends AbstractHelper
         }
 
         foreach ($urls as $url) {
-            $this->supplementExternalURL($url);
+            $this->supplementURL($url);
             if ($this->deduplicateURL($url)) {
                 continue;
             }
@@ -165,6 +195,7 @@ class RecordMedia extends AbstractHelper
         }
 
         foreach ($mergedData['urls'] ?? [] as $url) {
+            $this->supplementURL($url);
             if ($this->deduplicateURL($url)) {
                 continue;
             }
@@ -179,11 +210,11 @@ class RecordMedia extends AbstractHelper
      *
      * @return void
      */
-    protected function supplementExternalURL(&$url): void
+    protected function supplementURL(&$url): void
     {
         $desc = $url['desc'] ?? $url['url'];
         if ($desc === $url['url']) {
-            $desc = ($this->getView()->plugin('truncateUrl'))->truncateUrl($url['url']);
+            $desc = ($this->getView()->plugin('truncateUrl'))($url['url']);
         }
 
         if ($icon = ($this->externalIconMap[$desc] ?? '')) {
@@ -202,7 +233,7 @@ class RecordMedia extends AbstractHelper
     protected function deduplicateURL(array $url): bool
     {
         foreach ($this->renderedURLs as $renderedURL) {
-            if ($url['url'] === $renderedURL['url'] && ($url['desc'] ?? $url['text'] ?? '') === $renderedURL['desc']) {
+            if ($url['url'] === $renderedURL['url']) {
                 $cache = $renderedURL['cachedTo'];
                 foreach ($this->cache[$cache]['urls'] as &$originalURL) {
                     if ($originalURL['url'] === $url['url']) {
@@ -252,7 +283,6 @@ class RecordMedia extends AbstractHelper
         }
         $this->renderedURLs[] = [
           'url' => $url['url'],
-          'desc' => $url['desc'] ?? $url['text'] ?? '',
           'cachedTo' => $cachedTo,
         ];
     }
@@ -264,7 +294,7 @@ class RecordMedia extends AbstractHelper
      */
     protected function resetCache(): void
     {
-        foreach (['videoURLs', 'audioURLs', 'otherURLs', 'onlineURLs', 'mergedURLs', 'iiifManifests'] as $key) {
+        foreach ($this->cacheKeys as $key) {
             $this->cache[$key]['count'] = 0;
             $this->cache[$key]['urls'] = [];
         }
