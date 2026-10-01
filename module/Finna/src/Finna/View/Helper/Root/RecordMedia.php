@@ -85,6 +85,11 @@ class RecordMedia extends AbstractHelper
      */
     protected array $cache = [];
 
+    /**
+     * External link icon map.
+     *
+     * @var array
+     */
     protected array $externalIconMap = [
         'Database Guide' => 'database-info',
         'Database Interface' => 'database-browse',
