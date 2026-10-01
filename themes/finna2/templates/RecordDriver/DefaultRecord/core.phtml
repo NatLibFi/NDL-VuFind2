@@ -14,7 +14,7 @@
   $iiifManifests = $this->driver->tryMethod('getIiifManifests');
 
   // Add Finna skip link target to avoid landing into finnaMainTabs
-  $this->layout()->finnaSkipLinkTarget = $finnaSkipLinkTarget = 'record-skip-link-target';
+  $this->layout()->finnaSkipLinkTarget = 'record-skip-link-target';
 
   $addRenderedUrl = function (array $url) use (&$renderedURLs) {
     $renderedURLs[] = [
