@@ -1,14 +1,15 @@
 <!-- START of: finna - RecordDriver/SolrQdc/core.phtml -->
 <?php
-  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
-  $thumbnail = $this->record($this->driver)->renderTemplate('thumbnail.phtml');
+  $recordMedia = $this->recordMedia($this->driver);
+  $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  $media = $recordMedia->renderMedia();
 ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media">
   <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'left'): ?>
+    <?=$media ?>
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
@@ -97,8 +98,8 @@
       </div>
       <?php endif; ?>
     </div>
-  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'right'): ?>
+    <?=$media ?>
   <?php endif; ?>
 </div>
 <!-- END of: finna - RecordDriver/SolrQdc/core.phtml -->

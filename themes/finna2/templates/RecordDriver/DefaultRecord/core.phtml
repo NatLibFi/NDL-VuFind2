@@ -2,8 +2,9 @@
 <?php
   $binding = $this->driver->tryMethod('getBinding');
 
-  $thumbnail = $this->record($this->driver)->renderTemplate('thumbnail.phtml');
-  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  $recordMedia = $this->recordMedia($this->driver);
+  $media = $recordMedia->renderMedia();
+  $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
@@ -15,8 +16,8 @@
     <?=$this->extraControls['availabilityInfo'] ?? ''?>
   <?php endif; ?>
 
-  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'left'): ?>
+    <?=$media ?>
   <?php endif; ?>
   <div class="media-body record-information">
     <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
@@ -47,7 +48,7 @@
       $formats = $this->driver->getFormats();
     ?>
 
-    <?= $this->record($this->driver)->renderTemplate('urls-container.phtml'); ?>
+    <?= $recordMedia->renderURLs(); ?>
 
     <div class="record-core-metadata">
       <?php $formats = $this->driver->getFormats();
@@ -157,8 +158,8 @@
     </div>
     <?php endif; ?>
   </div>
-  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'right'): ?>
+    <?=$media ?>
   <?php endif; ?>
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/core.phtml -->

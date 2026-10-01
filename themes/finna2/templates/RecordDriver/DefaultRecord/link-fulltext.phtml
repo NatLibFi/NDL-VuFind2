@@ -1,0 +1,38 @@
+<?php
+  // Build the link into a variable to avoid extra whitespaces
+  $search = [
+    '%%url',
+    '%%ariaLabel',
+    '%%desc',
+  ];
+  $replace = [
+      $this->escapeHtmlAttr($this->proxyUrl($this->url)),
+      $this->transEscAttr('external_online_link'),
+      $this->transEsc('default::link_' . $this->text ?? $this->desc, null, $this->text ?? $this->desc),
+  ];
+
+  // Start the link with wrapping div
+  $link = '<div class="fulltextField">';
+  $link .= '<a class="fulltext" href="%%url" target="_blank" aria-label="%%ariaLabel">';
+  if ($linkIcon = $this->icon ?? 'external-link') {
+      $link .= $this->icon($linkIcon) . ' ';
+  }
+  $link .= '%%desc</a>';
+  if ($source = $this->source ?? '') {
+      $link .= ' <span class="online-source">(%%source)</span>';
+      $search[] = '%%source';
+      $replace[] = is_array($source) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $source, null, $source);
+  }
+  if ($linkNote = $this->note ?? '') {
+      $link = ' <span class="url-public-note">%%note</span>';
+      $search[] = '%%note';
+      $replace[] = $this->escapeHtml($linkNote);
+  }
+  if ($linkPart = $this->part ?? '') {
+      $link = ' <span class="coverage">%%part</span>';
+      $search[] = '%%part';
+      $replace[] = $this->transEsc('default::link_' . $linkPart, null, $linkPart);
+  }
+  $link .= '</div>';
+?>
+<?= str_replace($search, $replace, $link); ?>

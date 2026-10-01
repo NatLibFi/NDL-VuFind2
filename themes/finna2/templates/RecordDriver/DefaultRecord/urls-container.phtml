@@ -1,10 +1,5 @@
 <!-- START of: finna - RecordDriver/DefaultRecord/thumbnail.phtml -->
 <?php
-  $medias = $this->record($this->driver)->getMedias();
-  $onlineURLs = $medias['onlineURLs'];
-  $otherURLs = $medias['otherURLs'];
-  $mergedURLs = $medias['mergedURLs'];
-
   $identifierLinks = $this->identifierLinker($this->driver, 'record');
   $openUrl = $this->openUrl($this->driver, 'record');
 ?>
@@ -20,16 +15,16 @@
     <?php endif; ?>
   </div>
 
-  <?php foreach ($onlineURLs['urls'] as $url): ?>
-    <?= $this->component('finna-fulltext-url', $url) ?>
+  <?php foreach ($this->onlineURLs['urls'] as $url): ?>
+    <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
   <?php endforeach; ?>
-  <?php foreach ($otherURLs['urls'] as $url): ?>
-    <?= $this->component('finna-fulltext-url', $url) ?>
+  <?php foreach ($this->otherURLs['urls'] as $url): ?>
+    <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
   <?php endforeach; ?>
-  <?php if ($mergedURLs['count']): ?>
+  <?php if ($this->mergedURLs['count']): ?>
     <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $mergedURLs['count']])?>">
-      <?php foreach ($mergedURLs['urls'] as $url): ?>
-        <?= $this->component('finna-fulltext-url', $url) ?>
+      <?php foreach ($this->mergedURLs['urls'] as $url): ?>
+        <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', $url) ?>
       <?php endforeach; ?>
     </div>
   <?php endif; ?>

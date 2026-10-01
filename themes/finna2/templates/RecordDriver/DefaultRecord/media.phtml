@@ -1,0 +1,30 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/media.phtml -->
+<?php
+  if ($this->iiifManifests['count']) {
+    return '';
+  }
+
+  $img = $this->recordImage($this->record($this->driver));
+
+  $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+?>
+<div class="media-<?=$mediaAlignment ?><?=$this->audioURLs['count'] ? ' audio' : ''?>">
+
+  <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
+  <?php if ($this->videoURLs['count']): ?>
+    <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $this->videoURLs['urls']]);?>
+  <?php endif; ?>
+
+  <?php if ($this->audioURLs['count']): ?>
+    <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $this->audioURLs['urls']]);?>
+  <?php endif; ?>
+
+  <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
+    <div class="organisation-menu">
+        <?=$this->render('record/record-organisation-menu.phtml') ?>
+    </div>
+  <?php endif; ?>
+
+  <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
+</div>
+<!-- END of: finna - RecordDriver/DefaultRecord/media.phtml -->
