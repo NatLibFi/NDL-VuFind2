@@ -82,8 +82,7 @@
   ?>
   <?php if ($checkboxesShown): ?>
     <div class="checkbox-filters">
-      <fieldset>
-        <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
+      <fieldset aria-label="<?=$this->transEscAttr('checkbox_filter')?>">
         <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results, 'counts' => false]); ?>
       </fieldset>
     </div>
