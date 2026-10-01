@@ -107,19 +107,6 @@ class RecordMedia extends AbstractHelper
     }
 
     /**
-     * Returns true if the record.
-     */
-    public function hasURLs(): bool
-    {
-        foreach (['onlineURLs', 'otherURLs', 'mergedURLs'] as $key) {
-            if ($this->cache[$key]['count']) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
      * Render template containing media for the record.
      *
      * @return string
