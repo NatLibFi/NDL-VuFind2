@@ -65,7 +65,7 @@ class RecordMedia extends AbstractHelper
     protected array $renderedURLs = [];
 
     /**
-     * All the cache keys to store urls in proper caches
+     * All the cache keys to store urls in proper caches.
      *
      * @var array
      */
@@ -75,7 +75,7 @@ class RecordMedia extends AbstractHelper
         'otherURLs',
         'onlineURLs',
         'mergedURLs',
-        'iiifManifests'
+        'iiifManifests',
     ];
 
     /**
