@@ -156,3 +156,6 @@ archiveRequestRequireFilingUnit = true
 ; Allow piping images from provider, must have a permission which is granted by the
 ; provider. Used in CoverController::PipeAction.
 ;permissions[image_piping] = 1
+; Only images with the following copyrights can be piped.
+; Default is CC BY 4.0
+;piping_allowed_copyrights[] = 'CC BY 4.0'

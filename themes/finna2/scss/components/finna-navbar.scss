@@ -192,6 +192,13 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
 // Finna-specific custom display when collapsed
 @include media-breakpoint-down(md) {
   .finna-navbar-content {
+    border-radius: $border-radius-base;
+    .navbar-header {
+      padding: 0px;
+    }
+    .navbar-toggler {
+      gap: 0.25rem;
+    }
     .navbar-collapse,
     .navbar-form {
       color: $dropdown-link-color;
@@ -212,21 +219,13 @@ $finna-navbar-content-toggle-border-color:       $finna-navbar-content-border !d
         }
         > .active > a,
         a.active {
-          &,
-          &:hover,
-          &:focus {
-            color: $dropdown-link-hover-color;
-            background-color: $dropdown-link-hover-bg;
-          }
+          color: $dropdown-link-active-color;
+          background: $dropdown-link-active-bg;
         }
         > .disabled > a,
         a.disabled {
-          &,
-          &:hover,
-          &:focus {
-            color: $dropdown-link-color;
-            background-color: $dropdown-bg;
-          }
+          color: $dropdown-link-color;
+          background-color: $dropdown-bg;
         }
       }
     }

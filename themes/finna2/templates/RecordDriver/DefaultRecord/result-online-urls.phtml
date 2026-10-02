@@ -59,8 +59,11 @@
           ?>
           <?=$i > 0 ? '<br>' : ''?>
           <?php
+            $linkToResource = ($url['linkType'] ?? null) === 'proxy-link'
+                ? $this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $url['format'] ?? '', 'type' => 'document']])
+                : $this->proxyUrl($url['url']);
             $currentUrl = [
-              'href' => $this->proxyUrl($url['url']),
+              'href' => $linkToResource,
               'title' => $url['url'],
             ];
             switch ($url['embed'] ?? '') {

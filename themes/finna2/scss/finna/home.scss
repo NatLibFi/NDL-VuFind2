@@ -131,24 +131,7 @@ h2.introductionText {
   color: $infobox-text-color;
   background: $infobox-background;
   border: $infobox-border;
-  & h2 {
-    font-size: 1.777em;
-    line-height: 1.2em;
-  }
   & li {
     list-style-position: inside;
-  }
-  & p,li {
-    font-size: 1.2em;
-  }
-  & .icon, a {
-    color: $link-color;
-    text-shadow: none;
-  }
-  & a.btn-primary {
-    color: #fff;
-    .icon {
-      color: #fff;
-    }
   }
 }

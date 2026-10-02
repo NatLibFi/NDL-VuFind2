@@ -78,6 +78,19 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
             'permissions' => [
               'image_piping' => true,
             ],
+            'piping_allowed_copyrights' => [
+              'CC BY 4.0',
+            ],
+          ],
+        ];
+        $datasourceConfigPipedWithWrongCopyrights = [
+          'test' => [
+            'permissions' => [
+              'image_piping' => true,
+            ],
+            'piping_allowed_copyrights' => [
+              'CC BY-SA 4.0',
+            ],
           ],
         ];
         $requestWithApiKey = [
@@ -202,6 +215,15 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
           $configWithKeys,
           $datasourceConfigPiped,
           $requestWithMissingRecord,
+          $expectedResponse,
+        ];
+
+        $expectedResponse = new Response();
+        $expectedResponse->setStatusCode(Response::STATUS_CODE_403);
+        yield 'test with api key and permission but wrong copyright' => [
+          $configWithKeys,
+          $datasourceConfigPipedWithWrongCopyrights,
+          $requestWithApiKey,
           $expectedResponse,
         ];
     }

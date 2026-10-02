@@ -34,6 +34,7 @@ namespace Finna\RecordDriver\Feature;
 use Finna\Db\Entity\UserEntityInterface;
 use Finna\Db\Service\CommentsServiceInterface;
 use Finna\RecordDriver\RenderContext;
+use Finna\Xml\NamespacelessXmlRenderer;
 
 use function count;
 use function in_array;
@@ -55,11 +56,11 @@ use function is_callable;
 trait FinnaRecordTrait
 {
     /**
-     * Preferred language for display strings.
+     * Preferred language (two-character code) for display strings.
      *
      * @var string
      */
-    protected $preferredLanguage = null;
+    protected $preferredLanguage = '';
 
     /**
      * Search settings.
@@ -363,7 +364,8 @@ trait FinnaRecordTrait
      */
     public function setPreferredLanguage($language)
     {
-        $this->preferredLanguage = $language;
+
+        $this->preferredLanguage = substr($language, 0, 2);
     }
 
     /**
@@ -569,9 +571,17 @@ trait FinnaRecordTrait
      */
     public function getFilteredXMLLegacy()
     {
-        $filteredXml = $this->tryMethod('getFilteredXMLElementLegacy');
+        $filteredXml = $this->tryMethod('getFilteredXMLElement');
         if ($filteredXml) {
-            return $filteredXml->asXML();
+            $result = (new NamespacelessXmlRenderer($filteredXml->export(), null, null))->render();
+            // We need to hack the xsi namespace back in for back-compatibility:
+            $result = str_replace(
+                '<collection xmlns="http://www.loc.gov/MARC21/slim" schemaLocation',
+                '<collection xmlns="http://www.loc.gov/MARC21/slim"'
+                    . ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation',
+                $result
+            );
+            return $result;
         }
         return '';
     }

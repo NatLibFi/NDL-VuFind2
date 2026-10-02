@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2017-2025.
+ * Copyright (C) The National Library of Finland 2017-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -30,6 +30,7 @@
 
 namespace Finna\ILS\Driver;
 
+use Composer\Semver\Comparator;
 use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\TranslatableString;
@@ -88,7 +89,7 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     /**
      * Whether to use location in addition to library when grouping holdings.
      *
-     * @param bool
+     * @var bool
      */
     protected $groupHoldingsByLocation;
 
@@ -126,6 +127,17 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      * @var array
      */
     protected $nonPayableStatuses = [];
+
+    /**
+     * Patron fields always required in patron update.
+     *
+     * @var array
+     */
+    protected $requiredPatronFields = [
+        'surname',
+        'library_id',
+        'category_id',
+    ];
 
     /**
      * Initialize the driver.
@@ -268,6 +280,23 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
      */
     public function getMyHolds($patron)
     {
+        $embedBiblios = Comparator::greaterThanOrEqualTo($this->kohaVersion, '23.11');
+        $embedItems = Comparator::greaterThanOrEqualTo($this->kohaVersion, '25.11');
+
+        $embed = [];
+        if ($embedBiblios) {
+            $embed[] = 'biblio';
+        }
+        if ($embedItems) {
+            $embed[] = 'item';
+        }
+        if ($this->config['Holds']['displayHoldShelf'] ?? false) {
+            $embed[] = 'hold_pickup_shelf';
+        }
+        $headers = $embed ? [
+            'x-koha-embed' => implode(',', $embed),
+        ] : [];
+
         $request = [
             'path' => 'v1/holds',
             'query' => [
@@ -275,19 +304,17 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
                 '_match' => 'exact',
                 '_per_page' => -1,
             ],
+            'headers' => $headers,
         ];
-        if ($this->config['Holds']['displayHoldShelf'] ?? false) {
-            $request['headers']['x-koha-embed'] = 'hold_pickup_shelf';
-        }
         $result = $this->makeRequest($request);
 
         $holds = [];
         foreach ($result['data'] as $entry) {
-            $biblio = $this->getBiblio($entry['biblio_id']);
+            $biblio = $embedBiblios ? $entry['biblio'] : $this->getBiblio($entry['biblio_id']);
             $frozen = !empty($entry['suspended']);
             $volume = '';
             if ($entry['item_id'] ?? null) {
-                $item = $this->getItem($entry['item_id']);
+                $item = $embedItems ? $entry['item'] : $this->getItem($entry['item_id']);
                 $volume = $item['serial_issue_number'];
             }
             $available = !empty($entry['waiting_date']);
@@ -1335,12 +1362,14 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
     {
         $result = $this->makeRequest(['v1', 'patrons', $patron['id']]);
 
-        $request = $result['data'];
-        // Unset read-only fields
-        unset($request['anonymized']);
-        unset($request['restricted']);
-        unset($request['expired']);
-
+        // Koha's patron PUT method actually works like PATCH, but the schema includes mandatory fields that we need to
+        // take from the existing patron information:
+        $request = array_filter(
+            $result['data'],
+            fn ($key) => in_array($key, $this->requiredPatronFields),
+            ARRAY_FILTER_USE_KEY
+        );
+        // Merge the requested changes:
         $request = array_merge($request, $fields);
 
         $result = $this->makeRequest(
@@ -2033,5 +2062,33 @@ class KohaRest extends \VuFind\ILS\Driver\KohaRest
         $client = parent::createHttpClient($url);
         $client->setOptions(['keepalive' => false]);
         return $client;
+    }
+
+    /**
+     * Get item status code for NotForLoan or Lost status.
+     *
+     * @param string $code Status code
+     * @param array  $data Status data
+     * @param array  $item Item
+     *
+     * @return string
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     *
+     * @todo Revert when upstream version is fixed.
+     */
+    protected function getStatusCodeItemNotForLoanOrLost($code, $data, $item)
+    {
+        // NotForLoan and Lost are special: status has a library-specific
+        // status number. Allow mapping of different status numbers
+        // separately (e.g. Item::NotForLoan with status number 4
+        // is mapped with key Item::NotForLoan4):
+        $statusKey = $code . ($data['status'] ?? '-');
+        // Replace ':' in status key if used as status since ':' is
+        // the namespace separator in translatable strings:
+        if (null !== ($status = $this->itemStatusMappings[$statusKey] ?? null)) {
+            return $status;
+        }
+        return $this->getPrefixedMessage($data['code'] ?? str_replace(':', '_', $statusKey));
     }
 }

@@ -26,6 +26,7 @@
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ronja Koistinen <ronja.koistinen@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
@@ -50,6 +51,7 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
@@ -158,14 +160,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $fields = $this->getMarcReader()->getFields('506');
         foreach ($fields as $field) {
@@ -286,6 +286,12 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                         }
                     }
                     $tmp['value'] = implode(' ', $line);
+                } elseif ($value == '774') {
+                    // Use general field title instead of subfield i
+                    $tmp['title'] = 'note_774';
+                    // Always use title as link instead of subfield w
+                    $tmp['link']['type'] = 'title';
+                    $tmp['link']['value'] = $tmp['value'];
                 } elseif ($value == '773') {
                     $relation =
                         $this->relationMappings[$this->stripTrailingPunctuation($this->getSubfield($field, 'i'), ':')]
@@ -323,15 +329,14 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
-        $cacheKey = __FUNCTION__ . "/$language/" . ($includePdf ? '1' : '0');
+        $cacheKey = __FUNCTION__ . ($includePdf ? '1' : '0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -960,66 +965,6 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         );
 
         return $doc;
-    }
-
-    /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
-     *
-     * This is not particularly beautiful, but the aim is to do the work with the
-     * least effort.
-     * Legacy method, use getFilteredXMLElement instead.
-     *
-     * @return \SimpleXMLElement
-     */
-    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
-    {
-        $collection = new \DOMDocument();
-        $collection->preserveWhiteSpace = false;
-        $collection->loadXML($this->getMarcReader()->toFormat('MARCXML'));
-        $record = $collection->getElementsByTagName('record')->item(0);
-        $fieldsToRemove = [];
-        $componentPartIds = [];
-        foreach ($record->getElementsByTagName('datafield') as $field) {
-            $tag = $field->getAttribute('tag');
-            // Delete 520 (summary etc. may contain material under copyright) and
-            // 979 (we will add a new one with just component part ids):
-            if ('520' === $tag) {
-                $fieldsToRemove[] = $field;
-            } elseif ('979' === $tag) {
-                foreach ($field->getElementsByTagName('subfield') as $subfield) {
-                    if ('a' === $subfield->getAttribute('code')) {
-                        $componentPartIds[] = $subfield->textContent;
-                    }
-                }
-                $fieldsToRemove[] = $field;
-            }
-        }
-        foreach ($fieldsToRemove as $field) {
-            $record->removeChild($field);
-        }
-        if ($componentPartIds) {
-            $field = $collection->createElement('datafield');
-            $tag = $collection->createAttribute('tag');
-            $tag->value = '979';
-            $field->appendChild($tag);
-            $ind1 = $collection->createAttribute('ind1');
-            $ind1->value = ' ';
-            $field->appendChild($ind1);
-            $ind2 = $collection->createAttribute('ind2');
-            $ind2->value = ' ';
-            $field->appendChild($ind2);
-            foreach ($componentPartIds as $id) {
-                $subfield = $collection->createElement('subfield');
-                $code = $collection->createAttribute('code');
-                $code->value = 'a';
-                $subfield->appendChild($code);
-                $subfield->appendChild($collection->createTextNode($id));
-                $field->appendChild($subfield);
-            }
-            $record->appendChild($field);
-        }
-
-        return simplexml_import_dom($collection);
     }
 
     /**
@@ -1763,6 +1708,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
         $languageMappings = ['fin' => 'fi', 'swe' => 'sv', 'eng' => 'en-gb'];
         $languages = [];
         $marc = $this->getMarcReader();
+        // Check language information in 886 field
         foreach ($marc->getFields('886') as $field) {
             $scope = $this->getSubfield($field, '2');
             if (!$scope || 'local' !== $scope) {
@@ -1782,6 +1728,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
             }
         }
         $summaries = [];
+        // Check language-specific 520 fields first
         foreach ($marc->getFields('520') as $field) {
             $summary = $this->getSubfield($field, 'a');
             if (!$summary) {
@@ -1791,15 +1738,17 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
             $lng = $link && isset($languages[$link]) ? $languages[$link] : '-';
             $summaries[$lng][] = $summary;
         }
-        foreach ($this->getprioritizedlanguages() as $language) {
+        foreach ($this->getPrioritizedLanguages() as $language) {
             if ($summary = $summaries[$language] ?? null) {
                 return $summary;
             }
         }
+        // Otherwise display all 520 fields and linked 880 fields
         $result = [];
         foreach ($summaries as $languageSummaries) {
             $result = array_merge($result, $languageSummaries);
         }
+        $result = [...$result, ...$this->getMarcReader()->getLinkedFieldsSubfields('880', '520', ['a'])];
         return $result;
     }
 
@@ -2227,10 +2176,20 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                         false
                     );
                     if ($name) {
-                        $currentArray = [
-                            'name' =>
-                                $this->stripTrailingPunctuation(array_shift($name)),
-                        ];
+                        // Field 800: Build series name from author, date, and series title
+                        // instead of the first marc field, which is author in 800
+                        if ($field == '800') {
+                            $nameSubfields = ['a', 'd', 't'];
+                            $name800 = $this->getSubfieldArray($currentField, $nameSubfields, false);
+                            $name = array_diff($name, $name800);
+                            $currentArray = [
+                                'name' => $this->stripTrailingPunctuation(implode(' ', $name800)),
+                            ];
+                        } else {
+                            $currentArray = [
+                                'name' => $this->stripTrailingPunctuation(array_shift($name)),
+                            ];
+                        }
                         $currentArray['additional'] = implode(' ', $name);
 
                         // Can we find an ISSN in subfield x? (Note that ISSN is

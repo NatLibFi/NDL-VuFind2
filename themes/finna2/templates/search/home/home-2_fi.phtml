@@ -1,19 +1,19 @@
 <!-- START of: finna - search/home/home-2.phtml -->
 <div>
-  <h2>home-2.phtml</h2>
+  <h2>home-2_fi.phtml</h2>
 </div>
 <div>
   <div class="info-col">
     <div class="infobox">
-    <h2>Kokeile ulkomaisten tieteellisten aineistojen hakua</h2>
-    <p>Tee sinua kiinnostava haku, ja valitse haun jälkeen ulkomaisten aineistojen välilehti.<p>
-    <p><small>Ulkomaiset aineistot sisältävät mm. vertaisarvioituja kokotekstejä sekä verkossa saatavilla olevia aineistoja.</small></p>
+    <h2>Kokeile kansainvälisten tieteellisten aineistojen hakua</h2>
+    <p>Tee sinua kiinnostava haku ja valitse hakutuloksista kansainvälisten aineistojen välilehti.<p>
+    <p><small>Kansainväliset aineistot sisältävät mm. vertaisarvioituja kokotekstejä ja verkossa saatavilla olevia aineistoja.</small></p>
     <p><a class="btn btn-primary" role="button" href="<?=$this->url('primo-search');?>?lookfor=Work%20intensification&amp;type=AllFields&amp;filter%5B%5D=tlevel%3A%22online_resources%22" title="Esimerkkihaku"><?=$this->icon('search') ?> Esimerkkihaku</a>
     </div>
   </div>
   <div class="info-col">
     <div class="infobox">
-      <h2>Uusi lainat </h2>
+      <h2>Uusi lainat</h2>
       <p><a class="btn btn-primary" role="button" href="<?=$this->url('myresearch-checkedout')?>" title="Kirjaudu sisään"><?=$this->icon('sign-in') ?> Kirjaudu sisään </a> kirjastokortilla tai Haka-tunnuksillasi.</p>
       <p>Klikkaa uusi kaikki lainat -painiketta.</p>
       <p>Kaikki uusittavissa olevat lainasi uusitaan.</p>
@@ -22,17 +22,18 @@
 
   <div class="info-col">
     <div class="infobox">
-      <h2>Luokan infobox tyylit voi määritellä variables.less -tiedostossa</h2>
+      <h2>Luokan infobox tyylit voi määritellä variables.scss -tiedostossa</h2>
       <ul>
-        <li>@infobox-background = laatikon taustaväri</li>
-        <li>@infobox-border = laatikon reunat</li>
-        <li>@infobox-text-color = laatikon tekstin oletusväri</li>
-        <li>@infobox-box-shadow = laatikon varjostus</li>
+        <li>$home-middle-background = background color of the whole section</li>
+        <li>$infobox-background = laatikon taustaväri</li>
+        <li>$infobox-border = laatikon reunat</li>
+        <li>$infobox-text-color = laatikon tekstin oletusväri</li>
+        <li>$infobox-box-shadow = laatikon varjostus</li>
       </ul>
     </div>
   </div>
 </div>
 <div class="clearfix"></div>
-<div><?= $this->feed('carousel'); ?></div>
+<div><?= $this->feed('carousel-1'); ?></div>
 <div><?= $this->feed('carousel-small'); ?></div>
 <!-- END of: finna - search/home/home-2.phtml -->

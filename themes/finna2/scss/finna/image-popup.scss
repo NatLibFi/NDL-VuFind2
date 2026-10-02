@@ -383,10 +383,13 @@
         }
 
         h3.title {
+            font-size: $font-size-h3;
             padding: 0px 0px 0px;
-            letter-spacing: 0.2px;
             margin-top: 0px;
             margin-bottom: 0;
+        }
+        .record-organisation-header {
+            font-size: $font-size-h4;
         }
         .result-other-titles {
             margin-top: 3px;
@@ -398,9 +401,8 @@
 
         .summary {
             margin: 10px 0px;
-            color: rgb(90, 90, 90);
+            color: $gray-light;
             min-width: 200px;
-            line-height: 1.6em;
             &.loading {
                 max-height: 100px;
                 overflow: hidden;
@@ -420,12 +422,9 @@
 
         .image-rights {
             text-align: left;
-            padding: 5px 0;
-            margin-top: 10px;
-            border-top: 1px solid  $gray-lighter;
+            padding: $padding-base-vertical 0;
+            border-top: 1px solid $border-color;
             color: $text-color;
-            margin-right: 0;
-
             .rights span {
                 font-weight: bold;
             }
@@ -454,7 +453,7 @@
 }
 
 .cc-rights {
-    background-color: $gray-ultralight;
+    background-color: $light;
     display: inline-block;
     font-weight: 500;
     margin: 10px 10px 10px 0;
@@ -462,6 +461,7 @@
     text-align: center;
     white-space: normal;
     overflow-wrap: anywhere;
+    border-radius: $border-radius-base;
     &:hover {
         color: inherit;
     }
@@ -614,11 +614,11 @@
         }
         &.no-image {
             ::before {
-                font-size: 39px;
-                color: $gray-lighter;
+                font-size: 3rem;
+                color: $record-cover-no-image-color;
                 padding: 0;
                 @include media-breakpoint-down(md) {
-                    font-size: 26px;
+                    font-size: 2rem;
                 }
             }
             img {
@@ -627,7 +627,12 @@
             .iconlabel {
                 display: flex;
                 margin-right: 0;
-                box-shadow: 0px 0px 0px 2px $gray-lighter inset;
+                background: $record-cover-no-image-background;
+                border-radius: $record-cover-no-image-border-radius;
+                border: 1px solid $record-cover-no-image-border-color;
+            }
+            &:hover {
+                text-decoration: none;
             }
             &.disable {
                 cursor: default;
@@ -721,7 +726,7 @@
             top: 0;
             justify-content: start;
             button {
-                background-color: #efefefcc;
+                background-color: $light;
                 margin: 0 1px;
                 padding: 0 4px;
                 height: 24px;
@@ -730,6 +735,10 @@
                 }
                 &:disabled {
                     color: lighten($gray-light, 30%);
+                }
+                &:hover:not(:disabled) {
+                    background: $dark;
+                    color: $light;
                 }
             }
             .track-holder {

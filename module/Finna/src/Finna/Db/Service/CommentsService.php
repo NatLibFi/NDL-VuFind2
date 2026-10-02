@@ -216,6 +216,59 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
     }
 
     /**
+     * Find comments by a user.
+     *
+     * Note: Returns also hidden comments.
+     *
+     * @param string              $id       Record ID to look up
+     * @param string              $source   Source of record to look up
+     * @param UserEntityInterface $user     User object or identifier
+     * @param ?DateTime           $fromDate Optional creation start date
+     *
+     * @return CommentsEntityInterface[]
+     */
+    public function findCommentsForRecordByUser(
+        string $id,
+        string $source,
+        UserEntityInterface $user,
+        ?DateTime $fromDate
+    ): array {
+        $resourceService = $this->getDbService(ResourceServiceInterface::class);
+        $resource = $resourceService->getResourceByRecordId($id, $source);
+
+        $commentsRecordRepo = $this->entityManager->getRepository(FinnaCommentsRecordEntityInterface::class);
+        $commentsRecord = $commentsRecordRepo->findBy(['recordId' => $id]);
+
+        if (!$resource && !$commentsRecord) {
+            return [];
+        }
+        $terms = [];
+        $parameters = [];
+        if ($resource) {
+            $terms[] = 'c.resource = :resource';
+            $parameters['resource'] = $resource;
+        }
+        if ($commentsRecord) {
+            $terms[] = 'c IN (:commentsRecord)';
+            $parameters['commentsRecord'] = array_map(fn ($c) => $c->getComment(), $commentsRecord);
+        }
+        $parameters['user'] = $user;
+        $dql = 'SELECT c '
+            . ' FROM ' . CommentsEntityInterface::class . ' c'
+            . ' WHERE (' . implode(' OR ', $terms) . ')'
+            . ' AND c.user = :user';
+        if ($fromDate) {
+            $dql .= ' AND c.created >= :fromDate';
+            $parameters['fromDate'] = $fromDate;
+        }
+        $dql .= ' ORDER BY c.created DESC';
+
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($parameters);
+        return $query->getResult();
+    }
+
+    /**
      * Get a paginated result of all comments made by the user.
      *
      * @param int    $userId User ID

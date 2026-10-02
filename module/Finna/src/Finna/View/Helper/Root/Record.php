@@ -825,15 +825,14 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Return an array of all record images in all sizes.
      *
-     * @param string $language   Language for description and rights
-     * @param bool   $thumbnails Whether to include thumbnail links if no image links
-     *                           are found
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     *                           links are found
+     * @param bool $thumbnails Whether to include thumbnail links if no image links
+     *                         are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language, $thumbnails = true, $includePdf = true)
+    public function getAllImages($thumbnails = true, $includePdf = true)
     {
         $recordId = $this->driver->getUniqueID();
 
@@ -844,7 +843,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
 
         $sizes = ['small', 'medium', 'large', 'master'];
-        $images = $this->driver->tryMethod('getAllImages', [$language, $includePdf]);
+        $images = $this->driver->tryMethod('getAllImages', [$includePdf]);
         if (null === $images) {
             $images = [];
         }
@@ -1303,10 +1302,9 @@ class Record extends \VuFind\View\Helper\Root\Record
         if ($this->driver->tryMethod('getModels')) {
             return true;
         }
-        $language = $this->getView()->layout()->userLang;
 
         $imageTypes = ['small', 'medium', 'large', 'master'];
-        $images = $this->getAllImages($language, false, false);
+        $images = $this->getAllImages(false, false);
         $hasValidImages = false;
         foreach ($images as $image) {
             if (array_intersect(array_keys($image['urls'] ?? []), $imageTypes)) {

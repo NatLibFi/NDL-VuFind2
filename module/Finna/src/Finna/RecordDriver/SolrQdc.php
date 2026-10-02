@@ -35,7 +35,6 @@ namespace Finna\RecordDriver;
 use VuFindXml\XmlDoc;
 
 use function array_slice;
-use function count;
 use function in_array;
 
 /**
@@ -154,24 +153,22 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Return an associative array of abstracts associated with this record.
      *
-     * @return array of abstracts using abstract languages as keys
+     * @return array
      */
     public function getAbstracts()
     {
-        $abstracts = [];
-        $abstract = '';
-        $lang = '';
+        $preferred = $all = [];
         $xml = $this->getXmlReader();
         foreach ($this->getDcTermsElements('abstract') as $node) {
             $abstract = $xml->value($node);
-            $lang = $this->getLangAttr($node);
-            if ($lang == 'en') {
-                $lang = 'en-gb';
+            $lang = $this->getLangAttr($node) ?? self::NO_LOCALE;
+            if ($lang === $this->preferredLanguage) {
+                $preferred[] = $abstract;
             }
-            $abstracts[$lang] = $abstract;
+            $all[] = $abstract;
         }
 
-        return $abstracts;
+        return $preferred ?: $all;
     }
 
     /**
@@ -306,15 +303,14 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
-        $cacheKey = __FUNCTION__ . "/$language" . ($includePdf ? '/1' : '/0');
+        $cacheKey = __FUNCTION__ . ($includePdf ? '/1' : '/0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
@@ -325,7 +321,7 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $thumbnails = [];
         $otherSizes = [];
         $highResolution = [];
-        $rights = $this->getRights($language);
+        $rights = $this->getRights();
         $addToResults = function ($imageData) use (&$results): void {
             if (!$this->maxAmountOfImages()) {
                 if (!isset($imageData['urls']['small'])) {
@@ -427,11 +423,9 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     /**
      * Get image rights.
      *
-     * @param string $language Language for the copyright
-     *
      * @return array [copyright, link, description = []]
      */
-    protected function getRights(string $language): array
+    protected function getRights(): array
     {
         $xml = $this->getXmlReader();
         $result = [
@@ -444,9 +438,9 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         // Get all the copyrights and save them in an array identified by language.
         foreach ($this->getElements('rights') as $right) {
             $type = $this->getTypeAttr($right) ?? '';
-            $rightLanguage = $this->getLangAttr($right);
+            $rightLanguage = $this->getLangAttr($right) ?? self::NO_LOCALE;
             // QDC sometimes marks languageless elements with a dash
-            if (!$rightLanguage || '-' === $rightLanguage) {
+            if ('-' === $rightLanguage) {
                 $rightLanguage = self::NO_LOCALE;
             }
             // If no type and language is set and it is the first rights element,
@@ -464,7 +458,7 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         }
         // Check that there is proper values to use for displaying the rights.
         $localizedRights = [];
-        foreach ($this->getPrioritizedLanguages([$language], self::NO_LOCALE) as $lang) {
+        foreach ($this->getPrioritizedLanguages([], self::NO_LOCALE) as $lang) {
             if (empty($cache[$lang])) {
                 continue;
             }
@@ -481,7 +475,7 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         $priorityRight = array_shift($localizedRights);
         $mappedRight = $this->getMappedRights($priorityRight['txt']);
         $result['copyright'] = $mappedRight;
-        $result['link'] = $this->getRightsLink($mappedRight, $language);
+        $result['link'] = $this->getRightsLink($mappedRight);
         foreach ($localizedRights as $right) {
             // Add rights as descriptions which have the same localization
             // as the primary right.
@@ -562,35 +556,6 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             }
         );
         return $xml;
-    }
-
-    /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
-     * Legacy method, use getFilteredXmlElement instead.
-     *
-     * @return \SimpleXMLElement
-     */
-    public function getFilteredXMLElementLegacy(): \SimpleXMLElement
-    {
-        $record = clone $this->getXmlRecord();
-        while ($record->abstract) {
-            unset($record->abstract[0]);
-        }
-        // Try to filter out any summary or abstract fields
-        $filterTerms = [
-            'tiivistelmä', 'abstract', 'abstracts', 'abstrakt', 'sammandrag',
-            'sommario', 'summary', 'аннотация',
-        ];
-        for ($i = count($record->description) - 1; $i >= 0; $i--) {
-            $node = $record->description[$i];
-            $description = mb_strtolower((string)$node, 'UTF-8');
-            $firstWords = array_slice(preg_split('/\s/', $description), 0, 5);
-            if (array_intersect($firstWords, $filterTerms)) {
-                unset($record->description[$i]);
-            }
-        }
-
-        return $record;
     }
 
     /**
@@ -804,12 +769,12 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     public function getSeries(): array
     {
         $xml = $this->getXmlReader();
-        $locale = $this->getLocale();
+        $language = $this->preferredLanguage;
         $results = [];
         foreach ($this->getElements('relation') as $relation) {
             $type = $this->getTypeAttr($relation);
             if ($key = $this->seriesInfoMappings[$type] ?? false) {
-                $lang = $this->getLangAttr($relation) ?: 'nolocale';
+                $lang = $this->getLangAttr($relation) ?? self::NO_LOCALE;
                 // Initialize the result so that it contains the required elements:
                 if (!isset($results[$lang])) {
                     $results[$lang] = [
@@ -822,8 +787,8 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
             }
         }
 
-        return isset($results[$locale])
-            ? [$results[$locale]]
+        return isset($results[$language])
+            ? [$results[$language]]
             : array_values($results);
     }
 
@@ -835,15 +800,14 @@ class SolrQdc extends SolrDefault implements \Psr\Log\LoggerAwareInterface
     public function getAccessRestrictions(): array
     {
         $xml = $this->getXmlReader();
-        $locale = $this->getLocale();
         $primary = [];
         $all = [];
         foreach ($this->getElements('rights') as $right) {
             if ('accessrights' === $this->getTypeAttr($right)) {
                 $value = $xml->value($right);
                 $all[] = $value;
-                $rightLanguage = $this->getLangAttr($right);
-                if (!$rightLanguage || $rightLanguage === $locale) {
+                $rightLanguage = $this->getLangAttr($right) ?? self::NO_LOCALE;
+                if ($rightLanguage === self::NO_LOCALE || $rightLanguage === $this->preferredLanguage) {
                     $primary[] = $value;
                 }
             }

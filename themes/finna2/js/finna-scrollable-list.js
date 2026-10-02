@@ -38,13 +38,14 @@ finna.scrollableList = (function finnaScrollableList() {
        * Initialize tabindex
        */
       function initTabIndexes() {
-        links.forEach(link => link.setAttribute("tabindex", "-1"));
-
         // Active item from HTML or fallback to the first one
         const activeItem =
             list.querySelector(".list-scrollable__list-item.active .list-scrollable__item-container") ||
             links[0];
-        activeItem.setAttribute("tabindex", "0");
+        if (activeItem) {
+          links.forEach(link => link.setAttribute("tabindex", "-1"));
+          activeItem.setAttribute("tabindex", "0");
+        }
       }
       initTabIndexes();
 

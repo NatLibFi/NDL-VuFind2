@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Aipa Code Sets library factory.
+ * Finna Code Sets library factory.
  *
  * PHP version 8
  *
@@ -38,6 +38,9 @@ use Psr\Container\ContainerInterface;
 
 /**
  * Finna Code Sets library factory.
+ *
+ * Constructs FinnaCodeSets to use the 'codesets' cache with a fixed time to live
+ * setting of 0 (maximum possible).
  *
  * @category Finna
  * @package  Cache
