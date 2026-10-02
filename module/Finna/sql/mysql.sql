@@ -36,6 +36,7 @@ ALTER TABLE `user_card` ADD COLUMN `finna_due_date_reminder` int(11) NOT NULL DE
 --
 ALTER TABLE user_list ADD COLUMN `finna_updated` datetime DEFAULT NULL;
 ALTER TABLE user_list ADD COLUMN `finna_protected` tinyint(1) DEFAULT '0' NOT NULL;
+ALTER TABLE user_list ADD COLUMN `finna_custom_order_index` int DEFAULT NULL;
 
 --
 -- Additional columns for user_resource

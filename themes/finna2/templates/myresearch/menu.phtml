@@ -14,10 +14,11 @@
       $list = $this->results?->getListObject();
       $listParams = [
         'activeId' => $list?->getId(),
-        'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null,
+        'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user, $this->allListsSortList['active'] ?? '') : null,
         'results' => $this->results,
         'user' => $user,
         'totalResourceCount' => $this->totalResourceCount,
+        'allListsSortList' => $this->allListsSortList,
       ];
     }
     $reservationLists = $this->reservationList($user)->getReservationListsForUser();

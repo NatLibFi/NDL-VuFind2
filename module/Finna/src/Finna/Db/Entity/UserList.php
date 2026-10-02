@@ -61,6 +61,14 @@ class UserList extends \VuFind\Db\Entity\UserList implements UserListEntityInter
     protected bool $finnaProtected = false;
 
     /**
+     * Custom order index.
+     *
+     * @var ?int
+     */
+    #[ORM\Column(name: 'finna_custom_order_index', type: 'integer', nullable: true)]
+    protected ?int $finnaCustomOrderIndex = null;
+
+    /**
      * Protection status setter.
      *
      * @param bool $protected Is the user protected
@@ -104,5 +112,28 @@ class UserList extends \VuFind\Db\Entity\UserList implements UserListEntityInter
     public function getFinnaUpdated(): ?DateTime
     {
         return $this->finnaUpdated;
+    }
+
+    /**
+     * Get Finna custom order index.
+     *
+     * @return ?int
+     */
+    public function getFinnaCustomOrderIndex(): ?int
+    {
+        return $this->finnaCustomOrderIndex;
+    }
+
+    /**
+     * Finna custom order index setter.
+     *
+     * @param ?int $index Custom order index
+     *
+     * @return static
+     */
+    public function setFinnaCustomOrderIndex(?int $index): static
+    {
+        $this->finnaCustomOrderIndex = $index;
+        return $this;
     }
 }
