@@ -291,7 +291,7 @@ class SolrMarc extends \VuFind\RecordDriver\SolrMarc implements \Psr\Log\LoggerA
                     $tmp['title'] = 'note_774';
                     // Always use title as link instead of subfield w
                     $tmp['link']['type'] = 'title';
-                    $tmp['link']['value'] = $tmp['value'];
+                    $tmp['link']['value'] = $this->stripTrailingPunctuation($tmp['value']);
                 } elseif ($value == '773') {
                     $relation =
                         $this->relationMappings[$this->stripTrailingPunctuation($this->getSubfield($field, 'i'), ':')]
