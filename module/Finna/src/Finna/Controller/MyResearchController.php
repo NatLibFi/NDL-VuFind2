@@ -28,6 +28,7 @@
  * @author   Kalle Pyykkönen <kalle.pyykkonen@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -1220,6 +1221,30 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             $view->blocks = $this->getAccountBlocks($patron);
         }
         return $view;
+    }
+
+    /**
+     * Account deletion.
+     *
+     * @return mixed
+     */
+    public function deleteAccountAction()
+    {
+        if ($this->formWasSubmitted() || $this->formWasSubmitted('reset')) {
+            return parent::deleteAccountAction();
+        }
+
+        // Force login:
+        if (!($user = $this->getUser())) {
+            return $this->forceLogin();
+        }
+
+        $config = $this->getConfigArray();
+        if (empty($config['Authentication']['account_deletion'])) {
+            throw new \VuFind\Exception\BadRequest();
+        }
+
+        return $this->createViewModel(['accountDeleted' => false, 'user' => $user]);
     }
 
     /**

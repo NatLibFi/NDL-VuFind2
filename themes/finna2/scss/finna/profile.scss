@@ -1,4 +1,5 @@
-.my-research-content .logged-in-as {
+.my-research-content .logged-in-as,
+.delete-account-confirm .logged-in-as {
   margin-bottom: 1.1em;
   > div {
     display: flex;
@@ -12,7 +13,8 @@
   }
 }
 @include media-breakpoint-down(md) {
-.my-research-content .logged-in-as {
+.my-research-content .logged-in-as,
+.delete-account-confirm .logged-in-as {
   > div {
       // .display-name display deprecated
       &:not(.display-name) {
@@ -245,4 +247,8 @@ fieldset.profile-group {
     padding: 0px;
     margin: 0em 0.5em 0em 0em;
   }
+}
+
+#delete-account {
+  margin-bottom: 1.1em;
 }

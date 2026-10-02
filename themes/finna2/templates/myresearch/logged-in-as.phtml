@@ -1,0 +1,20 @@
+<?php if ($user): ?>
+  <?php
+    $authMethod = $user->getAuthMethod();
+    $loginMethod = '';
+    if ($authMethod === 'multiils') {
+    $loginConfig = $this->ils()->getConfig('patronLogin');
+    $loginMethod = $loginConfig['loginMethod'] ?? 'password';
+    }
+  ?>
+  <div class="logged-in-as">
+    <div>
+      <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getDisplayableUsername($loginMethod))?></span></div>
+      <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $authMethod)?></span></div>
+      <?php if ($email = $user->getEmail()): ?>
+      <div><span class="profile-title"><?=$this->transEsc('account_email')?>: </span><span><?=$this->escapeHtml($email)?></span></div>
+      <?php endif; ?>
+      <div><span class="profile-title"><?=$this->transEsc('account_creation_date')?>: </span><span><?=$user->getCreated()->format($this->config()->dateFormat())?></span></div>
+    </div>
+  </div>
+<?php endif; ?>
