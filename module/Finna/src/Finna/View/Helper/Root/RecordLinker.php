@@ -199,7 +199,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
             $result = parent::related($link, $source);
         }
 
-        $prepend = (!str_contains($result, '?')) ? '?' : '&amp;';
+        $prepend = (!str_contains($result, '?')) ? '?' : '&';
         $hiddenFilters = null;
         // Try to get hidden filters for the current search:
         if ($this->searchMemory) {
