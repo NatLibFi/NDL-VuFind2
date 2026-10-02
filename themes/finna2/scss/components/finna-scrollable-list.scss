@@ -123,6 +123,14 @@
   .list-scrollable__list-item {
     position: static;
     width: fit-content;
+    .iconlabel {
+      margin-right: 0px;
+      color: inherit;
+      &::before { 
+        padding-right: 0px;
+        font-size: 1em;
+      }
+    }
     .dropdown-toggle {
       .show--open,
       .show--closed {
@@ -146,6 +154,12 @@
     .dropdown-menu {
       z-index: $zindex-dropdown;
     }
+  }
+  .list-scrollable__scroll-next-btn {
+    right: 0rem;
+  }
+  .list-scrollable__scroll-prev-btn {
+    left: 0rem;
   }
 }
 
