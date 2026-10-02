@@ -398,6 +398,7 @@ return [
             'list-public' => 'FinnaIcons:public',
             'list-remove' => 'FontAwesome:close',
             'list-save' => 'FontAwesome:files-o',
+            'list-sort' => 'FinnaIcons:list-filter',
             'list-tag-edit' => 'FontAwesome:tag',
             'list-tag-delete' => 'FontAwesome:times',
             'location-service' => 'Alias:map-marker',

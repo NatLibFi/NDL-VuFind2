@@ -158,29 +158,34 @@
   .control-container {
     display: flex;
     align-items: center;
-    gap: 0.6rem;
+    gap: 0.5rem;
     &.sort-lists-control {
       justify-content: right;
     }
     .dropdown.sort-button li {
+      a.dropdown-item {
         border: none;
-        &:last-child {
-          border-top: 1px solid $gray-lighter;
-        }
-        .dropdown-item.selected {
-          background: $gray-lighter;
-        }
+      }
+      border: none;
+      &:last-child {
+        border-top: 1px solid $gray-lighter;
+      }
+      .dropdown-item.selected {
+        background: $gray-lighter;
       }
     }
-    .mylists-sort {
-      color: $black;
-      border-color: $black;
-      &:hover {
-        color: white;
-        background-color: $black;
-      }
+  }
+  .mylists-sort {
+    color: $black;
+    border-color: $black;
+    height: 3.3em;
+    width: 3em;
+    margin-left: 1rem;
+    &:hover {
+      color: white;
+      background-color: $black;
     }
-    gap: 0.5rem;
+  }
   }
 }
 
