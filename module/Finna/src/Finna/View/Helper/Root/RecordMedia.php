@@ -35,6 +35,7 @@ use VuFind\View\Helper\Root\ClassBasedTemplateRendererTrait;
 
 use function count;
 use function get_class;
+use function in_array;
 use function is_array;
 
 /**
@@ -161,9 +162,8 @@ class RecordMedia extends AbstractHelper
         $openUrlActive = $openUrl->isActive();
         // Account for replace_other_urls setting
         $urls = ($this->getView()->plugin('record'))($this->driver)->getLinkDetails($openUrlActive);
-        $driverOnlineURLs = $this->driver->tryMethod('getOnlineURLs', [['images']], []);
+        $driverOnlineURLs = $this->driver->tryMethod('getOnlineURLs', default: []);
         $mergedData = $this->driver->tryMethod('getMergedRecordData', default: []);
-
         $iiifManifests = $this->driver->tryMethod('getIiifManifests', default: []);
 
         $this->cache['iiifManifests']['count'] = count($iiifManifests);
@@ -250,32 +250,31 @@ class RecordMedia extends AbstractHelper
     /**
      * Process the given url and assign it to its correct cache.
      *
-     * @param array  $url           URL to process
-     * @param string $leftoverCache In which cache should the URL be placed if it is not a visual media.
+     * @param array  $url      URL to process
+     * @param string $cacheKey Cache key to store the URL if it is not an audio or a video URL.
      *
      * @return void
      */
-    protected function processURL(array $url, string $leftoverCache): void
+    protected function processURL(array $url, string $cacheKey): void
     {
-        $cachedTo = $leftoverCache;
         $isEmbeddedVideo
             = $this->getView()->plugin('recordLinker')->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
 
         if (($url['embed'] ?? '') === 'video' || !empty($url['videoSources']) || $isEmbeddedVideo) {
             $this->cache['videoURLs']['count']++;
             $this->cache['videoURLs']['urls'][] = $url;
-            $cachedTo = 'videoURLs';
+            $cacheKey = 'videoURLs';
         } elseif (($url['embed'] ?? '') === 'audio') {
             $this->cache['audioURLs']['count']++;
             $this->cache['audioURLs']['urls'][] = $url;
-            $cachedTo = 'audioURLs';
+            $cacheKey = 'audioURLs';
         } else {
-            $this->cache[$leftoverCache]['count']++;
-            $this->cache[$leftoverCache]['urls'][] = $url;
+            $this->cache[$cacheKey]['count']++;
+            $this->cache[$cacheKey]['urls'][] = $url;
         }
         $this->renderedURLs[] = [
           'url' => $url['url'],
-          'cachedTo' => $cachedTo,
+          'cachedTo' => $cacheKey,
         ];
     }
 
