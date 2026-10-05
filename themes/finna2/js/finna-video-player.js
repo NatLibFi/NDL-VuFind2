@@ -71,9 +71,9 @@ finna.videoPlayer = (() => {
 
     // Is the video inline video or popup video
     let container;
-    if (element.dataset.inline) {
-      container = document.getElementById('inline-video');
-      container.replaceChildren(videoPlayer);
+    const inlineVideo = document.getElementById('inline-video');
+    if (inlineVideo) {
+      inlineVideo.replaceChildren(videoPlayer);
       showWarningIcons(element);
     } else {
       // Try to close any open finna popups so the video can be shown properly
@@ -84,6 +84,7 @@ finna.videoPlayer = (() => {
     }
     const videoSources = JSON.parse(element.dataset.videoSources);
     finna.videoPopup.initVideoJs(container, videoSources, element.dataset.posterUrl);
+    element.classList.add('active-video');
   }
 
   /**
@@ -224,7 +225,10 @@ finna.videoPlayer = (() => {
           document.querySelectorAll('.vc-finna-video-button').forEach(b => b.classList.remove('active-video'));
           onVideoOpen(element);
         });
-        if (element.classList.contains('active-video')) {
+        if (
+            document.getElementById('inline-video')
+            && element.classList.contains('active-video')
+        ) {
           element.click();
         }
       });

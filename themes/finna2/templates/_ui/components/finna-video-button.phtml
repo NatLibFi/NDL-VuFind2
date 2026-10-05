@@ -10,31 +10,30 @@
    * @param string consent     Consent category to be accepted.
    * @param bool embed         Is the video an iframe embed?
    * @param string description Text description inside the button. Default is format_Video translated.
-   * @param bool inline        Is inline video player used?
    */
-  $inlineVideoPlayer = $this->inline ?? false;
   $index = $this->index ?? 0;
   $description = $this->description ?? $this->translate('format_Video');
   $videoSources = $this->videoSources ?? [];
   $consent = $this->consent ?? 'recordvideo';
   $embeddedVideo = $this->embed ?? false;
+
   $buttonAttributes = [
     'class' => trim(($this->class ?? 'video-link-container') . " vc-invocation-$this->_invocation $this->_componentClass"),
     'aria-label' => $this->ariaLabel ?? $this->translate('Link to video') . ' ' . $description,
     'data-url' => $this->url ?? '',
     'data-index' => $index,
-    'data-inline' => $inlineVideoPlayer,
     'data-embed' => $embeddedVideo,
     'data-consent' => $consent,
     'data-consent-title' => $this->translate($this->cookieConsent()->getCategoryTitleForService($consent)),
     'aria-haspopup' => true,
   ];
 
-  // If inline video player is user and current video index is 0, this video button will be clicked to initialize the player.
+  // If inline video player is used and current video index is 0, this video button will be clicked to initialize the player.
   // This will not cause the video to start playing.
-  if ($inlineVideoPlayer && $index === 0) {
+  if ($index === 0) {
     $buttonAttributes['class'] .= ' active-video';
   }
+
   // Generate unique selector for the button
   $jsSelector = '.' . str_replace(' ', '.', $buttonAttributes['class']);
 ?>
