@@ -54,7 +54,7 @@
             if (!empty($authors)): ?>
               <div class="truncate-field" data-rows="1">
                 <?php foreach ($authors as $index => $author): ?>
-                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+                  <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'authorityType' => $author['type'] ?? null])?>
                 <?php endforeach; ?>
               </div>
             <?php endif; ?>
@@ -112,7 +112,7 @@
                 <?php endforeach; ?>
               <?php endif; ?>
             </div>
-            <?php if ($rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang)): ?>
+            <?php if ($rights = $this->driver->getAccessRestrictionsType()): ?>
               <div class="material-rights">
                 <span class="rights-header"><?=$this->transEsc('usage_rights_ext')?>:</span>
                 <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>

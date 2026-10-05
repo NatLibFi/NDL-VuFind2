@@ -24,7 +24,7 @@
       <?=$this->context($this)->renderInContext('librarycards/selectcard.phtml', ['user' => $user, 'label' => 'Library Card'])?>
     </div>
     <div id="useraccount-content-heading" class="useraccount-header">
-      <?=$this->component('page-title', ['title' => $this->translate('Your Holds and Recalls') . " ($holdsRecallsCount)", 'headTitle' => $this->translate('My Holds')]);?>
+      <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Your Holds and Recalls') . " ($holdsRecallsCount)", 'headTitle' => $this->translate('My Holds'), 'tooltip' => 'tooltip_myaccount_holds_list_html']);?>
     </div>
     <?php if (isset($this->noSupport)): ?>
       <?php if (count($this->libraryCards()->getCardsForUser($user)) > 1): ?>
@@ -33,11 +33,9 @@
         </div>
       <?php endif; ?>
     <?php else: ?>
-      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/holds-pre-list')): ?>
-        <div class="holds-pre-list"><?=$this->render($template)?></div>
-      <?php endif; ?>
+      <?=$this->component('finna-addition-template', ['template' => 'holds-pre-list'])?>
       <?php if (!empty($this->recordList)): ?>
-        <div class="sort-col sort-col-mobile">
+        <div class="sort-col sort-col-mobile visible-xs">
           <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList])?>
         </div>
         <?php if ($this->cancelForm || $this->updateForm): ?>
@@ -69,15 +67,15 @@
                         <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('hold_cancel_selected') ?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
                           <li><span class="dropdown-header"><?=$this->transEsc('confirm_hold_cancel_selected_text') ?></span></li>
-                          <li>
-                            <a class="dropdown-item" href="#" id="confirm_cancel_selected_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-                            <a class="dropdown-item" href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a>
+                          <li useraccount-confirm-buttons>
+                            <a class="dropdown-item" href="#" id="confirm_cancel_selected_yes" role="button"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+                            <a class="dropdown-item" href="#" class="confirm_cancel_no" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
                           </li>
                         </ul>
                       <?php endif; ?>
                       </div>
                     </div>
-                    <div class="sort-col">
+                    <div class="sort-col hidden-xs">
                       <?php if ($sortList): ?>
                         <?=$this->context($this)->renderInContext('myresearch/controls/sort.phtml', ['sortList' => $sortList])?>
                       <?php endif; ?>
@@ -251,16 +249,16 @@
                 <input id="cancelAll" name="cancelAll" type="submit" value="<?=$this->transEscAttr('hold_cancel_all') ?>" class="btn btn-danger dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
                 <ul class="dropdown-menu useraccount-confirm" role="presentation">
                   <li><span class="dropdown-header"><?=$this->transEsc('confirm_hold_cancel_all_text') ?></span></li>
-                  <li><a class="dropdown-item" href="#" id="confirm_cancel_all_yes"><?=$this->transEsc('confirm_dialog_yes') ?></a></li>
-                  <li><a class="dropdown-item" href="#" class="confirm_cancel_no"><?=$this->transEsc('confirm_dialog_no')?></a></li>
+                  <li class="useraccount-confirm-buttons">
+                    <a class="dropdown-item" href="#" id="confirm_cancel_all_yes" role="button"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+                    <a class="dropdown-item" href="#" class="confirm_cancel_no" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
+                  </li>
                 </ul>
               </div>
             </form>
           </div>
         <?php endif; ?>
-        <?php if ($template = $this->content()->findTemplateForLng('content/Additions/holds-post-list')): ?>
-          <div class="holds-post-list"><?=$this->render($template)?></div>
-        <?php endif; ?>
+        <?=$this->component('finna-addition-template', ['template' => 'holds-post-list'])?>
       <?php else: ?>
         <div class="useraccount-header">
           <h3><?=$this->transEsc('You do not have any holds or recalls placed') ?>.</h3>

@@ -27,19 +27,12 @@
               <?=$this->record($this->driver)->getTitleHtml()?><span class="visually-hidden"> <?=$this->transEsc('To the record')?></span>
             </a>
           </h2>
-          <?php if ($uniformTitles = $this->driver->tryMethod('getUniformTitles')): ?>
-            <div class="result-uniform-titles">
-              <?php foreach ($uniformTitles as $uniformTitle): ?>
-                <?=$this->escapeHtml($uniformTitle) ?><br>
-              <?php endforeach; ?>
+          <?php if ($altTitles = $this->driver->tryMethod('getAlternativeTitles')): ?>
+            <div class="result-alt-titles truncate-field" data-rows="5">
+              <?=implode('<br>', array_map([$this, 'escapeHtml'], $altTitles))?>
             </div>
           <?php endif; ?>
         </div>
-        <?php foreach ($this->driver->tryMethod('getFullTitlesAltScript', [], []) as $altTitle): ?>
-          <div class="title-alt-script">
-            <?=$this->escapeHtml($altTitle)?>
-          </div>
-        <?php endforeach; ?>
 
         <div class="dateyeartype">
           <div class="resultItemFormat">
@@ -118,7 +111,7 @@
                 <?php endforeach; ?>
               <?php endif; ?>
             </div>
-            <?php if ($rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang)): ?>
+            <?php if ($rights = $this->driver->getAccessRestrictionsType()): ?>
               <div class="material-rights">
                 <span class="rights-header"><?=$this->transEsc('usage_rights_ext')?>:</span>
                 <?= $this->partial('Helpers/copyright-field-value.phtml', ['data' => $rights]) ?>

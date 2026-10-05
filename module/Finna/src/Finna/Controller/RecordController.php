@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record Controller
+ * Record Controller.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -33,6 +33,7 @@ namespace Finna\Controller;
 use Finna\Controller\Feature\FinnaRecordPreviewSupportTrait;
 use Finna\Controller\Plugin\Preview;
 use Finna\Form\Form;
+use Psr\Log\LoggerAwareInterface;
 
 use function count;
 use function in_array;
@@ -40,7 +41,7 @@ use function is_array;
 use function is_string;
 
 /**
- * Record Controller
+ * Record Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -49,11 +50,12 @@ use function is_string;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
-class RecordController extends \VuFind\Controller\RecordController
+class RecordController extends \VuFind\Controller\RecordController implements LoggerAwareInterface
 {
     use FinnaRecordControllerTrait;
     use \Finna\Statistics\ReporterTrait;
     use FinnaRecordPreviewSupportTrait;
+    use \VuFind\Log\LoggerAwareTrait;
 
     /**
      * Create record feedback form and send feedback to correct recipient.
@@ -286,7 +288,7 @@ class RecordController extends \VuFind\Controller\RecordController
                             '%%url%%' => $this->url()->fromRoute('holds-list'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     if (!empty($results['warningMessage'])) {
                         $this->flashMessenger()
                             ->addWarningMessage($results['warningMessage']);
@@ -455,10 +457,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
-                $this->flashMessenger()->addMessage(
-                    'must_accept_terms',
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage('must_accept_terms');
             } else {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
@@ -480,20 +479,16 @@ class RecordController extends \VuFind\Controller\RecordController
                                 ->fromRoute('myresearch-storageretrievalrequests'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     return $this->redirectToRecord('#top');
                 } else {
                     // Failure: use flash messenger to display messages, stay on
                     // the current form.
                     if (isset($results['status'])) {
-                        $this->flashMessenger()->addMessage(
-                            $results['status'],
-                            'error'
-                        );
+                        $this->flashMessenger()->addErrorMessage($results['status']);
                     }
                     if (isset($results['sysMessage'])) {
-                        $this->flashMessenger()
-                            ->addMessage($results['sysMessage'], 'error');
+                        $this->flashMessenger()->addErrorMessage($results['sysMessage']);
                     }
                 }
             }
@@ -590,10 +585,7 @@ class RecordController extends \VuFind\Controller\RecordController
                 in_array('acceptTerms', $extraFields)
                 && empty($gatheredDetails['acceptTerms'])
             ) {
-                $this->flashMessenger()->addMessage(
-                    'must_accept_terms',
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage('must_accept_terms');
             } else {
                 // If we made it this far, we're ready to place the hold;
                 // if successful, we will redirect and can stop here.
@@ -615,18 +607,18 @@ class RecordController extends \VuFind\Controller\RecordController
                                 ->fromRoute('myresearch-illrequests'),
                         ],
                     ];
-                    $this->flashMessenger()->addMessage($msg, 'success');
+                    $this->flashMessenger()->addSuccessMessage($msg);
                     return $this->redirectToRecord('#top');
                 } else {
                     // Failure: use flash messenger to display messages, stay on
                     // the current form.
                     if (isset($results['status'])) {
                         $this->flashMessenger()
-                            ->addMessage($results['status'], 'error');
+                            ->addErrorMessage($results['status']);
                     }
                     if (isset($results['sysMessage'])) {
                         $this->flashMessenger()
-                            ->addMessage($results['sysMessage'], 'error');
+                            ->addErrorMessage($results['sysMessage']);
                     }
                 }
             }
@@ -709,7 +701,7 @@ class RecordController extends \VuFind\Controller\RecordController
     }
 
     /**
-     * Download 3D model
+     * Download 3D model.
      *
      * @return \Laminas\Http\Response
      */
@@ -718,66 +710,63 @@ class RecordController extends \VuFind\Controller\RecordController
         $params = $this->params();
         $index = $params->fromQuery('index');
         $format = $params->fromQuery('format');
-        $response = $this->getResponse();
-        if ($format && $index) {
-            $driver = $this->loadRecord();
-            $id = $driver->getUniqueID();
-            $models = $driver->tryMethod('getModels')[$index]['models'] ?? [];
-            $found = array_search('preview', array_column($models, 'type'));
-            if (false === $found) {
-                $response->setStatusCode(404);
-                return $response;
-            }
-            // Always force preview model to be fetched
-            $url = $models[$found]['url'];
-            if (!empty($url)) {
-                $fileName = urlencode($id) . '-' . $index . '.' . $format;
-                $fileLoader = $this->serviceLocator->get(\Finna\File\Loader::class);
-                $file = $fileLoader->getFile(
-                    $url,
-                    $fileName,
-                    'Models',
-                    'public'
-                );
-                if (empty($file['result'])) {
-                    $response->setStatusCode(500);
-                } else {
-                    $contentType = '';
-                    switch ($format) {
-                        case 'gltf':
-                            $contentType = 'model/gltf+json';
-                            break;
-                        case 'glb':
-                            $contentType = 'model/gltf+binary';
-                            break;
-                        default:
-                            $contentType = 'application/octet-stream';
-                            break;
-                    }
-                    // Set headers for downloadable file
-                    header("Content-Type: $contentType");
-                    header(
-                        "Content-disposition: attachment; filename=\"{$fileName}\""
-                    );
-                    header('Pragma: public');
-                    header('Content-Length: ' . filesize($file['path']));
-                    if (ob_get_level()) {
-                        ob_end_clean();
-                    }
-                    readfile($file['path']);
-                }
-            } else {
-                $response->setStatusCode(404);
-            }
-        } else {
+        $response = new \Laminas\Http\Response\Stream();
+        if (null === $format || null === $index) {
             $response->setStatusCode(400);
+            return $response;
         }
+        $driver = $this->loadRecord();
+        $models = $driver->tryMethod('getModels')[$index]['models'] ?? [];
+        $found = array_search('preview', array_column($models, 'type'));
+        if (false === $found) {
+            $response->setStatusCode(404);
+            return $response;
+        }
+        // Always force preview model to be fetched
+        $url = $models[$found]['url'];
+        if (empty($url)) {
+            $response->setStatusCode(404);
+            return $response;
+        }
+        $id = $driver->getUniqueID();
+        $fileName = urlencode($id) . '-' . $index . '.' . $format;
+        $fileLoader = $this->serviceLocator->get(\Finna\File\Loader::class);
+        $file = $fileLoader->getFile(
+            $url,
+            $fileName,
+            'Models',
+            'public'
+        );
+        if (empty($file['result'])) {
+            $response->setStatusCode(500);
+            return $response;
+        }
+        $contentType = match ($format) {
+            'gltf' => 'model/gltf+json',
+            'glb' => 'model/gltf+binary',
+            default => 'application/octet-stream'
+        };
+        // Set headers for downloadable file
+        $headers = $response->getHeaders();
+        $headers->addHeaderLine('Content-Type', $contentType);
+        $headers->addHeaderLine(
+            'Content-Disposition',
+            "attachment; filename=\"{$fileName}\""
+        );
+        $headers->addHeaderLine(
+            'Cache-Control',
+            'public, s-maxage=' . (string)(24 * 60 * 60)
+        );
+        $headers->addHeaderLine('Content-Length', filesize($file['path']));
+
+        $stream = fopen($file['path'], 'r');
+        $response->setStream($stream);
 
         return $response;
     }
 
     /**
-     * Download a file
+     * Download a file.
      *
      * @return \Laminas\Http\Response
      */
@@ -881,5 +870,51 @@ class RecordController extends \VuFind\Controller\RecordController
         }
 
         return parent::showTab($tab, $ajax);
+    }
+
+    /**
+     * Call IIIF manifest generator and encode body in JSON.
+     *
+     * @return \Laminas\Http\Response
+     */
+    protected function iiifManifestAction()
+    {
+        $driver = $this->loadRecord();
+        $response = $this->getResponse();
+        $headers = $response->getHeaders();
+
+        if ($datasourceManifests = $driver->tryMethod('getIiifManifests')) {
+            $headers->addHeaderLine('Location', $datasourceManifests[0]['url']);
+            $response->setStatusCode(302);
+            return $response;
+        }
+
+        $generator = $this->serviceLocator->get(\Finna\Record\IIIF\IIIFManifestGenerator::class);
+        $config = $this->getConfigArray();
+        $corsAllow = $config['IIIF']['manifestCORS'] ?? [];
+        foreach ($corsAllow as $allow) {
+            $headers->addHeaderLine('Access-Control-Allow-Origin', $allow);
+        }
+        if ($manifest = $generator->generate($driver)) {
+            if ($manifestJson = json_encode($manifest)) {
+                $headers->addHeaderLine(
+                    'Content-Type: application/json;' .
+                    'profile="http://iiif.io/api/presentation/3/context.json"'
+                );
+                $response->setContent($manifestJson);
+            } else {
+                $headers->addHeaderLine('Content-Type: text/plain');
+                $response->setStatusCode(500);
+                $response->setContent('Error encoding JSON');
+                $this->logError(
+                    'IIIFManifest: Error encoding JSON for ' .
+                    $driver->getUniqueID() . ': ' .
+                    json_last_error_msg()
+                );
+            }
+        } else {
+            $response->setStatusCode(404);
+        }
+        return $response;
     }
 }

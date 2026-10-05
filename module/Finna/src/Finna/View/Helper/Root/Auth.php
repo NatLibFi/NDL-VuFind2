@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Authentication view helper
+ * Authentication view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use Laminas\Http\PhpEnvironment\Request;
 
 /**
- * Authentication view helper
+ * Authentication view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -43,14 +43,14 @@ use Laminas\Http\PhpEnvironment\Request;
 class Auth extends \VuFind\View\Helper\Root\Auth
 {
     /**
-     * Request
+     * Request.
      *
      * @var Request
      */
     protected $request;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Auth\Manager          $manager          Authentication manager
      * @param \VuFind\Auth\ILSAuthenticator $ilsAuthenticator ILS Authenticator
@@ -66,7 +66,7 @@ class Auth extends \VuFind\View\Helper\Root\Auth
     }
 
     /**
-     * Get auth method requested in current request
+     * Get auth method requested in current request.
      *
      * @return string
      */

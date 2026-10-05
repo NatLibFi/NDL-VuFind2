@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -34,7 +34,9 @@ use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\EncapsulatedRecordInterface;
 use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
+use VuFindXml\XmlDoc;
 
+use function in_array;
 use function is_callable;
 
 /**
@@ -61,6 +63,23 @@ class AipaLrmi extends SolrLrmi implements
     protected FinnaCodeSets $codeSets;
 
     /**
+     * Fields filtered from the record by getFilteredXmlElement method.
+     *
+     * @var array
+     */
+    protected $filterFields = [
+        'abstract',
+        'description',
+        'assignmentIdeas',
+        'learningResource/studyObjectives',
+        'learningResource/educationalLevel/name',
+        'learningResource/educationalLevel/inDefinedTermSet/name',
+        'learningResource/educationalAlignment/educationalSubject/educationalFramework',
+        'learningResource/educationalAlignment/educationalSubject/targetName',
+        'learningResource/teaches/name',
+    ];
+
+    /**
      * Attach Finna Code Sets library instance.
      *
      * @param FinnaCodeSets $codeSets Finna Code Sets library instance
@@ -73,7 +92,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Get an array of formats/extents for the record
+     * Get an array of formats/extents for the record.
      *
      * @return array
      */
@@ -83,7 +102,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Return educational levels
+     * Return educational levels.
      *
      * @return array
      */
@@ -98,7 +117,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Get educational subjects
+     * Get educational subjects.
      *
      * @return array
      */
@@ -123,20 +142,19 @@ class AipaLrmi extends SolrLrmi implements
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = false)
+    public function getAllImages($includePdf = false)
     {
         // AIPA LRMI records do not directly contain PDF files.
-        return parent::getAllImages($language, false);
+        return parent::getAllImages(false);
     }
 
     /**
-     * Get educational aim
+     * Get educational aim.
      *
      * @return array
      */
@@ -151,7 +169,7 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * Only returns non-presenter authors if they differ from the container record.
      * This is a strict comparison: even the same authors in a different order is
@@ -159,7 +177,7 @@ class AipaLrmi extends SolrLrmi implements
      *
      * @return array
      */
-    public function getNonPresenterAuthors()
+    public function getNonPresenterAuthors(): array
     {
         $nonPresenterAuthors = parent::getNonPresenterAuthors();
         if (!is_callable([$this->getContainerRecord(), 'getNonPresenterAuthors'])) {
@@ -267,7 +285,7 @@ class AipaLrmi extends SolrLrmi implements
      */
     protected function getEncapsulatedRecordElementTagName(): string
     {
-        return 'material';
+        return "{{$this->lrmiNs}}material";
     }
 
     /**
@@ -283,53 +301,40 @@ class AipaLrmi extends SolrLrmi implements
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Return full record as a filtered XmlDoc for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXmlElement(): XmlDoc
     {
-        $record = parent::getFilteredXMLElement();
-        $this->doFilterFields($record, ['abstract', 'description', 'assignmentIdeas']);
-        foreach ($record->learningResource as $learningResource) {
-            $this->doFilterFields($learningResource, ['studyObjectives']);
-            foreach ($learningResource->educationalLevel as $educationalLevel) {
-                $this->doFilterFields($educationalLevel, ['name']);
-                foreach ($educationalLevel->inDefinedTermSet as $inDefinedTermSet) {
-                    $this->doFilterFields($inDefinedTermSet, ['name']);
-                }
+        $record = parent::getFilteredXmlElement();
+        $record->filter(
+            function (array $node, string $path) use ($record): bool {
+                $path = implode(
+                    '/',
+                    array_map(
+                        [$record, 'localName'],
+                        explode('/', $path)
+                    )
+                );
+                return in_array($path, $this->filterFields);
             }
-            foreach ($learningResource->educationalAlignment as $educationalAlignment) {
-                foreach ($educationalAlignment->educationalSubject as $educationalSubject) {
-                    $this->doFilterFields(
-                        $educationalSubject,
-                        ['educationalFramework', 'targetName']
-                    );
-                }
-            }
-            foreach ($learningResource->teaches as $teaches) {
-                $this->doFilterFields($teaches, ['name']);
-            }
-        }
+        );
+
         return $this->filterEncapsulatedRecords($record);
     }
 
     /**
      * Helper method for filtering fields.
      *
-     * @param \SimpleXMLElement $baseElement  Base element
-     * @param array             $filterFields Fields to filter
+     * @param XmlDoc $xmlDoc       Document
+     * @param array  $filterFields Fields to filter (paths with local names of nodes)
      *
      * @return void
      */
     protected function doFilterFields(
-        \SimpleXMLElement $baseElement,
+        XmlDoc $xmlDoc,
         array $filterFields
     ): void {
-        foreach ($filterFields as $filterField) {
-            while ($baseElement->{$filterField}) {
-                unset($baseElement->{$filterField}[0]);
-            }
-        }
     }
 }

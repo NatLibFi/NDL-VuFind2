@@ -13,7 +13,7 @@
 <div class="record-container list-view <?=$this->record($this->driver)->getContainerJsClasses()?>" id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>">
   <div class="condensed-collapse-toggle">
     <div class="condensed-body">
-      <?=$this->icon('condensed-expand', 'condensed-expand') ?><?=$this->icon('condensed-collapse', 'condensed-collapse') ?>
+      <button class="collapse-transparent-icon-button" aria-expanded="false" aria-label="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>" data-toggle-aria-expanded=""><?=$this->icon('condensed-expand', 'condensed-expand') ?><?=$this->icon('condensed-collapse', 'condensed-collapse') ?></button>
       <h2 class="title">
         <a href="<?=$this->escapeHtmlAttr($recordLinker->getUrl($this->driver))?>" class="title" title="<?=$this->escapeHtmlAttr($this->driver->getTitle())?>">
         <?php
@@ -40,7 +40,7 @@
         <?php $authors = $this->driver->tryMethod('getAuthorsWithRoles');
         if (!empty($authors)): ?>
           <?php $author = $authors[0]; ?>
-          <a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a>
+          <?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['authorityType' => $author['type'] ?? null])?>
           <?php if (count($authors) > 1): ?> <?=$this->transEsc('more_authors_abbrev')?><?php endif; ?>
         <?php endif; ?>
 

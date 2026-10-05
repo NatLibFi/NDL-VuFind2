@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Catalog Connection Class
+ * Catalog Connection Class.
  *
  * This wrapper works with a driver class to pass information from the ILS to
  * VuFind.
@@ -20,8 +20,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -35,7 +35,7 @@ namespace Finna\ILS;
 use VuFind\Exception\ILS as ILSException;
 
 /**
- * Catalog Connection Class
+ * Catalog Connection Class.
  *
  * This wrapper works with a driver class to pass information from the ILS to
  * VuFind.
@@ -51,6 +51,22 @@ use VuFind\Exception\ILS as ILSException;
  */
 class Connection extends \VuFind\ILS\Connection
 {
+    /**
+     * Set cache lifetime settings.
+     *
+     * @param array $settings Lifetime settings
+     *
+     * @return void
+     */
+    public function setCacheLifeTime(array $settings): void
+    {
+        parent::setCacheLifeTime($settings);
+        $this->cacheStorage['getAccountBlocks'] = 'session';
+        $this->cacheStorage['getRequestBlocks'] = 'session';
+        $this->sessionCacheInvalidatingMethods[] = 'registerPayment';
+        $this->sessionCacheInvalidatingMethods[] = 'renewMyItems';
+    }
+
     /**
      * Check driver capability -- return true if the driver supports the specified
      * method; false otherwise.
@@ -81,13 +97,13 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check Holds
+     * Check Holds.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports Holds.
      *
-     * @param array $functionConfig The Hold configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig The Hold configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed On success, an associative array with specific function keys
      * and values either for placing holds via a form or a URL; on failure, false.
@@ -106,15 +122,15 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check Storage Retrieval Request
+     * Check Storage Retrieval Request.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports storage
      * retrieval requests.
      *
-     * @param array $functionConfig The storage retrieval request configuration
+     * @param array  $functionConfig The storage retrieval request configuration
      * values
-     * @param array $params         An array of function-specific params (or null)
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed On success, an associative array with specific function keys
      * and values either for placing requests via a form; on failure, false.
@@ -136,14 +152,14 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check ILL Request
+     * Check ILL Request.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports storage
      * retrieval requests.
      *
-     * @param array $functionConfig The ILL request configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig The ILL request configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed On success, an associative array with specific function keys
      * and values either for placing requests via a form; on failure, false.
@@ -162,7 +178,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for Authorization Status
+     * Check for Authorization Status.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports getting
@@ -189,7 +205,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for Staff User Authorization Status
+     * Check for Staff User Authorization Status.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports getting
@@ -218,7 +234,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateAddress
+     * Check for updateAddress.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating address.
@@ -254,7 +270,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for checkMethodupdateTransactionHistoryState
+     * Check for checkMethodupdateTransactionHistoryState.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports change of
@@ -283,7 +299,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateEmail
+     * Check for updateEmail.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating email
@@ -321,7 +337,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateMessagingSettings
+     * Check for updateMessagingSettings.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating
@@ -356,7 +372,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updatePhone
+     * Check for updatePhone.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating phone
@@ -394,7 +410,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check for updateSmsNumber
+     * Check for updateSmsNumber.
      *
      * A support method for checkFunction(). This is responsible for checking
      * the driver configuration to determine if the system supports updating phone
@@ -432,7 +448,7 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check if catalog login is availale
+     * Check if catalog login is availale.
      *
      * @return bool true if the login is available
      */
@@ -451,26 +467,10 @@ class Connection extends \VuFind\ILS\Connection
     }
 
     /**
-     * Check if online payment is supported.
+     * Check if title lists are enabled.
      *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
-     *
-     * @return boolean
-     */
-    protected function checkMethodmarkFeesAsPaid($functionConfig, $params)
-    {
-        if ($this->checkCapability('markFeesAsPaid', [$params ?: []])) {
-            return ['function' => 'markFeesAsPaid'];
-        }
-        return false;
-    }
-
-    /**
-     * Check if title lists are enabled
-     *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig Function configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
      * @return mixed array|false
      */
@@ -488,10 +488,10 @@ class Connection extends \VuFind\ILS\Connection
     /**
      * Check if self-registration.
      *
-     * @param array $functionConfig Function configuration values
-     * @param array $params         An array of function-specific params (or null)
+     * @param array  $functionConfig Function configuration values
+     * @param ?array $params         An array of function-specific params (or null)
      *
-     * @return boolean
+     * @return bool
      */
     protected function checkMethodregisterPatron($functionConfig, $params)
     {
@@ -514,5 +514,37 @@ class Connection extends \VuFind\ILS\Connection
             return $functionConfig;
         }
         return false;
+    }
+
+    /**
+     * Return details on fees payable online.
+     *
+     * @param array  $patron          Patron
+     * @param array  $fines           Patron's fines
+     * @param ?array $selectedFineIds Selected fines
+     *
+     * @throws ILSException
+     * @return array Associative array of payment details
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function getOnlinePaymentDetails(array $patron, array $fines, ?array $selectedFineIds): array
+    {
+        // @phpstan-ignore-next-line
+        $result = parent::getOnlinePaymentDetails($patron, $fines, $selectedFineIds);
+        if ($result['payable'] ?? false) {
+            // Check that payment is not disabled:
+            if (!($this->config->online_payment ?? true)) {
+                $result['payable'] = false;
+                $result['reason'] = $this->translate(
+                    'service_blocked',
+                    [
+                        '%%service%%'
+                            => $this->translate('service_description_payment', [], 'default_service_description'),
+                    ]
+                );
+            }
+        }
+        return $result;
     }
 }

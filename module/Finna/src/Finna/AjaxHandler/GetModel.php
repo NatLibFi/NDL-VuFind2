@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -37,7 +37,7 @@ use VuFind\Session\Settings as SessionSettings;
 use VuFind\View\Helper\Root\Url;
 
 /**
- * GetModel AJAX handler
+ * GetModel AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -50,42 +50,42 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase implements \VuFindHttp\H
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Session settings
+     * Session settings.
      *
      * @var Settings
      */
     protected $sessionSettings;
 
     /**
-     * Loader
+     * Loader.
      *
      * @var RecordLoader
      */
     protected $recordLoader;
 
     /**
-     * File loader
+     * File loader.
      *
      * @var Loader
      */
     protected $fileLoader;
 
     /**
-     * Domain url
+     * Domain url.
      *
      * @var Url
      */
     protected $urlHelper;
 
     /**
-     * Router
+     * Router.
      *
      * @var \Laminas\Router\Http\TreeRouteStack
      */
     protected $router;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings $ss           Session settings
      * @param RecordLoader    $recordLoader Recordloader
@@ -141,7 +141,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase implements \VuFindHttp\H
         // Use fileloader for proxies
         $file = $this->fileLoader->getFile($url, $fileName, 'Models', 'public');
         if (!empty($file['result'])) {
-            $route = stripslashes($this->router->getBaseUrl());
             // Point url to public cache so viewer has access to it
             $url = ($this->urlHelper)('home') . 'cache/' . $fileName;
             return $this->formatResponse(compact('url'));

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Preview Plugin Test Class
+ * Preview Plugin Test Class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -44,7 +44,7 @@ use VuFindHttp\HttpService;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * Preview Plugin Test Class
+ * Preview Plugin Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -57,45 +57,43 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
 
     /**
-     * Data provider for testPreview
+     * Data provider for testPreview.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function previewProvider(): array
+    public static function previewProvider(): \Iterator
     {
-        return [
-            'LIDO non-validated' => [
-                'lido',
-                'lido_test.xml',
-                '',
-                '',
-                [],
-                [],
-                [],
-            ],
-            'LIDO invalid' => [
-                'lido',
-                'lido_test.xml',
-                'lido-v1.1-profile-FINNA-v0.1.xsd',
-                'lido-v1.1-profile-FINNA-v0.1.sch',
-                [],
-                [],
-                [],
-            ],
-            'LIDO valid' => [
-                'lido',
-                'lido_valid.xml',
-                'lido-v1.1-profile-FINNA-v0.1.xsd',
-                'lido-v1.1-profile-FINNA-v0.1.sch',
-                [],
-                [],
-                [],
-            ],
+        yield 'LIDO non-validated' => [
+            'lido',
+            'lido_test.xml',
+            '',
+            '',
+            [],
+            [],
+            [],
+        ];
+        yield 'LIDO invalid' => [
+            'lido',
+            'lido_test.xml',
+            'lido-v1.1-profile-FINNA-v0.1.xsd',
+            'lido-v1.1-profile-FINNA-v0.1.sch',
+            [],
+            [],
+            [],
+        ];
+        yield 'LIDO valid' => [
+            'lido',
+            'lido_valid.xml',
+            'lido-v1.1-profile-FINNA-v0.1.xsd',
+            'lido-v1.1-profile-FINNA-v0.1.sch',
+            [],
+            [],
+            [],
         ];
     }
 
     /**
-     * Test preview
+     * Test preview.
      *
      * @param string $format          Record format
      * @param string $record          Record fixture
@@ -106,9 +104,8 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
      * @param array  $recommendations Expected recommendations
      *
      * @return void
-     *
-     * @dataProvider previewProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('previewProvider')]
     public function testPreview(
         string $format,
         string $record,
@@ -134,7 +131,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get Preview plugin
+     * Get Preview plugin.
      *
      * @param array  $config     VuFind configuration
      * @param string $format     Record format
@@ -153,9 +150,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
     ): MockObject&Preview {
         $metadata = $this->getFixture("$format/$record", 'Finna');
 
-        $recordPluginManager = $this->getMockBuilder(RecordPluginManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $recordPluginManager = $this->createMock(RecordPluginManager::class);
         $recordPluginManager->expects($this->once())
             ->method('getSolrRecord')
             ->with(['record_format' => $format])
@@ -168,9 +163,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $pathResolver = $this->getMockBuilder(PathResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $pathResolver = $this->createMock(PathResolver::class);
         $pathResolver->expects($this->exactly(($xsd ? 1 : 0) + ($schematron ? 1 : 0)))
             ->method('getConfigPath')
             ->willReturnCallback(
@@ -209,9 +202,7 @@ class PreviewTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $controller = $this->getMockBuilder(RecordPreviewController::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $controller = $this->createMock(RecordPreviewController::class);
         $controller->expects($this->once())
             ->method('plugin')
             ->with('params', null)

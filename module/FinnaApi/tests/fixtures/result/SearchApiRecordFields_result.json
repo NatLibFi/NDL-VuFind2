@@ -1,0 +1,737 @@
+{
+  "__index__": {
+    "description": "Index",
+    "type": "string"
+  },
+  "accessRestrictions": {
+    "description": "Access restriction notes",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "alternativeTitles": {
+    "description": "Alternative titles",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "authors": {
+    "description": "Deduplicated author information including main, corporate and secondary authors",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/Authors"
+    }
+  },
+  "awards": {
+    "description": "Award notes",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "bibliographicLevel": {
+    "description": "Bibliographic level",
+    "type": "string",
+    "enum": [
+      "Monograph",
+      "Serial",
+      "MonographPart",
+      "SerialPart",
+      "Collection",
+      "CollectionPart",
+      "Unknown"
+    ]
+  },
+  "bibliographyNotes": {
+    "description": "Bibliography notes",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "buildings": {
+    "description": "Locations (hierarchical)",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/TranslatedField"
+    }
+  },
+  "callNumbers": {
+    "description": "Call numbers",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "childRecordCount": {
+    "description": "Number of child records",
+    "type": "integer"
+  },
+  "classifications": {
+    "description": "Classifications keyed by source (ykl, udk, nlm etc.)",
+    "type": "array",
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "cleanDoi": {
+    "description": "First valid DOI",
+    "type": "string"
+  },
+  "cleanIsbn": {
+    "description": "First valid ISBN favoring ISBN-10 over ISBN-13 when possible",
+    "type": "string"
+  },
+  "cleanIssn": {
+    "description": "Base portion of the first listed ISSN",
+    "type": "string"
+  },
+  "cleanOclcNumber": {
+    "description": "First OCLC number",
+    "type": "string"
+  },
+  "collections": {
+    "description": "Collections the record belongs to (used in museum material)",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "containerEndPage": {
+    "description": "End page in the containing item",
+    "type": "string"
+  },
+  "containerIssue": {
+    "description": "Issue number of the containing item",
+    "type": "string"
+  },
+  "containerReference": {
+    "description": "Reference to the containing item",
+    "type": "string"
+  },
+  "containerStartPage": {
+    "description": "Start page in the containing item",
+    "type": "string"
+  },
+  "containerTitle": {
+    "description": "Title of the containing item",
+    "type": "string"
+  },
+  "containerVolume": {
+    "description": "Volume of the containing item",
+    "type": "string"
+  },
+  "corporateAuthors": {
+    "description": "Main corporate authors",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "controlNumbers": {
+    "description": "Record control numbers",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "creationDateRange": {
+    "description": "Creation date range in ISO 8601 format",
+    "type": "string"
+  },
+  "dedupIds": {
+    "description": "IDs of all records deduplicated with the current record",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "dissertationNote": {
+    "description": "Dissertation note",
+    "type": "string"
+  },
+  "edition": {
+    "description": "Edition",
+    "type": "string"
+  },
+  "embeddedComponentParts": {
+    "description": "Embedded component parts (e.g. pieces of music in a recording) -- requesting this may slow down the response and increase the response size significantly\n",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/ComponentPart"
+    }
+  },
+  "eraSubjects": {
+    "description": "Chronological subject headings",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "events": {
+    "description": "Events related to museum (LIDO) material. Events include production, printing photographing, planning and use. The response may include (depending on metadata) names, dates, methods, materials, places, actors, culture and description\n",
+    "$ref": "#/components/schemas/Events"
+  },
+  "findingAids": {
+    "description": "Finding aids",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "formats": {
+    "description": "Formats",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/TranslatedField"
+    }
+  },
+  "fullRecord": {
+    "description": "Full metadata record (typically XML)",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "generalNotes": {
+    "description": "General notes",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "genres": {
+    "description": "Genres",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "geoCenter": {
+    "description": "Geographic center point",
+    "type": "object",
+    "properties": {
+      "lon": {
+        "description": "Longitude",
+        "type": "string"
+      },
+      "lat": {
+        "description": "Latitude",
+        "type": "string"
+      }
+    },
+    "required": [
+      "lon",
+      "lat"
+    ]
+  },
+  "geoLocations": {
+    "description": "Geographic locations (e.g. points, bounding boxes) in WKT format",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "geographicSubjects": {
+    "description": "Geographic subject headings",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "hierarchicalPlaceNames": {
+    "description": "Hierarchical place names concatenated for display",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "hierarchyParentId": {
+    "description": "Parent record IDs for hierarchical records",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "hierarchyParentTitle": {
+    "description": "Parent record titles for hierarchical records",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "hierarchyTopId": {
+    "description": "Hierarchy top record IDs for hierarchical records",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "hierarchyTopTitle": {
+    "description": "Hierarchy top record titles for hierarchical records",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "humanReadablePublicationDates": {
+    "description": "Publication dates in human-readable format",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "id": {
+    "description": "Record unique ID (can be used in the record endpoint)",
+    "type": "string"
+  },
+  "identifierString": {
+    "description": "Record identifier (e.g. inventory ID in museum material) -- not guaranteed to be unique\n",
+    "type": "string"
+  },
+  "imageRights": {
+    "description": "Image rights",
+    "type": "object",
+    "properties": {
+      "copyright": {
+        "description": "License type",
+        "type": "string"
+      },
+      "link": {
+        "description": "Link to license",
+        "type": "string"
+      },
+      "description": {
+        "description": "Description text",
+        "type": "string"
+      }
+    }
+  },
+  "images": {
+    "description": "Links to record images without the domain name -- prepend with the correct domain\n",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "imagesExtended": {
+    "description": "Record images, their descriptions and rights\n",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/Image"
+    }
+  },
+  "inscriptions": {
+    "description": "Inscriptions",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "institutions": {
+    "description": "Institutions the record belongs to (see also **buildings**)",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/TranslatedField"
+    }
+  },
+  "isbns": {
+    "description": "ISBNs (see also **cleanIsbn**)",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "isCollection": {
+    "description": "Whether the record is a collection node in a hierarchy",
+    "type": "boolean"
+  },
+  "isDigitized": {
+    "description": "Whether the record is digitized",
+    "type": "boolean"
+  },
+  "isPartOfArchiveSeries": {
+    "description": "Whether the record is part of an archive series",
+    "type": "boolean"
+  },
+  "issns": {
+    "description": "ISSNs (see also **cleanIssn**)",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "languages": {
+    "description": "Languages",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "lccn": {
+    "description": "LCCNs",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "majorGenres": {
+    "description": "Major genres",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "manufacturer": {
+    "description": "manufacturer",
+    "type": "string"
+  },
+  "measurements": {
+    "description": "Physical measurements",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "mediaTypes": {
+    "description": "Media types collected from links",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "newerTitles": {
+    "description": "Successor titles",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "nonPresenterAuthors": {
+    "description": "Non-presenter authors",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/AuthorWithRoleAndDate"
+    }
+  },
+  "oclc": {
+    "description": "OCLC numbers",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "onlineUrls": {
+    "description": "Online links",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/OnlineLink"
+    }
+  },
+  "openUrl": {
+    "description": "OpenURL",
+    "type": "string"
+  },
+  "originalLanguages": {
+    "description": "Original languages (see also **languages**)",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "otherLinks": {
+    "description": "Other links between records",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/OtherRecordLink"
+    }
+  },
+  "physicalDescriptions": {
+    "description": "Physical dimensions etc.",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "physicalLocations": {
+    "description": "Physical locations (archive material)",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "placesOfPublication": {
+    "description": "Places of publication",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "playingTimes": {
+    "description": "Playing times (durations)",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "presenters": {
+    "description": "Presenters",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/AuthorWithRoleAndDate"
+    }
+  },
+  "previousTitles": {
+    "description": "Predecessor titles",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "PreviousUniqueId": {
+    "description": "Previous unique ID of the record",
+    "type": "string"
+  },
+  "primaryAuthors": {
+    "description": "Primary authors",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "productionCredits": {
+    "description": "Production credits",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "projectedPublicationDate": {
+    "description": "Projected (estimated) publication date",
+    "type": "string"
+  },
+  "publicationDates": {
+    "description": "Publication dates",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "publicationEndDate": {
+    "description": "End date of publication (continuing publication often marked as 9999)",
+    "type": "string"
+  },
+  "publicationFrequency": {
+    "description": "Publication frequency",
+    "type": "string"
+  },
+  "publicationInfo": {
+    "description": "Publication information",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "publishers": {
+    "description": "Publishers",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "rating": {
+    "$ref": "#/components/schemas/AverageRating"
+  },
+  "rawData": {
+    "description": "All data in the index fields",
+    "type": "string"
+  },
+  "recordFormat": {
+    "description": "Record format",
+    "type": "string"
+  },
+  "recordLinks": {
+    "description": "Links to other related records",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/RecordLink"
+    }
+  },
+  "recordPage": {
+    "description": "Link to the record page in the UI",
+    "type": "string"
+  },
+  "relationshipNotes": {
+    "description": "Notes describing relationships to other items",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "recordImagesCountNotice": {
+    "description": "Displays current amount of images returned out of total images,",
+    "type": "string"
+  },
+  "secondaryAuthors": {
+    "description": "Secondary authors",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "sectors": {
+    "description": "Record sector (archive, museum, library and library sector)",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/TranslatedField"
+    }
+  },
+  "series": {
+    "description": "Series",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "sfxObjectId": {
+    "description": "ID of the record in SFX (only for records from SFX)",
+    "type": "string"
+  },
+  "shortTitle": {
+    "description": "Short title (title excluding any subtitle)",
+    "type": "string"
+  },
+  "source": {
+    "description": "Record sources",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/TranslatedField"
+    }
+  },
+  "subjectActors": {
+    "description": "Subject actors",
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "subjectDetails": {
+    "description": "Detailed subject descriptions",
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "subjectPlaces": {
+    "description": "Subject places",
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "subjects": {
+    "description": "Subject headings as an array from the least specific to the most specific\n",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "subjectsExtended": {
+    "description": "Subject headings with type and source information",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/Subject"
+    }
+  },
+  "subTitle": {
+    "description": "Subtitle",
+    "type": "string"
+  },
+  "summary": {
+    "description": "Summary",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "systemDetails": {
+    "description": "Technical details on the represented item",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "targetAudienceNotes": {
+    "description": "Notes about the target audience",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "title": {
+    "description": "Title including any subtitle",
+    "type": "string"
+  },
+  "titleSection": {
+    "description": "Part/section portion of the title",
+    "type": "string"
+  },
+  "titleStatement": {
+    "description": "Statement of responsibility that goes with the title",
+    "type": "string"
+  },
+  "toc": {
+    "description": "Table of contents",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "uniformTitles": {
+    "description": "Uniform titles",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "unitId": {
+    "description": "Archival unit ID",
+    "type": "string"
+  },
+  "urls": {
+    "description": "URLs contained in the record",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/Url"
+    }
+  },
+  "usageRights": {
+    "description": "Usage rights (see [usage_rights_str_mv at https://www.kiwi.fi/display/Finna/Kenttien+mappaukset+eri+formaateista+Finnan+indeksiin] (https://github.com/NatLibFi/RecordManager-Finna/blob/dev/mappings/usage_rights.map.sample))",
+    "type": "array",
+    "items": {
+      "type": "string"
+    }
+  },
+  "usageRightsExtended": {
+    "description": "Extended usage rights (see https://github.com/NatLibFi/RecordManager-Finna/blob/dev/mappings/usage_rights_ext.map.sample)",
+    "type": "array",
+    "items": {
+      "$ref": "#/components/schemas/TranslatedField"
+    }
+  },
+  "year": {
+    "description": "Main year (publication, production etc.) -- used also in main_date_str facet\n",
+    "type": "string"
+  }
+}

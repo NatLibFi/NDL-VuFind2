@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Quria ILS Driver
+ * Quria ILS Driver.
  *
  * PHP version 8.1
  *
- * Copyright (C) The National Library of Finland 2024.
+ * Copyright (C) The National Library of Finland 2024-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -45,7 +45,7 @@ use function is_object;
 use function strlen;
 
 /**
- * Quria ILS Driver
+ * Quria ILS Driver.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -61,7 +61,7 @@ use function strlen;
 class Quria extends AxiellWebServices
 {
     /**
-     * SOAP Options
+     * SOAP Options.
      *
      * @var array
      */
@@ -82,7 +82,14 @@ class Quria extends AxiellWebServices
     ];
 
     /**
-     * Constructor
+     * Regex pattern for extracting payment identifier from debt note.
+     *
+     * @var string
+     */
+    protected string $paymentIdPattern = '/\s*Maksun tunnus: ([\w\-]+)/';
+
+    /**
+     * Constructor.
      *
      * @param \VuFind\Date\Converter      $dateConverter Date converter object
      * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
@@ -122,7 +129,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Pickup Locations
+     * Get Pickup Locations.
      *
      * This is responsible for retrieving pickup locations.
      *
@@ -239,7 +246,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -336,7 +343,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * This is responsible for iterating the organisation holdings
+     * This is responsible for iterating the organisation holdings.
      *
      * @param array   $organisationHoldings Organisation holdings
      * @param string  $id                   The record id to retrieve the holdings
@@ -389,11 +396,7 @@ class Quria extends AxiellWebServices
                         $year = $journalInfo['year'] ?? '';
                         $edition = $journalInfo['edition'] ?? '';
                         if ($year !== '' && $edition !== '') {
-                            if (strncmp($year, $edition, strlen($year)) == 0) {
-                                $group = $edition;
-                            } else {
-                                $group = "$year, $edition";
-                            }
+                            $group = strncmp($year, $edition, strlen($year)) == 0 ? $edition : "$year, $edition";
                         } else {
                             $group = $year . $edition;
                         }
@@ -569,7 +572,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -633,7 +636,6 @@ class Quria extends AxiellWebServices
         $names = explode(' ', $info->patronName);
         $lastname = array_pop($names);
         $firstname = implode(' ', $names);
-        $loanHistoryEnabled = $info->isLoanHistoryEnabled ?? false;
 
         /**
          * Request an authentication id used in certain requests e.g:
@@ -641,110 +643,95 @@ class Quria extends AxiellWebServices
          */
         $patronId = $this->authenticatePatron($username, $password);
 
-        $user = [
-            'id' => $info->backendPatronId,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'lastname' => $lastname,
-            'firstname' => $firstname,
-            'major' => null,
-            'college' => null,
-            'patronId' => $patronId,
-        ];
-
-        $userCached = [
-            'id' => $info->backendPatronId,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'lastname' => $lastname,
-            'firstname' => $firstname,
-            'email' => '',
-            'emailId' => '',
-            'address1' => '',
-            'addressId' => '',
-            'zip' => '',
-            'city' => '',
-            'country' => '',
-            'phone' => '',
-            'phoneId' => '',
-            'phoneLocalCode' => '',
-            'phoneAreaCode' => '',
-            'major' => null,
-            'college' => null,
-            'patronId' => $patronId,
-            'loan_history' => (bool)$loanHistoryEnabled,
-        ];
-
+        $email = null;
+        $emails = [];
         if (!empty($info->emailAddresses->emailAddress)) {
             $emailAddresses
                 =  $this->objectToArray($info->emailAddresses->emailAddress);
             $activeFound = false;
             foreach ($emailAddresses as $i => $emailAddress) {
-                if (empty($userCached['email']) || !$activeFound) {
-                    $userCached['email'] = $emailAddress->address;
-                    $activeFound = $emailAddress->isActive == 'yes';
+                if (!$email || !$activeFound) {
+                    if ($email = trim($emailAddress->address) ?: null) {
+                        $activeFound = $emailAddress->isActive == 'yes';
+                    }
                 }
-                $userCached['email_' . $i] = $emailAddress->address ?? null;
-                $userCached['email_' . $i . '_id'] = $emailAddress->id ?? null;
-                $userCached['email_' . $i . '_active'] = $emailAddress->isActive == 'yes';
+                $emails['email_' . $i] = $emailAddress->address ?? null;
+                $emails['email_' . $i . '_id'] = $emailAddress->id ?? null;
+                $emails['email_' . $i . '_active'] = $emailAddress->isActive == 'yes';
             }
         }
+
+        $user = $this->createPatronArray(
+            id: $info->backendPatronId,
+            cat_username: $username,
+            cat_password: $password,
+            lastname: $lastname,
+            firstname: $firstname,
+            email: $email,
+            nonDefaultFields: [
+                'patronId' => $patronId,
+            ]
+        );
+        $address = null;
+        $zip = null;
+        $city = null;
+        $country = null;
+        $addressId = null;
         if (isset($info->addresses->address)) {
-            $addresses = $this->objectToArray($info->addresses->address);
-            foreach ($addresses as $address) {
-                if ($address->isActive == 'yes' || empty($userCached['address1'])) {
-                    $userCached['address1'] = $address->streetAddress ?? '';
-                    $userCached['zip'] = $address->zipCode ?? '';
-                    $userCached['city'] = $address->city ?? '';
-                    $userCached['country'] = $address->country ?? '';
-                    $userCached['addressId'] = $address->id ?? '';
+            foreach ($this->objectToArray($info->addresses->address) as $addressFound) {
+                if ($addressFound->isActive === 'yes') {
+                    $address = $addressFound->streetAddress ?? '';
+                    $zip = $addressFound->zipCode ?? '';
+                    $city = $addressFound->city ?? '';
+                    $country = $addressFound->country ?? '';
+                    $addressId = $addressFound->id ?? '';
                     break;
                 }
             }
         }
+        $phone = null;
+        $phones = [];
         if (isset($info->phoneNumbers->phoneNumber)) {
             $phoneNumbers = $this->objectToArray($info->phoneNumbers->phoneNumber);
             foreach ($phoneNumbers as $i => $phoneNumber) {
                 $activeFound = false;
-                if (empty($userCached['phone']) || !$activeFound) {
-                    $userCached['phone'] = ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? null;
+                if (empty($phone) || !$activeFound) {
+                    $phone = ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? null;
                     $activeFound = $phoneNumber->sms->useForSms == 'yes';
                 }
-                $userCached['phone_' . $i] = ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? null;
-                $userCached['phone_' . $i . '_id'] = $phoneNumber->id ?? null;
-                $userCached['phone_' . $i . '_active'] = ($phoneNumber->sms->useForSms ?? '') == 'yes';
+                $phones['phone_' . $i] = ($phoneNumber->areaCode ?? '') . $phoneNumber->localCode ?? null;
+                $phones['phone_' . $i . '_id'] = $phoneNumber->id ?? null;
+                $phones['phone_' . $i . '_active'] = ($phoneNumber->sms->useForSms ?? '') == 'yes';
             }
         }
 
-        $serviceSendMethod
-            = $this->config['updateMessagingSettings']['method'] ?? 'none';
-
-        switch ($serviceSendMethod) {
-            case 'database':
-                $userCached['messagingServices']
-                    = $this->parseEmailMessagingSettings(
-                        $info->messageServices->messageService ?? null
-                    );
-                break;
-            case 'driver':
-                $userCached['messagingServices']
-                    = $this->parseDriverMessagingSettings(
-                        $info->messageServices->messageService ?? null,
-                        $user
-                    );
-                break;
-            default:
-                $userCached['messagingServices'] = [];
-                break;
-        }
-
+        $userCached = $this->createProfileArray(
+            firstname: $firstname,
+            lastname: $lastname,
+            address1: $address,
+            zip: $zip,
+            city: $city,
+            country: $country,
+            phone: $phone,
+            loan_history: $info->isLoanHistoryEnabled ?? null,
+            email: $email,
+            nonDefaultFields: [
+                'addressId' => $addressId,
+                'id' => $info->backendPatronId,
+                'cat_username' => $username,
+                'cat_password' => $password,
+                ...$emails,
+                ...$phones,
+                'patronId' => $patronId,
+            ]
+        );
         $this->putCachedData($cacheKey, $userCached);
 
         return $user;
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked out items)
      * by a specific patron.
@@ -873,7 +860,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Patron Transaction History
+     * Get Patron Transaction History.
      *
      * This is responsible for retrieving all historical transactions
      * (i.e. checked out items)
@@ -941,7 +928,7 @@ class Quria extends AxiellWebServices
         $transactions = $this->objectToArray(
             $result->loanHistoryResponse->loanHistoryItems->loanHistoryItem ?? []
         );
-        foreach ($transactions as $transaction => $record) {
+        foreach ($transactions as $record) {
             $obj = $record->catalogueRecord;
             $title = $obj->title;
             if (!empty($record->note)) {
@@ -968,7 +955,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Returns an id which is used to authenticate current session in SOAP API
+     * Returns an id which is used to authenticate current session in SOAP API.
      *
      * @param string $username patron username
      * @param string $password patron password
@@ -1005,7 +992,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -1137,7 +1124,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -1231,7 +1218,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -1281,7 +1268,7 @@ class Quria extends AxiellWebServices
     /**
      * Returns translated value of a fine type.
      * Maps Quria message in to more unified version in VuFind
-     * I.E reservationFeeDebt => 'fine_status_Hold Expired'
+     * I.E reservationFeeDebt => 'fine_status_Hold Expired'.
      *
      * @param string $key Key to check for mapping
      *
@@ -1328,7 +1315,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -1342,10 +1329,11 @@ class Quria extends AxiellWebServices
         $username = $user['cat_username'];
         $password = $user['cat_password'];
 
-        $paymentConfig = $this->config['onlinePayment'] ?? [];
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
         $blockedTypes = $paymentConfig['nonPayable'] ?? [];
         $payableMinDate
             = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
+        $mapItemIdentifier = $paymentConfig['mapItemIdentifier'] ?? null;
 
         $function = 'GetDebts';
         $functionResult = 'debtsResponse';
@@ -1392,36 +1380,28 @@ class Quria extends AxiellWebServices
             }
             // Round the amount in case it's a weird decimal number:
             $amount = round($amount);
-            $description = $this->mapAndTranslateFineType($debt->debtType) . ' - ' . $debt->debtNote;
-            $debtDate = $this->dateFormat->convertFromDisplayDate(
-                'U',
-                $this->formatDate($debt->debtDate)
-            );
-            $payable = $amount > 0 && $debtDate >= $payableMinDate;
-            if ($payable) {
-                foreach ($blockedTypes as $blockedType) {
-                    if (
-                        $blockedType === $description
-                        || (strncmp($blockedType, '/', 1) === 0
-                        && substr_compare($blockedType, '/', -1) === 0
-                        && preg_match($blockedType, $description))
-                    ) {
-                        $payable = false;
-                        break;
-                    }
+            $note = (string)$debt->debtNote;
+            $productCode = null;
+            if ('productCode' === $mapItemIdentifier) {
+                if (preg_match($this->paymentIdPattern, $note, $matches)) {
+                    $productCode = $matches[1];
                 }
+                $note = preg_replace($this->paymentIdPattern, '', $note);
             }
             $fine = [
                 'debt_id' => $debt->id,
                 'fine_id' => $debt->id,
-                'amount' => $amount,
+                'fineId' => $debt->id,
+                'amount' => (int)$amount,
                 'checkout' => '',
-                'fine' => $description,
-                'balance' => $amount,
+                'fine' => $this->mapAndTranslateFineType($debt->debtType),
+                'description' => $note,
+                'balance' => (int)$amount,
                 'createdate' => $debt->debtDate,
-                'payableOnline' => $payable,
+                'productCode' => $productCode,
                 'organization' => trim($debt->organisation ?? ''),
             ];
+            $fine['payableOnline'] = ($debt->isOnlinePaymentAllowed ?? true) && $this->fineIsPayable($fine);
             $finesList[] = $fine;
         }
 
@@ -1442,7 +1422,158 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update holds
+     * Register a payment.
+     *
+     * This is called after a successful online payment.
+     *
+     * @param array   $patron                  Patron
+     * @param int     $amount                  Amount to be registered as paid
+     * @param string  $localPaymentIdentifier  Local payment identifier
+     * @param ?string $remotePaymentIdentifier Remote payment identifier
+     * @param int     $paymentId               Internal payment id
+     * @param ?array  $fineIds                 Fine IDs to mark paid or null for bulk payment
+     *
+     * @throws ILSException
+     * @return array Associative array with keys success (bool, always) and reason (string, on error)
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    public function registerPayment(
+        array $patron,
+        int $amount,
+        string $localPaymentIdentifier,
+        ?string $remotePaymentIdentifier,
+        int $paymentId,
+        ?array $fineIds = null
+    ): array {
+        if (empty($fineIds)) {
+            $this->logError('Bulk payment not supported');
+            throw new ILSException('Bulk payment not supported');
+        }
+
+        $fines = $this->getMyFines($patron);
+        if (!$fines) {
+            $this->logError('No fines to pay found');
+            return [
+                'success' => false,
+                'reason' => 'Payment::error_fines_changed',
+            ];
+        }
+
+        $amountRemaining = $amount;
+        $debts = [];
+        foreach ($fines as $fine) {
+            if (
+                in_array($fine['fineId'], $fineIds)
+                && $fine['payableOnline'] && $fine['balance'] > 0
+            ) {
+                $pay = (int)round(min($fine['balance'], $amountRemaining));
+                $debts[] = $fine['fineId'];
+                $amountRemaining -= $pay;
+            }
+        }
+        if (!$debts) {
+            $this->logError('Fine IDs do not match any of the payable fines');
+            return [
+                'success' => false,
+                'reason' => 'Payment::error_fines_changed',
+            ];
+        }
+        if ($amountRemaining) {
+            $this->logError('Amount to pay does not match the selected fines');
+            return [
+                'success' => false,
+                'reason' => 'Payment::error_fines_changed',
+            ];
+        }
+
+        $username = $patron['cat_username'];
+        $password = $patron['cat_password'];
+
+        $function = 'GetPaymentServiceInformation';
+        $functionResult = 'paymentServiceInformationResponse';
+        $amountDec = substr((string)$amount, 0, -2) . ',' . substr((string)$amount, -2);
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'amount' => $amountDec,
+            'debts' => $debts,
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
+            $username,
+            ['paymentServiceInformationRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [];
+        }
+        if (null === ($orderId = $result->$functionResult->orderId ?? null)) {
+            $this->logError('Did not receive orderId from ILS');
+            return [
+                'success' => false,
+                'reason' => 'ils_connection_failed',
+            ];
+        }
+
+        // Clear patron cache regardless of result, just incase:
+        $cacheKey = $this->getPatronCacheKey($patron['cat_username']);
+        $this->putCachedData($cacheKey, null);
+
+        // Make the payment:
+        $function = 'AddPayment';
+        $functionResult = 'addPaymentResponse';
+        $transactionNumber = $localPaymentIdentifier;
+        if ($remotePaymentIdentifier) {
+            $transactionNumber .= " / $remotePaymentIdentifier";
+        }
+        $conf = [
+            'arenaMember' => $this->arenaMember,
+            'user' => $username,
+            'password' => $password,
+            'transactionNumber' => $transactionNumber,
+            'orderId' => $orderId,
+            'paymentAmount' => $amountDec,
+            'debts' => $debts,
+        ];
+
+        $result = $this->doSOAPRequest(
+            $this->payments_wsdl,
+            $function,
+            $functionResult,
+            $username,
+            ['addPaymentRequest' => $conf]
+        );
+
+        $statusAWS = $result->$functionResult->status;
+        if ($statusAWS->type != 'ok') {
+            $message = $this->handleError($function, $statusAWS, $username);
+            if ($message == 'ils_connection_failed') {
+                throw new ILSException($message);
+            }
+            return [
+                'success' => false,
+                'reason' => $message,
+            ];
+        }
+
+        return [
+            'success' => true,
+        ];
+    }
+
+    /**
+     * Update holds.
      *
      * This is responsible for changing the status of hold requests
      *
@@ -1532,6 +1663,11 @@ class Quria extends AxiellWebServices
                     'success' => false,
                     'status' => $message,
                 ];
+            } elseif (($result->$functionResult->reservation->status->key ?? '') === 'reservationDenied') {
+                $results[$requestId] = [
+                    'success' => false,
+                    'status' => 'hold_error_update_failed',
+                ];
             } else {
                 $results[$requestId] = [
                     'success' => true,
@@ -1542,7 +1678,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Place Hold
+     * Place Hold.
      *
      * This is responsible for both placing holds as well as placing recalls.
      *
@@ -1626,7 +1762,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array    $patron  Patron array
      * @param String   $email   Email address
@@ -1721,7 +1857,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron  Patron array
      * @param string $phone   Phone number
@@ -1799,14 +1935,14 @@ class Quria extends AxiellWebServices
         $this->putCachedData($cacheKey, null);
 
         return [
-                'success' => true,
-                'status' => 'Phone number changed',
-                'sys_message' => '',
-            ];
+            'success' => true,
+            'status' => 'Phone number changed',
+            'sys_message' => '',
+        ];
     }
 
     /**
-     * Cancel Holds
+     * Cancel Holds.
      *
      * This is responsible for canceling holds.
      *
@@ -1873,7 +2009,7 @@ class Quria extends AxiellWebServices
     }
 
     /**
-     * Renew Items
+     * Renew Items.
      *
      * This is responsible for renewing items.
      *

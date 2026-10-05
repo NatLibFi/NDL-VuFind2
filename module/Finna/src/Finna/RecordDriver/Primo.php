@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -45,7 +45,7 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 class Primo extends \VuFind\RecordDriver\Primo
 {
@@ -63,7 +63,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     public function exportDisabled($format)
     {
         // Support export for EndNote and RefWorks
-        return !in_array($format, ['EndNote', 'RefWorks', 'RIS']);
+        return !in_array($format, ['EndNote', 'RefWorks', 'RIS', 'ZoteroWebLibrary']);
     }
 
     /**
@@ -194,7 +194,7 @@ class Primo extends \VuFind\RecordDriver\Primo
      * Check if Primo online URLs (local links from record metadata) should be
      * displayed for this record.
      *
-     * @return boolean
+     * @return bool
      */
     protected function showOnlineURLs()
     {
@@ -284,7 +284,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Return DOI (false if none)
+     * Return DOI (false if none).
      *
      * @return mixed
      */
@@ -310,7 +310,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Get primary author information with highlights applied (if applicable)
+     * Get primary author information with highlights applied (if applicable).
      *
      * @return array
      */
@@ -388,7 +388,7 @@ class Primo extends \VuFind\RecordDriver\Primo
     }
 
     /**
-     * Return information whether fulltext is available
+     * Return information whether fulltext is available.
      *
      * @return bool
      */
@@ -400,15 +400,13 @@ class Primo extends \VuFind\RecordDriver\Primo
     /**
      * Return image rights.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'  Copyright (e.g. 'CC BY 4.0') (optional)
      *   'description Human readable description (array)
      *   'link'       Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language)
+    public function getImageRights()
     {
         return false;
     }
@@ -507,7 +505,7 @@ class Primo extends \VuFind\RecordDriver\Primo
 
     /**
      * Utility function for processing OpenURL parameters.
-     * This duplicates 'rft_<param>' prefixed parameters as 'rft.<param>'
+     * This duplicates 'rft_<param>' prefixed parameters as 'rft.<param>'.
      *
      * @param array $params OpenURL parameters as key-value pairs
      *

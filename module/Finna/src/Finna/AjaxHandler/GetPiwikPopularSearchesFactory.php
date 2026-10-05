@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -46,7 +46,7 @@ use Psr\Container\ContainerInterface;
 class GetPiwikPopularSearchesFactory implements \Laminas\ServiceManager\Factory\FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -72,7 +72,7 @@ class GetPiwikPopularSearchesFactory implements \Laminas\ServiceManager\Factory\
         $result = new $requestedName(
             $container->get(\VuFind\Session\Settings::class),
             $container->get(\VuFind\Cache\Manager::class),
-            $container->get(\VuFind\Config\PluginManager::class)->get('config'),
+            $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('config'),
             $container->get('ViewRenderer')
         );
         $result->setLogger($container->get(\VuFind\Log\Logger::class));

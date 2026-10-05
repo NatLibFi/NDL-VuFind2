@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record driver data formatting view helper
+ * Record driver data formatting view helper.
  *
  * PHP version 8
  *
@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,7 +41,7 @@ use VuFind\RecordDriver\AbstractBase as RecordDriver;
 use function in_array;
 
 /**
- * Record driver data formatting view helper
+ * Record driver data formatting view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -160,6 +160,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Available Online',
             'child_records',
             'Collection',
+            'Color',
             'DOI',
             'Edition',
             'Events',
@@ -176,7 +177,6 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Measurements',
             'Organisation',
             'original_work_language',
-            'Other Classification',
             'Other Classifications',
             'Other ID',
             'Parent Archive',
@@ -190,7 +190,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Subject Date',
             'Subject Detail',
             'Subject Place',
-            'SubjectsWithoutPlaces',
+            'SubjectDisplayTerms',
         ];
         return $this->filterFields($coreFields, $include);
     }
@@ -245,7 +245,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
     }
 
     /**
-     * Filter unnecessary fields from Lrmi records
+     * Filter unnecessary fields from Lrmi records.
      *
      * @param array $coreFields data to filter
      *
@@ -431,6 +431,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
             'Related Materials',
             'Related Places',
             'Subject Actor',
+            'Subject Place',
             'subjects_extended',
             'System Format',
             'Unit IDs',
@@ -690,7 +691,7 @@ class RecordDataFormatter extends \VuFind\View\Helper\Root\RecordDataFormatter
         // Apply the group spec.
         $result = [];
         foreach ($groups as $group) {
-            if (!empty($group['skipGroup'])) {
+            if (!empty($group['options']['skipGroup'])) {
                 continue;
             }
             $lines = $group['lines'];

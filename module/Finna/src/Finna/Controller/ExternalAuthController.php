@@ -1,7 +1,7 @@
 <?php
 
 /**
- * External Authentication/Authorization Controller
+ * External Authentication/Authorization Controller.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\ServiceManager\ServiceLocatorInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 /**
- * External Authentication/Authorization Controller
+ * External Authentication/Authorization Controller.
  *
  * Provides authorization support for external systems, e.g. EZproxy
  *
@@ -46,7 +46,7 @@ use VuFind\Db\Entity\UserEntityInterface;
 class ExternalAuthController extends \VuFind\Controller\ExternalAuthController
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param ServiceLocatorInterface $sm Service locator
      */
@@ -66,6 +66,8 @@ class ExternalAuthController extends \VuFind\Controller\ExternalAuthController
     {
         $user = parent::getUser();
         if ($user) {
+            // Clone the user to avoid modifying the shared object:
+            $user = clone $user;
             $parts = explode(':', $user->getUsername(), 2);
             if (isset($parts[1])) {
                 $user->setUsername($parts[1]);

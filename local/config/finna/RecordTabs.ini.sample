@@ -54,6 +54,7 @@ tabs[Preview] = preview
 tabs[HierarchyTree] = HierarchyTree
 tabs[Map] = Map
 tabs[Versions] = Versions
+tabs[Series] = Series
 tabs[Details] = StaffViewMARC
 defaultTab = null
 

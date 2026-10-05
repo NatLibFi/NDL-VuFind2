@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Search Parameters
+ * Solr Search Parameters.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -31,14 +31,16 @@
 namespace Finna\Search\Solr;
 
 use VuFind\Config\Config;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Solr\Utils;
 
 use function in_array;
 use function is_array;
+use function is_callable;
 use function strlen;
 
 /**
- * Solr Search Parameters
+ * Solr Search Parameters.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -54,28 +56,28 @@ class Params extends \VuFind\Search\Solr\Params
     use ParamsSharedTrait;
 
     /**
-     * Maximum facet limit
+     * Maximum facet limit.
      *
      * @var int
      */
     public const MAX_FACET_LIMIT = 100;
 
     /**
-     * Date converter
+     * Date converter.
      *
      * @var \Vufind\Date\Converter
      */
     protected $dateConverter;
 
     /**
-     * New items facet configuration
+     * New items facet configuration.
      *
      * @var array
      */
     protected $newItemsFacets = [];
 
     /**
-     * Query debug flag
+     * Query debug flag.
      *
      * @var bool
      */
@@ -96,29 +98,30 @@ class Params extends \VuFind\Search\Solr\Params
     protected $facetFilters = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param \VuFind\Search\Base\Options  $options         Options to use
-     * @param \VuFind\Config\PluginManager $configLoader    Config loader
-     * @param HierarchicalFacetHelper      $facetHelper     Hierarchical
-     * facet helper
-     * @param AuthorityHelper              $authorityHelper Authority helper
-     * @param \VuFind\Date\Converter       $dateConverter   Date converter
+     * @param \VuFind\Search\Base\Options $options         Options to use
+     * @param ConfigManagerInterface      $configManager   Config manager
+     * @param HierarchicalFacetHelper     $facetHelper     Hierarchical
+     *                                                     facet helper
+     * @param AuthorityHelper             $authorityHelper Authority helper
+     * @param \VuFind\Date\Converter      $dateConverter   Date converter
      */
     public function __construct(
         $options,
-        \VuFind\Config\PluginManager $configLoader,
+        ConfigManagerInterface $configManager,
         HierarchicalFacetHelper $facetHelper,
         AuthorityHelper $authorityHelper,
         \VuFind\Date\Converter $dateConverter
     ) {
-        parent::__construct($options, $configLoader, $facetHelper);
+        parent::__construct($options, $configManager, $facetHelper);
 
         $this->dateConverter = $dateConverter;
         $this->authorityHelper = $authorityHelper;
 
         // New items facets
-        if ($newItems = $this->facetConfig['SpecialFacets']['newItems'] ?? null) {
+        $facetConfig = $configManager->getConfigArray($options->getFacetsIni());
+        if ($newItems = $facetConfig['SpecialFacets']['newItems'] ?? null) {
             $this->newItemsFacets = $newItems;
         }
     }
@@ -155,7 +158,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Format a Solr date for display
+     * Format a Solr date for display.
      *
      * @param string $date   Date
      * @param string $domain Translation domain
@@ -217,7 +220,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Pull the search parameters
+     * Pull the search parameters.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -253,7 +256,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Initialize coordinate filter (coordinates, VuFind1)
+     * Initialize coordinate filter (coordinates, VuFind1).
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -285,7 +288,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Get query debug flag status
+     * Get query debug flag status.
      *
      * @return bool
      */
@@ -295,7 +298,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Enable or disable query debugging
+     * Enable or disable query debugging.
      *
      * @param bool $value Whether to enable debugging
      *
@@ -307,7 +310,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Remove all hidden filters
+     * Remove all hidden filters.
      *
      * @return void
      */
@@ -317,7 +320,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Get current limit for hierarchical facets
+     * Get current limit for hierarchical facets.
      *
      * @return int
      */
@@ -327,7 +330,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Set limit for hierarchical facets
+     * Set limit for hierarchical facets.
      *
      * @param int $limit New limit
      *
@@ -354,14 +357,14 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Return active author id filters.
      *
-     * @param boolean $includeRole Return role with author id
+     * @param bool $includeRole Return role with author id
      *
      * @return mixed null|array
      */
     public function getAuthorIdFilter($includeRole = false)
     {
         $result = [];
-        foreach ($this->getFilterList() as $key => $val) {
+        foreach ($this->getFilterList() as $val) {
             foreach ($val as $filterItem) {
                 $filter = $filterItem['value'] ?? null;
                 if (!$filter) {
@@ -488,11 +491,11 @@ class Params extends \VuFind\Search\Solr\Params
     /**
      * Is author id filter active?
      *
-     * @return boolean
+     * @return bool
      */
     public function hasAuthorIdFilter()
     {
-        foreach ($this->getFilterList() as $field => $facets) {
+        foreach ($this->getFilterList() as $facets) {
             foreach ($facets as $facet) {
                 if (
                     in_array(
@@ -524,7 +527,7 @@ class Params extends \VuFind\Search\Solr\Params
     }
 
     /**
-     * Initialize new items filter (first_indexed and other configured ones)
+     * Initialize new items filter (first_indexed and other configured ones).
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -591,7 +594,11 @@ class Params extends \VuFind\Search\Solr\Params
     {
         // We used to include the tie breaker in all sort options, so strip it out before doing anything else so that
         // any saved searches or links containing it still work properly and display the correct value:
-        if ($sort && ($tieBreaker = $this->getOptions()->getSortTieBreaker())) {
+        if (
+            $sort
+            && is_callable([$this->getOptions(), 'getSortTieBreaker'])
+            && ($tieBreaker = $this->getOptions()->getSortTieBreaker())
+        ) {
             if (str_ends_with($sort, ",$tieBreaker")) {
                 $sort = substr($sort, 0, -strlen($tieBreaker) - 1);
             }

@@ -1,11 +1,11 @@
 <?php
 
 /**
- * CookieConsent view helper
+ * CookieConsent view helper.
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022.
+ * Copyright (C) The National Library of Finland 2022-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -32,7 +32,7 @@ namespace Finna\View\Helper\Root;
 use function in_array;
 
 /**
- * CookieConsent view helper
+ * CookieConsent view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -42,65 +42,6 @@ use function in_array;
  */
 class CookieConsent extends \VuFind\View\Helper\Root\CookieConsent
 {
-    /**
-     * Render cookie consent initialization script
-     *
-     * @return string
-     */
-    public function render(): string
-    {
-        if (!$this->isEnabled()) {
-            return '';
-        }
-
-        // Check that categories in current consent cookie exist in configuration:
-        if ($consentJson = $this->cookieManager->get($this->consentCookieName)) {
-            if ($consent = json_decode($consentJson, true)) {
-                $cookieCategories = array_values(
-                    array_unique(
-                        array_merge(
-                            (array)($consent['categories'] ?? []),
-                            array_keys((array)($consent['services'] ?? []))
-                        )
-                    )
-                );
-
-                $categories = array_keys($this->consentConfig['Categories']);
-                $enabled = $this->config['Cookies']['consentCategories'] ?? '';
-                $categories = array_intersect(
-                    $categories,
-                    $enabled ? explode(',', $enabled) : ['essential']
-                );
-
-                sort($categories);
-                sort($cookieCategories);
-                if ($categories != $cookieCategories) {
-                    // Categories differ, invalidate current consent:
-                    $consent['revision'] = (int)($consent['revision']) - 1;
-
-                    $domain = $this->cookieManager->getDomain()
-                        ?: $this->getHostName();
-                    if (strncmp($domain, '.', 1) !== 0) {
-                        $domain = ".$domain";
-                    }
-                    setcookie(
-                        $this->consentCookieName,
-                        json_encode($consent),
-                        [
-                            'expires' => 0,
-                            'path' => $this->cookieManager->getPath(),
-                            'domain' => $domain,
-                            'samesite' => $this->cookieManager->getSameSite(),
-                            'secure' => $this->cookieManager->isSecure(),
-                        ]
-                    );
-                }
-            }
-        }
-
-        return parent::render();
-    }
-
     /**
      * Get title of required category for a service.
      *

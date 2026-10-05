@@ -1,7 +1,7 @@
 <?php
 
 /**
- * OAI Server class
+ * OAI Server class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  OAI_Server
@@ -32,7 +32,7 @@ namespace Finna\OAI;
 use VuFind\RecordDriver\AbstractBase as AbstractRecordDriver;
 
 /**
- * OAI Server class
+ * OAI Server class.
  *
  * This class provides OAI server functionality.
  *
@@ -45,14 +45,14 @@ use VuFind\RecordDriver\AbstractBase as AbstractRecordDriver;
 class Server extends \VuFind\OAI\Server
 {
     /**
-     * Finna specific api fields from [OAI] section
+     * Finna specific api fields from [OAI] section.
      *
      * @var array
      */
     protected array $finnaApiFields = [];
 
     /**
-     * Finna metadata prefix
+     * Finna metadata prefix.
      *
      * @var string
      */
@@ -105,7 +105,7 @@ class Server extends \VuFind\OAI\Server
     }
 
     /**
-     * Get record as a metadata presentation
+     * Get record as a metadata presentation.
      *
      * @param AbstractRecordDriver $record A record driver object
      * @param string               $format Metadata format to obtain

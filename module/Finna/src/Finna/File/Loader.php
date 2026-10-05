@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  File
@@ -36,7 +36,7 @@ use VuFind\Config\Config;
 use VuFind\Http\GuzzleService;
 
 /**
- * File loader
+ * File loader.
  *
  * @category VuFind
  * @package  File
@@ -44,13 +44,12 @@ use VuFind\Http\GuzzleService;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
-class Loader implements \VuFindHttp\HttpServiceAwareInterface
+class Loader
 {
-    use \VuFindHttp\HttpServiceAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CacheManager  $cacheManager  Cache Manager
      * @param Config        $config        Main configuration
@@ -64,7 +63,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Convert format to mime
+     * Convert format to mime.
      *
      * @param string $format Format to convert.
      *
@@ -78,7 +77,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Download a file to cache
+     * Download a file to cache.
      *
      * @param string $url           Url to download
      * @param string $fileName      Name of the file to save
@@ -95,26 +94,42 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     ): array {
         $cacheDir = $this->cacheManager->getCache($cacheId)->getOptions()->getCacheDir();
         $path = "$cacheDir/$fileName";
+        $tmpPath = "$cacheDir/" . getmypid() . '_' . time() . '_' . $fileName;
         $maxAge = $this->config->$configSection->cacheTime ?? 43200;
         $result = true;
         $error = '';
         if (!file_exists($path) || time() - filemtime($path) > $maxAge * 60) {
-            $client = $this->httpService->createClient(
+            $fileStream = new FileStream($tmpPath);
+            $client = $this->guzzleService->createGuzzleClient($url, 300);
+            $response = $client->request(
+                'GET',
                 $url,
-                \Laminas\Http\Request::METHOD_GET,
-                300
+                [
+                    RequestOptions::SINK => $fileStream,
+                    RequestOptions::ON_HEADERS => function (ResponseInterface $response) use (
+                        &$fileStream,
+                    ): void {
+                        // Start output when the headers and correct status code are received:
+                        if ($response->getStatusCode() === 200) {
+                            $fileStream->setOutputActive(true);
+                        }
+                    },
+                ],
             );
-            $client->setStream($path);
-            $client->setOptions(['useragent' => 'VuFind']);
-            $adapter = new \Laminas\Http\Client\Adapter\Curl();
-            $client->setAdapter($adapter);
-            $response = $client->send();
 
-            if (!$response->isSuccess()) {
-                $error = "Failed to retrieve file from $url: "
-                    . $response->getStatusCode() . ' ' . $response->getReasonPhrase();
-                $this->debug($error);
+            if ($response->getStatusCode() !== 200) {
+                $this->logError(
+                    "Failed to retrieve file from $url: " . $response->getStatusCode() . ' '
+                    . $response->getReasonPhrase()
+                );
+                $this->logError($error);
                 $result = false;
+            }
+            // Move file into place:
+            if (!rename($tmpPath, $path)) {
+                $this->logError("Could not rename $tmpPath to $path");
+                $result = false;
+                unlink($tmpPath);
             }
         }
 
@@ -122,7 +137,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
     }
 
     /**
-     * Proxy a file and set proper headers, useful if download has no information
+     * Proxy a file and set proper headers, useful if download has no information.
      *
      * @param string $url      Url to load the file from
      * @param string $fileName Display name of the file to download
@@ -136,7 +151,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
         string $format
     ): bool {
         $stdoutStream = new StdoutStream();
-        $client = $this->guzzleService->createClient($url, 300);
+        $client = $this->guzzleService->createGuzzleClient($url, 300);
         $response = $client->request(
             'GET',
             $url,
@@ -146,7 +161,7 @@ class Loader implements \VuFindHttp\HttpServiceAwareInterface
                     &$stdoutStream,
                     $format,
                     $fileName
-                ) {
+                ): void {
                     // Send headers and start output when the correct status code is received:
                     if ($response->getStatusCode() === 200) {
                         $contentType = $response->getHeader('Content-Type');

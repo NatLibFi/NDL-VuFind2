@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -31,6 +31,8 @@
 namespace Finna\Controller;
 
 use VuFind\Db\Service\SearchServiceInterface;
+
+use function in_array;
 
 /**
  * Finna search controller trait.
@@ -54,8 +56,10 @@ trait FinnaSearchControllerTrait
         if ($savedTabs = $this->getRequest()->getQuery()->get('search')) {
             $saved = [];
             foreach ((array)$savedTabs as $tab) {
-                [$searchClass, $searchId] = explode(':', $tab);
-                $saved[$searchClass] = $searchId;
+                $parts = explode(':', $tab);
+                if (isset($parts[1])) {
+                    $saved[$parts[0]] = $parts[1];
+                }
             }
             $this->layout()->savedTabs = $saved;
         }
@@ -132,13 +136,11 @@ trait FinnaSearchControllerTrait
         $all = ['top', 'results_top', 'side', 'noresults', 'bottom'];
         $noRecommend = $this->params()->fromQuery('noRecommend', false);
         if (
-            $noRecommend === 1 || $noRecommend === '1'
-            || $noRecommend === 'true' || $noRecommend === true
+            in_array($noRecommend, [1, '1', 'true', true], true)
         ) {
             return [];
         } elseif (
-            $noRecommend === 0 || $noRecommend === '0'
-            || $noRecommend === 'false' || $noRecommend === false
+            in_array($noRecommend, [0, '0', 'false', false], true)
         ) {
             return $all;
         }

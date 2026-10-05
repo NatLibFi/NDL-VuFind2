@@ -1,7 +1,7 @@
 <?php
 
 /**
- * List Controller
+ * List Controller.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -56,7 +56,7 @@ class ListController extends \VuFind\Controller\AbstractBase
     use Feature\FinnaUserListTrait;
 
     /**
-     * Send user's saved favorites from a particular list to the view
+     * Send user's saved favorites from a particular list to the view.
      *
      * @return mixed
      */
@@ -105,8 +105,8 @@ class ListController extends \VuFind\Controller\AbstractBase
                 $feed = $this->getViewRenderer()->plugin('resultfeed');
                 $feed->setList($listObj);
                 $feed = $feed($results);
-                $feed->setTitle($listObj->title);
-                if ($desc = $listObj->description) {
+                $feed->setTitle($listObj->getTitle());
+                if ($desc = $listObj->getDescription()) {
                     $feed->setDescription($desc);
                 }
                 $feed->setLink($this->getServerUrl('home') . "List/$lid");
@@ -137,7 +137,7 @@ class ListController extends \VuFind\Controller\AbstractBase
 
     /**
      * Save action - Allows the save template to appear,
-     *   passes containingLists & nonContainingLists
+     *   passes containingLists & nonContainingLists.
      *
      * @return mixed
      */
@@ -184,7 +184,7 @@ class ListController extends \VuFind\Controller\AbstractBase
                 . '<a href="' . $listUrl . '" class="gotolist">'
                 . $this->translate('go_to_list') . '</a>.',
             ];
-            $this->flashMessenger()->addMessage($message, 'success');
+            $this->flashMessenger()->addSuccessMessage($message);
             return $this->redirect()->toRoute('list-page', ['lid' => $sourceListId]);
         }
         $userListService = $this->getDbService(\VuFind\Db\Service\UserListServiceInterface::class);
@@ -213,7 +213,7 @@ class ListController extends \VuFind\Controller\AbstractBase
             return;
         }
         $runner = $this->serviceLocator->get(\VuFind\Search\SearchRunner::class);
-        $callback = function ($callback, $params, $runningSearchId) {
+        $callback = function ($callback, $params, $runningSearchId): void {
             $params->setLimit(100000);
         };
         $records = $runner->run(

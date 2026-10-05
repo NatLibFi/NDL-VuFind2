@@ -1,0 +1,98 @@
+# This file configures the FooterMenu section plugin, which renders menus at the
+# bottom of every page. If this file is empty or missing, default settings will be
+# used, matching the examples provided below.
+#
+# The format of this configuration is as follows:
+#
+# Array keys for every group are:
+#   - label: text shown as group header, will be translated - required
+#   - MenuItems: items shown in the menu - required
+#   - checkMethod: the name of a FooterMenu section plugin method to perform
+#     a check whether to show the group. If omitted, group will always display.
+#
+# Array keys for every menu item could be:
+#   - label: the text shown as link, will be translated - required
+#   - route: route name used to generate link target - required unless url is set
+#   - routeParams: parameters for dynamic routes
+#   - url: target url, alternative to route - required unless route is set
+#   - checkMethod: the name of a FooterMenu section plugin method to perform
+#     a check whether to show the item. If omitted, item will always display.
+#   - attributes: additional attributes for the menu item's <a> tag
+#
+# You can use checkMethod: alwaysFail to disable specific inherited groups or items
+# in local configuration. If you wish to completely override the default
+# configuration you can disable configuration inheritance by adding a
+# "@parent_yaml": false entry at the very top of your local configuration file.
+
+"@parent_yaml": false
+
+footer-left:
+  label: 'About'
+  MenuItems:
+    - label: 'About Us'
+      route: content-page
+      routeParams:
+        page: about
+
+    - label: 'What is Finna'
+      route: content-page
+      routeParams:
+        page: about_finna
+
+    - label: 'Site Map'
+      route: sitemap-home
+      checkMethod: checkSiteMapPage
+
+    - label: 'Terms'
+      route: content-page
+      routeParams:
+        page: terms
+
+    - label: 'Privacy'
+      route: content-page
+      routeParams:
+        page: privacy
+
+    - label: 'Cookie Settings'
+      url: '#'
+      checkMethod: checkCookieSettings
+      attributes:
+        data-cc: show-preferencesModal
+        aria-haspopup: dialog
+
+
+footer-center:
+  label: footer_header_find_more
+  MenuItems:
+    - label: 'Search History'
+      route: search-history
+
+    - label: 'Advanced Search'
+      route: search-advanced
+
+    - label: 'Primo Search'
+      route: primo-home
+      checkMethod: checkPrimo
+
+    - label: 'Advanced Search from Primo'
+      route: primo-advanced
+      checkMethod: checkPrimo
+
+    - label: browse_extended_Database
+      route: browse-database
+      checkMethod: checkBrowseDatabase
+
+    - label: browse_extended_Journal
+      route: browse-journal
+      checkMethod: checkBrowseJournal
+
+footer-right:
+  label: footer_header_need_help
+  MenuItems:
+    - label: 'Help'
+      route: content-page
+      routeParams:
+        page: help
+
+    - label: 'Feedback'
+      route: feedback-home

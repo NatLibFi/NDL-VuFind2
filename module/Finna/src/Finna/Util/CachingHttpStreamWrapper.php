@@ -1,7 +1,7 @@
 <?php
 
 /**
- * HTTP stream wrapper with caching support
+ * HTTP stream wrapper with caching support.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ use Laminas\Cache\Storage\StorageInterface;
 use VuFindHttp\HttpServiceInterface;
 
 /**
- * HTTP stream wrapper with caching support
+ * HTTP stream wrapper with caching support.
  *
  * @category VuFind
  * @package  Util
@@ -44,7 +44,7 @@ use VuFindHttp\HttpServiceInterface;
 class CachingHttpStreamWrapper
 {
     /**
-     * Context
+     * Context.
      *
      * @var resource
      */
@@ -58,35 +58,35 @@ class CachingHttpStreamWrapper
     protected static $enabled = false;
 
     /**
-     * HTTP response
+     * HTTP response.
      *
      * @var ?resource
      */
     protected static $response = null;
 
     /**
-     * HTTP Service
+     * HTTP Service.
      *
      * @var ?HttpServiceInterface
      */
     protected static $httpService = null;
 
     /**
-     * Cache storage
+     * Cache storage.
      *
      * @var ?StorageInterface
      */
     protected static $cacheStorage = null;
 
     /**
-     * Cache life time (two weeks)
+     * Cache life time (two weeks).
      *
      * @var int
      */
     protected static $cacheLifetime = 60 * 60 * 24 * 14;
 
     /**
-     * Enable wrapper
+     * Enable wrapper.
      *
      * @param HttpServiceInterface $httpService  HTTP service
      * @param StorageInterface     $cacheStorage Cache storage

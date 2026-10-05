@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -44,9 +44,9 @@ trait FinnaUnsupportedFunctionViewTrait
      * Check if current library card supports a function. If not supported, show
      * a message and a notice about the possibility to change library card.
      *
-     * @param string  $function      Function to check
-     * @param boolean $checkFunction Use checkFunction() if true,
-     * checkCapability() otherwise
+     * @param string $function      Function to check
+     * @param bool   $checkFunction Use checkFunction() if true,
+     *                              checkCapability() otherwise
      *
      * @return mixed \Laminas\View if the function is not supported, false otherwise
      */
@@ -62,8 +62,7 @@ trait FinnaUnsupportedFunctionViewTrait
         if (!$supported) {
             $view = $this->createViewModel();
             $view->noSupport = true;
-            $this->flashMessenger()->setNamespace('error')
-                ->addMessage('no_ils_support_for_' . strtolower($function));
+            $this->flashMessenger()->addErrorMessage('no_ils_support_for_' . strtolower($function));
             return $view;
         }
         return false;

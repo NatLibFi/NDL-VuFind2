@@ -1,4 +1,4 @@
-/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab */
+/*global VuFind, finna, removeHashFromLocation, getNewRecordTab, ajaxLoadTab*/
 finna.record = (function finnaRecord() {
   var accordionTitleHeight = 64;
 
@@ -366,15 +366,32 @@ finna.record = (function finnaRecord() {
   }
 
   /**
-   * Initialize record navigation hash update event listener when window hash changes
+   * Initialize record navigation URL update event listener when window hash changes
    */
-  function initRecordNaviHashUpdate() {
-    $(window).on('hashchange', function onHashChange() {
-      $('.pager a').each(function updateHash(i, a) {
-        a.hash = window.location.hash;
+  function initRecordNaviUrlUpdate() {
+    /**
+     * Update all pager links from current URL
+     */
+    function updatePagerLinks() {
+      // Extract tab from current location:
+      const path = window.location.pathname;
+      let parts = path.match(/\/(Record|Collection|PrimoRecord|EdsRecord)\/[^/]+\/([^/]+)/);
+      if (parts) {
+        const tabName = parts[2];
+        document.querySelectorAll('.pager a').forEach((pagerLink) => {
+          const linkParts = pagerLink.href.split('?', 2);
+          linkParts[0] = linkParts[0].replace(/\/(Record|Collection|PrimoRecord|EdsRecord)\/([^/]+)((\/[^/]+)|$)/, "/$1/$2/" + tabName);
+          pagerLink.href = linkParts.join('?');
+        });
+      }
+    };
+    updatePagerLinks();
+    document.querySelectorAll('.record-tab-button')
+      .forEach((tabButton) => {
+        tabButton.addEventListener('show.bs.tab', () => {
+          updatePagerLinks();
+        });
       });
-    });
-    $(window).trigger('hashchange');
   }
 
   /**
@@ -496,53 +513,6 @@ finna.record = (function finnaRecord() {
         removeHashFromLocation();
       }
     }
-  }
-
-  /**
-   * Load recommended records
-   * @param {jQuery} container Container to load records to
-   * @param {string} method Method for ajax call
-   */
-  function loadRecommendedRecords(container, method)
-  {
-    if (container.length === 0) {
-      return;
-    }
-    var spinner = container.find('.fa-spinner').removeClass('hide');
-    var data = {
-      method: method,
-      id: container.data('id')
-    };
-    if ('undefined' !== typeof container.data('source')) {
-      data.source = container.data('source');
-    }
-    $.getJSON(VuFind.path + '/AJAX/JSON', data)
-      .done(function onGetRecordsDone(response) {
-        if (response.data.html.length > 0) {
-          container.html(VuFind.updateCspNonce(response.data.html));
-        }
-        spinner.addClass('hidden');
-      })
-      .fail(function onGetRecordsFail() {
-        spinner.addClass('hidden');
-        container.text(VuFind.translate('error_occurred'));
-      });
-  }
-
-  /**
-   * Load similar records support function
-   */
-  function loadSimilarRecords()
-  {
-    loadRecommendedRecords($('.sidebar .similar-records'), 'getSimilarRecords');
-  }
-
-  /**
-   * Load record related records support function
-   */
-  function loadRecordDriverRelatedRecords()
-  {
-    loadRecommendedRecords($('.sidebar .record-driver-related-records'), 'getRecordDriverRelatedRecords');
   }
 
   /**
@@ -719,13 +689,11 @@ finna.record = (function finnaRecord() {
   function init() {
     initHideDetails();
     initDescription();
-    initRecordNaviHashUpdate();
+    initRecordNaviUrlUpdate();
     initRecordAccordion();
     initAudioAccordion();
     applyRecordAccordionHash(initialToggle);
     $(window).on('hashchange', applyRecordAccordionHash);
-    loadSimilarRecords();
-    loadRecordDriverRelatedRecords();
     finna.authority.initAuthorityResultInfo();
     initPopovers();
   }

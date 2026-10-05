@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Get Search Results" AJAX handler
+ * "Get Search Results" AJAX handler.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -33,7 +33,7 @@ use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Search\Base\Results;
 
 /**
- * "Get Search Results" AJAX handler
+ * "Get Search Results" AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -44,7 +44,7 @@ use VuFind\Search\Base\Results;
 class GetSearchResults extends \VuFind\AjaxHandler\GetSearchResults
 {
     /**
-     * Render pagination
+     * Render pagination.
      *
      * @param Params  $params   Request params
      * @param Results $results  Search results

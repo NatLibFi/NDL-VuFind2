@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for a L1 backend
+ * Factory for a L1 backend.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Factory
@@ -32,7 +32,7 @@ namespace Finna\Search\Factory;
 use FinnaSearch\Backend\L1\Connector;
 
 /**
- * Factory for a L1 backend
+ * Factory for a L1 backend.
  *
  * @category VuFind
  * @package  Search_Factory
@@ -50,7 +50,7 @@ class L1BackendFactory extends SolrDefaultBackendFactory
     protected $createRecordMethod = 'getL1Record';
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {

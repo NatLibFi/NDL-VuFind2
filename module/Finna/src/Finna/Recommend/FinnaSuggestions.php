@@ -1,7 +1,7 @@
 <?php
 
 /**
- * FinnaSuggestions Recommendations Module
+ * FinnaSuggestions Recommendations Module.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Recommendations
@@ -34,7 +34,7 @@ use Laminas\Http\Client;
 use function in_array;
 
 /**
- * FinnaSuggestions Recommendations Module
+ * FinnaSuggestions Recommendations Module.
  *
  * This class provides recommendations via VuFind REST API (deferred).
  *
@@ -48,56 +48,56 @@ class FinnaSuggestions implements
     \VuFind\I18n\Translator\TranslatorAwareInterface,
     \VuFind\Recommend\RecommendInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface
+    \Psr\Log\LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * API url
+     * API url.
      *
      * @var string
      */
     protected $apiUrl;
 
     /**
-     * Search URL
+     * Search URL.
      *
      * @var string
      */
     protected $searchUrl;
 
     /**
-     * Settings from searches.ini
+     * Settings from searches.ini.
      *
      * @var string
      */
     protected $settings;
 
     /**
-     * Search term
+     * Search term.
      *
      * @var string
      */
     protected $lookfor;
 
     /**
-     * Search handler
+     * Search handler.
      *
      * @var string
      */
     protected $searchHandler;
 
     /**
-     * Search type
+     * Search type.
      *
      * @var string
      */
     protected $searchType;
 
     /**
-     * Result count
+     * Result count.
      *
      * @var int
      */
@@ -118,7 +118,7 @@ class FinnaSuggestions implements
     protected $urlHelper;
 
     /**
-     * Search handlers that are supported in Finna.fi
+     * Search handlers that are supported in Finna.fi.
      *
      * @var array
      */
@@ -252,7 +252,7 @@ class FinnaSuggestions implements
     }
 
     /**
-     * Reset search parameters
+     * Reset search parameters.
      *
      * @return void
      */
@@ -264,7 +264,7 @@ class FinnaSuggestions implements
     }
 
     /**
-     * Get search link to Finna
+     * Get search link to Finna.
      *
      * @return string
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Abstract base custom element
+ * Abstract base custom element.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  CustomElements
@@ -40,7 +40,7 @@ use function array_key_exists;
 use function is_string;
 
 /**
- * Abstract base custom element
+ * Abstract base custom element.
  *
  * @category VuFind
  * @package  CustomElements
@@ -51,28 +51,28 @@ use function is_string;
 abstract class AbstractBase implements CustomElementInterface
 {
     /**
-     * Regex for matching valid element names
+     * Regex for matching valid element names.
      *
      * @var string
      */
     protected $validNameRegex = '/^([A-Za-z][A-Za-z0-9]*)-[A-Za-z0-9-]+$/';
 
     /**
-     * Element name
+     * Element name.
      *
      * @var string
      */
     protected $name;
 
     /**
-     * Element name prefix
+     * Element name prefix.
      *
      * @var string
      */
     protected $prefix;
 
     /**
-     * Options
+     * Options.
      *
      * The base class supports the following options:
      * - attributes
@@ -87,21 +87,21 @@ abstract class AbstractBase implements CustomElementInterface
     protected $options;
 
     /**
-     * Attributes
+     * Attributes.
      *
      * @var array
      */
     protected $attributes;
 
     /**
-     * DOM object for the custom element if outerHTML is provided in options
+     * DOM object for the custom element if outerHTML is provided in options.
      *
      * @var Dom
      */
     protected $dom = null;
 
     /**
-     * View model for server-side rendering
+     * View model for server-side rendering.
      *
      * @var ModelInterface
      */

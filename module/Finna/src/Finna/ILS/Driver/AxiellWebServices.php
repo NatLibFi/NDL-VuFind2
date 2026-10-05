@@ -1,11 +1,11 @@
 <?php
 
 /**
- * Axiell Web Services ILS Driver
+ * Axiell Web Services ILS Driver.
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2015-2022.
+ * Copyright (C) The National Library of Finland 2015-2025.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -34,10 +34,12 @@
 namespace Finna\ILS\Driver;
 
 use DOMDocument;
+use Finna\ILS\Driver\Feature\FinnaCommonILSTrait;
 use VuFind\Date\DateException;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\I18n\Translator\TranslatorAwareInterface as TranslatorAwareInterface;
 use VuFind\ILS\Logic\AvailabilityStatus;
+use VuFind\ILS\Logic\OnlinePaymentTrait;
 
 use function count;
 use function in_array;
@@ -46,7 +48,7 @@ use function is_object;
 use function strlen;
 
 /**
- * Axiell Web Services ILS Driver
+ * Axiell Web Services ILS Driver.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -60,7 +62,7 @@ use function strlen;
  */
 class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     TranslatorAwareInterface,
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -69,156 +71,160 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         logError as error;
     }
     use \VuFind\Cache\CacheTrait;
+    use FinnaCommonILSTrait;
+    use OnlinePaymentTrait {
+        fineIsPayable as fineIsPayableBase;
+    }
 
     /**
-     * Date formatting object
+     * Date formatting object.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateFormat;
 
     /**
-     * Config file path resolver
+     * Config file path resolver.
      *
      * @var \VuFind\Config\PathResolver
      */
     protected $pathResolver;
 
     /**
-     * Default pickup location
+     * Default pickup location.
      *
      * @var string
      */
     protected $defaultPickUpLocation;
 
     /**
-     * Default request group
+     * Default request group.
      *
      * @var bool|string
      */
     protected $defaultRequestGroup;
 
     /**
-     * Whether request groups are enabled
+     * Whether request groups are enabled.
      *
      * @var bool
      */
     protected $requestGroupsEnabled;
 
     /**
-     * Regional hold
+     * Regional hold.
      *
-     * @var Boolean
+     * @var bool
      */
     protected $regionalHold = false;
 
     /**
-     * Arena Member code of the institution
+     * Arena Member code of the institution.
      *
      * @var string
      */
     protected $arenaMember = '';
 
     /**
-     * Wsdl file name or url for accessing the catalogue section of AWS
+     * Wsdl file name or url for accessing the catalogue section of AWS.
      *
      * @var string
      */
     protected $catalogue_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the patron section of AWS
+     * Wsdl file name or url for accessing the patron section of AWS.
      *
      * @var string
      */
     protected $patron_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the patronaurora section of AWS
+     * Wsdl file name or url for accessing the patronaurora section of AWS.
      *
      * @var string
      */
     protected $patronaurora_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the loans section of AWS
+     * Wsdl file name or url for accessing the loans section of AWS.
      *
      * @var string
      */
     protected $loans_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the loansaurora section of aws
+     * Wsdl file name or url for accessing the loansaurora section of aws.
      *
      * @var string
      */
     protected $loansaurora_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the payment section of AWS
+     * Wsdl file name or url for accessing the payment section of AWS.
      *
      * @var string
      */
     protected $payments_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the reservation section of AWS
+     * Wsdl file name or url for accessing the reservation section of AWS.
      *
      * @var string
      */
     protected $reservations_wsdl = '';
 
     /**
-     * Wsdl file name or url for accessing the catalogue aurora section of AWS
+     * Wsdl file name or url for accessing the catalogue aurora section of AWS.
      *
      * @var string
      */
     protected $catalogueaurora_wsdl = '';
 
     /**
-     * Path of the AWS debug log-file
+     * Path of the AWS debug log-file.
      *
      * @var string
      */
     protected $logFile = '';
 
     /**
-     * Pathname with prefix for logging the duration of AWS calls
+     * Pathname with prefix for logging the duration of AWS calls.
      *
      * @var string
      */
     protected $durationLogPrefix = '';
 
     /**
-     * Verbose debug-mode
+     * Verbose debug-mode.
      *
-     * @var Boolean
+     * @var bool
      */
     protected $verbose = false;
 
     /**
-     * Institution settings for the order of organisations
+     * Institution settings for the order of organisations.
      *
      * @var array
      */
     protected $holdingsOrganisationOrder;
 
     /**
-     * Institution settings for the order of branches
+     * Institution settings for the order of branches.
      *
      * @var array
      */
     protected $holdingsBranchOrder;
 
     /**
-     * Institution settings for single reservation queue
+     * Institution settings for single reservation queue.
      *
-     * @var Boolean
+     * @var bool
      */
     protected $singleReservationQueue = false;
 
     /**
-     * Messaging methods excluded from a service
+     * Messaging methods excluded from a service.
      *
      * @var array
      */
@@ -229,7 +235,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Title list mappings
+     * Title list mappings.
      *
      * @var array
      */
@@ -241,7 +247,19 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Messaging settings status code mappings
+     * Messaging preference type mappings.
+     *
+     * @var array
+     */
+    protected array $messagingPrefTypeMap = [
+        'overdueNotice' => 'overdueNotice',
+        'pickUpNotice' => 'pickUpNotice',
+        'dueDateAlert' => 'dueDateAlert',
+        'dueDateAlertEmail' => 'dueDateAlertEmail',
+    ];
+
+    /**
+     * Messaging settings status code mappings.
      *
      * @var array
      */
@@ -251,17 +269,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Backwards compatibility for messagingSettings
-     *
-     * @var array
-     */
-    protected $oldStatuses = [
-        'snailMail' => 'letter',
-        'ilsDefined' => 'none',
-    ];
-
-    /**
-     * SOAP Options
+     * SOAP Options.
      *
      * @var array
      */
@@ -282,14 +290,14 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Titlelist cache time mappings in minutes
+     * Titlelist cache time mappings in minutes.
      *
      * @var array
      */
     protected $titleListCacheSettings = [];
 
     /**
-     * Pick up location block list
+     * Pick up location block list.
      *
      * @var array
      */
@@ -305,7 +313,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Date\Converter      $dateConverter Date converter object
      * @param \VuFind\Config\PathResolver $pathResolver  Config file path resolver
@@ -524,7 +532,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if request is valid
+     * Check if request is valid.
      *
      * This is responsible for determining if an item is requestable
      *
@@ -540,7 +548,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -564,7 +572,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Pickup Locations
+     * Get Pickup Locations.
      *
      * This is responsible for retrieving pickup locations.
      *
@@ -680,7 +688,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Default Pick Up Location
+     * Get Default Pick Up Location.
      *
      * Returns the default pick up location set in the .ini file
      *
@@ -699,7 +707,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Default Request Group
+     * Get Default Request Group.
      *
      * Returns the default request group
      *
@@ -718,7 +726,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get request groups
+     * Get request groups.
      *
      * @param integer $bibId       BIB ID
      * @param array   $patronId    Patron information returned by the patronLogin
@@ -750,7 +758,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Place Hold
+     * Place Hold.
      *
      * This is responsible for both placing holds as well as placing recalls.
      *
@@ -836,7 +844,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Cancel Holds
+     * Cancel Holds.
      *
      * This is responsible for canceling holds.
      *
@@ -898,7 +906,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update holds
+     * Update holds.
      *
      * This is responsible for changing the status of hold requests
      *
@@ -988,7 +996,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1005,7 +1013,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Statuses
+     * Get Statuses.
      *
      * This is responsible for retrieving the status information for a
      * collection of records.
@@ -1025,7 +1033,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -1116,7 +1124,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * This is responsible for iterating the organisation holdings
+     * This is responsible for iterating the organisation holdings.
      *
      * @param array  $organisationHoldings Organisation holdings
      * @param string $id                   The record id to retrieve the holdings
@@ -1167,11 +1175,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
                             $year = $journalInfo['year'] ?? '';
                             $edition = $journalInfo['edition'] ?? '';
                             if ($year !== '' && $edition !== '') {
-                                if (strncmp($year, $edition, strlen($year)) == 0) {
-                                    $group = $edition;
-                                } else {
-                                    $group = "$year, $edition";
-                                }
+                                $group = strncmp($year, $edition, strlen($year)) == 0 ? $edition : "$year, $edition";
                             } else {
                                 $group = $year . $edition;
                             }
@@ -1330,7 +1334,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Purchase History
+     * Get Purchase History.
      *
      * This is responsible for retrieving the acquisitions history data for the
      * specific record (usually recently received issues of a serial).
@@ -1346,7 +1350,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Patron Login
+     * Patron Login.
      *
      * This is responsible for authenticating a patron against the catalog.
      *
@@ -1386,305 +1390,218 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             }
             return null;
         }
-
         $info = $result->$functionResult->patronInformation;
 
         $names = explode(' ', $info->patronName);
         $lastname = array_pop($names);
         $firstname = implode(' ', $names);
 
-        $loanHistoryEnabled = $info->isLoanHistoryEnabled ?? false;
-
         /**
          * Request an authentication id used in certain requests e.g:
          * GetTransactionHistory
          */
         $patronId = $this->authenticatePatron($username, $password);
+        $user = $this->createPatronArray(
+            id: $patronId,
+            cat_username: $username,
+            cat_password: $password,
+            firstname: $firstname,
+            lastname: $lastname,
+            nonDefaultFields: [
+                // Non  default field for legacy support
+                'patronId' => $patronId,
+            ]
+        );
 
-        $user = [
-            'id' => $info->backendPatronId,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'lastname' => $lastname,
-            'firstname' => $firstname,
-            'major' => null,
-            'college' => null,
-            'patronId' => $patronId,
-        ];
+        $email = null;
+        $emailId = null;
 
-        $userCached = [
-            'id' => $info->backendPatronId,
-            'cat_username' => $username,
-            'cat_password' => $password,
-            'lastname' => $lastname,
-            'firstname' => $firstname,
-            'email' => '',
-            'emailId' => '',
-            'address1' => '',
-            'addressId' => '',
-            'zip' => '',
-            'city' => '',
-            'country' => '',
-            'phone' => '',
-            'phoneId' => '',
-            'phoneLocalCode' => '',
-            'phoneAreaCode' => '',
-            'major' => null,
-            'college' => null,
-            'patronId' => $patronId,
-            'loan_history' => (bool)$loanHistoryEnabled,
-        ];
-
-        if (!empty($info->emailAddresses->emailAddress)) {
-            $emailAddresses
-                =  $this->objectToArray($info->emailAddresses->emailAddress);
-
-            foreach ($emailAddresses as $emailAddress) {
-                if ($emailAddress->isActive == 'yes') {
-                    $userCached['email'] = $emailAddress->address ?? '';
-                    $userCached['emailId'] = $emailAddress->id ?? '';
+        foreach ($this->objectToArray($info->emailAddresses->emailAddress ?? []) as $emailAddress) {
+            if ($emailAddress->isActive === 'yes') {
+                if (!($email = trim($emailAddress->address ?? '') ?: null)) {
+                    continue;
                 }
+                $emailId = $emailAddress->id ?? '';
+                break;
+            }
+        }
+        $address1 = null;
+        $zip = null;
+        $city = null;
+        $country = null;
+        $addressId = null;
+        foreach ($this->objectToArray($info->addresses->address ?? []) as $address) {
+            if ($address->isActive == 'yes') {
+                $address1 = $address->streetAddress ?? '';
+                $zip = $address->zipCode ?? '';
+                $city = $address->city ?? '';
+                $country = $address->country ?? '';
+                $addressId = $address->id ?? '';
             }
         }
 
-        if (isset($info->addresses->address)) {
-            $addresses = $this->objectToArray($info->addresses->address);
-            foreach ($addresses as $address) {
-                if ($address->isActive == 'yes') {
-                    $userCached['address1'] = $address->streetAddress ?? '';
-                    $userCached['zip'] = $address->zipCode ?? '';
-                    $userCached['city'] = $address->city ?? '';
-                    $userCached['country'] = $address->country ?? '';
-                    $userCached['addressId'] = $address->id ?? '';
+        $phone = null;
+        $phoneLocalCode = null;
+        $phoneAreaCode = null;
+        $phoneId = null;
+        foreach ($this->objectToArray($info->phoneNumbers->phoneNumber ?? []) as $phoneNumber) {
+            if ($phoneNumber->sms->useForSms == 'yes') {
+                $phoneAreaCode = $phone = $phoneNumber->areaCode ?? '';
+                if (isset($phoneNumber->localCode)) {
+                    $phone .= $phoneNumber->localCode;
+                    $phoneLocalCode = $phoneNumber->localCode;
                 }
-            }
-        }
-
-        if (isset($info->phoneNumbers->phoneNumber)) {
-            $phoneNumbers = $this->objectToArray($info->phoneNumbers->phoneNumber);
-            foreach ($phoneNumbers as $phoneNumber) {
-                if ($phoneNumber->sms->useForSms == 'yes') {
-                    $userCached['phone'] = $phoneNumber->areaCode ?? '';
-                    $userCached['phoneAreaCode'] = $userCached['phone'];
-                    if (isset($phoneNumber->localCode)) {
-                        $userCached['phone'] .= $phoneNumber->localCode;
-                        $userCached['phoneLocalCode'] = $phoneNumber->localCode;
-                    }
-                    if (isset($phoneNumber->id)) {
-                        $userCached['phoneId'] = $phoneNumber->id;
-                    }
+                if (isset($phoneNumber->id)) {
+                    $phoneId = $phoneNumber->id;
                 }
             }
         }
 
         $serviceSendMethod
             = $this->config['updateMessagingSettings']['method'] ?? 'none';
-
-        switch ($serviceSendMethod) {
-            case 'database':
-                $userCached['messagingServices']
-                    = $this->parseEmailMessagingSettings(
-                        $info->messageServices->messageService ?? null
-                    );
-                break;
-            case 'driver':
-                $userCached['messagingServices']
-                    = $this->parseDriverMessagingSettings(
-                        $info->messageServices->messageService ?? null,
-                        $user
-                    );
-                break;
-            default:
-                $userCached['messagingServices'] = [];
-                break;
+        $messagingServices = [];
+        // Convert users messaging services into koha style array
+        if ($serviceSendMethod === 'driver') {
+            $allowedMessagingServices = $this->getMessageServices($user);
+            $userMessagingServices
+                = $this->parseObtainedMessagingSettings(
+                    $this->objectToArray($info->messageServices->messageService ?? []),
+                    $allowedMessagingServices,
+                );
+            $messagingServices = $this->createMessagingSettingsArray(
+                $userMessagingServices,
+                1,
+                5,
+                'select'
+            );
+        } elseif ($serviceSendMethod === 'database') {
+            $allowedMessagingServices = $this->getEmailMessagingServices();
+            $messagingServices = $this->parseObtainedMessagingSettings(
+                $this->objectToArray($info->messageServices->messageService ?? []),
+                $allowedMessagingServices
+            );
+            $messagingServices = $this->createMessagingSettingsArray($messagingServices, 1, 5);
         }
 
+        $userCached = $this->createProfileArray(
+            firstname: $firstname,
+            lastname: $lastname,
+            address1: $address1,
+            zip: $zip,
+            city: $city,
+            country: $country,
+            phone: $phone,
+            email: $email,
+            messagingServices: $messagingServices,
+            loan_history: $info->isLoanHistoryEnabled ?? null,
+            nonDefaultFields: [
+                'emailId' => $emailId,
+                'addressId' => $addressId,
+                'phoneId' => $phoneId,
+                'phoneLocalCode' => $phoneLocalCode,
+                'phoneAreaCode' => $phoneAreaCode,
+                'patronId' => $patronId,
+                'id' => $info->backendPatronId,
+                'cat_username' => $username,
+                'cat_password' => $password,
+            ]
+        );
         $this->putCachedData($cacheKey, $userCached);
 
         return $user;
     }
 
     /**
-     * Function to create an array for using email to change messaging services
+     * Helper function to format obtained messaging services from object into common array format.
      *
-     * @param ?object $infoServices Services to parse
+     * @param ?object $userServices    User defined services and methods
+     * @param array   $allowedServices Services allowed, obtained from ILS
      *
-     * @return array parsed services
+     * @return array
      */
-    public function parseEmailMessagingSettings($infoServices)
+    protected function parseObtainedMessagingSettings($userServices, $allowedServices): array
     {
-        $validServices = [
-            'pickUpNotice'  => [
-                'letter', 'email', 'sms', 'none',
-            ],
-            'overdueNotice' => [
-                'letter', 'email', 'sms', 'none',
-            ],
-            'dueDateAlert' => [
-                'email', 'none',
-            ],
-         ];
+        if (!$userServices || !$allowedServices) {
+            return [];
+        }
 
-        $services = [];
-        foreach ($validServices as $service => $validMethods) {
-            $typeLabel = 'dueDateAlert' === $service
-                ? $this->translate(
-                    'messaging_settings_type_dueDateAlertEmail'
-                )
-                : $this->translate("messaging_settings_type_$service");
-            $data = [
-                'active' => false,
-                'type' => $typeLabel,
-                'sendMethods' => [],
-            ];
-
-            foreach ($validMethods as $methodKey) {
+        // Loop through services found from users profile and parse them into a commonly understandable
+        // form
+        foreach ($userServices as $userService) {
+            $type = (string)$userService->serviceType;
+            if (!isset($allowedServices[$type])) {
+                continue;
+            }
+            // Loop through users preferred send methods and adjust the returning array with correct values
+            foreach ($this->objectToArray($userService->sendMethods) as $method) {
+                $mappedMethod = $this->mapCodeToStatus($method->sendMethod->value ?? 'inactive');
                 if (
-                    in_array(
-                        $this->mapOldStatusToCode($methodKey),
-                        $this->messagingFilters[$service] ?? []
-                    )
+                    !isset($allowedServices[$type]['transport_types'][$mappedMethod])
                 ) {
                     continue;
                 }
-
-                $data['sendMethods'] += [
-                    "$methodKey" => [
-                        'active' => false,
-                        'type' => $methodKey,
-                    ],
-                ];
+                $allowedServices[$type]['transport_types'][$mappedMethod]
+                    = ($method->sendMethod->isActive ?? 'no') === 'yes';
             }
-            $services[$service] = $data;
-        }
-
-        if (null !== $infoServices) {
-            foreach ($infoServices as $service) {
-                $serviceType = $service->serviceType;
-                $numOfDays = $service->nofDays->value ?? 'none';
-                $active = $service->isActive === 'yes';
-
-                $sendMethods = $this->objectToArray($service->sendMethods);
-
-                foreach ($sendMethods as $method) {
-                    $type = isset($method->sendMethod->value)
-                        ? $this->mapOldCodeToStatus($method->sendMethod->value)
-                        : 'none';
-                    if (!isset($services[$serviceType]['sendMethods'][$type])) {
-                        continue;
-                    }
-                    $services[$serviceType]['sendMethods'][$type]['active']
-                        = isset($method->sendMethod->isActive)
-                            && $method->sendMethod->isActive === 'yes';
-                }
-
-                foreach ($services[$serviceType]['sendMethods'] as $key => &$data) {
-                    $methodLabel
-                        = $this->translate("messaging_settings_method_$key");
-
-                    if ($numOfDays > 0 && $key == 'email') {
-                        $methodLabel =  $this->translate(
-                            $numOfDays == 1
-                            ? 'messaging_settings_num_of_days'
-                            : 'messaging_settings_num_of_days_plural',
-                            ['%%days%%' => $numOfDays]
-                        );
-                    }
-
-                    if (!$active) {
-                        $methodLabel
-                            =  $this->translate('messaging_settings_method_none');
-                    }
-                    $data['method'] = $methodLabel;
-                }
-
-                if (isset($services[$serviceType])) {
-                    $services[$serviceType]['active'] = $active;
-                    $services[$serviceType]['numOfDays'] = $numOfDays;
-                }
+            if (isset($userService->nofDays->value)) {
+                $allowedServices[$type]['days_in_advance']['value'] = (int)$userService->nofDays->value;
             }
         }
-
-        return $services;
+        return $allowedServices;
     }
 
     /**
-     * Function to create an array for using driver to change messaging services
-     *
-     * @param ?object $infoServices Services to parse
-     * @param array   $user         User data
+     * Function to create an array for using email to change messaging services.
+     * This is a Legacy compatibility function.
      *
      * @return array parsed services
      */
-    public function parseDriverMessagingSettings($infoServices, $user)
+    public function getEmailMessagingServices()
     {
-        $services = [];
-        $messagingSettings = [];
-
-        if (null !== $infoServices) {
-            foreach ($infoServices as $service => $options) {
-                $current = [
-                    'transport_type' =>
-                        (string)$options->sendMethods->sendMethod->value,
-                ];
-                if (isset($options->nofDays)) {
-                    $current['nofDays'] = $options->nofDays->value;
-                }
-                $services[$options->serviceType] = $current;
-            }
-        }
-
-        // We need to find proper options for current service
-        foreach ($this->getMessageServices($user) as $service => $methods) {
-            $settings = [
-                'type' => $service,
-                'settings' => [
-                    'transport_types' => [
-                        'type' => 'select',
-                        'options' => [],
-                        'value' => $this->mapCodeToStatus(
-                            $services[$service]['transport_type']
-                        ),
-                    ],
+        $defaultEmailServices = [
+            'pickUpNotice'  => [
+                'transport_types' => [
+                    'print' => false,
+                    'email' => false,
+                    'sms' => false,
+                    'inactive' => false,
                 ],
-            ];
-            if ($service === 'dueDateAlert') {
-                $options = [];
-                $hasActive = false;
-                for ($i = 1; $i <= 5; $i++) {
-                    if ($i === $services[$service]['nofDays']) {
-                        $hasActive = true;
-                    }
-                    $options[$i] = [
-                        'name' => $this->translate(
-                            1 === $i ? 'messaging_settings_num_of_days'
-                            : 'messaging_settings_num_of_days_plural',
-                            ['%%days%%' => $i]
-                        ),
-                        'active' => $i === $services[$service]['nofDays'],
-                    ];
+                'selectType' => 'select',
+                'type' => 'pickUpNotice',
+            ],
+            'overdueNotice' => [
+                'transport_types' => [
+                    'print' => false,
+                    'email' => false,
+                    'sms' => false,
+                    'inactive' => false,
+                ],
+                'selectType' => 'select',
+                'type' => 'overdueNotice',
+            ],
+            'dueDateAlert' => [
+                'transport_types' => [
+                    'email' => false,
+                    'inactive' => false,
+                ],
+                'selectType' => 'select',
+                'type' => 'dueDateAlertEmail',
+                'days_in_advance' => [
+                    'configurable' => true,
+                ],
+            ],
+        ];
+        $filtered = [];
+        foreach ($defaultEmailServices as $serviceType => $settings) {
+            $filtered[$serviceType] = $settings;
+            foreach ($settings['transport_types'] as $method => $active) {
+                $oldStatus = $this->mapStatusToCode($method);
+                if (in_array($oldStatus, $this->messagingFilters[$serviceType] ?? [])) {
+                    unset($filtered[$serviceType]['transport_types'][$method]);
                 }
-                if (!$hasActive) {
-                    $options[1]['active'] = true;
-                }
-                $settings['settings']['days_in_advance'] = [
-                    'type' => 'select',
-                    'value' => $services[$service]['nofDays'],
-                    'options' => $options,
-                    'readonly' => false,
-                ];
             }
-            foreach ($methods as $methodId => $method) {
-                $coded = $this->mapCodeToStatus($method);
-                $settings['settings']['transport_types']['options'][$coded] = [
-                        'active' => $services[$service]['transport_type']
-                            === $method,
-                    ];
-            }
-            $messagingSettings[$service] = $settings;
         }
-
-        return $messagingSettings;
+        return $filtered;
     }
 
     /**
@@ -1699,7 +1616,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     {
         if (isset($this->config[$function])) {
             $functionConfig = $this->config[$function];
-            if ('onlinePayment' === $function) {
+            if ('OnlinePayment' === $function) {
                 if (!isset($functionConfig['exactBalanceRequired'])) {
                     $functionConfig['exactBalanceRequired'] = true;
                 }
@@ -1720,7 +1637,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Function to fetch dynamic lists from Aurora
+     * Function to fetch dynamic lists from Aurora.
      *
      * @param array $params To fetch
      *
@@ -1769,7 +1686,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             'pages' => $result->$functionResult->nofPages,
         ];
         // Lets get a pretty list of results
-        foreach ($records as $key => $obj) {
+        foreach ($records as $obj) {
             $record = [
                 'id' => $obj->id ?? '0',
                 'title' => $obj->title ?? '',
@@ -1785,7 +1702,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Checks if key has a value in mapped list and returns it
+     * Checks if key has a value in mapped list and returns it.
      *
      * @param string $key to map
      *
@@ -1797,7 +1714,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Checks if value has a key in mapped list and returns it
+     * Checks if value has a key in mapped list and returns it.
      *
      * @param string $value to map
      *
@@ -1810,7 +1727,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transactions
+     * Get Patron Transactions.
      *
      * This is responsible for retrieving all transactions (i.e. checked out items)
      * by a specific patron.
@@ -1938,7 +1855,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Transaction History
+     * Get Patron Transaction History.
      *
      * This is responsible for retrieving all historical transactions
      * (i.e. checked out items)
@@ -2002,7 +1919,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         $transactions = $this->objectToArray(
             $result->loanHistoryResponse->loanHistoryItems->loanHistoryItem ?? []
         );
-        foreach ($transactions as $transaction => $record) {
+        foreach ($transactions as $record) {
             $obj = $record->catalogueRecord;
             $title = $obj->title;
             if (!empty($record->note)) {
@@ -2029,7 +1946,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Returns an id which is used to authenticate current session in SOAP API
+     * Returns an id which is used to authenticate current session in SOAP API.
      *
      * @param string $username patron username
      * @param string $password patron password
@@ -2067,7 +1984,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron messaging settings
+     * Update patron messaging settings.
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -2108,7 +2025,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get message services available
+     * Get message services available.
      *
      * @param array $patron The patron array from patronLogin
      *
@@ -2130,11 +2047,10 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
         $conf = [
             'arenaMember' => $this->arenaMember,
-            'language' => $this->getLanguage(),
             'user' => $username,
             'password' => $password,
+            'language' => $this->getLanguage(),
         ];
-
         $result = $this->doSOAPRequest(
             $this->patronaurora_wsdl,
             $function,
@@ -2152,30 +2068,35 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             }
             return [];
         }
-
         $resultArray = $this->objectToArray(
             $result->$functionResult->messageServices->messageService
         );
         $returnable = [];
-        foreach ($resultArray as $service => $sendMethods) {
-            $current = [];
-            $currentMethods = $sendMethods->sendMethods->sendMethod;
-            $serviceType = $sendMethods->serviceType;
-            foreach ($currentMethods as $key => $value) {
+        foreach ($resultArray as $sendMethods) {
+            $serviceType = $this->mapCodeToStatus($sendMethods->serviceType);
+            $current = [
+                'transport_types' => [],
+            ];
+            foreach ($sendMethods->sendMethods->sendMethod as $value) {
                 $method = is_object($value) ? $value->value : $value;
+                $mappedMethod = $this->mapCodeToStatus($method);
                 if (in_array($method, $this->messagingFilters[$serviceType] ?? [])) {
                     continue;
                 }
-                $current[] = $method;
+                $current['transport_types'][$mappedMethod] = false;
+            }
+            if ($serviceType === 'dueDateAlert') {
+                $current['days_in_advance'] = [
+                    'configurable' => true,
+                ];
             }
             $returnable[$serviceType] = $current;
         }
-
         return $returnable;
     }
 
     /**
-     * Function to change message service in SOAP API
+     * Function to change message service in SOAP API.
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -2234,7 +2155,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Function to remove message service from use in SOAP API
+     * Function to remove message service from use in SOAP API.
      *
      * @param array $patron The patron array from patronLogin
      * @param array $params Parameters
@@ -2284,7 +2205,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -2297,11 +2218,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     {
         $username = $user['cat_username'];
         $password = $user['cat_password'];
-
-        $paymentConfig = $this->config['onlinePayment'] ?? [];
-        $blockedTypes = $paymentConfig['nonPayable'] ?? [];
-        $payableMinDate
-            = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
 
         $function = 'GetDebts';
         $functionResult = 'debtsResponse';
@@ -2348,36 +2264,18 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             }
             // Round the amount in case it's a weird decimal number:
             $amount = round($amount);
-            $description = $debt->debtType . ' - ' . $debt->debtNote;
-            $debtDate = $this->dateFormat->convertFromDisplayDate(
-                'U',
-                $this->formatDate($debt->debtDate)
-            );
-            $payable = $amount > 0 && $debtDate >= $payableMinDate;
-            if ($payable) {
-                foreach ($blockedTypes as $blockedType) {
-                    if (
-                        $blockedType === $description
-                        || (strncmp($blockedType, '/', 1) === 0
-                        && substr_compare($blockedType, '/', -1) === 0
-                        && preg_match($blockedType, $description))
-                    ) {
-                        $payable = false;
-                        break;
-                    }
-                }
-            }
             $fine = [
                 'debt_id' => $debt->id,
-                'fine_id' => $debt->id,
-                'amount' => $amount,
+                'fineId' => $debt->id,
+                'amount' => (int)$amount,
                 'checkout' => '',
-                'fine' => $description,
-                'balance' => $amount,
+                'fine' => (string)$debt->debtType,
+                'description' => (string)$debt->debtNote,
+                'balance' => (int)$amount,
                 'createdate' => $debt->debtDate,
-                'payableOnline' => $payable,
                 'organization' => trim($debt->organisation ?? ''),
             ];
+            $fine['payableOnline'] = $this->fineIsPayable($fine);
             $finesList[] = $fine;
         }
 
@@ -2398,64 +2296,30 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Return details on fees payable online.
-     *
-     * @param array  $patron          Patron
-     * @param array  $fines           Patron's fines
-     * @param ?array $selectedFineIds Selected fines
-     *
-     * @throws ILSException
-     * @return array Associative array of payment details,
-     * false if an ILSException occurred.
-     */
-    public function getOnlinePaymentDetails($patron, $fines, ?array $selectedFineIds)
-    {
-        if (!empty($fines)) {
-            $amount = 0;
-            foreach ($fines as $fine) {
-                if ($fine['payableOnline']) {
-                    $amount += $fine['balance'];
-                }
-            }
-            $config = $this->getConfig('onlinePayment');
-            $nonPayableReason = false;
-            if (isset($config['minimumFee']) && $amount < $config['minimumFee']) {
-                $nonPayableReason = 'online_payment_minimum_fee';
-            }
-            $res = ['payable' => empty($nonPayableReason), 'amount' => $amount];
-            if ($nonPayableReason) {
-                $res['reason'] = $nonPayableReason;
-            }
-            return $res;
-        }
-        return [
-            'payable' => false,
-            'amount' => 0,
-            'reason' => 'online_payment_minimum_fee',
-        ];
-    }
-
-    /**
-     * Mark fees as paid.
+     * Register a payment.
      *
      * This is called after a successful online payment.
      *
-     * @param array  $patron            Patron
-     * @param int    $amount            Amount to be registered as paid
-     * @param string $transactionId     Transaction ID
-     * @param int    $transactionNumber Internal transaction number
-     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
+     * @param array   $patron                  Patron
+     * @param int     $amount                  Amount to be registered as paid
+     * @param string  $localPaymentIdentifier  Local payment identifier
+     * @param ?string $remotePaymentIdentifier Remote payment identifier
+     * @param int     $paymentId               Internal payment id
+     * @param ?array  $fineIds                 Fine IDs to mark paid or null for bulk payment
      *
      * @throws ILSException
-     * @return true|string True on success, error description on error
+     * @return array Associative array with keys success (bool, always) and reason (string, on error)
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function markFeesAsPaid(
-        $patron,
-        $amount,
-        $transactionId,
-        $transactionNumber,
-        $fineIds = null
-    ) {
+    public function registerPayment(
+        array $patron,
+        int $amount,
+        string $localPaymentIdentifier,
+        ?string $remotePaymentIdentifier,
+        int $paymentId,
+        ?array $fineIds = null
+    ): array {
         $function = 'AddPayment';
         $functionResult = 'addPaymentResponse';
         $functionParam = 'addPaymentRequest';
@@ -2475,19 +2339,22 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             }
         );
 
-        $paymentConfig = $this->getConfig('onlinePayment');
+        $paymentConfig = $this->getConfig('OnlinePayment');
         if (
             $total < $amount
             || (!empty($paymentConfig['exactBalanceRequired']) && $total != $amount)
         ) {
-            return 'fines_updated';
+            return [
+                'success' => false,
+                'reason' => 'Payment::error_fines_changed',
+            ];
         }
 
-        $debtIds = array_column($payableFines, 'debt_id');
+        $debtIds = array_column($payableFines, 'fineId');
         $request = [
             'arenaMember'       => $this->arenaMember,
-            'orderId'           => (string)$transactionNumber,
-            'transactionNumber' => (string)$transactionId,
+            'orderId'           => $localPaymentIdentifier,
+            'transactionNumber' => (string)$paymentId,
             'paymentAmount'     => $amount,
             // Comma-separated list of IDs since the API has it single-valued
             'debts'             => ['id' => implode(',', $debtIds)],
@@ -2524,11 +2391,13 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
         $cacheKey = $this->getPatronCacheKey($patron['cat_username']);
         $this->putCachedData($cacheKey, null);
 
-        return true;
+        return [
+            'success' => true,
+        ];
     }
 
     /**
-     * Get Patron Holds
+     * Get Patron Holds.
      *
      * This is responsible for retrieving all holds by a specific patron.
      *
@@ -2670,7 +2539,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Renew Details
+     * Renew Details.
      *
      * This is responsible for getting the details required for renewing loans.
      *
@@ -2686,7 +2555,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Renew Items
+     * Renew Items.
      *
      * This is responsible for renewing items.
      *
@@ -2757,7 +2626,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron Patron array
      * @param string $phone  Phone number
@@ -2833,7 +2702,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -2882,7 +2751,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array  $patron Patron array
      * @param String $email  Email address
@@ -2963,7 +2832,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array  $patron  Patron array
      * @param String $details Associative array of patron contact information
@@ -3052,7 +2921,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Change pin code
+     * Change pin code.
      *
      * @param String $cardDetails Patron card data
      *
@@ -3132,7 +3001,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Send a SOAP request
+     * Send a SOAP request.
      *
      * @param string $wsdl           Name of the wsdl file
      * @param string $function       Name of the function
@@ -3152,10 +3021,9 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             $result = $client->$function($params);
         } catch (\SoapFault | \ErrorException $e) {
             $this->error(
-                "$function Request for '$this->arenaMember'.'$id' failed: "
-                . $e->getMessage()
+                "$function Request for '$this->arenaMember'.'$id' failed: " . (string)$e
             );
-            throw new ILSException($e->getMessage());
+            throw new ILSException('ils_connection_failed');
         }
 
         if ($this->durationLogPrefix) {
@@ -3184,7 +3052,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Format date
+     * Format date.
      *
      * @param string $dateString Date as a string
      *
@@ -3205,7 +3073,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Pretty-print an XML string
+     * Pretty-print an XML string.
      *
      * @param string $xml XML string
      *
@@ -3224,7 +3092,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get the language to be used in the interface
+     * Get the language to be used in the interface.
      *
      * @return string Language as string
      */
@@ -3240,7 +3108,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Handle system status error messages from Axiell Web Services
+     * Handle system status error messages from Axiell Web Services.
      *
      * @param string $function  Function name
      * @param object $statusAWS AWS status object
@@ -3271,7 +3139,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
 
     /**
      * Sort function for sorting holdings locations
-     * according to organisation and branch
+     * according to organisation and branch.
      *
      * @param array $a Holding info
      * @param array $b Holding info
@@ -3371,7 +3239,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Function for determining the type of Hold
+     * Function for determining the type of Hold.
      *
      * @param array $holdDetails Hold details
      *
@@ -3390,7 +3258,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Sort function for sorting pickup locations
+     * Sort function for sorting pickup locations.
      *
      * @param array $a Pickup location
      * @param array $b Pickup location
@@ -3417,7 +3285,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Map statuses
+     * Map statuses.
      *
      * @param string $status   Status as a string
      * @param string $function AWS function that returned the status
@@ -3449,7 +3317,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Check if renewal is permanently blocked
+     * Check if renewal is permanently blocked.
      *
      * @param string $status Status as a string
      *
@@ -3466,7 +3334,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Code to status
+     * Code to status.
      *
      * @param string $code as a string
      *
@@ -3478,7 +3346,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Status to code
+     * Status to code.
      *
      * @param string $status as a string
      *
@@ -3487,31 +3355,6 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     protected function mapStatusToCode($status)
     {
         $found = array_search($status, $this->statuses);
-        return $found !== false ? $found : $status;
-    }
-
-    /**
-     * Map old code to status
-     *
-     * @param string $code as a string
-     *
-     * @return string Mapped code
-     */
-    protected function mapOldCodeToStatus($code)
-    {
-        return $this->oldStatuses[$code] ?? $code;
-    }
-
-    /**
-     * Map old status to code
-     *
-     * @param string $status as a string
-     *
-     * @return string Mapped status
-     */
-    protected function mapOldStatusToCode($status)
-    {
-        $found = array_search($status, $this->oldStatuses);
         return $found !== false ? $found : $status;
     }
 
@@ -3540,11 +3383,11 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
      */
     protected function getCacheKey($suffix = null)
     {
-        return 'AxiellWebServices' . '-' . md5($this->arenaMember . "|$suffix");
+        return 'AxiellWebServices-' . md5($this->arenaMember . "|$suffix");
     }
 
     /**
-     * Get a cache key for patron information
+     * Get a cache key for patron information.
      *
      * @param string $username Unique username
      *
@@ -3582,7 +3425,7 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
     }
 
     /**
-     * Get path to a WSDL file taking inheritance into account
+     * Get path to a WSDL file taking inheritance into account.
      *
      * @param string $wsdl WSDL file name
      *
@@ -3595,5 +3438,42 @@ class AxiellWebServices extends \VuFind\ILS\Driver\AbstractBase implements
             return $wsdl;
         }
         return $this->pathResolver->getConfigPath($wsdl);
+    }
+
+    /**
+     * Check if a fine is payable.
+     *
+     * @param array $fine Fine
+     *
+     * @return bool
+     */
+    protected function fineIsPayable(array $fine): bool
+    {
+        if (!$this->fineIsPayableBase($fine)) {
+            return false;
+        }
+
+        $paymentConfig = $this->config['OnlinePayment'] ?? [];
+        $blockedTypes = $paymentConfig['nonPayable'] ?? [];
+        $payableMinDate = strtotime($paymentConfig['payableFineDateThreshold'] ?? '-5 years');
+
+        $debtDate = $this->dateFormat->convertFromDisplayDate(
+            'U',
+            $this->formatDate($fine['createdate'])
+        );
+        if ($debtDate < $payableMinDate) {
+            return false;
+        }
+        foreach ($blockedTypes as $blockedType) {
+            if (
+                $blockedType === $fine['fine']
+                || (str_starts_with($blockedType, '/')
+                && str_ends_with($blockedType, '/')
+                && preg_match($blockedType, $fine['fine']))
+            ) {
+                return false;
+            }
+        }
+        return true;
     }
 }

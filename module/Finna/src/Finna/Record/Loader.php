@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Record loader
+ * Record loader.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Record
@@ -36,7 +36,7 @@ use VuFind\Exception\RecordMissing as RecordMissingException;
 use VuFindSearch\ParamBag;
 
 /**
- * Record loader
+ * Record loader.
  *
  * @category VuFind
  * @package  Record
@@ -49,7 +49,7 @@ use VuFindSearch\ParamBag;
 class Loader extends \VuFind\Record\Loader
 {
     /**
-     * Preferred language for display strings from RecordDriver
+     * Preferred language for display strings from RecordDriver.
      *
      * @var ?string
      */
@@ -61,18 +61,6 @@ class Loader extends \VuFind\Record\Loader
      * @var array
      */
     protected $recordRedirectionRules = [];
-
-    /**
-     * Set preferred language for display strings from RecordDriver.
-     *
-     * @param string $language Language
-     *
-     * @return void
-     */
-    public function setPreferredLanguage($language)
-    {
-        $this->preferredLanguage = $language;
-    }
 
     /**
      * Set record redirection rules.
@@ -163,10 +151,6 @@ class Loader extends \VuFind\Record\Loader
             throw new RecordMissingException(
                 'Record ' . $source . ':' . $id . ' does not exist.'
             );
-        }
-
-        if ($this->preferredLanguage) {
-            $result->tryMethod('setPreferredLanguage', [$this->preferredLanguage]);
         }
 
         return $result;

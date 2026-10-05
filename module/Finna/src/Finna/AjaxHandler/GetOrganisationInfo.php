@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -55,7 +55,7 @@ use function in_array;
  */
 class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     TranslatorAwareInterface,
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -63,42 +63,42 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Organisation info
+     * Organisation info.
      *
      * @var OrganisationInfo
      */
     protected $organisationInfo;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Facet configuration
+     * Facet configuration.
      *
      * @var array
      */
     protected $facetConfig;
 
     /**
-     * Sorter
+     * Sorter.
      *
      * @var Sorter
      */
     protected $sorter;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings   $ss               Session settings
      * @param OrganisationInfo  $organisationInfo Organisation info
@@ -250,7 +250,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get consortium info and location selection snippet
+     * Get consortium info and location selection snippet.
      *
      * @param string  $id             Organisation id
      * @param ?string $locationId     Selected location id, if any
@@ -304,7 +304,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
                 'address' => $org['address'],
                 'services' => $org['allServices'] ?? [],
             ];
-            foreach ($org['allServices'] ?? [] as $type => $services) {
+            foreach ($org['allServices'] ?? [] as $services) {
                 foreach ($services as $service) {
                     $serviceList[] = $service['standardName'];
                 }
@@ -349,7 +349,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get location search results snippet
+     * Get location search results snippet.
      *
      * @param string $id       Organisation id
      * @param array  $sectors  Sectors
@@ -387,11 +387,9 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
             if (null !== $lon && null !== $lat) {
                 $locLat = $location['address']['coordinates']['lat'] ?? null;
                 $locLon = $location['address']['coordinates']['lon'] ?? null;
-                if (null !== $locLat && null !== $locLon) {
-                    $location['distance'] = $this->getDistance($lat, $lon, $locLat, $locLon);
-                } else {
-                    $location['distance'] = null;
-                }
+                $location['distance'] = null !== $locLat && null !== $locLon
+                    ? $this->getDistance($lat, $lon, $locLat, $locLon)
+                    : null;
             }
             $results[] = $location;
         }
@@ -419,7 +417,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get location details snippet
+     * Get location details snippet.
      *
      * @param string $id         Organisation id
      * @param string $locationId Location id
@@ -448,7 +446,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get schedule snippet
+     * Get schedule snippet.
      *
      * @param string $id         Organisation id
      * @param string $locationId Location id
@@ -475,7 +473,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get widget
+     * Get widget.
      *
      * @param string  $id          Organisation id
      * @param ?string $locationId  Location id
@@ -520,7 +518,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get widget data for a location
+     * Get widget data for a location.
      *
      * @param string $id          Organisation id
      * @param string $locationId  Location id
@@ -568,7 +566,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get organisation page image and link
+     * Get organisation page image and link.
      *
      * @param string $id         Organisation id
      * @param array  $sectors    Sectors
@@ -602,7 +600,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get location name from organisation list
+     * Get location name from organisation list.
      *
      * @param ?string $locationId Location ID
      * @param array   $orgInfo    Organisation info
@@ -612,7 +610,6 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     protected function getLocationName(?string $locationId, array $orgInfo): string
     {
         if (null !== $locationId) {
-            $locationId = (string)$locationId;
             foreach ($orgInfo['list'] ?? [] as $location) {
                 if ((string)$location['id'] === $locationId) {
                     return $location['name'];
@@ -641,7 +638,7 @@ class GetOrganisationInfo extends \VuFind\AjaxHandler\AbstractBase implements
     }
 
     /**
-     * Get distance between two points in meters
+     * Get distance between two points in meters.
      *
      * @param float $lat1 Latitude of first point
      * @param float $lon1 Longitude of first point

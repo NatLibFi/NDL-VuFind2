@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ProxyUrl helper test class
+ * ProxyUrl helper test class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -33,12 +33,13 @@ use Finna\View\Helper\Root\ProxyUrl;
 use Finna\View\Helper\Root\ProxyUrlFactory;
 use Generator;
 use VuFind\Config\Config;
-use VuFind\Config\PluginManager;
+use VuFind\Config\ConfigManager;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Net\IpAddressUtils;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * ProxyUrl helper test class
+ * ProxyUrl helper test class.
  *
  * @category VuFind
  * @package  Tests
@@ -51,7 +52,7 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
     use FixtureTrait;
 
     /**
-     * Mock container
+     * Mock container.
      *
      * @var \VuFindTest\Container\MockContainer
      */
@@ -68,7 +69,7 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected invoke test data
+     * Function to get expected invoke test data.
      *
      * @return array
      */
@@ -89,16 +90,16 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test invoking the helper
+     * Test invoking the helper.
      *
      * @param string $url           Url to proxy
      * @param string $expected      Expected value
      * @param string $permissionIni Path to the test permissions.ini
      * @param string $configIni     Path to the test config.ini
      *
-     * @return       void
-     * @dataProvider getTestInvokeData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestInvokeData')]
     public function testInvoke(string $url, string $expected, string $permissionIni, string $configIni): void
     {
         $permissionsFixture = $this->getFixture('proxyurl/' . $permissionIni, 'Finna');
@@ -107,20 +108,20 @@ class ProxyUrlTest extends \PHPUnit\Framework\TestCase
         $permissions = new Config(parse_ini_string($permissionsFixture, true));
         $factory = new ProxyUrlFactory();
 
-        $configPluginManager = $this->container->createMock(PluginManager::class, ['get']);
-        $configPluginManager->expects($this->any())->method('get')->willReturnCallback(
+        $configManager = $this->container->createMock(ConfigManager::class, ['getConfigObject']);
+        $configManager->method('getConfigObject')->willReturnCallback(
             function ($param) use ($config, $permissions) {
                 return $param === 'config' ? $config : $permissions;
             }
         );
-        $this->container->set(\VuFind\Config\PluginManager::class, $configPluginManager);
+        $this->container->set(ConfigManagerInterface::class, $configManager);
 
         $ipAddressUtils = $this->container->createMock(IpAddressUtils::class, []);
         $this->container->set(IpAddressUtils::class, $ipAddressUtils);
 
         $cacheManager = $this->container->createMock(\VuFind\Cache\Manager::class, ['getCache']);
         $cache = $this->container->createMock(\Laminas\Cache\Storage\StorageInterface::class, []);
-        $cacheManager->expects($this->any())->method('getCache')->willReturn($cache);
+        $cacheManager->method('getCache')->willReturn($cache);
         $this->container->set(\VuFind\Cache\Manager::class, $cacheManager);
 
         $proxyUrlHelper = $factory($this->container, ProxyUrl::class);

@@ -46,7 +46,7 @@
     <?php if ($descriptions): ?>
       <div class="copyright<?=$this->truncateLicense ? ' truncate-field' : ''?>">
         <?php foreach ($descriptions as $item): ?>
-          <p><?=$this->transEsc($item)?></p>
+          <?= $this->recordFieldMarkdown()->toHtml($item) ?>
         <?php endforeach ?>
       </div>
     <?php endif; ?>

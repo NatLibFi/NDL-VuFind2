@@ -45,36 +45,40 @@
 
     $filterCount = $this->search()->getFilterCount($checkboxFilters, $filterList);
   ?>
-  <?php if (!empty($params->getFilterList(false))): ?>
-    <?=
-      $this->render(
-          'search/filters.phtml',
-          [
-              'filterList' => $filterList,
-              'checkboxFilters' => $checkboxFilters,
-              'defaultSortApplied' => $defaultSortApplied,
-              'options' => $options,
-              'params' => $params,
-              'urlQuery' => $results->getUrlQuery(),
-              'isCollectionTab' => true,
-          ]
-      )
-    ?>
-  <?php endif; ?>
-
   <?php if (($recordTotal = $results->getResultTotal()) > 0): // only display these at very top if we have results ?>
-    <div class="finna-search-filter-toggle-trigger visible-xs hidden-print"></div>
-    <div class="finna-search-filter-toggle visible-xs hidden-print">
-      <div class="btn btn-primary btn-search-filter">
-        <?=$this->transEsc('Filter Collection')?>
-        <?php if ($filterCount > 0): ?>
-          <span class="active-filter-count">(<?=$filterCount?>)</span>
+    <div class="mobile-functions-container hidden-print">
+      <div class="mobile-functions-row">
+        <button id="narrow-search-filter-toggle" data-toggle="vufind-offcanvas" class="btn btn-mobile-nav search-filter-toggle visible-xs visible-sm">
+          <span class="btn-elements">
+            <?= $this->icon('sliders'); ?><span class="btn-text">
+              <?=$this->transEsc('Filter Collection')?>
+              <?php if ($filterCount > 0): ?>
+                (<?=$filterCount?>)
+              <?php endif; ?>
+            </span>
+          </span>
+        </button>
+        <?php if (!empty($params->getFilterList(false))): ?>
+          <?=
+            $this->render(
+                'search/filters.phtml',
+                [
+                  'filterList' => $filterList,
+                  'checkboxFilters' => $checkboxFilters,
+                  'defaultSortApplied' => $defaultSortApplied,
+                  'options' => $options,
+                  'params' => $params,
+                  'urlQuery' => $results->getUrlQuery(),
+                  'isCollectionTab' => true,
+                ]
+            )
+          ?>
         <?php endif; ?>
       </div>
     </div>
     <?=$this->paginationControl($results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $results])?>
 
-    <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>">
+    <form class="form-inline" method="post" name="bulkActionForm" action="<?=$this->url('cart-searchresultsbulk')?>" id="search-cart-form">
       <?=$this->context($this)->renderInContext('search/bulk-action-buttons.phtml', $searchDetails + ['idPrefix' => ''])?>
     </form>
     <div class="results result-view-<?=$this->escapeHtmlAttr($params->getView()) == 'grid' ? 'grid' : $this->escapeHtmlAttr($params->getView());?>">

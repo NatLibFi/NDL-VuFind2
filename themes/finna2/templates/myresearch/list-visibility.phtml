@@ -3,7 +3,7 @@
   <?= $this->translate('Public List Visibility'); ?>
   <div>
     <span><input id="visibility-public" type="radio" name="visibility" value="1"<?= $public ? ' checked="checked"' : '' ?>> <label for="visibility-public"><?= $this->translate('Public'); ?></label></span>
-    <span class="list-visibility-hidden"><input id="visibility-hidden" type="radio" name="visibility" value="0"<?= !$public ? ' checked="checked"' : '' ?>> <label for="visibility-hidden"><?= $this->translate('Private'); ?></label></span>
+    <span><input id="visibility-hidden" type="radio" name="visibility" value="0"<?= !$public ? ' checked="checked"' : '' ?>> <label for="visibility-hidden"><?= $this->translate('Private'); ?></label></span>
   </div>
   <?php if ($public): ?>
   <div class="list-url">

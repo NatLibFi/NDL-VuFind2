@@ -45,6 +45,7 @@ var finna = (function finnaModule() {
         'a11y',
         'finnaDatepicker',
         'reservationList',
+        'scrollableNav'
       ];
 
       $.each(modules, function initModule(ind, module) {

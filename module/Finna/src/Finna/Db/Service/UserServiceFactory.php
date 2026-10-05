@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database user service factory
+ * Database user service factory.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Database
@@ -29,14 +29,14 @@
 
 namespace Finna\Db\Service;
 
-use Interop\Container\ContainerInterface;
-use Interop\Container\Exception\ContainerException;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
+use Psr\Container\ContainerExceptionInterface as ContainerException;
+use Psr\Container\ContainerInterface;
 use VuFind\Db\Service\AbstractDbServiceFactory;
 
 /**
- * Database user service factory
+ * Database user service factory.
  *
  * @category VuFind
  * @package  Database
@@ -47,7 +47,7 @@ use VuFind\Db\Service\AbstractDbServiceFactory;
 class UserServiceFactory extends AbstractDbServiceFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -70,7 +70,7 @@ class UserServiceFactory extends AbstractDbServiceFactory
         }
         $sessionManager = $container->get(\Laminas\Session\SessionManager::class);
         $session = new \Laminas\Session\Container('Account', $sessionManager);
-        $config = $container->get(\VuFind\Config\PluginManager::class)->get('config')->toArray();
+        $config = $container->get(\VuFind\Config\ConfigManager::class)->getConfigArray('config');
         $hmac = $container->get(\VuFind\Crypt\HMAC::class);
         return parent::__invoke($container, $requestedName, [$session, $config, $hmac]);
     }

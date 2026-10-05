@@ -1,48 +1,53 @@
-//== Styling Finna radiobuttons
-.radiobutton {
-  font-size: 14px;
-  font-weight: normal;
-
-  & :last-child {
-    padding-bottom: 5px;
-  }
-  & input {
-    border: none;
-    background: transparent;
-    margin-right: 10px;
-    margin-top: 4px;
-  }
-  & input:before {
-    content: "\e61b";
-    font-family: finnaicons;
-    font-size: 18px;
-    margin: -3px 0px 0px -3px;
-    position: absolute;
-    background: $body-bg;
-    border-radius: 50%;
-    color: $gray-light;
-    transition: color .1s linear;
-  }
-  & input:checked:before  {
-    font-family: finnaicons;
-    content: "\e61a";
-    color: $link-color;
-  }
-}
-
 //== Bulk actions buttons
 
 .bulkActionButtons {
-  & .btn-group {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+  margin: (0.5 * $spacer) 0px;
+  font-size: 0.9em;
+  > * {
+    margin-right: 0.3em;
+  }
+  .checkbox,
+  label {
+    display: inline-block;
+  }
+  .checkbox {
+    padding-left: 0px;
+    input[type="checkbox"] {
+      float: none;
+    }
+  }
+  label {
+    display: flex;
+    align-items: center;
+    input {
+      margin-right: 0.2em
+    }
+  }
+  .btn-group {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
     .btn {
-      border: 1px solid $gray-lighter;
-      background: $gray-ultralight;
+      border: 1px solid $border-color;
+      background: $light;
       color: $text-color;
-      padding: 5px 10px;
+      padding: $padding-small-vertical $padding-base-horizontal;
       font-size: 0.9em;
-      @include media-breakpoint-down(sm) {
-        padding: 5px;
+      &:hover, &:focus {
+        color: $light;
+        background: $dark;
+        text-decoration: none;
+        transition: background 0.2s linear;
       }
     }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .bulkActionButtons .btn-group .btn {
+    padding: 0.4em;
   }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * URL truncater
+ * URL truncater.
  *
  * PHP version 8
  *
@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
@@ -32,18 +32,18 @@ namespace Finna\View\Helper\Root;
 use function strlen;
 
 /**
- * URL truncater
+ * URL truncater.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class TruncateUrl extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Truncate a URL for display
+     * Truncate a URL for display.
      *
      * @param string $url URL to truncate
      *

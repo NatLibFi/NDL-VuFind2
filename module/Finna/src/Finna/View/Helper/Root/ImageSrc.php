@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
@@ -38,12 +38,12 @@ namespace Finna\View\Helper\Root;
  * @author   Mika Hatakka <mika.hatakka@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class ImageSrc extends ThemeSrc
 {
     /**
-     * Backwards-compatible __invoke that returns self or calls getSourceAddress
+     * Backwards-compatible __invoke that returns self or calls getSourceAddress.
      *
      * @param string $arg Image filename without extension
      *
@@ -94,7 +94,7 @@ class ImageSrc extends ThemeSrc
     }
 
     /**
-     * Returns data string to generate a pixel placeholder used for lazyloading
+     * Returns data string to generate a pixel placeholder used for lazyloading.
      *
      * @return string
      */

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Encapsulated Records aspect of the Search Multi-class (Results)
+ * Encapsulated Records aspect of the Search Multi-class (Results).
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_EncapsulatedRecords
@@ -33,7 +33,7 @@ use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use VuFind\RecordDriver\AbstractBase;
 
 /**
- * Encapsulated Records Search Results
+ * Encapsulated Records Search Results.
  *
  * @category VuFind
  * @package  Search_EncapsulatedRecords
@@ -51,7 +51,7 @@ class Results extends \VuFind\Search\Base\Results
     protected AbstractBase|bool $containerRecord = false;
 
     /**
-     * Returns the stored list of facets for the last search
+     * Returns the stored list of facets for the last search.
      *
      * @param array $filter Array of field => on-screen description listing
      * all of the desired facet fields; set to null to get all configured values.
@@ -120,11 +120,7 @@ class Results extends \VuFind\Search\Base\Results
         ) {
             // Check the filters for a record ID, and load the corresponding object
             // if one is found:
-            if (null === $id) {
-                $this->containerRecord = false;
-            } else {
-                $this->containerRecord = $this->recordLoader->load($id);
-            }
+            $this->containerRecord = null === $id ? false : $this->recordLoader->load($id);
         }
         return $this->containerRecord;
     }

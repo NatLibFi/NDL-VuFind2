@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ExtendedIniNormalizer Test Class
+ * ExtendedIniNormalizer Test Class.
  *
  * PHP version 8
  *
@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -35,7 +35,7 @@ namespace FinnaTest\I18n;
 use VuFind\I18n\ExtendedIniNormalizer;
 
 /**
- * ExtendedIniNormalizer Test Class
+ * ExtendedIniNormalizer Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -136,7 +136,7 @@ class ExtendedIniNormalizerTest extends \PHPUnit\Framework\TestCase
         foreach ($actual as $current) {
             [$current] = explode(';', $current);
             $current = trim($current);
-            $this->assertEquals('', $current, "Unexpected line in translation file $filename");
+            $this->assertSame('', $current, "Unexpected line in translation file $filename");
         }
     }
 }

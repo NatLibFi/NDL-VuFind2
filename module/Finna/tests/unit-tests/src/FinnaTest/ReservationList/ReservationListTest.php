@@ -1,7 +1,7 @@
 <?php
 
 /**
- * ReservationList test class
+ * ReservationList test class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -31,9 +31,9 @@ namespace FinnaTest\ReservationList;
 
 use DateTime;
 use Exception;
-use Finna\Auth\ILSAuthenticator;
 use Finna\Cache\Manager;
-use Finna\Db\Row\FinnaResourceList;
+use Finna\Db\Entity\FinnaResourceList;
+use Finna\Db\Entity\User;
 use Finna\Db\Service\FinnaResourceListResourceService;
 use Finna\Db\Service\FinnaResourceListService;
 use Finna\Db\Service\UserService;
@@ -49,7 +49,7 @@ use Laminas\Session\Container;
 use Laminas\View\Renderer\PhpRenderer;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Yaml\Yaml;
-use VuFind\Db\Row\User;
+use VuFind\Auth\ILSAuthenticator;
 use VuFind\Db\Service\PluginManager;
 use VuFind\Db\Service\ResourceService;
 use VuFind\Db\Service\UserCardService;
@@ -60,7 +60,7 @@ use VuFindHttp\HttpService;
 use VuFindTest\Container\MockContainer;
 
 /**
- * Reservation list tests
+ * Reservation list tests.
  *
  * @category VuFind
  * @package  Tests
@@ -83,7 +83,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     protected $container;
 
     /**
-     * Setup method
+     * Setup method.
      *
      * @return void
      */
@@ -93,49 +93,49 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get mocked reservation list service
+     * Get mocked reservation list service.
      *
      * @param ?MockObject $mockHttpService       Http service
      * @param ?MockObject $listPluginManager     List plugin manager
      * @param array       $reservationListConfig Reservation list config
      *
-     * @return MockObject
+     * @return MockObject&ReservationListService
      */
     protected function getReservationListService(
         ?MockObject $mockHttpService = null,
         ?MockObject $listPluginManager = null,
         array $reservationListConfig = [],
-    ): MockObject {
+    ): MockObject&ReservationListService {
         $adapterOptions = new FilesystemOptions();
-        $storage = $this->getMockBuilder(StorageInterface::class)->disableOriginalConstructor()->getMock();
-        $storage->expects($this->any())->method('getOptions')->willReturn($adapterOptions);
-        $cacheManager = $this->getMockBuilder(Manager::class)->disableOriginalConstructor()->getMock();
-        $cacheManager->expects($this->any())->method('getCache')->willReturn($storage);
+        $storage = $this->createMock(StorageInterface::class);
+        $storage->method('getOptions')->willReturn($adapterOptions);
+        $cacheManager = $this->createMock(Manager::class);
+        $cacheManager->method('getCache')->willReturn($storage);
         $service = $this->getMockBuilder(ReservationListService::class)->onlyMethods(['createListForUser'])
-        ->setConstructorArgs([
-          $this->container->createMock(FinnaResourceListService::class),
-          $this->container->createMock(FinnaResourceListResourceService::class),
-          $this->container->createMock(ResourceService::class),
-          $this->container->createMock(UserService::class),
-          $this->container->createMock(ResourcePopulator::class),
-          $this->container->createMock(RecordLoader::class),
-          $this->container->createMock(Cache::class),
-          $this->container->createMock(Container::class),
-          $mockHttpService ??= $this->container->createMock(HttpService::class),
-          $this->container->createMock(ILSAuthenticator::class),
-          $cacheManager,
-          $listPluginManager ??= $this->container->createMock(HandlerPluginManager::class),
-          $reservationListConfig,
-        ])->getMock();
+          ->setConstructorArgs([
+            $this->container->createMock(FinnaResourceListService::class),
+            $this->container->createMock(FinnaResourceListResourceService::class),
+            $this->container->createMock(ResourceService::class),
+            $this->container->createMock(UserService::class),
+            $this->container->createMock(ResourcePopulator::class),
+            $this->container->createMock(RecordLoader::class),
+            $this->container->createMock(Cache::class),
+            $this->container->createMock(Container::class),
+            $mockHttpService ??= $this->container->createMock(HttpService::class),
+            $this->container->createMock(ILSAuthenticator::class),
+            $cacheManager,
+            $listPluginManager ??= $this->container->createMock(HandlerPluginManager::class),
+            $reservationListConfig,
+          ])->getMock();
         $newListTemplate = $this->getMockBuilder(FinnaResourceList::class)->onlyMethods(['getUser'])
           ->disableOriginalConstructor()->getMock();
-        $service->expects($this->any())->method('createListForUser')->willReturnCallback(
-            function ($user, $params) use ($newListTemplate, $service) {
+        $service->method('createListForUser')->willReturnCallback(
+            function (?\VuFind\Db\Entity\UserEntityInterface $user, array $params) use ($newListTemplate, $service) {
                 $cloned = clone $newListTemplate;
                 if ($params) {
                     $cloned = $service->populateListValues($cloned, $user, $params);
                 }
-                $cloned->expects($this->any())->method('getUser')->willReturn($user);
+                $cloned->method('getUser')->willReturn($user);
                 return $cloned;
             }
         );
@@ -167,7 +167,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for properly set list data
+     * Data provider for properly set list data.
      *
      * @return array
      */
@@ -192,7 +192,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for insufficient list data
+     * Data provider for insufficient list data.
      *
      * @return array
      */
@@ -218,32 +218,32 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test list creation
+     * Test list creation.
      *
      * @param int   $id      User id
      * @param array $prefill Data to prefill the list with
      *
-     * @return       void
-     * @dataProvider getProperListData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getProperListData')]
     public function testListCreation(int $id, array $prefill): void
     {
         $user = $this->getMockUser($id);
 
         $service = $this->getReservationListService();
         $newList = $service->createListForUser($user, $prefill);
-        $this->assertEquals($id, $newList->getUser()->getId());
+        $this->assertSame($id, $newList->getUser()->getId());
     }
 
     /**
-     * Test failing list creation
+     * Test failing list creation.
      *
      * @param int   $id      User id
      * @param array $prefill Array to prefill the list with
      *
-     * @return       void
-     * @dataProvider getFailingListData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getFailingListData')]
     public function testFailingListCreation(int $id, array $prefill): void
     {
         $this->expectException(Exception::class);
@@ -254,7 +254,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing user access for lists
+     * Data provider for testing user access for lists.
      *
      * @return array
      */
@@ -273,7 +273,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing user access for lists
+     * Data provider for testing user access for lists.
      *
      * @return array
      */
@@ -292,14 +292,14 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test user list access
+     * Test user list access.
      *
      * @param int $ownerId   Owner id for the list
      * @param int $currentId Current user id for the list
      *
-     * @return       void
-     * @dataProvider getUserAccessSuccessData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getUserAccessSuccessData')]
     public function testUserAccessSuccess(int $ownerId, int $currentId): void
     {
         $ownerUser = $this->getMockUser($ownerId);
@@ -311,14 +311,14 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test user list access failure
+     * Test user list access failure.
      *
      * @param int  $ownerId   Owner id for the list
      * @param ?int $currentId Current user id for the list or null for no user
      *
-     * @return       void
-     * @dataProvider getUserAccessFailureData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getUserAccessFailureData')]
     public function testUserAccessFailure(int $ownerId, ?int $currentId = null): void
     {
         $ownerUser = $this->getMockUser($ownerId);
@@ -329,7 +329,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing user deletion of lists
+     * Data provider for testing user deletion of lists.
      *
      * @return array
      */
@@ -355,16 +355,16 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test deleting list
+     * Test deleting list.
      *
      * @param int    $ownerId   Owner id for the list
      * @param ?int   $currentId Current user id for the list or null for no user
      * @param string $expected  Expected error value. Success for deletion also uses exception
      *                          for asserting that everything went well.
      *
-     * @return       void
-     * @dataProvider getTestDeletingListData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestDeletingListData')]
     public function testDeletingList(int $ownerId, ?int $currentId, string $expected): void
     {
         if ($expected === 'list_access_denied') {
@@ -381,7 +381,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testing setting a list being ordered
+     * Data provider for testing setting a list being ordered.
      *
      * @return array
      */
@@ -441,15 +441,15 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test deleting list
+     * Test deleting list.
      *
      * @param int   $ownerId  Owner id for the list
      * @param array $data     Data to pass for the list being ordered
      * @param array $expected Expected results
      *
-     * @return       void
-     * @dataProvider getTestSettingListOrderedData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestSettingListOrderedData')]
     public function testSettingListOrdered(int $ownerId, array $data, array $expected): void
     {
         if (!isset($data['pickup_date'])) {
@@ -461,11 +461,11 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
 
         $newList = $service->createListForUser($ownerUser);
         $service->setListOrdered($ownerUser, $newList, $data);
-        $this->assertEquals(true, $newList->__get('connection'));
+        $this->assertEquals(true, $newList->getConnection());
     }
 
     /**
-     * Get test data for testing handlers
+     * Get test data for testing handlers.
      *
      * @return array
      */
@@ -476,8 +476,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
             'Example Institution',
             'list_with_email',
             [
-              'firstName' => 'Testaaja',
-              'lastName' => 'von Testaaja',
+              'full_name' => 'Test Tester',
               'email' => 'testaaja@testeri.fi',
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
@@ -486,14 +485,14 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'listId' => null,
               'institution' => 'Example Institution',
               'listIdentifier' => 'list_with_email',
-              'full_name' => 'Testaaja von Testaaja',
+              'full_name' => 'Test Tester',
               'email' => 'testaaja@testeri.fi',
               'record_ids_text' => '',
               'record_source_and_ids' => [],
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
               'phone' => null,
-              'card_info' => 'test_cat_username',
+              'card_info' => 'Patron card name',
             ],
           ],
           'different name given' => [
@@ -509,13 +508,13 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'institution' => 'Example Institution',
               'listIdentifier' => 'list_with_email',
               'full_name' => 'Pouta Pakkanen',
-              'email' => 'testaaja@testeri.fi',
+              'email' => 'patronemail@email.fi',
               'record_ids_text' => '',
               'record_source_and_ids' => [],
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
               'phone' => null,
-              'card_info' => 'test_cat_username',
+              'card_info' => 'Patron card name',
             ],
           ],
           'disec get list values' => [
@@ -531,20 +530,20 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
               'institution' => 'Example Institution',
               'listIdentifier' => 'list_with_disec',
               'full_name' => 'Pouta Pekkanen',
-              'email' => 'testaaja@testeri.fi',
+              'email' => 'patronemail@email.fi',
               'record_ids_text' => '',
               'record_source_and_ids' => [],
               'pickup_date' => '2025-01-01',
               'message' => 'Test message',
               'phone' => null,
-              'card_info' => 'test_cat_username',
+              'card_info' => 'Patron card name',
             ],
           ],
         ];
     }
 
     /**
-     * Creates an instance of a plugin manager for getting connection handlers
+     * Creates an instance of a plugin manager for getting connection handlers.
      *
      * @param ?MockObject $mockDisec              Disec handler
      * @param ?MockObject $mockEmail              Email handler
@@ -579,17 +578,17 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         if (null === $yamlReader) {
             $yamlReader = $this->getMockBuilder(\Finna\Config\YamlReader::class)
               ->onlyMethods(['getFinna'])->disableOriginalConstructor()->getMock();
-            $yamlReader->expects($this->any())->method('getFinna')
+            $yamlReader->method('getFinna')
               ->willReturnMap([['ReservationList.yaml', 'config/finna', true, $listConfig]]);
         }
         if (null === $viewRenderer) {
-            $viewRenderer = $this->getMockBuilder(PhpRenderer::class)->disableOriginalConstructor()->getMock();
-            $viewRenderer->expects($this->any())->method('render')->willReturn('');
+            $viewRenderer = $this->createMock(PhpRenderer::class);
+            $viewRenderer->method('render')->willReturn('');
         }
 
         if (null === $ilsAuthenticator) {
-            $ilsAuthenticator = $this->getMockBuilder(ILSAuthenticator::class)->disableOriginalConstructor()->getMock();
-            $ilsAuthenticator->expects($this->any())->method('storedCatalogLogin')->willReturn([
+            $ilsAuthenticator = $this->createMock(ILSAuthenticator::class);
+            $ilsAuthenticator->method('storedCatalogLogin')->willReturn([
               'firstname' => 'Testaaja',
               'lastname' => 'von Testaaja',
               'patron_id' => 'test.testid',
@@ -599,12 +598,12 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         }
 
         if (null === $userCardService) {
-            $userCardService = $this->getMockBuilder(UserCardService::class)->disableOriginalConstructor()->getMock();
-            $userCardService->expects($this->any())->method('getLibraryCards')->willReturn([]);
+            $userCardService = $this->createMock(UserCardService::class);
+            $userCardService->method('getLibraryCards')->willReturn([]);
         }
 
-        $dbPluginManager = $this->getMockBuilder(PluginManager::class)->disableOriginalConstructor()->getMock();
-        $dbPluginManager->expects($this->any())->method('get')->willReturnMap([
+        $dbPluginManager = $this->createMock(PluginManager::class);
+        $dbPluginManager->method('get')->willReturnMap([
           [UserCardServiceInterface::class, null, $userCardService],
         ]);
 
@@ -612,38 +611,51 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         $httpService ??= $this->getHttpService([]);
 
         if (null === $mockForm) {
-            $mockForm = $this->getMockBuilder(\Finna\ReservationList\Form\Form::class)
-              ->disableOriginalConstructor()->getMock();
-            $mockForm->expects($this->any())->method('mapRequestParamsToFieldValues')->willReturn([]);
+            $mockForm = $this->createMock(\Finna\ReservationList\Form\Form::class);
+            $mockForm->method('mapRequestParamsToFieldValues')->willReturn([]);
         }
 
         if (!$handlerServices) {
             $handlerServices = [
-            [\Finna\Config\YamlReader::class, $yamlReader],
-            [\VuFindHttp\HttpService::class, $httpService],
-            [\VuFind\Record\Loader::class, $this->getFinnaRecordLoader()],
-            [\Finna\ReservationList\Form\Form::class, $mockForm],
-            [ILSAuthenticator::class, $ilsAuthenticator],
-            [PluginManager::class, $dbPluginManager],
-            ['ViewRenderer', $viewRenderer],
-            [
-              \Finna\ReservationList\ReservationListService::class,
-              $this->getReservationListService(reservationListConfig: $listConfig),
-            ],
+              [\Finna\Config\YamlReader::class, $yamlReader],
+              [\VuFindHttp\HttpService::class, $httpService],
+              [\VuFind\Record\Loader::class, $this->getFinnaRecordLoader()],
+              [\Finna\ReservationList\Form\Form::class, $mockForm],
+              [ILSAuthenticator::class, $ilsAuthenticator],
+              [PluginManager::class, $dbPluginManager],
+              ['ViewRenderer', $viewRenderer],
+              [
+                \Finna\ReservationList\ReservationListService::class,
+                $this->getReservationListService(reservationListConfig: $listConfig),
+              ],
             ];
         }
 
         if ($mockDisec === null) {
-            $mockDisec = $this->getMockBuilder(Disec::class)->onlyMethods(['getService', 'debug'])
+            $mockDisec = $this->getMockBuilder(Disec::class)
+              ->onlyMethods(['getService', 'debug', 'getPreferredCardInfo'])
               ->disableOriginalConstructor()->getMock();
-            $mockDisec->expects($this->any())->method('getService')->willReturnMap($handlerServices);
+            $mockDisec->method('getService')->willReturnMap($handlerServices);
+            $mockDisec->method('getPreferredCardInfo')->willReturn([
+              'patron_id' => '11',
+              'full_name' => 'Test Tester',
+              'email' => 'patronemail@email.fi',
+              'card_name' => 'Patron card name',
+            ]);
         }
 
         if ($mockEmail === null) {
-            $mockEmail = $this->getMockBuilder(Email::class)->onlyMethods(['getService', 'debug', 'sendEmail'])
+            $mockEmail = $this->getMockBuilder(Email::class)
+              ->onlyMethods(['getService', 'debug', 'sendEmail', 'getPreferredCardInfo'])
               ->disableOriginalConstructor()->getMock();
-            $mockEmail->expects($this->any())->method('getService')->willReturnMap($handlerServices);
-            $mockEmail->expects($this->any())->method('sendEmail')->willReturn(true);
+            $mockEmail->method('getService')->willReturnMap($handlerServices);
+            $mockEmail->method('sendEmail')->willReturn(true);
+            $mockEmail->method('getPreferredCardInfo')->willReturn([
+              'patron_id' => '11',
+              'full_name' => 'Test Tester',
+              'email' => 'patronemail@email.fi',
+              'card_name' => 'Patron card name',
+            ]);
         }
 
         $listPluginMap = [
@@ -653,22 +665,22 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
 
         $mockListPluginManager = $this->getMockBuilder(HandlerPluginManager::class)->onlyMethods(['get'])
           ->disableOriginalConstructor()->getMock();
-        $mockListPluginManager->expects($this->any())->method('get')->willReturnMap($listPluginMap);
+        $mockListPluginManager->method('get')->willReturnMap($listPluginMap);
 
         return $mockListPluginManager;
     }
 
     /**
-     * Test list value returns for handlers
+     * Test list value returns for handlers.
      *
      * @param string $institution    Institution for list
      * @param string $listIdentifier List identifier for list
      * @param array  $requestValues  Request values to test
      * @param array  $expected       Expected values to be returned
      *
-     * @return       void
-     * @dataProvider getTestHandlerData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestHandlerData')]
     public function testHandlers(
         string $institution,
         string $listIdentifier,
@@ -697,7 +709,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test disec data sending
+     * Test disec data sending.
      *
      * @return void
      */
@@ -743,7 +755,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test email data sending
+     * Test email data sending.
      *
      * @return void
      */
@@ -788,7 +800,7 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testgetListHandlerFromApi
+     * Data provider for testgetListHandlerFromApi.
      *
      * @return Generator
      */
@@ -815,15 +827,15 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test list fetch from an api endpoint
+     * Test list fetch from an api endpoint.
      *
      * @param bool   $success     Is the request successful
      * @param string $fixturePath Fixture path
      * @param array  $expected    Expected results
      *
-     * @return       void
-     * @dataProvider getTestgetListHandlerFromApiData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestgetListHandlerFromApiData')]
     public function testGetListHandlerFromApi(bool $success, string $fixturePath, array $expected): void
     {
         $config = Yaml::parse($this->getFixture($fixturePath, 'Finna'));
@@ -845,6 +857,6 @@ class ReservationListTest extends \PHPUnit\Framework\TestCase
         );
         $listHandler = $service->getListHandler('Example Institution', 'list_with_email');
         $this->assertEquals($expected, $listHandler->getConnectionSettings());
-        $this->assertEquals($success, $listHandler->isEnabled());
+        $this->assertSame($success, $listHandler->isEnabled());
     }
 }

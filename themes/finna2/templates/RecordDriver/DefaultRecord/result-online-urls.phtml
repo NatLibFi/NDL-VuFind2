@@ -55,8 +55,11 @@
           ?>
           <?=$i > 0 ? '<br>' : ''?>
           <?php
+            $linkToResource = ($url['linkType'] ?? null) === 'proxy-link'
+                ? $this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $url['format'] ?? '', 'type' => 'document']])
+                : $this->proxyUrl($url['url']);
             $currentUrl = [
-              'href' => $this->proxyUrl($url['url']),
+              'href' => $linkToResource,
               'title' => $url['url'],
             ];
             $desc = !empty($url['desc']) ? $url['desc'] : $this->truncateUrl($url['url']);
@@ -77,6 +80,7 @@
             <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><?=$this->icon($icon) ?>
               <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
             </a>
+            <?php if (!empty($url['note'])): ?> <span class="url-public-note"><?=$this->escapeHtml($url['note'])?></span><?php endif; ?>
           <?php endif; ?>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?></span><?php endif; ?>
           <?php if (!empty($url['source'])): ?>

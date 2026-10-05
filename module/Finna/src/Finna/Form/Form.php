@@ -31,6 +31,8 @@
 namespace Finna\Form;
 
 use Exception;
+use Finna\RecordDriver\SolrAipa;
+use NatLibFi\FinnaCodeSets\Model\DataObjectInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
@@ -71,42 +73,42 @@ class Form extends \VuFind\Form\Form
     public const ARCHIVE_MATERIAL_REQUEST = 'ArchiveRequest';
 
     /**
-     * Handlers that are considered safe for transmitting information about the user
+     * Handlers that are considered safe for transmitting information about the user.
      *
      * @var array
      */
     protected $secureHandlers = ['api', 'database'];
 
     /**
-     * Institution name
+     * Institution name.
      *
      * @var string
      */
     protected $institution = '';
 
     /**
-     * Institution email
+     * Institution email.
      *
      * @var string
      */
     protected $institutionEmail = '';
 
     /**
-     * User
+     * User.
      *
      * @var ?UserEntityInterface
      */
     protected $user = null;
 
     /**
-     * ILS Patron
+     * ILS Patron.
      *
      * @var array
      */
     protected $ilsPatron = null;
 
     /**
-     * User roles
+     * User roles.
      *
      * @var array
      */
@@ -135,28 +137,28 @@ class Form extends \VuFind\Form\Form
     protected $recordRequestFormsWithBarcode = [];
 
     /**
-     * Data source configuation
+     * Data source configuation.
      *
      * @var array
      */
     protected $dataSourceConfig = null;
 
     /**
-     * Record driver
+     * Record driver.
      *
      * @var DefaultRecord
      */
     protected $record = null;
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var \VuFind\Record\Loader
      */
     protected $recordLoader = null;
 
     /**
-     * Set form id
+     * Set form id.
      *
      * @param string $formId  Form id
      * @param array  $params  Additional form parameters.
@@ -169,21 +171,20 @@ class Form extends \VuFind\Form\Form
     {
         parent::setFormId($formId, $params, $prefill);
 
-        if ($this->reportPatronBarcode()) {
-            if ($this->user && ($catUsername = $this->user->getCatUsername())) {
-                [, $barcode] = explode('.', $catUsername);
-                $this->userCatUsername = $barcode;
+        if ($this->ilsPatron) {
+            if ($this->reportPatronBarcode()) {
+                $this->userCatUsername = $this->ilsPatron['__local_cat_username'] ?? $this->ilsPatron['cat_username'];
+            }
+            if ($this->reportPatronId()) {
+                $this->userCatId = $this->ilsPatron['__local_id'] ?? $this->ilsPatron['id'];
             }
         }
-        if ($this->reportPatronId() && $catId = $this->user?->getCatId()) {
-            [, $id] = explode('.', $catId);
-            $this->userCatId = $id;
-        }
+
         $this->setName($formId);
     }
 
     /**
-     * Set data to validate and/or populate elements
+     * Set data to validate and/or populate elements.
      *
      * Typically, also passes data on to the composed input filter.
      *
@@ -210,7 +211,32 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set institution
+     * Sets name and email field values from preferred source.
+     *
+     * @return static
+     */
+    public function setContactInformation(): static
+    {
+        if ($this->preferPatronInformation()) {
+            $this->setData(
+                [
+                    'name' => $this->ilsPatron['firstname'] . ' ' . $this->ilsPatron['lastname'],
+                    'email' => $this->ilsPatron['email'],
+                ]
+            );
+        } elseif ($this->user) {
+            $this->setData(
+                [
+                    'name' => $this->user->getFirstname() . ' ' . $this->user->getLastname(),
+                    'email' => $this->user->getEmail(),
+                ]
+            );
+        }
+        return $this;
+    }
+
+    /**
+     * Set institution.
      *
      * @param string $institution Institution
      *
@@ -222,7 +248,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set institution email
+     * Set institution email.
      *
      * @param string $email Email
      *
@@ -234,7 +260,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set user
+     * Set user.
      *
      * @param UserEntityInterface $user      User
      * @param array               $roles     User roles
@@ -250,7 +276,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Get record driver
+     * Get record driver.
      *
      * @return ?DefaultRecord
      */
@@ -260,7 +286,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set record driver
+     * Set record driver.
      *
      * @param DefaultRecord $record Record
      *
@@ -285,7 +311,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set data source configuration
+     * Set data source configuration.
      *
      * @param array $config Data source configuration
      *
@@ -297,7 +323,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Set record loader
+     * Set record loader.
      *
      * @param \VuFind\Record\Loader $loader Record loader
      *
@@ -309,7 +335,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Check if the form should report patron's barcode
+     * Check if the form should report patron's barcode.
      *
      * @return bool
      */
@@ -319,13 +345,28 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Check if the form should report patron's id
+     * Check if the form should report patron's id.
      *
      * @return bool
      */
     public function reportPatronId(): bool
     {
         return (bool)($this->formConfig['includePatronId'] ?? false);
+    }
+
+    /**
+     * Should the form fill user data from patron?
+     *
+     * @return bool
+     */
+    public function preferPatronInformation(): bool
+    {
+        return $this->ilsPatron
+            && (
+                $this->reportPatronBarcode()
+                || $this->reportPatronId()
+                || (bool)($this->formConfig['preferPatronInformation'] ?? false)
+            );
     }
 
     /**
@@ -343,13 +384,21 @@ class Form extends \VuFind\Form\Form
             if (!$this->record) {
                 throw new \Exception('Record not set for FeedbackRecord form');
             }
-            $dataSource = $this->record->tryMethod('getDataSource');
-            $inst = $this->dataSourceConfig[$dataSource] ?? null;
-            if (!($recipientEmail = $inst['feedbackEmail'] ?? null)) {
-                throw new \Exception(
-                    'Error sending record feedback: Recipient email for'
-                    . " $dataSource not set in datasources.ini"
-                );
+            if ($this->record instanceof SolrAipa) {
+                if (!$recipientEmail = $this->record->getFeedbackEmail()) {
+                    throw new \Exception(
+                        'Error sending record feedback: Unable to determine recipient email'
+                    );
+                }
+            } else {
+                $dataSource = $this->record->tryMethod('getDataSource');
+                $inst = $this->dataSourceConfig[$dataSource] ?? null;
+                if (!($recipientEmail = $inst['feedbackEmail'] ?? null)) {
+                    throw new \Exception(
+                        'Error sending record feedback: Recipient email for'
+                        . " $dataSource not set in datasources.ini"
+                    );
+                }
             }
             return [
                 [
@@ -458,19 +507,26 @@ class Form extends \VuFind\Form\Form
             // Append receiver info after general record feedback instructions
             // (translation key for this is defined in FeedbackForms.yaml)
             if (!$translationEmpty('feedback_recipient_info_record')) {
+                if ($this->record instanceof SolrAipa) {
+                    // Institution names in FinnaAdmin are currently in Finnish only.
+                    $institutionName = $this->record->getFeedbackOrganization()
+                        ->getPrefLabel(DataObjectInterface::LANGUAGE_FINNISH);
+                } else {
+                    $institutionName = $organisationDisplayName($this->record, true);
+                }
                 $preParagraphs[] = $transEsc(
                     'feedback_recipient_info_record',
-                    [
-                        '%%institution%%'
-                            => $organisationDisplayName($this->record, true),
-                    ]
+                    ['%%institution%%' => $institutionName]
                 );
             }
-            $datasourceKey = 'feedback_recipient_info_record_'
-                . $this->record->tryMethod('getDataSource', [], '') . '_html';
-            if (!$translationEmpty($datasourceKey)) {
-                $preParagraphs[] = '<span class="datasource-info">'
-                    . $this->translate($datasourceKey) . '</span>';
+            if (!$this->record instanceof SolrAipa) {
+                $datasourceKey = 'feedback_recipient_info_record_'
+                    . $this->record->tryMethod('getDataSource', [], '')
+                    . '_html';
+                if (!$translationEmpty($datasourceKey)) {
+                    $preParagraphs[] = '<span class="datasource-info">'
+                        . $this->translate($datasourceKey) . '</span>';
+                }
             }
         }
         if (
@@ -575,7 +631,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Combine a translation key from two or three strings
+     * Combine a translation key from two or three strings.
      *
      * @param string $prefix The prefix/first part of translation key
      * @param string $middle The second part of translation key
@@ -597,7 +653,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Map request parameters to field values
+     * Map request parameters to field values.
      *
      * @param array $requestParams Request parameters
      *
@@ -675,7 +731,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Return API settings
+     * Return API settings.
      *
      * @return array
      */
@@ -701,7 +757,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Get form elements
+     * Get form elements.
      *
      * @param array $config Form configuration
      *
@@ -815,6 +871,7 @@ class Form extends \VuFind\Form\Form
                 'hideSenderInfo',
                 'includeBarcode',
                 'includePatronId',
+                'preferPatronInformation',
                 'readonly',
                 'rows',
                 'senderInfoHelp',
@@ -839,7 +896,7 @@ class Form extends \VuFind\Form\Form
     }
 
     /**
-     * Get form configuration
+     * Get form configuration.
      *
      * @param string $formId Form id
      *
@@ -904,7 +961,7 @@ class Form extends \VuFind\Form\Form
      * Is this form allowed to send user's library card barcode
      * along with the form data?
      *
-     * @return boolean
+     * @return bool
      */
     protected function isRecordRequestFormWithBarcode(): bool
     {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for ReservationList view helper
+ * Factory for ReservationList view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -36,7 +36,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for ReservationList view helper
+ * Factory for ReservationList view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -47,7 +47,7 @@ use Psr\Container\ContainerInterface;
 class ReservationListFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -70,8 +70,7 @@ class ReservationListFactory implements FactoryInterface
         }
         $reservationListYaml = $container->get(\Finna\Config\YamlReader::class)
             ->getFinna('ReservationList.yaml', 'config/finna');
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config')->toArray();
+        $config = $container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigArray('config');
         return new $requestedName(
             $container->get(\Finna\ReservationList\ReservationListService::class),
             $container->get(\VuFind\Auth\ILSAuthenticator::class),

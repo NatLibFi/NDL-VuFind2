@@ -7,6 +7,7 @@
 <html lang="<?=$this->layout()->userLang?>">
   <head>
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+  <meta name="color-scheme" content="light dark">
   <?php // Turn off automatic telephone number detection on iOS ?>
   <meta name="format-detection" content="telephone=no">
   <?php if ($appleTouchIcon = $this->imageSrc()->getSourceAddress('webapp-icon-180.png')): ?>
@@ -77,11 +78,18 @@
       max-width: 380px; /* Prevent the barcode from being too big */
       background-color: white;
       padding: .5em;
+      @media (prefers-color-scheme: dark), (prefers-color-scheme: light) {
+        background-color: white;
+      }
     }
     .barcode-instructions {
       text-align: center;
       flex-basis: 100%;
       margin-top: 40px;
+    }
+    .barcode-number {
+      text-align: center;
+      flex-basis: 100%;
     }
   </style>
   <?php
@@ -110,6 +118,9 @@
         <?=$this->transEsc('An error has occurred')?>
       <?php else: ?>
         <?=$barcodeSvg?>
+        <div class="barcode-number">
+          <?=$this->escapeHtml($this->code)?>
+        </div>
         <div class="barcode-instructions">
           <?=$this->translate('show_barcode_instructions_html', null, '')?>
         </div>

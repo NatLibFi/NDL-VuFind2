@@ -10,6 +10,21 @@
 
   $resultsTotal = $results->getResultTotal();
   $params = $results->getParams();
+
+  $options = $this->searchOptions($params->getSearchClassId());
+  $filterList = $params->getFilterList(true);
+  $checkboxFilters = $params->getCheckboxFacets();
+  $filterCount = $this->searchbox()->getFilterCount($checkboxFilters, $filterList);
+  $defaultFilters = $options->getDefaultFilters();
+  $onlyDefaultsApplied = count($defaultFilters) == $filterCount;
+  foreach ($defaultFilters as $currentDefault) {
+    if (!$params->hasFilter($currentDefault)) {
+      $onlyDefaultsApplied = false;
+      break;
+    }
+  }
+
+  $side = $this->config()->offcanvasSide();
 ?>
 <?php if ($resultsTotal > 0): ?>
   <?php
@@ -24,23 +39,37 @@
     // We also need to inform the helper about any special parameters used in place
     // of the suppressed query:
     $extraUrlFields = $results->getUrlQuery()->getParamsWithConfiguredDefaults();
+    $urlQueryFromResult = $results->getUrlQuery();
+    $resetLink = !$onlyDefaultsApplied && isset($urlQueryFromResult) ? $urlQueryFromResult->removeAllFilters()->resetDefaultFilters() : false;
   ?>
-  <div aria-label="<?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?>" class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
-    <div class="side-facets-header-container">
-      <h1><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
+  <div class="side-facets-container-ajax" data-search-class-id="<?=$this->escapeHtmlAttr($this->searchClassId) ?>" data-location="<?=$this->escapeHtmlAttr($this->location) ?>" data-config-index="<?=$this->escapeHtmlAttr($this->configIndex)?>" data-query="<?=$this->escapeHtmlAttr($urlQuery)?>" data-query-suppressed="<?=$querySuppressed ? '1' : '0' ?>" data-extra-fields="<?=$this->escapeHtml(implode(',', $extraUrlFields))?>">
+    <div class="mobile-navigation-header-container">
+      <span class="visible-xs visible-sm close-offcanvas">
+      <a class="visible-xs visible-sm close-offcanvas-btn" href="#" role="button" data-toggle="vufind-offcanvas">
+        <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
+        <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
+        <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
+      </a>
+      </span>
+      <h1 class="hidden-xs hidden-sm"><?=$this->transEsc($this->slot('side-facet-caption')->get('Narrow Search')) ?></h1>
       <?php if (null === $this->slot('side-facet-caption')->get() && !$this->translationEmpty('tooltip_facet_html')): ?>
-        <?=$this->component(
-      'finna-toggletip',
-      [
-          'icon' => 'help',
-          'ariaLabel' => $this->translate('Help'),
-          'contentHtml' => $this->translate('tooltip_facet_html'),
-        ]
-  );
-        ?>
-        <?php endif; ?>
-        <button class="visible-xs sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button><?php endif; ?>
+        <div class="hidden-xs hidden-sm">
+          <?=$this->component(
+            'finna-toggletip',
+            [
+              'icon' => 'help',
+              'ariaLabel' => $this->translate('Help'),
+              'contentHtml' => $this->translate('tooltip_facet_html'),
+            ]
+          );
+          ?>
+        </div>
+      <?php endif; ?>
+      <?php if ($resetLink): ?>
+        <a class="reset-filters-btn visible-xs visible-sm" role="button" href="<?=$resetLink?>"><?=$this->transEsc('reset_filters_button')?> (<?=$filterCount?>)</a>
+      <?php endif; ?>
     </div>
+<?php endif; ?>
 <?php $checkboxFilters = $params->getCheckboxFacets(); ?>
 <?php $checkboxesShown = false; ?>
 <?php if (count($checkboxFilters) > 0):
@@ -52,12 +81,12 @@
     }
   ?>
   <?php if ($checkboxesShown): ?>
-    <fieldset>
-      <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
-      <div class="checkbox-filters">
+    <div class="checkbox-filters">
+      <fieldset>
+        <legend class="visually-hidden"><?=$this->transEsc('checkbox_filter')?></legend>
         <?=$this->context($this)->renderInContext('Recommend/SideFacets/checkbox-filters.phtml', ['checkboxFilters' => $checkboxFilters, 'results' => $results, 'counts' => false]); ?>
-      </div>
-    </fieldset>
+      </fieldset>
+    </div>
   <?php endif; ?>
 <?php endif; ?>
 <?php $extraFilters = $this->extraSideFacetFilters ?? []; ?>
@@ -105,7 +134,8 @@ $rangeFacets = $this->recommend->getAllRangeFacets(); ?>
         <span class="facet-title"><?=$this->transEsc($facetName)?></span>
         <?=$this->icon('collapse', 'facet-title-icon') ?>
       </button>
-      <div id="<?=$dataTarget?>" class="collapse<?= !$isCollapsed ? ' show' : '';?>" data-facet="<?=$escAttrField ?>">
+      <div id="facet-title-<?=$escAttrField?>" class="visually-hidden" aria-hidden="true"><?=$this->transEsc($facetName)?></div>
+      <div id="<?=$dataTarget?>" aria-labelledby="facet-title-<?=$escAttrField?>" role="group" class="collapse<?= !$isCollapsed ? ' show' : '';?>" data-facet="<?=$escAttrField ?>">
         <span class="facet-load-failed hidden"><?=$msgFailed?></span>
         <div class="facet-load-indicator hidden">
           <?=$this->icon('spinner') ?> <?=$this->transEsc('loading_ellipsis')?>

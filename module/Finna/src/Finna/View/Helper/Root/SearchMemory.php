@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category Finna
  * @package  View_Helpers
@@ -41,7 +41,7 @@ namespace Finna\View\Helper\Root;
 class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
 {
     /**
-     * Retrieve the last search class id
+     * Retrieve the last search class id.
      *
      * @return string
      */
@@ -52,7 +52,7 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the last search type
+     * Retrieve the last search type.
      *
      * @return string
      */
@@ -63,7 +63,7 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the last search lookfor
+     * Retrieve the last search lookfor.
      *
      * @return string
      */
@@ -75,7 +75,7 @@ class SearchMemory extends \VuFind\View\Helper\Root\SearchMemory
     }
 
     /**
-     * Retrieve the scroll data
+     * Retrieve the scroll data.
      *
      * @return array
      *

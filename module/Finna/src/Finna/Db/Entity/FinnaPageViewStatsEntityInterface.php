@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Db_Interface
@@ -38,10 +38,17 @@ namespace Finna\Db\Entity;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
-interface FinnaPageViewStatsEntityInterface extends FinnaBaseStatsLogEntityInterface
+interface FinnaPageViewStatsEntityInterface extends FinnaBaseStatsEntityInterface
 {
     /**
-     * Controller setter
+     * Get controller.
+     *
+     * @return string
+     */
+    public function getController(): string;
+
+    /**
+     * Set controller.
      *
      * @param string $controller Controller
      *
@@ -50,25 +57,18 @@ interface FinnaPageViewStatsEntityInterface extends FinnaBaseStatsLogEntityInter
     public function setController(string $controller): static;
 
     /**
-     * Controller getter
+     * Get action.
      *
      * @return string
      */
-    public function getController(): string;
+    public function getAction(): string;
 
     /**
-     * Action setter
+     * Set action.
      *
      * @param string $action Action
      *
      * @return static
      */
     public function setAction(string $action): static;
-
-    /**
-     * Action getter
-     *
-     * @return string
-     */
-    public function getAction(): string;
 }

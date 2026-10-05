@@ -13,13 +13,14 @@
 ?>
 <!-- start list-entry -->
 <div class="result record-container myresearch-row <?=$this->record($this->driver)->getContainerJsClasses()?>">
-  <div class="checkbox-container">
-    <div class="checkbox">
-      <?php // Request a checkbox with a label (can't add the label here as checkbox template contains more than one field): ?>
-      <?=$this->record($this->driver)->getCheckbox('', false, true) ?>
-    </div>
-  </div>
   <input type="hidden" value="<?=$this->escapeHtmlAttr($id) ?>" class="hiddenId">
+  <?php if ($recordNumber): ?>
+    <div class="checkbox-container">
+      <div class="checkbox">
+      <?=$this->record($this->driver)->getCheckbox(number: $recordNumber)?>
+      </div>
+    </div>
+  <?php endif; ?>
   <div class="media">
     <div class="media-left text-center">
       <?php $img = $this->recordImage($this->record($this->driver))?>
@@ -97,7 +98,8 @@
             <?php endif; ?>
           <?php endif; ?>
 
-          <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $this->driver->getTags(
+          <?php $recordHelper = $this->record($this->driver); ?>
+          <?php $listTags = ($this->usertags()->getMode() !== 'disabled') ? $recordHelper->getTags(
                 null === $list_id ? true : $list_id, // get tags for all lists if no single list is selected
                 $user_id,
                 'tag'
@@ -110,7 +112,6 @@
             <br>
           <?php endif; ?>
 
-          <?php $recordHelper = $this->record($this->driver); ?>
           <?=$recordHelper->renderTemplate('holdings.phtml');?>
           <?=$recordHelper->getOnlineUrls('results');?>
           <?=$recordHelper->getCitationLinks();?>

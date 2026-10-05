@@ -7,15 +7,15 @@
     }
   ?>
   <div class="checkbox <?=$current['selected'] ? 'checked' : ''?><?=!empty($current['disabled']) ? ' disabled' : ''?> <?=$this->escapeHtmlAttr($classes)?><?php if (!($results->getResultTotal() > 0 || $current['selected'] || $current['alwaysVisible'])): ?> hidden<?php endif; ?> checkbox-filter" data-facet="<?=$this->escapeHtmlAttr($current['filter'])?>"<?=!$current['selected'] && empty($current['disabled']) && isset($counts) && false === $counts ? '' : ' data-loaded="true"'?>>
-    <label>
-      <span class="badge cb-facet avail-count"></span>
-      <input class="checkbox-filter" type="checkbox" name="filter[]" value="<?=$this->escapeHtmlAttr($current['filter'])?>" <?=($current['selected'] ? 'checked="checked"' : '')?>
-        id="<?=$this->escapeHtmlAttr(str_replace(' ', '', $current['desc']))?>"
-        data-location="<?=$current['selected'] ? $results->getUrlQuery()->removeFilter($current['filter']) : $results->getUrlQuery()->addFilter($current['filter']) ?>"
-        <?=!empty($current['disabled']) ? 'disabled="disabled"' : ''?>
-      >
+    <input class="checkbox-filter" role="link" aria-labelledby="<?=$this->escapeHtmlAttr(str_replace(' ', '', $current['desc']))?>_label" type="checkbox" name="filter[]" value="<?=$this->escapeHtmlAttr($current['filter'])?>" <?=($current['selected'] ? 'checked="checked"' : '')?>
+      id="<?=$this->escapeHtmlAttr(str_replace(' ', '', $current['desc']))?>"
+      data-location="<?=$current['selected'] ? $results->getUrlQuery()->removeFilter($current['filter']) : $results->getUrlQuery()->addFilter($current['filter']) ?>"
+      <?=!empty($current['disabled']) ? 'disabled="disabled"' : ''?>
+    >
+    <div aria-hidden="true" id="<?=$this->escapeHtmlAttr(str_replace(' ', '', $current['desc']))?>_label">
       <span><?=$this->translate($current['desc']) // Intentionally left unescaped to allow HTML in the description ?></span>
-    </label>
+      <span class="badge cb-facet avail-count"></span>
+    </div>
   </div>
 <?php endforeach; ?>
 <?php

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * MetaLib Controller
+ * MetaLib Controller.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -30,7 +30,7 @@
 namespace Finna\Controller;
 
 /**
- * MetaLib Controller
+ * MetaLib Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -41,7 +41,7 @@ namespace Finna\Controller;
 class MetaLibController extends \VuFind\Controller\AbstractBase
 {
     /**
-     * Home action -- show MetaLib unavailable message
+     * Home action -- show MetaLib unavailable message.
      *
      * @return mixed
      */
@@ -51,7 +51,7 @@ class MetaLibController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Search action -- show MetaLib unavailable message
+     * Search action -- show MetaLib unavailable message.
      *
      * @return mixed
      */
@@ -61,7 +61,7 @@ class MetaLibController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Advanced search -- show MetaLib unavailable message
+     * Advanced search -- show MetaLib unavailable message.
      *
      * @return mixed
      */
@@ -71,7 +71,7 @@ class MetaLibController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Show MetaLib unavailable show
+     * Show MetaLib unavailable show.
      *
      * @return mixed
      */

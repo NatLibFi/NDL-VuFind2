@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Statistics
@@ -43,14 +43,14 @@ use Finna\Statistics\EventHandler as StatisticsEventHandler;
 trait ReporterTrait
 {
     /**
-     * Statistics event handler
+     * Statistics event handler.
      *
      * @var StatisticsEventHandler
      */
     protected $statisticsEventHandler = null;
 
     /**
-     * Set statistics event handler
+     * Set statistics event handler.
      *
      * @param StatisticsEventHandler $handler Statistics event handler
      *
@@ -62,7 +62,7 @@ trait ReporterTrait
     }
 
     /**
-     * Trigger session start event
+     * Trigger session start event.
      *
      * @param string $sessionId Session id
      *
@@ -76,7 +76,7 @@ trait ReporterTrait
     }
 
     /**
-     * Trigger record view event
+     * Trigger record view event.
      *
      * @param ?\VuFind\RecordDriver\AbstractBase $driver Record driver
      *

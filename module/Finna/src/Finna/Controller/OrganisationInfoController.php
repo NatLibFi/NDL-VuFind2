@@ -45,14 +45,14 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
     use Feature\DownloadTrait;
 
     /**
-     * Default action if none provided
+     * Default action if none provided.
      *
      * @return Laminas\View\Model\ViewModel
      */
     public function homeAction()
     {
         $config = $this->serviceLocator
-            ->get(\VuFind\Config\PluginManager::class)->get('OrganisationInfo');
+            ->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('OrganisationInfo');
 
         $id = $this->params()->fromQuery('id');
         $buildings = $this->params()->fromQuery('buildings');
@@ -96,7 +96,7 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
     }
 
     /**
-     * Proxy load image
+     * Proxy load image.
      *
      * @return Laminas\View\Model\ViewModel
      */
@@ -111,7 +111,7 @@ class OrganisationInfoController extends \VuFind\Controller\AbstractBase
         $valid = false;
         $imageHost = mb_strtolower(parse_url($imageUrl, PHP_URL_HOST), 'UTF-8');
         $config = $this->serviceLocator
-            ->get(\VuFind\Config\PluginManager::class)->get('OrganisationInfo');
+            ->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigArray('OrganisationInfo');
         foreach ($config['Images']['allowed_hosts'] ?? [] as $host) {
             if ($imageHost === $host) {
                 $valid = true;

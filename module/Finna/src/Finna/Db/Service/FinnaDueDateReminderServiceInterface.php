@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Database
@@ -46,7 +46,7 @@ use VuFind\Db\Service\DbServiceInterface;
 interface FinnaDueDateReminderServiceInterface extends DbServiceInterface
 {
     /**
-     * Get a reminded loan
+     * Get a reminded loan.
      *
      * @param UserEntityInterface $user    User
      * @param string              $loanId  Loan Id
@@ -61,7 +61,7 @@ interface FinnaDueDateReminderServiceInterface extends DbServiceInterface
     ): ?FinnaDueDateReminderEntityInterface;
 
     /**
-     * Add a reminded loan
+     * Add a reminded loan.
      *
      * @param UserEntityInterface $user    User
      * @param string              $loanId  Loan Id
@@ -72,7 +72,7 @@ interface FinnaDueDateReminderServiceInterface extends DbServiceInterface
     public function addRemindedLoan(UserEntityInterface $user, string $loanId, DateTime $dueDate): void;
 
     /**
-     * Delete a reminded loan
+     * Delete a reminded loan.
      *
      * @param UserEntityInterface $user   User
      * @param string              $loanId Loan Id

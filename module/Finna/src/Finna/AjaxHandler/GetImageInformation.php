@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetImageInformation AJAX handler
+ * GetImageInformation AJAX handler.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -41,7 +41,7 @@ use VuFind\Session\Settings as SessionSettings;
 use VuFind\View\Helper\Root\Record;
 
 /**
- * GetImageInformation AJAX handler
+ * GetImageInformation AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -55,7 +55,7 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
     use \Finna\Statistics\ReporterTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings              $sessionSettings     Session settings
      * @param Config                       $config              Main configuration
@@ -98,11 +98,7 @@ class GetImageInformation extends \VuFind\AjaxHandler\AbstractBase
 
         if (null === ($source = $params->fromQuery('source'))) {
             [$source] = explode('.', $id, 2);
-            if ('pci' === $source) {
-                $source = 'Primo';
-            } else {
-                $source = 'Solr';
-            }
+            $source = 'pci' === $source ? 'Primo' : 'Solr';
         }
         $driver = $this->recordLoader->load($id, $source);
 

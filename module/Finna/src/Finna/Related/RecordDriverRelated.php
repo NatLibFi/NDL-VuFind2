@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Related Record: record driver based
+ * Related Record: record driver based.
  *
  * PHP version 8
  *
@@ -17,31 +17,31 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Related_Records
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:building_a_related_record_module Wiki
+ * @link     https://vufind.org/wiki/development:plugins:related_records_modules Wiki
  */
 
 namespace Finna\Related;
 
 /**
- * Related Record: record driver based
+ * Related Record: record driver based.
  *
  * @category VuFind
  * @package  Related_Records
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:building_a_related_record_module Wiki
+ * @link     https://vufind.org/wiki/development:plugins:related_records_modules Wiki
  */
 class RecordDriverRelated implements \VuFind\Related\RelatedInterface
 {
     /**
-     * Record driver
+     * Record driver.
      *
      * @var \VuFind\RecordDriver\AbstractBase
      */
@@ -74,7 +74,7 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get the current record ID
+     * Get the current record ID.
      *
      * @return string
      */
@@ -87,7 +87,7 @@ class RecordDriverRelated implements \VuFind\Related\RelatedInterface
     }
 
     /**
-     * Get the current record source
+     * Get the current record source.
      *
      * @return string
      */

@@ -15,7 +15,7 @@
     <div class="view-options">
       <?php foreach ($viewList as $viewType => $viewData): ?>
         <div class="view-button <?= $viewData['selected'] ? 'selected' : '' ?>">
-          <a href="<?=$this->results->getUrlQuery()->setViewParam($viewType)?>" role="button" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc'])?>" <?php if ($viewData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif; ?>><?= $this->icon('view-' . $viewType, 'icon-' . $viewType) ?></a>
+          <a href="<?=$this->results->getUrlQuery()->setViewParam($viewType)?>" aria-label="<?=$this->transEsc('show_as') . ': ' . $this->transEsc('Show As ' . $viewData['desc'])?>" <?php if ($viewData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif; ?>><?= $this->icon('view-' . $viewType, 'icon-' . $viewType) ?></a>
         </div>
       <?php endforeach; ?>
     </div>
@@ -28,7 +28,7 @@
           <?php endif; ?>
         <?php endforeach; ?>
 
-        <ul class="dropdown-menu" role="menu">
+        <ul class="dropdown-menu" role="presentation">
           <?php foreach ($viewList as $viewType => $viewData): ?>
             <?php
               if ($viewData['selected']) {
@@ -41,7 +41,7 @@
               }
             ?>
             <li>
-              <a class="dropdown-item" href="<?=$viewUrl?>" role="menuitem" <?php if ($viewData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>>
+              <a class="dropdown-item" href="<?=$viewUrl?>" <?php if ($viewData['selected']):?>aria-description="<?=$this->transEsc('selected')?>"<?php endif;?>>
                 <?=$this->icon('view-' . $viewType, 'icon-' . $viewType) ?> <?=$this->transEsc('Show As ' . $viewData['desc'])?>
               </a>
             </li>

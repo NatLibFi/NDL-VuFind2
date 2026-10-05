@@ -6,6 +6,11 @@ override_full_sections = "UpdateAddress"
 ; An optional catalog id that is used in the translation string when translating
 ; location names and opac messages (e.g. location_{id}_ADU)
 id = "outi"
+; Koha version. This is required to adapt for newer API features. E.g. Koha 25.11
+; allows faster retrieval of holds and their associated item and biblio records.
+; Format for the setting should follow Koha's major.minor version numbering. Valid
+; values are e.g. "25.05" and "25.11". Default is compatibility with Koha 20.05.
+;kohaVersion = "25.05"
 ; The API address without any version such as v1
 host = "http://koha-server/api"
 ; OAuth2 client ID
@@ -87,6 +92,9 @@ updateFields = frozen:frozenThrough:pickUpLocation
 ; This setting can be used to exclude locations from the pickup location list
 ;excludePickupLocations = "BRANCH:MOBILE"
 
+; Enable display of hold shelf (disabled by default, only supported with a Koha-Suomi version)
+;displayHoldShelf = true
+
 [Holdings]
 ; Whether item-specific hold counts are displayed
 display_item_hold_counts = false
@@ -152,11 +160,11 @@ indexes = "868az"
 ; Whether to sort items by enumchron. Default is true.
 ;sort_by_enum_chron = false
 
-[onlinePayment]
+[OnlinePayment]
 ; Whether online payment is enabled. Default is false.
 enabled = true
-; Transaction fee (in cents) added to each payment
-;transactionFee = 50
+; Service fee (in cents) added to each payment
+;serviceFee = 50
 ; Minimum fee (in cents) allowed to be paid online
 minimumFee = 65
 ; Email address for transactions that could not be registered.
@@ -171,6 +179,11 @@ currency = 'EUR'
 ;nonPayableTypes[] = "LOST"
 ; Non-payable fine statuses:
 ;nonPayableStatuses[] = "UNRETURNED"
+; Fine types that prevent payment completely
+;blockingNonPayableTypes[] = "XYZ"
+; Fine descriptions that prevent payment completely (enclose in // for regular expressions; modifiers supported,
+; other enclosures not)
+;blockingNonPayableDescriptions[] = "/Debt.*collection/"
 
 
 [PasswordRecovery]
@@ -216,3 +229,21 @@ Recall_Waiting = ""
 [FeeTypeMappings]
 ODUE = "Overdue Return Request"
 ODUE2 = "Overdue Return Request"
+
+; Block ILS methods during given times. Format is "method[] = "value""
+; method  - Method in ILS driver
+; value   - startDate/endDate or startTime/endTime, where startDate and endDate are YYYY-MM-DD or YYYY-MM-DD HH:MM
+;           and startTime and endTime are HH:MM
+; startDate and endDate specify fixed start and end dates (with optional times) to make the method unavailable.
+; You do not need to specify both -- you can use either on its own for an open-ended range.
+; You MUST use slash as a separator, for example to only define endDate: "/2025-09-01".
+; startTime and endTime specify a time window that will block the method every day.
+; If endTime is lower than startTime, the driver will assume a time window crossing from one day into the next day.
+; When setting a recurring window, both startTime and endTime MUST be set.
+; Timed blocks can be displayed using MethodTimedBlocks view helper.
+; Common methods for blocking features:
+; - Renewals: Blocks renewing loans
+; - registerPayment: Blocks online payment
+[TimedBlocks]
+;Renewals[] = "2025-08-01/2025-09-01"
+;Renewals[] = "23:00/01:00"

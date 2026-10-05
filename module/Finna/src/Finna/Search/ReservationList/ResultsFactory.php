@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Factory for ReservationList search results
+ * Factory for ReservationList search results.
  *
  * PHP version 8
  *
@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_ReservationList
@@ -40,7 +40,7 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 
 /**
- * Factory for ReservationList search results
+ * Factory for ReservationList search results.
  *
  * @category VuFind
  * @package  Search_ReservationList
@@ -53,7 +53,7 @@ use Psr\Container\ContainerInterface;
 class ResultsFactory extends \VuFind\Search\Results\ResultsFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -82,8 +82,6 @@ class ResultsFactory extends \VuFind\Search\Results\ResultsFactory
             $requestedName,
             [$resourceService, $listService]
         );
-        $init = new \LmcRbacMvc\Initializer\AuthorizationServiceInitializer();
-        $init($container, $obj);
         return $obj;
     }
 }

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Turku Payment API Item
+ * Turku Payment API Item.
  *
  * PHP version 8
  *
@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
@@ -32,25 +32,25 @@ namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
 use Paytrail\SDK\Exception\ValidationException;
 
 /**
- * Turku Payment API Item
+ * Turku Payment API Item.
  *
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class Item extends \Paytrail\SDK\Model\Item
 {
     /**
-     * Holds required sap products
+     * Holds required sap products.
      *
      * @var array
      */
     protected $sapProduct = [];
 
     /**
-     * Set sapProduct
+     * Set sapProduct.
      *
      * @param array $sapProduct The sapProduct
      *
@@ -63,7 +63,7 @@ class Item extends \Paytrail\SDK\Model\Item
     }
 
     /**
-     * Get sapProduct
+     * Get sapProduct.
      *
      * @return array
      */
@@ -74,7 +74,7 @@ class Item extends \Paytrail\SDK\Model\Item
 
     /**
      * Validates with Respect\Validation library and
-     * throws an exception for invalid objects
+     * throws an exception for invalid objects.
      *
      * @throws ValidationException
      *

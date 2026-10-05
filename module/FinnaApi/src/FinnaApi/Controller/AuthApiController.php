@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Authentication Api Controller
+ * Authentication Api Controller.
  *
  * PHP version 8
  *
@@ -44,13 +44,13 @@ use function in_array;
  */
 class AuthApiController extends \VuFindApi\Controller\ApiController implements
     \VuFindApi\Controller\ApiInterface,
-    \Laminas\Log\LoggerAwareInterface
+    \Psr\Log\LoggerAwareInterface
 {
     use \VuFindApi\Controller\ApiTrait;
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Execute the request
+     * Execute the request.
      *
      * @param \Laminas\Mvc\MvcEvent $e Event
      *
@@ -82,7 +82,7 @@ class AuthApiController extends \VuFindApi\Controller\ApiController implements
     }
 
     /**
-     * Retrieve backends available for library card authentication
+     * Retrieve backends available for library card authentication.
      *
      * @return \Laminas\Http\Response
      */
@@ -125,7 +125,7 @@ class AuthApiController extends \VuFindApi\Controller\ApiController implements
     }
 
     /**
-     * Login with library card and return status
+     * Login with library card and return status.
      *
      * @return \Laminas\Http\Response
      */
@@ -216,7 +216,7 @@ class AuthApiController extends \VuFindApi\Controller\ApiController implements
 
     /**
      * Get Swagger specification JSON fragment for services provided by the
-     * controller
+     * controller.
      *
      * @return string
      */
@@ -434,7 +434,7 @@ class AuthApiController extends \VuFindApi\Controller\ApiController implements
     }
 
     /**
-     * Get a list of available login targets
+     * Get a list of available login targets.
      *
      * @return array
      */

@@ -29,7 +29,7 @@ use DOMXPath;
 class SchematronXPath extends DOMXPath
 {
     /**
-     * Query
+     * Query.
      *
      * ($registerNodeNS is FALSE in opposition to DOMXPath default value)
      *
@@ -45,7 +45,7 @@ class SchematronXPath extends DOMXPath
     }
 
     /**
-     * Evaluate
+     * Evaluate.
      *
      * ($registerNodeNS is FALSE in opposition to DOMXPath default value)
      *
@@ -61,7 +61,7 @@ class SchematronXPath extends DOMXPath
     }
 
     /**
-     * Query context
+     * Query context.
      *
      * ($registerNodeNS is FALSE in opposition to DOMXPath default value)
      *

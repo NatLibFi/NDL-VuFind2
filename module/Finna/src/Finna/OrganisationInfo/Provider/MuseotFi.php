@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Service for querying museot.fi API
+ * Service for querying museot.fi API.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OrganisationInfo\Provider;
@@ -35,7 +35,7 @@ namespace Finna\OrganisationInfo\Provider;
 use function strlen;
 
 /**
- * Service for querying museot.fi API
+ * Service for querying museot.fi API.
  *
  * @category VuFind
  * @package  Content
@@ -44,12 +44,12 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class MuseotFi extends AbstractProvider
 {
     /**
-     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part).
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -75,7 +75,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get consortium information (includes list of locations) (provider-specific part)
+     * Get consortium information (includes list of locations) (provider-specific part).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -89,7 +89,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get location details (provider-specific part)
+     * Get location details (provider-specific part).
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -110,7 +110,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -272,7 +272,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Fetch data from cache or external API
+     * Fetch data from cache or external API.
      *
      * @param string $locationId Location ID
      *
@@ -290,7 +290,7 @@ class MuseotFi extends AbstractProvider
     }
 
     /**
-     * Get open times for a date
+     * Get open times for a date.
      *
      * @param string $day  Weekday
      * @param array  $json Data from museum api

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetPiwikPopularSearches AJAX handler
+ * GetPiwikPopularSearches AJAX handler.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -37,7 +37,7 @@ use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * GetPiwikPopularSearches AJAX handler
+ * GetPiwikPopularSearches AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -48,35 +48,35 @@ use VuFind\Session\Settings as SessionSettings;
 class GetPiwikPopularSearches extends \VuFind\AjaxHandler\AbstractBase implements
     TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface
+    \Psr\Log\LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFind\Log\LoggerAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Config
+     * Config.
      *
      * @var Config
      */
     protected $config;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings   $ss       Session settings
      * @param CacheManager      $cm       Cache manager

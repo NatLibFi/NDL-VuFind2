@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Finna Cache Manager
+ * Finna Cache Manager.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Cache
@@ -32,10 +32,9 @@
 namespace Finna\Cache;
 
 use Laminas\Cache\Service\StorageAdapterFactory;
-use VuFind\Config\Config;
 
 /**
- * Finna Cache Manager
+ * Finna Cache Manager.
  *
  * @category VuFind
  * @package  Cache
@@ -59,14 +58,17 @@ class Manager extends \VuFind\Cache\Manager
      * @var array
      */
     protected $finnaCacheSpecs = [
+        // Codesets cache that should live for as long as possible.
         'codesets' => [
             'directory' => 'codesets',
             'options' => [
-                // Code sets cache should live for as long as possible.
-                // Refreshing of the cache is based on a separate setting to safeguard
-                // against API unavailability or errors.
                 'ttl' => 0,
             ],
+            'persistent' => true,
+        ],
+        // Codesets cache that uses global defaults for caches from config.ini.
+        'codesets-defaults' => [
+            'directory' => 'codesets-defaults',
             'persistent' => true,
         ],
         'description' => [
@@ -87,19 +89,17 @@ class Manager extends \VuFind\Cache\Manager
     ];
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param Config                $config       Main VuFind configuration
-     * @param Config                $searchConfig Search configuration
-     * @param StorageAdapterFactory $factory      Cache storage adapter factory
+     * @param array                 $config  Main VuFind configuration
+     * @param StorageAdapterFactory $factory Cache storage adapter factory
      */
     public function __construct(
-        Config $config,
-        Config $searchConfig,
+        array $config,
         StorageAdapterFactory $factory
     ) {
         $this->cacheSpecs = array_merge($this->cacheSpecs, $this->finnaCacheSpecs);
-        parent::__construct($config, $searchConfig, $factory);
+        parent::__construct($config, $factory);
     }
 
     /**

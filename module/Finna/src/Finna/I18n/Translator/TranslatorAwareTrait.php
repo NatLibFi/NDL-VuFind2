@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Translator
@@ -49,7 +49,7 @@ use function count;
 trait TranslatorAwareTrait
 {
     /**
-     * Translate a string (or string-castable object)
+     * Translate a string (or string-castable object).
      *
      * @param string|object|array $target          String to translate or an array of text
      *                                             domain and string to translate
@@ -137,7 +137,7 @@ trait TranslatorAwareTrait
     /**
      * Tries to translate a hierarchical string without the middle levels, bu only if
      * it looks like a hierarchical facet that starts with a number and ends with a
-     * slash
+     * slash.
      *
      * @param string $str             String to translate
      * @param string $domain          Translation domain

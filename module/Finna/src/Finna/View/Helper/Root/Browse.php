@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Browse database/journal view helper
+ * Browse database/journal view helper.
  *
  * PHP version 8
  *
@@ -17,38 +17,38 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
 
 /**
- * Browse database/journal view helper
+ * Browse database/journal view helper.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class Browse extends \VuFind\View\Helper\Root\Browse
 {
     /**
-     * Browser configuration
+     * Browser configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $config Browse configuration
      */
@@ -58,7 +58,7 @@ class Browse extends \VuFind\View\Helper\Root\Browse
     }
 
     /**
-     * Check if Browse is available
+     * Check if Browse is available.
      *
      * @param string $type Type (Database or Journal).
      *

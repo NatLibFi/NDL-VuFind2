@@ -1,250 +1,327 @@
-.template-dir-myresearch.template-name-mylist {
-  @include media-breakpoint-down(md) {
+@include media-breakpoint-down(md) {
+  .template-name-mylist,
+  .template-name-displaylist {
     &.prevent-scroll {
       overflow: hidden;
     }
   }
 }
 
-.main.template-dir-myresearch.template-name-mylist {
-  .search-controls {
-    margin-top: 10px;
-    margin-bottom: 0px;
-    hr {
-      border-top: 1px solid $gray-lighter;
-    }
+.mylist-header {
+  width: 100%;
+  .alert {
+    margin-top: 1em;
   }
-  .bulk-action-buttons-col {
-    width: 100%;
-    @include media-breakpoint-up(sm) {
-      padding-right: 0;
-    }
-    @media (max-width: $grid-float-breakpoint) {
-      top: $navbar-height;
-    }
-    &:not(.fixed) .mylist-functions {
-      text-align: right;
-    }
-  }
+}
+
+.record-container.myresearch-row {
+  padding: 0.7em;
+  margin: 0px;
+}
+
+.template-name-mylist {
   .delete-list .dropdown-menu {
-    z-index: 1500;
+    z-index: $zindex-dropdown;
   }
 }
 
-.template-name-mylist .bulk-action-buttons-col {
-  padding: 10px;
-  padding-bottom: 0px;
+// Mylist mobile navigation
+
+@include media-breakpoint-down(md) {
+  .sidebar.open {
+    margin-top: 0px;
+  }
 }
 
-.mylist-bar, .reservationlist-bar {
+.mylist-bar,
+.reservationlist-bar {
   > .dropdown-menu {
-    float: none;
     position: relative;
     top: initial;
     left: initial;
-    border-left: none;
-    border-right: none;
+    padding: 0px;
+    border: none;
+    border-radius: 0px;
     @include box-shadow(none);
-    padding: 0;
     .active a {
       font-weight: 600;
+      color: $dropdown-link-color;
       text-decoration: none;
-      color: $dropdown-link-color;;
-      background-color: $gray-ultralight;
+      background-color: $light;
     }
     > li {
       max-width: none;
       border: none;
-      > h1 {
-        width: 100%;
-      }
       > a {
-        padding: 3px 20px;
+        padding: $padding-small-vertical $padding-large-horizontal;
+        border: none;
         &.active {
-          font-weight: bold;
-          background-color: $gray-ultralight;
+          font-weight: 700;
+          color: $dropdown-link-color;
+          background-color: $light;
         }
-      }
-      > a:not(.add-new-list) {
-        color: $text-color;
       }
       .favorite-list-holder {
         height: 25px;
+        line-height: 25px;
         .favorite-list-title {
           max-width: 60%;
+          margin-right: 0.3em;
           overflow: hidden;
           text-overflow: ellipsis;
           white-space: nowrap;
-          margin-right: 5px;
-        }
 
-        .public-favorite-list {
-          padding: 2px;
-          &:before {
-            line-height: 19px;
-          }
         }
       }
     }
   }
-  h4.visible-xs.visible-sm {
-    text-transform: none;
-  }
+}
+
+.mylist-bar {
   .list-visibility {
-    padding: 2px 2px 10px 20px;
-    background-color: $gray-ultralight;
-    @include media-breakpoint-up(md) {
-      font-size: 0.8em;
+    padding: 0 $padding-large-horizontal $padding-large-vertical $padding-large-horizontal;
+    background-color: $light;
+    div:first-of-type {
+      display: flex;
+      gap: 0.7em;
     }
     .list-url {
-      font-weight: bold;
+      font-weight: 700;
       word-break: break-word;
-      a:first-child {
-        margin-right: 2px;
-        padding: 2px;
-      }
       .feed {
-        font-size: 1.2em;
         display: inline-block;
+        font-size: 1.2em;
         color: initial;
       }
     }
     a {
-      padding: 2px;
-    }
-    .list-visibility-hidden {
-      margin-left: 10px;
-      margin-bottom: 5px;
+      padding: 0.2em;
     }
   }
-
+  .vc-confirm-button > a {
+    font-size: 0.9em;
+  }
   .add-new-list-holder {
-    padding: 0 20px;
-    margin: 5px 0 10px 0px;
-    #add-new-list-item-btn {
-      border: none;
-      &:not(:hover){
-        background: none;
-      }
-    }
+    padding: $padding-large-vertical $padding-large-horizontal;
+    margin-top: (0.25 * $spacer);
+    margin-bottom: (0.5 * $spacer);
     .add-new-list {
-      border: 1px solid $gray-lighter;
       display: -webkit-flex;
       display: flex;
-      border-radius: 2px;
-      @include media-breakpoint-down(md) {
-        margin-bottom: 25px;
-      }
+      border: 1px solid $border-color;
+      border-radius: $input-border-radius;
       input {
-        width: 90%;
-        border-radius: 4px;
-        padding-left: 4px;
+        width: 100%;
         border: none;
-        display: inline-block;
-        @include media-breakpoint-down(md) {
-          font-size: 16px;
-        }
       }
-      .list-add-icon {
-        text-align: center;
-        width: 20px;
-        cursor: pointer;
-        color: $action-link-color;
-        padding: 1px;
+      #add-new-list-item-btn {
+        padding: 0.3em 0.6em;
+        border: none;
+        &:not(:hover) {
+          background: none;
+        }
+        .list-add-icon {
+          color: $action-link-color;
+          text-align: center;
+        }
       }
     }
   }
 }
+@include media-breakpoint-down(md) {
+  .mylist-bar {
+    .add-new-list-holder .add-new-list {
+      margin-bottom: 2em;
+      input {
+        font-size: 1.15em;
+      }
+    }
+  }
+}
+@include media-breakpoint-up(md) {
+  .mylist-bar {
+    .list-visibility {
+      font-size: $font-size-small;
+    }
+  }
+}
+
+// List info, toolbar and functions
+
+.list-public-indicator {
+  padding-left: 0.3em;
+}
+
+.mylist-controls {
+  .control-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+@include media-breakpoint-down(md) {
+  .mylist-controls {
+    .sort-option-container {
+      a.dropdown-toggle {
+        max-width: max-content;
+        white-space: initial;
+      }
+    }
+  }
+}
+@include media-breakpoint-down(md) {
+  .mylist-bar.mobile-sidebar-container {
+    .mobile-navigation-header-container {
+      border-bottom: $sidebar-border;
+      .mobile-navigation-header {
+        padding-top: 0px;
+        padding-bottom: 0px;
+      }
+    }
+  }
+}
+
+.btn-sort-order {
+  padding: 0.4em;
+}
+
+.own-favorite-list-button-area {
+  width: 100%;
+  margin-bottom: 0.7em;
+}
+
+.sortable-favorite-list {
+  li {
+    padding: 0.3em 2em 0.3em 0.7em;
+    margin-top: 0.4em;
+    list-style-position: inside;
+    list-style-type: decimal;
+    background: $list-group-bg;
+    border: 1px solid $gray-lighter;
+    border-radius: 3px;
+    &:hover {
+      cursor: move;
+    }
+    h4 {
+      margin: 0px;
+      font-size: $font-size-base;
+    }
+    p {
+      margin-top: 0.2em;
+      margin-bottom: 0px;
+    }
+    .sort-icon {
+      position: absolute;
+      right: 2em;
+      font-size: 1.2em;
+    }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .sortable-favorite-list {
+    margin-right: 0.7em;
+    margin-left: 0.3em;
+  }
+}
+
+// MyResearch bulkActionButtons
 .bulk-action-buttons-row {
-  margin: 0;
+  margin-left: 0.7em;
   border-bottom: 1px solid $gray-lighter;
-  @include media-breakpoint-down(sm) {
-    margin-right: calc(-0.5 * var(--bs-gutter-x));
-    margin-left: calc(-0.5 * var(--bs-gutter-x));
+  .bulk-action-buttons-col {
+    padding: 0.8em 0em;
+    .mylist-functions.btn-group {
+      text-align: right;
+      padding-left: 1px;
+      padding-right: 1px;
+      button {
+        white-space: nowrap;
+      }
+      #button_email {
+        border-radius: 4px 0px 0px 4px;
+      }
+      #add-to-list {
+        text-align: left;
+        box-shadow: none;
+      }
+    }
+  }
+  .selection-controls-bar {
+    padding: 0.3em 0em;
+    li {
+      display: inline-block;
+      &.bulk-checkbox {
+        padding-inline-end: 1rem;
+      }
+    }
+    // Like .bulkActionButtons .btn-group .btn
+    .clear-selection {
+      @extend .btn, .btn-outline-dark;
+      background: $light;
+      font-size: 0.9em;
+      padding: $padding-small-vertical $padding-base-horizontal;
+    }
+  }
+}
+@include media-breakpoint-down(sm) {
+  .bulk-action-buttons-row {
     @include clearfix;
   }
 }
 
-.bulk-action-buttons-col {
-  padding: 10px 0;
-  &.fixed {
-    margin-top: 0;
-    min-height: 50px;
-    top: 0;
-    background-color: $body-bg;
-    position: fixed;
-    padding: 10px 0 10px 10px;
-    z-index: 11;
-    box-shadow: 0 0 10px 3px $gray-mid-light;
-  }
-}
-.mylist-functions.btn-group {
-  .btn {
-    height: 30px;
-  }
-  select {
-    margin-right: -1px;
-  }
-}
+// JS editables
 
-.checkbox-container.mylist-select-all {
-  float: left;
-  margin-right: 10px;
-  line-height: $line-height-computed;
-  .checkbox {
-    margin: 0;
-  }
-}
-
-.list-title {
-  margin-bottom: 0;
+.useraccount-header .list-title {
+  font-size: $font-size-h2;
+  margin-bottom: 0px;
   margin-top: 0px;
-  i.list-title-edit {
-    margin-bottom: -22px;
+  span {
+    display: inline;
+  }
+  .icon.list-title-edit {
+    margin-top: 5px;
   }
   &.no-edit {
     border: 0;
     margin-top: 5px;
+    padding-left: 0px;
     &:hover {
       border: 0;
     }
   }
 }
 
-.list-public-indicator {
-  padding-left: 5px;
-}
-
-.resource-note i.fa-pen {
-  margin-bottom: -18px;
-}
-
-.list-title, .add-new-list {
+.list-title,
+.add-new-list {
   border: 1px solid transparent;
-  display: inline-block;
+  display: flex;
   padding: 5px;
   width: -webkit-calc(100% - 30px);
   width: -moz-calc(100% - 30px);
   width: calc(100% - 30px);
   width: 100%;
-  &:hover, &:active, &:focus {
+  &:hover,
+  &:active,
+  &:focus {
     border: 1px solid $gray-lighter;
-    i {
+    .icon {
       transition: all 0.2s linear;
       color: $gray;
     }
   }
-  i {
+  .icon {
     color: $gray-light;
-    float: right;
+    cursor: pointer;
   }
-  span {
+  .js-list-title {
     width: 100%;
     display: inline-block;
     word-wrap: break-word;
     padding-right: 25px;
-    input, textarea {
-      &:focus, &:active {
+    input,
+    textarea {
+      &:focus,
+      &:active {
         border: none;
         box-shadow: none;
         outline: none;
@@ -253,24 +330,56 @@
   }
 }
 .list-title.disable {
-  &:hover, &:active, &:focus {
+  &:hover,
+  &:active,
+  &:focus {
     border: 1px solid transparent;
     cursor: initial;
   }
 }
 
-@mixin list-tag(){
+.myresearch-notes {
+  clear: both;
+  margin-top: 0.7em;
+  .resource-note {
+    margin-left: -0.4em;
+  }
+  a,
+  i {
+    color: $gray-light;
+  }
+}
+
+.list-description,
+.public-list-desc,
+.myresearch-notes,
+.template-dir-list .notes,
+.public-list-embed .notes {
+  .truncate-field.truncate-done {
+    div:first-child {
+      padding-top: 0.3em;
+    }
+  }
+  .more-link,
+  .less-link {
+    margin-bottom: 1.1em;
+  }
+}
+
+// Tags
+
+@mixin list-tag() {
   font-size: 0.9em;
-  margin-right: 5px;
-  margin-bottom: 5px;
-  padding: 2px 5px;
+  margin-right: 0.4em;
+  margin-bottom: 0.4em;
+  padding: 0.1em 0.4em;
   border: 1px solid $gray-lighter;
   background: $gray-ultralight;
   border-radius: 5px;
 }
 
 .list-tags {
-  margin-bottom: 10px;
+  margin-bottom: 0.7em;
   &.editable .view-tags {
     display: none;
   }
@@ -289,16 +398,8 @@
     .edit-tags {
       flex-direction: row;
       border: none;
-      .ui {
-        display: none;
-      }
       .toggle {
         border: none;
-        margin-right: 1px;
-        margin-top: 1px;
-        span {
-          display: none;
-        }
       }
     }
   }
@@ -307,10 +408,9 @@
     ul {
       display: flex;
       flex-wrap: wrap;
-      margin: 0;
+      margin: 0px;
     }
   }
-
   .edit-tags {
     display: flex;
     flex-direction: row-reverse;
@@ -319,249 +419,95 @@
     .info {
       font-weight: bold;
       color: $danger;
-      i {
-       border-radius: 50%;
-       border: 2px solid $danger;
-       font-size: 1em;
-       padding: 1px;
+      .icon {
+       font-size: $font-size-icon-large;
       }
-    }
-    .fa {
-      cursor: inherit;
     }
     .toggle {
-      border: 2px solid $action-link-color;
-      cursor: pointer;
       height: 100%;
       padding: 0.3em;
+      padding-left: 0.5em;
       margin-top: -1px;
       margin-right: -1px;
-      padding-left: 0.5em;
       font-size: 0.9em;
       white-space: nowrap;
-      @include media-breakpoint-down(xs) {
-        align-self: flex-end;
-        white-space: inherit;
-
-      }
-      i {
-        margin-left: 5px;
+      border: 2px solid $action-link-color;
+      .icon {
+        margin-left: 0.4em;
         transform: rotate(90deg);
       }
     }
-    @include media-breakpoint-down(xs) {
-      flex-direction: column;
-    }
     .ui {
       flex-grow: 1;
-      padding: 10px;
+      padding: 0.7em;
       .add-new {
-        display: flex;
-        @include media-breakpoint-down(xs) {
-          height: inherit;
-          flex-wrap: wrap;
-          input {
-            margin-bottom: 0.5em;
-          }
+        .new-tag,
+        button {
+          margin-bottom: 0.4em;
         }
         .new-tag {
+          padding-left: 0.3em;
           margin-right: 0.5em;
-          margin-bottom: 5px;
-          padding-left: 5px;
-          @include media-breakpoint-down(xs) {
-            width: 100%;
-          }
         }
         button {
           display: inline-flex;
           align-items: center;
           line-height: 1em;
-          margin-bottom: 5px;
         }
       }
-      .tags {
-        .tag {
-          margin-right: 5px;
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
+      .tags .tag {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.3em;
+        padding: 0.1em 0.4em;
+        margin-right: 0.4em;
+        margin-bottom: 0.4em;
+        color: $action-link-color;
+        white-space: nowrap;
+        background: transparent;
+        border: 2px solid $action-link-color;
+        border-radius: $border-radius-small;
+        span {
+          font-weight: bold;
+        }
+        button {
+          padding: 0px;
           background: transparent;
-          border: 2px solid $action-link-color;
-          color: $action-link-color;
-          border-radius: $border-radius-small;
-          font-size: 1em;
-          padding: 2px 5px;
-          margin-bottom: 3px;
-          white-space: nowrap;
-          & span {
-            font-weight: bold;
-            padding-right: 5px;
-            padding-left: 3px;
-          }
-          button {
-            border: none;
-            background: transparent;
-            padding: 0;
-            .fa {
-              background: none;
-              border: 2px solid $action-link-color;
-              color: $action-link-color;
-              font-size: 10px;
-              display: block;
-              pointer-events: none;
-              padding: 2px 2px 2px 2.1px;
-            }
-          }
-        }
-      }
-    }
-    form fieldset {
-      &:disabled {
-          button {
-              cursor: default;
-          }
-      }
-      legend {
-        font-size: 0.9em;
-        font-weight: normal;
-        margin-bottom: 0.5em;
-        border: none;
-      }
-    }
-  }
-}
-
-span.caret {
-  border: none;
-  cursor: pointer;
-}
-
-.sortable-favorite-list {
-  li {
-    background: $list-group-bg;
-    padding: 5px 30px 5px 10px;
-    margin-top: 5px;
-    border-radius: 3px;
-    border: 1px solid $gray-lighter;
-    list-style-type: decimal;
-    list-style-position: inside;
-    &:hover {
-      cursor: move;
-    }
-    h4 {
-      margin: 0;
-      font-size: 14px;
-    }
-    p {
-      margin-top: 2px;
-      margin-bottom: 0;
-    }
-    .sort-icon {
-      position: absolute;
-      right: 2em;
-      font-size: 1.2em;
-    }
-  }
-  .btn {
-    margin-bottom: 10px;
-    margin-right: 10px;
-  }
-  @include media-breakpoint-down(sm) {
-    margin-left: 5px;
-    margin-right: 10px;
-  }
-}
-
-@include media-breakpoint-down(md) {
-  .mylist-mobile.mobile-navigation {
-    left: 0;
-    border-top: 1px solid $body-bg;
-    position: fixed;
-    height: 44px;
-    bottom: 0;
-    z-index: 2;
-    width: 100%;
-    background: $sidebar-background;
-    i {
-      font-size: 15px;
-    }
-    li.sidebar-navigation {
-      padding: 11px;
-      color: $sidebar-header-text-color;
-      font-size: 1.1em;
-      text-transform: uppercase;
-      &:hover {
-        cursor: pointer;
-      }
-    }
-    span.active-filters {
-      float: right;
-      max-width: 55%;
-    }
-  }
-}
-
-.mylist-header {
-  display: inline-block;
-  width: 100%;
-  .alert {
-    margin-top: 1em;
-  }
-  > p {
-    margin-left: 6px;
-  }
-}
-.mylist-controls {
-  .control-container {
-    display: flex;
-    align-items: center;
-    .sort-option-container, .limit-option-container, .view-option-container{
-      margin-left: 5px;
-    }
-    .btn-sort-order {
-      padding-top: 7px;
-      padding-bottom: 7px;
-    }
-    .sort-option-container {
-      @include media-breakpoint-down(md) {
-        a.dropdown-toggle {
-          white-space: initial;
-          i.fa-arrow-down {
-            position: absolute;
-            top: 30%;
-            right: 0.7em;
-            margin-left: 0;
+          border: none;
+          .icon {
+            display: block;
+            padding: 0.2em;
+            font-size: $font-size-icon-tiny;
+            color: $action-link-color;
+            border: 2px solid $action-link-color;
           }
         }
       }
     }
   }
 }
-.template-name-list,
-.public-list-embed {
-  .public-list-tags {
-    margin-top: 5px;
-    margin-bottom: 5px;
-    display: flex;
-    flex-wrap: wrap;
-    .tag {
-      @include list-tag();
+@include media-breakpoint-down(xs) {
+  .list-tags {
+    .edit-tags {
+      flex-direction: column;
+      .toggle {
+        align-self: flex-end;
+        white-space: inherit;
+      }
+      .add-new .new-tag {
+        width: 100%;
+      }
     }
   }
 }
-.public-list-embed {
-  .show-more {
-    text-align: center;
-    > div {
-      margin-bottom: 10px;
-    }
-  }
-  .savedLists.loaded {
-    display: none;
-  }
-  .controls {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: 10px;
+
+.public-list-tags {
+  display: flex;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+  flex-wrap: wrap;
+  .tag {
+    @include list-tag();
   }
 }

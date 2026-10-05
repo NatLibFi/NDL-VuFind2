@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Piwik view helper
+ * Piwik view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -36,7 +36,7 @@ use function in_array;
 use function is_array;
 
 /**
- * Piwik Web Analytics view helper
+ * Piwik Web Analytics view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -50,7 +50,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Current results, if any
+     * Current results, if any.
      *
      * @var \VuFind\Search\Base\Results
      */
@@ -92,7 +92,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     }
 
     /**
-     * Get the custom URL of the Tracking Code
+     * Get the custom URL of the Tracking Code.
      *
      * @return string URL
      */
@@ -109,7 +109,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     }
 
     /**
-     * Get Custom Variables for a Record Page
+     * Get Custom Variables for a Record Page.
      *
      * @param VuFind\RecordDriver\AbstractBase $recordDriver Record driver
      *
@@ -168,7 +168,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     }
 
     /**
-     * Get Custom Variables for Search Results
+     * Get Custom Variables for Search Results.
      *
      * @param VuFind\Search\Base\Results $results Search results
      *
@@ -205,7 +205,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
 
         $vars['Language'] = $this->translator->getLocale();
 
-        foreach ($params->getFilterList() as $filterType => $filters) {
+        foreach ($params->getFilterList() as $filters) {
             $facetType = null;
             foreach ($filters as $filter) {
                 if (!$facetType) {
@@ -238,7 +238,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     }
 
     /**
-     * Get Custom Variables for lightbox actions
+     * Get Custom Variables for lightbox actions.
      *
      * @return array Associative array of custom variables
      */
@@ -264,7 +264,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     }
 
     /**
-     * Convert a Custom Variables Array to JavaScript Code
+     * Convert a Custom Variables Array to JavaScript Code.
      *
      * @param array $customVars Custom Variables
      *
@@ -298,7 +298,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     /**
      * Check if the view helper was called from image popup template.
      *
-     * @return boolean
+     * @return bool
      */
     protected function calledFromImagePopup()
     {
@@ -308,7 +308,7 @@ class Piwik extends \VuFind\View\Helper\Root\Piwik implements \VuFind\I18n\Trans
     }
 
     /**
-     * Get Search Results if on a Results Page
+     * Get Search Results if on a Results Page.
      *
      * @return VuFind\Search\Base\Results|null Search results or null if not
      * on a search page

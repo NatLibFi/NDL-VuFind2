@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<dcterms:qualifieddc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:kk="http://kk/1.0" xsi:schemaLocation="http://kk/1.0/qdckk.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:qdc_extended="http://www.kansalliskirjasto.fi/qdc_extended">
+<dc:title lang="-">SolrQdc Institutional Repository test</dc:title>
+<dc:creator>Kiira Kirjoittaja</dc:creator>
+<dc:contributor type="illustrator">Piia Piirtäjä</dc:contributor>
+<dc:contributor type="organisation" xml:lang="fi">Helsingin yliopisto</dc:contributor>
+<dc:contributor type="organisation" xml:lang="sv">Helsingfors universitet</dc:contributor>
+<dc:contributor type="school" lang="-">School</dc:contributor>
+<dc:subject lang="-">Duck</dc:subject>
+<dc:subject lang="-">Tasmanian Devil</dc:subject>
+<dc:description lang="fi">Kuvausteksti</dc:description>
+<dc:description lang="en">Description text</dc:description>
+<dc:description lang="en">Additional description</dc:description>
+<dc:description lang="en" format="image/jpeg">Photo</dc:description>
+<dc:description type="notification" lang="fi">Huomautusteksti</dc:description>
+<dc:description type="notification" lang="en">Notification text</dc:description>
+<dc:available>2017-06-27T09:23:48Z</dc:available>
+<dcterms:issued>1992</dcterms:issued>
+<dc:type xml:lang="-">julkaisu</dc:type>
+<dc:identifier>123-4-245-6</dc:identifier>
+<dc:identifier type="isbn">978-3-16-148410-0</dc:identifier>
+<dc:identifier>978-3-16-148410-1</dc:identifier>
+<dc:identifier>issn:0000-0019</dc:identifier>
+<dc:identifier>https://www.this.is.identifier.com/animals</dc:identifier>
+<dc:language type="iso" xml:lang="-">fi</dc:language>
+<dc:relation type="ispartof" xml:lang="-">Animals of Earth</dc:relation>
+<dc:relation type="numberofseries" xml:lang="-">11/2022</dc:relation>
+<dc:relation type="ispartofseries" xml:lang="en">Animals of Earth - The Series</dc:relation>
+<dc:relation type="numberinseries" xml:lang="en">11-2022</dc:relation>
+<dc:relation type="issn" xml:lang="-">1234-5678</dc:relation>
+<dc:rights>CC BY 4.0</dc:rights>
+<dc:rights type="copyright">This is a copyright description</dc:rights>
+<dc:rights type="notdisplayable">This is a copyright which should not be displayed</dc:rights>
+<dc:rights type="copyright">This is a copyright which should also be displayed as description</dc:rights>
+<dc:rights type="accessrights" lang="en">Restricted Access</dc:rights>
+<dc:rights type="accessrights" lang="fi">Rajattu käyttö</dc:rights>
+<dc:publisher xml:lang="-">Tielaitos</dc:publisher>
+<kk:file bundle="ORIGINAL" href="https://localhost/thumb.odd" name="thumb.odd" type="image/other" length="123" sequence="1"/>
+<kk:file bundle="NONORIGINAL" href="https://localhost/copy" name="copy.pdf" type="application/pdf" length="456" sequence="1"/>
+<kk:file bundle="ORIGINAL" href="https://www.animals.of.earth.fi/duck.pdf" name="duck.pdf" type="application/pdf" length="41070954" sequence="1"/>
+<kk:file bundle="ORIGINAL" href="https://www.animals.of.moon.fi/duck.png" name="duck.png" type="image/png" length="2323" sequence="1"/>
+<recordID>10024_138404</recordID>
+<dcterms:medium>No physical carrier</dcterms:medium>
+<dc:format>Format</dc:format>
+<dc:format>Another Format</dc:format>
+<dcterms:extent>Extent</dcterms:extent>
+<qdc_extended:programme>Duck Education</qdc_extended:programme>
+<qdc_extended:keyword>keyword1</qdc_extended:keyword>
+<qdc_extended:keyword>keyword2</qdc_extended:keyword>
+</dcterms:qualifieddc>

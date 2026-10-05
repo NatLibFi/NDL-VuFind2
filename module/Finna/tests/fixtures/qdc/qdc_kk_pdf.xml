@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<dcterms:qualifieddc xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:kk="http://kk/1.0"
+  xsi:schemaLocation="http://kk/1.0/qdckk.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:qdc_extended="http://www.kansalliskirjasto.fi/qdc_extended">
+  <dc:title lang="-">SolrQdc Institutional Repository test with only PDF</dc:title>
+  <dc:creator>Kiira Kirjoittaja</dc:creator>
+  <kk:file bundle="ORIGINAL" href="https://www.animals.of.earth.fi/duck.pdf" name="duck.pdf"
+    type="application/pdf" length="41070954" sequence="1" />
+</dcterms:qualifieddc>

@@ -78,6 +78,7 @@ class ModelViewerClass extends HTMLElement {
   {
     super();
     this.dependenciesLoaded = false;
+    this.loadModelOnDependenciesLoaded = false;
     this.lights = [];
     this.materials = [];
     this.meshes = [];
@@ -398,6 +399,45 @@ class ModelViewerClass extends HTMLElement {
     }
   }
 
+  loadModel()
+  {
+    this.changeLoadInfoButtonToStateDisplay();
+    this.loadInfo.innerHTML = `<span>${VuFind.spinner()} ${this.translations['loading file'] || 'Model loading.'}</span>`;
+    if (!this.dependenciesLoaded) {
+      // Dependencies not yet loaded, defer loading:
+      this.loadModelOnDependenciesLoaded = true;
+      return;
+    }
+    const queryParams = new URLSearchParams(window.location.search);
+    queryParams.set('context', '3D');
+    window.history.replaceState({}, '', '?' + queryParams);
+
+    /**
+     * Start to load the model from the provider to cache
+     */
+    fetch(this.src)
+      .then(response => {
+        if (!response.ok) {
+          this.loadInfo.textContent = this.translations.error_occurred || 'An error has occurred';
+        } else {
+          response.json()
+            .then(responseJSON => {
+              if (responseJSON.data && responseJSON.data.url) {
+                this.src = responseJSON.data.url;
+                try {
+                  this.createElement();
+                  return;
+                } catch (e) {
+                  console.error('Failed to create element:');
+                  console.error(e);
+                }
+              }
+              this.loadInfo.textContent = this.translations.error_occurred || 'An error has occurred';
+            });
+        }
+      });
+  }
+
   connectedCallback()
   {
     this.menuOptions.translations = this.translations;
@@ -417,26 +457,7 @@ class ModelViewerClass extends HTMLElement {
     this.loadInfo = document.createElement('button');
     this.loadInfo.classList.add('state', 'btn', 'btn-primary');
     this.loadInfo.textContent = this.translations['view model'] || 'View model';
-    this.loadInfo.addEventListener('click', () => {
-      if (!this.dependenciesLoaded) {
-        return;
-      }
-      this.changeLoadInfoButtonToStateDisplay();
-      /**
-       * Start to load the model from the provider to cache
-       */
-      this.loadInfo.innerHTML = `<span>${this.translations['loading file'] || 'Model loading.'} ${VuFind.spinner()}</span>`;
-      fetch(this.src)
-        .then(response => response.json())
-        .then(responseJSON => {
-          if (responseJSON.data && responseJSON.data.url) {
-            this.src = responseJSON.data.url;
-            this.createElement();
-            return;
-          }
-          this.loadInfo.textContent = this.translations['An error has occurred'] || 'An error has occurred';
-        });
-    }, {once: true});
+    this.loadInfo.addEventListener('click', () => this.loadModel(), {once: true});
 
     this.root.append(this.loadInfo);
     const highlight = () => {
@@ -464,6 +485,12 @@ class ModelViewerClass extends HTMLElement {
       this.src = URL.createObjectURL(e.dataTransfer.files[0]);
       this.restartViewer();
     });
+
+    // Trigger load if context is set to 3D:
+    const queryParams = new URLSearchParams(window.location.search);
+    if (queryParams.get('context') === '3D') {
+      this.loadModel();
+    }
   }
 
   attributeChangedCallback(name/*, oldValue, newValue*/)
@@ -475,6 +502,15 @@ class ModelViewerClass extends HTMLElement {
     }
   }
 
+  setDependenciesLoaded()
+  {
+    this.dependenciesLoaded = true;
+    if (this.loadModelOnDependenciesLoaded) {
+      this.loadModelOnDependenciesLoaded = false;
+      this.loadModel();
+    }
+  }
+
   load()
   {
     this.decoder = `${this.scripts}draco/`;
@@ -482,11 +518,11 @@ class ModelViewerClass extends HTMLElement {
     const loaded = function onScriptLoad() {
       delete self.loadScrips[this.reference];
       if (Object.keys(self.loadScrips).length < 1) {
-        self.dependenciesLoaded = true;
+        self.setDependenciesLoaded();
       }
     };
     if (Object.keys(this.loadScrips).length < 1) {
-      this.dependenciesLoaded = true;
+      this.setDependenciesLoaded();
       return;
     }
     const scripts = [];
@@ -512,7 +548,7 @@ class ModelViewerClass extends HTMLElement {
       const head = document.querySelector('head');
       head.append(...scripts);
     } else {
-      this.dependenciesLoaded = true;
+      this.setDependenciesLoaded();
     }
   }
 
@@ -644,6 +680,7 @@ class ModelViewerClass extends HTMLElement {
       loader = new THREE.GLTFLoader();
       if (this.decoder) {
         dracoLoader = new THREE.DRACOLoader();
+        dracoLoader.setDecoderConfig({ type: 'js' });
         dracoLoader.setDecoderPath(this.decoder);
         loader.setDRACOLoader(dracoLoader);
       }
@@ -662,7 +699,7 @@ class ModelViewerClass extends HTMLElement {
         this.loaded = true;
       },
       (xhr) => {
-        let loaded = '';
+        let loaded;
         if (xhr.total < 1) {
           loaded = `${(xhr.loaded / 1024 / 1024).toFixed(0)}MB`;
         } else {
@@ -754,7 +791,7 @@ class ModelViewerClass extends HTMLElement {
       // Set camera and position to center from the newly created object
       const objectHeight = (newBox.max.y - newBox.min.y);
       const objectWidth = (newBox.max.x - newBox.min.x);
-      let result = 0;
+      let result;
       if (objectHeight >= objectWidth) {
         result = objectHeight / getTanDeg(this.viewerPaddingAngle);
       } else {
@@ -938,7 +975,7 @@ class ModelViewerClass extends HTMLElement {
     } else if (this.oldSize) {
       this.size = this.oldSize;
       delete this.oldSize;
-    } else {
+    } else if (this.parentElement) {
       const computed = getComputedStyle(this.parentElement);
       this.size = {
         x: this.parentElement.offsetWidth,

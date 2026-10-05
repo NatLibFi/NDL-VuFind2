@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Browse action support trait
+ * Browse action support trait.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -30,7 +30,7 @@
 namespace Finna\AjaxHandler;
 
 /**
- * Browse action support trait
+ * Browse action support trait.
  *
  * @category VuFind
  * @package  AJAX
@@ -50,9 +50,8 @@ trait BrowseActionTrait
     protected function getBrowseAction($request)
     {
         $referer = $request->getServer()->get('HTTP_REFERER');
-        $match = null;
         $regex = '/^http[s]?:.*\/Browse\/(Database|Journal)[\/.*]?/';
-        if (preg_match($regex, $referer, $match)) {
+        if ($referer && preg_match($regex, $referer, $match)) {
             return $match[1];
         }
         return null;

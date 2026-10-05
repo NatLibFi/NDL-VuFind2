@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -30,12 +30,13 @@
 namespace FinnaTest\Traits;
 
 use Finna\View\Helper\Root\CleanHtmlFactory;
+use FinnaTest\Cache\TestHarness\FilesystemOptions;
 use FinnaTest\Container\MockContainer;
-use stdClass;
+use Laminas\Cache\Storage\Adapter\Filesystem;
 use VuFind\Cache\Manager as CacheManager;
-use VuFind\Config\Config;
-use VuFind\Config\PluginManager as ConfigPluginManager;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\View\Helper\Root\CleanHtml;
+use VuFindTest\Feature\ConfigRelatedServicesTrait;
 
 /**
  * Trait for tests involving Laminas Views.
@@ -48,8 +49,10 @@ use VuFind\View\Helper\Root\CleanHtml;
  */
 trait ViewTrait
 {
+    use ConfigRelatedServicesTrait;
+
     /**
-     * Get a CleanHtml helper
+     * Get a CleanHtml helper.
      *
      * @param array $customElements Custom elements
      *
@@ -71,22 +74,10 @@ trait ViewTrait
             ]
         );
 
-        $configPluginManager = new MockContainer($this);
-        $configPluginManager->add('config', new Config());
-        $container->add(ConfigPluginManager::class, $configPluginManager);
+        $configManager = $this->getMockConfigManager(['config' => []]);
+        $container->add(ConfigManagerInterface::class, $configManager);
 
-        $cacheOptions = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['getCacheDir'])
-            ->getMock();
-        $cacheOptions->expects($this->any())
-            ->method('getCacheDir')
-            ->willReturn('');
-        $cache = $this->getMockBuilder(stdClass::class)
-            ->addMethods(['getOptions'])
-            ->getMock();
-        $cache->expects($this->any())
-            ->method('getOptions')
-            ->willReturn($cacheOptions);
+        $cache = new Filesystem(new FilesystemOptions());
         $cacheManager = $this->createMock(CacheManager::class);
         $cacheManager->expects($this->any())
             ->method('getCache')

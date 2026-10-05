@@ -2,39 +2,21 @@
 .authority-recommend
 {
   background-color: transparent;
-  padding-bottom: 15px;
 
   ul.nav-tabs > li {
-    background-color: #EDEDED;
-    padding-bottom: 0;
     display: flex;
-
-    &.with-tooltip {
-      display: flex;
-      align-items: center;
-      > a {
-        padding-right: 2.5rem;
-      }
+    align-items: last baseline;
+    padding-bottom: 0px;
+    &.with-tooltip > a {
+      padding-right: 2.5rem;
     }
     > a  {
       flex: 1;
-      padding: 10px 5px;
-      font-size: 1em;
-
       // Disable isolation that would cover the tooltip button:
       &:hover {
         isolation: auto;
       }
     }
-    &:not(.help-tab) > a {
-      font-weight: 600;
-    }
-    &.active {
-     .tooltip-tabs_local, .tooltip-tabs_pci {
-        color: $gray;
-      }
-    }
-
     > .finna-toggletip {
       display: $tooltip-tabs-default;
       &.tooltip-tabs_local {
@@ -43,192 +25,122 @@
       &.tooltip-tabs_pci {
         display: $tooltip-tabs-pci;
       }
-
       > button {
-        margin-left: -2.5rem;
-        opacity: 1;
-        padding: .2em;
-        margin-top: 0.25rem;
-        color: $main-tabs-active-color;
         display: inline-block;
-        z-index: 200;
+        position: relative;
+        margin-left: -2.25rem;
+        font-size: $font-size-large;
+        color: inherit;
         background-color: transparent;
         border: none;
-        font-size: 1.3rem;
-        cursor: pointer;
-        .icon {
-          cursor: pointer;
-        }
+        opacity: 1;
       }
+    }
+  }
+}
+
+.finna-main-tabs .nav-scrollable > .nav {
+  margin-bottom: 0px;
+  overscroll-behavior-y: none;
+  border-bottom: none;
+  text-align: center;
+  @include media-breakpoint-down(sm) {
+    .nav-link {
+      max-width: 18em;
+      text-wrap: auto;
     }
   }
 }
 
 .search-tabs-recommendations {
+  padding-top: $padding-large-horizontal;
   border-top: 2px solid $primary;
   border-bottom: 2px solid $primary;
-  padding: $padding-large-horizontal 0 0 0;
-
   a.title {
     display: inline-block;
-    margin-bottom: 5px;
     .searchterms {
-      font-weight: bold;
-    }
-    @include media-breakpoint-down(sm) {
-      display: block;
+      font-weight: 600;
     }
   }
-
   .count {
     color: $text-muted;
   }
-
-  .tab-icon:before {
-    color: $gray-mid-light;
-    font-size: 2.5em;
+  div.result:first-of-type {
+    padding-top: 0px;
   }
 }
-
-// add classes when there are too many tabs to fit on the screen
-.tabs-responsive {
-  width: 100%;
-  overflow-x: auto;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-  @include media-breakpoint-down(sm) {
-    > .recordTabs {
-      width: 150%;
-      margin-left: 0px;
-      margin-right: 0px;
+@include media-breakpoint-down(sm) {
+  .search-tabs-recommendations {
+    a.title {
+      display: block;
     }
   }
 }
 
 // RSS-feed and Linked Events tabs
-.feed-tabs .nav-tabs, .linked-events-tabs .nav-tabs {
-  margin-left: 6px;
-  > li {
-    // Make the list-items overlay the bottom border
-    margin-bottom: -1px;
-    font-size: 1.1em;
-    font-weight: 500;
-    background-color: transparent;
-    color: $nav-tabs-text-color;
-    padding: .6em 0 0 0;
-    cursor: pointer;
-    @include media-breakpoint-only(sm) {
-      .icon {
-        display: block;
-        text-align: center;
+.feed-tabs,
+.linked-events-tabs {
+  .nav-tabs {
+    margin-left: 0.4em;
+    > li {
+      padding: 0.6em 0em 0em 0em;
+      // Make the list-items overlay the bottom border
+      margin-bottom: -1px;
+
+      font-size: 1.1em;
+      font-weight: 500;
+      color: $nav-tabs-text-color;
+      background-color: transparent;
+      cursor: pointer;
+      &:hover {
+        color: $nav-tabs-link-hover-color;
+        border-color: transparent;
       }
-    }
-    @include media-breakpoint-down(md) {
-      font-size: .9em;
-    }
-    &:hover {
-      color: $nav-tabs-link-hover-color;
-      border-color: transparent;
-    }
-    // Active state, and its :hover to override normal :hover
-    &.active {
-      cursor: initial;
-      &,
-      &:hover,
-      &:focus {
-        background-color: $body-bg;
-        color: $text-color;
-        margin-bottom: -1px;
-        border-bottom: none;
-        transition: 0s;
+      // Active state, and its :hover to override normal :hover
+      &.active {
+        cursor: initial;
+        &,
+        &:hover,
+        &:focus {
+          margin-bottom: -1px;
+          background-color: $body-bg;
+          color: $text-color;
+          border-bottom: none;
+          transition: 0s;
+        }
       }
-    }
-    a {
-      margin-right: 0px;
-      height: 100%;
+      a {
+        height: 100%;
+        margin-right: 0px;
+      }
     }
   }
 }
-
-
-.useraccount-nav.nav-tabs {
-  border-bottom: none;
-  // style 5 tabs to make sure they stay as tabs
-  > li:first-child:nth-last-child(5), li:first-child:nth-last-child(5) ~ li {
-    @include media-breakpoint-only(sm) {
-      max-width: 100%;
-    }
-    @include media-breakpoint-only(md) {
-      max-width: 100%;
-    }
-  }
-  > li {
-    margin-bottom: 0;
-    > a {
-      border: none;
-      font-weight: 400;
-      &:hover {
-        border-bottom-color: $gray-lighter;
-      }
-      &.menu-parent {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
+@include media-breakpoint-only(sm) {
+  .feed-tabs,
+  .linked-events-tabs {
+    .nav-tabs {
+      > li {
         .icon {
-          font-size: 0.8em;
+          display: block;
+          text-align: center;
         }
       }
     }
-    &:first-child > a {
-        border-top-left-radius: 4px;
-        border-top-right-radius: 4px;
-    }
-    &:last-child > a {
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 4px;
-    }
-    &.active > a {
-      background-color: $gray-ultralight;
-      border-color: transparent;
-      border-bottom-color: $gray-lighter;
-      &,
-      &:hover,
-      &:focus {
-        border: 1px solid transparent;
-        border-top: 1px solid transparent;
-        cursor: auto;
-        font-weight: 600;
+  }
+}
+@include media-breakpoint-down(md) {
+  .feed-tabs,
+  .linked-events-tabs {
+    .nav-tabs {
+      > li {
+        font-size: 0.9em;
       }
     }
   }
-}
-
-.useraccount-nav .collapsing {
-  -webkit-transition-delay: -1s;
-  transition-delay: -1s;
-  visibility: hidden;
 }
 
 .recordTabs.nav {
-  margin-top: 20px;
-  .staff-view-icon {
-    line-height: 1em;
-  }
-  @include media-breakpoint-down(sm) {
-    margin-left: -15px;
-    margin-right: -15px;
-  }
-  @media print {
-    .record-tab.versions {
-      display: none;
-    }
-    li.record-tab.active {
-      > a {
-        border-bottom-color: $nav-tabs-background-color;
-      }
-    }
-  }
   li.tab-right {
     flex: 1 0;
     display: flex;
@@ -236,48 +148,92 @@
   }
 }
 
-.record .recordTabs.nav > li > a {
-  color: $gray;
-}
+/*
+ * Scrollable tab navigation
+ */
+.nav-scrollable {
+  position: relative;
+  overscroll-behavior-x: contain;
+  --#{$prefix}nav-link-padding-y: #{$nav-link-padding-y};
 
-.mobile-main-tabs {
-  width: 100%;
-  .dropdown-toggle {
-    line-height: 50px;
-    margin-top: 15px;
-    background-color: $main-tabs-active-color;
-    color: mix($main-tabs-active-color, contrast($main-tabs-active-color), 5%);
-    padding: 0 15px;
-    border-radius: 5px;
+  .nav {
+    $nav-scrollable-link-active-color: $primary !default;
+    $nav-scrollable-link-active-border-color: $primary !default;
+    --#{$prefix}nav-scrollable-border-width: #{$nav-tabs-border-width};
+    --#{$prefix}nav-scrollable-border-color: #{$nav-tabs-border-color};
+    --#{$prefix}nav-scrollable-link-active-color: #{$nav-scrollable-link-active-color};
+    --#{$prefix}nav-scrollable-link-active-border-color: #{$nav-scrollable-link-active-border-color};
     display: flex;
-    cursor: pointer;
-    .tab-title {
-      font-size: $font-size-h2;
-      font-weight: 500;
-      background: transparent;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      overflow: hidden;
-      flex-grow: 1;
-      margin-right: 10px;
+    flex-wrap: nowrap; /* Overrides default wrap */
+    overflow-x: auto;
+    padding-left: 1px; /* Padding for focus ring */
+    padding-right: 1px; /* Padding for focus ring */
+    width: 100%;
+    border-bottom: var(--#{$prefix}nav-scrollable-border-width) solid var(--#{$prefix}nav-scrollable-border-color);
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE/Edge */
+    &::-webkit-scrollbar { display: none; } /* Chrome/Safari */
+  }
+
+  /* Arrow buttons */
+  .arrow-btn {
+    position: absolute;
+    // Calculate position relative to normal line height and our height taking the nav-item padding into account:
+    top: calc(var(--#{$prefix}nav-link-padding-y) - (2rem - 1rem * var(--#{$prefix}body-line-height)) / 2 + 2px);
+    width: 2rem;
+    height: 2rem;
+    border-radius: 0.25rem;
+    border: none;
+    background: #fff;
+    z-index: 10;
+    transition: opacity 0.3s, visibility 0.3s;
+    box-shadow: 0 .125rem .25rem rgba(0,0,0, .25);
+
+    &.scroll-next-btn {
+      right: -0.5rem;
     }
-    .more {
-      display: flex;
-      align-items: center;
-      font-size: 85%;
-      padding-left: 10px;
+    &.scroll-prev-btn {
+      left: -0.5rem;
+    }
+    &.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+  }
+
+  /* Items and active indicator */
+  .nav-item {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    padding: 2px 2px 0 2px; /* Padding for focus ring */
+
+    .nav-link {
       white-space: nowrap;
-      .icon {
-        margin-left: 5px;
-        font-size: 20px;
+      position: relative;
+
+      &.active {
+        &::after {
+          content: "";
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          height: 5px;
+          background: var(--#{$prefix}nav-scrollable-link-active-border-color);
+          border-radius: 5px 5px 0 0;
+        }
       }
     }
   }
-  .tooltip {
-    display: none;
-  }
 }
 
-.loginTabs a {
-  cursor: default;
+// Tab content container
+.tab-content {
+  margin-bottom: 1.5em;
+  outline: 0;
+  &:focus-visible {
+    box-shadow: $focus-ring-box-shadow;
+  }
 }

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -36,6 +36,7 @@ use Finna\RecordDriver\Feature\EncapsulatedRecordTrait;
 use Finna\RecordDriver\Feature\FinnaXmlReaderTrait;
 use VuFind\RecordDriver\AbstractBase;
 use VuFindSearch\Response\RecordInterface;
+use VuFindXml\XmlDoc;
 
 use function count;
 
@@ -147,17 +148,16 @@ class CuratedRecord extends SolrDefault implements
     /**
      * Return full record as a filtered SimpleXMLElement for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXMLElement(): XmlDoc
     {
-        $record = clone $this->getXmlRecord();
-        $filterFields = ['comment'];
-        foreach ($filterFields as $filterField) {
-            while ($record->{$filterField}) {
-                unset($record->{$filterField}[0]);
+        $record = clone $this->getXmlDoc();
+        $record->filter(
+            function (array $node) use ($record): bool {
+                return 'comment' === $record->localName($node);
             }
-        }
+        );
         // Only the URL of the single encapsulated record is in the XML record, so
         // there is no need to call filterEncapsulatedRecords().
         return $record;

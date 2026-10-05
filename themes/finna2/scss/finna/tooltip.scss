@@ -61,39 +61,6 @@
     font-weight: 500;
   }
 }
-.tooltip-image {
-  .tooltip {
-    overflow: hidden;
-  }
-  .tooltip-arrow {
-    display: none;
-  }
-  i {
-    margin-left: 0;
-    position: relative;
-    text-align: center;
-    cursor: pointer;
-    font-style: normal;
-    padding: 3px;
-    color: $action-link-color;
-    font-size: 24px;
-    &:before {
-      color: mix($background-color, contrast($background-color), 5%);
-      opacity: 0.8;
-    }
-  }
-  @include media-breakpoint-down(md) {
-    display: none;
-   }
-}
-
-.tooltip-myaccount {
-  margin-left: 10px;
-  color: $gray;
-  >.icon {
-    vertical-align: 0px !important;
-  }
-}
 .slider {
   .tooltip.top .tooltip-inner {
     min-width: initial;
@@ -111,4 +78,24 @@
   @media (pointer:coarse) {
       pointer-events: none;
   }
+}
+
+// Styles for specific tooltips
+
+.tooltip-myaccount,
+.tooltip-library-card-name {
+  background: initial;
+  border: none;
+}
+.useraccount-header .tooltip-myaccount {
+  color: $gray;
+  font-size: $font-size-h2;
+  padding-right: 0;
+  margin-top: 0.3em;
+  margin-bottom: 0.7em;
+}
+.useraccount-nav .tooltip-myaccount {
+  float: right;
+  padding: 0px;
+  margin: 0px;
 }

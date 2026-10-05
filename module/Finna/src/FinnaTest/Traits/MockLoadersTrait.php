@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Trait which returns pre-configured mocks
+ * Trait which returns pre-configured mocks.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -39,6 +39,7 @@ use Finna\RecordDriver\SolrLido;
 use Finna\RecordDriver\SolrMarc;
 use Finna\RecordDriver\SolrQdc;
 use FinnaSearch\Backend\Solr\Response\Json\RecordCollection;
+use FinnaTest\Container\MockContainer;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use Laminas\Mvc\I18n\Translator;
@@ -49,7 +50,7 @@ use VuFind\RecordDriver\Missing;
 use function in_array;
 
 /**
- * Trait which returns pre-configured mocks
+ * Trait which returns pre-configured mocks.
  *
  * @category VuFind
  * @package  Tests
@@ -99,6 +100,22 @@ trait MockLoadersTrait
                     $rawData = $record['raw_data'] ?? [];
                     $rawData['fullrecord'] = $fixture;
                     $mockedRecord->setRawData($rawData);
+                    $localeConfig = [
+                        'Site' => [
+                            'language' => 'fi',
+                            'fallback_languages' => 'fi,en',
+                            'browserDetectLanguage' => false,
+                        ],
+                        'Languages' => [
+                            'fi' => 'Finnish',
+                            'en' => 'English',
+                            'sv' => 'Swedish',
+                            'en-gb' => 'British English',
+                            'se' => 'Northern Sámi',
+                        ],
+                    ];
+                    $localeConfig = new \VuFind\Config\Config($localeConfig);
+                    $mockedRecord->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
                     $foundRecords[] = $mockedRecord;
                 }
             }
@@ -119,7 +136,7 @@ trait MockLoadersTrait
     }
 
     /**
-     * Get record driver plugin manager
+     * Get record driver plugin manager.
      *
      * @param array $config Main config
      *
@@ -127,31 +144,25 @@ trait MockLoadersTrait
      */
     public function getRecordDriverPluginManager(array $config = []): \Finna\RecordDriver\PluginManager
     {
-        $configContainer = $this->getMockBuilder(\VuFind\Config\PluginManager::class)->onlyMethods(['get'])
+        $configManager = $this->getMockBuilder(\VuFind\Config\ConfigManager::class)->onlyMethods(['getConfigObject'])
             ->disableOriginalConstructor()->getMock();
-        $configMap = [
-            ['config', null, new Config($config)],
-        ];
-        $configContainer->expects($this->any())->method('get')->willReturnMap($configMap);
+        $configManager->expects($this->any())->method('getConfigObject')
+            ->willReturnCallback(function ($configName) use ($config) {
+                return new Config('config' === $configName ? $config : []);
+            });
 
-        $dbTablePluginManager = $this->getMockBuilder(\VuFind\Db\Table\PluginManager::class)->onlyMethods([])
-            ->disableOriginalConstructor()->getMock();
         $dbServicePluginManager = $this->getMockBuilder(\VuFind\Db\Service\PluginManager::class)->onlyMethods([])
             ->disableOriginalConstructor()->getMock();
         $translator = $this->getMockBuilder(Translator::class)->onlyMethods([])
             ->disableOriginalConstructor()->getMock();
 
         // Create a mock container for factory
-        $mockContainer = $this->getMockBuilder(\VuFind\Config\PluginManager::class)->onlyMethods(['get'])
-            ->disableOriginalConstructor()->getMock();
-        $serviceMap = [
-            ['Missing', null, new Missing()],
-            [\VuFind\Config\PluginManager::class, null, $configContainer],
-            [\VuFind\Db\Table\PluginManager::class, null, $dbTablePluginManager],
-            [\VuFind\Db\Service\PluginManager::class, null, $dbServicePluginManager],
-            [Translator::class, null, $translator],
-        ];
-        $mockContainer->expects($this->any())->method('get')->willReturnMap($serviceMap);
+        $mockContainer = new MockContainer($this);
+        $mockContainer->add('Missing', new Missing());
+        $mockContainer->add(\VuFind\Config\ConfigManagerInterface::class, $configManager);
+        $mockContainer->add(\VuFind\Db\Service\PluginManager::class, $dbServicePluginManager);
+        $mockContainer->add(Translator::class, $translator);
+
         return $this->getMockBuilder(\Finna\RecordDriver\PluginManager::class)->onlyMethods([])
             ->setConstructorArgs([$mockContainer, []])->getMock();
     }
@@ -165,7 +176,7 @@ trait MockLoadersTrait
      */
     public function getFinnaFileLoader(array $urls = []): FileLoader
     {
-        $mockedGuzzle = $this->getMockBuilder(GuzzleService::class)->onlyMethods(['createClient'])
+        $mockedGuzzle = $this->getMockBuilder(GuzzleService::class)->onlyMethods(['createGuzzleClient'])
             ->disableOriginalConstructor()->getMock();
         $mockedGuzzleClient = $this->getMockBuilder(Client::class)->onlyMethods(['request'])
             ->disableOriginalConstructor()->getMock();
@@ -177,7 +188,7 @@ trait MockLoadersTrait
                 return new Response(404);
             }
         );
-        $mockedGuzzle->expects($this->any())->method('createClient')->willReturn($mockedGuzzleClient);
+        $mockedGuzzle->expects($this->any())->method('createGuzzleClient')->willReturn($mockedGuzzleClient);
         $mockedCacheManager = $this->getMockBuilder(Manager::class)->onlyMethods([])
             ->disableOriginalConstructor()->getMock();
 

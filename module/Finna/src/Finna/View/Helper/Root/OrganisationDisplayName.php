@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -46,8 +46,9 @@ class OrganisationDisplayName extends \Laminas\View\Helper\AbstractHelper
      * Get translated organisation display name.
      *
      * @param \VuFind\RecordDriver\AbstractBase $record   Record
-     * @param boolean                           $fullName Return full
-     * name with datasource
+     * @param bool                              $fullName Return full
+     *                                                    name with
+     *                                                    datasource
      *
      * @return string
      */
@@ -55,12 +56,11 @@ class OrganisationDisplayName extends \Laminas\View\Helper\AbstractHelper
     {
         $translate = $this->getView()->plugin('translate');
 
-        $locale = $translate->getTranslatorLocale();
-        $institutions = (array)$record->tryMethod('getInstitutions', [$locale]);
+        $institutions = (array)$record->tryMethod('getInstitutions');
         $institution = reset($institutions);
 
         // Case 1: only one building level
-        $buildings = $record->tryMethod('getBuilding', [$locale]);
+        $buildings = $record->tryMethod('getBuilding');
         $building = $buildings[0] ?? '';
         $displayName = $translate($building);
 

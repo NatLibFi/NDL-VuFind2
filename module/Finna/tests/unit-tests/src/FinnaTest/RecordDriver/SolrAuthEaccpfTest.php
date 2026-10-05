@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrAuthEaccpf Test Class
+ * SolrAuthEaccpf Test Class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -32,7 +32,7 @@ namespace FinnaTest\RecordDriver;
 use Finna\RecordDriver\SolrAuthEaccpf;
 
 /**
- * SolrAuthEaccpf Record Driver Test Class
+ * SolrAuthEaccpf Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -45,7 +45,7 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Test getAlternativeTitles
+     * Test getAlternativeTitles.
      *
      * @return void
      */
@@ -71,7 +71,7 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getRelatedPublication
+     * Test getRelatedPublication.
      *
      * @return void
      */
@@ -105,15 +105,44 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getGetOccupations.
+     *
+     * @return void
+     */
+    public function testGetOccupations(): void
+    {
+        $expected =  [
+            'fi' => [
+              'historiantutkija',
+              'filosofian tohtori',
+            ],
+            'en' => [
+              'history scholar',
+            ],
+        ];
+        foreach ($expected as $key => $value) {
+            $driver = $this->getDriver(language: $key);
+            $this->assertSame(
+                $value,
+                $driver->getOccupations()
+            );
+        }
+    }
+
+    /**
      * Get a record driver with fake data.
      *
-     * @param array $overrides    Fixture fields to override.
-     * @param array $searchConfig Search configuration.
+     * @param array  $overrides    Fixture fields to override.
+     * @param array  $searchConfig Search configuration.
+     * @param string $language     Language
      *
      * @return SolrAuthEaccpf
      */
-    protected function getDriver($overrides = [], $searchConfig = []): SolrAuthEaccpf
-    {
+    protected function getDriver(
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+    ): SolrAuthEaccpf {
         $fixture = $this->getFixture('eaccpf/eaccpf_test.xml', 'Finna');
         $dateConverter = new \VuFind\Date\Converter(['displayDateFormat' => 'j.n.Y']);
         $record = new SolrAuthEaccpf(
@@ -123,6 +152,7 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
         );
         $record->attachDateConverter($dateConverter);
         $record->setRawData(['fullrecord' => $fixture]);
+        $record->setPreferredLanguage($language);
         return $record;
     }
 }

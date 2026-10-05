@@ -1,7 +1,7 @@
 <?php
 
 /**
- * User public name view helper
+ * User public name view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -27,16 +27,15 @@
  * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
 
-use Finna\Db\Entity\FinnaUserEntityInterface;
-use VuFind\Db\Entity\UserEntityInterface;
+use Finna\Db\Entity\UserEntityInterface;
 
 /**
- * User public name view helper
+ * User public name view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -45,7 +44,7 @@ use VuFind\Db\Entity\UserEntityInterface;
  * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class UserPublicName extends \Laminas\View\Helper\AbstractHelper implements
     \VuFind\I18n\Translator\TranslatorAwareInterface
@@ -53,7 +52,7 @@ class UserPublicName extends \Laminas\View\Helper\AbstractHelper implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Create publicly shown user name
+     * Create publicly shown user name.
      *
      * @param ?UserEntityInterface $user User, if any
      *
@@ -62,7 +61,7 @@ class UserPublicName extends \Laminas\View\Helper\AbstractHelper implements
     public function __invoke(?UserEntityInterface $user)
     {
         $username = '';
-        if ($user instanceof FinnaUserEntityInterface) {
+        if ($user instanceof UserEntityInterface) {
             if (!empty($nickname = $user->getFinnaNickname())) {
                 $nicknameDescription = strtolower($this->translate('finna_nickname'));
                 $username = "$nickname ($nicknameDescription)";

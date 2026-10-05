@@ -321,6 +321,9 @@ loan_history_download_batch_limit = 1000
 ; Whether to display the item barcode for each loan. Default is false.
 display_checked_out_item_barcode = true
 
+; Online payment availability. Default is true.
+online_payment = true
+
 ; This section controls features related to user accounts
 [Account]
 ; Allow the user to set a home library through the Profile screen, which will
@@ -746,35 +749,23 @@ feedcachetime = 10
 ; Host is the same as from parse_url
 ;feedHostToNameMappings[] = 'www.instagram.com:instagram'
 
-; You can select from Syndetics, SyndeticsPlus, Amazon Editorial, Amazon, Booksite
-; and/or the Guardian
-;   Note: Guardian reviews contain embedded advertisements. If the API key is not
-;         supplied, e.g. "Guardian:", only the review title, byline, Guardian logo
-;         and a link to the full Guardian page will be displayed
-;reviews         = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsID,AmazonEditorial:MyAccessKeyId,Amazon:MyAccessKeyId,Booksite,Guardian:MyGuardianKeyId
+; You can select from Syndetics and/or the Guardian
+;   Note: If the API key is omitted, e.g. "Guardian:", only the review title, byline,
+;         Guardian logo and a link to the full Guardian page will be displayed
+;   Note: The Guardian API changed in 2014; if you signed up before that date, you
+;         may need to obtain a new API key for continued access.
+;reviews         = Syndetics:MySyndeticsId,Guardian:MyGuardianKeyId
 
-; You can select from Syndetics or SyndeticsPlus
-;excerpts        = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsId
+; You can only select Syndetics
+;excerpts        = Syndetics:MySyndeticsId
 
-; You can select from Syndetics or SyndeticsPlus
-;authorNotes = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsId
-
-; You can select from Syndetics or SyndeticsPlus
-;videoClips = Syndetics:MySyndeticsId,SyndeticsPlus:MySyndeticsId
+; You can only select Syndetics
+;authorNotes = Syndetics:MySyndeticsId
 
 ; You can select from Wikipedia
 ; Note for Windows users: If using Wikipedia, you may need to increase your Apache
 ; heap size settings.  For details, see: http://vufind.org/jira/browse/VUFIND-630
 ;authors         = Wikipedia
-
-; You can look up your secret key by logging into http://aws.amazon.com and clicking
-; "Access Identifiers" under "Your Account".
-;amazonsecret    = MyAmazonSecretKey
-
-; You can sign up for an associate ID by logging into
-; https://affiliate-program.amazon.com .  Please make sure your instance of VuFind
-; complies with Amazon's agreements before enabling this feature.
-;amazonassociate = MyAmazonAssociateID
 
 ; You can select from Google, OpenLibrary, HathiTrust.  You should consult
 ; https://developers.google.com/books/branding before using Google Book Search.
@@ -827,6 +818,22 @@ recordMap = openlayers
 ; A colon-separated list of formats that are enabled for image zoom function
 zoomFormats = qdc:forward:ead3:ead:lido
 
+; Sets the amount of images allowed to be returned in search context.
+; Default and hard limit is 20.
+;maxImagesInSearchContext = 10
+
+; Sets the amount of images allowed to be returned in record context.
+; Default and hard limit is 1000.
+;maxImagesInRecordContext = 500
+
+; Sets the amount of URLs allowed to be returned in search context.
+; Default and hard limit is 200.
+;maxUrlsInSearchContext = 20
+
+; Sets the amount of URLs allowed to be returned in record context.
+; Default and hard limit is 200.
+;maxUrlsInRecordContext = 200
+
 [QRCode]
 ; This setting controls the image to display when no qrcode is available.
 ; The path is relative to the base of your theme directory.
@@ -838,19 +845,15 @@ zoomFormats = qdc:forward:ead3:ead:lido
 ; Should we show QR codes on record pages?
 showInCore = true
 
-; If you are using Syndetics Plus for *any* content, set plus = true
-; and set plus_id to your syndetics ID.  This loads the javascript file.
-; Syndetics vs. SyndeticsPlus: SyndeticsPlus has nice formatting, but loads slower
-; and requires javascript to be enabled in users' browsers.
-; You can change the base Syndetics URL used by the content services here.
-; Most users will not need to change this setting.  It does not affect
-; Syndetics Plus at all.  (FYI: Syndetics Plus is currently not available
-; through SSL.)
 [Syndetics]
-plus = false
-;plus_id = "MySyndeticsId"
-;url = "https://secure.syndetics.com"
-url = "http://syndetics.com"
+; When the Syndetics cover image fallback is enabled, it will return generic covers based
+; on information Syndetics has related to the ISBN number or other number given. This
+; will prevent other fallbacks in VuFind from being tried, such as other cover image sources.
+; If the Syndetics cover image fallback is disabled, VuFind will query for the metadata first,
+; and only return an image if the Syndetics metadata returns a real cover image.
+use_syndetics_cover_image_fallback = false
+; timeout value (in seconds) for API calls:
+timeout = 10
 
 ; Booksite CATS Enhanced Content - cover images, reviews, description, etc.
 [Booksite]
@@ -875,10 +878,15 @@ pw               = "xxxxxx"
 ; help users find resources through your link resolver and to manage citations in
 ; Zotero.
 [OpenURL]
-; If a resolver base URL is enabled, it will be used to link ISSNs to your link
-; resolver and to access articles in Summon if that module is enabled.  Earlier
-; versions of VuFind included some parameters as part of the URL; at this point,
-; any extra parameters will be ignored -- please provide only the base URL.
+; If a resolver base URL is enabled, it will be used to link from records to your
+; OpenURL resolver. An OpenURL resolver is typically used to e.g. link to full text
+; from article metadata, but it may provide other services too. Extra parameters may
+; be added if necessary.
+; For LinkIQ (the API used with EBSCO Full Text Finder), the url format is the
+; following. {PROFILE} needs to be replaced with the actual profile code (like
+; ns123456.main.ftf), and also a password is required in the [LinkIQ] section).
+; Remember also to set resolver to "linkiq" below.
+; https://api.ebsco.io/ftf/ftfaccount/{PROFILE}/openurl
 ;url             = "http://openurl.myuniversity.edu/sfx_local"
 
 ; This string will be included as part of your OpenURL referer ID (the full string
@@ -890,8 +898,22 @@ rfr_id          = finna.fi
 
 ; By specifying your link resolver type, you can allow VuFind to optimize its
 ; OpenURLs for a particular platform.  Current legal values: "sfx", "360link",
-; "EZB" or "other" (default is "other" if commented out).
+; "JOP", "Redi", "Alma", "demo", "linkiq" or "generic" (default is "generic"
+; if commented out; "demo" generates fake values for use in testing the embed
+; setting below).
+; Note that linkiq (used with EBSCO Full Text Finder) requires additional settings
+; for the connection in the [LinkIQ] section.
 resolver        = sfx
+
+; Some link resolver drivers can filter resource links based on specific criteria.
+; This setting indicates which filter reasons should NOT be used to exclude
+; resource links. This is currently ONLY supported by the Alma resolver driver.
+; (default is "Date Filter" if commented out, for backwards compatibility)
+; You may add new filters to the array by adding new lines in the format shown below
+; Currently known valid values include: Date Filter
+; ignoredFilterReasons[] = "Date Filter"
+; To deactivate this setting you can set
+; ignoredFilterReasons = false or one line ignoredFilterReasons = ""
 
 ; If you want OpenURL links to open in a new window, set this setting to the
 ; desired Javascript window.open parameters.  If you do not want a new window
@@ -941,6 +963,16 @@ language[fi] = fin
 language[sv] = swe
 language[en-gb] = eng
 
+; Additional resolver settings required for EBSCO LinkIQ (available with EBSCO
+; Full Text Finder).
+[LinkIQ]
+; Profile Password for the service:
+;password = ""
+; Base URL for the "More Options" link to Full Text Finder. Leave empty to disable.
+; The base URL can be copied by going to EBSCO Experience Manager (experience.ebsco.com)
+; > Full Text Finder > Branding and clicking the "Copy base URL" button.
+;moreOptionsUrl = "https://resolver.ebsco.com/c/{PROFILE_OPID}/result"
+
 ; EZproxy is optional.  This section only needs to exist if you
 ; are using EZProxy to provide off-site access to online materials.
 ;[EZproxy]
@@ -955,6 +987,23 @@ url             = http://www.refworks.com
 [EndNoteWeb]
 vendor          = Finna
 url             = https://www.myendnoteweb.com/EndNoteWeb.html
+
+; These settings affect Zotero record exports. You will need to register your
+; VuFind instance with Zotero at https://www.zotero.org/oauth/apps and enter the
+; credentials below for the user-facing OAuth authentication to work properly.
+; Note: Zotero requires user login in VuFind because the Zotero access token must
+; be persisted across sessions (it doesn't expire in Zotero automatically).
+; time.
+; Users using Zotero desktop application will need to enable sync in Zotero (see
+; https://www.zotero.org/support/sync) to get the exported records to the client.
+[Zotero]
+; Client key
+identifier = ""
+; Client secret
+secret = ""
+; Callback URI pointing to VuFind's /Zotero/Callback action. Normally left
+; blank (VuFind will automatically create it based on the used server address).
+;callback_uri = ""
 
 ; These settings affect your OAI server if you choose to use it.
 ;
@@ -1168,6 +1217,9 @@ MARC = false
 MARCXML = false
 RDF = false
 BibTeX = false
+; Note: ZoteroWebLibrary requires proper settings in [Zotero] section!
+;ZoteroWebLibrary = "record,bulk"
+
 
 [BulkExport]
 ; Export behavior to use when no bulkExportType setting is found in the matching
@@ -1265,6 +1317,9 @@ related[] = "SimilarDeferred"
 ;similar_carousel_display = "after_tabs"
 ; How many items will be shown in the similar items carousel. Default is 40.
 ;similar_carousel_items = 15
+
+; Whether to display the series tab. Default is false.
+;series_tab = false
 
 ; Presenter roles that are displayed separately from other authors
 presenter_roles[] = "esitt"
@@ -1672,6 +1727,9 @@ case_sensitive_tags = false
 rating = true
 ; Whether the user is allowed to remove a rating (true or false, default is true)
 remove_rating = false
+; Limits for comments per day for a record. Keyed by login method (shibboleth, database, multiils) or * for all.
+;daily_record_comment_limit[*] = 1
+;daily_record_comment_limit[database] = 1
 
 ; Uncomment this section and provide your API key to enable Google Analytics
 ;[GoogleAnalytics]
@@ -1918,3 +1976,16 @@ Summon = tabs_summon
 ; Possible values are: 'production', 'beta', 'test' and 'disabled'.
 ; Default value is 'production'.
 site_status = production
+; FinnaAdmin API base URL
+;finna_admin_api_base_url =
+
+[IIIF]
+; Pipe-separated tuple of viewer name and URL, the latter containing a
+; placeholder for a percent-encoded manifest URL
+externalViewers[] = "Mirador|https://projectmirador.org/embed/?iiif-content={manifest}"
+externalViewers[] = "Universal Viewer|https://uv-v4.netlify.app/#?manifest={manifest}"
+
+; Origins to be listed in Access-Control-Allow-Origin headers in the
+; RecordController IIIFManifest action. Use "*" for general use, or site URL
+; to restrict to local
+;manifestCORS[] = "*"

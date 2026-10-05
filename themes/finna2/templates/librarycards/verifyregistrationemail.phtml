@@ -1,0 +1,37 @@
+<!-- START of: finna - librarycards/verifyregistrationemail.phtml -->
+<?php
+    $this->layout()->finnaMainHeader = '';
+
+    // Set up breadcrumbs:
+    $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
+      ->add($this->translate('new_ils_account'), active: true);
+?>
+<?=$this->component('page-title', ['title' => $this->translate('new_ils_account') . ' (' . $this->authData['targetName'] . ')']);?>
+
+<div class="alert alert-info flash-message">
+  <?=$this->transEsc('verification_email_sent')?>
+</div>
+
+<?=$this->flashmessages()?>
+
+<form class="form-validate-email" method="post" name="emailValidationForm" action="<?=$this->url('librarycards-verifyregistrationemail')?>">
+  <input type="hidden" name="csrf" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>">
+  <div class="form-group">
+    <label class="form-label">
+      <?=$this->transEsc('Email')?>:
+    </label>
+    <p class="form-control-static">
+      <?=$this->escapeHtml($this->authData['email'] ?? '')?>
+    </p>
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="card_password">
+      <?=$this->transEsc('one_time_password')?>:
+    </label>
+    <input type="text" name="password" id="card_password" class="form-control" autocomplete="one-time-code">
+  </div>
+  <div class="form-group">
+    <input class="btn btn-primary" type="submit" name="submitButton" value="<?=$this->transEscAttr('Submit') ?>">
+  </div>
+</form>
+<!-- END of: finna - librarycards/verifyregistrationemail.phtml -->

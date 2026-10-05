@@ -56,21 +56,21 @@ use function in_array;
 class CoverController extends \VuFind\Controller\CoverController
 {
     /**
-     * Data source configuration
+     * Data source configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $datasourceConfig;
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var VuFind\Record\Loader
      */
     protected $recordLoader;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Loader                $loader             Cover loader
      * @param CachingProxy          $proxy              Proxy loader
@@ -97,7 +97,7 @@ class CoverController extends \VuFind\Controller\CoverController
     }
 
     /**
-     * Send image data for display in the view
+     * Send image data for display in the view.
      *
      * @return \Laminas\Http\Response
      */

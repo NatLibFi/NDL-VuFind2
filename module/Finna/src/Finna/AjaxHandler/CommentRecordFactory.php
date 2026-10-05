@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -29,10 +29,13 @@
 
 namespace Finna\AjaxHandler;
 
+use Finna\Ratings\RatingsService;
+use Finna\Record\ResourcePopulator;
 use Laminas\ServiceManager\Exception\ServiceNotCreatedException;
 use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
+use VuFind\Config\ConfigManager;
 
 /**
  * Factory for CommentRecord AJAX handler.
@@ -46,7 +49,7 @@ use Psr\Container\ContainerInterface;
 class CommentRecordFactory extends \VuFind\AjaxHandler\CommentRecordFactory
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -66,7 +69,20 @@ class CommentRecordFactory extends \VuFind\AjaxHandler\CommentRecordFactory
         $requestedName,
         ?array $options = null
     ) {
-        $result = parent::__invoke($container, $requestedName, $options);
+        $servicePluginManager = $container->get(\VuFind\Db\Service\PluginManager::class);
+        $controllerPluginManager = $container->get('ControllerPluginManager');
+        $capabilities = $container->get(\VuFind\Config\AccountCapabilities::class);
+        $result = new $requestedName(
+            $container->get(ResourcePopulator::class),
+            $servicePluginManager->get(\VuFind\Db\Service\CommentsServiceInterface::class),
+            $controllerPluginManager->get(\VuFind\Controller\Plugin\Captcha::class),
+            $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
+            $capabilities->getCommentSetting() !== 'disabled',
+            $container->get(\VuFind\Record\Loader::class),
+            $container->get(\VuFind\Config\AccountCapabilities::class),
+            $container->get(RatingsService::class),
+            $container->get(ConfigManager::class)->getConfigArray('config')
+        );
         $result->setSearchRunner($container->get(\VuFind\Search\SearchRunner::class));
         return $result;
     }

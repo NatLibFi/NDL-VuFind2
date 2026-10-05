@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Search;
@@ -39,7 +39,7 @@ use function is_callable;
  * @package  Search
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 trait FinnaParams
 {
@@ -94,7 +94,7 @@ trait FinnaParams
     }
 
     /**
-     * Get the date range field from options, if available
+     * Get the date range field from options, if available.
      *
      * @return string
      */
@@ -162,15 +162,8 @@ trait FinnaParams
     {
         // Extract field and value from URL string:
         [$field, $value] = $this->parseFilter($filter);
-
-        if (
-            isset($this->hiddenFilters[$field])
-            && in_array($value, $this->hiddenFilters[$field])
-        ) {
-            return true;
-        }
-
-        return false;
+        return isset($this->hiddenFilters[$field])
+        && in_array($value, $this->hiddenFilters[$field]);
     }
 
     /**
@@ -282,11 +275,11 @@ trait FinnaParams
             $from += 0.5;
             $to -= 0.5;
         }
-        $from = $from * 86400;
+        $from *= 86400;
         $from = new \DateTime("@{$from}");
         $from = $from->format('Y');
 
-        $to = $to * 86400;
+        $to *= 86400;
         $to = new \DateTime("@{$to}");
         $to = $to->format('Y');
 
@@ -363,11 +356,11 @@ trait FinnaParams
     }
 
     /**
-     * Check if the given filter is a date range filter
+     * Check if the given filter is a date range filter.
      *
      * @param string $field Filter field
      *
-     * @return boolean
+     * @return bool
      */
     protected function isDateRangeFilter($field)
     {
@@ -378,7 +371,7 @@ trait FinnaParams
     }
 
     /**
-     * Pull the page size parameter or set to default
+     * Pull the page size parameter or set to default.
      *
      * @param \Laminas\Stdlib\Parameters $request Parameter object representing user
      * request.
@@ -420,7 +413,7 @@ trait FinnaParams
     }
 
     /**
-     * Get view options list type setting
+     * Get view options list type setting.
      *
      * @return bool
      */
@@ -433,7 +426,7 @@ trait FinnaParams
     }
 
     /**
-     * Used to be used for activating all facets, but no longer needed
+     * Used to be used for activating all facets, but no longer needed.
      *
      * @return void
      */

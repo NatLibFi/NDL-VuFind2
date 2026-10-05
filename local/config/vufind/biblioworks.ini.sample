@@ -1,0 +1,67 @@
+; =============================================================================
+; Biblioworks Helpdesk Integration
+; =============================================================================
+;
+; This feature integrates the Biblioworks Helpdesk chatbot and enables
+; User Session Token (UST) generation for authenticated patrons.
+; More info at https://biblioworks.ai/products/ai-library-chatbot/
+;
+; Configuration requirements:
+; 1. Generate a secure encryption key (Defuse ASCII-safe format) and send it
+;    via secure email to Biblioworks:
+;    $ php -r 'require "vendor/autoload.php"; echo \Defuse\Crypto\Key::createNewRandomKey()->saveToAsciiSafeString() . PHP_EOL;'
+;    Alternatively, ask Biblioworks to generate one.
+;
+; 2. Obtain your chatbot token and base URL from Biblioworks support:
+;    support@biblioworks.ai
+;
+; 3. Enable CSP rules in local/config/vufind/contentsecuritypolicy.ini:
+;    [Directives]
+;    script-src[] = "https://your-biblioworks-domain.com"
+;    connect-src[] = "https://your-biblioworks-domain.com"
+;    frame-src[] = "https://your-biblioworks-domain.com"
+;
+; =============================================================================
+
+[BiblioworksHelpdesk]
+; Enable/disable the integration
+enabled = false
+
+; Session token time-to-live in seconds (default: 48 hours)
+;ust_ttl_seconds = 172800
+
+; JWT issuer claim (typically your Finna domain)
+;ust_issuer = "example.finna.fi"
+
+; JWT audience claim (provided by Biblioworks)
+;ust_audience = "biblioworks-adapter"
+
+; AES-256-CTR encryption key (Defuse ASCII-safe format, starts with "def...")
+; WARNING: Never commit this key to version control!
+;ust_encryption_key = "def00000..."
+
+; Mock mode skips ILS session validation and builds a patron from user.cat_id
+; (falling back to the VuFind internal user ID). Also used in tests.
+;allow_mock_patron = false
+
+[Chatbot]
+; Enable/disable the chatbot widget on the website
+chatbot_enabled = false
+
+; Chatbot authentication token (provided by Biblioworks)
+;chatbot_token = ""
+
+; Chatbot script base URL (provided by Biblioworks)
+;chatbot_base_url = ""
+
+[CSP]
+; The chatbot widget requires CSP (Content Security Policy) allowlisting.
+; Edit local/config/vufind/contentsecuritypolicy.ini and add to the [Directives] section:
+;
+;   ; BiblioWorks Helpdesk Chatbot
+;   script-src[] = "https://helpdesk.example.org"
+;   frame-src[] = "https://helpdesk.example.org"
+;   connect-src[] = "https://helpdesk.example.org"
+;
+; Replace the URL with your chatbot_base_url value.
+; The inline <script> tag is already covered by CSP nonce.

@@ -17,23 +17,23 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Authorization
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Role\PermissionProvider;
 
-use Finna\Auth\ILSAuthenticator;
 use Finna\Auth\Manager as AuthManager;
 use Finna\ILS\Connection as ILSConnection;
 use Laminas\Session\Container as SessionContainer;
+use VuFind\Auth\ILSAuthenticator;
 use VuFind\Exception\ILS as ILSException;
 use VuFind\Role\PermissionProvider\PermissionProviderInterface;
 
@@ -48,40 +48,40 @@ use function is_callable;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class AuthenticationStrategy implements PermissionProviderInterface
 {
     /**
-     * Authentication manager
+     * Authentication manager.
      *
      * @var AuthManager
      */
     protected $authManager;
 
     /**
-     * ILS authenticator
+     * ILS authenticator.
      *
      * @var ILSAuthenticator
      */
     protected $ilsAuth;
 
     /**
-     * ILS connection
+     * ILS connection.
      *
      * @var ILSConnection
      */
     protected $ils;
 
     /**
-     * Session storage
+     * Session storage.
      *
      * @var SessionContainer
      */
     protected $sessionContainer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param AuthManager      $am      Authentication manager
      * @param ILSConnection    $ils     ILS connection
@@ -143,7 +143,7 @@ class AuthenticationStrategy implements PermissionProviderInterface
     }
 
     /**
-     * Get patron authorization status
+     * Get patron authorization status.
      *
      * @param bool $staff Whether to check staff or normal user authorization
      *

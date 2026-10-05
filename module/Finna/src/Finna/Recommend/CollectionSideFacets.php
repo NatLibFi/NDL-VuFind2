@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CollectionSideFacets Recommendations Module
+ * CollectionSideFacets Recommendations Module.
  *
  * PHP version 8
  *
@@ -17,20 +17,20 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Recommendations
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:recommendation_modules Wiki
+ * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
 
 namespace Finna\Recommend;
 
 /**
- * CollectionSideFacets Recommendations Module
+ * CollectionSideFacets Recommendations Module.
  *
  * This class extends the SideFacets functionality for use in Collection display.
  *
@@ -38,7 +38,7 @@ namespace Finna\Recommend;
  * @package  Recommendations
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:recommendation_modules Wiki
+ * @link     https://vufind.org/wiki/development:plugins:recommendation_modules Wiki
  */
 class CollectionSideFacets extends \VuFind\Recommend\CollectionSideFacets
 {

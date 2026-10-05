@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Get "RecordDriverRelatedRecords" AJAX handler
+ * Get "RecordDriverRelatedRecords" AJAX handler.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -38,7 +38,7 @@ use function array_slice;
 use function is_string;
 
 /**
- * Get "RecordDriverRelatedRecords" AJAX handler
+ * Get "RecordDriverRelatedRecords" AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -49,28 +49,28 @@ use function is_string;
 class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
 {
     /**
-     * Record loader
+     * Record loader.
      *
      * @var Loader
      */
     protected $recordLoader;
 
     /**
-     * SearchRunner
+     * SearchRunner.
      *
      * @var SearchRunner
      */
     protected $searchRunner;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Loader            $loader       Record loader
      * @param SearchRunner      $searchRunner Search runner
@@ -131,7 +131,7 @@ class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
                             ['lookfor' =>
                                 "{$field}:" . addcslashes($identifier, '"')],
                             $source,
-                            function ($runner, $params, $searchId) use ($driver) {
+                            function ($runner, $params, $searchId) use ($driver): void {
                                 $params->setLimit(1);
                                 $params->setPage(1);
                                 $params->resetFacetConfig();
@@ -152,7 +152,7 @@ class GetRecordDriverRelatedRecords extends \VuFind\AjaxHandler\AbstractBase
                     }
                 }
             }
-            if ($records) {
+            if ($records = array_filter($records)) {
                 $html = $this->renderer->partial(
                     'Related/RecordDriverRelatedRecordList.phtml',
                     ['results' => $records]

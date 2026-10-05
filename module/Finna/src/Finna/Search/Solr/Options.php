@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr aspect of the Search Multi-class (Options)
+ * Solr aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -30,8 +30,10 @@
 
 namespace Finna\Search\Solr;
 
+use VuFind\Config\ConfigManagerInterface;
+
 /**
- * Solr Search Options
+ * Solr Search Options.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -46,14 +48,14 @@ class Options extends \VuFind\Search\Solr\Options
     use \Finna\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Date range visualization settings
+     * Date range visualization settings.
      *
      * @var string
      */
     protected $dateRangeVis;
 
     /**
-     * Whether to display record versions
+     * Whether to display record versions.
      *
      * Finna: keep it false by default for now
      *
@@ -62,13 +64,13 @@ class Options extends \VuFind\Search\Solr\Options
     protected $displayRecordVersions = false;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param \VuFind\Config\PluginManager $configLoader Config loader
+     * @param ConfigManagerInterface $configManager Config manager
      */
-    public function __construct(\VuFind\Config\PluginManager $configLoader)
+    public function __construct(ConfigManagerInterface $configManager)
     {
-        parent::__construct($configLoader);
+        parent::__construct($configManager);
 
         $this->dateRangeVis = $this->facetSettings['SpecialFacets']['dateRangeVis'] ?? '';
 
@@ -103,7 +105,7 @@ class Options extends \VuFind\Search\Solr\Options
     }
 
     /**
-     * Get the field used for date range search
+     * Get the field used for date range search.
      *
      * @return string
      */
@@ -114,7 +116,7 @@ class Options extends \VuFind\Search\Solr\Options
     }
 
     /**
-     * Get the field used for date range visualization
+     * Get the field used for date range visualization.
      *
      * @return string
      */
@@ -142,7 +144,7 @@ class Options extends \VuFind\Search\Solr\Options
     }
 
     /**
-     * Convert a legacy sort option to current one that excludes a tie breaker
+     * Convert a legacy sort option to current one that excludes a tie breaker.
      *
      * @param string $sort Sort string
      *

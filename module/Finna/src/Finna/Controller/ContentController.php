@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Content Controller
+ * Content Controller.
  *
  * PHP version 8
  *
@@ -32,7 +32,7 @@
 namespace Finna\Controller;
 
 /**
- * Loads content pages
+ * Loads content pages.
  *
  * @category VuFind
  * @package  Controller
@@ -44,7 +44,7 @@ namespace Finna\Controller;
 class ContentController extends \VuFind\Controller\ContentController
 {
     /**
-     * Default action if none provided
+     * Default action if none provided.
      *
      * @return Laminas\View\Model\ViewModel
      */

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -45,14 +45,14 @@ use function array_key_exists;
 class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
 {
     /**
-     * Hidden filters
+     * Hidden filters.
      *
      * @var array
      */
     protected $hiddenFilters = [];
 
     /**
-     * Set hidden filters
+     * Set hidden filters.
      *
      * @param array $filters Hidden filters
      *
@@ -64,7 +64,7 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
     }
 
     /**
-     * Support method for query() -- perform inner search logic
+     * Support method for query() -- perform inner search logic.
      *
      * @param array $terms Associative array:
      *     index       string: primo index to search (default "any")
@@ -109,7 +109,7 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
     }
 
     /**
-     * Convert contains and contains_all to boolean searches
+     * Convert contains and contains_all to boolean searches.
      *
      * @param array $terms Search terms
      *
@@ -224,7 +224,7 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
      * @throws \Exception
      * @return string|false
      */
-    protected function getOpenUrl(\StdClass $doc)
+    protected function getOpenUrl(\stdClass $doc)
     {
         foreach ($doc->delivery->link ?? [] as $link) {
             if ('http://purl.org/pnx/linkType/openurl' === $link->linkType) {
@@ -237,9 +237,9 @@ class RestConnector extends \VuFindSearch\Backend\Primo\RestConnector
 
         if (!$result) {
             if (($url = (string)($doc->delivery->GetIt2->link ?? '')) !== '') {
-                $result = (string)$url;
+                $result = $url;
             } elseif (($url = (string)($doc->delivery->GetIt1[0]->links[0]->link ?? '')) !== '') {
-                $result = (string)$url;
+                $result = $url;
             }
         }
 

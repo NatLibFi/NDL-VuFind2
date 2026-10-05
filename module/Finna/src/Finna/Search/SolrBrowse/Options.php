@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrBrowse aspect of the Search Multi-class (Options)
+ * SolrBrowse aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -29,8 +29,10 @@
 
 namespace Finna\Search\SolrBrowse;
 
+use VuFind\Config\ConfigManagerInterface;
+
 /**
- * SolrBrowse Search Options
+ * SolrBrowse Search Options.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -41,60 +43,66 @@ namespace Finna\Search\SolrBrowse;
 class Options extends \Finna\Search\Solr\Options
 {
     /**
-     * Overall default sort option
-     *
-     * @var string
-     */
-    protected $defaultSort = 'title,id asc';
-
-    /**
-     * Default search handler
+     * Default search handler.
      *
      * @var string
      */
     protected $defaultHandler = 'Title';
 
     /**
-     * Default limit option
+     * Default limit option.
      *
      * @var int
      */
     protected $defaultLimit = 100;
 
     /**
-     * Default view option
+     * Default view option.
      *
      * @var string
      */
     protected $defaultView = 'condensed';
 
     /**
-     * Spelling setting
+     * Spelling setting.
      *
      * @var bool
      */
     protected $spellcheck = false;
 
     /**
-     * Configuration file to read search settings from
+     * Configuration file to read search settings from.
      *
      * @var string
      */
     protected $searchIni = 'browse';
 
     /**
-     * Configuration file to read facet settings from
+     * Configuration file to read facet settings from.
      *
      * @var string
      */
     protected $facetsIni = 'facets-browse';
 
     /**
-     * Browse type
+     * Browse type.
      *
      * @var string
      */
     protected $browseType = '';
+
+    /**
+     * Constructor.
+     *
+     * @param ConfigManagerInterface $configManager Config manager
+     */
+    public function __construct(ConfigManagerInterface $configManager)
+    {
+        parent::__construct($configManager);
+
+        // Override default sort to always be by title:
+        $this->defaultSort = 'title';
+    }
 
     /**
      * Return the route name for the search results action.
@@ -107,7 +115,7 @@ class Options extends \Finna\Search\Solr\Options
     }
 
     /**
-     * Set curren browse type
+     * Set curren browse type.
      *
      * @param string $type Browse type
      *

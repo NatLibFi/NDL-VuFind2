@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Barcode Controller
+ * Barcode Controller.
  *
  * PHP version 8
  *
@@ -33,7 +33,7 @@ namespace Finna\Controller;
 use VuFind\Db\Service\UserCardServiceInterface;
 
 /**
- * Generates barcodes
+ * Generates barcodes.
  *
  * @category VuFind
  * @package  Controller
@@ -45,7 +45,7 @@ use VuFind\Db\Service\UserCardServiceInterface;
 class BarcodeController extends \VuFind\Controller\AbstractBase
 {
     /**
-     * Display a barcode
+     * Display a barcode.
      *
      * @return \Laminas\Http\Response
      *

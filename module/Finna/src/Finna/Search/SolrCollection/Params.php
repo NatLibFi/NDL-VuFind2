@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Collection Search Parameters
+ * Solr Collection Search Parameters.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -31,7 +31,7 @@
 namespace Finna\Search\SolrCollection;
 
 /**
- * Solr Collection Search Parameters
+ * Solr Collection Search Parameters.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -46,14 +46,14 @@ class Params extends \VuFind\Search\SolrCollection\Params
     use \Finna\Search\FinnaParams;
 
     /**
-     * Applied filters
+     * Applied filters.
      *
      * @var array
      */
     protected $filterList = [];
 
     /**
-     * Date converter
+     * Date converter.
      *
      * @var \Vufind\Date\Converter
      */

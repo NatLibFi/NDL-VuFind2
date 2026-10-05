@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Database
@@ -60,11 +60,11 @@ interface FinnaCacheServiceInterface extends DbServiceInterface
     public function deleteCacheEntry(FinnaCacheEntityInterface $entity): void;
 
     /**
-     * Get cache item from database by id.
+     * Get cache item from database by resource id.
      *
-     * @param string $id Item id
+     * @param string $resourceId Resource id
      *
      * @return ?FinnaCacheEntityInterface
      */
-    public function getByResourceId(string $id): ?FinnaCacheEntityInterface;
+    public function getByResourceId(string $resourceId): ?FinnaCacheEntityInterface;
 }

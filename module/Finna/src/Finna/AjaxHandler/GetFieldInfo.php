@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -30,8 +30,8 @@
 namespace Finna\AjaxHandler;
 
 use Finna\Db\Service\FinnaCacheServiceInterface;
-use Laminas\Log\LoggerAwareInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
+use Psr\Log\LoggerAwareInterface;
 use VuFind\Config\Config;
 use VuFind\Log\LoggerAwareTrait;
 use VuFind\Record\Loader;
@@ -58,14 +58,14 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     use LoggerAwareTrait;
 
     /**
-     * Settings for diplaying dynamic content
+     * Settings for diplaying dynamic content.
      *
      * @var array
      */
     protected $dynamicContent;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param Config                     $config            Main configuration
      * @param SessionSettings            $sessionSettings   Session settings
@@ -155,12 +155,12 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             )
         );
 
-        $isAuthority = $authority ? true : false;
+        $isAuthority = (bool)$authority;
         return $this->formatResponse(compact('html', 'isAuthority'));
     }
 
     /**
-     * Get enrichment data from Skosmos
+     * Get enrichment data from Skosmos.
      *
      * @param string $id    Identifier
      * @param string $label Label
@@ -221,7 +221,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     }
 
     /**
-     * Fetch data for an identifier from Skosmos
+     * Fetch data for an identifier from Skosmos.
      *
      * @param string $id Identifier
      *
@@ -258,7 +258,7 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
     }
 
     /**
-     * Parse Skosmos data and return labels
+     * Parse Skosmos data and return labels.
      *
      * @param string $response     Skoskos response
      * @param string $id           Requested id
@@ -291,37 +291,25 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
             if (!in_array('skos:Concept', (array)($item['type'] ?? []))) {
                 continue;
             }
+            if (($item['uri'] ?? null) !== $id) {
+                continue;
+            }
 
-            if ($item['uri'] === $id) {
-                foreach ($item['prefLabel'] ?? [] as $label) {
-                    if (!($value = $label['value'] ?? '')) {
-                        continue;
-                    }
-                    $lng = $label['lang'] ?? '-';
-                    // Try to determine the language of the display label:
-                    if ($value === $displayLabel) {
-                        $labelLang = $lng;
-                    } else {
-                        $pref[$lng][] = $value;
-                    }
-                }
-
-                $altLabels = isset($item['altLabel']['value'])
-                    ? [$item['altLabel']] : ($item['altLabel'] ?? []);
-
-                foreach ($altLabels as $label) {
-                    if (!($value = $label['value'] ?? '')) {
-                        continue;
-                    }
-                    $lng = $label['lang'] ?? '-';
-                    $alt[$lng][] = $value;
+            foreach ($this->getLabels($item) as $lng => $values) {
+                // Try to determine the language of the display label:
+                if (in_array($displayLabel, $values)) {
+                    $labelLang = $lng;
+                } else {
+                    $pref[$lng] = [...($pref[$lng] ?? []), ...$values];
                 }
             }
 
+            foreach ($this->getLabels($item, 'altLabel') as $lng => $values) {
+                $alt[$lng] = [...($alt[$lng] ?? []), ...$values];
+            }
+
             foreach ($item['exactMatch'] ?? [] as $exactMatch) {
-                $matchId = is_array($exactMatch)
-                    ? ($exactMatch['uri'] ?? null)
-                    : $exactMatch;
+                $matchId = is_array($exactMatch) ? ($exactMatch['uri'] ?? null) : $exactMatch;
                 if (!$matchId) {
                     continue;
                 }
@@ -347,20 +335,12 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
                         continue;
                     }
 
-                    foreach ($item['prefLabel'] ?? [] as $label) {
-                        if (!($value = $label['value'] ?? '')) {
-                            continue;
-                        }
-                        $lng = $label['lang'] ?? '-';
-                        $pref[$lng][] = $value;
+                    foreach ($this->getLabels($matchItem) as $lng => $values) {
+                        $pref[$lng] = [...($pref[$lng] ?? []), ...$values];
                     }
 
-                    foreach ($item['altLabel'] ?? [] as $label) {
-                        if (!($value = $label['value'] ?? '')) {
-                            continue;
-                        }
-                        $lng = $label['lang'] ?? '-';
-                        $alt[$lng][] = $value;
+                    foreach ($this->getLabels($matchItem, 'altLabel') as $lng => $values) {
+                        $alt[$lng] = [...($alt[$lng] ?? []), ...$values];
                     }
                 }
             }
@@ -403,5 +383,32 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         }
 
         return $result;
+    }
+
+    /**
+     * Get labels from a graph item.
+     *
+     * @param array  $item      Graph item
+     * @param string $labeltype Label type
+     *
+     * @return array
+     */
+    protected function getLabels(
+        array $item,
+        string $labeltype = 'prefLabel',
+    ): array {
+        $results = [];
+        // A label either is an array with lang and value keys or contains sub arrays with lang and value keys
+        $labels = isset($item[$labeltype]['value'])
+            ? [$item[$labeltype]] : ($item[$labeltype] ?? []);
+
+        foreach ($labels as $label) {
+            if (!($value = $label['value'] ?? '')) {
+                continue;
+            }
+            $lng = $label['lang'] ?? '-';
+            $results[$lng][] = $value;
+        }
+        return $results;
     }
 }

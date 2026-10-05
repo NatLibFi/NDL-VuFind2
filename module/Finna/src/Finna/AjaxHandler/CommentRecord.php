@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -30,8 +30,15 @@
 
 namespace Finna\AjaxHandler;
 
-use Finna\Db\Service\FinnaCommentsServiceInterface;
+use DateTime;
+use Finna\Db\Service\CommentsServiceInterface;
 use Laminas\Mvc\Controller\Plugin\Params;
+use VuFind\Config\AccountCapabilities;
+use VuFind\Controller\Plugin\Captcha;
+use VuFind\Db\Entity\UserEntityInterface;
+use VuFind\Ratings\RatingsService;
+use VuFind\Record\Loader as RecordLoader;
+use VuFind\Record\ResourcePopulator;
 use VuFind\Search\SearchRunner;
 
 use function assert;
@@ -51,14 +58,50 @@ use function intval;
 class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
 {
     /**
-     * Search runner
+     * Constructor.
+     *
+     * @param ResourcePopulator        $resourcePopulator   Resource populator service
+     * @param CommentsServiceInterface $commentsService     Comments database service
+     * @param Captcha                  $captcha             Captcha controller plugin
+     * @param ?UserEntityInterface     $user                Logged in user (or null)
+     * @param bool                     $enabled             Are comments enabled?
+     * @param RecordLoader             $recordLoader        Record loader
+     * @param AccountCapabilities      $accountCapabilities Account capabilities helper
+     * @param RatingsService           $ratingsService      Ratings service
+     * @param array                    $config              VuFind configuration
+     */
+    public function __construct(
+        ResourcePopulator $resourcePopulator,
+        CommentsServiceInterface $commentsService,
+        Captcha $captcha,
+        ?UserEntityInterface $user,
+        bool $enabled,
+        RecordLoader $recordLoader,
+        AccountCapabilities $accountCapabilities,
+        RatingsService $ratingsService,
+        protected array $config,
+    ) {
+        parent::__construct(
+            $resourcePopulator,
+            $commentsService,
+            $captcha,
+            $user,
+            $enabled,
+            $recordLoader,
+            $accountCapabilities,
+            $ratingsService
+        );
+    }
+
+    /**
+     * Search runner.
      *
      * @var ?SearchRunner
      */
     protected ?SearchRunner $searchRunner = null;
 
     /**
-     * Setter for search runner
+     * Setter for search runner.
      *
      * @param SearchRunner $runner Search runner
      *
@@ -78,7 +121,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
      */
     public function handleRequest(Params $params)
     {
-        assert($this->commentsService instanceof FinnaCommentsServiceInterface);
+        assert($this->commentsService instanceof CommentsServiceInterface);
 
         // Make sure comments are enabled:
         if (!$this->enabled) {
@@ -109,7 +152,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
         $resource = $this->resourcePopulator->getOrCreateResourceForRecordId($id, $source);
         if ($commentId = $params->fromPost('commentId')) {
             // Edit existing comment
-            $this->commentsService->editComment($this->user->getId(), $commentId, $comment);
+            $this->commentsService->editComment($this->user, $commentId, $comment);
         } else {
             // Add new comment
             if (!$this->checkCaptcha()) {
@@ -117,6 +160,26 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
                     $this->translate('captcha_not_passed'),
                     self::STATUS_HTTP_FORBIDDEN
                 );
+            }
+
+            // Check if the user has exceeded the comment limit for the day:
+            $limits = $this->config['Social']['daily_record_comment_limit'] ?? [];
+            $commentLimit = $limits[$this->user->getAuthMethod()] ?? $limits['*'] ?? null;
+            if (null !== $commentLimit) {
+                $today = new DateTime('today');
+                $commentCount = count(
+                    $this->commentsService->findCommentsForRecordByUser($id, $source, $this->user, $today)
+                );
+                if ($commentCount >= $commentLimit) {
+                    return $this->formatResponse(
+                        $this->translate(
+                            'comment_daily_limit_reached',
+                            ['count' => $commentLimit],
+                            useIcuFormatter: true
+                        ),
+                        self::STATUS_HTTP_NEED_AUTH
+                    );
+                }
             }
 
             $commentId = $this->commentsService->addComment(
@@ -129,7 +192,7 @@ class CommentRecord extends \VuFind\AjaxHandler\CommentRecord
             $results = $this->searchRunner->run(
                 ['lookfor' => 'local_ids_str_mv:"' . addcslashes($id, '"') . '"'],
                 $source,
-                function ($runner, $params, $searchId) {
+                function ($runner, $params, $searchId): void {
                     $params->setLimit(1000);
                     $params->setPage(1);
                     $params->resetFacetConfig();

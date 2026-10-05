@@ -1,7 +1,7 @@
 <?php
 
 /**
- * KohaRest ILS Driver for KohaSuomi
+ * KohaRest ILS Driver for KohaSuomi.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -40,7 +40,7 @@ use function in_array;
 use function is_array;
 
 /**
- * KohaRest ILS Driver for KohaSuomi
+ * KohaRest ILS Driver for KohaSuomi.
  *
  * @category VuFind
  * @package  ILS_Drivers
@@ -52,7 +52,7 @@ use function is_array;
 class KohaRestSuomi extends KohaRestSuomiVuFind
 {
     /**
-     * Mappings from Koha messaging preferences
+     * Mappings from Koha messaging preferences.
      *
      * @var array
      */
@@ -76,21 +76,21 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     ];
 
     /**
-     * Whether to use location in addition to branch when grouping holdings
+     * Whether to use location in addition to branch when grouping holdings.
      *
      * @param bool
      */
     protected $groupHoldingsByLocation;
 
     /**
-     * Priority settings for the order of branches or branch/location combinations
+     * Priority settings for the order of branches or branch/location combinations.
      *
      * @var array
      */
     protected $holdingsBranchOrder;
 
     /**
-     * Priority settings for the order of locations (in branches)
+     * Priority settings for the order of locations (in branches).
      *
      * @var array
      */
@@ -108,6 +108,11 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     public function init()
     {
         parent::init();
+
+        // BC for online payment configuration:
+        if (empty($this->config['OnlinePayment']) && !empty($this->config['onlinePayment'])) {
+            $this->config['OnlinePayment'] = $this->config['onlinePayment'];
+        }
 
         $this->groupHoldingsByLocation
             = $this->config['Holdings']['group_by_location']
@@ -133,7 +138,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Holding
+     * Get Holding.
      *
      * This is responsible for retrieving the holding information of a certain
      * record.
@@ -171,7 +176,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Status
+     * Get Status.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -192,7 +197,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Statuses
+     * Get Statuses.
      *
      * This is responsible for retrieving the status information for a
      * collection of records.
@@ -219,7 +224,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Patron Fines
+     * Get Patron Fines.
      *
      * This is responsible for retrieving all fines by a specific patron.
      *
@@ -239,7 +244,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Patron Profile
+     * Get Patron Profile.
      *
      * This is responsible for retrieving the profile for a specific patron.
      *
@@ -300,90 +305,43 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
             true
         );
 
-        $messagingSettings = [];
-        if (200 === $resultCode) {
-            foreach ($messagingPrefs as $type => $prefs) {
-                $typeName = $this->messagingPrefTypeMap[$type] ?? $type;
-                $settings = [
-                    'type' => $typeName,
-                ];
-                if (isset($prefs['transport_types'])) {
-                    $settings['settings']['transport_types'] = [
-                        'type' => 'multiselect',
-                    ];
-                    foreach ($prefs['transport_types'] as $key => $active) {
-                        $settings['settings']['transport_types']['options'][$key] = [
-                            'active' => $active,
-                        ];
-                    }
-                }
-                if (isset($prefs['digest'])) {
-                    $settings['settings']['digest'] = [
-                        'type' => 'boolean',
-                        'name' => '',
-                        'active' => $prefs['digest']['value'],
-                        'readonly' => !$prefs['digest']['configurable'],
-                    ];
-                }
-                if (
-                    isset($prefs['days_in_advance'])
-                    && ($prefs['days_in_advance']['configurable']
-                    || null !== $prefs['days_in_advance']['value'])
-                ) {
-                    $options = [];
-                    for ($i = 0; $i <= 30; $i++) {
-                        $options[$i] = [
-                            'name' => $this->translate(
-                                1 === $i ? 'messaging_settings_num_of_days'
-                                : 'messaging_settings_num_of_days_plural',
-                                ['%%days%%' => $i]
-                            ),
-                            'active' => $i == $prefs['days_in_advance']['value'],
-                        ];
-                    }
-                    $settings['settings']['days_in_advance'] = [
-                        'type' => 'select',
-                        'value' => $prefs['days_in_advance']['value'],
-                        'options' => $options,
-                        'readonly' => !$prefs['days_in_advance']['configurable'],
-                    ];
-                }
-                $messagingSettings[$type] = $settings;
-            }
-        }
+        $messagingSettings = 200 === $resultCode
+            ? $this->createMessagingSettingsArray($messagingPrefs)
+            : [];
 
         $phoneField = $this->config['Profile']['phoneNumberField']
             ?? 'mobile';
 
         $smsField = $this->config['Profile']['smsNumberField']
             ?? 'smsalertnumber';
-
-        return [
-            'firstname' => $result['firstname'],
-            'lastname' => $result['surname'],
-            'phone' => $phoneField && !empty($result[$phoneField])
+        return $this->createProfileArray(
+            firstname: $result['firstname'],
+            lastname: $result['surname'],
+            phone: $phoneField && !empty($result[$phoneField])
                 ? $result[$phoneField] : '',
-            'smsnumber' => $smsField ? $result[$smsField] : '',
-            'email' => $result['email'],
-            'address1' => $result['address'],
-            'address2' => $result['address2'],
-            'zip' => $result['zipcode'],
-            'city' => $result['city'],
-            'country' => $result['country'],
-            'category' => $result['categorycode'] ?? '',
-            'expiration_date' => $expirationDate,
-            'hold_identifier' => $result['othernames'],
-            'guarantor' => $guarantor,
-            'guarantees' => $guarantees,
-            'loan_history' => $result['privacy'],
-            'messagingServices' => $messagingSettings,
-            'notes' => $result['opacnote'],
-            'full_data' => $result,
-        ];
+            address1: $result['address'],
+            address2: $result['address2'],
+            zip: $result['zipcode'],
+            city: $result['city'],
+            country: $result['country'],
+            expiration_date: $expirationDate,
+            messagingServices: $messagingSettings,
+            loan_history: $result['privacy'],
+            email: $result['email'],
+            nonDefaultFields: [
+                'category' => $result['categorycode'] ?? '',
+                'hold_identifier' => $result['othernames'],
+                'guarantor' => $guarantor,
+                'guarantees' => $guarantees,
+                'smsnumber' => $smsField ? $result[$smsField] : '',
+                'notes' => $result['opacnote'],
+                'full_data' => $result,
+            ]
+        );
     }
 
     /**
-     * Purge Patron Transaction History
+     * Purge Patron Transaction History.
      *
      * @param array  $patron The patron array from patronLogin
      * @param ?array $ids    IDs to purge, or null for all
@@ -419,7 +377,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update Patron Transaction History State
+     * Update Patron Transaction History State.
      *
      * Enable or disable patron's transaction history
      *
@@ -458,7 +416,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron's phone number
+     * Update patron's phone number.
      *
      * @param array  $patron Patron array
      * @param string $phone  Phone number
@@ -496,7 +454,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron's SMS alert number
+     * Update patron's SMS alert number.
      *
      * @param array  $patron Patron array
      * @param string $number SMS alert number
@@ -539,7 +497,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron's email address
+     * Update patron's email address.
      *
      * @param array  $patron Patron array
      * @param String $email  Email address
@@ -577,7 +535,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron contact information
+     * Update patron contact information.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of patron contact information
@@ -642,7 +600,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Update patron messaging settings
+     * Update patron messaging settings.
      *
      * @param array $patron  Patron array
      * @param array $details Associative array of messaging settings
@@ -731,10 +689,10 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
                     $amount += $fine['balance'];
                 }
             }
-            $config = $this->getConfig('onlinePayment');
+            $config = $this->getConfig('OnlinePayment');
             $nonPayableReason = false;
             if (isset($config['minimumFee']) && $amount < $config['minimumFee']) {
-                $nonPayableReason = 'online_payment_minimum_fee';
+                $nonPayableReason = 'Payment::minimum_payment';
             }
             $res = ['payable' => empty($nonPayableReason), 'amount' => $amount];
             if ($nonPayableReason) {
@@ -745,43 +703,47 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         return [
             'payable' => false,
             'amount' => 0,
-            'reason' => 'online_payment_minimum_fee',
+            'reason' => 'Payment::minimum_payment',
         ];
     }
 
     /**
-     * Mark fees as paid.
+     * Register a payment.
      *
      * This is called after a successful online payment.
      *
-     * @param array  $patron            Patron
-     * @param int    $amount            Amount to be registered as paid
-     * @param string $transactionId     Transaction ID
-     * @param int    $transactionNumber Internal transaction number
-     * @param ?array $fineIds           Fine IDs to mark paid or null for bulk
+     * @param array   $patron                  Patron
+     * @param int     $amount                  Amount to be registered as paid
+     * @param string  $localPaymentIdentifier  Local payment identifier
+     * @param ?string $remotePaymentIdentifier Remote payment identifier
+     * @param int     $paymentId               Internal payment id
+     * @param ?array  $fineIds                 Fine IDs to mark paid or null for bulk payment
      *
      * @throws ILSException
-     * @return true|string True on success, error description on error
+     * @return array Associative array with keys success (bool, always) and reason (string, on error)
+     *
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    public function markFeesAsPaid(
-        $patron,
-        $amount,
-        $transactionId,
-        $transactionNumber,
-        $fineIds = null
-    ) {
+    public function registerPayment(
+        array $patron,
+        int $amount,
+        string $localPaymentIdentifier,
+        ?string $remotePaymentIdentifier,
+        int $paymentId,
+        ?array $fineIds = null
+    ): array {
         $request = [
             'amount' => $amount / 100,
-            'note' => "Online transaction $transactionId",
+            'note' => "Online transaction $localPaymentIdentifier",
         ];
         $operator = $patron;
         if (
-            !empty($this->config['onlinePayment']['userId'])
-            && !empty($this->config['onlinePayment']['userPassword'])
+            !empty($this->config['OnlinePayment']['userId'])
+            && !empty($this->config['OnlinePayment']['userPassword'])
         ) {
             $operator = [
-                'cat_username' => $this->config['onlinePayment']['userId'],
-                'cat_password' => $this->config['onlinePayment']['userPassword'],
+                'cat_username' => $this->config['OnlinePayment']['userId'],
+                'cat_password' => $this->config['OnlinePayment']['userPassword'],
             ];
         }
 
@@ -801,11 +763,13 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         // Clear patron's block cache
         $cacheId = 'blocks|' . $patron['id'];
         $this->removeCachedData($cacheId);
-        return true;
+        return [
+            'success' => true,
+        ];
     }
 
     /**
-     * Get a password recovery data for a user
+     * Get a password recovery data for a user.
      *
      * @param array $params Required params such as cat_username and email
      *
@@ -933,7 +897,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
             return ['enabled' => true];
         }
         $functionConfig = parent::getConfig($function, $params);
-        if ($functionConfig && 'onlinePayment' === $function) {
+        if ($functionConfig && 'OnlinePayment' === $function) {
             if (!isset($functionConfig['exactBalanceRequired'])) {
                 $functionConfig['exactBalanceRequired'] = false;
             }
@@ -966,7 +930,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Pick Up Locations
+     * Get Pick Up Locations.
      *
      * This is responsible for gettting a list of valid library locations for
      * holds / recall retrieval
@@ -1139,7 +1103,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Return a location for a Koha item
+     * Return a location for a Koha item.
      *
      * @param array $item Item
      *
@@ -1168,7 +1132,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Return a call number for a Koha item
+     * Return a call number for a Koha item.
      *
      * @param array $item Item
      *
@@ -1213,7 +1177,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get Item Statuses
+     * Get Item Statuses.
      *
      * This is responsible for retrieving the status information of a certain
      * record.
@@ -1353,18 +1317,16 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
         }
 
         // Add holdings that don't have items
-        if (!empty($holdings)) {
-            foreach ($holdings as $holding) {
-                if ($holding['suppress'] || !empty($holding['_hasItems'])) {
-                    continue;
-                }
-                $holdingData = $this->getHoldingData($holding);
-                $i++;
-                $entry = $this->createHoldingEntry($id, $holding, $i);
-                $entry += $holdingData;
-
-                $statuses[] = $entry;
+        foreach ($holdings as $holding) {
+            if ($holding['suppress'] || !empty($holding['_hasItems'])) {
+                continue;
             }
+            $holdingData = $this->getHoldingData($holding);
+            $i++;
+            $entry = $this->createHoldingEntry($id, $holding, $i);
+            $entry += $holdingData;
+
+            $statuses[] = $entry;
         }
 
         // Add serial purchase information
@@ -1456,48 +1418,46 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
 
         // See if there are links in holdings
         $electronic = [];
-        if (!empty($holdings)) {
-            foreach ($holdings as $holding) {
-                $marc = $this->getHoldingMarc($holding);
-                if (null === $marc) {
-                    continue;
-                }
+        foreach ($holdings as $holding) {
+            $marc = $this->getHoldingMarc($holding);
+            if (null === $marc) {
+                continue;
+            }
 
-                $notes = [];
-                if ($fields = $marc->getFields('852')) {
-                    foreach ($fields as $field) {
-                        if ($subfield = $field->getSubfield('z')) {
-                            $notes[] = $subfield->getData();
-                        }
+            $notes = [];
+            if ($fields = $marc->getFields('852')) {
+                foreach ($fields as $field) {
+                    if ($subfield = $field->getSubfield('z')) {
+                        $notes[] = $subfield->getData();
                     }
                 }
-                if ($fields = $marc->getFields('856')) {
-                    foreach ($fields as $field) {
-                        if ($subfields = $field->getSubfields()) {
-                            $urls = [];
-                            $desc = [];
-                            $parts = [];
-                            foreach ($subfields as $code => $subfield) {
-                                if ('u' === $code) {
-                                    $urls[] = $subfield->getData();
-                                } elseif ('3' === $code) {
-                                    $parts[] = $subfield->getData();
-                                } elseif (in_array($code, ['y', 'z'])) {
-                                    $desc[] = $subfield->getData();
-                                }
+            }
+            if ($fields = $marc->getFields('856')) {
+                foreach ($fields as $field) {
+                    if ($subfields = $field->getSubfields()) {
+                        $urls = [];
+                        $desc = [];
+                        $parts = [];
+                        foreach ($subfields as $code => $subfield) {
+                            if ('u' === $code) {
+                                $urls[] = $subfield->getData();
+                            } elseif ('3' === $code) {
+                                $parts[] = $subfield->getData();
+                            } elseif (in_array($code, ['y', 'z'])) {
+                                $desc[] = $subfield->getData();
                             }
-                            foreach ($urls as $url) {
-                                ++$i;
-                                $entry
-                                    = $this->createHoldingEntry($id, $holding, $i);
-                                $entry['availability'] = true;
-                                $entry['location'] = implode('. ', $desc);
-                                $entry['locationhref'] = $url;
-                                $entry['use_unknown_message'] = false;
-                                $entry['status']
-                                    = implode('. ', array_merge($parts, $notes));
-                                $electronic[] = $entry;
-                            }
+                        }
+                        foreach ($urls as $url) {
+                            ++$i;
+                            $entry
+                                = $this->createHoldingEntry($id, $holding, $i);
+                            $entry['availability'] = true;
+                            $entry['location'] = implode('. ', $desc);
+                            $entry['locationhref'] = $url;
+                            $entry['use_unknown_message'] = false;
+                            $entry['status']
+                                = implode('. ', array_merge($parts, $notes));
+                            $electronic[] = $entry;
                         }
                     }
                 }
@@ -1513,7 +1473,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Create a holding entry
+     * Create a holding entry.
      *
      * @param string $id      Bib ID
      * @param array  $holding Holding
@@ -1583,7 +1543,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Create a serial entry
+     * Create a serial entry.
      *
      * @param array $subscription Subscription record
      * @param int   $sortKey      Sort key
@@ -1620,7 +1580,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Return a location for a Koha branch ID
+     * Return a location for a Koha branch ID.
      *
      * @param string $branchId Branch ID
      *
@@ -1638,7 +1598,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get a MARC record for the given holding or null if not available
+     * Get a MARC record for the given holding or null if not available.
      *
      * @param array $holding Holding
      *
@@ -1662,7 +1622,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get holding data from a holding record
+     * Get holding data from a holding record.
      *
      * @param array $holding Holding record from Koha
      *
@@ -1739,7 +1699,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Get specified fields from a MARC Record
+     * Get specified fields from a MARC Record.
      *
      * @param MarcReader   $record     Marc reader
      * @param array|string $fieldSpecs Array or colon-separated list of
@@ -1788,7 +1748,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Translate location name
+     * Translate location name.
      *
      * @param string $location Location code
      * @param string $default  Default value if translation is not available
@@ -1816,7 +1776,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Translate collection name
+     * Translate collection name.
      *
      * @param string $code        Collection code
      * @param string $description Collection description
@@ -1837,7 +1797,7 @@ class KohaRestSuomi extends KohaRestSuomiVuFind
     }
 
     /**
-     * Status item sort function
+     * Status item sort function.
      *
      * @param array $a First status record to compare
      * @param array $b Second status record to compare

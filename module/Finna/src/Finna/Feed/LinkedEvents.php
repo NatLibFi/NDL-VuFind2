@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Linked events service
+ * Linked events service.
  *
  * PHP version 8
  *
@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Feed;
@@ -39,18 +39,18 @@ use function is_array;
 use function strlen;
 
 /**
- * Linked events service
+ * Linked events service.
  *
  * @category VuFind
  * @package  Content
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class LinkedEvents implements
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     \VuFind\I18n\Translator\TranslatorAwareInterface
 {
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -58,49 +58,49 @@ class LinkedEvents implements
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
 
     /**
-     * Api url
+     * Api url.
      *
      * @var string
      */
     protected $apiUrl = '';
 
     /**
-     * Publisher ID
+     * Publisher ID.
      *
      * @var ?string
      */
     protected $publisherId = null;
 
     /**
-     * Language
+     * Language.
      *
      * @var string
      */
     protected $language = null;
 
     /**
-     * Date converter
+     * Date converter.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateConverter;
 
     /**
-     * Url helper
+     * Url helper.
      *
      * @var Url
      */
     protected $url;
 
     /**
-     * CleanHtml helper
+     * CleanHtml helper.
      *
      * @var CleanHtml
      */
     protected $cleanHtml;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
@@ -115,14 +115,14 @@ class LinkedEvents implements
 
     /**
      * Include super events in response?
-     * Legacy compatibility
+     * Legacy compatibility.
      *
      * @var bool
      */
     protected $includeSuperEvents;
 
     /**
-     * Default parameters used in search
+     * Default parameters used in search.
      *
      * @var array
      */
@@ -130,14 +130,14 @@ class LinkedEvents implements
 
     /**
      * How many related events (if available) are displayed on
-     * the events content page
+     * the events content page.
      *
      * @var int
      */
     protected $relatedEventsAmount = 5;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config  $config        OrganisationInfo config
      * @param \VuFind\Date\Converter $dateConverter Date converter
@@ -175,7 +175,7 @@ class LinkedEvents implements
     }
 
     /**
-     * Return events from the LinkedEvents API
+     * Return events from the LinkedEvents API.
      *
      * @param array $params array of parameters. Key 'query' has API query
      *                      parameters as value, key 'url' has full URL as value.
@@ -303,6 +303,7 @@ class LinkedEvents implements
                             $eventData['images'][0]['url'] ?? '',
                             $params
                         ),
+                        'photographer' => $eventData['images'][0]['photographer_name'] ?? '',
                     ],
                     'short_description' =>
                         $this->getField($eventData, 'short_description'),
@@ -356,7 +357,7 @@ class LinkedEvents implements
     }
 
     /**
-     * Return the value of the field in the configured language
+     * Return the value of the field in the configured language.
      *
      * @param array  $object object
      * @param string $field  field
@@ -406,7 +407,7 @@ class LinkedEvents implements
     }
 
     /**
-     * Format date
+     * Format date.
      *
      * @param string $date Date to format
      *
@@ -421,7 +422,7 @@ class LinkedEvents implements
     }
 
     /**
-     * Format time
+     * Format time.
      *
      * @param string $time Time to format
      *
@@ -436,7 +437,7 @@ class LinkedEvents implements
     }
 
     /**
-     * Proxify an image url for loading via the FeedContent controller
+     * Proxify an image url for loading via the FeedContent controller.
      *
      * @param string $url    Image URL
      * @param array  $params Array of parameters
@@ -465,7 +466,7 @@ class LinkedEvents implements
     }
 
     /**
-     * Get language
+     * Get language.
      *
      * @return string
      */

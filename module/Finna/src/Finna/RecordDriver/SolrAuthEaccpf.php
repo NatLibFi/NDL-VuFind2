@@ -3,7 +3,7 @@
 /**
  * Model for EAC-CPF records in Solr.
  *
- * PHP version 5
+ * PHP version 8
  *
  * Copyright (C) Villanova University 2010.
  * Copyright (C) The National Library of Finland 2012-2019.
@@ -26,7 +26,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -41,7 +41,7 @@ use function in_array;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 class SolrAuthEaccpf extends SolrAuthDefault
 {
@@ -51,7 +51,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     use Feature\FinnaXmlReaderTrait;
 
     /**
-     * Get authority title
+     * Get authority title.
      *
      * @return string
      */
@@ -60,7 +60,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $firstTitle = '';
         $record = $this->getXmlRecord();
         if (isset($record->cpfDescription->identity->nameEntry)) {
-            $languages = $this->mapLanguageCode($this->getLocale());
+            $languages = $this->mapLanguageCode($this->preferredLanguage);
             $name = $record->cpfDescription->identity->nameEntry;
             if (!isset($name->part)) {
                 return '';
@@ -107,7 +107,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Get dates from either date or dateRange elements
+     * Get dates from either date or dateRange elements.
      *
      * @param \SimpleXmlElement $dateElement date element
      *
@@ -146,7 +146,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Return description
+     * Return description.
      *
      * @return array|null
      */
@@ -162,7 +162,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     /**
      * Return birth date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return string
      */
@@ -179,7 +179,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     /**
      * Return death date.
      *
-     * @param boolean $force Return terminated date for corporations?
+     * @param bool $force Return terminated date for corporations?
      *
      * @return string
      */
@@ -194,7 +194,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Return exist date
+     * Return exist date.
      *
      * @param string $localType localType attribute
      *
@@ -214,7 +214,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Get related places
+     * Get related places.
      *
      * @return array
      */
@@ -225,7 +225,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
             return '';
         }
         $result = [];
-        $languages = $this->mapLanguageCode($this->getLocale());
+        $languages = $this->mapLanguageCode($this->preferredLanguage);
         foreach ($record->cpfDescription->description->places->place as $place) {
             $attr = $place->attributes();
             if ($attr->placeEntry && !$attr->lang || in_array((string)$attr->lang, $languages)) {
@@ -275,7 +275,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $result = [];
         $record = $this->getXmlRecord();
         if (isset($record->cpfDescription->description->occupations)) {
-            $languages = $this->mapLanguageCode($this->getLocale());
+            $languages = $this->mapLanguageCode($this->preferredLanguage);
             foreach ($record->cpfDescription->description->occupations as $occupations) {
                 if (!isset($occupations->occupation)) {
                     continue;
@@ -296,7 +296,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Return sources
+     * Return sources.
      *
      * @return array
      */
@@ -305,7 +305,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $result = [];
         $record = $this->getXmlRecord();
         if (isset($record->control->sources)) {
-            $languages = $this->mapLanguageCode($this->getLocale());
+            $languages = $this->mapLanguageCode($this->preferredLanguage);
             foreach ($record->control->sources->source as $source) {
                 if (isset($source->sourceEntry)) {
                     $title = '';
@@ -355,18 +355,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
     }
 
     /**
-     * Set preferred language for display strings.
-     *
-     * @param string $language Language
-     *
-     * @return void
-     */
-    public function setPreferredLanguage($language)
-    {
-    }
-
-    /**
-     * Format date
+     * Format date.
      *
      * @param string $date Date
      *

@@ -78,13 +78,13 @@ use function in_array;
 class Schematron
 {
     /**
-     * Class version
+     * Class version.
      */
     public const
         VERSION = '1.0.0';
 
     /**
-     * Namespace of supported schematron versions
+     * Namespace of supported schematron versions.
      */
     public const
         NS_DETECT = null,
@@ -92,7 +92,7 @@ class Schematron
         NS_1_5 = 'http://www.ascc.net/xml/schematron';
 
     /**
-     * Type of {@link self::validate()} return value
+     * Type of {@link self::validate()} return value.
      */
     public const
         RESULT_SIMPLE = 'simple',
@@ -100,7 +100,7 @@ class Schematron
         RESULT_EXCEPTION = 'exception';
 
     /**
-     * Standardized validation phase
+     * Standardized validation phase.
      *
      * @var string
      */
@@ -109,7 +109,7 @@ class Schematron
         PHASE_DEFAULT = '#DEFAULT';
 
     /**
-     * Type of include URIs for {@link self::setAllowedInclude()}
+     * Type of include URIs for {@link self::setAllowedInclude()}.
      *
      * @var int
      */
@@ -120,7 +120,7 @@ class Schematron
         INCLUDE_ALL = 0xFF;
 
     /**
-     * Default options
+     * Default options.
      *
      * @var int
      */
@@ -149,98 +149,98 @@ class Schematron
         ALLOW_EMPTY_RULE = 0x0040;
 
     /**
-     * XPath class used in this class
+     * XPath class used in this class.
      *
      * @var string
      */
     public static $xPathClass = 'Milo\SchematronXPath';
 
     /**
-     * Schema has been loaded
+     * Schema has been loaded.
      *
      * @var bool
      */
     protected $loaded = false;
 
     /**
-     * Options
+     * Options.
      *
      * @var int
      */
     protected $options = self::DEFAULT_OPTIONS;
 
     /**
-     * Schema namespace
+     * Schema namespace.
      *
      * @var string
      */
     protected $ns;
 
     /**
-     * Absolute path for <sch:include> relative paths
+     * Absolute path for <sch:include> relative paths.
      *
      * @var ?string
      */
     protected $directory;
 
     /**
-     * LibXML options which were used for schema loading
+     * LibXML options which were used for schema loading.
      *
      * @var int
      */
     protected $domOptions;
 
     /**
-     * Version from @schemaVersion in <sch:schema>
+     * Version from @schemaVersion in <sch:schema>.
      *
      * @var ?string
      */
     protected $version;
 
     /**
-     * Title from <sch:title> in <sch:schema>
+     * Title from <sch:title> in <sch:schema>.
      *
      * @var ?string
      */
     protected $title;
 
     /**
-     * Default validation phase
+     * Default validation phase.
      *
      * @var string
      */
     protected $defaultPhase = self::PHASE_ALL;
 
     /**
-     * Restrictions on <sch:include>; self::INCLUDE_* value/mask
+     * Restrictions on <sch:include>; self::INCLUDE_* value/mask.
      *
      * @var int|false|null
      */
     protected $allowedInclude = self::INCLUDE_RELATIVE_PATH;
 
     /**
-     * How deep can be <sch:include>
+     * How deep can be <sch:include>.
      *
      * @var int
      */
     protected $maxIncludeDepth = 10;
 
     /**
-     * XPath handler
+     * XPath handler.
      *
      * @var SchematronXPath
      */
     protected $xPath;
 
     /**
-     * Namespace mapping [prefix => URI] loaded from <sch:ns>
+     * Namespace mapping [prefix => URI] loaded from <sch:ns>.
      *
      * @var array
      */
     protected $namespaces = [];
 
     /**
-     * Patterns
+     * Patterns.
      *
      * @see self::findPatterns()
      *
@@ -249,7 +249,7 @@ class Schematron
     protected $patterns = [];
 
     /**
-     * Phases [id => value]
+     * Phases [id => value].
      *
      * @see self::findPhases()
      *
@@ -258,14 +258,14 @@ class Schematron
     protected $phases = [];
 
     /**
-     * List of opened external DOMDOCUMENT and Xpath (to support document() in xpath )
+     * List of opened external DOMDOCUMENT and Xpath (to support document() in xpath ).
      *
      * @var array
      */
     protected $externals = [];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $namespace Schema namespace (self::NS_*)
      *
@@ -470,7 +470,7 @@ class Schematron
     }
 
     /**
-     * Returns version loaded from @schemaVersion on <sch:schema>
+     * Returns version loaded from @schemaVersion on <sch:schema>.
      *
      * @return ?string
      */
@@ -480,7 +480,7 @@ class Schematron
     }
 
     /**
-     * Returns title loaded from <sch:title> in <sch:schema>
+     * Returns title loaded from <sch:title> in <sch:schema>.
      *
      * @return ?string
      */
@@ -490,7 +490,7 @@ class Schematron
     }
 
     /**
-     * Set processing options, {@link self::DEFAULT_OPTIONS}
+     * Set processing options, {@link self::DEFAULT_OPTIONS}.
      *
      * @param int $options Mask of options
      *
@@ -503,7 +503,7 @@ class Schematron
     }
 
     /**
-     * Returns processing options, {@link self::DEFAULT_OPTIONS}
+     * Returns processing options, {@link self::DEFAULT_OPTIONS}.
      *
      * @return int
      */
@@ -523,7 +523,7 @@ class Schematron
     }
 
     /**
-     * Set which URIa are allowed for <sch:include> (self::INCLUDE_*)
+     * Set which URIa are allowed for <sch:include> (self::INCLUDE_*).
      *
      * @param int $mask Mask of types
      *
@@ -536,7 +536,7 @@ class Schematron
     }
 
     /**
-     * Returns which URIa are allowed for <sch:include> (self::INCLUDE_*)
+     * Returns which URIa are allowed for <sch:include> (self::INCLUDE_*).
      *
      * @return int
      */
@@ -569,7 +569,7 @@ class Schematron
     }
 
     /**
-     * Sets include directory path for relative file paths in <sch:include>
+     * Sets include directory path for relative file paths in <sch:include>.
      *
      * @param string $dir Directory path
      *
@@ -588,7 +588,7 @@ class Schematron
     }
 
     /**
-     * Returns path to directory which is used for relative file paths from <sch:include>
+     * Returns path to directory which is used for relative file paths from <sch:include>.
      *
      * @return ?string
      */
@@ -788,7 +788,7 @@ class Schematron
     }
 
     /**
-     * Search for all <sch:pattern abstract="TRUE">
+     * Search for all <sch:pattern abstract="TRUE">.
      *
      * @param DOMDocument $schema Schema
      *

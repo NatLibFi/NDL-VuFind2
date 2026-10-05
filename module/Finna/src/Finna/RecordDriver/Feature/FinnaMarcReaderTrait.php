@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -48,7 +48,7 @@ use function is_array;
 trait FinnaMarcReaderTrait
 {
     /**
-     * Strip trailing spaces and punctuation characters from a string
+     * Strip trailing spaces and punctuation characters from a string.
      *
      * @param string|array $input                   String to strip
      * @param string       $additional              Additional punctuation characters
@@ -90,7 +90,7 @@ trait FinnaMarcReaderTrait
     }
 
     /**
-     * Get all subfields from a field
+     * Get all subfields from a field.
      *
      * @param array $field MARC field
      *

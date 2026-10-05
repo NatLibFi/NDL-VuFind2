@@ -5,7 +5,7 @@
  *
  * PHP version 8
  *
- * Copyright (C) The National Library of Finland 2022-2025.
+ * Copyright (C) The National Library of Finland 2022-2026.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2,
@@ -17,21 +17,28 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
 
+use Exception;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\Feature\ContainerFormatTrait;
 use Finna\RecordDriver\Feature\LrmiDriverTrait;
+use NatLibFi\FinnaCodeSets\FinnaCodeSets;
+use NatLibFi\FinnaCodeSets\Model\Organisation\OrganisationInterface;
+use NatLibFi\FinnaCodeSets\Source\NatLibFi\Finna\FinnaAdminApi;
+use NatLibFi\FinnaCodeSets\Source\OrganisationsSourceInterface;
+use VuFindXml\XmlDoc;
 
 use function in_array;
 
@@ -41,6 +48,7 @@ use function in_array;
  * @category VuFind
  * @package  RecordDrivers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
+ * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
@@ -55,6 +63,13 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     public const AIPA_TYPE_RESEARCH = 'aipa-research';
 
     /**
+     * Finna Code Sets library instance.
+     *
+     * @var ?FinnaCodeSets
+     */
+    protected ?FinnaCodeSets $codeSets = null;
+
+    /**
      * Encapsulated content type records.
      *
      * @var array
@@ -62,11 +77,29 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected array $encapsulatedContentTypeRecords;
 
     /**
-     * Array of excluded descriptions
+     * Array of excluded descriptions.
      *
      * @var array
      */
     protected $excludedDescriptions = [];
+
+    /**
+     * Attach Finna Code Sets library instance.
+     *
+     * @param FinnaCodeSets $codeSets Finna Code Sets library instance
+     *
+     * @return void
+     */
+    public function attachCodeSetsLibrary(FinnaCodeSets $codeSets): void
+    {
+        if (!($apiBaseUrl = $this->mainConfig['Finna']['finna_admin_api_base_url'] ?? null)) {
+            return;
+        }
+        // Configure and set FinnaAdmin source for organizations.
+        $codeSets->setClassConfig(FinnaAdminApi::class, ['apiBaseUrl' => $apiBaseUrl]);
+        $codeSets->setSourceClass(OrganisationsSourceInterface::class, FinnaAdminApi::class);
+        $this->codeSets = $codeSets;
+    }
 
     /**
      * Get an array of summary strings for the record.
@@ -92,39 +125,40 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = false)
+    public function getAllImages($includePdf = false)
     {
-        $cacheKey = __FUNCTION__ . "/$language" . ($includePdf ? '/1' : '/0');
+        $cacheKey = __FUNCTION__ . ($includePdf ? '/1' : '/0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
 
-        $xml = $this->getXmlRecord();
+        $xml = $this->getXmlReader();
         $uniqueId = $this->getUniqueID();
         $result = [];
         $images = ['image/png', 'image/jpeg'];
-        foreach ($xml->description as $desc) {
-            $attr = $desc->attributes();
-            $format = trim((string)($attr['format'] ?? ''));
+        foreach ($xml->all(path: 'description') as $desc) {
+            $format = $xml->attr($desc, 'format');
             if ($format && in_array($format, $images)) {
-                $url = (string)$desc;
+                $url = $xml->value($desc);
                 if ($this->isUrlLoadable($url, $uniqueId)) {
-                    $result[] = [
-                        'urls' => [
-                            'small' => $url,
-                            'medium' => $url,
-                            'large' => $url,
-                        ],
-                        'description' => '',
-                        'rights' => [],
-                        'downloadable' => false,
-                    ];
+                    if (!$this->maxAmountOfImages()) {
+                        $result[] = [
+                            'urls' => [
+                                'small' => $url,
+                                'medium' => $url,
+                                'large' => $url,
+                            ],
+                            'description' => '',
+                            'rights' => [],
+                            'downloadable' => false,
+                        ];
+                    }
+                    $this->imagesCount++;
                 }
             }
         }
@@ -181,11 +215,11 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getSubjectPlaces(bool $extended = false)
     {
-        return $this->getFieldData('coverage', true, 'place', 'spatial');
+        return $this->getFieldData('coverage', $extended, 'place', 'spatial');
     }
 
     /**
-     * Get extended subject places
+     * Get extended subject places.
      *
      * @return array
      */
@@ -241,22 +275,20 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         string $headingType = 'subject',
         ?string $requiredType = null
     ) {
-        $lang = $this->getLocale();
-        $lang = $lang === 'en-gb' ? 'en' : $lang;
-        $xml = $this->getXmlRecord();
+        $lang = $this->preferredLanguage;
+        $xml = $this->getXmlReader();
         $elements = [];
-        foreach ($xml->{$xmlElementName} as $xmlElement) {
+        foreach ($this->getElements($xmlElementName) as $xmlElement) {
             if ($requiredType) {
-                $type = $xmlElement->attributes()->{'type'} ?? null;
-                if (!$type || $requiredType !== (string)$type) {
+                if ($requiredType !== $xml->attr($xmlElement, 'type')) {
                     continue;
                 }
             }
-            $elementLang = $xmlElement->attributes()->{'lang'} ?? null;
-            if ($elementLang && $lang !== (string)$elementLang) {
+            $elementLang = $this->getLangAttr($xmlElement);
+            if ($elementLang && $lang !== $elementLang) {
                 continue;
             }
-            $element = (string)$xmlElement;
+            $element = $xml->value($xmlElement);
             if ($extended) {
                 $element = [
                     'heading' => [$element],
@@ -264,11 +296,11 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
                     'detail' => '',
                     'authType' => '',
                 ];
-                if ($source = $xmlElement->attributes()->{'source'} ?? '') {
-                    $element['source'] = (string)$source;
+                if ($source = $xml->attr($xmlElement, 'source')) {
+                    $element['source'] = $source;
                 }
-                if ($id = $xmlElement->attributes()->{'identifier'} ?? null) {
-                    $element['id'] = (string)$id;
+                if ($id = $xml->attr($xmlElement, 'identifier')) {
+                    $element['id'] = $id;
                     $element['ids'][] = $element['id'];
                 }
             }
@@ -280,25 +312,27 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
-        $xml = $this->getXmlRecord();
-        $rights = [];
-        if (!empty($xml->rights)) {
-            $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
-            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
-                $rights['link'] = $link;
-            }
-            return $rights;
+        if (!($elements = $this->getElements('rights'))) {
+            return false;
         }
-        return false;
+        $xml = $this->getXmlReader();
+        if (!($value = $xml->value(reset($elements)))) {
+            return false;
+        }
+        $rights = [
+            'copyright' => $this->getMappedRights($value),
+        ];
+        if ($link = $this->getRightsLink($rights['copyright'])) {
+            $rights['link'] = $link;
+        }
+        return $rights;
     }
 
     /**
@@ -318,17 +352,16 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getType(): string
     {
-        return (string)($this->getXmlRecord()->type ?? '');
+        $elements = $this->getElements('type');
+        return $elements ? $this->getXmlReader()->value(reset($elements)) : '';
     }
 
     /**
-     * Get topics
-     *
-     * @param string $type defaults to /onto/yso/
+     * Get topics.
      *
      * @return array
      */
-    public function getTopics(string $type = '/onto/yso/'): array
+    public function getTopics(): array
     {
         return $this->getAllSubjectHeadings();
     }
@@ -340,7 +373,8 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getProvenance(): string
     {
-        return (string)($this->getXmlRecord()->provenance ?? '');
+        $elements = $this->getElements('provenance');
+        return $elements ? $this->getXmlReader()->value(reset($elements)) : '';
     }
 
     /**
@@ -350,7 +384,42 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
      */
     public function getAdditionalInformation(): string
     {
-        return (string)($this->getXmlRecord()->additionalInformation ?? '');
+        return $this->getXmlReader()->firstValue(path: "{{$this->aipaNs}}additionalInformation") ?? '';
+    }
+
+    /**
+     * Return feedback organization.
+     *
+     * @return ?OrganisationInterface
+     */
+    public function getFeedbackOrganization(): ?OrganisationInterface
+    {
+        try {
+            if (
+                ($id = $this->getXmlReader()->firstValue(path: "{{$this->aipaNs}}feedbackOrganization"))
+                && ($organization = $this->codeSets?->getOrganisation($id))
+            ) {
+                return $organization;
+            }
+        } catch (Exception) {
+        }
+        return null;
+    }
+
+    /**
+     * Return feedback email.
+     *
+     * @return ?string
+     */
+    public function getFeedbackEmail(): ?string
+    {
+        if (
+            ($organization = $this->getFeedbackOrganization())
+            && ($feedbackEmail = $organization->getFeedbackEmail())
+        ) {
+            return $feedbackEmail;
+        }
+        return null;
     }
 
     /**
@@ -381,9 +450,9 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     protected function getEncapsulatedRecordElementTagName(): string
     {
         return match ($this->getType()) {
-            'aipa:education' => 'item', // For BC, to be removed later.
-            self::AIPA_TYPE_EDUCATION => 'item',
-            default => 'curatedRecords',
+            'aipa:education' => "{{$this->aipaNs}}item", // For BC, to be removed later.
+            self::AIPA_TYPE_EDUCATION => "{{$this->aipaNs}}item",
+            default => "{{$this->aipaNs}}curatedRecords",
         };
     }
 
@@ -404,32 +473,32 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
     }
 
     /**
-     * Return full record as a filtered SimpleXMLElement for public APIs.
+     * Return full record as a filtered XmlDoc for public APIs.
      *
-     * @return \SimpleXMLElement
+     * @return XmlDoc
      */
-    public function getFilteredXMLElement(): \SimpleXMLElement
+    public function getFilteredXMLElement(): XmlDoc
     {
         $record = parent::getFilteredXMLElement();
         $filterFields = ['abstract', 'description'];
-        foreach ($filterFields as $filterField) {
-            while ($record->{$filterField}) {
-                unset($record->{$filterField}[0]);
+        $record->filter(
+            function ($node, $path) use ($record, $filterFields) {
+                return in_array($record->localName($node), $filterFields);
             }
-        }
+        );
         return $this->filterEncapsulatedRecords($record);
     }
 
     /**
      * Return record driver instance for an encapsulated LRMI record.
      *
-     * @param \SimpleXMLElement $item AIPA item XML
+     * @param XmlDoc $item AIPA item XML
      *
      * @return AipaLrmi
      *
      * @see ContainerFormatTrait::getEncapsulatedRecordDriver()
      */
-    protected function getLrmiDriver(\SimpleXMLElement $item): AipaLrmi
+    protected function getLrmiDriver(XmlDoc $item): AipaLrmi
     {
         /* @var AipaLrmi $driver */
         $driver = $this->recordDriverManager->get('AipaLrmi');
@@ -439,39 +508,44 @@ class SolrAipa extends SolrQdc implements ContainerFormatInterface
         $data = [
             'id' => $this->getUniqueID()
                 . ContainerFormatInterface::ENCAPSULATED_RECORD_ID_SEPARATOR
-                . (string)$item->id,
-            'title' => (string)$item->title,
-            'fullrecord' => $item->asXML(),
-            'position' => (int)$item->position,
+                . $this->getItemId($item),
+            'title' => $item->firstValue(path: "{{$this->dcNs}}title"),
+            'fullrecord' => $item->toXML(),
+            // TODO: position does not seem to be read from correct place. Also the result seems to be unused. FIXME?
+            'position' => (int)$item->firstValue(path: "{{$this->aipaNs}}position"),
             'record_format' => 'lrmi',
             'datasource_str_mv' => $this->getDataSource(),
         ];
 
         // Facets
-        foreach ($item->educationalAudience as $audience) {
-            $data['educational_audience_str_mv'][]
-                = (string)$audience->educationalRole;
-        }
-        $data['educational_level_str_mv'] = array_map(
-            'strval',
-            (array)($item->learningResource->educationalLevel ?? [])
-        );
-        $data['educational_aim_str_mv'] = array_map(
-            'strval',
-            (array)($item->learningResource->teaches ?? [])
-        );
-        foreach ($item->learningResource->educationalAlignment ?? [] as $alignment) {
-            if ($subject = $alignment->educationalSubject ?? null) {
-                $data['educational_subject_str_mv'][] = (string)$subject;
-            }
-        }
-
-        foreach ($item->type as $type) {
-            $data['educational_material_type_str_mv'][] = (string)$type;
-        }
+        $data['educational_audience_str_mv']
+            = $item->allValues(path: "{{$this->lrmiNs}}educationalAudience/{{$this->lrmiNs}}educationalRole");
+        $data['educational_level_str_mv']
+            = $item->allValues(path: "{{$this->lrmiNs}}learningResource/{{$this->lrmiNs}}educationalLevel");
+        $data['educational_aim_str_mv']
+            = $item->allValues(path: "{{$this->lrmiNs}}learningResource/{{$this->lrmiNs}}teaches");
+        $data['educational_subject_str_mv']
+            = $item->allValues(
+                path: "{{$this->lrmiNs}}learningResource/{{$this->lrmiNs}}educationalAlignment"
+                . "/{{$this->lrmiNs}}educationalSubject"
+            );
+        $data['educational_material_type_str_mv'] = $item->allValues(path: "{{$this->dcNs}}type");
 
         $driver->setRawData($data);
 
         return $driver;
+    }
+
+    /**
+     * Get item identifier.
+     *
+     * @param XmlDoc $item Item
+     *
+     * @return string
+     */
+    protected function getItemId(XmlDoc $item): string
+    {
+        // The identifier should be in dc:identifier but could be in dc:id due to legacy/bad documentation:
+        return $item->firstValue(path: "{{$this->dcNs}}identifier") ?? $item->firstValue(path: "{{$this->dcNs}}id");
     }
 }

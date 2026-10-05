@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SFX Link Resolver Driver
+ * SFX Link Resolver Driver.
  *
  * PHP version 8
  *
@@ -18,33 +18,33 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Resolver_Drivers
  * @author   Graham Seaman <Graham.Seaman@rhul.ac.uk>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:link_resolver_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:link_resolver_drivers Wiki
  */
 
 namespace Finna\Resolver\Driver;
 
 /**
- * SFX Link Resolver Driver
+ * SFX Link Resolver Driver.
  *
  * @category VuFind
  * @package  Resolver_Drivers
  * @author   Graham Seaman <Graham.Seaman@rhul.ac.uk>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:link_resolver_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:link_resolver_drivers Wiki
  */
 class Sfx extends \VuFind\Resolver\Driver\Sfx
 {
     /**
-     * Parse Links
+     * Parse Links.
      *
      * Parses an XML file returned by a link resolver
      * and converts it to a standardised format for display
@@ -59,7 +59,7 @@ class Sfx extends \VuFind\Resolver\Driver\Sfx
         try {
             libxml_use_internal_errors(true);
             libxml_clear_errors();
-            $xml = new \SimpleXmlElement($xmlstr);
+            $xml = new \SimpleXMLElement($xmlstr);
             if ($errors = libxml_get_errors()) {
                 $fatal = false;
                 foreach ($errors as $error) {

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element Markdown extension
+ * Custom element Markdown extension.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  CommonMark
@@ -40,7 +40,7 @@ use League\CommonMark\Environment\EnvironmentBuilderInterface;
 use League\CommonMark\Extension\ExtensionInterface;
 
 /**
- * Custom element Markdown extension
+ * Custom element Markdown extension.
  *
  * The implementation uses a separate block parser for custom element closing tags
  * to enable regular Markdown processing for element contents.

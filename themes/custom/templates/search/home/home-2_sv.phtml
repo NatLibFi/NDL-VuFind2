@@ -5,35 +5,32 @@
 <div>
   <div class="info-col">
     <div class="infobox">
-    <h2>TODO Kokeile ulkomaisten tieteellisten aineistojen hakua</h2>
-    <p>TODO Tee sinua kiinnostava haku, ja valitse haun jälkeen ulkomaisten aineistojen välilehti.<p>
-    <p>TODO <small>Ulkomaiset aineistot sisältävät mm. vertaisarvioituja kokotekstejä sekä verkossa saatavilla olevia aineistoja.</small></p>
-    <p><a class="btn btn-primary" role="button" href="<?=$this->url('primo-search');?>?lookfor=Work%20intensification&amp;type=AllFields&amp;filter%5B%5D=tlevel%3A%22online_resources%22"><?=$this->icon('search') ?> Esimerkkihaku</a>
+    <h2>Testa sökningen för internationella vetenskapliga material</h2>
+    <p>Gör en sökning som intresserar dig och välj därefter fliken för internationellt material.<p>
+    <p><small>Det internationella materialet innehåller bl.a. referentgranskade fulltexter samt material som är tillgängligt på nätet.</small></p>
+    <p><a class="btn btn-primary" role="button" href="<?=$this->url('primo-search');?>?lookfor=Work%20intensification&amp;type=AllFields&amp;filter%5B%5D=tlevel%3A%22online_resources%22"><?=$this->icon('search') ?> Exempelsökning</a>
     </div>
   </div>
   <div class="info-col">
     <div class="infobox">
-      <h2>TODO Uusi lainat </h2>
-      <p><a class="btn btn-primary" role="button" href="<?=$this->url('myresearch-checkedout')?>" title="Kirjaudu sisään"><?=$this->icon('sign-in') ?> Kirjaudu sisään </a> kirjastokortilla tai Haka-tunnuksillasi.</p>
-      <p>Klikkaa uusi kaikki lainat -painiketta.</p>
-      <p>Kaikki uusittavissa olevat lainasi uusitaan.</p>
+      <h2>Nya lån</h2>
+      <p><a class="btn btn-primary" role="button" href="<?=$this->url('myresearch-checkedout')?>" title="Logga in"><?=$this->icon('sign-in') ?> Logga in </a> med bibliotekskort eller Haka-inloggning.</p>
+      <p>Klicka på knappen Förnya alla lån.</p>
+      <p>Alla lån som kan förnyas blir förnyade.</p>
     </div>
   </div>
 
   <div class="info-col">
     <div class="infobox">
-      <h2>TODO Luokan infobox tyylit voi määritellä variables.scss -tiedostossa</h2>
+      <h2>Dessa är exempel, lägg till en tom home-3.phtml till mappen custom/search/home om du inte använder filen.</h2>
       <ul>
-        <li>$home-middle-background = koko alueen taustaväri</li>
-        <li>$infobox-background = laatikon taustaväri</li>
-        <li>$infobox-border = laatikon reunat</li>
-        <li>$infobox-text-color = laatikon tekstin oletusväri</li>
-        <li>$infobox-box-shadow = laatikon varjostus</li>
+        <li>@home-middle-background = hela områdets bakgrundsfärg</li>
+        <li>@infobox-background = rutans bakgrundsfärg</li>
+        <li>@infobox-border = rutans ram</li>
+        <li>@infobox-text-color = textens standardfärg i rutan</li>
+        <li>@infobox-box-shadow = skugga för rutan</li>
       </ul>
     </div>
   </div>
 </div>
-<div class="clearfix"></div>
-<div><?= $this->feed('carousel-1'); ?></div>
-<div><?= $this->feed('carousel-small'); ?></div>
 <!-- END of: finna - search/home/home-2_sv.phtml -->

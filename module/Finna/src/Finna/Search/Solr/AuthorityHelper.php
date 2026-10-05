@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -53,7 +53,7 @@ class AuthorityHelper
     public const AUTHOR2_ID_FACET = 'author2_id_str_mv';
 
     /**
-     * Index field for author id-role combinations
+     * Index field for author id-role combinations.
      *
      * @var string
      */
@@ -103,42 +103,42 @@ class AuthorityHelper
     public const LINK_TYPE_SEARCH_SUBJECT = 'search-subject';
 
     /**
-     * Record loader
+     * Record loader.
      *
      * @var \VuFind\Record\Loader
      */
     protected $recordLoader;
 
     /**
-     * Search runner
+     * Search runner.
      *
      * @var \VuFind\Search\SearchRunner
      */
     protected $searchRunner;
 
     /**
-     * Translator
+     * Translator.
      *
      * @var \VuFind\Translator
      */
     protected $translator;
 
     /**
-     * Authority config
+     * Authority config.
      *
      * @var \VuFind\Config\Config|null
      */
     protected $authorityConfig;
 
     /**
-     * Authority search config
+     * Authority search config.
      *
      * @var \VuFind\Config\Config
      */
     protected $authoritySearchConfig;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Record\Loader              $recordLoader          Record loader
      * @param \VuFind\Search\SearchRunner        $searchRunner          Search runner
@@ -255,9 +255,10 @@ class AuthorityHelper
     /**
      * Format facet value (display text).
      *
-     * @param string  $value        Facet value
-     * @param boolean $extendedInfo Wheter to return an array with
-     * 'id', 'displayText' and 'role' fields.
+     * @param string $value        Facet value
+     * @param bool   $extendedInfo Wheter to return an array with
+     *                             'id', 'displayText' and 'role'
+     *                             fields.
      *
      * @return mixed string|array
      */
@@ -292,7 +293,7 @@ class AuthorityHelper
     }
 
     /**
-     * Return biblio records that are linked to an authority
+     * Return biblio records that are linked to an authority.
      *
      * @param string $id        Authority id(s)
      * @param string $field     Solr field to search by (author, topic)
@@ -309,7 +310,7 @@ class AuthorityHelper
         $results = $this->searchRunner->run(
             [],
             'Solr',
-            function ($runner, $params, $searchId) use ($onlyCount, $query) {
+            function ($runner, $params, $searchId) use ($onlyCount, $query): void {
                 $params->setLimit($onlyCount ? 0 : 100);
                 $params->setPage(1);
                 $params->addFilter($query);
@@ -322,7 +323,7 @@ class AuthorityHelper
     }
 
     /**
-     * Return identifiers for an authority record
+     * Return identifiers for an authority record.
      *
      * @param DefaultRecord $record Authority record
      *

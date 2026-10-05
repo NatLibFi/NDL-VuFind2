@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Cookie
@@ -133,7 +133,7 @@ class RecommendationMemory
      * Returns data about a recommendation followed by the user.
      *
      * @param Parameters $request Parameter object representing user request.
-     * @param boolean    $clear   Whether to clear the data cookie (optional,
+     * @param bool       $clear   Whether to clear the data cookie (optional,
      *                            defaults to true).
      *
      * @return array|null Recommendation data or null if there is none.

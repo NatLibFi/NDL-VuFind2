@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Database
@@ -30,17 +30,17 @@
 namespace Finna\Db\Service;
 
 use Finna\Db\Entity\FinnaPageViewStatsEntityInterface;
+use Finna\Db\Entity\FinnaRecordStatsLog;
 use Finna\Db\Entity\FinnaRecordStatsLogEntityInterface;
+use Finna\Db\Entity\FinnaRecordViewEntityInterface;
 use Finna\Db\Entity\FinnaRecordViewInstitutionViewEntityInterface;
 use Finna\Db\Entity\FinnaRecordViewRecordEntityInterface;
+use Finna\Db\Entity\FinnaRecordViewRecordFormat;
 use Finna\Db\Entity\FinnaRecordViewRecordFormatEntityInterface;
+use Finna\Db\Entity\FinnaRecordViewRecordRights;
 use Finna\Db\Entity\FinnaRecordViewRecordRightsEntityInterface;
 use Finna\Db\Entity\FinnaSessionStatsEntityInterface;
-use Finna\Db\Table\FinnaRecordViewInstView;
-use Laminas\Db\TableGateway\AbstractTableGateway;
 use VuFind\Db\Service\AbstractDbService;
-use VuFind\Db\Table\DbTableAwareInterface;
-use VuFind\Db\Table\DbTableAwareTrait;
 
 /**
  * Database service for Finna statistics.
@@ -52,71 +52,68 @@ use VuFind\Db\Table\DbTableAwareTrait;
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
 class FinnaStatisticsService extends AbstractDbService implements
-    DbTableAwareInterface,
     FinnaStatisticsServiceInterface
 {
-    use DbTableAwareTrait;
-
     /**
-     * Formats cache for detailed record views
+     * Formats cache for detailed record views.
      *
      * @var FinnaRecordViewRecordFormatEntityInterface[]
      */
     protected $formatCache = [];
 
     /**
-     * Usage rights cache for detailed record views
+     * Usage rights cache for detailed record views.
      *
      * @var FinnaRecordViewRecordRightsEntityInterface[]
      */
     protected $usageRightsCache = [];
 
     /**
-     * Cache for a view record
+     * Cache for a view record.
      *
      * @var ?FinnaRecordViewRecordEntityInterface
      */
     protected ?FinnaRecordViewRecordEntityInterface $cachedViewRecord = null;
 
     /**
-     * Cache for an institution+view
+     * Cache for an institution+view.
      *
      * @var ?FinnaRecordViewInstitutionViewEntityInterface
      */
     protected ?FinnaRecordViewInstitutionViewEntityInterface $cachedViewInstView = null;
 
     /**
-     * Create a new session stats entity
+     * Create a new session stats entity.
      *
      * @return FinnaSessionStatsEntityInterface
      */
     public function createSessionEntity(): FinnaSessionStatsEntityInterface
     {
-        return $this->getDbTable(\Finna\Db\Table\FinnaSessionStats::class)->createRow();
+        return $this->entityPluginManager->get(FinnaSessionStatsEntityInterface::class);
     }
 
     /**
-     * Create a new page view entity
+     * Create a new page view entity.
      *
      * @return FinnaPageViewStatsEntityInterface
      */
     public function createPageViewEntity(): FinnaPageViewStatsEntityInterface
     {
-        return $this->getDbTable(\Finna\Db\Table\FinnaPageViewStats::class)->createRow();
+        return $this->entityPluginManager->get(FinnaPageViewStatsEntityInterface::class);
     }
 
     /**
-     * Create a new record stats log entity
+     * Create a new record stats log entity.
      *
      * @return FinnaRecordStatsLogEntityInterface
      */
     public function createRecordStatsLogEntity(): FinnaRecordStatsLogEntityInterface
     {
-        return $this->getDbTable(\Finna\Db\Table\FinnaRecordStatsLog::class)->createRow();
+        return $this->entityPluginManager->get(FinnaRecordStatsLogEntityInterface::class);
     }
 
     /**
-     * Get a batch of log entries to process from finna_record_stats_log table
+     * Get a batch of log entries to process from finna_record_stats_log table.
      *
      * @param int $batchSize Number of records to retrieve
      *
@@ -124,16 +121,14 @@ class FinnaStatisticsService extends AbstractDbService implements
      */
     public function getRecordStatsLogEntriesToProcess(int $batchSize): array
     {
-        $callback = function ($select) use ($batchSize) {
-            $select->where->lessThan('date', date('Y-m-d'));
-            $select->limit($batchSize);
-        };
-        $table = $this->getDbTable(\Finna\Db\Table\FinnaRecordStatsLog::class);
-        return iterator_to_array($table->select($callback));
+        $dql = 'SELECT l FROM ' . FinnaRecordStatsLog::class . ' l WHERE l.date < :date';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameter('date', date('Y-m-d'));
+        return $query->getResult();
     }
 
     /**
-     * Delete a record stats log entry
+     * Delete a record stats log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $entry Log entry
      *
@@ -141,21 +136,11 @@ class FinnaStatisticsService extends AbstractDbService implements
      */
     public function deleteRecordStatsLogEntry(FinnaRecordStatsLogEntityInterface $entry): void
     {
-        $this->getDbTable(\Finna\Db\Table\FinnaRecordStatsLog::class)->delete(
-            [
-                'institution' => $entry->getInstitution(),
-                'view' => $entry->getView(),
-                'crawler' => $entry->getType()->value,
-                'date' => $entry->getDate()->format('Y-m-d'),
-                'backend' => $entry->getBackend(),
-                'source' => $entry->getSource(),
-                'record_id' => $entry->getRecordId(),
-            ]
-        );
+        $this->deleteEntity($entry);
     }
 
     /**
-     * Add a new session entry
+     * Add a new session entry.
      *
      * @param FinnaSessionStatsEntityInterface $session Session
      *
@@ -167,14 +152,14 @@ class FinnaStatisticsService extends AbstractDbService implements
             'institution' => $session->getInstitution(),
             'view' => $session->getView(),
             'crawler' => $session->getType()->value,
-            'date' => $session->getDate()->format('Y-m-d'),
+            'date' => $session->getDate(),
         ];
 
-        $this->processAdd($this->getDbTable(\Finna\Db\Table\FinnaSessionStats::class), $params);
+        $this->processAdd(FinnaSessionStatsEntityInterface::class, $params);
     }
 
     /**
-     * Add a page view
+     * Add a page view.
      *
      * @param FinnaPageViewStatsEntityInterface $pageView Page view
      *
@@ -186,16 +171,16 @@ class FinnaStatisticsService extends AbstractDbService implements
             'institution' => $pageView->getInstitution(),
             'view' => $pageView->getView(),
             'crawler' => $pageView->getType()->value,
-            'date' => $pageView->getDate()->format('Y-m-d'),
+            'date' => $pageView->getDate(),
             'controller' => $pageView->getController(),
             'action' => $pageView->getAction(),
         ];
 
-        $this->processAdd($this->getDbTable(\Finna\Db\Table\FinnaPageViewStats::class), $params);
+        $this->processAdd(FinnaPageViewStatsEntityInterface::class, $params);
     }
 
     /**
-     * Add a record view entry from a log entry
+     * Add a record view entry from a log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -206,15 +191,15 @@ class FinnaStatisticsService extends AbstractDbService implements
         $params = [
             'inst_view_id' => $this->getRecordViewInstViewByLogEntry($logEntry)->getId(),
             'crawler' => $logEntry->getType()->value,
-            'date' => $logEntry->getDate()->format('Y-m-d'),
+            'date' => $logEntry->getDate(),
             'record_id' => $this->getRecordViewRecordByLogEntry($logEntry)->getId(),
         ];
 
-        $this->processAdd($this->getDbTable(\Finna\Db\Table\FinnaRecordView::class), $params);
+        $this->processAdd(FinnaRecordViewEntityInterface::class, $params);
     }
 
     /**
-     * Add a record stats log entry (a detailed entry for processing later via addDetailedRecordView)
+     * Add a record stats log entry (a detailed entry for processing later via addDetailedRecordView).
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -226,7 +211,7 @@ class FinnaStatisticsService extends AbstractDbService implements
             'institution' => $logEntry->getInstitution(),
             'view' => $logEntry->getView(),
             'crawler' => $logEntry->getType()->value,
-            'date' => $logEntry->getDate()->format('Y-m-d'),
+            'date' => $logEntry->getDate(),
             'backend' => $logEntry->getBackend(),
             'source' => $logEntry->getSource(),
             'record_id' => $logEntry->getRecordId(),
@@ -236,11 +221,11 @@ class FinnaStatisticsService extends AbstractDbService implements
             'extra_metadata' => $logEntry->getExtraMetadata(),
         ];
 
-        $this->processAdd($this->getDbTable(\Finna\Db\Table\FinnaRecordStatsLog::class), $params);
+        $this->processAdd(FinnaRecordStatsLogEntityInterface::class, $params);
     }
 
     /**
-     * Add a detailed record view entry from a log entry
+     * Add a detailed record view entry from a log entry.
      *
      * Note: This is a relatively slow and complex function and should only be
      * executed from a batch processing utility
@@ -251,19 +236,18 @@ class FinnaStatisticsService extends AbstractDbService implements
      */
     public function addDetailedRecordView(FinnaRecordStatsLogEntityInterface $logEntry): void
     {
-        $record = $this->getRecordViewRecordByLogEntry($logEntry);
         $params = [
             'inst_view_id' => $this->getRecordViewInstViewByLogEntry($logEntry)->getId(),
             'crawler' => $logEntry->getType()->value,
-            'date' => $logEntry->getDate()->format('Y-m-d'),
-            'record_id' => $record->getId(),
+            'date' => $logEntry->getDate(),
+            'record_id' => $this->getRecordViewRecordByLogEntry($logEntry)->getId(),
         ];
 
-        $this->processAdd($this->getDbTable(\Finna\Db\Table\FinnaRecordView::class), $params);
+        $this->processAdd(FinnaRecordViewEntityInterface::class, $params);
     }
 
     /**
-     * Get a record view format entity by id
+     * Get a record view format entity by id.
      *
      * @param int $id Id
      *
@@ -271,11 +255,11 @@ class FinnaStatisticsService extends AbstractDbService implements
      */
     public function getRecordViewRecordFormatById(int $id): FinnaRecordViewRecordFormatEntityInterface
     {
-        return $this->getDbTable(\Finna\Db\Table\FinnaRecordViewRecordFormat::class)->select(compact('id'))->current();
+        return $this->getEntityById(FinnaRecordViewRecordFormat::class, $id);
     }
 
     /**
-     * Get a record view format entity by id
+     * Get a record view format entity by id.
      *
      * @param int $id Id
      *
@@ -283,11 +267,11 @@ class FinnaStatisticsService extends AbstractDbService implements
      */
     public function getRecordViewRecordUsageRightsById(int $id): FinnaRecordViewRecordRightsEntityInterface
     {
-        return $this->getDbTable(\Finna\Db\Table\FinnaRecordViewRecordRights::class)->select(compact('id'))->current();
+        return $this->getEntityById(FinnaRecordViewRecordRights::class, $id);
     }
 
     /**
-     * Get a record view record by log entry
+     * Get a record view record by log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -305,18 +289,18 @@ class FinnaStatisticsService extends AbstractDbService implements
             return $this->cachedViewRecord;
         }
 
-        $table = $this->getDbTable(\Finna\Db\Table\FinnaRecordViewRecord::class);
-        $record = $table->select(
-            [
-                'backend' => $logEntry->getBackend(),
-                'source' => $logEntry->getSource(),
-                'record_id' => $logEntry->getRecordId(),
-            ]
-        )->current();
-        if (!$record) {
-            $record = $table->createRow();
+        $dql = 'SELECT r FROM ' . FinnaRecordViewRecordEntityInterface::class . ' r'
+            . ' WHERE r.backend = :backend AND r.source = :source AND r.recordId = :recordId';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters([
+            'backend' => $logEntry->getBackend(),
+            'source' => $logEntry->getSource(),
+            'recordId' => $logEntry->getRecordId(),
+        ]);
+        if (!($entity = $query->getOneOrNullResult())) {
+            $entity = $this->entityPluginManager->get(FinnaRecordViewRecordEntityInterface::class);
         }
-        $record
+        $entity
             ->setBackend($logEntry->getBackend())
             ->setSource($logEntry->getSource())
             ->setRecordId($logEntry->getRecordId())
@@ -324,13 +308,13 @@ class FinnaStatisticsService extends AbstractDbService implements
             ->setUsageRights($this->getRecordViewRecordRightsFromString($logEntry->getUsageRights()))
             ->setOnline($logEntry->getOnline())
             ->setExtraMetadata($logEntry->getExtraMetadata());
-        $record->save();
-        $this->cachedViewRecord = $record;
-        return $record;
+        $this->persistEntity($entity);
+        $this->cachedViewRecord = $entity;
+        return $entity;
     }
 
     /**
-     * Get record view record format entity from string
+     * Get record view record format entity from string.
      *
      * @param string $format Format
      *
@@ -339,14 +323,22 @@ class FinnaStatisticsService extends AbstractDbService implements
     protected function getRecordViewRecordFormatFromString(string $format): FinnaRecordViewRecordFormatEntityInterface
     {
         if (!isset($this->formatCache[$format])) {
-            $this->formatCache[$format]
-                = $this->getDbTable(\Finna\Db\Table\FinnaRecordViewRecordFormat::class)->getByFormat($format);
+            $dql = 'SELECT f FROM ' . FinnaRecordViewRecordFormatEntityInterface::class . ' f'
+                . ' WHERE f.formats = :formats';
+            $query = $this->entityManager->createQuery($dql)
+                ->setParameter('formats', $format);
+            if (!($entity = $query->getOneOrNullResult())) {
+                $entity = $this->entityPluginManager->get(FinnaRecordViewRecordFormatEntityInterface::class);
+                $entity->setFormats($format);
+                $this->persistEntity($entity);
+            }
+            $this->formatCache[$format] = $entity;
         }
         return $this->formatCache[$format];
     }
 
     /**
-     * Get record view record rights entity from string
+     * Get record view record rights entity from string.
      *
      * @param string $rights Rights
      *
@@ -355,14 +347,22 @@ class FinnaStatisticsService extends AbstractDbService implements
     protected function getRecordViewRecordRightsFromString(string $rights): FinnaRecordViewRecordRightsEntityInterface
     {
         if (!isset($this->usageRightsCache[$rights])) {
-            $this->usageRightsCache[$rights]
-                = $this->getDbTable(\Finna\Db\Table\FinnaRecordViewRecordRights::class)->getByUsageRights($rights);
+            $dql = 'SELECT r FROM ' . FinnaRecordViewRecordRightsEntityInterface::class . ' r'
+                . ' WHERE r.rights = :rights';
+            $query = $this->entityManager->createQuery($dql)
+                ->setParameter('rights', $rights);
+            if (!($entity = $query->getOneOrNullResult())) {
+                $entity = $this->entityPluginManager->get(FinnaRecordViewRecordRightsEntityInterface::class);
+                $entity->setRights($rights);
+                $this->persistEntity($entity);
+            }
+            $this->usageRightsCache[$rights] = $entity;
         }
         return $this->usageRightsCache[$rights];
     }
 
     /**
-     * Get FinnaRecordViewInstitutionView for a log entry
+     * Get FinnaRecordViewInstitutionView for a log entry.
      *
      * @param FinnaRecordStatsLogEntityInterface $logEntry Log entry
      *
@@ -379,80 +379,47 @@ class FinnaStatisticsService extends AbstractDbService implements
             return $this->cachedViewInstView;
         }
 
-        $table = $this->getDbTable(FinnaRecordViewInstView::class);
-        $record = $table->select(
-            [
-                'institution' => $logEntry->getInstitution(),
-                'view' => $logEntry->getView(),
-            ]
-        )->current();
-        if (!$record) {
-            $record = $table->createRow();
-            $record->setInstitution($logEntry->getInstitution());
-            $record->setView($logEntry->getView());
-            $record->save();
+        $dql = 'SELECT iv FROM ' . FinnaRecordViewInstitutionViewEntityInterface::class . ' iv'
+            . ' WHERE iv.institution = :institution AND iv.view = :view';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters([
+            'institution' => $logEntry->getInstitution(),
+            'view' => $logEntry->getView(),
+        ]);
+        $entity = $query->getOneOrNullResult();
+        if (!$entity) {
+            $entity = $this->entityPluginManager->get(FinnaRecordViewInstitutionViewEntityInterface::class);
+            $entity->setInstitution($logEntry->getInstitution());
+            $entity->setView($logEntry->getView());
+            $this->persistEntity($entity);
         }
-        $this->cachedViewInstView = $record;
-        return $record;
-
-        return $this->cachedViewInstView;
+        $this->cachedViewInstView = $entity;
+        return $entity;
     }
 
     /**
-     * Add or update a statistics table entry
+     * Add or update a statistics table entry.
      *
-     * @param AbstractTableGateway $table  Table
-     * @param array                $params Row identification params
+     * @param string $entityClass Entity class
+     * @param array  $params      Columns
      *
      * @return void
      *
      * @throws \Exception
      */
-    protected function processAdd(AbstractTableGateway $table, array $params): void
+    protected function processAdd(string $entityClass, array $params): void
     {
-        $exception = null;
-        for ($try = 1; $try < 5; $try++) {
-            try {
-                // Try update first, insert then:
-                if (!$this->incrementCount($table, $params)) {
-                    try {
-                        $row = $table->createRow();
-                        $row->populate($params, false);
-                        $row->save();
-                    } catch (\RuntimeException $e) {
-                        // Did someone else just add the row? Try update again!
-                        $this->incrementCount($table, $params);
-                    }
-                }
-                break;
-            } catch (\Exception $e) {
-                $exception = $e;
-                usleep(1000);
-            }
-        }
-        if (null !== $exception) {
-            throw $exception;
-        }
-    }
+        // Use direct DBAL access to handle the addition. This allows us to do an 'UPSERT' and prevents any issues
+        // that could be caused by unique constraint violations that would close the entity manager:
+        $metadata = $this->entityManager->getClassMetadata($entityClass);
+        $table = $metadata->getTableName();
+        $placeholders = array_map(fn ($s) => ":$s", array_keys($params));
+        $sql = "INSERT INTO $table ("
+            . implode(',', array_keys($params))
+            . ') VALUES (' . implode(',', $placeholders) . ')'
+            . ' ON DUPLICATE KEY UPDATE count=count+1';
 
-    /**
-     * Increment count for an existing row
-     *
-     * @param AbstractTableGateway $table Table
-     * @param array                $where Fields for row identification
-     *
-     * @return bool Whether a row was updated
-     */
-    protected function incrementCount(
-        AbstractTableGateway $table,
-        array $where
-    ): bool {
-        $rowsAffected = $table->update(
-            [
-                'count' => new \Laminas\Db\Sql\Literal('count + 1'),
-            ],
-            $where
-        );
-        return 0 !== $rowsAffected;
+        $conn = $this->entityManager->getConnection();
+        $conn->executeQuery($sql, $params);
     }
 }

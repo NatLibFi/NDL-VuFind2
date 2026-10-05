@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\LocationService;
@@ -38,7 +38,7 @@ use function is_array;
  * @package  Content
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class LocationService
 {
@@ -100,11 +100,7 @@ class LocationService
         }
 
         if (is_array($url)) {
-            if (isset($url[$language])) {
-                $url = $url[$language];
-            } else {
-                $url = reset($url);
-            }
+            $url = $url[$language] ?? reset($url);
         }
 
         $callnum = $fields['callnumber'] ?? '';
@@ -140,7 +136,7 @@ class LocationService
     /**
      * Check if QR-code option is enabled.
      *
-     * @return boolean
+     * @return bool
      */
     public function useQrCode()
     {

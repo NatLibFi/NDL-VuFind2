@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Markdown Test Class
+ * Markdown Test Class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -43,7 +43,7 @@ use VuFind\View\Helper\Root\TransEsc;
 use VuFind\View\Helper\Root\Translate;
 
 /**
- * Markdown Test Class
+ * Markdown Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -94,7 +94,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $pluginManager = $this->createMock(PluginManager::class);
         $pluginManager
             ->method('get')
-            ->willReturnCallback(function ($name, $options) use ($elements) {
+            ->willReturnCallback(function ($name, ?array $options) use ($elements) {
                 return new $elements[$name]($options['__element'], $options);
             });
         $customElementHelper = new CustomElement($pluginManager);
@@ -122,7 +122,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $converted = $this->getHelper()->toHtml($markdown);
         $expected = "<h2>One</h2>\n<h3>Two</h3>\n<h4>Three</h4>\n<h5>Four</h5>\n"
             . "<h6>Five</h6>\n<h6>Six</h6>\n<p>####### Seven</p>\n";
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -135,7 +135,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $markdown = '<details><summary markdown="1">Summary</summary>Details</details>';
         $converted = $this->getHelper()->replaceDeprecatedTags($markdown);
         $expected = "<finna-panel>\n  <h3 slot=\"heading\">Summary</h3>\n\nDetails\n</finna-panel>\n";
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -148,7 +148,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $markdown = '<truncate><summary>Summary</summary>Truncate</truncate>';
         $converted = $this->getHelper()->replaceDeprecatedTags($markdown);
         $expected = "<finna-truncate>\n  <span slot=\"label\">Summary</span>\nTruncate\n</finna-truncate>\n";
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -161,7 +161,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $markdown = $this->getFinnaPanelMarkdown();
         $converted = $this->getHelper()->toHtml($markdown);
         $expected = $this->getExpectedFinnaPanel();
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -175,7 +175,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $converted = $this->getHelper()->toHtml($markdown);
         $expected = $this->getExpectedFinnaPanel();
         $expected = $this->getExpectedFinnaPanel("\n  \n$expected");
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -188,7 +188,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $markdown = $this->getFinnaTruncateMarkdown();
         $converted = $this->getHelper()->toHtml($markdown);
         $expected = $this->getExpectedFinnaTruncate();
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -203,7 +203,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $converted = $this->getHelper()->toHtml($markdown);
         $expected = $this->getExpectedFinnaPanel()
             . $this->getExpectedFinnaTruncate();
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
@@ -217,11 +217,11 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
         $converted = $this->getHelper()->toHtml($markdown);
         $expected = trim($this->getExpectedFinnaPanel(null, null)) . "\n"
             . "<p>Extra content</p>\n";
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
-     * Get test Markdown with finna-panel
+     * Get test Markdown with finna-panel.
      *
      * @param string $content Content
      *
@@ -239,7 +239,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get test Markdown with finna-truncate
+     * Get test Markdown with finna-truncate.
      *
      * @return string
      */
@@ -255,7 +255,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get expected result for finna-panel
+     * Get expected result for finna-panel.
      *
      * @param ?string $content Content
      * @param ?string $heading Heading
@@ -281,7 +281,7 @@ class MarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get expected result for finna-truncate
+     * Get expected result for finna-truncate.
      *
      * @return string
      */

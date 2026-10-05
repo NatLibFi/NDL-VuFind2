@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -27,7 +27,7 @@
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
@@ -46,7 +46,7 @@ use function is_array;
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
@@ -55,28 +55,28 @@ trait SolrCommonFinnaTrait
     use FinnaRecordTrait;
 
     /**
-     * Date Converter
+     * Date Converter.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateConverter = null;
 
     /**
-     * Video Handler
+     * Video Handler.
      *
-     * @var \Finna\Video\Video
+     * @var ?\Finna\Video\Video
      */
     protected $videoHandler = null;
 
     /**
-     * Locale settings
+     * Locale settings.
      *
-     * @var LocaleSettings
+     * @var ?LocaleSettings
      */
     protected $localeSettings = null;
 
     /**
-     * Attach date converter
+     * Attach date converter.
      *
      * @param \VuFind\Date\Converter $dateConverter Date Converter
      *
@@ -88,7 +88,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Attach video handler
+     * Attach video handler.
      *
      * @param \Finna\Video\Video $videoHandler Video Handler
      *
@@ -116,9 +116,9 @@ trait SolrCommonFinnaTrait
      * If validation is enabled and the stripped HTML is invalid,
      * all tags are stripped.
      *
-     * @param string  $html      HTML
-     * @param string  $allowTags Allowed tags
-     * @param boolean $validate  Validate output?
+     * @param string $html      HTML
+     * @param string $allowTags Allowed tags
+     * @param bool   $validate  Validate output?
      *
      * @return array
      */
@@ -161,15 +161,17 @@ trait SolrCommonFinnaTrait
      * Return URL to copyright information.
      *
      * @param string $copyright Copyright
-     * @param string $language  Language
      *
      * @return mixed URL or false if no URL for the given copyright
      */
-    public function getRightsLink($copyright, $language)
+    public function getRightsLink($copyright)
     {
         $copyright = mb_strtoupper($copyright, 'UTF-8');
-        if (isset($this->mainConfig['ImageRights'][$language][$copyright])) {
-            return $this->mainConfig['ImageRights'][$language][$copyright];
+        $languages = 'en' === $this->preferredLanguage ? ['en', 'en-gb'] : [$this->preferredLanguage];
+        foreach ($languages as $lang) {
+            if (isset($this->mainConfig['ImageRights'][$lang][$copyright])) {
+                return $this->mainConfig['ImageRights'][$lang][$copyright];
+            }
         }
         return false;
     }
@@ -186,13 +188,12 @@ trait SolrCommonFinnaTrait
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
         return [];
     }
@@ -237,7 +238,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Get sector
+     * Get sector.
      *
      * @return string
      */
@@ -247,7 +248,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Return local record IDs (only works with dedup records)
+     * Return local record IDs (only works with dedup records).
      *
      * @return array
      */
@@ -272,6 +273,71 @@ trait SolrCommonFinnaTrait
     }
 
     /**
+     * Get record creation date range from index in ISO 8601 format.
+     *
+     * @return string
+     */
+    public function getCreationDateRange(): string
+    {
+        $filteredRange = str_replace(['[', ']'], ['', ''], $this->fields['creation_daterange'] ?? '');
+        return implode('/', explode(' TO ', $filteredRange));
+    }
+
+    /**
+     * Get geographic subject headings.
+     *
+     * @return array
+     */
+    public function getGeographicSubjects(): array
+    {
+        return (array)($this->fields['geographic'] ?? []);
+    }
+
+    /**
+     * Get chronological subject headings.
+     *
+     * @return array
+     */
+    public function getEraSubjects(): array
+    {
+        return (array)($this->fields['era'] ?? []);
+    }
+
+    /**
+     * Get all titles in prioritized order.
+     *
+     * @return array
+     */
+    public function getAllTitles(): array
+    {
+        $titles = [];
+        if ($title = $this->fields['title'] ?? '') {
+            $titles[] = $title;
+        }
+        foreach ($this->getPrioritizedLanguages() as $language) {
+            if ('' !== ($title = $this->fields['title_' . $language . '_txt'] ?? '')) {
+                $titles[] = $title;
+            }
+        }
+        return array_values(array_unique([...$titles, ...$this->fields['title_alt'] ?? []]));
+    }
+
+    /**
+     * Get the title prioritized title field based on language.
+     *
+     * @return string
+     */
+    public function getPrioritizedTitleField(): string
+    {
+        foreach ($this->getPrioritizedLanguages() as $language) {
+            if ('' !== ($this->fields['title_' . $language . '_txt'] ?? '')) {
+                return 'title_' . $language . '_txt';
+            }
+        }
+        return 'title';
+    }
+
+    /**
      * Get the VuFind configuration.
      *
      * @return \VuFind\Config\Config
@@ -282,7 +348,7 @@ trait SolrCommonFinnaTrait
     }
 
     /**
-     * Returns the locale used by translator
+     * Returns the locale used by translator.
      *
      * @return string
      */
@@ -295,7 +361,7 @@ trait SolrCommonFinnaTrait
     /**
      * Get an array containing languages in a priority order.
      * First language is the translator locale, then languages from primary array,
-     * then sites fallback_languages and last default non-language code
+     * then sites fallback_languages and last default non-language code.
      *
      * @param array  $primary An array containing languages, which are to be checked after
      *                        translator locale.
@@ -309,9 +375,9 @@ trait SolrCommonFinnaTrait
         string $default = '',
     ): array {
         $languages = [
-            $this->getTranslatorLocale(),
+            $this->preferredLanguage,
             ...$primary,
-            ...$this->localeSettings->getFallbackLocales(),
+            ...$this->localeSettings?->getFallbackLocales() ?? [],
         ];
         $final = [];
         foreach ($languages as $lang) {

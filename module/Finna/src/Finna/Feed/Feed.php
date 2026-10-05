@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Feed service
+ * Feed service.
  *
  * PHP version 8
  *
@@ -17,15 +17,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Feed;
@@ -48,19 +48,19 @@ use function is_string;
 use function strlen;
 
 /**
- * Feed service
+ * Feed service.
  *
  * @category VuFind
  * @package  Content
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class Feed implements
     \VuFind\I18n\Translator\TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface
+    \Psr\Log\LoggerAwareInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
     use \VuFindHttp\HttpServiceAwareTrait;
@@ -88,42 +88,42 @@ class Feed implements
     protected $organisationInfoFeedConfig;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var CacheManager
      */
     protected $cacheManager;
 
     /**
-     * URL helper
+     * URL helper.
      *
      * @var Url
      */
     protected $urlHelper;
 
     /**
-     * Server URL helper
+     * Server URL helper.
      *
      * @var ServerUrl
      */
     protected $serverUrl;
 
     /**
-     * Image link helper
+     * Image link helper.
      *
      * @var ImageLink
      */
     protected $imageLinkHelper;
 
     /**
-     * Clean HTML helper
+     * Clean HTML helper.
      *
      * @var CleanHtml
      */
     protected $cleanHtml;
 
     /**
-     * Organisation info service
+     * Organisation info service.
      *
      * @var OrganisationInfo
      */
@@ -272,7 +272,7 @@ class Feed implements
     }
 
     /**
-     * Check for a local file and create a timestamped link if found
+     * Check for a local file and create a timestamped link if found.
      *
      * @param string $url url
      *
@@ -430,7 +430,7 @@ class Feed implements
     }
 
     /**
-     * Function to parse feed with config
+     * Function to parse feed with config.
      *
      * @param AbstractFeed $channel Feed channel
      * @param Config       $config  Feed config
@@ -665,8 +665,7 @@ class Feed implements
                 $cnt = 0;
                 foreach ($items as &$item) {
                     foreach ($xpathContent as $setting => $xpathElement) {
-                        $content = $xpath->query($xpathElement, $xpathItem)
-                            ->item($cnt++)->nodeValue;
+                        $content = $xpath->query($xpathElement, $xpathItem)->item($cnt++)?->nodeValue;
 
                         $content = $this->processItemContent(
                             $content ?: '',
@@ -699,7 +698,7 @@ class Feed implements
     }
 
     /**
-     * Set up custom extensions
+     * Set up custom extensions.
      *
      * @param ContainerInterface $container Service container
      *
@@ -717,7 +716,7 @@ class Feed implements
     }
 
     /**
-     * Process item content
+     * Process item content.
      *
      * @param string $content       Content as string
      * @param array  $searchReplace Search and replacement values
@@ -800,7 +799,7 @@ class Feed implements
     }
 
     /**
-     * Proxify an image url for loading via the FeedContent controller
+     * Proxify an image url for loading via the FeedContent controller.
      *
      * @param string $url    Image URL
      * @param string $feedId Feed identifier

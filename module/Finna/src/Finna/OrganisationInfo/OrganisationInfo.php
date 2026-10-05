@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OrganisationInfo;
@@ -51,10 +51,10 @@ use function is_array;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class OrganisationInfo implements
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     \VuFind\I18n\HasSorterInterface,
     \VuFind\I18n\Translator\TranslatorAwareInterface
 {
@@ -63,49 +63,49 @@ class OrganisationInfo implements
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Organisation info configuration
+     * Organisation info configuration.
      *
      * @var VuFind\Config\Config
      */
     protected $config = null;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var \VuFind\CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Language (use getLanguage())
+     * Language (use getLanguage()).
      *
      * @var string
      */
     protected $language = null;
 
     /**
-     * Results plugin manager
+     * Results plugin manager.
      *
      * @var PluginManager
      */
     protected $resultsManager;
 
     /**
-     * Hierarchical facet helper
+     * Hierarchical facet helper.
      *
      * @var HierarchicalFacetHelper
      */
     protected $facetHelper;
 
     /**
-     * Kirkanta provider
+     * Kirkanta provider.
      *
      * @var Kirkanta
      */
     protected $kirkanta;
 
     /**
-     * MuseotFi provider
+     * MuseotFi provider.
      *
      * @var MuseotFi
      */
@@ -138,7 +138,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Check if organisation info is enabled
+     * Check if organisation info is enabled.
      *
      * @return bool
      */
@@ -148,7 +148,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information.
      *
      * @param array  $sectors Sectors if known, empty array otherwise
      * @param string $id      Parent organisation ID
@@ -161,7 +161,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param array  $sectors        Sectors if known, empty array otherwise
      * @param string $id             Parent organisation ID
@@ -175,7 +175,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get location details
+     * Get location details.
      *
      * @param array   $sectors    Sectors if known, empty array otherwise
      * @param string  $id         Parent organisation ID
@@ -299,7 +299,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Convert building code to Kirjastohakemisto finna_id
+     * Convert building code to Kirjastohakemisto finna_id.
      *
      * @param string|array $building Building
      *
@@ -319,7 +319,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get facet data from a field
+     * Get facet data from a field.
      *
      * @param string $field  Field to return
      * @param string $prefix Optional facet prefix limiter
@@ -354,7 +354,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get the active language to use in a request
+     * Get the active language to use in a request.
      *
      * @return string
      */
@@ -373,7 +373,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Validate language
+     * Validate language.
      *
      * @param string $language     Language version
      * @param array  $allLanguages List of valid languages
@@ -395,7 +395,7 @@ class OrganisationInfo implements
     }
 
     /**
-     * Get organisation info provider based on sector information
+     * Get organisation info provider based on sector information.
      *
      * @param array  $sectors Sectors for the organisation
      * @param string $id      Parent organisation ID

@@ -1,0 +1,15 @@
+<?php
+  /**
+   * Addition template component, renders addition content from custom theme if template exists in user language 
+   *
+   * @param string       class         CSS class used with content (default is template name)
+   * @param string       template      Template to be rendered
+   * @param string       templatePath  Path to the template in custom theme
+   */
+  $template = $this->template ?? '';
+  $class = $this->class ?? $template;
+  $templatePath = 'content/Additions/'
+?>
+<?php if ($template = $this->content()->findTemplateForLng($templatePath . $template)): ?>
+  <div class="<?=$class?>"><?=$this->render($template)?></div>
+<?php endif; ?>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Reservation list service
+ * Reservation list service.
  *
  * PHP version 8
  *
@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  ReservationList
@@ -33,7 +33,6 @@ namespace Finna\ReservationList;
 
 use DateTime;
 use Exception;
-use Finna\Auth\ILSAuthenticator;
 use Finna\Db\Entity\FinnaResourceListEntityInterface;
 use Finna\Db\Service\FinnaResourceListResourceServiceInterface;
 use Finna\Db\Service\FinnaResourceListServiceInterface;
@@ -42,6 +41,7 @@ use Finna\ReservationList\Handler\PluginManager;
 use Laminas\Session\Container;
 use Laminas\Stdlib\Parameters;
 use TypeError;
+use VuFind\Auth\ILSAuthenticator;
 use VuFind\Cache\Manager;
 use VuFind\Db\Entity\ResourceEntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
@@ -61,7 +61,7 @@ use VuFind\RecordDriver\DefaultRecord;
 use VuFindHttp\HttpService;
 
 /**
- * Reservation list service
+ * Reservation list service.
  *
  * @category VuFind
  * @package  ReservationList
@@ -76,21 +76,21 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     use DbServiceAwareTrait;
 
     /**
-     * Type of resource list
+     * Type of resource list.
      *
      * @var string
      */
     public const RESOURCE_LIST_TYPE = 'reservationlist';
 
     /**
-     * Default connection handler used for list connections
+     * Default connection handler used for list connections.
      *
      * @var string
      */
     public const DEFAULT_CONNECTION_HANDLER = 'email';
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaResourceListServiceInterface         $resourceListService         Resource list database service
      * @param FinnaResourceListResourceServiceInterface $resourceListResourceService Resource and list relation
@@ -126,7 +126,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Create a new list object for the specified user
+     * Create a new list object for the specified user.
      *
      * @param ?UserEntityInterface $user    Logged in user (null if logged out)
      * @param array                $prefill Prefill the list with these values.
@@ -278,7 +278,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Set list ordered
+     * Set list ordered.
      *
      * @param UserEntityInterface              $user      User to check for rights to list
      * @param FinnaResourceListEntityInterface $list      List entity or id of the list
@@ -367,13 +367,13 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
         array $listValues
     ): FinnaResourceListEntityInterface {
         try {
-            $list->setTitle($listValues['title'])
-                ->setDescription($listValues['desc'])
-                ->setInstitution($listValues['institution'])
-                ->setListConfigIdentifier($listValues['listIdentifier'])
+            $list->setTitle($listValues['title'] ?? null)
+                ->setDescription($listValues['desc'] ?? null)
+                ->setInstitution($listValues['institution'] ?? null)
+                ->setListConfigIdentifier($listValues['listIdentifier'] ?? null)
                 ->setUser($user)
                 ->setListType(self::RESOURCE_LIST_TYPE)
-                ->setConnection($listValues['connection']);
+                ->setConnection($listValues['connection'] ?? null);
         } catch (TypeError $e) {
             throw new Exception('Missing values to populate list');
         }
@@ -422,7 +422,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get resource list as an array containing formatted dates to be displayed in templates
+     * Get resource list as an array containing formatted dates to be displayed in templates.
      *
      * @param int                  $listId List id
      * @param ?UserEntityInterface $user   User entity object
@@ -440,7 +440,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get resource lists identified as reservation list for user
+     * Get resource lists identified as reservation list for user.
      *
      * @param UserEntityInterface $user           Optional user ID or entity object (to limit results
      *                                            to a particular user).
@@ -491,7 +491,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get resources for list
+     * Get resources for list.
      *
      * @param FinnaResourceListEntityInterface $list List to get resources for
      * @param UserEntityInterface              $user User entity
@@ -570,7 +570,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get all available lists for given record
+     * Get all available lists for given record.
      *
      * @param DefaultRecord $driver Record to look for a matching list
      *
@@ -601,7 +601,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Get list configuration using configured method
+     * Get list configuration using configured method.
      *
      * @return array
      */
@@ -649,6 +649,9 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
      */
     public function checkUserRightsForList(HandlerInterface $list): bool
     {
+        if ($list->databaseAccountAllowed()) {
+            return true;
+        }
         if ($patron = $this->ilsAuthenticator->storedCatalogLogin()) {
             return $list->cardIsValid($patron['source']);
         }
@@ -656,7 +659,7 @@ class ReservationListService implements TranslatorAwareInterface, DbServiceAware
     }
 
     /**
-     * Check if single order form is set in the config file
+     * Check if single order form is set in the config file.
      *
      * @return bool
      */

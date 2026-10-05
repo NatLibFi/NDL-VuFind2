@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Turku Payment API Signature
+ * Turku Payment API Signature.
  *
  * PHP version 8
  *
@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OnlinePayment\Handler\Connector\TurkuPaymentAPI;
@@ -34,18 +34,18 @@ use Paytrail\SDK\Exception\HmacException;
 use function is_array;
 
 /**
- * Turku Payment API Signature
+ * Turku Payment API Signature.
  *
  * @category VuFind
  * @package  OnlinePayment
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class TurkuSignature
 {
     /**
-     * Calculate TurkuPayment hash
+     * Calculate TurkuPayment hash.
      *
      * @param array[] $params       HTTP headers in an associative array.
      * @param string  $body         HTTP request body,

@@ -1,17 +1,14 @@
 section.main.template-dir-search.template-name-results.browse {
-    &>.container.main-content {
+    > .container.main-content {
         padding-top: 20px;
-        margin-top: 0;
+        margin-top: 0px;
     }
 }
 
 // Alpha & list Browse
 
 section.template-dir-browse {
-    & .browse.list-group {
-        @include media-breakpoint-down(sm) {
-            margin-top: 20px;
-        }
+    .browse.list-group {
         a.list-group-item:hover {
             text-decoration: underline;
         }
@@ -21,59 +18,72 @@ section.template-dir-browse {
         &:last-child {
             margin-bottom: 25px;
         }
-        & a.list-group-item {
+        a.list-group-item {
             display: inline-block;
         }
-        & .widen {
+        .widen {
             width: 100%;
-            background: $gray-ultralight;
-            margin-bottom: 3px;
             max-width: 500px;
-            & a {
+            margin-bottom: 3px;
+            background: $gray-ultralight;
+            a {
                 background-color: $gray-ultralight;
             }
-            & a.list-group-item.active {
+            a.list-group-item.active {
                 background-color: $primary;
             }
         }
-        & .list-group-item.view-record {
+        .list-group-item.view-record {
             padding: 12px 15px;
         }
     }
-    & #list3 {
-        & a {
-            min-width: 45px;
-            text-align: center;
-            margin-bottom: 2px;
-        }
-        @include media-breakpoint-up(sm) {
-            width: 50%;
-            float: left;
-        }
-    }
-    & #list2 {
+    #list2 {
         margin-bottom: 20px;
     }
-    & #list4 {
-        @include media-breakpoint-up(sm) {
-            width: 50%;
-            float: right;
+    #list3 {
+        a {
+            min-width: 45px;
+            margin-bottom: 2px;
+            text-align: center;
         }
-        & a.list-group-item {
+    }
+    #list4 {
+        a.list-group-item {
             display: block;
             width: 100%;
             margin-bottom: 2px;
         }
     }
 }
+@include media-breakpoint-down(sm) {
+    section.template-dir-browse {
+        .browse.list-group {
+            margin-top: 20px;
+        }
+    }
+}
+@include media-breakpoint-up(sm) {
+    section.template-dir-browse {
+        .browse.list-group {
+            #list3 {
+                float: left;
+                width: 50%;
+            }
+            #list4 {
+                float: right;
+                width: 50%;
+            }
+        }
+    }
+}
 
 /* --- Browse --- */
 .browse.list-group .list-group-item {
-    word-wrap:break-word;
+    word-wrap: break-word;
     &.view-record {
-        border-top:0;
-        font-size:85%;
-        padding:2px 4px;
-        text-align:right;
+        padding: 2px 4px;
+        font-size: 85%;
+        text-align: right;
+        border-top: 0px;
     }
 }

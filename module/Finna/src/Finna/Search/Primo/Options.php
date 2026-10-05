@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Primo Central Search Options
+ * Primo Central Search Options.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Primo
@@ -30,8 +30,10 @@
 
 namespace Finna\Search\Primo;
 
+use VuFind\Config\ConfigManagerInterface;
+
 /**
- * Primo Search Options
+ * Primo Search Options.
  *
  * @category VuFind
  * @package  Search_Primo
@@ -45,20 +47,20 @@ class Options extends \VuFind\Search\Primo\Options
     use \Finna\Search\FinnaOptions;
 
     /**
-     * Date range visualization settings
+     * Date range visualization settings.
      *
      * @var string
      */
     protected $dateRangeVis;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param \VuFind\Config\PluginManager $configLoader Config loader
+     * @param ConfigManagerInterface $configManager Config manager
      */
-    public function __construct(\VuFind\Config\PluginManager $configLoader)
+    public function __construct(ConfigManagerInterface $configManager)
     {
-        parent::__construct($configLoader);
+        parent::__construct($configManager);
 
         // Load autocomplete preference:
         $this->configureAutocomplete($this->searchSettings);
@@ -68,7 +70,7 @@ class Options extends \VuFind\Search\Primo\Options
     }
 
     /**
-     * Get the field used for date range search
+     * Get the field used for date range search.
      *
      * @return string
      */
@@ -79,7 +81,7 @@ class Options extends \VuFind\Search\Primo\Options
     }
 
     /**
-     * Get the field used for date range visualization
+     * Get the field used for date range visualization.
      *
      * @return string
      */

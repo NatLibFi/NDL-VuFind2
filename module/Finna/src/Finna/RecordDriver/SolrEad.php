@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -27,7 +27,7 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -49,9 +49,9 @@ use function is_array;
  * @author   Luke O'Sullivan <l.osullivan@swansea.ac.uk>
  * @author   Lutz Biedinger <lutz.Biedinger@gmail.com>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
-class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
+class SolrEad extends SolrDefault implements \Psr\Log\LoggerAwareInterface
 {
     use Feature\SolrFinnaTrait {
         getSupportedCitationFormats as getSupportedCitationFormatsFinna;
@@ -67,7 +67,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     public const FILE_LEVELS = ['file'];
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param \VuFind\Config\Config $mainConfig     VuFind main configuration (omit
      * for built-in defaults)
@@ -99,14 +99,12 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $record = $this->getXmlRecord();
         $restrict = $record->userestrict->p ?? $record->accessrestrict->p ?? '';
@@ -116,7 +114,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
         $data = [];
         $data['copyright'] = $copyright
             = $this->getMappedRights($restrict);
-        if ($link = $this->getRightsLink($copyright, $language)) {
+        if ($link = $this->getRightsLink($copyright)) {
             $data['link'] = $link;
         }
         return $data;
@@ -134,22 +132,21 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
-        $cacheKey = __FUNCTION__ . "/$language/" . ($includePdf ? '1' : '0');
+        $cacheKey = __FUNCTION__ . ($includePdf ? '1' : '0');
         if (isset($this->cache[$cacheKey])) {
             return $this->cache[$cacheKey];
         }
 
         $result = [];
         // All images have same rights..
-        $rights = $this->getImageRights($language, true);
+        $rights = $this->getImageRights(true);
         foreach ($this->getXmlRecord()->xpath('did/daogrp') as $daogrp) {
             $urls = [];
             foreach ($daogrp->daoloc as $daoloc) {
@@ -187,18 +184,17 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
                     ?? $urls['small'];
             }
 
-            if (isset($daogrp->dapdesc->p) && $daogrp->dapdesc->p != 'Fotografi') {
-                $description = $daogrp->dapdesc->p;
-            } else {
-                $description = '';
+            $description = isset($daogrp->dapdesc->p) && $daogrp->dapdesc->p != 'Fotografi' ? $daogrp->dapdesc->p : '';
+            if (!$this->maxAmountOfImages()) {
+                $image = [
+                    'urls' => $urls,
+                    'description' => (string)$description,
+                    'rights' => $rights,
+                ];
+                $image['downloadable'] = $this->allowRecordImageDownload($image);
+                $result[] = $image;
             }
-            $image = [
-                'urls' => $urls,
-                'description' => (string)$description,
-                'rights' => $rights,
-            ];
-            $image['downloadable'] = $this->allowRecordImageDownload($image);
-            $result[] = $image;
+            $this->imagesCount++;
         }
 
         $this->cache[$cacheKey] = $result;
@@ -245,7 +241,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -261,8 +257,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     /**
      * Return image rights.
      *
-     * @param string $language       Language
-     * @param bool   $skipImageCheck Whether to check that images exist
+     * @param bool $skipImageCheck Whether to check that images exist
      *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0') (optional)
@@ -270,7 +265,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
      *   'link'        Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language, $skipImageCheck = false)
+    public function getImageRights($skipImageCheck = false)
     {
         if (!$skipImageCheck && !$this->getAllImages()) {
             return false;
@@ -278,24 +273,11 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
 
         $rights = [];
 
-        if ($type = $this->getAccessRestrictionsType($language)) {
+        if ($type = $this->getAccessRestrictionsType()) {
             $rights['copyright'] = $type['copyright'];
             if (isset($type['link'])) {
                 $rights['link'] = $type['link'];
             }
-        }
-
-        [$language] = explode('-', $language);
-        switch ($language) {
-            case 'fi':
-                $language = 'fin';
-                break;
-            case 'sv':
-                $language = 'swe';
-                break;
-            case 'en':
-                $language = 'eng';
-                break;
         }
 
         $desc = $this->getAccessRestrictions();
@@ -304,7 +286,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             // First try with the language code
             foreach ($desc as $p) {
                 $lang = (string)$p->attributes()->lang;
-                if ($lang == $language) {
+                if ($lang === $this->preferredLanguage) {
                     $description[] = (string)$p;
                 }
             }
@@ -322,7 +304,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get origination
+     * Get origination.
      *
      * @return string
      */
@@ -333,7 +315,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get all originations
+     * Get all originations.
      *
      * @return array
      */
@@ -348,7 +330,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get extended origination
+     * Get extended origination.
      *
      * @return array
      */
@@ -371,7 +353,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get origination Id
+     * Get origination Id.
      *
      * @return string
      */
@@ -416,7 +398,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get an array of external service URLs
+     * Get an array of external service URLs.
      *
      * @return array Array of urls with 'url' and 'desc' keys
      */
@@ -485,7 +467,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get unit ID (for reference)
+     * Get unit ID (for reference).
      *
      * @return string Unit ID
      */
@@ -514,6 +496,9 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
      */
     public function getURLs()
     {
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
+        }
         $urls = [];
         $url = '';
         $record = $this->getXmlRecord();
@@ -529,11 +514,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
 
             $desc = '';
             if ($node->daodesc) {
-                if ($node->daodesc->p) {
-                    $desc = (string)$node->daodesc->p;
-                } else {
-                    $desc = (string)$node->daodesc;
-                }
+                $desc = $node->daodesc->p ? (string)$node->daodesc->p : (string)$node->daodesc;
             } else {
                 if ($p = $node->xpath('parent::*/daodesc/p')) {
                     $desc = (string)$p[0];
@@ -541,10 +522,13 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
             }
             $desc = empty($desc) ? $url : $desc;
             if (!$this->urlBlocked($url, $desc)) {
-                $urls[] = [
-                    'url' => $url,
-                    'desc' => $desc,
-                ];
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = [
+                        'url' => $url,
+                        'desc' => $desc,
+                    ];
+                }
+                $this->urlsCount++;
             }
         }
 
@@ -556,18 +540,21 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
                 $matches
             );
             if ($match && !$this->urlBlocked($matches[2], $matches[1])) {
-                $urls[] = [
-                    'url' => $matches[2],
-                    'desc' => $matches[1],
-                ];
+                if (!$this->maxAmountOfURLs()) {
+                    $urls[] = [
+                        'url' => $matches[2],
+                        'desc' => $matches[1],
+                    ];
+                }
+                $this->urlsCount++;
             }
         }
-        $urls = $this->resolveUrlTypes($urls);
-        return $urls;
+        $this->cache[__FUNCTION__] = $this->resolveUrlTypes($urls);
+        return $this->cache[__FUNCTION__];
     }
 
     /**
-     * Get the value of whether or not this is a collection level record
+     * Get the value of whether or not this is a collection level record.
      *
      * NOTE: \VuFind\Hierarchy\TreeDataFormatter\AbstractBase::isCollection()
      * duplicates some of this logic.
@@ -587,7 +574,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Check if the record is a fonds or a collection by format
+     * Check if the record is a fonds or a collection by format.
      *
      * @return bool
      */
@@ -604,12 +591,12 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     /**
      * Check if record is digitized.
      *
-     * @return boolean True if the record is digitized
+     * @return bool True if the record is digitized
      */
     public function isDigitized()
     {
         $record = $this->getXmlRecord();
-        return $record->did->daogrp ? true : false;
+        return (bool)$record->did->daogrp;
     }
 
     /**
@@ -647,7 +634,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get parent archives
+     * Get parent archives.
      *
      * @return array
      */
@@ -668,7 +655,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get parent series
+     * Get parent series.
      *
      * @return array
      */
@@ -685,7 +672,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Get parent files
+     * Get parent files.
      *
      * @return array
      */
@@ -825,7 +812,44 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Replace placeholders in the URL with the values from the record
+     * Get related places.
+     *
+     * @param array $include Relator attributes to include
+     * @param array $exclude Relator attributes to exclude
+     *
+     * @return array
+     */
+    public function getRelatedPlacesExtended($include = [], $exclude = [])
+    {
+        // Relator attribute is currently not in use.
+        $record = $this->getXmlRecord();
+        $result = $resultDetail = [];
+        foreach ($record->controlaccess as $controlaccess) {
+            foreach ($controlaccess->geogname as $name) {
+                // Check both geogname and geogname/part
+                $parts = [];
+                if ($namestr = trim((string)$name)) {
+                    $parts[] = $namestr;
+                }
+                foreach ($name->part ?? [] as $place) {
+                    if ($p = trim((string)$place)) {
+                        $parts[] = $p;
+                    }
+                }
+                if ($parts) {
+                    $part = implode(', ', $parts);
+                    if (!in_array($part, $result)) {
+                        $resultDetail[] = ['data' => $part];
+                        $result[] = $part;
+                    }
+                }
+            }
+        }
+        return $resultDetail;
+    }
+
+    /**
+     * Replace placeholders in the URL with the values from the record.
      *
      * @param string $url URL
      *
@@ -853,7 +877,7 @@ class SolrEad extends SolrDefault implements \Laminas\Log\LoggerAwareInterface
     }
 
     /**
-     * Build a record array for hierarchy display
+     * Build a record array for hierarchy display.
      *
      * @param array $ids    Record IDs
      * @param array $titles Record titles

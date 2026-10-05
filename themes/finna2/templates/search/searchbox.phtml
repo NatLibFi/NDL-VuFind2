@@ -52,15 +52,21 @@
     $showFilters = $filterDetails && ($results || $options->getRetainFilterSetting());
 
     // Set up filters
+    $filterSettingsArray = [
+      'filterList' => $filterList,
+      'checkboxFilters' => $checkboxFilters,
+      'defaultSortApplied' => $defaultSortApplied,
+      'options' => $options,
+      'params' => $params,
+    ];
     $this->layout()->finnaFilters = $showFilters ? $this->context($this)->renderInContext(
         'search/filters.phtml',
-        [
-            'filterList' => $filterList,
-            'checkboxFilters' => $checkboxFilters,
-            'defaultSortApplied' => $defaultSortApplied,
-            'options' => $options,
-            'params' => $params,
-        ]
+        $filterSettingsArray,
+    ) : '';
+    $filterSettingsArray['dropdown'] = false;
+    $this->layout()->finnaMobileFilters = $showFilters ? $this->context($this)->renderInContext(
+        'search/filters.phtml',
+        $filterSettingsArray,
     ) : '';
 
     $searchTabs = $this->searchtabs()->getTabConfig($this->searchClassId, $this->lookfor, $this->searchIndex, $this->searchType, $hiddenFilters, $this->layout()->savedTabs);
@@ -134,13 +140,13 @@
         $searchboxAttributes['class'] .= ' suggestions:0';
       }
       if (!empty($acHandlers)) {
-        $searchboxAttributes['class'] .= ' handlers:' . implode('|', array_map(function ($h) { return $h['handler']; }, $acHandlers));
+        $searchboxAttributes['class'] .= ' handlers:' . implode('|', array_map(fn ($h) => $h['handler'], $acHandlers));
       }
       if ($phrase) {
         $searchboxAttributes['class'] .= " phrase:$phrase";
       }
       if (!empty($acFilters)) {
-        $searchboxAttributes['class'] .= ' filters:' . implode('||', array_map(function ($k, $v) { return $k . '|' . $v; }, array_keys($acFilters), $acFilters));
+        $searchboxAttributes['class'] .= ' filters:' . implode('||', array_map(fn ($k, $v) => $k . '|' . $v, array_keys($acFilters), $acFilters));
       }
     }
     if (!empty($keyboardLayouts)) {
@@ -150,16 +156,16 @@
 <div class="searchbox hidden-print">
   <div class="searchbox-flex <?=$mainPage ? 'searchbox-home' : '' ?> <?=$this->escapeHtmlAttr("searchbox-$module-$action")?>">
     <?php if ($module == 'record' || $module == 'collection'): ?>
-      <div class="record-back hidden-print">
-          <?php
-            $html = $this->icon('record-back');
-            $html .= '<span class="back-to-search-text hidden-xs hidden-sm hidden-md">' . $this->transEsc('Back to search results') . '</span>';
-            $previousSearch = $this->searchMemory()->getLastSearchLink($html);
-            if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
-          ?>
-            <div class="back-to-search"><?=$previousSearch?></div>
-          <?php endif; ?>
-      </div>
+      <?php
+        $html = $this->icon('record-back');
+        $html .= '<span class="back-to-search-text hidden-xs hidden-sm hidden-md">' . $this->transEsc('Back to search results') . '</span>';
+        $previousSearch = $this->searchMemory()->getLastSearchLink($html);
+        if ($previousSearch !== '' && $this->searchMemory()->getLastSearchClassId() === $this->searchClassId):
+      ?>
+        <div class="record-back hidden-print">
+          <div class="back-to-search"><?=$previousSearch?></div>
+        </div>
+      <?php endif; ?>
     <?php endif; ?>
     <div class="search">
       <div class="keyboard-box">
@@ -269,13 +275,6 @@
       ?>
     </form>
     </div>
-    <?php if (!$browse && !$mainPage && $advSearch): ?>
-      <?php
-        $advSearchQuery = $results ? ['sid' => $results->getSearchId()] : $hiddenFilters;
-        $advSearchLink = $this->url($advSearch, [], ['query' => $advSearchQuery]);
-      ?>
-      <a href="<?=$advSearchLink?>" class="btn btn-link btn-advanced hidden-xs"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
-    <?php endif; ?>
     <?php
       $searchTypes = ['search' => 'local', 'primo' => 'pci', 'eds' => 'eds', 'summon' => 'summon'];
       if (
@@ -292,6 +291,13 @@
           'class' => 'tooltip-button tooltip-search-' . $searchType, // for back-compatibility
         ])?>
       </div>
+    <?php endif; ?>
+    <?php if (!$browse && !$mainPage && $advSearch): ?>
+      <?php
+        $advSearchQuery = $results ? ['sid' => $results->getSearchId()] : $hiddenFilters;
+        $advSearchLink = $this->url($advSearch, [], ['query' => $advSearchQuery]);
+      ?>
+      <a href="<?=$advSearchLink?>" class="btn btn-link btn-advanced hidden-xs"><?=$this->icon('search-advanced', 'search-advanced-icon') ?><?=$this->transEsc('Advanced Search')?></a>
     <?php endif; ?>
     <?php if ($module != 'record' && $module != 'collection'): ?>
       <?php if ($browse || $mainPage || ($module === 'authority' && $action === 'search')): ?>

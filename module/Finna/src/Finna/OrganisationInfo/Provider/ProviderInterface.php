@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OrganisationInfo\Provider;
@@ -36,12 +36,12 @@ namespace Finna\OrganisationInfo\Provider;
  * @package  Content
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 interface ProviderInterface
 {
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information.
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -51,7 +51,7 @@ interface ProviderInterface
     public function lookup(string $language, string $id): array;
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -62,7 +62,7 @@ interface ProviderInterface
     public function getConsortiumInfo(string $language, string $id, array $locationFilter = []): array;
 
     /**
-     * Get location details
+     * Get location details.
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID

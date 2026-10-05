@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDataFormatter
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDataFormatter\Specs;
@@ -42,7 +42,7 @@ namespace Finna\RecordDataFormatter\Specs;
 class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
 {
     /**
-     * Order of record fields in record page
+     * Order of record fields in record page.
      *
      * @var array
      */
@@ -94,10 +94,9 @@ class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
         'Item History',
         'Inventory ID',
         'Other ID',
+        'Events',
         'Measurements',
         'Inscriptions',
-        'Other Classification',
-        'Events',
         'Unit ID',
         'Unit IDs',
         'Authors',
@@ -114,7 +113,7 @@ class CollectionRecord extends \Finna\RecordDataFormatter\Specs\DefaultRecord
         'Subject Date',
         'Subject Actor',
         'Subjects',
-        'SubjectsWithoutPlaces',
+        'SubjectDisplayTerms',
         'subjects_extended',
         'Methodology',
         'Publications',

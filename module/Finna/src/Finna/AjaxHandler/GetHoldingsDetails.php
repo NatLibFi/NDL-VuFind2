@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AJAX handler for fetching holdings details
+ * AJAX handler for fetching holdings details.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -41,7 +41,7 @@ use VuFind\Session\Settings as SessionSettings;
 use function in_array;
 
 /**
- * AJAX handler for fetching holdings details
+ * AJAX handler for fetching holdings details.
  *
  * @category VuFind
  * @package  AJAX
@@ -52,7 +52,7 @@ use function in_array;
 class GetHoldingsDetails extends \VuFind\AjaxHandler\AbstractIlsAndUserAction
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings      $ss               Session settings
      * @param Connection           $ils              ILS connection

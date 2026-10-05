@@ -50,14 +50,14 @@ class Form extends \Finna\Form\Form
     public const RESERVATION_LIST_REQUEST = 'ReservationListRequest';
 
     /**
-     * Recipients for reservation lists
+     * Recipients for reservation lists.
      *
      * @var array
      */
     protected array $recipients = [];
 
     /**
-     * Set recipients
+     * Set recipients.
      *
      * @param array $recipients Array containing recipients [name, email]
      *
@@ -69,7 +69,7 @@ class Form extends \Finna\Form\Form
     }
 
     /**
-     * Return form recipient. Name is in singular to override inherited methods
+     * Return form recipient. Name is in singular to override inherited methods.
      *
      * @param array $postParams Posted form data
      *
@@ -81,7 +81,7 @@ class Form extends \Finna\Form\Form
     }
 
     /**
-     * Get form elements
+     * Get form elements.
      *
      * @param array $config Form configuration
      *

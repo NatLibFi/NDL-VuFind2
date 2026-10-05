@@ -1,7 +1,7 @@
 <?php
 
 /**
- * DOI view helper (for legacy back-compatibility)
+ * DOI view helper (for legacy back-compatibility).
  *
  * PHP version 8
  *
@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -32,7 +32,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * DOI view helper (for legacy back-compatibility)
+ * DOI view helper (for legacy back-compatibility).
  *
  * @category VuFind
  * @package  View_Helpers
@@ -44,28 +44,28 @@ namespace Finna\View\Helper\Root;
 class Doi extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Current RecordDriver
+     * Current RecordDriver.
      *
      * @var \VuFind\RecordDriver
      */
     protected $recordDriver;
 
     /**
-     * Context ('results', 'record' or 'holdings')
+     * Context ('results', 'record' or 'holdings').
      *
      * @var string
      */
     protected $context;
 
     /**
-     * Rendered template
+     * Rendered template.
      *
      * @var ?string
      */
     protected $renderedTemplate = null;
 
     /**
-     * Set up context for helper
+     * Set up context for helper.
      *
      * @param \VuFind\RecordDriver $driver  The current record driver
      * @param string               $context DOI context ('results', 'record'
@@ -82,7 +82,7 @@ class Doi extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Public method to render the template
+     * Public method to render the template.
      *
      * @return string
      */
@@ -96,7 +96,7 @@ class Doi extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Public method to check whether the linker is active for current record
+     * Public method to check whether the linker is active for current record.
      *
      * @return bool
      */

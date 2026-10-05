@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Custom element view helper
+ * Custom element view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -35,7 +35,7 @@ use Laminas\ServiceManager\Exception\ServiceNotFoundException;
 use Laminas\View\Helper\AbstractHelper;
 
 /**
- * Custom element view helper
+ * Custom element view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -46,14 +46,14 @@ use Laminas\View\Helper\AbstractHelper;
 class CustomElement extends AbstractHelper implements CustomElementRendererInterface
 {
     /**
-     * Custom element plugin manager
+     * Custom element plugin manager.
      *
      * @var CustomElementManager
      */
     protected $pluginManager;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param CustomElementManager $pm Custom element plugin manager
      */

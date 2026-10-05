@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Content page view helper
+ * Content page view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -30,7 +30,7 @@
 namespace Finna\View\Helper\Root;
 
 /**
- * Content page view helper
+ * Content page view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -41,7 +41,7 @@ namespace Finna\View\Helper\Root;
 class Content extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Page heading
+     * Page heading.
      *
      * @var string
      */
@@ -80,11 +80,11 @@ class Content extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Try to find the best template for the current language
+     * Try to find the best template for the current language.
      *
      * @param string $templateName Template name without .phtml suffix
      *
-     * @return string|boolean Template name or false if not available
+     * @return string|bool Template name or false if not available
      */
     public function findTemplateForLng($templateName)
     {

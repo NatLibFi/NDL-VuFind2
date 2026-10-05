@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Db_Interface
@@ -38,10 +38,10 @@ namespace Finna\Db\Entity;
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org Main Site
  */
-interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInterface
+interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsEntityInterface
 {
     /**
-     * Backend setter
+     * Backend setter.
      *
      * @param string $backend Backend
      *
@@ -50,14 +50,14 @@ interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInte
     public function setBackend(string $backend): static;
 
     /**
-     * Backend getter
+     * Backend getter.
      *
      * @return string
      */
     public function getBackend(): string;
 
     /**
-     * Source setter
+     * Source setter.
      *
      * @param string $source Source
      *
@@ -66,14 +66,14 @@ interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInte
     public function setSource(string $source): static;
 
     /**
-     * Source getter
+     * Source getter.
      *
      * @return string
      */
     public function getSource(): string;
 
     /**
-     * Record Id setter
+     * Record Id setter.
      *
      * @param string $recordId Record Id
      *
@@ -82,14 +82,14 @@ interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInte
     public function setRecordId(string $recordId): static;
 
     /**
-     * Record Id getter
+     * Record Id getter.
      *
      * @return string
      */
     public function getRecordId(): string;
 
     /**
-     * Formats setter
+     * Formats setter.
      *
      * @param string $formats Formats
      *
@@ -98,14 +98,14 @@ interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInte
     public function setFormats(string $formats): static;
 
     /**
-     * Formats getter
+     * Formats getter.
      *
      * @return string
      */
     public function getFormats(): string;
 
     /**
-     * Usage rights setter
+     * Usage rights setter.
      *
      * @param string $usageRights Usage rights
      *
@@ -114,14 +114,14 @@ interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInte
     public function setUsageRights(string $usageRights): static;
 
     /**
-     * Usage rights getter
+     * Usage rights getter.
      *
      * @return string
      */
     public function getUsageRights(): string;
 
     /**
-     * Online setter
+     * Online setter.
      *
      * @param bool $online Online
      *
@@ -130,14 +130,14 @@ interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInte
     public function setOnline(bool $online): static;
 
     /**
-     * Online getter
+     * Online getter.
      *
      * @return bool
      */
     public function getOnline(): bool;
 
     /**
-     * Extra metadata setter
+     * Extra metadata setter.
      *
      * @param ?string $extraMetadata Extra metadata
      *
@@ -146,7 +146,7 @@ interface FinnaRecordStatsLogEntityInterface extends FinnaBaseStatsLogEntityInte
     public function setExtraMetadata(?string $extraMetadata): static;
 
     /**
-     * Extra metadata getter
+     * Extra metadata getter.
      *
      * @return ?string
      */

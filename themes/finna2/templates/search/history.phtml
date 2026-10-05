@@ -49,9 +49,14 @@
     <?php if ($saveSupported): ?>
       <div id="useraccount-content-heading" class="useraccount-header" tabindex="0">
         <h2><?=$this->transEsc('history_saved_searches')?></h2>
+        <?php if (!$this->translationEmpty('tooltip_myaccount_search_history_saved_html')): ?>
+          <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?=$this->transEsc('tooltip_myaccount_search_history_saved_html')?>"><?=$this->icon('help')?></button>
+        <?php endif; ?>
       </div>
+      <?=$this->component('finna-addition-template', ['template' => 'search-history-saved-pre-list'])?>
       <?php if (!empty($this->saved)): ?>
         <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => true]);?>
+        <?=$this->component('finna-addition-template', ['template' => 'search-history-saved-post-list'])?>
       <?php else: ?>
         <?=
           $loggedInUser
@@ -63,11 +68,16 @@
 
     <div class="useraccount-header" tabindex="0">
       <h2><?=$this->transEsc('history_recent_searches')?></h2>
+      <?php if (!$this->translationEmpty('tooltip_myaccount_search_history_recent_html')): ?>
+        <button class="tooltip-myaccount" aria-label="<?=$this->transEsc('Tips')?>" data-bs-toggle="tooltip" data-bs-placement="bottom" data-html="true" data-original-title="<?=$this->transEsc('tooltip_myaccount_search_history_recent_html')?>"><?=$this->icon('help')?></button>
+      <?php endif; ?>
     </div>
+    <?=$this->component('finna-addition-template', ['class' => 'search-history-recent-pre-list', 'template' => 'search-history-recent-pre-list'])?>
     <?php if (!empty($this->unsaved)): ?>
       <?=$this->context()->renderInContext('search/history-table.phtml', ['showSaved' => false]);?>
       <p class="text-right"><a href="?purge=true"><?=$this->icon('remove') ?> <?=$this->transEsc('history_purge')?></a></p>
       <br>
+      <?=$this->component('finna-addition-template', ['class' => 'search-history-recent-post-list', 'template' => 'search-history-recent-post-list'])?>
     <?php else: ?>
       <h4><?=$this->transEsc('history_no_searches')?></h4>
       <br>

@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -34,6 +34,8 @@ use Finna\AjaxHandler\GetCheckoutHistoryFactory;
 use VuFind\Auth\ILSAuthenticator;
 use VuFind\Auth\Manager;
 use VuFind\Config\Config;
+use VuFind\Config\ConfigManager;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\ILS\Connection;
 
@@ -62,128 +64,124 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     ): GetCheckoutHistory {
         // Set up auth manager with user:
         $this->container->set(Manager::class, $this->getMockAuthManager($user));
-        $mockConfigManager = $this->container->createMock(\VuFind\Config\PluginManager::class, ['get']);
-        $mockConfigManager->expects($this->once())->method('get')->with('config')->willReturn($testConfig);
-        $this->container->set(\VuFind\Config\PluginManager::class, $mockConfigManager);
+        $mockConfigManager = $this->container->createMock(ConfigManager::class, ['getConfigObject']);
+        $mockConfigManager->expects($this->once())->method('getConfigObject')->with('config')->willReturn($testConfig);
+        $this->container->set(ConfigManagerInterface::class, $mockConfigManager);
         // Build the handler:
         $factory = new GetCheckoutHistoryFactory();
         return $factory($this->container, GetCheckoutHistory::class);
     }
 
     /**
-     * Data provider for testSuccess
+     * Data provider for testSuccess.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getSuccessfulData(): array
+    public static function getSuccessfulData(): \Iterator
     {
-        return [
-            'batch limit is higher' => [
-                50,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['parts' => 10],
+        yield 'batch limit is higher' => [
+            50,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
-            'batch limit is same' => [
-                50,
-                50,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['parts' => 200],
+            ['parts' => 10],
+        ];
+        yield 'batch limit is same' => [
+            50,
+            50,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
-            'batch limit is lower' => [
-                50,
-                10,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['parts' => 200],
+            ['parts' => 200],
+        ];
+        yield 'batch limit is lower' => [
+            50,
+            10,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
-            'results lower than batch limit' => [
-                50,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [[]],
-                    'count' => 21,
-                ],
-                ['parts' => 1],
+            ['parts' => 200],
+        ];
+        yield 'results lower than batch limit' => [
+            50,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [[]],
+                'count' => 21,
             ],
-            'no history' => [
-                50,
-                10,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 0,
-                ],
-                ['parts' => 0],
+            ['parts' => 1],
+        ];
+        yield 'no history' => [
+            50,
+            10,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 0,
             ],
-            'different default than usual' => [
-                15,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 10000,
-                ],
-                ['parts' => 10],
+            ['parts' => 0],
+        ];
+        yield 'different default than usual' => [
+            15,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 10000,
             ],
-            'test with very small limits' => [
-                3,
-                2,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 7,
-                ],
-                ['parts' => 3],
+            ['parts' => 10],
+        ];
+        yield 'test with very small limits' => [
+            3,
+            2,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 7,
             ],
-            'test with nothing set as limits' => [
-                0,
-                1000,
-                [
-                    'success' => true,
-                    'transactions' => [],
-                    'count' => 10000,
-                ],
-                ['parts' => 10],
+            ['parts' => 3],
+        ];
+        yield 'test with nothing set as limits' => [
+            0,
+            1000,
+            [
+                'success' => true,
+                'transactions' => [],
+                'count' => 10000,
             ],
+            ['parts' => 10],
         ];
     }
 
     /**
-     * Data provider for testSuccess
+     * Data provider for testSuccess.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getFailuresData(): array
+    public static function getFailuresData(): \Iterator
     {
-        return [
-            'failure from getMyTransactions' => [
-                50,
-                1000,
-                [
-                    'success' => false,
-                    'transactions' => [[]],
-                    'count' => 10000,
-                ],
-                ['An error has occurred',  500],
+        yield 'failure from getMyTransactions' => [
+            50,
+            1000,
+            [
+                'success' => false,
+                'transactions' => [[]],
+                'count' => 10000,
             ],
+            ['An error has occurred',  500],
         ];
     }
 
     /**
-     * Test successful response
+     * Test successful response.
      *
      * @param int   $defaultPageSize   Default page size to set in config
      * @param int   $batchLimit        Default batch limit to set in config
@@ -191,9 +189,8 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
      * @param array $expected          What is the expected result
      *
      * @return void
-     *
-     * @dataProvider getSuccessfulData
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getSuccessfulData')]
     public function testSuccess(int $defaultPageSize, int $batchLimit, array $transactionResult, array $expected)
     {
         $this->assertEquals(
@@ -203,7 +200,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     }
 
     /**
-     * Test failures
+     * Test failures.
      *
      * @param int   $defaultPageSize   Default page size to set in config
      * @param int   $batchLimit        Default batch limit to set in config
@@ -211,9 +208,8 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
      * @param array $expected          What is the expected result
      *
      * @return void
-     *
-     * @dataProvider getFailuresData
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getFailuresData')]
     public function testFailures(int $defaultPageSize, int $batchLimit, array $transactionResult, array $expected)
     {
         $this->assertEquals(
@@ -248,11 +244,11 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
     protected function runSuccessfulTest($limit, $batchLimit, $transactionResult = []): array
     {
         /**
-         * Create a wrapper class for connection as it is little bit difficult to mock
+         * Create a wrapper class for connection as it is little bit difficult to mock.
          */
         $wrapperClass = new class ($transactionResult) extends Connection {
             /**
-             * Override constructor
+             * Override constructor.
              *
              * @param array $transactionResult Result from getMyTransactionHistory
              *
@@ -263,7 +259,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
             }
 
             /**
-             * Override checkFunction
+             * Override checkFunction.
              *
              * @param string $function Function to check
              * @param ?array $params   Params to use or null
@@ -278,7 +274,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
             }
 
             /**
-             * GetMyTransactionHistory mock
+             * GetMyTransactionHistory mock.
              *
              * @param array $patron Mock patron array
              * @param array $params Contains info about ils specified limits
@@ -296,7 +292,7 @@ class GetCheckoutHistoryTest extends \VuFindTest\Unit\AjaxHandlerTestCase
         };
         $ilsAuth = $this->container
             ->createMock(ILSAuthenticator::class, ['storedCatalogLogin']);
-        $ilsAuth->expects($this->any())->method('storedCatalogLogin')->willReturn([3]);
+        $ilsAuth->method('storedCatalogLogin')->willReturn([3]);
         $this->container->set(Connection::class, $wrapperClass);
         $this->container->set(ILSAuthenticator::class, $ilsAuth);
         $config = new Config([

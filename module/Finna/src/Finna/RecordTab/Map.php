@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Map tab
+ * Map tab.
  *
  * PHP version 8
  *
@@ -18,15 +18,15 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordTabs
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 
 namespace Finna\RecordTab;
@@ -35,14 +35,14 @@ use function count;
 use function in_array;
 
 /**
- * Map tab
+ * Map tab.
  *
  * @category VuFind
  * @package  RecordTabs
  * @author   Demian Katz <demian.katz@villanova.edu>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_tabs Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_tabs Wiki
  */
 class Map extends \VuFind\RecordTab\Map
 {
@@ -58,7 +58,7 @@ class Map extends \VuFind\RecordTab\Map
     }
 
     /**
-     * Get all map markers (points, polygons etc.)
+     * Get all map markers (points, polygons etc.).
      *
      * @return string
      */
@@ -105,7 +105,7 @@ class Map extends \VuFind\RecordTab\Map
     }
 
     /**
-     * Convert WKT envelope to array
+     * Convert WKT envelope to array.
      *
      * @param string $envelope WKT envelope
      *
@@ -125,7 +125,7 @@ class Map extends \VuFind\RecordTab\Map
     }
 
     /**
-     * Convert WKT to array (support function for getGoogleMapMarker)
+     * Convert WKT to array (support function for getGoogleMapMarker).
      *
      * @param string $location Well Known Text, envelope or simple point
      *

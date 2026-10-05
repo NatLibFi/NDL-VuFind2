@@ -1,7 +1,7 @@
 <?php
 
 /**
- * AIPA view helper
+ * AIPA view helper.
  *
  * PHP version 8
  *
@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
@@ -34,6 +34,7 @@ use Finna\RecordDriver\CuratedRecordList;
 use Finna\RecordDriver\SolrAipa;
 use Laminas\View\Helper\AbstractHelper;
 use NatLibFi\FinnaCodeSets\FinnaCodeSets;
+use NatLibFi\FinnaCodeSets\Model\DataObjectInterface;
 use NatLibFi\FinnaCodeSets\Model\EducationalLevel\EducationalLevelInterface;
 use NatLibFi\FinnaCodeSets\Model\HierarchicalProxyDataObjectInterface as HPDOInterface;
 use NatLibFi\FinnaCodeSets\Utility\EducationalData;
@@ -42,13 +43,13 @@ use VuFind\View\Helper\Root\ClassBasedTemplateRendererTrait;
 use function count;
 
 /**
- * AIPA view helper
+ * AIPA view helper.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class Aipa extends AbstractHelper
 {
@@ -94,14 +95,14 @@ class Aipa extends AbstractHelper
     protected FinnaCodeSets $codeSets;
 
     /**
-     * Record driver
+     * Record driver.
      *
      * @var SolrAipa|AipaLrmi
      */
     protected SolrAipa|AipaLrmi $driver;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaCodeSets $codeSets Finna Code Sets library instance
      */
@@ -444,7 +445,7 @@ class Aipa extends AbstractHelper
             $subjectLevelItems = [];
             foreach ($educationalData[$key] ?? [] as $item) {
                 $subjectLevelItems[] = [
-                    'title' => $item->getProxiedObject()->getPrefLabel($langcode),
+                    'title' => $this->getPrefLabel($item, $langcode),
                     'items' => $this->getComponentDataForSubject(
                         $item,
                         $langcode,
@@ -471,7 +472,7 @@ class Aipa extends AbstractHelper
                     $levelItems = [];
                     foreach ($data as $studyData) {
                         $levelItems[] = [
-                            'title' => $studyData->getPrefLabel($langcode),
+                            'title' => $this->getPrefLabel($studyData, $langcode),
                         ];
                     }
                     if ($dataLevelCodeValue !== $levelCodeValue) {
@@ -512,7 +513,7 @@ class Aipa extends AbstractHelper
         $items = [];
         foreach ($educationalData[$type] ?? [] as $data) {
             $items[] = [
-                'title' => $data->getPrefLabel($langcode),
+                'title' => $this->getPrefLabel($data, $langcode),
             ];
         }
         if (!empty($items)) {
@@ -523,5 +524,21 @@ class Aipa extends AbstractHelper
             ];
         }
         return $componentData;
+    }
+
+    /**
+     * Get first available label if one does not exist in the requested language.
+     *
+     * @param DataObjectInterface|HPDOInterface $item     Data object
+     * @param string                            $langcode Language code for the label
+     *
+     * @return string
+     */
+    protected function getPrefLabel(
+        DataObjectInterface|HPDOInterface $item,
+        string $langcode
+    ): string {
+        $prefLabels = $item->getPrefLabels();
+        return $prefLabels[$langcode] ?? reset($prefLabels);
     }
 }

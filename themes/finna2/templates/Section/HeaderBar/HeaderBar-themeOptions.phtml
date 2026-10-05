@@ -1,0 +1,16 @@
+<!-- START of: finna - header-themeOptions.phtml -->
+<?php if (isset($this->layout()->themeOptions) && count($this->layout()->themeOptions) > 1): ?>
+  <li class="nav-item theme dropdown">
+    <a role="button" href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false"><?=$this->transEsc('Theme')?> <?=$this->icon('collapse-open', 'collapse-open-icon')?></a>
+    <ul class="dropdown-menu">
+      <?php foreach ($this->layout()->themeOptions as $current): ?>
+        <li>
+          <a class="dropdown-item<?=$current['selected'] ? ' active' : '' ?>" role="button" href="<?=$this->escapeHtmlAttr($this->url()->addQueryParameters(['ui' => $current['name']])) ?>" rel="nofollow">
+            <?=$this->transEsc($current['desc']) ?>
+          </a>
+        </li>
+      <?php endforeach; ?>
+    </ul>
+  </li>
+<?php endif; ?>
+<!-- END of: finna - header-themeOptions.phtml -->

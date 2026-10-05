@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Class Api
+ * Class Api.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Form
@@ -33,7 +33,7 @@ declare(strict_types=1);
 
 namespace Finna\Form\Handler;
 
-use Laminas\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Form\Handler\HandlerInterface;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
@@ -45,7 +45,7 @@ use function is_array;
 use function strval;
 
 /**
- * Class Api
+ * Class Api.
  *
  * @category VuFind
  * @package  Form
@@ -64,14 +64,14 @@ class Api implements
     use \VuFindHttp\HttpServiceAwareTrait;
 
     /**
-     * Site base url
+     * Site base url.
      *
      * @var string
      */
     protected $baseUrl;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param string $baseUrl Site base url
      */

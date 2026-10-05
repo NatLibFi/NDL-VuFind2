@@ -1,0 +1,128 @@
+<?php
+  $seriesKeys = $this->driver->getSeriesKeys();
+  $currentSeriesKey = $this->seriesKey ?? $seriesKeys[0];
+  $results = $this->driver->getSeriesResult($currentSeriesKey);
+  $currentSeries = $this->driver->getSeriesFromSeriesKey($currentSeriesKey);
+  $recordId = $this->driver->getUniqueId();
+  $searchQuery = 'series_key_str_mv:"' . $currentSeriesKey . '"';
+  $searchUrlEscaped = $this->url('search-results', options: ['query' => ['lookfor' => $searchQuery]]);
+
+  // Re-order the results to display numbered ones first:
+  $numberedResults = [];
+  $otherResults = [];
+  foreach ($results as $current) {
+    if ($seriesOrder = $current->getSeriesOrder($currentSeries, $currentSeriesKey)) {
+      $numberedResults[] = [
+        'seriesOrder' => $seriesOrder,
+        'driver' => $current,
+      ];
+    } else {
+      $otherResults[] = [
+        'seriesOrder' => null,
+        'driver' => $current,
+      ];
+    }
+  }
+  usort($numberedResults, fn ($a, $b) => $a['seriesOrder']['order'] <=> $b['seriesOrder']['order']);
+?>
+<div class="record-tab-series-container">
+  <div class="series-header">
+    <?php if ($currentSeries): ?>
+      <h2 id="series"><?=$this->escapeHtml($currentSeries)?></h2>
+    <?php endif; ?>
+    <div class="series-controls">
+      <div class="search-stats">
+        <?=
+          $this->translate(
+              'showing_results_of_html',
+              [
+                '%%start%%' => 1,
+                '%%end%%' => count($results),
+                '%%total%%' => $this->localizedNumber($results->getTotal()),
+              ]
+          );
+        ?>
+      </div>
+
+      <?php if (count($seriesKeys) > 1): ?>
+        <span class="series-dropdown-text"><?= $this->transEsc('Series')?>:</span>
+        <div class="view-dropdown">
+          <div class="dropdown">
+            <a id="dropdown-toggle" type="button" class="dropdown-toggle series-dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+              <?=$this->escapeHtml($currentSeries)?>
+              <?=$this->icon('dropdown-open') ?>
+            </a>
+            <ul class="dropdown-menu">
+              <?php foreach ($seriesKeys as $key): ?>
+                <li>
+                  <a class="dropdown-item dropdown__link" href="#" data-id="<?=$this->escapeHtmlAttr($recordId)?>" data-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" data-serieskey="<?=$this->escapeHtmlAttr($key)?>">
+                    <?=$this->escapeHtml($this->driver->getSeriesFromSeriesKey($key))?>
+                  </a>
+                </li>
+              <?php endforeach; ?>
+            </ul>
+          </div>
+        </div>
+      <?php endif; ?>
+    </div>
+  </div>
+  <div class="series-tab-container js-series-tab-container container">
+    <div class="list-scrollable">
+      <button class="list-scrollable__scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+        <?=$this->icon('scrollable-prev')?>
+      </button>
+      <ul class="list-scrollable__list flex-row flex-nowrap overflow-x-auto">
+        <?php foreach (array_merge($numberedResults, $otherResults) as $current): ?>
+          <?php
+            $formats = $current['driver']->getFormats();
+            $seriesOrder = $current['seriesOrder'];
+          ?>
+          <li class="list-scrollable__list-item js-list-item <?= $recordId === $current['driver']->getUniqueId() ? 'active' : '' ?>">
+            <?php if ($seriesOrder): ?>
+              <span class="series"><?=$this->escapeHtml($seriesOrder['order'])?></span>
+            <?php endif; ?>
+            <a class="list-scrollable__item-container js-list-link" href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['driver']))?>">
+              <div class="list-scrollable__image-container">
+                <img class="list-scrollable__image" loading="lazy" src="<?=$this->recordImage($this->record($current['driver']))->getLargeImage()?>" alt="">
+                <div class="list-scrollable__image iconlabel hidden format-<?=$this->record($current['driver'])->getFormatClass(end($formats))?>"></div>
+              </div>
+              <div class="list-scrollable__title-container">
+                <span class="list-scrollable__title"><?=$this->escapeHtml($current['driver']->getTitle())?></span>
+                <?php if ($formats = $current['driver']->getFormats()): ?>
+                  <?php $binding = $current['driver']->tryMethod('getBinding');?>
+                  <span class="series-record-format">
+                    <?=trim($this->record($current['driver'])->getFormatList())?><?php if (!empty($binding)): ?><span class="iconlabel label-binding"><span class="label-punctuation">, </span><?=$this->transEsc($binding)?></span><?php endif; ?>
+                  </span>
+                <?php endif; ?>
+              </div>
+            </a>
+          </li>
+        <?php endforeach; ?>
+        <?php if (count($results) < $results->getTotal()): ?>
+          <li class="list-scrollable__list-item js-list-item show-more">
+            <a class="list-scrollable__item-container js-list-link" href="<?=$searchUrlEscaped?>">
+              <div class="list-scrollable__image-container">
+                <div class="list-scrollable__image">
+                  <?=$this->icon('view-list')?>
+                  <?=$this->transEsc('find_more_ellipsis')?>
+                </div>
+              </div>
+            </a>
+          </li>
+        <?php endif; ?>
+      </ul>
+      <button class="list-scrollable__scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+        <?=$this->icon('scrollable-next')?>
+      </button>
+    </div>
+  </div>
+  <?php $searchQuery = 'series_key_str_mv:"' . $currentSeriesKey . '"'; ?>
+  <div class="series-search-link"><a href="<?=$searchUrlEscaped?>" class="btn btn-primary"><?= $this->transEsc('channel_search') ?> (<?=$results->getTotal()?>)</a></div>
+</div>
+<?php
+  $script = <<<JS
+      finna.scrollableList.initScrollableList(document.querySelector('.js-series-tab-container'));
+      finna.series.init();
+      JS;
+?>
+<?=$this->assetManager()->outputInlineScriptString($script);?>

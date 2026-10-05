@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind Bootstrapper
+ * VuFind Bootstrapper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Bootstrap
@@ -29,6 +29,8 @@
 
 namespace VuFind;
 
+use Laminas\Http\Header\Location;
+use Laminas\Http\Response;
 use Laminas\Mvc\MvcEvent;
 use Laminas\Router\Http\RouteMatch;
 use Psr\Container\ContainerInterface;
@@ -36,7 +38,7 @@ use VuFind\I18n\Locale\LocaleSettings;
 use VuFind\RateLimiter\RateLimiterManager;
 
 /**
- * VuFind Bootstrapper
+ * VuFind Bootstrapper.
  *
  * @category VuFind
  * @package  Bootstrap
@@ -47,35 +49,35 @@ use VuFind\RateLimiter\RateLimiterManager;
 class Bootstrapper
 {
     /**
-     * Main VuFind configuration
+     * Main VuFind configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Service manager
+     * Service manager.
      *
      * @var ContainerInterface
      */
     protected $container;
 
     /**
-     * Current MVC event
+     * Current MVC event.
      *
      * @var MvcEvent
      */
     protected $event;
 
     /**
-     * Event manager
+     * Event manager.
      *
      * @var \Laminas\EventManager\EventManagerInterface
      */
     protected $events;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param MvcEvent $event Laminas MVC Event object
      */
@@ -85,8 +87,7 @@ class Bootstrapper
         $app = $event->getApplication();
         $this->events = $app->getEventManager();
         $this->container = $app->getServiceManager();
-        $this->config = $this->container->get(\VuFind\Config\PluginManager::class)
-            ->get('config');
+        $this->config = $this->container->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('config');
     }
 
     /**
@@ -146,7 +147,7 @@ class Bootstrapper
         // If the system is unavailable and we're not in the console, forward to the
         // unavailable page.
         if (PHP_SAPI !== 'cli' && !($this->config->System->available ?? true)) {
-            $callback = function ($e) {
+            $callback = function ($e): void {
                 $routeMatch = new RouteMatch(
                     ['controller' => 'Error', 'action' => 'Unavailable'],
                     1
@@ -159,7 +160,7 @@ class Bootstrapper
     }
 
     /**
-     * Initializes timezone value
+     * Initializes timezone value.
      *
      * @return void
      */
@@ -175,7 +176,7 @@ class Bootstrapper
      */
     protected function initContext(): void
     {
-        $callback = function ($event) {
+        $callback = function (/*$event*/): void {
             if (PHP_SAPI !== 'cli') {
                 $viewModel = $this->container->get('ViewManager')->getViewModel();
 
@@ -217,7 +218,7 @@ class Bootstrapper
      */
     protected function initUserLanguage(): void
     {
-        $callback = function ($event) {
+        $callback = function (/*$event*/): void {
             // Store last selected language in user account, if applicable:
             $settings = $this->container->get(LocaleSettings::class);
             $language = $settings->getUserLocale();
@@ -243,7 +244,7 @@ class Bootstrapper
     {
         // Attach remaining theme configuration to the dispatch event at high priority:
         $siteConfig = $this->config->Site;
-        $callback = function ($event) use ($siteConfig) {
+        $callback = function ($event) use ($siteConfig): void {
             $theme = new \VuFindTheme\Initializer($siteConfig, $event);
             try {
                 $theme->init();
@@ -268,10 +269,10 @@ class Bootstrapper
      */
     protected function initLoginTokenManager(): void
     {
-        $dispatchCallback = function () {
+        $dispatchCallback = function (): void {
             $this->container->get(\VuFind\Auth\LoginTokenManager::class)->themeIsReady();
         };
-        $finishCallback = function () {
+        $finishCallback = function (): void {
             $this->container->get(\VuFind\Auth\LoginTokenManager::class)->requestIsFinished();
         };
         $this->events->attach('dispatch.error', $dispatchCallback, 8000);
@@ -291,7 +292,7 @@ class Bootstrapper
             return;
         }
 
-        $callback = function ($e) {
+        $callback = function ($e): void {
             $exception = $e->getParam('exception');
             if ($exception instanceof \VuFind\Exception\HttpStatusInterface) {
                 $response = $e->getResponse();
@@ -328,7 +329,7 @@ class Bootstrapper
      */
     protected function initErrorLogging(): void
     {
-        $callback = function ($event) {
+        $callback = function ($event): void {
             if ($this->container->has(\VuFind\Log\Logger::class)) {
                 $log = $this->container->get(\VuFind\Log\Logger::class);
                 if ($log instanceof \VuFind\Log\ExtendedLoggerInterface) {
@@ -359,7 +360,7 @@ class Bootstrapper
         // layout that can be used to suppress actions in the layout templates that
         // might trigger exceptions -- this will greatly increase the odds of showing
         // a user-friendly message instead of a fatal error.
-        $callback = function ($event) {
+        $callback = function (/*$event*/): void {
             $viewModel = $this->container->get('ViewManager')->getViewModel();
             $viewModel->renderingError = true;
         };
@@ -367,7 +368,30 @@ class Bootstrapper
     }
 
     /**
-     * Set up content security policy
+     * Set up handling for rendering redirects.
+     *
+     * @return void
+     */
+    protected function initRenderRedirects(): void
+    {
+        // When a render is triggered, check the response status code and switch to a simple redirect template for
+        // 302 redirects.
+        $callback = function ($event): void {
+            $response = $event->getResponse();
+            if ($response instanceof Response && $response->getStatusCode() === 302) {
+                $viewModel = $this->container->get('ViewManager')->getViewModel();
+                if ($viewModel->getTemplate() === 'layout/layout') {
+                    $viewModel->setTemplate('layout/redirect');
+                    $location = $response->getHeaders()->get('Location');
+                    $viewModel->setVariable('redirectUrl', $location instanceof Location ? $location->getUri() : null);
+                }
+            }
+        };
+        $this->events->attach('render', $callback, 10000);
+    }
+
+    /**
+     * Set up content security policy.
      *
      * @return void
      */
@@ -385,7 +409,7 @@ class Bootstrapper
     }
 
     /**
-     * Set up rate limiter
+     * Set up rate limiter.
      *
      * @return void
      */
@@ -417,7 +441,7 @@ class Bootstrapper
     }
 
     /**
-     * Present a Cloudflare Turnstile challenge to the user
+     * Present a Cloudflare Turnstile challenge to the user.
      *
      * @param RateLimiterManager               $rateLimiterManager The RateLimiterManager
      * @param MvcEvent                         $event              The current Laminas event
@@ -438,7 +462,7 @@ class Bootstrapper
         // base64_encoding the destination URL is just further obfuscation
         $context = base64_encode(json_encode([
             'policyId' => $policyId,
-            'destination' => $event->getRequest()->getUri()->getPath(),
+            'destination' => $event->getRequest()->getRequestUri(),
         ]));
         $response->getHeaders()->addHeaderLine(
             'Location',

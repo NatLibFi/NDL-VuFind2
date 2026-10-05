@@ -1,3 +1,4 @@
+<!-- START of: finna - comments/userlist.phtml -->
 <?php
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
@@ -11,13 +12,16 @@
 <!-- Leftside navigationbar -->
 <?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => 'usercontent']); ?>
 
-<div class="<?=$this->layoutClass('mainbody')?>">
-  <?=$this->component('page-title', ['title' => $this->translate('Comments')]);?>
+<div class="<?=$this->layoutClass('mainbody-myresearch')?>">
+  <div class="useraccount-header">
+    <?=$this->component('finna-page-title-with-tip', ['title' => $this->translate('Comments'), 'tooltip' => 'tooltip_myaccount_comments_html']);?>
+  </div>
   <ul class="nav nav-tabs" role="tablist">
     <?php foreach ($tabs as $tab => $title): ?>
       <li class="nav-item" role="presentation" id="user-content-<?=$this->escapeHtmlAttr($tab)?>" data-tab="<?=$this->escapeHtmlAttr($tab)?>"><a class="<?='comments' === $tab ? 'active' : ''?> nav-link" href="<?=$this->url($tab . '-' . 'userlist')?>"><?=$this->transEsc($title)?></a></li>
     <?php endforeach; ?>
   </ul>
+  <?=$this->component('finna-addition-template', ['template' => 'comments-pre-list'])?>
   <?php if (count($this->comments) !== 0): ?>
     <div><?=$this->transEsc('finna_nickname')?>: <?=$this->userPublicName($user);?></div>
     <nav class="search-header hidden-print">
@@ -38,9 +42,11 @@
     <form action="<?=$this->url('comments-deletecomments')?>" name="updateForm" id="select_all_comments" method="post">
       <input type="hidden" value="<?=$this->escapeHtmlAttr($this->auth()->getManager()->getCsrfHash())?>" name="csrf">
       <label>
-        <div class="checkbox">
-          <input type="checkbox" name="selectAll" class="checkbox-select-all">
-          <?=$this->transEsc('select_all_on_page')?>
+        <div class="checkbox-container">
+          <div class="checkbox">
+            <input type="checkbox" name="selectAll" class="checkbox-select-all">
+            <?=$this->transEsc('select_all_on_page')?>
+          </div>
         </div>
       </label>
       <?=
@@ -70,7 +76,7 @@
         <tbody>
           <?php foreach ($this->comments as $comment):?>
             <tr>
-              <td class="checkbox-col">
+              <td class="checkbox-col user-account-table-select unlabeled-column">
                 <div class="checkbox-container result">
                   <div class="checkbox">
                     <label class="record-checkbox">
@@ -81,24 +87,30 @@
                 </div>
               </td>
               <td class="mycomments-table-hidden">
-                  <?php if ($comment['finna_visible'] === 0): ?>
+                  <?php if (!$comment['finnaVisible']): ?>
                     <?php
                       $tooltipBtn = [
                         'label' => $this->transEsc('comment_hidden'),
                         'aria-label' => $this->transEscAttr('comment_hidden'),
-                        'content' => '<h4>' . $this->transEsc('comment_hidden') . '</h4>' . $this->translate('comment_hidden_by_admin_html'),
+                        'content' => '<h4>' . $this->transEsc('comment_hidden') . '</h4>' . $this->translate('comment_hidden_by_admin_html', ['%%url%%' => $this->url('content-page', ['page' => 'help-comments-ratings'])]),
                       ];
                     ?>
                     <?=$this->component('finna-tooltip-btn', $tooltipBtn)?>
                   <?php endif; ?>
               </td>
-              <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('Y-m-d H:i:s', $comment['created'])?></td>
+              <td data-label="<?=$this->transEscAttr('Created')?>"><?=$this->dateTime()->convertToDisplayDateAndTime('U', $comment['created']->getTimestamp())?></td>
               <td data-label="<?=$this->transEscAttr('Title')?>">
+                <?php $missing = $comment['missing']; ?>
+                <?php $titleEsc = $this->escapeHtml($comment['recordTitle']); ?>
                 <?php if (empty($comment['mergedData'])): ?>
-                  <a href="<?=$this->url('record', ['id' => $comment['record_id']])?>"><?=$this->escapeHtml($comment['recordTitle'])?></a>
+                  <?php if ($missing): ?>
+                    <?=$titleEsc?>
+                  <?php else: ?>
+                    <a href="<?=$this->url('record', ['id' => $comment['record_id']])?>"><?=$titleEsc?></a>
+                  <?php endif; ?>
                 <?php else: ?>
                   <div>
-                    <p><?=$this->escapeHtml($comment['recordTitle'])?></p>
+                    <p><?=$titleEsc?></p>
                     <div class="truncate-field other-organisation-links" data-rows="-1" data-label="<?=$this->transEscAttr('show_instances')?>">
                       <?php foreach ($comment['mergedData']['records'] ?? [] as $current): ?>
                         <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getUrl($current['id'])) ?>" title="<?=$this->transEscAttr("source_{$current['source']}", null, $current['source']) ?>">
@@ -119,6 +131,7 @@
         </tbody>
       </table>
     </form>
+    <?=$this->component('finna-addition-template', ['template' => 'comments-post-list'])?>
   <?php else: ?>
     <?=$this->transEsc('No Comments')?>
   <?php endif; ?>
@@ -131,3 +144,4 @@
       JS;
 ?>
 <?=$this->assetManager()->outputInlineScriptString($script);?>
+<!-- END of: finna - comments/userlist.phtml -->

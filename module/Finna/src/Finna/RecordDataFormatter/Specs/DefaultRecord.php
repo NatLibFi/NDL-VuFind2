@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDataFormatter
@@ -51,21 +51,21 @@ use function is_array;
 class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
 {
     /**
-     * Record fields with single template lines
+     * Record fields with single template lines.
      *
      * @var array
      */
     protected array $singleTemplateLines = [];
 
     /**
-     * Record fields with multiple template lines
+     * Record fields with multiple template lines.
      *
      * @var array
      */
     protected array $multiTemplateLines = [];
 
     /**
-     * Order of record fields in record page
+     * Order of record fields in record page.
      *
      * @var array
      */
@@ -115,10 +115,9 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         'Item History',
         'Inventory ID',
         'Other ID',
+        'Events',
         'Measurements',
         'Inscriptions',
-        'Other Classification',
-        'Events',
         'Unit ID',
         'Unit IDs',
         'Authors',
@@ -135,7 +134,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
         'Subject Date',
         'Subject Actor',
         'Subjects',
-        'SubjectsWithoutPlaces',
+        'SubjectDisplayTerms',
         'subjects_extended',
         'Methodology',
         'Publications',
@@ -293,7 +292,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ],
             'Accessibility Feature' => [
                 'getAccessibilityFeatures',
-                'data-escapeHtml.phtml',
+                'data-accessibilityFeature.phtml',
                 [
                     'context' => [
                         'class' => 'record-accessibility-features',
@@ -563,7 +562,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 ],
             ],
             'Color' => [
-                'getColor',
+                'getColorsExtended',
                 'data-color.phtml',
                 [
                     'context' => [
@@ -1239,15 +1238,6 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                     ],
                 ],
             ],
-            'Other Classification' => [
-                'getFormatClassifications',
-                'data-escapeHtml.phtml',
-                [
-                    'context' => [
-                        'class' => 'recordClassifications',
-                    ],
-                ],
-            ],
             'Other Classifications' => [
                 'getOtherClassifications',
                 'data-keywords.phtml',
@@ -1715,8 +1705,8 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                 ],
             ],
             'Subject Actor' => [
-                'getSubjectActors',
-                'data-escapeHtml.phtml',
+                'getSubjectActorsExtended',
+                'data-authors.phtml',
                 [
                     'context' => [
                         'class' => 'recordSubjects',
@@ -1769,8 +1759,8 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
                     ],
                 ],
             ],
-            'SubjectsWithoutPlaces' => [
-                'getAllSubjectHeadingsWithoutPlacesExtended',
+            'SubjectDisplayTerms' => [
+                'getAllSubjectHeadingsForDisplayExtended',
                 'data-allSubjectHeadingsExtended.phtml',
                 [
                     'context' => [
@@ -1900,7 +1890,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Utility function for getting fields in core metadata
+     * Utility function for getting fields in core metadata.
      *
      * @return array
      */
@@ -1915,7 +1905,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ) use (
                 &$lines,
                 &$pos
-            ) {
+            ): void {
                 $pos += 100;
                 $dataMethod = $data[0];
                 $template = $data[1];
@@ -1931,7 +1921,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
             ) use (
                 &$lines,
                 &$pos
-            ) {
+            ): void {
                 $pos += 100;
                 $dataMethod = $data[0];
                 $callback = $data[1];
@@ -2042,7 +2032,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for extended music compositions
+     * Multiline constructor function for extended music compositions.
      *
      * @param array $data    Field data
      * @param array $options Field options
@@ -2072,7 +2062,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for archive relations
+     * Multiline constructor function for archive relations.
      *
      * @param array $data    Field data
      * @param array $options Field options
@@ -2110,7 +2100,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for access restrictions
+     * Multiline constructor function for access restrictions.
      *
      * @param array $data    Field data
      * @param array $options Field options
@@ -2150,7 +2140,7 @@ class DefaultRecord extends \VuFind\RecordDataFormatter\Specs\DefaultRecord
     }
 
     /**
-     * Multiline constructor function for lido event types field
+     * Multiline constructor function for lido event types field.
      *
      * @param array $data    Field data
      * @param array $options Field options

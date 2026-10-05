@@ -1,0 +1,5 @@
+<?xml version="1.0"?>
+<qualifieddc schemaLocation="http://kk/1.0/qdcfinna.xsd">
+  <title lang="-">SolrQdc With Just a Thumnail</title>
+  <file bundle="THUMBNAIL" href="https://localhost/thumb.jpg" name="thumb.jog" type="image/jpeg" length="123" sequence="1"/>
+</qualifieddc>

@@ -64,7 +64,7 @@
       <ul>
         <?php foreach ($orgInfo['phones'] as $phone): ?>
           <li>
-            <?=$this->icon('phone') ?><?=$this->escapeHtml($phone['name'])?>
+            <?=$this->icon('phone') ?> <?=$this->escapeHtml($phone['name'])?>
             <a href="tel:<?=$this->escapeHtmlAttr($phone['number'])?>"><?=$this->escapeHtml($phone['number'])?></a>
           </li>
         <?php endforeach ?>

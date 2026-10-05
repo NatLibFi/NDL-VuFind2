@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Holdings callnumber view helper
+ * Holdings callnumber view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -33,7 +33,7 @@ use Finna\LocationService\LocationService;
 use Finna\Wayfinder\WayfinderService;
 
 /**
- * Holdings callnumber view helper
+ * Holdings callnumber view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -58,7 +58,7 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
     protected $wayfinderService;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param LocationService  $locationService  Location Service
      * of Finland Location Service
@@ -134,7 +134,7 @@ class Callnumber extends \Laminas\View\Helper\AbstractHelper
     /**
      * Check if QR-code option is enabled.
      *
-     * @return boolean
+     * @return bool
      */
     public function useQrCode()
     {

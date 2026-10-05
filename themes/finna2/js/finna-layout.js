@@ -118,8 +118,8 @@ finna.layout = (function finnaLayout() {
         var moreLabel = self.data('label') || VuFind.translate('show_more');
         var lessLabel = self.data('label') || VuFind.translate('show_less');
 
-        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + moreLabel + VuFind.icon('show-more') + '</button>');
-        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + lessLabel + VuFind.icon('show-less') + '</button>');
+        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + '<span>' + moreLabel + '</span>' + VuFind.icon('show-more') + '</button>');
+        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + '<span>' + lessLabel + '</span>' + VuFind.icon('show-less') + '</button>');
 
         if (self.attr('tabindex') === '-1') {
           moreLink.attr('tabindex', '-1');
@@ -176,104 +176,6 @@ finna.layout = (function finnaLayout() {
     }
   }
 
-
-  /**
-   * Check and keep focus within the search facet list
-   * @param {object} e Event object
-   */
-  function onFocusOutOfFacetContainer(e) {
-    const container = document.querySelector('.side-facets-container-ajax');
-    if (!container.contains(e.relatedTarget)) {
-      e.stopImmediatePropagation();
-      e.preventDefault();
-      document.activeElement.blur();
-      container.focus();
-    }
-  }
-
-  /**
-   * Toggle visibility of sidebar on mobile
-   * @param {object} e Event object
-   */
-  function toggleMobileSidebar(e) {
-    e.stopImmediatePropagation();
-    const sidebar = document.querySelector('.sidebar');
-    if (sidebar) {
-      sidebar.classList.toggle('open');
-      const container = document.querySelector('.side-facets-container-ajax');
-      document.querySelectorAll('.mobile-navigation .sidebar-navigation .expand-icon, .mobile-navigation .sidebar-navigation .collapse-icon').forEach(el => {
-        el.classList.toggle('hidden');
-      });
-      document.querySelector('body').classList.toggle('prevent-scroll');
-      if (container) {
-        if (sidebar.classList.contains('open')) {
-          container.addEventListener('focusout', onFocusOutOfFacetContainer, e);
-          container.ariaModal = true;
-          container.tabIndex = '0';
-          container.querySelector('h1').tabIndex = '0';
-          document.activeElement.blur();
-          container.querySelector('h1').focus();
-        } else {
-          container.removeEventListener('focusout', onFocusOutOfFacetContainer, e);
-          document.activeElement.blur();
-          document.querySelector('.finna-search-filter-toggle .btn-search-filter').focus();
-          container.removeAttribute('aria-modal');
-          container.removeAttribute('tabindex');
-          container.querySelector('h1').removeAttribute('tabindex');
-        }
-      }
-    }
-  }
-
-  /**
-   * On keypress of mobile sidebar
-   * @param {object} e Event object
-   */
-  function onKeyPressMobileSidebar(e) {
-    if (e.which === 32 || e.which === 13) {
-      e.preventDefault();
-      toggleMobileSidebar(e);
-    }
-  }
-
-  /**
-   * Initialize mobile narrow search
-   */
-  function initMobileNarrowSearch() {
-    document.querySelectorAll('.mobile-navigation .sidebar-navigation, .js-mobile-list-navigation').forEach(el => {
-      el.addEventListener('click', toggleMobileSidebar);
-    });
-    const container = document.querySelector(".side-facets-container-ajax");
-    if (container) {
-      document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
-        el.addEventListener('click', toggleMobileSidebar);
-      });
-      document.querySelectorAll('.finna-search-filter-toggle .btn-search-filter, .sidebar .sidebar-close-btn').forEach(el => {
-        el.addEventListener('keydown', function onKeyDownMobileFacets(e) {
-          onKeyPressMobileSidebar(e);
-        });
-      });
-    }
-    const filters = document.querySelector('.mobile-navigation .sidebar-navigation .active-filters');
-    if (filters) {
-      filters.addEventListener('click', function onClickMobileActiveFilters() {
-        document.querySelector('.sidebar').scrollTop(0);
-      });
-    }
-    const narrowSearchMobileTrigger = document.querySelector('.finna-search-filter-toggle-trigger');
-    const narrowSearchMobile = document.querySelector('.finna-search-filter-toggle');
-    if (narrowSearchMobileTrigger && narrowSearchMobile && ('IntersectionObserver' in window)) {
-      const narrowSearchMobileObserver = new IntersectionObserver(
-        ([e]) => narrowSearchMobile.classList.toggle('sticky', e.intersectionRatio < 1),
-        {
-          threshold: [1],
-          rootMargin: '-' + narrowSearchMobile.offsetHeight + 'px',
-        }
-      );
-      narrowSearchMobileObserver.observe(narrowSearchMobileTrigger);
-    }
-  }
-
   /**
    * Set my account header as sticky
    */
@@ -317,13 +219,6 @@ finna.layout = (function finnaLayout() {
         scrollTop: $('.recordProvidedBy').offset().top
       }, 500);
     });
-    var feedbackBtn = $('.floating-feedback-btn');
-    if (feedbackBtn.length) {
-      var feedbackBtnOffset = feedbackBtn.offset().top;
-      $(window).on("scroll", function onScrollWindow(/*event*/) {
-        feedbackBtn.toggleClass('fixed', $(window).scrollTop() > feedbackBtnOffset);
-      });
-    }
     var backUp = $('.template-dir-record .back-to-up');
     if (backUp.length) {
       $(window).on('scroll', function onScrollWindow(/*event*/) {
@@ -602,7 +497,7 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Initialize touch device galler
+   * Initialize touch device gallery
    */
   function initTouchDeviceGallery() {
     if ($('.result-view-grid')[0] != null && isTouchDevice()) {
@@ -681,7 +576,6 @@ finna.layout = (function finnaLayout() {
     VuFind.listen('VuFind.sidefacets.loaded', function onSideFacetsLoaded() {
       finna.dateRangeVis.init();
       initToolTips($('.sidebar'));
-      initMobileNarrowSearch();
       VuFind.lightbox.bind($('.sidebar'));
     }, {once: true});
   }
@@ -739,14 +633,9 @@ finna.layout = (function finnaLayout() {
 
     var target = null;
     var identifier = decodeURIComponent(window.location.hash);
-    if (identifier === '') {
-      // Scroll to search box
-      if ($(window).height() < 960 && $(window).scrollTop() === 0) {
-        target = $('.search-form-container');
-      }
-    } else {
-      // Scroll to record
-      var result = $('.hiddenId[value="' + identifier.substr(1) + '"]');
+    // Scroll to record
+    if (identifier !== '') {
+      const result = $('.hiddenId[value="' + identifier.substr(1) + '"]');
       if (result.length) {
         target = result.closest('.result');
       }
@@ -929,61 +818,117 @@ finna.layout = (function finnaLayout() {
   }
 
   /**
-   * Initialize filters toggle button events
+   * Return the offcanvas container
+   * @returns {Element} The offcanvas container
    */
-  function initFiltersToggle () {
-    var win = $(window);
-
-    if (win.width() <= 991) {
-      $('.finna-filters .filters').addClass('hidden');
-      $('.finna-filters .filters-toggle .toggle-text').html(VuFind.translate('show_filters'));
+  function getOffcanvasContainer() {
+    if (document.body.classList.contains('template-name-mylist')) {
+      return document.querySelector('.mylist-bar.mobile-sidebar-container');
+    } else if (document.body.classList.contains('template-name-displaylist')) {
+      return document.querySelector('.reservationlist-bar.mobile-sidebar-container');
     }
-
-    win.on('throttled-resize.finna', function checkFiltersEnabled(e, data) {
-      var filters = $('.finna-filters .filters');
-      if (data.w > 991 && filters.hasClass('hidden')) {
-        filters.removeClass('hidden');
-      }
-
-    });
-
-    $('.filters-toggle').on('click', function filterToggleClicked() {
-      var button = $(this);
-      var filters = button.closest('.finna-filters').find('.filters');
-      button.toggleClass('open');
-
-      /**
-       * Set state of given text
-       * @param {boolean} setHidden Set text
-       * @param {string} text Set button text
-       */
-      function setState(setHidden, text) {
-        filters.toggleClass('hidden', setHidden);
-        button.find('.toggle-text').html(VuFind.translate(text));
-      }
-
-      if (filters.hasClass('hidden')) {
-        setState(false, 'hide_filters');
-      } else {
-        setState(true, 'show_filters');
-      }
-    });
+    return document.querySelector('.side-facets-container-ajax, .mobile-sidebar-container');
   }
 
   /**
-   * Initialize cookie consent events
+   * Check and keep focus within the offcanvas container
+   * @param {object} e Event object
    */
-  function initCookieConsent() {
-    var state = finna.common.getCookie('cookieConsent');
-    if ('undefined' === typeof state || !state) {
-      $('.cookie-consent-dismiss').on('click', function dismiss() {
-        finna.common.setCookie('cookieConsent', 1, { expires: 365 });
-        $('.cookie-consent').addClass('hidden');
-      });
-      $('.cookie-consent').removeClass('hidden');
+  function onFocusOutOfContainer(e) {
+    const offcanvas = getOffcanvasContainer();
+    if (e.relatedTarget && !offcanvas.contains(e.relatedTarget)) {
+      e.stopImmediatePropagation();
+      e.preventDefault();
+      setTimeout(() => {
+        document.activeElement.blur();
+        offcanvas.focus();
+      },
+      200
+      );
     }
-    VuFind.listen('cookie-consent-first-done', VuFind.refreshPage);
-    VuFind.listen('cookie-consent-changed', VuFind.refreshPage);
+  }
+
+  /**
+   *
+   * @param {HTMLElement} offcanvas The element shown as offcanvas
+   * @param {boolean} open If the offcanvas is opened.
+   */
+  function handleOffcanvasAttributes(offcanvas, open) {
+    if (open) {
+      offcanvas.setAttribute('role', 'dialog');
+      offcanvas.setAttribute('aria-modal', 'true');
+      offcanvas.setAttribute('aria-hidden', 'false');
+      document.activeElement.blur();
+      offcanvas.focus();
+      offcanvas.addEventListener('focusout', onFocusOutOfContainer);
+    } else {
+      offcanvas.removeAttribute('role');
+      offcanvas.removeAttribute('aria-modal');
+      offcanvas.setAttribute('aria-hidden', 'true');
+      offcanvas.removeEventListener('focusout', onFocusOutOfContainer);
+      document.activeElement.blur();
+      document.getElementById('narrow-search-filter-toggle').focus();
+    }
+  }
+
+  /**
+   * Set offcanvas accessibility functionality and attributes
+   */
+  function initOffcanvas() {
+    const body = document.querySelector('body.vufind-offcanvas');
+    const offcanvas = getOffcanvasContainer();
+    if (offcanvas) {
+      offcanvas.setAttribute('tabIndex', '-1');
+      if (body) {
+        const observer = new MutationObserver((mutations) => {
+          mutations.forEach((mutation) => {
+            if (
+              mutation.type === 'attributes' &&
+              mutation.attributeName === 'class'
+            ) {
+              if (body.classList.contains('active')) {
+                handleOffcanvasAttributes(offcanvas, true);
+              } else {
+                handleOffcanvasAttributes(offcanvas, false);
+              }
+            }
+          });
+        });
+        observer.observe(body, {
+          attributes: true
+        });
+      }
+    }
+  }
+
+  /**
+   * Init the narrow search button animation.
+   */
+  function initMobileNavBtnAnimation() {
+    const container = document.querySelector('.mobile-functions-row');
+    if (!container) {
+      return;
+    }
+
+    const filters = container.querySelector('.active-filters.finna-filters');
+    const btn = container.querySelector('#narrow-search-filter-toggle');
+    if (!filters || !btn) {
+      return;
+    }
+
+    const scrollableBar = filters.querySelector(':scope > div');
+    const btnText = btn.querySelector('.btn-text');
+    if (scrollableBar && btnText) {
+      // The full scrollable bar should be over the amount the button minimizes to
+      if ((scrollableBar.clientWidth / (filters.clientWidth + btnText.clientWidth + 20)) > 1) {
+        filters.addEventListener('scroll', () => {
+          btn.classList.toggle(
+            'collapsed',
+            filters.scrollLeft > 50
+          );
+        });
+      }
+    }
   }
 
   /**
@@ -1050,6 +995,7 @@ finna.layout = (function finnaLayout() {
     // Accordion
     $('.login-accordion .accordion-toggle').on('click', function accordionClicked() {
       _activateLoginTab($(this).find('a').data('tab'));
+      return false;
     });
     // Call activation to position the initial content properly
     _activateLoginTab($('.login-tabs .accordion-heading.initiallyActive a').data('tab'));
@@ -1170,7 +1116,6 @@ finna.layout = (function finnaLayout() {
     initLocationService: initLocationService,
     initBuildingFilter: initBuildingFilter,
     initJumpMenus: initJumpMenus,
-    initMobileNarrowSearch: initMobileNarrowSearch,
     initOrganisationPageLinks: initOrganisationPageLinks,
     initSecondaryLoginField: initSecondaryLoginField,
     initILSPasswordRecoveryLink: initILSPasswordRecoveryLink,
@@ -1185,7 +1130,6 @@ finna.layout = (function finnaLayout() {
       initAnchorNavigationLinks();
       initTruncate();
       initContentNavigation();
-      initMobileNarrowSearch();
       setStickyMyaccountHeader();
       initMobileCartIndicator();
       initToolTips();
@@ -1203,13 +1147,13 @@ finna.layout = (function finnaLayout() {
       initOrganisationPageLinks();
       initAudioButtons();
       initPriorityNav();
-      initFiltersToggle();
-      initCookieConsent();
       setImagePaginatorTranslations();
       initImagePaginators();
       initHelpTabs();
       initPrintTriggers();
       initSelectAllButtonListeners();
+      initOffcanvas();
+      initMobileNavBtnAnimation();
     },
     showPostLoginLightbox: showPostLoginLightbox
   };

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RecordDataFormatter Test Class
+ * RecordDataFormatter Test Class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -33,7 +33,7 @@ use Finna\RecordDataFormatter\Specs\CollectionRecord;
 use Finna\RecordDataFormatter\Specs\DefaultRecord;
 
 /**
- * RecordDataFormatter Test Class
+ * RecordDataFormatter Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -48,7 +48,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\ViewTrait;
 
     /**
-     * Default record field keys in order to be displayed
+     * Default record field keys in order to be displayed.
      *
      * @var array
      */
@@ -98,10 +98,9 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
           'Item History',
           'Inventory ID',
           'Other ID',
+          'Events',
           'Measurements',
           'Inscriptions',
-          'Other Classification',
-          'Events',
           'Unit ID',
           'Unit IDs',
           'Authors',
@@ -118,7 +117,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
           'Subject Date',
           'Subject Actor',
           'Subjects',
-          'SubjectsWithoutPlaces',
+          'SubjectDisplayTerms',
           'subjects_extended',
           'Methodology',
           'Publications',
@@ -233,7 +232,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
       ];
 
     /**
-     * Collection record field keys in order to be displayed
+     * Collection record field keys in order to be displayed.
      *
      * @var array
      */
@@ -285,10 +284,9 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
           'Item History',
           'Inventory ID',
           'Other ID',
+          'Events',
           'Measurements',
           'Inscriptions',
-          'Other Classification',
-          'Events',
           'Unit ID',
           'Unit IDs',
           'Authors',
@@ -305,7 +303,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
           'Subject Date',
           'Subject Actor',
           'Subjects',
-          'SubjectsWithoutPlaces',
+          'SubjectDisplayTerms',
           'subjects_extended',
           'Methodology',
           'Publications',
@@ -418,7 +416,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
       ];
 
     /**
-     * Test default record core specs
+     * Test default record core specs.
      *
      * @return void
      */
@@ -431,7 +429,7 @@ class RecordSpecsTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test collection record core specs
+     * Test collection record core specs.
      *
      * @return void
      */

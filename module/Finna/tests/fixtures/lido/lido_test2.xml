@@ -24,15 +24,21 @@
             <term label="testimittari" lang="en">one</term>
             <term type="testimittari" lang="en">two</term>
           </classification>
+          <classification type="colour content">
+            <term lang="fi">mustavalkoinen</term>
+            <term lang="sv">svartvit</term>
+          </classification>
         </classificationWrap>
       </objectClassificationWrap>
       <objectIdentificationWrap>
         <titleWrap>
           <titleSet>
-            <appellationValue>Otsikko näkyy partial.</appellationValue>
-            <appellationValue>Näkyy kokonaan.</appellationValue>
-            <appellationValue pref="preferred">Ei näy preferred.</appellationValue>
-            <appellationValue pref="alternate">Ei näy alternate.</appellationValue>
+            <appellationValue lang="fi">Otsikko näkyy partial.</appellationValue>
+            <appellationValue lang="en">Title visible partial.</appellationValue>
+            <appellationValue lang="fi">Näkyy kokonaan.</appellationValue>
+            <appellationValue lang="fi" pref="http://terminology.lido-schema.org/lido00169">Ei näy preferred.</appellationValue>
+            <appellationValue lang="fi" pref="alternate">Ei näy alternate.</appellationValue>
+            <appellationValue lang="fi" pref="alternate" label="aiheen tarkenne">Aiheen tarkenne</appellationValue>
           </titleSet>
         </titleWrap>
         <repositoryWrap>
@@ -56,6 +62,10 @@
                 </partOfPlace>
               </partOfPlace>
             </repositoryLocation>
+          </repositorySet>
+          <repositorySet type="http://terminology.lido-schema.org/lido01018">
+            <displayRepository lang="fi">Suomi</displayRepository>
+            <displayRepository lang="en">Finland</displayRepository>
           </repositorySet>
         </repositoryWrap>
         <objectDescriptionWrap>
@@ -83,21 +93,22 @@
                 <measurementValue>1200</measurementValue>
               </measurementsSet>
               <measurementsSet>
-                <measurementType>
-                  <conceptID type="URI">http://urn.fi/URN:NBN:fi:au:mts:m8</conceptID>
-                  <term lang="en">extent</term>
-                </measurementType>
+                <measurementType>extent</measurementType>
                 <measurementUnit>yksikköä</measurementUnit>
                 <measurementValue>12</measurementValue>
               </measurementsSet>
               <measurementsSet>
-                <measurementType lang="fi">syvyys</measurementType>
+                <measurementType>
+                  <term lang="fi">syvyys</term>
+                </measurementType>
                 <measurementType lang="en">depth</measurementType>
                 <measurementUnit>cm</measurementUnit>
                 <measurementValue>50</measurementValue>
               </measurementsSet>
               <extentMeasurements lang="fi">kohde 1</extentMeasurements>
               <extentMeasurements lang="en">subject 1</extentMeasurements>
+              <qualifierMeasurements lang="fi">arvio</qualifierMeasurements>
+              <qualifierMeasurements lang="en">estimate</qualifierMeasurements>
             </objectMeasurements>
           </objectMeasurementsSet>
           <objectMeasurementsSet>
@@ -122,8 +133,19 @@
               </measurementsSet>
             </objectMeasurements>
               <extentMeasurements>  </extentMeasurements>
-          </objectMeasurementsSet>                  
+          </objectMeasurementsSet>
         </objectMeasurementsWrap>
+          <objectMaterialsTechWrap>
+            <objectMaterialsTechSet>
+              <materialsTech>
+                <termMaterialsTech type="color name">
+                  <conceptID type="URI" source="koko">http://www.yso.fi/onto/koko/p54358</conceptID>
+                  <term lang="fi">punainen</term>
+                  <term lang="en">red</term>
+                </termMaterialsTech>
+              </materialsTech>
+            </objectMaterialsTechSet>
+        </objectMaterialsTechWrap>
       </objectIdentificationWrap>
       <objectRelationWrap>
         <subjectWrap>
@@ -135,6 +157,7 @@
             <subject>
               <subjectActor>
                 <actor>
+                  <actorID type="URI">http://urn.fi/URN:NBN:fi:au:finaf:000211029</actorID>
                   <nameActorSet>
                     <appellationValue>Jussi, J&#xE4;n&#xF6;</appellationValue>
                   </nameActorSet>
@@ -145,8 +168,10 @@
           <subjectSet>
             <subject>
               <subjectPlace>
-                <displayPlace>Etelä-Suomi</displayPlace>
+                <displayPlace lang="fi">Etelä-Suomi</displayPlace>
+                <displayPlace lang="en">Southern Finland</displayPlace>
                 <place>
+                  <!--For URIs, get place type from type-->
                   <placeID type="URI" source="YSO">http://www.yso.fi/onto/yso/p105917</placeID>
                   <gml>
                     <Point>
@@ -156,7 +181,22 @@
                 </place>
               </subjectPlace>
               <subjectPlace>
+                <displayPlace>Rakennus</displayPlace>
+                <place>
+                  <!--For other identifiers, get place type from source-->
+                  <placeID type="Local identifier" source="prt">PRT</placeID>
+                </place>
+              </subjectPlace>
+              <subjectPlace>
+                <displayPlace>Rakennus2</displayPlace>
+                <place>
+                  <!--Map the values of source-->
+                  <placeID type="prt" source="VTJ">PRT2</placeID>
+                </place>
+              </subjectPlace>
+              <subjectPlace>
                 <displayPlace>Lohja</displayPlace>
+                <!--Use type if source not available-->
                 <place>
                   <placeID type="mjr">123456</placeID>
                   <placeID>extraid</placeID>
@@ -184,13 +224,18 @@
                       </namePlaceSet>
                       <partOfPlace>
                         <namePlaceSet>
-                          <appellationValue>Suomi</appellationValue>
+                          <appellationValue lang="fi">Suomi</appellationValue>
+                          <appellationValue lang="en">Finland</appellationValue>
                         </namePlaceSet>
                       </partOfPlace>
                     </partOfPlace>
                   </partOfPlace>
                 </place>
               </subjectPlace>
+              <subjectDate>
+                <displayDate lang="en">21st Century</displayDate>
+                <displayDate lang="fi">2000-luku</displayDate>
+              </subjectDate>
             </subject>
           </subjectSet>
           <subjectSet>
@@ -213,6 +258,20 @@
             </subject>
           </subjectSet>
         </subjectWrap>
+        <relatedWorksWrap>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject label="kuuluu kokoelmaan">Onnellisen tietueen seikkailut</displayObject>
+              <object>
+                <objectWebResource>https://www.finna.fi/Record/eepos.3289017</objectWebResource>
+                <objectID type="URI" label="URN">URN:ISBN:978-952-65-1357-7</objectID>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>kuuluu kokoelmaan</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+        </relatedWorksWrap>
       </objectRelationWrap>
     </descriptiveMetadata>
   </lido>

@@ -2,6 +2,8 @@
 <lidoWrap schemaLocation="http://www.lido-schema.org http://www.lido-schema.org/schema/v1.0/lido-v1.0.xsd">
   <lido>
     <lidoRecID type="Test">knp-247394</lidoRecID>
+    <objectPublishedID type="URI" label="not isbn">12345678</objectPublishedID>
+    <objectPublishedID type="URI" label="isbn">URN:ISBN:951-771-872-1</objectPublishedID>
     <descriptiveMetadata lang="fi">
       <objectClassificationWrap>
         <objectWorkTypeWrap>
@@ -16,14 +18,26 @@
           <classification type="language">
             <term>sv</term>
           </classification>
-          <classification lang="en">
-            <term type="testimittari">näkyy</term>
-            <term type="testimittari">ei näy</term>
+          <classification type="muu luokitus">
+            <term lang="en">buildings</term>
+            <term lang="en">department stores</term>
+            <term lang="fi">rakennukset</term>
+          </classification>
+          <classification>
+            <term lang="sv">byggnader</term>
           </classification>
         </classificationWrap>
       </objectClassificationWrap>
       <objectIdentificationWrap>
         <repositoryWrap>
+          <repositorySet>
+            <workID>Primary id</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113">000001</workID>
+            <workID type="http://terminology.lido-schema.org/lido00113" label="inventaarionumero">000002</workID>
+            <workID type="esinenumero">000003</workID>
+            <workID type="isbn">978-3-16-148410-0</workID>
+            <workID type="issn">2049-3630</workID>
+          </repositorySet>
           <repositorySet>
             <displayRepository lang="fi">Tätä paikkaa ei näytetä</displayRepository>
             <repositoryLocation>
@@ -59,12 +73,13 @@
                   </namePlaceSet>
                 </partOfPlace>
               </partOfPlace>
+              <placeID type="URI">http://urn.fi/URN:NBN:fi:au:finaf:000034269</placeID>
             </repositoryLocation>
           </repositorySet>
         </repositoryWrap>
         <objectDescriptionWrap>
           <objectDescriptionSet type="introduction">
-            <descriptiveNoteValue lang="fi" label="esittely">Ei saa näkyä.</descriptiveNoteValue>
+            <descriptiveNoteValue lang="fi" label="esittely">Vain introductionissa!</descriptiveNoteValue>
           </objectDescriptionSet>
           <objectDescriptionSet type="description">
             <descriptiveNoteValue lang="fi" label="kuvaus">Näkyy description typed.</descriptiveNoteValue>
@@ -111,6 +126,18 @@
             </objectMeasurements>
           </objectMeasurementsSet>
         </objectMeasurementsWrap>
+        <displayStateEditionWrap>
+          <displayEdition>1.</displayEdition>
+        </displayStateEditionWrap>
+        <inscriptionsWrap>
+          <inscriptions>
+            <inscriptionDescription type="annotated">
+              <descriptiveNoteValue label="Annotation">
+                No huhhuh
+              </descriptiveNoteValue>
+            </inscriptionDescription>
+          </inscriptions>
+        </inscriptionsWrap>
       </objectIdentificationWrap>
        <objectRelationWrap>
         <subjectWrap>
@@ -123,6 +150,21 @@
           </subjectSet>
           <subjectSet>
             <subject>
+              <subjectActor>
+                <actor>
+                  <actorID type="URI" source="KANTO">http://urn.fi/URN:NBN:fi:au:finaf:000229728</actorID>
+                  <nameActorSet>
+                    <appellationValue>Pukki, Joulu</appellationValue>
+                  </nameActorSet>
+                </actor>
+              </subjectActor>
+              <subjectActor>
+                <actor>
+                  <nameActorSet>
+                    <appellationValue>Punakuono, Petteri</appellationValue>
+                  </nameActorSet>
+                </actor>
+              </subjectActor>
               <subjectConcept>
                 <conceptID source="sanaston nimi">Yleinen suomalainen asiasanasto</conceptID>
                 <term label="asiasana">sohvat</term>
@@ -146,7 +188,7 @@
                 <term label="asiasana"/>
               </subjectConcept>
               <subjectConcept>
-                <conceptID type="URI">http://www.yso.fi/onto/koko/p31096</conceptID>
+                <Concept about="http://www.yso.fi/onto/koko/p31096"/>
                 <term label="asiasana">maalaukset, ei pilkottu</term>
               </subjectConcept>
               <subjectConcept>
@@ -213,6 +255,71 @@
               <term>kirjallisuus</term>
             </relatedWorkRelType>
           </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Archive</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">12345678</objectID>
+                <objectNote type="objectWorkType">archive</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Collection</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">23456789</objectID>
+                <objectNote type="objectWorkType">collection</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Subcollection 1</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">s1</objectID>
+                <objectNote type="objectWorkType">subcollection</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Subcollection 2</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">s2</objectID>
+                <objectNote type="objectWorkType">subcollection</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
+          <relatedWorkSet>
+            <relatedWork>
+              <displayObject>Parent Series</displayObject>
+              <object>
+                <objectWebResource/>
+                <objectID type="URI">series</objectID>
+                <objectNote type="objectWorkType">series</objectNote>
+              </object>
+            </relatedWork>
+            <relatedWorkRelType>
+              <term>is part of</term>
+            </relatedWorkRelType>
+          </relatedWorkSet>
         </relatedWorksWrap>
       </objectRelationWrap>
       <eventWrap>
@@ -225,9 +332,14 @@
             <eventActor>
               <actorInRole>
                 <actor>
+                  <actorID type="URI" source="ISNI">https://isni.org/isni/0000000109136025</actorID>
                   <nameActorSet>
                     <appellationValue>  Mattilainen, Meikä   </appellationValue>
                   </nameActorSet>
+                  <vitalDatesActor>
+                    <earliestDate>1951</earliestDate>
+                    <latestDate>2019</latestDate>
+                  </vitalDatesActor>
                 </actor>
                 <roleActor>
                   <term>haaveilija</term>
@@ -237,6 +349,8 @@
             <eventActor>
               <actorInRole>
                 <actor>
+                  <actorID type="URI" source="ISNI">https://isni.org/isni/0000000474486306</actorID>
+                  <actorID type="URI" source="finaf">http://urn.fi/URN:NBN:fi:au:finaf:000016723</actorID>
                   <nameActorSet>
                     <appellationValue>  Tiistai, Nietos  </appellationValue>
                   </nameActorSet>
@@ -258,8 +372,8 @@
               </date>
             </eventDate>
             <eventPlace>
-              <displayPlace lang="fi">Bulevardi, Helsinki</displayPlace>
-              <displayPlace lang="en">Bulevardi, Helsinki</displayPlace>
+              <displayPlace lang="fi">Bulevardi, Helsinki, Suomi</displayPlace>
+              <displayPlace lang="en">Bulevardi, Helsinki, Finland</displayPlace>
               <place>
                 <placeID type="URI">http://www.yso.fi/onto/yso/p202484</placeID>
                 <namePlaceSet>
@@ -272,6 +386,24 @@
                   <partOfPlace>
                     <namePlaceSet>
                       <appellationValue lang="fi">Suomi</appellationValue>
+                    </namePlaceSet>
+                  </partOfPlace>
+                </partOfPlace>
+              </place>
+            </eventPlace>
+            <eventPlace>
+              <place>
+                <namePlaceSet>
+                  <appellationValue lang="fi">Ruttopuisto</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue lang="fi">Helsinki</appellationValue>
+                  </namePlaceSet>
+                  <partOfPlace>
+                    <namePlaceSet>
+                      <appellationValue lang="fi">Suomi</appellationValue>
+                      <appellationValue lang="en">Finland</appellationValue>
                     </namePlaceSet>
                   </partOfPlace>
                 </partOfPlace>
@@ -296,7 +428,7 @@
               <displayMaterialsTech lang="en">lining: frieze</displayMaterialsTech>
                 <materialsTech>
                   <termMaterialsTech>
-                    <conceptID type="URI">http://www.yso.fi/onto/koko/p30796</conceptID>
+                    <Concept about="http://www.yso.fi/onto/koko/p30796"/>
                     <term lang="fi">sarka</term>
                   </termMaterialsTech>
                 </materialsTech>
@@ -315,6 +447,8 @@
             <eventActor>
               <actorInRole>
                 <actor>
+                  <actorID type="Local Identifier">12345678</actorID>
+                  <actorID type="URI" source="finaf">http://urn.fi/URN:NBN:fi:au:finaf:000228701</actorID>
                   <nameActorSet>
                     <appellationValue>Puu, Teisto</appellationValue>
                   </nameActorSet>
@@ -324,6 +458,57 @@
                 </roleActor>
               </actorInRole>
             </eventActor>
+            <eventDate>
+              <displayDate lang="fi">suunnittelu noin 1910</displayDate>
+              <displayDate lang="en">design ca 1910</displayDate>
+              <date>
+                <earliestDate>1910</earliestDate>
+                <latestDate>1910</latestDate>
+              </date>
+            </eventDate>
+          </event>
+        </eventSet>
+         <eventSet>
+          <event>
+            <eventType>
+              <term>outo tapahtuma</term>
+            </eventType>
+            <eventDate>
+              <date>
+                <earliestDate>1900</earliestDate>
+                <latestDate>1909</latestDate>
+              </date>
+            </eventDate>
+            <eventPlace>
+              <place>
+                <placeID type="local" source="lähde">outo</placeID>
+                <placeID type="URI">http://localhost/outo_id</placeID>
+                <namePlaceSet>
+                  <appellationValue>Outo kumpu</appellationValue>
+                </namePlaceSet>
+                <partOfPlace>
+                  <namePlaceSet>
+                    <appellationValue>Outo kaupunki</appellationValue>
+                  </namePlaceSet>
+                  <partOfPlace>
+                    <namePlaceSet>
+                      <appellationValue>Outo maa</appellationValue>
+                    </namePlaceSet>
+                  </partOfPlace>
+                </partOfPlace>
+              </place>
+            </eventPlace>
+          </event>
+          <event>
+            <eventType>
+              <term>toinen outo tapahtuma</term>
+            </eventType>
+            <eventDate>
+              <date>
+                <earliestDate>1900-10-02</earliestDate>
+                <latestDate>1909-11-13</latestDate>
+              </date>
+            </eventDate>
           </event>
         </eventSet>
       </eventWrap>
@@ -362,14 +547,24 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">CC BY 4.0</conceptID>
-              <term lang="fi">Tässä on kuvien copyright.</term>
+              <conceptID>CC BY 4.0</conceptID>
+              <term lang="fi">Ei näytetä.</term>
             </rightsType>
+            <rightsHolder>
+              <legalBodyName>
+                <appellationValue>Holder, Rights</appellationValue>
+              </legalBodyName>
+              <legalBodyWeblink>http://localhost/rightsholder</legalBodyWeblink>
+            </rightsHolder>
+            <creditLine lang="en">Credit: Holder, Rights</creditLine>
+            <creditLine label="usage" lang="fi">Kuvien käyttöoikeuskuvaus.</creditLine>
+            <creditLine label="usage" lang="en">Usage instructions.</creditLine>
           </rightsResource>
         </resourceSet>
         <resourceSet>
           <resourceID type="ID">607643</resourceID>
-          <resourceDescription type="displayLink">Kuvan nimi</resourceDescription>
+          <resourceDescription type="displayLink" lang="en">Image name</resourceDescription>
+          <resourceDescription type="displayLink" lang="fi">Kuvan nimi</resourceDescription>
           <resourceRepresentation type="image_thumb">
             <linkResource>https://thumbkuvanlinkki2.com</linkResource>
           </resourceRepresentation>
@@ -405,10 +600,25 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">InC</conceptID>
+              <conceptID>InC</conceptID>
               <term lang="fi">Tässä on kuvien copyright.</term>
             </rightsType>
           </rightsResource>
+          <resourceType>
+            <term>Type Term</term>
+          </resourceType>
+          <resourceRelType>
+            <term>Relation Type</term>
+          </resourceRelType>
+          <resourceDateTaken>
+            <displayDate>20.1.2026</displayDate>
+          </resourceDateTaken>
+          <resourcePerspective>
+            <term>Vääristynyt</term>
+          </resourcePerspective>
+          <resourcePerspective>
+            <term>Suoristettu</term>
+          </resourcePerspective>
         </resourceSet>
         <resourceSet>
           <resourceRepresentation type="preview_3D">
@@ -429,7 +639,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">InC</conceptID>
+              <Concept about="https://rightsstatements.org/vocab/InC/1.0/"/>
               <term lang="fi">Tässä on mallien copyright.</term>
             </rightsType>
           </rightsResource>
@@ -456,6 +666,27 @@
           </resourceRepresentation>
         </resourceSet>
         <resourceSet>
+          <resourceDescription type="displayLink">VideoTestiInC.mp4</resourceDescription>
+          <resourceRepresentation type="preview_video">
+            <linkResource formatResource="mp4">https://linkkiInCVideoon.fi</linkResource>
+            <resourceMeasurementsSet>
+              <measurementType lang="fi">koko</measurementType>
+              <measurementType lang="en">size</measurementType>
+              <measurementType lang="sv">storlek</measurementType>
+              <measurementUnit lang="fi">tavua</measurementUnit>
+              <measurementUnit lang="en">byte</measurementUnit>
+              <measurementUnit lang="sv">byte</measurementUnit>
+              <measurementValue>74576596</measurementValue>
+            </resourceMeasurementsSet>
+          </resourceRepresentation>
+          <rightsResource>
+            <rightsType>
+              <conceptID>InC</conceptID>
+              <term lang="fi">Tässä on videoiden copyright.</term>
+            </rightsType>
+          </rightsResource>
+        </resourceSet>
+        <resourceSet>
           <resourceDescription type="displayLink">PDFTesti.pdf</resourceDescription>
           <resourceRepresentation type="provided_text">
             <linkResource formatResource="pdf">https://linkkiPDF.fi</linkResource>
@@ -468,7 +699,7 @@
           </resourceRepresentation>
           <rightsResource>
             <rightsType>
-              <conceptID type="copyright">CC BY 4.0</conceptID>
+              <conceptID>CC BY 4.0</conceptID>
               <term lang="fi">Tekstitiedoston tarkempi käyttöoikeuskuvaus</term>
             </rightsType>
           </rightsResource>

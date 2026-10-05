@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Statistics
@@ -52,7 +52,7 @@ use Psr\Container\ContainerInterface;
 class RedisFactory implements FactoryInterface
 {
     /**
-     * Create an object
+     * Create an object.
      *
      * @param ContainerInterface $container     Service manager
      * @param string             $requestedName Service being created
@@ -74,8 +74,8 @@ class RedisFactory implements FactoryInterface
             throw new \Exception('Unexpected options passed to factory.');
         }
 
-        $config = $container->get(\VuFind\Config\PluginManager::class)
-            ->get('config')->Statistics ?? null;
+        $config = $container->get(\VuFind\Config\ConfigManagerInterface::class)
+            ->getConfigObject('config')->Statistics ?? null;
         return new $requestedName(
             $this->getConnection($config),
             $config->redis_key_prefix ?? Redis::DEFAULT_KEY_PREFIX

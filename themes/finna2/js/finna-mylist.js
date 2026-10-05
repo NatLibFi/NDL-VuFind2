@@ -61,7 +61,7 @@ finna.myList = (function finnaMyList() {
 
     var listParams = {
       'id': getActiveListId(),
-      'title': $('.list-title span').text(),
+      'title': $('.js-list-title').text(),
       'public': $(".list-visibility input[type='radio']:checked").val()
     };
 
@@ -186,7 +186,7 @@ finna.myList = (function finnaMyList() {
    * @param {boolean} mode Should the title be editable
    */
   function toggleTitleEditable(mode) {
-    var target = $('.list-title span');
+    var target = $('.js-list-title');
     var currentTitle;
     if (mode) {
       // list title
@@ -210,7 +210,7 @@ finna.myList = (function finnaMyList() {
           }
         }
       };
-      target.editable({action: 'click', triggers: [target, $('.list-title i')]}, titleCallback, editableSettings);
+      target.editable({action: 'click', triggers: [target, $('.list-title .icon')]}, titleCallback, editableSettings);
     } else {
       target.replaceWith(target.clone());
     }
@@ -331,9 +331,6 @@ finna.myList = (function finnaMyList() {
    */
   function initEditComponents() {
     var isDefaultList = typeof getActiveListId() == 'undefined';
-
-    //Init mobile navigation collapse after list has been reloaded
-    finna.layout.initMobileNarrowSearch();
 
     if (!isDefaultList) {
       toggleTitleEditable(true);

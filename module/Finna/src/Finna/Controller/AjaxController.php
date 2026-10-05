@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Ajax Controller Module
+ * Ajax Controller Module.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -31,7 +31,7 @@
 namespace Finna\Controller;
 
 /**
- * This controller handles Finna AJAX functionality
+ * This controller handles Finna AJAX functionality.
  *
  * @category VuFind
  * @package  Controller
@@ -43,20 +43,7 @@ namespace Finna\Controller;
 class AjaxController extends \VuFind\Controller\AjaxController
 {
     /**
-     * Handle online payment notification callback.
-     *
-     * An empty response with HTTP code 200 is returned
-     *
-     * @return \Laminas\Http\Response
-     */
-    public function onlinePaymentNotifyAction()
-    {
-        // Use text/html to avoid any output
-        return $this->callAjaxMethod('onlinePaymentNotify', 'text/html');
-    }
-
-    /**
-     * Handle a file download with AJAX call
+     * Handle a file download with AJAX call.
      *
      * @return \Laminas\Http\Response
      */

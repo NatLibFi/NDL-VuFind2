@@ -1,0 +1,129 @@
+<?xml version="1.0"?>
+<ExchangeSet xmlns="http://project-forward.eu/schemas/EN15907-forward" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://project-forward.eu/schemas/EN15907-forward http://forward.cineca.it/schema/EN15907-forward-v1.0.xsd">
+  <CinematographicAgent>
+    <AgentIdentifier>
+      <AgentIDType>01</AgentIDType>
+      <IDTypeName>elonet_henkilo</IDTypeName>
+      <IDValue>249124</IDValue>
+    </AgentIdentifier>
+    <RecordSource>
+      <SourceName>Kansallinen audiovisuaalinen instituutti</SourceName>
+    </RecordSource>
+    <RecordSource>
+      <SourceName>Kari Uusitalon kokoama luettelo 2004.</SourceName>
+    </RecordSource>
+    <CAgentName>
+      <AgentNameType>04</AgentNameType>
+      <PersonName>Mare Jala</PersonName>
+      <PersonNameInverted>Jala, Mare</PersonNameInverted>
+      <NamesBeforeKey>Mare</NamesBeforeKey>
+      <AgentNameId type="ISNI">0000000123123</AgentNameId>
+    </CAgentName>
+    <CAgentName>
+      <AgentNameType henkilo-muu_nimi-tyyppi="oikea nimi">00</AgentNameType>
+      <PersonName>Markka Jala</PersonName>
+      <PersonNameInverted>Jala, Markka</PersonNameInverted>
+    </CAgentName>
+    <AgentDate>
+      <AgentDateEventType>51</AgentDateEventType>
+      <DateText>27.09.1935</DateText>
+      <LocationName>Valtasora</LocationName>
+    </AgentDate>
+    <AgentDate>
+      <AgentDateEventType>52</AgentDateEventType>
+      <DateText>3.2.2026</DateText>
+      <LocationName>Lahjo</LocationName>
+    </AgentDate>
+    <AgentPlace>
+      <LocationName>Suomi</LocationName>
+    </AgentPlace>
+    <BiographicalNote>Ei tätä</BiographicalNote>
+    <BiographicalNote henkilo-biografia-tyyppi="biografia">Nootti</BiographicalNote>
+    <BiographicalNote henkilo-biografia-tyyppi="palkinnot">
+        1. palkinto
+        2. palkinto
+    </BiographicalNote>
+  </CinematographicAgent>
+  <CinematographicWork>
+    <Identifier scheme="KAVI" IDTypeName="elonet_materiaali_kuva">173489</Identifier>
+    <RecordSource>
+      <SourceName>Kansallinen audiovisuaalinen instituutti</SourceName>
+    </RecordSource>
+    <Title>
+      <TitleText>112233.jpg</TitleText>
+      <PartDesignation>
+        <Value kuva-kuvatyyppi="V" kuva-kuvateksti="Vt. kunnanjohtaja (Mare) ja nimismies" kuva-kuvakoko="1159439">4</Value>
+      </PartDesignation>
+      <TitleRelationship>unspecified</TitleRelationship>
+    </Title>
+    <IdentifyingTitle>223344.jpg</IdentifyingTitle>
+    <HasAgent>
+      <Activity>A99</Activity>
+      <AgentName>121212</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_elokuva</IDTypeName>
+        <IDValue>131313</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent>
+      <Activity>A99</Activity>
+      <AgentName>2222</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>33333</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent>
+      <Activity>A99</Activity>
+      <AgentName>44444</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>55555</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <ProductionEvent>
+      <ProductionEventType elokuva-elonet-url="http://localhost/movie" elokuva-elonet-materiaali-kuva-url="http://localhost/poster.jpg" finna-kayttooikeus="Luvanvarainen k&#xE4;ytt&#xF6; / ei tiedossa">DESCRIPTION</ProductionEventType>
+    </ProductionEvent>
+    <Manifestation>
+      <Identifier scheme="KAVI">1111</Identifier>
+    </Manifestation>
+  </CinematographicWork>
+  <CinematographicWork>
+    <Identifier scheme="KAVI" IDTypeName="elonet_materiaali_kuva">2121</Identifier>
+    <RecordSource>
+      <SourceName>Kansallinen audiovisuaalinen instituutti</SourceName>
+    </RecordSource>
+    <Title>
+      <TitleText>144.jpg</TitleText>
+      <PartDesignation>
+        <Value kuva-kuvatyyppi="V" kuva-kuvateksti="Etsiv&#xE4; (Mare)" kuva-kuvakoko="1612394">9</Value>
+      </PartDesignation>
+      <TitleRelationship>unspecified</TitleRelationship>
+    </Title>
+    <IdentifyingTitle>144.jpg</IdentifyingTitle>
+    <HasAgent>
+      <Activity>A99</Activity>
+      <AgentName>12</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_elokuva</IDTypeName>
+        <IDValue>12</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <HasAgent>
+      <Activity>A99</Activity>
+      <AgentName>13</AgentName>
+      <AgentIdentifier>
+        <AgentIDType>01</AgentIDType>
+        <IDTypeName>elonet_henkilo</IDTypeName>
+        <IDValue>13</IDValue>
+      </AgentIdentifier>
+    </HasAgent>
+    <Manifestation>
+      <Identifier scheme="KAVI">5656</Identifier>
+    </Manifestation>
+  </CinematographicWork>
+</ExchangeSet>

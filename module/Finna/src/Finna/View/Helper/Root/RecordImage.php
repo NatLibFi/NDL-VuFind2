@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Header view helper
+ * Header view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -31,13 +31,13 @@
 
 namespace Finna\View\Helper\Root;
 
+use Finna\RecordDriver\RenderContext;
 use Laminas\View\Helper\Url;
 
 use function func_get_args;
-use function in_array;
 
 /**
- * Header view helper
+ * Header view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -49,14 +49,14 @@ use function in_array;
 class RecordImage extends \Laminas\View\Helper\AbstractHelper
 {
     /**
-     * Record view helper
+     * Record view helper.
      *
      * @var Record
      */
     protected $record;
 
     /**
-     * Url helper
+     * Url helper.
      *
      * @var Url
      */
@@ -94,8 +94,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      */
     public function getImageRights($index = 0)
     {
-        $language = $this->getView()->layout()->userLang;
-        $images = $this->record->getAllImages($language);
+        $images = $this->record->getAllImages();
         return isset($images[$index]) ? $images[$index]['rights'] : [];
     }
 
@@ -145,10 +144,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $canonical = false,
         $includePdf = true
     ) {
-        $images = $this->record->getAllImages(
-            $this->view->layout()->userLang,
-            $includePdf
-        );
+        $images = $this->record->getAllImages($includePdf);
         if (!isset($images[$index])) {
             return false;
         }
@@ -207,7 +203,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $params = [],
         $canonical = false
     ) {
-        $images = $this->record->getAllImages($this->view->layout()->userLang);
+        $images = $this->record->getAllImages();
         if (!isset($images[$index])) {
             return false;
         }
@@ -232,7 +228,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
     }
 
     /**
-     * Returns an array containing all the high resolution images for record image
+     * Returns an array containing all the high resolution images for record image.
      *
      * @param int $index Record image index
      *
@@ -240,32 +236,29 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      */
     public function getHighResolutionImages($index)
     {
-        $images = $this->record->getAllImages($this->view->layout()->userLang);
+        $images = $this->record->getAllImages();
         return $images[$index]['highResolution'] ?? false;
     }
 
     /**
-     * Get all images as Cover links
+     * Get all images as Cover links.
      *
-     * @param string $language   Language for copyright information
-     * @param array  $params     Optional array of image parameters as an
-     *                           associative array of parameter => value pairs:
-     *                           - w  Width
-     *                           - h  Height
-     * @param bool   $thumbnails Whether to include thumbnail links if no image links
-     *                           are found
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     *                           links are found
+     * @param array $params     Optional array of image parameters as an
+     *                          associative array of parameter => value
+     *                          pairs: - w  Width - h  Height
+     * @param bool  $thumbnails Whether to include thumbnail links if no image links
+     *                          are found
+     * @param bool  $includePdf Whether to include first PDF file when no image
+     *                          links are found
      *
      * @return array
      */
     public function getAllImagesAsCoverLinks(
-        $language,
         $params = [],
         $thumbnails = true,
         $includePdf = true
     ) {
-        $images = $this->record->getAllImages($language, $thumbnails, $includePdf);
+        $images = $this->record->getAllImages($thumbnails, $includePdf);
         if (empty($images)) {
             return [];
         }
@@ -343,15 +336,16 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
         $imageToRecord = $extraParams['imageToRecord'] ?? false;
 
         $view = $this->getView();
+        $renderContext = RenderContext::fromView($type);
+        $this->record->getDriver()->tryMethod('setRenderContext', [$renderContext->value]);
         $images = $this->getAllImagesAsCoverLinks(
-            $view->layout()->userLang,
             $params,
             true,
             true
         );
         // Get plausible model data
         if (
-            !in_array($type, ['list', 'list grid'])
+            $renderContext === RenderContext::RECORD
             && $this->record->getDriver()->tryMethod('getModels')
         ) {
             $images = $this->mergeModelDataToImages($images);
@@ -360,6 +354,10 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             // Limit combined results to a single image
             $images = [reset($images)];
         }
+
+        // Ensure that the array is a list so that image paginator can handle it properly:
+        $images = array_values($images);
+
         $context = [
             'type' => $type,
             'images' => $images,
@@ -368,6 +366,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             'imageRightsLabel' => $imageRightsLabel,
             'numOfImages' => $numOfImages,
             'displayIcon' => $displayIcon,
+            'renderContext' => $renderContext,
         ];
 
         return $this->record->renderTemplate('record-image.phtml', $context);
@@ -448,11 +447,13 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
             }
             $images[$ind]['type'] = 'model';
         }
+        // Sort the array to ensure correct order:
+        ksort($images);
         return $images;
     }
 
     /**
-     * Get image with index as cover links
+     * Get image with index as cover links.
      *
      * @param int $index Index of the image array to get.
      *
@@ -460,9 +461,7 @@ class RecordImage extends \Laminas\View\Helper\AbstractHelper
      */
     public function getImageAsCoverLinks(int $index): array
     {
-        $image
-            = $this->record->getAllImages($this->view->layout()->userLang)[$index]
-            ?? [];
+        $image = $this->record->getAllImages()[$index] ?? [];
         if (empty($image)) {
             return [];
         }

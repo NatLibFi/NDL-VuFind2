@@ -32,7 +32,7 @@ use function func_get_args;
 class SchematronHelpers
 {
     /**
-     * XML Errors
+     * XML Errors.
      *
      * @var array
      */
@@ -70,7 +70,7 @@ class SchematronHelpers
     }
 
     /**
-     * Restore LibXML internal error handling previously enabled by self::handleXmlErrors()
+     * Restore LibXML internal error handling previously enabled by self::handleXmlErrors().
      *
      * @return void
      */

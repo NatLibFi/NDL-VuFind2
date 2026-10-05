@@ -1,5 +1,6 @@
 // finna/common contains mixins used in other files, so import it first
 @import "finna/common";
+@import "finna/offcanvas.scss";
 @import "finna/accordion";
 @import "finna/advanced-search";
 @import "finna/autocomplete";
@@ -13,6 +14,7 @@
 @import "finna/image-popup";
 @import "finna/finna-header";
 @import "finna/combinedlist";
+@import "finna/eds";
 @import "finna/grid-view";
 @import "finna/holdings";
 @import "finna/public-favorites";
@@ -34,7 +36,7 @@
 @import "finna/browsebar";
 @import "finna/forms";
 @import "finna/search-controls";
-@import "finna/result-sidebar";
+@import "finna/sidebar";
 @import "finna/library-cards";
 @import "finna/tooltip";
 @import "finna/street-search";
@@ -53,7 +55,6 @@
 @import "finna/record";
 @import "finna/primo";
 @import "finna/filters";
-@import "finna/mobile-toolbar";
 @import "finna/mobile-table";
 @import "finna/audio-player";
 @import 'finna/feed-styles';
@@ -64,6 +65,7 @@
 @import 'finna/wayfinder';
 @import 'finna/select-a11y';
 @import 'finna/reservationlist';
+@import 'finna/iiif';
 
 html {
   @if $font-size-root != null {
@@ -74,7 +76,6 @@ html {
 ::-ms-clear {
   display: none;
 }
-
 iframe {
   border: none;
 }
@@ -94,14 +95,16 @@ body {
   }
 }
 section.main.template-dir-search.template-name-results,
+section.main.template-dir-l1.template-name-results,
+section.main.template-dir-blender.template-name-results,
 section.main.template-dir-primo.template-name-search,
 section.main.template-dir-eds.template-name-search,
 section.main.template-dir-authority.template-name-search,
 section.main.template-dir-feedback.template-name-response {
   & >.container.main-content {
-    margin-top: 10px;
-    padding-bottom: 25px;
-    @include media-breakpoint-down(sm) {
+    margin-top: 1rem;
+    padding-bottom: 2rem;
+    @include media-breakpoint-down(md) {
       margin-top: 0px;
     }
   }
@@ -114,9 +117,6 @@ section.main.template-dir-content.template-name-content > .container,
 section.main.template-dir-feedcontent.template-name-content > .container {
   padding-top: 0;
   padding-bottom: 3.4em;
-}
-.record-row {
-  margin-top: 20px;
 }
 
 .document-types {
@@ -138,18 +138,8 @@ section.main.template-dir-feedcontent.template-name-content > .container {
   }
 }
 
-i.fa.fa-search.backgrounding {
-  position: absolute;
-  right: 30px;
-  top: 30px;
-}
-i.fa.fa-search.backgrounding:before {
-  font-size: 100px;
-  color: rgba(255,255,255,0.5);
-}
-
 /* Input styles */
-input[type=number].input-year {
+input[type=text].input-year {
   -moz-appearance:textfield !important;
   width: 5em;
 }
@@ -157,6 +147,13 @@ input[type=number].input-year::-webkit-inner-spin-button,
 input[type=number].input-year::-webkit-outer-spin-button {
   -webkit-appearance: none !important;
   margin: 0;
+}
+
+label,
+select,
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
 }
 
 /* --- Image processing --- */
@@ -184,25 +181,6 @@ label.list-group-item {
 }
 .tab-content {
   padding: 4px 0px;
-}
-
-/* --- Collection view --- */
-.template-dir-collection.template-name-view {
-  & .collection-title {
-    margin-top: 0;
-  }
-  & .list-group.filters {
-    & input {
-      max-width: 100%;
-      @include media-breakpoint-between(sm, md) {
-        width: 100%;
-        margin-bottom: 5px;
-      }
-      @include media-breakpoint-down(sm) {
-        display: inline-block;
-      }
-    }
-  }
 }
 
 /* --- Badges - blend the links in --- */
@@ -310,14 +288,15 @@ label.list-group-item {
 // Truncate
 .truncate-done {
   overflow-y: hidden;
-  // Add a bit of padding for focus rings:
-  padding-top: 2px;
-  padding-bottom: 2px;
 }
 
 //Finna mixins
 .truncate-field {
   display: none;
+  // Focus-visible style for links within truncate-field
+  a:focus-visible {
+    box-shadow: 0 0 $focus-ring-blur (0.75 * $focus-ring-width) $focus-ring-color inset;
+  }
   &.truncate-done {
     display: block;
   }
@@ -326,7 +305,16 @@ label.list-group-item {
     margin-bottom: 0;
   }
 }
+.more-link,
+.less-link {
+  .icon {
+    padding-left: 3px;
+  }
+}
 .more-link, .less-link, .less-link-top {
+  display: flex;
+  align-content: center;
+  align-items: center;
   cursor: pointer;
   font-weight: 600;
   text-transform: uppercase;
@@ -337,9 +325,15 @@ label.list-group-item {
   color: $text-color;
   background-color: transparent;
   padding: 0;
+  &:hover span:not(.icon) {
+    text-decoration: $link-hover-decoration;
+  }
   &.link-buttons {
     color: $link-color;
     font-weight: 400;
+    &:hover {
+      text-decoration: $link-hover-decoration;
+    }
   }
 }
 
@@ -390,7 +384,7 @@ label.list-group-item {
 
 .well {
   background-color: mix($body-bg, contrast($body-bg), 95%);
-  border: 1px solid mix($body-bg, contrast($body-bg), 85%);
+  border: 1px solid mix($body-bg, contrast($body-bg), 80%);
 }
 
 // Virtual keyboard
@@ -402,50 +396,53 @@ label.list-group-item {
 
 .keyboard-selection {
   margin-top: 0;
+  button.dropdown-toggle {
+    &:hover {
+      color: $input-color;
+      background-color: $light;
+    }
+  }
 }
 
 #keyboard-selection-button {
+  margin-left: (0.5 * $spacer);
   height: 48px;
+  border-radius: $border-radius-base;
 }
 
 /* ------ Responsive table for small screen size ------ */
 @media screen {
   @include media-breakpoint-down(sm) {
     .table-responsive {
-      border: none;
-      thead, tfoot > tr > th {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        margin: -1px;
-        padding: 0;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        border: 0;
-      }
+      --bs-table-striped-bg: #{$table-bg-accent};
+      box-shadow: none;
+
+      @include table-responsive;
+
       tbody > tr {
-        display: block;
-        margin-bottom: $line-height-computed;
-        border: 1px solid $gray-lighter;
-      }
-      td, tbody > tr > th {
-        display: flex;
-        align-items: first baseline;
-        background: #fff;
-        &:not(.user-account-table-select):before {
-          display: flex;
-          flex-basis: 40%;
-          flex-shrink: 0;
-          font-weight: bold;
-          content: attr(data-label);
+        th, td {
+          // Add space inside table cells
+          &:before {
+            margin-right: 0.5rem;
+          }
+          // Prevent rounded corners on table cells
+          &:first-child,
+          &:last-child {
+            border-radius: 0;
+          }
         }
       }
-      tbody > tr > td:nth-child(even) {
-        background-color: $table-bg-accent;
-      }
-      tfoot > tr > td {
-        border-top: none;
-      }
+    }
+  }
+}
+/* ------ Responsive table for non-ultrawide screen size ------ */
+@include media-breakpoint-down(xl) {
+  @media screen {
+    .table-responsive.table-responsive__lg {
+      --bs-table-striped-bg: #{$table-bg-accent};
+      box-shadow: none;
+
+      @include table-responsive;
     }
   }
 }
@@ -499,21 +496,19 @@ label.list-group-item {
     &:focus-visible {
       box-shadow: $focus-ring-box-shadow;
     }
-
     .hierarchy-tree__children, li:not(.hierarchy-tree__collection)  {
       padding-left: 0.7rem;
     }
-    li:not(.hierarchy-tree__collection) {
-      border-left: 1px solid $gray-mid-light;
-    }
     button {
-      font-size: 1.3rem;
       color: $primary;
       &:hover {
         background-color: $gray-lighter;
         border-radius: 4px;
       }
     }
+  }
+  .hierarchy-tree-toggle-full {
+    margin-bottom: 0.5rem;
   }
   div.alert {
     margin-top: 10px;

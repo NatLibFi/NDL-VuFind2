@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Content
@@ -27,7 +27,7 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\OrganisationInfo\Provider;
@@ -50,12 +50,12 @@ use function strlen;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 abstract class AbstractProvider implements
     TranslatorAwareInterface,
     \VuFindHttp\HttpServiceAwareInterface,
-    \Laminas\Log\LoggerAwareInterface,
+    \Psr\Log\LoggerAwareInterface,
     ProviderInterface
 {
     use \VuFind\I18n\Translator\TranslatorAwareTrait;
@@ -63,7 +63,7 @@ abstract class AbstractProvider implements
     use \VuFind\Log\LoggerAwareTrait;
 
     /**
-     * Template with all the default details fields
+     * Template with all the default details fields.
      *
      * @var array
      */
@@ -84,49 +84,49 @@ abstract class AbstractProvider implements
     ];
 
     /**
-     * Organisation info configuration
+     * Organisation info configuration.
      *
      * @var VuFind\Config\Config
      */
     protected $config;
 
     /**
-     * Cache manager
+     * Cache manager.
      *
      * @var \VuFind\CacheManager
      */
     protected $cacheManager;
 
     /**
-     * Date converter
+     * Date converter.
      *
      * @var \VuFind\Date\Converter
      */
     protected $dateConverter;
 
     /**
-     * URL plugin
+     * URL plugin.
      *
      * @var Url
      */
     protected $urlPlugin;
 
     /**
-     * Results plugin manager
+     * Results plugin manager.
      *
      * @var PluginManager
      */
     protected $resultsManager;
 
     /**
-     * Hierarchical facet helper
+     * Hierarchical facet helper.
      *
      * @var HierarchicalFacetHelper
      */
     protected $facetHelper;
 
     /**
-     * Sorter
+     * Sorter.
      *
      * @var Sorter
      */
@@ -162,7 +162,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Check if a consortium is found in organisation info and return basic information
+     * Check if a consortium is found in organisation info and return basic information.
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -179,7 +179,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Get consortium information (includes list of locations)
+     * Get consortium information (includes list of locations).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -193,6 +193,8 @@ abstract class AbstractProvider implements
         if (!empty($result['consortium']['logo']['small'])) {
             $result['consortium']['logo']['small'] = $this->proxifyImageUrl($result['consortium']['logo']['small']);
         }
+        // Ensure that the result to be returned contains the 'list' element:
+        $result['list'] ??= [];
         foreach ($result['list'] as &$item) {
             $item = $this->processDetails($item);
         }
@@ -201,7 +203,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Get location details
+     * Get location details.
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -223,7 +225,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Check if a consortium is found in organisation info and return basic information (provider-specific part)
+     * Check if a consortium is found in organisation info and return basic information (provider-specific part).
      *
      * @param string $language Language
      * @param string $id       Parent organisation ID
@@ -233,7 +235,7 @@ abstract class AbstractProvider implements
     abstract protected function doLookup(string $language, string $id): array;
 
     /**
-     * Get consortium information (includes list of locations) (provider-specific part)
+     * Get consortium information (includes list of locations) (provider-specific part).
      *
      * @param string $language       Language
      * @param string $id             Parent organisation ID
@@ -244,7 +246,7 @@ abstract class AbstractProvider implements
     abstract protected function doGetConsortiumInfo(string $language, string $id, array $locationFilter = []): array;
 
     /**
-     * Get location details (provider-specific part)
+     * Get location details (provider-specific part).
      *
      * @param string  $language   Language
      * @param string  $id         Parent organisation ID
@@ -263,7 +265,7 @@ abstract class AbstractProvider implements
     ): array;
 
     /**
-     * Fetch JSON data as an array from cache or external API
+     * Fetch JSON data as an array from cache or external API.
      *
      * @param string $url URL
      *
@@ -322,7 +324,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Proxify an image url for loading via the OrganisationInfo controller
+     * Proxify an image url for loading via the OrganisationInfo controller.
      *
      * @param string $url Image URL
      *
@@ -366,7 +368,7 @@ abstract class AbstractProvider implements
     }
 
     /**
-     * Process response data and extract various fields
+     * Process response data and extract various fields.
      *
      * @param array $result Result
      *
@@ -379,6 +381,8 @@ abstract class AbstractProvider implements
         }
         $isAlwaysClosed = true;
         $hasSelfServiceTimes = false;
+        $now = time();
+        $currentScheduleTime = null;
         // empty() needed because we can't use null coalescing without breaking the reference:
         if (!empty($result['openTimes']['schedules'])) {
             foreach ($result['openTimes']['schedules'] as &$schedule) {
@@ -403,6 +407,10 @@ abstract class AbstractProvider implements
                         if (null === $lastClosingDateTime || $time['closes'] > $lastClosingDateTime) {
                             $lastClosingDateTime = $time['closes'];
                         }
+                        $time['current'] = $now >= $time['opens'] && $now < $time['closes'];
+                        if ($time['current']) {
+                            $currentScheduleTime = $time;
+                        }
                         if ($time['selfservice']) {
                             $selfServiceTimes[] = $time;
                             $hasSelfServiceTimes = true;
@@ -425,6 +433,10 @@ abstract class AbstractProvider implements
         }
         $result['isAlwaysClosed'] = $isAlwaysClosed;
         $result['hasSelfServiceTimes'] = $hasSelfServiceTimes;
+        if ($result['openNow'] && $hasSelfServiceTimes) {
+            $result['currentScheduleTime'] = $currentScheduleTime;
+        }
+        unset($now, $currentScheduleTime);
 
         if (!empty($result['address'])) {
             $address = $result['address'];
@@ -492,7 +504,7 @@ abstract class AbstractProvider implements
 
     /**
      * Enrich organisation details with accessibility information from TPR
-     * Palvelukuvausrekisteri
+     * Palvelukuvausrekisteri.
      *
      * @param string $language      Language
      * @param string $id            Parent organisation ID

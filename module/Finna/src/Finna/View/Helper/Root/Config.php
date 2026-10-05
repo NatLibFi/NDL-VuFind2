@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Config view helper
+ * Config view helper.
  *
  * PHP version 8
  *
@@ -18,33 +18,35 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
 
+use VuFind\Db\Entity\UserEntityInterface;
+
 /**
- * Config view helper
+ * Config view helper.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Jaro Ravila <jaro.ravila@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class Config extends \VuFind\View\Helper\Root\Config
 {
     /**
-     * Is video embedding on record page enabled
+     * Is video embedding on record page enabled.
      *
-     * @return boolean
+     * @return bool
      */
     public function inlineVideoEnabled()
     {
@@ -52,7 +54,7 @@ class Config extends \VuFind\View\Helper\Root\Config
     }
 
     /**
-     * Get default facet fields
+     * Get default facet fields.
      *
      * @return array
      */
@@ -63,7 +65,7 @@ class Config extends \VuFind\View\Helper\Root\Config
     }
 
     /**
-     * Get default checkbox facets
+     * Get default checkbox facets.
      *
      * @return array
      */
@@ -74,7 +76,7 @@ class Config extends \VuFind\View\Helper\Root\Config
     }
 
     /**
-     * Is map selection shown
+     * Is map selection shown.
      *
      * @return bool
      */
@@ -85,7 +87,7 @@ class Config extends \VuFind\View\Helper\Root\Config
 
     /**
      * Display similar records at the bottom of record view
-     * as a carousel
+     * as a carousel.
      *
      * @return string
      */
@@ -94,5 +96,34 @@ class Config extends \VuFind\View\Helper\Root\Config
         //return $this->get('config')->Record->similar_carousel_display ?? '';
         // Disabled 12.1.2024 due to performance issues
         return '';
+    }
+
+    /**
+     * Get the maximum daily comment count for a user per record.
+     *
+     * @param UserEntityInterface $user User
+     *
+     * @return int
+     */
+    public function getMaximumDailyCommentCount(UserEntityInterface $user): ?int
+    {
+        $config = $this->get('config');
+        $limits = $config['Social']['daily_record_comment_limit'] ?? [];
+        return $limits[$user->getAuthMethod()] ?? $limits['*'] ?? null;
+    }
+
+    /**
+     * Get offcanvas sidebar side.
+     *
+     * Finna: force off-canvas enabled.
+     *
+     * @return ?string 'left', 'right'
+     */
+    public function offcanvasSide(): ?string
+    {
+        $config = $this->get('config');
+        return ($config->Site->sidebarOnLeft ?? false)
+            ? 'left'
+            : 'right';
     }
 }

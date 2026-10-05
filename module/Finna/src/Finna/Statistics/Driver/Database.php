@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Database driver for statistics
+ * Database driver for statistics.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Statistics
@@ -29,14 +29,13 @@
 
 namespace Finna\Statistics\Driver;
 
-use DateTime;
 use Finna\Db\Service\FinnaStatisticsServiceInterface;
 use Finna\Db\Type\FinnaStatisticsClientType;
-use Laminas\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareInterface;
 use VuFind\Log\LoggerAwareTrait;
 
 /**
- * Database driver for statistics
+ * Database driver for statistics.
  *
  * @category VuFind
  * @package  Statistics
@@ -49,7 +48,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     use LoggerAwareTrait;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaStatisticsServiceInterface $statisticsService Statistics database service
      */
@@ -58,7 +57,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a new session to statistics
+     * Add a new session to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -76,13 +75,13 @@ class Database implements DriverInterface, LoggerAwareInterface
         $session = $this->statisticsService->createSessionEntity()
             ->setInstitution($institution)
             ->setView($view)
-            ->setDate(new DateTime())
+            ->setDate(date('Y-m-d'))
             ->setType(FinnaStatisticsClientType::from($type));
         $this->statisticsService->addSession($session);
     }
 
     /**
-     * Add a page view to statistics
+     * Add a page view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -102,7 +101,7 @@ class Database implements DriverInterface, LoggerAwareInterface
         $pageView = $this->statisticsService->createPageViewEntity()
             ->setInstitution($institution)
             ->setView($view)
-            ->setDate(new DateTime())
+            ->setDate(date('Y-m-d'))
             ->setType(FinnaStatisticsClientType::from($type))
             ->setController($controller)
             ->setAction($action);
@@ -110,7 +109,7 @@ class Database implements DriverInterface, LoggerAwareInterface
     }
 
     /**
-     * Add a record view to statistics
+     * Add a record view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -139,7 +138,7 @@ class Database implements DriverInterface, LoggerAwareInterface
         $recordView = $this->statisticsService->createRecordStatsLogEntity()
             ->setInstitution($institution)
             ->setView($view)
-            ->setDate(new DateTime())
+            ->setDate(date('Y-m-d'))
             ->setType(FinnaStatisticsClientType::from($type))
             ->setBackend($backend)
             ->setSource($source)

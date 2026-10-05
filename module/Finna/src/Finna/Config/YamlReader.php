@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind YAML Configuration Reader
+ * VuFind YAML Configuration Reader.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Config
@@ -30,7 +30,7 @@
 namespace Finna\Config;
 
 /**
- * VuFind YAML Configuration Reader
+ * VuFind YAML Configuration Reader.
  *
  * @category VuFind
  * @package  Config
@@ -41,11 +41,11 @@ namespace Finna\Config;
 class YamlReader extends \VuFind\Config\YamlReader
 {
     /**
-     * Return a Finna configuration (Finna default or view specific)
+     * Return a Finna configuration (Finna default or view specific).
      *
-     * @param string  $filename        Config file name
-     * @param boolean $localDir        Config directory (local/finna or local/vufind)
-     * @param boolean $ignoreFileCache Read from file even if config has been cached.
+     * @param string $filename        Config file name
+     * @param bool   $localDir        Config directory (local/finna or local/vufind)
+     * @param bool   $ignoreFileCache Read from file even if config has been cached.
      *
      * @return array
      */

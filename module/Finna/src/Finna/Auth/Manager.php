@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Authentication
@@ -55,7 +55,7 @@ class Manager extends \VuFind\Auth\Manager
     }
 
     /**
-     * Get secondary login field label (if any)
+     * Get secondary login field label (if any).
      *
      * This method only exists for back-compatibility
      *
@@ -69,7 +69,7 @@ class Manager extends \VuFind\Auth\Manager
     }
 
     /**
-     * Check if ILS supports password recovery
+     * Check if ILS supports password recovery.
      *
      * @param string $target Login target (only for MultiILS)
      *
@@ -83,7 +83,7 @@ class Manager extends \VuFind\Auth\Manager
     }
 
     /**
-     * Check if ILS supports self-registration
+     * Check if ILS supports self-registration.
      *
      * @param string $target Login target (only for MultiILS)
      *

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Collection Controller
+ * Collection Controller.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -31,9 +31,10 @@
 namespace Finna\Controller;
 
 use Finna\Controller\Feature\FinnaRecordPreviewSupportTrait;
+use Laminas\View\Model\ViewModel;
 
 /**
- * Collection Controller
+ * Collection Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -65,7 +66,12 @@ class CollectionController extends \VuFind\Controller\CollectionController
             return $this->catalogLogin();
         }
 
-        return parent::showTab($tab, $ajax);
+        $result = parent::showTab($tab, $ajax);
+        // Back-compatibility for legacy view.phtml (TODO: remove when no longer needed):
+        if ($result instanceof ViewModel) {
+            $result->backgroundTabs = [];
+        }
+        return $result;
     }
 
     /**

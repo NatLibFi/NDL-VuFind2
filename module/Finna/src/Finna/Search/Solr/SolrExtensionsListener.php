@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
@@ -51,14 +51,14 @@ use function sprintf;
 class SolrExtensionsListener
 {
     /**
-     * Terms filter prefix for a filter (%s is the field name)
+     * Terms filter prefix for a filter (%s is the field name).
      *
      * @var string
      */
     public const TERMS_FILTER_PREFIX = "{!terms f=%s separator=\"\u{001f}\" method=docValuesTermsFilter}";
 
     /**
-     * Terms filter prefix for a source filter
+     * Terms filter prefix for a source filter.
      *
      * @var string
      */
@@ -205,7 +205,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Get a list of active sources
+     * Get a list of active sources.
      *
      * @param EventInterface $event Event
      *
@@ -231,9 +231,8 @@ class SolrExtensionsListener
         }
         // Not in params, check config:
         if (null === $sources) {
-            $config = $this->serviceLocator
-                ->get(\VuFind\Config\PluginManager::class);
-            $searchConfig = $config->get($this->searchConfig);
+            $configManager = $this->serviceLocator->get(\VuFind\Config\ConfigManagerInterface::class);
+            $searchConfig = $configManager->getConfigObject($this->searchConfig);
             $sources = $searchConfig->Records->sources ?? null;
         }
 
@@ -258,7 +257,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Add a boost query for boosting the geo filter
+     * Add a boost query for boosting the geo filter.
      *
      * @param EventInterface $event Event
      *
@@ -305,7 +304,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Add alternative authority IDs to authority search
+     * Add alternative authority IDs to authority search.
      *
      * @param EventInterface $event Event
      *
@@ -393,8 +392,8 @@ class SolrExtensionsListener
         }
 
         // Check for config:
-        $configManager = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
-        $searchConfig = $configManager->get($this->searchConfig);
+        $configManager = $this->serviceLocator->get(\VuFind\Config\ConfigManagerInterface::class);
+        $searchConfig = $configManager->getConfigObject($this->searchConfig);
         if (null === $hideHiddenComponentsPart) {
             $hideHiddenComponentsPart = $searchConfig->General->hide_component_parts ?? false;
         }
@@ -413,7 +412,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Display debug information about the query
+     * Display debug information about the query.
      *
      * @param EventInterface $event Event
      *
@@ -499,7 +498,7 @@ class SolrExtensionsListener
     }
 
     /**
-     * Process availability checkbox filters
+     * Process availability checkbox filters.
      *
      * Changes the following filters if deduplication is enabled:
      *
@@ -516,8 +515,8 @@ class SolrExtensionsListener
      */
     protected function handleAvailabilityFilters(EventInterface $event)
     {
-        $config = $this->serviceLocator->get(\VuFind\Config\PluginManager::class);
-        $searchConfig = $config->get($this->searchConfig);
+        $configManager = $this->serviceLocator->get(\VuFind\Config\ConfigManagerInterface::class);
+        $searchConfig = $configManager->getConfigObject($this->searchConfig);
         if (!empty($searchConfig->Records->sources)) {
             $params = $event->getParam('command')->getSearchParameters();
             $filters = $params->get('fq');

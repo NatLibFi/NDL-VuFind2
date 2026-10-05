@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrMarc Test Class
+ * SolrMarc Test Class.
  *
  * PHP version 8
  *
@@ -17,13 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
@@ -32,14 +33,16 @@ namespace FinnaTest\RecordDriver;
 
 use Finna\RecordDriver\SolrMarc;
 use Generator;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
- * SolrMarc Record Driver Test Class
+ * SolrMarc Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:testing:unit_tests Wiki
  */
@@ -48,42 +51,102 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\FixtureTrait;
 
     /**
-     * Data provider for testTitlePunctuation
+     * Data provider for testDriverMethods.
      *
-     * @return array
+     * @return \Iterator
      */
-    public static function getTestTitlePunctuationData(): array
+    public static function driverMethodsProvider(): \Iterator
     {
-        return [
+        yield [
+            'marc_test.xml',
+            'getAlternativeTitles',
             [
-                'Title',
-                'Title /:',
+                'Proboscidea : Elephantidae and their ancestors',
             ],
+        ];
+        yield [
+            'marc_test.xml',
+            'getSummary',
             [
-                'Title',
-                'Title /  ',
+                'Asiaa norsueläimistä.',
+                'Om elefantdjur.',
+                'Hobotnye.',
+                'Хоботные.',
             ],
+        ];
+        yield [
+            'marc_test_lang.xml',
+            'getSummary',
             [
-                'Title',
-                'Title (((',
+                'Asiaa norsueläimistä.',
+                'Lisää asiaa norsueläimistä.',
             ],
+            'fi',
+        ];
+        yield [
+            'marc_test_lang.xml',
+            'getSummary',
             [
-                '(((',
-                '(((',
+                'Om elefantdjur.',
             ],
+            'sv',
         ];
     }
 
     /**
-     * Test title trailing punctuation handling
+     * Test driver methods.
+     *
+     * @param string  $fixture  Fixture
+     * @param string  $method   Method
+     * @param mixed   $expected Expected result
+     * @param ?string $lang     Language
+     *
+     * @return void
+     */
+    #[DataProvider('driverMethodsProvider')]
+    public function testDriverMethods(string $fixture, string $method, $expected, ?string $lang = null): void
+    {
+        $driver = $this->getDriver($fixture, language: $lang);
+        $this->assertSame(
+            $expected,
+            $driver->$method()
+        );
+    }
+
+    /**
+     * Data provider for testTitlePunctuation.
+     *
+     * @return \Iterator<(int | string), mixed>
+     */
+    public static function getTestTitlePunctuationData(): \Iterator
+    {
+        yield [
+            'Title',
+            'Title /:',
+        ];
+        yield [
+            'Title',
+            'Title /  ',
+        ];
+        yield [
+            'Title',
+            'Title (((',
+        ];
+        yield [
+            '(((',
+            '(((',
+        ];
+    }
+
+    /**
+     * Test title trailing punctuation handling.
      *
      * @param string $expected Expected result
      * @param string $title    Record title
      *
-     * @dataProvider getTestTitlePunctuationData
-     *
      * @return void
      */
+    #[DataProvider('getTestTitlePunctuationData')]
     public function testTitlePunctuation(string $expected, string $title): void
     {
         $marc = [
@@ -100,26 +163,20 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        $driver = $this->getDriver(null, $marc);
 
-        $record = new SolrMarc();
-        $record->setRawData(
-            [
-                'fullrecord' => json_encode($marc),
-            ]
-        );
-
-        $this->assertEquals($expected, $record->getTitle());
+        $this->assertEquals($expected, $driver->getTitle());
     }
 
     /**
-     * Data provider for testHostRecordsData
+     * Data provider for testHostRecordsData.
      *
      * @return Generator
      */
     public static function getTestHostRecordsData(): Generator
     {
         yield 'legacy host record links' => [
-            'marc/legacy_linking_ids.xml',
+            'legacy_linking_ids.xml',
             [
                 'test' => [
                     'legacy_settings' => [
@@ -151,7 +208,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'host record link with prefix' => [
-            'marc/linking_ids.xml',
+            'linking_ids.xml',
             [
                 'test' => [
                     'prefixIn003' => true,
@@ -191,7 +248,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'host record link with prefix mismatch' => [
-            'marc/linking_ids_prefix_mismatch.xml',
+            'linking_ids_prefix_mismatch.xml',
             [
                 'test' => [
                     'prefixIn003' => true,
@@ -231,7 +288,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'host record link with dots' => [
-            'marc/linking_ids_with_dots.xml',
+            'linking_ids_with_dots.xml',
             [
                 'test' => [
                     'prefixIn003' => true,
@@ -261,7 +318,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'host record link with no prefix' => [
-            'marc/linking_ids_no_prefix.xml',
+            'linking_ids_no_prefix.xml',
             [
                 'test' => [
                     'prefixIn003' => false,
@@ -303,47 +360,30 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test record linking with Legacy and new way
+     * Test record linking with Legacy and new way.
      *
      * @param string $fixture  Fixture path to test file
      * @param array  $dsConfig Datasource configuration
      * @param array  $expected Array of expected results
      *
-     * @dataProvider getTestHostRecordsData
-     *
      * @return void
      */
+    #[DataProvider('getTestHostRecordsData')]
     public function testGetHostRecords(string $fixture, array $dsConfig, array $expected): void
     {
-        $xml = $this->getFixture($fixture, 'Finna');
-        $config = new \VuFind\Config\Config([
-            'Record' => [
-                'marc_links' => '760,762,765,767,770,772,773,775,776,780,785',
-                'marc_links_link_types' => 'linkingId,id,oclc,dlc,isbn,issn,title',
-            ],
-        ]);
-
-        $obj = new SolrMarc($config);
-        $obj->setRawData(
-            [
-                'datasource_str_mv' => ['test'],
-                'fullrecord' => $xml,
-            ],
-        );
-        $obj->attachDatasourceSettings($dsConfig);
-
-        $this->assertEquals($expected, $obj->getHostRecords());
+        $driver = $this->getDriver($fixture, dsConfig: $dsConfig);
+        $this->assertEquals($expected, $driver->getHostRecords());
     }
 
     /**
-     * Data provider for testRecordLinking
+     * Data provider for testRecordLinking.
      *
      * @return Generator
      */
     public static function getTestAllRecordLinksData(): Generator
     {
         yield 'legacy record links' => [
-            'marc/legacy_linking_ids.xml',
+            'legacy_linking_ids.xml',
             [
                 'test' => [
                     'legacy_settings' => [
@@ -373,7 +413,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'record link with prefixes' => [
-            'marc/linking_ids.xml',
+            'linking_ids.xml',
             [
                 'test' => [
                     'prefixIn003' => true,
@@ -410,7 +450,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'record link without prefixes' => [
-            'marc/linking_ids_no_prefix.xml',
+            'linking_ids_no_prefix.xml',
             [
                 'test' => [
                     'prefixIn003' => false,
@@ -447,7 +487,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'record link check linking id with multiple prefixes' => [
-            'marc/linking_ids_prefix_mismatch.xml',
+            'linking_ids_prefix_mismatch.xml',
             [
                 'test' => [
                     'link_prefixes' => 'FI-MELINDA,FI-NL',
@@ -484,7 +524,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'record link check linking id with a dot' => [
-            'marc/linking_ids_with_dots.xml',
+            'linking_ids_with_dots.xml',
             [
                 'test' => [
                     'prefixIn003' => true,
@@ -512,7 +552,7 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
             ],
         ];
         yield 'record link force checking legacy ids' => [
-            'marc/linking_ids.xml',
+            'linking_ids.xml',
             [
                 'test' => [
                     'prefixIn003' => false,
@@ -551,38 +591,96 @@ class SolrMarcTest extends \PHPUnit\Framework\TestCase
                 ],
             ],
         ];
+        yield 'record links in 774 field' => [
+            'marc_test.xml',
+            [],
+            [
+                [
+                    'value' => 'Studies towards an elephant utopia',
+                    'title' => 'note_774',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'Studies towards an elephant utopia',
+                    ],
+                    'isCollection' => false,
+                ],
+                [
+                    'value' => 'On the sources of mighty mammoths',
+                    'title' => 'note_774',
+                    'link' => [
+                        'type' => 'title',
+                        'value' => 'On the sources of mighty mammoths',
+                    ],
+                    'isCollection' => false,
+                ],
+            ],
+        ];
     }
 
     /**
-     * Test getAllRecordLinks
+     * Test getAllRecordLinks.
      *
      * @param string $fixture  Fixture path to test file
      * @param array  $dsConfig Datasource configuration
      * @param array  $expected Array of expected results
      *
-     * @dataProvider getTestAllRecordLinksData
-     *
      * @return void
      */
+    #[DataProvider('getTestAllRecordLinksData')]
     public function testGetAllRecordLinks(string $fixture, array $dsConfig, array $expected): void
     {
-        $xml = $this->getFixture($fixture, 'Finna');
+        $driver = $this->getDriver($fixture, dsConfig: $dsConfig);
+        $this->assertEquals($expected, $driver->getAllRecordLinks());
+    }
+
+    /**
+     * Get a record driver with fake data.
+     *
+     * @param ?string $recordXml   Xml record to use for the test
+     * @param array   $recordArray Array to use as record for the test
+     * @param array   $dsConfig    Datasource config
+     * @param ?string $language    Preferred language
+     *
+     * @return SolrMarc
+     */
+    protected function getDriver(
+        ?string $recordXml,
+        array $recordArray = [],
+        array $dsConfig = [],
+        ?string $language = null,
+    ): SolrMarc {
+        $fixture = $recordXml ? $this->getFixture("marc/$recordXml", 'Finna') : json_encode($recordArray);
         $config = new \VuFind\Config\Config([
             'Record' => [
-                'marc_links' => '760,762,765,767,770,772,773,775,776,780,785',
+                'marc_links' => '760,762,765,767,770,772,773,774,775,776,780,785',
                 'marc_links_link_types' => 'linkingId,id,oclc,dlc,isbn,issn,title',
             ],
         ]);
-
-        $obj = new SolrMarc($config);
-        $obj->setRawData(
+        $record = new SolrMarc($config);
+        $record->setRawData(
             [
                 'datasource_str_mv' => ['test'],
-                'fullrecord' => $xml,
+                'fullrecord' => $fixture,
             ],
         );
-        $obj->attachDatasourceSettings($dsConfig);
-
-        $this->assertEquals($expected, $obj->getAllRecordLinks());
+        $record->attachDatasourceSettings($dsConfig);
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => 'fi,en',
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+                'se' => 'Northern Sámi',
+            ],
+        ];
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
+        $record->setPreferredLanguage($language ?? 'fi');
+        return $record;
     }
 }

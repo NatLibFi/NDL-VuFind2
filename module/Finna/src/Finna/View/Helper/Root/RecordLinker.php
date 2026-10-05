@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RecordLinker view helper
+ * RecordLinker view helper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -26,18 +26,19 @@
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
 
 use Finna\Search\UrlQueryHelper;
+use Laminas\View\Helper\ServerUrl;
 use VuFind\Search\Memory;
 
 use function sprintf;
 
 /**
- * RecordLinker view helper
+ * RecordLinker view helper.
  *
  * @category VuFind
  * @package  View_Helpers
@@ -45,38 +46,50 @@ use function sprintf;
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
 {
     /**
-     * Data source configuration
+     * Data source configuration.
      *
      * @var array
      */
     protected $datasourceConfig;
 
     /**
-     * Search memory
+     * Search memory.
      *
      * @var Memory
      */
     protected $searchMemory = null;
 
     /**
-     * Constructor
+     * ServerUrl helper.
      *
-     * @param \VuFind\Record\Router $router   Record router
-     * @param array                 $dsConfig Data source configuration
+     * @var ServerUrl
      */
-    public function __construct(\VuFind\Record\Router $router, array $dsConfig)
-    {
+    protected $serverUrl;
+
+    /**
+     * Constructor.
+     *
+     * @param \VuFind\Record\Router $router    Record router
+     * @param array                 $dsConfig  Data source configuration
+     * @param ServerUrl             $serverUrl ServerUrl helper
+     */
+    public function __construct(
+        \VuFind\Record\Router $router,
+        array $dsConfig,
+        ServerUrl $serverUrl
+    ) {
         parent::__construct($router);
         $this->datasourceConfig = $dsConfig;
+        $this->serverUrl = $serverUrl;
     }
 
     /**
-     * Inject the search memory
+     * Inject the search memory.
      *
      * @param Memory $memory Search memory
      *
@@ -88,7 +101,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Returns 'data-embed-iframe' if url is vimeo or youtube url
+     * Returns 'data-embed-iframe' if url is vimeo or youtube url.
      *
      * @param string $url record url
      *
@@ -103,7 +116,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Returns url for video embedding if url is vimeo or youtube url
+     * Returns url for video embedding if url is vimeo or youtube url.
      *
      * @param string $url record url
      *
@@ -229,7 +242,7 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
     }
 
     /**
-     * Return URL of the record in staff interface if available
+     * Return URL of the record in staff interface if available.
      *
      * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
      *
@@ -250,5 +263,21 @@ class RecordLinker extends \VuFind\View\Helper\Root\RecordLinker
             return str_replace('%%id%%', $id, $url);
         }
         return '';
+    }
+
+    /**
+     * Return fully qualified URL to a generated IIIF manifest of the record.
+     *
+     * @param \VuFind\RecordDriver\AbstractBase $driver Record driver
+     *
+     * @return string
+     */
+    public function getGeneratedIiifManifestUrl($driver): string
+    {
+        return ($this->serverUrl)($this->getActionUrl(
+            $driver,
+            'IIIFManifest',
+            options: ['force_canonical' => true]
+        ));
     }
 }

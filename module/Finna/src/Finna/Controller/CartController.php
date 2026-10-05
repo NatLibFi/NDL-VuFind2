@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Book Bag / Bulk Action Controller
+ * Book Bag / Bulk Action Controller.
  *
  * PHP version 8
  *
@@ -18,8 +18,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -39,7 +39,7 @@ use function count;
 use function is_array;
 
 /**
- * Book Bag / Bulk Action Controller
+ * Book Bag / Bulk Action Controller.
  *
  * @category VuFind
  * @package  Controller
@@ -126,10 +126,7 @@ class CartController extends \VuFind\Controller\CartController
                 );
                 return $this->redirectToSource('success', 'bulk_email_success', true);
             } catch (MailException $e) {
-                $this->flashMessenger()->addMessage(
-                    $e->getDisplayMessage(),
-                    'error'
-                );
+                $this->flashMessenger()->addErrorMessage($e->getDisplayMessage());
             }
         }
         return $view;
@@ -149,12 +146,9 @@ class CartController extends \VuFind\Controller\CartController
         if (empty($view->message)) {
             $listName = $this->params()->fromPost('listName', '');
             $listDescription = $this->params()->fromPost('listDescription', '');
-
-            if ($listName && $listDescription) {
-                $view->message = "$listName\n\n$listDescription";
-            } else {
-                $view->message = "$listName$listDescription";
-            }
+            $view->message = $listName && $listDescription
+                ? "$listName\n\n$listDescription"
+                : "$listName$listDescription";
         }
         return $view;
     }

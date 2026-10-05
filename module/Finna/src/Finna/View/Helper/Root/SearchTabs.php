@@ -1,7 +1,7 @@
 <?php
 
 /**
- * "Search tabs" view helper
+ * "Search tabs" view helper.
  *
  * PHP version 8
  *
@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\View\Helper\Root;
@@ -40,25 +40,25 @@ use function in_array;
 use function is_callable;
 
 /**
- * "Search tabs" view helper
+ * "Search tabs" view helper.
  *
  * @category VuFind
  * @package  View_Helpers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
 {
     /**
-     * Active search class
+     * Active search class.
      *
      * @var string
      */
     protected $activeSearchClass = null;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param PluginManager          $results       Search results plugin manager
      * @param Url                    $url           URL helper
@@ -77,7 +77,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
     }
 
     /**
-     * Determine information about search tabs
+     * Determine information about search tabs.
      *
      * @param string $activeSearchClass The search class ID of the active search
      * @param string $query             The current search query
@@ -298,7 +298,7 @@ class SearchTabs extends \VuFind\View\Helper\Root\SearchTabs
 
     /**
      * Find out the tab id with search class and hidden filters and return it
-     * url-encoded to avoid it containing e.g. colon
+     * url-encoded to avoid it containing e.g. colon.
      *
      * @param string $searchClass   Search class
      * @param array  $hiddenFilters Hidden filters

@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search
  * @author   Anna Niku <anna.niku@gofore.com>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace Finna\Search;
@@ -36,7 +36,7 @@ namespace Finna\Search;
  * @package  Search
  * @author   Anna Niku <anna.niku@gofore.com>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 trait FinnaOptions
 {
@@ -68,14 +68,14 @@ trait FinnaOptions
     }
 
     /**
-     * Get view option list type setting
+     * Get view option list type setting.
      *
      * @return bool
      */
     public function getViewOptionListType()
     {
         $viewOptionsIcons = $this->searchSettings['General']['view_options_icons'] ?? false;
-        return $viewOptionsIcons ? true : false;
+        return $viewOptionsIcons;
     }
 
     /**

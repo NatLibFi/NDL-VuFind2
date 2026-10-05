@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Abstract base class for classes that are capable of rendering custom elements
+ * Abstract base class for classes that are capable of rendering custom elements.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  CustomElements
@@ -30,7 +30,7 @@
 namespace Finna\View\CustomElement;
 
 /**
- * Abstract base class for classes that are capable of rendering custom elements
+ * Abstract base class for classes that are capable of rendering custom elements.
  *
  * @category VuFind
  * @package  CustomElements
@@ -41,14 +41,14 @@ namespace Finna\View\CustomElement;
 abstract class AbstractCustomElementEnabledBase
 {
     /**
-     * Names of elements to render
+     * Names of elements to render.
      *
      * @var array
      */
     protected array $customElements;
 
     /**
-     * Renderer
+     * Renderer.
      *
      * @var CustomElementRendererInterface
      */

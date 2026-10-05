@@ -1,7 +1,7 @@
 <?php
 
 /**
- * GetContentFeed AJAX handler
+ * GetContentFeed AJAX handler.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  AJAX
@@ -38,7 +38,7 @@ use VuFind\Config\Config;
 use VuFind\Session\Settings as SessionSettings;
 
 /**
- * GetContentFeed AJAX handler
+ * GetContentFeed AJAX handler.
  *
  * @category VuFind
  * @package  AJAX
@@ -52,35 +52,35 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
     use FeedTrait;
 
     /**
-     * Organisation page RSS configuration
+     * Organisation page RSS configuration.
      *
      * @var Config
      */
     protected $config;
 
     /**
-     * Feed service
+     * Feed service.
      *
      * @var FeedService
      */
     protected $feedService;
 
     /**
-     * View renderer
+     * View renderer.
      *
      * @var RendererInterface
      */
     protected $renderer;
 
     /**
-     * URL helper
+     * URL helper.
      *
      * @var Url
      */
     protected $url;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param SessionSettings   $ss       Session settings
      * @param Config            $config   Organisation page RSS configuration
@@ -208,11 +208,7 @@ class GetContentFeed extends \VuFind\AjaxHandler\AbstractBase
         $config = $this->config;
         $feedConfig = ['url' => $url];
 
-        if (isset($config[$id])) {
-            $feedConfig['result'] = $config[$id]->toArray();
-        } else {
-            $feedConfig['result'] = ['items' => 5];
-        }
+        $feedConfig['result'] = isset($config[$id]) ? $config[$id]->toArray() : ['items' => 5];
         $feedConfig['result']['type'] = 'list';
         $feedConfig['result']['active'] = 1;
         return $feedConfig;

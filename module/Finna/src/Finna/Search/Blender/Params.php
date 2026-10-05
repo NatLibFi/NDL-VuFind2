@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Blender Search Parameters
+ * Blender Search Parameters.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Blender
@@ -30,13 +30,14 @@
 namespace Finna\Search\Blender;
 
 use Finna\Search\Solr\AuthorityHelper;
+use VuFind\Config\ConfigManagerInterface;
 use VuFind\Search\Solr\HierarchicalFacetHelper;
 use VuFindSearch\ParamBag;
 
 use function in_array;
 
 /**
- * Blender Search Parameters
+ * Blender Search Parameters.
  *
  * @category VuFind
  * @package  Search_Blender
@@ -49,46 +50,37 @@ class Params extends \VuFind\Search\Blender\Params
     use \Finna\Search\Solr\ParamsSharedTrait;
 
     /**
-     * Helper for formatting authority id filter display texts.
+     * Constructor.
      *
-     * @var AuthorityHelper
-     */
-    protected $authorityHelper = null;
-
-    /**
-     * Constructor
-     *
-     * @param \VuFind\Search\Base\Options  $options       Options to use
-     * @param \VuFind\Config\PluginManager $configLoader  Config loader
-     * @param HierarchicalFacetHelper      $facetHelper   Hierarchical facet helper
-     * @param array                        $searchParams  Search params for backends
-     * @param \VuFind\Config\Config        $blenderConfig Blender configuration
-     * @param array                        $mappings      Blender mappings,
-     * @param AuthorityHelper              $authHelper    Authority helper
+     * @param \VuFind\Search\Base\Options $options         Options to use
+     * @param ConfigManagerInterface      $configManager   Config manager
+     * @param HierarchicalFacetHelper     $facetHelper     Hierarchical facet helper
+     * @param array                       $searchParams    Search params for backends
+     * @param \VuFind\Config\Config       $blenderConfig   Blender configuration
+     * @param array                       $mappings        Blender mappings
+     * @param AuthorityHelper             $authorityHelper Authority helper
      */
     public function __construct(
         \VuFind\Search\Base\Options $options,
-        \VuFind\Config\PluginManager $configLoader,
+        ConfigManagerInterface $configManager,
         HierarchicalFacetHelper $facetHelper,
         array $searchParams,
         \VuFind\Config\Config $blenderConfig,
         array $mappings,
-        AuthorityHelper $authHelper
+        protected AuthorityHelper $authorityHelper
     ) {
         parent::__construct(
             $options,
-            $configLoader,
+            $configManager,
             $facetHelper,
             $searchParams,
             $blenderConfig,
             $mappings
         );
-
-        $this->authorityHelper = $authHelper;
     }
 
     /**
-     * Get the date range field from options, if available
+     * Get the date range field from options, if available.
      *
      * @return string
      */
@@ -201,11 +193,11 @@ class Params extends \VuFind\Search\Blender\Params
     }
 
     /**
-     * Check if the given filter is a date range filter
+     * Check if the given filter is a date range filter.
      *
      * @param string $field Filter field
      *
-     * @return boolean
+     * @return bool
      */
     protected function isDateRangeFilter($field)
     {

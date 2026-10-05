@@ -4,12 +4,12 @@
     ],
     "autoload": {
         "psr-4": {
-            "Finna\\": "module/Finna/src/Finna",
-            "FinnaApi\\": "module/FinnaApi/src/FinnaApi",
-            "FinnaConsole\\": "module/FinnaConsole/src/FinnaConsole",
+            "Finna\\": ["module/Finna/src/Finna", "module/Finna"],
+            "FinnaApi\\": ["module/FinnaApi/src/FinnaApi", "module/FinnaApi"],
+            "FinnaConsole\\": ["module/FinnaConsole/src/FinnaConsole", "module/FinnaConsole"],
             "FinnaCustom\\": "module/FinnaCustom/src/FinnaCustom",
-            "FinnaSearch\\": "module/FinnaSearch/src/FinnaSearch",
-            "FinnaTheme\\": "module/FinnaTheme/src/FinnaTheme"
+            "FinnaSearch\\": ["module/FinnaSearch/src/FinnaSearch", "module/FinnaSearch"],
+            "FinnaTheme\\": ["module/FinnaTheme/src/FinnaTheme", "module/FinnaTheme"]
         }
     },
     "autoload-dev": {
@@ -18,19 +18,27 @@
         }
     },
     "require": {
+        "defuse/php-encryption": "^2.4",
         "league/mime-type-detection": "1.9.0",
         "natlibfi/besimple-soap": "3.0.1",
-        "natlibfi/finna-code-sets": "0.5.2",
-        "natlibfi/php-html-parser": "4.0.1",
-        "paytrail/paytrail-php-sdk": "2.5.2",
+        "natlibfi/finna-code-sets": "0.7.0",
+        "vufind-org/vufind-xml": "1.7.0",
+        "natlibfi/php-html-parser": "5.0.1",
         "phpoffice/phpspreadsheet": "^2.0",
         "picqer/php-barcode-generator": "2.0.1",
-        "swen100/geophp": "^1.0.8",
-        "tecnickcom/tcpdf": "6.8.2"
+        "swen100/geophp": "^1.0.8"
     },
     "scripts": {
         "create-translation-files": "touch local/languages/finna/fi-datasources.ini; touch local/languages/finna/sv-datasources.ini; touch local/languages/finna/en-gb-datasources.ini; touch local/languages/finna/se-datasources.ini;",
         "post-install-cmd": ["@phing-install-dependencies", "@create-translation-files"],
-        "post-update-cmd": ["@phing-install-dependencies", "@create-translation-files"]
+        "post-update-cmd": ["@phing-install-dependencies", "@create-translation-files"],
+        "update-npm-deps": [
+            "cd themes/finna2 && npm run updateDeps"
+        ],
+        "install-build-deps": [
+            "[ $COMPOSER_DEV_MODE -eq 0 ] || npm install --ignore-scripts",
+            "cd themes/bootstrap5 && npm run installBuildDeps",
+            "cd themes/finna2 && npm run installBuildDeps"
+        ]
     }
 }

@@ -5,9 +5,18 @@
   <date>2023-12-01T10:45:39Z</date>
   <description lang="fi">Ei saa n&#xE4;ky&#xE4;</description>
   <description lang="en">Do not show</description>
+  <description format="image/png">http://localhost/image</description>
   <creator>Testihenkil&#xF6;</creator>
   <creator>Testiorganisaatio</creator>
   <type>aipa-education</type>
+  <subject lang="en" source="local" identifier="foo">Subject</subject>
+  <subject lang="fi">Subjekti</subject>
+  <coverage type="temporal">2026</coverage>
+  <coverage type="spatial">Helsinki</coverage>
+  <relatedEvent>So related</relatedEvent>
+  <rights lang="en">CCBY40</rights>
+  <provenance>Provenance</provenance>
+  <additionalInformation>Additional information</additionalInformation>
   <item format="lrmi" position="0" display="grid">
     <id>oai:aineistopaketit.finna.fi:2787</id>
     <title>Testipaketti</title>

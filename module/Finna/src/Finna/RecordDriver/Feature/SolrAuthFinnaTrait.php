@@ -17,14 +17,14 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver\Feature;
@@ -36,7 +36,7 @@ namespace Finna\RecordDriver\Feature;
  * @package  RecordDrivers
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
@@ -145,7 +145,7 @@ trait SolrAuthFinnaTrait
     /**
      * Return birth place and date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return array
      */
@@ -160,7 +160,7 @@ trait SolrAuthFinnaTrait
     /**
      * Return death place and date.
      *
-     * @param boolean $force Return established date for corporations?
+     * @param bool $force Return established date for corporations?
      *
      * @return array
      */
@@ -228,7 +228,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return summary
+     * Return summary.
      *
      * @return array
      */
@@ -248,7 +248,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return description (for backward compatibility)
+     * Return description (for backward compatibility).
      *
      * @return string|null
      */
@@ -258,7 +258,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Return authority data sources
+     * Return authority data sources.
      *
      * @return array|null
      */
@@ -308,7 +308,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Get data source id
+     * Get data source id.
      *
      * @return string
      */
@@ -324,9 +324,9 @@ trait SolrAuthFinnaTrait
      *
      * @return array
      */
-    public function getInstitutions()
+    public function getInstitutions(): array
     {
-        return $this->fields['institution'] ?? [];
+        return (array)($this->fields['institution'] ?? []);
     }
 
     /**
@@ -365,7 +365,7 @@ trait SolrAuthFinnaTrait
     /**
      * Is this a Person authority record?
      *
-     * @return boolean
+     * @return bool
      */
     public function isPerson()
     {
@@ -383,7 +383,7 @@ trait SolrAuthFinnaTrait
     }
 
     /**
-     * Get online URLs
+     * Get online URLs.
      *
      * @param bool $raw Whether to return raw data
      *

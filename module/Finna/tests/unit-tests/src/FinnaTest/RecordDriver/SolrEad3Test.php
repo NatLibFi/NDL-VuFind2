@@ -1,7 +1,7 @@
 <?php
 
 /**
- * SolrEad3 Test Class
+ * SolrEad3 Test Class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -33,7 +33,7 @@ use Finna\RecordDriver\SolrEad3;
 use Generator;
 
 /**
- * SolrEad3 Record Driver Test Class
+ * SolrEad3 Record Driver Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -47,7 +47,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     use \VuFindTest\Feature\TranslatorTrait;
 
     /**
-     * Get unit dates
+     * Get unit dates.
      *
      * @return void
      */
@@ -85,63 +85,88 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected other related material data
+     * Test related records.
      *
-     * @return array
+     * @return void
      */
-    public static function getOtherRelatedMaterialData(): array
+    public function testGetRelatedRecords()
     {
-        return [
-            [
-                'fi',
+        $driver = $this->getDriver('ead3_test.xml');
+        $relatedRecords = [
+            'see-also' => [
                 [
-                    [
-                        'text' => 'Wikipedia-artikkeli',
-                        'url' => 'https://fi.wikipedia.org/',
-                    ],
-                    [
-                        'text' => 'Joku muu liittyvä aineisto',
-                        'url' => '',
-                    ],
+                    'id' => '12345',
+                    'field' => 'identifier',
                 ],
             ],
-            [
-                'en-gb',
+            'separated' => [
                 [
-                    [
-                        'text' => 'Some related material',
-                        'url' => '',
-                    ],
+                    'id' => '54321',
+                    'field' => 'identifier',
+                ],
+                [
+                    'id' => '543210',
+                    'field' => 'identifier',
                 ],
             ],
+        ];
+        $this->assertEquals($relatedRecords, $driver->getRelatedRecords());
+    }
+
+    /**
+     * Function to get expected other related material data.
+     *
+     * @return \Iterator<(int | string), mixed>
+     */
+    public static function getOtherRelatedMaterialData(): \Iterator
+    {
+        yield [
+            'fi',
             [
-                'sv',
                 [
-                    [
-                        'text' => 'https://sv.wikipedia.org/',
-                        'url' => 'https://sv.wikipedia.org/',
-                    ],
+                    'text' => 'Wikipedia-artikkeli',
+                    'url' => 'https://fi.wikipedia.org/',
+                ],
+                [
+                    'text' => 'Joku muu liittyvä aineisto',
+                    'url' => '',
+                ],
+            ],
+        ];
+        yield [
+            'en-gb',
+            [
+                [
+                    'text' => 'Some related material',
+                    'url' => '',
+                ],
+            ],
+        ];
+        yield [
+            'sv',
+            [
+                [
+                    'text' => 'https://sv.wikipedia.org/',
+                    'url' => 'https://sv.wikipedia.org/',
                 ],
             ],
         ];
     }
 
     /**
-     * Test getOtherRelatedMaterial
+     * Test getOtherRelatedMaterial.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getOtherRelatedMaterialData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getOtherRelatedMaterialData')]
     public function testGetOtherRelatedMaterial(
         string $language,
         array $expected
     ): void {
-        $driver = $this->getDriver('ead3_test.xml');
-        $driver->setPreferredLanguage($language);
+        $driver = $this->getDriver('ead3_test.xml', language: $language);
         $this->assertEquals(
             $expected,
             $driver->getOtherRelatedMaterial()
@@ -149,125 +174,48 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected author data
+     * Function to get expected related places data.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getAuthorData(): array
+    public static function getRelatedPlacesData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'getNonPresenterAuthors',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102476374',
-                            'role' => 'rda:collector',
-                            'name' => 'Suomalaisen Kirjallisuuden Seura ry',
-                        ],
-                        [
-                            'id' => 'EAC_123456',
-                            'role' => 'ive',
-                            'name' => 'Harri Haastateltava',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Rolle Rooliton',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuovi Tuntematon',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'rda:former-owner',
-                            'name' => 'Lucifer Luovuttaja',
-                        ],
+                'getSubjectPlacesExtended' => [
+                    [
+                    'heading' => ['Helsinki'],
+                    'id' => 'http://www.yso.fi/onto/yso/p94137',
+                    'source' => 'YSO',
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'EAC_76543',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuukka Tuntematon',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Roope Rooliton',
-                        ],
+                ],
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
                     ],
                 ],
             ],
+        ];
+        yield [
+            'sv',
             [
-                'getAuthorsWithoutRoleHeadings',
-                [
-                    'ead3_test.xml' => [],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'EAC_76543',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuukka Tuntematon',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Roope Rooliton',
-                        ],
+                'getSubjectPlacesExtended' => [
+                    [
+                        'heading' => ['Helsingfors'],
+                        'id' => 'http://www.yso.fi/onto/yso/p94137',
+                        'source' => 'YSO',
                     ],
                 ],
-            ],
-            [
-                'getAuthorsWithRoleHeadings',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102476374',
-                            'role' => 'rda:collector',
-                            'name' => 'Suomalaisen Kirjallisuuden Seura ry',
-                        ],
-                        [
-                            'id' => 'EAC_123456',
-                            'role' => 'ive',
-                            'name' => 'Harri Haastateltava',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'rda:former-owner',
-                            'name' => 'Lucifer Luovuttaja',
-                        ],
-                    ],
-                    'ead3_test2.xml' => [],
-                ],
-            ],
-            [
-                'getOtherAuthors',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => '',
-                            'role' => '',
-                            'name' => 'Rolle Rooliton',
-                        ],
-                        [
-                            'id' => '',
-                            'role' => 'tuntematon rooli',
-                            'name' => 'Tuovi Tuntematon',
-                        ],
-                    ],
-                    'ead3_test2.xml' => [],
-                ],
-            ],
-            [
-                'getSubjectActors',
-                [
-                    'ead3_test.xml' => [
-                        'Anssi Aihe',
-                        'Aino Aihe',
-                    ],
-                    'ead3_test2.xml' => [
-                        'Aino Aihe',
+                'getRelatedPlacesExtended' => [
+                    [
+                        'data' => 'Hakaniemi',
+                        'detail' => 'alueellinen kattavuus',
+                        'id' => 'http://www.yso.fi/onto/yso/p105964',
+                        'source' => 'YSO',
                     ],
                 ],
             ],
@@ -275,15 +223,187 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test authors
+     * Test related places.
+     *
+     * @param string $language Language
+     * @param array  $expected Result to be expected
+     *
+     * @return void
+     */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getRelatedPlacesData')]
+    public function testRelatedPlaces(
+        string $language,
+        array $expected
+    ): void {
+        $driver = $this->getDriver('ead3_test.xml');
+        $driver->setPreferredLanguage($language);
+        foreach ($expected as $function => $result) {
+            $this->assertEquals(
+                $result,
+                $driver->$function()
+            );
+        }
+    }
+
+    /**
+     * Function to get expected author data.
+     *
+     * @return \Iterator<(int | string), mixed>
+     */
+    public static function getAuthorData(): \Iterator
+    {
+        yield [
+            'getNonPresenterAuthors',
+            [
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102476374',
+                        'role' => 'rda:collector',
+                        'name' => 'Suomalaisen Kirjallisuuden Seura ry',
+                    ],
+                    [
+                        'id' => 'EAC_123456',
+                        'role' => 'ive',
+                        'name' => 'Harri Haastateltava',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Rolle Rooliton',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuovi Tuntematon',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'rda:former-owner',
+                        'name' => 'Lucifer Luovuttaja',
+                    ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'EAC_76543',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuukka Tuntematon',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Roope Rooliton',
+                    ],
+                ],
+            ],
+        ];
+        yield [
+            'getAuthorsWithoutRoleHeadings',
+            [
+                'ead3_test.xml' => [],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'EAC_76543',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuukka Tuntematon',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Roope Rooliton',
+                    ],
+                ],
+            ],
+        ];
+        yield [
+            'getAuthorsWithRoleHeadings',
+            [
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102476374',
+                        'role' => 'rda:collector',
+                        'name' => 'Suomalaisen Kirjallisuuden Seura ry',
+                    ],
+                    [
+                        'id' => 'EAC_123456',
+                        'role' => 'ive',
+                        'name' => 'Harri Haastateltava',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'rda:former-owner',
+                        'name' => 'Lucifer Luovuttaja',
+                    ],
+                ],
+                'ead3_test2.xml' => [],
+            ],
+        ];
+        yield [
+            'getOtherAuthors',
+            [
+                'ead3_test.xml' => [
+                    [
+                        'id' => '',
+                        'role' => '',
+                        'name' => 'Rolle Rooliton',
+                    ],
+                    [
+                        'id' => '',
+                        'role' => 'tuntematon rooli',
+                        'name' => 'Tuovi Tuntematon',
+                    ],
+                ],
+                'ead3_test2.xml' => [],
+            ],
+        ];
+        yield [
+            'getSubjectActors',
+            [
+                'ead3_test.xml' => [
+                    'Anssi Aihe',
+                    'Aku Aihe',
+                    'Aino Aihe',
+                ],
+                'ead3_test2.xml' => [
+                    'Aino Aihe',
+                ],
+            ],
+        ];
+        yield [
+            'getSubjectActorsExtended',
+            [
+                'ead3_test.xml' => [
+                    [
+                        'name' => 'Anssi Aihe',
+                        'id' => '',
+                    ],
+                    [
+                        'name' => 'Aku Aihe',
+                        'id' => 'EAC_123456',
+                    ],
+                    [
+                        'name' => 'Aino Aihe',
+                        'id' => '',
+                    ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'name' => 'Aino Aihe',
+                        'id' => '',
+                    ],
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Test authors.
      *
      * @param string $function Function of the driver to test
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getAuthorData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAuthorData')]
     public function testAuthors(
         string $function,
         array $expected
@@ -298,115 +418,113 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected subject headings data
+     * Function to get expected subject headings data.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getAllSubjectHeadingsExtendedData(): array
+    public static function getAllSubjectHeadingsExtendedData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'fi',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102486375',
-                            'source' => '',
-                            'detail' => 'aihe',
-                            'heading' => ['Manner, Eeva-Liisa'],
-                            'type' => 'topic',
-                            'authType' => 'Unknown Name',
-                        ],
-                        [
-                            'id' => 'http://www.yso.fi/onto/yso/p900',
-                            'source' => 'YSO',
-                            'detail' => 'aihe',
-                            'heading' => ['fysiikka'],
-                            'type' => 'topic',
-                            'authType' => null,
-
-                        ],
-                        [
-                            'source' => '',
-                            'detail' => '',
-                            'type' => 'topic',
-                            'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102486375',
+                        'source' => '',
+                        'detail' => 'aihe',
+                        'heading' => ['Manner, Eeva-Liisa'],
+                        'type' => 'topic',
+                        'authType' => 'Unknown Name',
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['kirjoituskilpailut'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                    [
+                        'id' => 'http://www.yso.fi/onto/yso/p900',
+                        'source' => 'YSO',
+                        'detail' => 'aihe',
+                        'heading' => ['fysiikka'],
+                        'type' => 'topic',
+                        'authType' => null,
+
+                    ],
+                    [
+                        'source' => '',
+                        'detail' => '',
+                        'type' => 'topic',
+                        'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
+                    ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['kirjoituskilpailut'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
                 ],
             ],
+        ];
+        yield [
+            'sv',
             [
-                'sv',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'EAC_102486375',
-                            'source' => '',
-                            'detail' => 'aihe',
-                            'heading' => ['Manner, Eeva-Liisa'],
-                            'type' => 'topic',
-                            'authType' => 'Unknown Name',
-                        ],
-                        [
-                            'id' => 'http://www.yso.fi/onto/yso/p900',
-                            'source' => 'YSO',
-                            'detail' => 'aihe',
-                            'heading' => ['fysiikka'],
-                            'type' => 'topic',
-                            'authType' => null,
-
-                        ],
-                        [
-                            'source' => '',
-                            'detail' => '',
-                            'type' => 'topic',
-                            'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'EAC_102486375',
+                        'source' => '',
+                        'detail' => 'aihe',
+                        'heading' => ['Manner, Eeva-Liisa'],
+                        'type' => 'topic',
+                        'authType' => 'Unknown Name',
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['skrivartävlingar'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                    [
+                        'id' => 'http://www.yso.fi/onto/yso/p900',
+                        'source' => 'YSO',
+                        'detail' => 'aihe',
+                        'heading' => ['fysiikka'],
+                        'type' => 'topic',
+                        'authType' => null,
+
+                    ],
+                    [
+                        'source' => '',
+                        'detail' => '',
+                        'type' => 'topic',
+                        'heading' => ['Elintarviketeollisuus, Myllytuotteiden valmistus'],
+                    ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['skrivartävlingar'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
                 ],
             ],
+        ];
+        yield [
+            'en-gb',
             [
-                'en-gb',
-                [
-                    'ead3_test.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['writing contests'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                'ead3_test.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['writing contests'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
-                    'ead3_test2.xml' => [
-                        [
-                            'id' => 'http://www.yso.fi/onto/koko/p9492',
-                            'source' => 'KOKO',
-                            'detail' => 'asiasana',
-                            'heading' => ['writing contests'],
-                            'type' => 'topic',
-                            'authType' => null,
-                        ],
+                ],
+                'ead3_test2.xml' => [
+                    [
+                        'id' => 'http://www.yso.fi/onto/koko/p9492',
+                        'source' => 'KOKO',
+                        'detail' => 'asiasana',
+                        'heading' => ['writing contests'],
+                        'type' => 'topic',
+                        'authType' => null,
                     ],
                 ],
             ],
@@ -414,22 +532,20 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test getAllSubjectHeadingsExtended
+     * Test getAllSubjectHeadingsExtended.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getAllSubjectHeadingsExtendedData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getAllSubjectHeadingsExtendedData')]
     public function testAllSubjectHeadingsExtended(
         string $language,
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
-            $driver = $this->getDriver($file);
-            $driver->setPreferredLanguage($language);
+            $driver = $this->getDriver($file, language: $language);
             $this->assertEquals(
                 $result,
                 $driver->getAllSubjectHeadingsExtended()
@@ -438,68 +554,64 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected physical descriptions data
+     * Function to get expected physical descriptions data.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getPhysicalDescriptionsData(): array
+    public static function getPhysicalDescriptionsData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'fi',
-                [
-                    'ead3_test.xml' => [
-                        'Hyllymetriä järjestetty 0.96 hm',
-                        'Koteloita 5',
-                    ],
-                    'ead3_test2.xml' => [
-                        '9 koteloa (kuva, luetteloitu ja kuvailtu)',
-                    ],
+                'ead3_test.xml' => [
+                    'Hyllymetriä järjestetty 0.96 hm',
+                    'Koteloita 5',
+                ],
+                'ead3_test2.xml' => [
+                    '9 koteloa (kuva, luetteloitu ja kuvailtu)',
                 ],
             ],
+        ];
+        yield [
+            'sv',
             [
-                'sv',
-                [
-                    'ead3_test.xml' => [
-                        'Hyllmeter ordnat 0.96 hm',
-                    ],
-                    'ead3_test2.xml' => [
-                        '9 mappar (bild, listad och beskriven)',
-                    ],
+                'ead3_test.xml' => [
+                    'Hyllmeter ordnat 0.96 hm',
+                ],
+                'ead3_test2.xml' => [
+                    '9 mappar (bild, listad och beskriven)',
                 ],
             ],
+        ];
+        yield [
+            'en-gb',
             [
-                'en-gb',
-                [
-                    'ead3_test.xml' => [
-                        'Hyllymetriä järjestetty 0.96 hm',
-                        'Koteloita 5',
-                    ],
-                    'ead3_test2.xml' => [
-                        '9 koteloa (kuva, luetteloitu ja kuvailtu)',
-                    ],
+                'ead3_test.xml' => [
+                    'Hyllymetriä järjestetty 0.96 hm',
+                    'Koteloita 5',
+                ],
+                'ead3_test2.xml' => [
+                    '9 koteloa (kuva, luetteloitu ja kuvailtu)',
                 ],
             ],
         ];
     }
 
     /**
-     * Test getPhysicalDescriptions
+     * Test getPhysicalDescriptions.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getPhysicalDescriptionsData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getPhysicalDescriptionsData')]
     public function testPhysicalDescriptions(
         string $language,
         array $expected
     ): void {
         foreach ($expected as $file => $result) {
-            $driver = $this->getDriver($file);
-            $driver->setPreferredLanguage($language);
+            $driver = $this->getDriver($file, language: $language);
             $this->assertEquals(
                 $result,
                 $driver->getPhysicalDescriptions()
@@ -508,7 +620,7 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Data provider for testGetImages
+     * Data provider for testGetImages.
      *
      * @return Generator
      */
@@ -565,14 +677,14 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test get images
+     * Test get images.
      *
      * @param string $xmlPath  Path for the record xml
      * @param array  $expected Return value to be expected
      *
-     * @return       void
-     * @dataProvider getTestGetImagesData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestGetImagesData')]
     public function testGetImages(string $xmlPath, array $expected)
     {
         $driver = $this->getDriver($xmlPath, ['id' => 'test_id']);
@@ -580,52 +692,48 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Function to get expected general notes data
+     * Function to get expected general notes data.
      *
-     * @return array
+     * @return \Iterator<(int | string), mixed>
      */
-    public static function getGeneralNotesData(): array
+    public static function getGeneralNotesData(): \Iterator
     {
-        return [
+        yield [
+            'fi',
             [
-                'fi',
-                [
-                    'Aineisto on digitoitu',
-                    'Aineisto on osa Unescon maailmanperintöä',
-                ],
+                'Aineisto on digitoitu',
+                'Aineisto on osa Unescon maailmanperintöä',
             ],
+        ];
+        yield [
+            'en-gb',
             [
-                'en-gb',
-                [
-                    'Aineisto on digitoitu',
-                    'Aineisto on osa Unescon maailmanperintöä',
-                ],
+                'Aineisto on digitoitu',
+                'Aineisto on osa Unescon maailmanperintöä',
             ],
+        ];
+        yield [
+            'sv',
             [
-                'sv',
-                [
-                    'Samlingen är digitaliserad',
-                ],
+                'Samlingen är digitaliserad',
             ],
         ];
     }
 
     /**
-     * Test getGeneralNotes
+     * Test getGeneralNotes.
      *
      * @param string $language Language
      * @param array  $expected Result to be expected
      *
-     * @dataProvider getGeneralNotesData
-     *
      * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getGeneralNotesData')]
     public function testGetGeneralNotes(
         string $language,
         array $expected
     ): void {
-        $driver = $this->getDriver('ead3_test5.xml');
-        $driver->setPreferredLanguage($language);
+        $driver = $this->getDriver('ead3_test5.xml', language: $language);
         $this->assertEquals(
             $expected,
             $driver->getGeneralNotes()
@@ -633,28 +741,119 @@ class SolrEad3Test extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test titles.
+     *
+     * @return void
+     */
+    public function testTitles(): void
+    {
+        $rawData = [
+            'title' => 'Otsikko suomeksi',
+            'title_fi_txt' => 'Otsikko suomeksi',
+            'title_en_txt' => 'Title in English',
+            'title_sv_txt' => 'Titel på svenska',
+            'title_alt' => [
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+        ];
+        $driver = $this->getDriver(
+            'ead3_test5.xml',
+            overrides: $rawData,
+            language: 'fi',
+            fallbackLanguages: 'fi,sv,en'
+        );
+        $this->assertSame(
+            'Otsikko suomeksi',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Titel på svenska',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getDriver('ead3_test3.xml', overrides: $rawData, language: 'sv');
+        $this->assertSame(
+            'Titel på svenska',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Title in English',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+        $driver = $this->getDriver('ead3_test2.xml', overrides: $rawData, language: 'en');
+        $this->assertSame(
+            'Title in English',
+            $driver->getTitle()
+        );
+        $this->assertSame(
+            [
+                'Otsikko suomeksi',
+                'Toinen otsikko',
+                'Yet another title',
+            ],
+            $driver->getAlternativeTitles()
+        );
+    }
+
+    /**
      * Get a record driver with fake data.
      *
-     * @param string $recordXml    Xml record to use for the test
-     * @param array  $overrides    Fixture fields to override.
-     * @param array  $searchConfig Search configuration.
+     * @param string $recordXml         Xml record to use for the test
+     * @param array  $overrides         Fixture fields to override.
+     * @param array  $searchConfig      Search configuration.
+     * @param string $language          Language
+     * @param string $fallbackLanguages Site fallback languages
      *
      * @return SolrEad3
      */
-    protected function getDriver(string $recordXml, $overrides = [], $searchConfig = []): SolrEad3
-    {
+    protected function getDriver(
+        string $recordXml,
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+        $fallbackLanguages = 'fi,en',
+    ): SolrEad3 {
         $fixture = $this->getFixture("ead3/$recordXml", 'Finna');
         $record = new SolrEad3(
             null,
             null,
             new \VuFind\Config\Config($searchConfig)
         );
+
         $record->setTranslator(
             $this->getMockTranslator(
-                ['default' => ['year_decade_or_century' => '%%year%%-luku']]
+                ['default' => ['year_decade_or_century' => '%%year%%-luku']],
+                $language,
             )
         );
+        $record->setPreferredLanguage($language);
         $record->setRawData(array_merge(['fullrecord' => $fixture], $overrides));
+        $localeConfig = [
+            'Site' => [
+                'language' => 'fi',
+                'fallback_languages' => $fallbackLanguages,
+                'browserDetectLanguage' => false,
+            ],
+            'Languages' => [
+                'fi' => 'Finnish',
+                'en' => 'English',
+                'sv' => 'Swedish',
+                'en-gb' => 'British English',
+                'se' => 'Northern Sámi',
+            ],
+        ];
+        $localeConfig = new \VuFind\Config\Config($localeConfig);
+        $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
         return $record;
     }
 }

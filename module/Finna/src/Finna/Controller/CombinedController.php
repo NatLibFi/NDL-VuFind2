@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Combined Search Controller
+ * Combined Search Controller.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Controller
@@ -43,7 +43,7 @@ class CombinedController extends \VuFind\Controller\CombinedController
     use FinnaSearchControllerTrait;
 
     /**
-     * Handle onDispatch event
+     * Handle onDispatch event.
      *
      * @param \Laminas\Mvc\MvcEvent $e Event
      *
@@ -60,7 +60,7 @@ class CombinedController extends \VuFind\Controller\CombinedController
     }
 
     /**
-     * Results action
+     * Results action.
      *
      * @return mixed
      */

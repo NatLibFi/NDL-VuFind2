@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  RecordDrivers
@@ -28,7 +28,7 @@
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 
 namespace Finna\RecordDriver;
@@ -48,14 +48,14 @@ use function in_array;
  * @author   Samuli Sillanpää <samuli.sillanpaa@helsinki.fi>
  * @author   Aleksi Peebles <aleksi.peebles@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:record_drivers Wiki
+ * @link     https://vufind.org/wiki/development:plugins:record_drivers Wiki
  */
 class SolrLrmi extends SolrQdc
 {
     use LrmiDriverTrait;
 
     /**
-     * File formats that are downloadable
+     * File formats that are downloadable.
      *
      * @var array
      */
@@ -77,7 +77,7 @@ class SolrLrmi extends SolrQdc
     ];
 
     /**
-     * Array of excluded descriptions
+     * Array of excluded descriptions.
      *
      * @var array
      */
@@ -94,7 +94,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get identifier
+     * Get identifier.
      *
      * @return array
      */
@@ -111,20 +111,18 @@ class SolrLrmi extends SolrQdc
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         $xml = $this->getXmlRecord();
         $rights = [];
         if (!empty($xml->rights)) {
             $rights['copyright'] = $this->getMappedRights((string)$xml->rights);
-            if ($link = $this->getRightsLink($rights['copyright'], $language)) {
+            if ($link = $this->getRightsLink($rights['copyright'])) {
                 $rights['link'] = $link;
             }
             return $rights;
@@ -133,7 +131,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get an array of summary strings for the record
+     * Get an array of summary strings for the record.
      *
      * @return array
      */
@@ -174,7 +172,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get educational audiences
+     * Get educational audiences.
      *
      * @return array
      */
@@ -184,11 +182,11 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get all authors apart from presenters
+     * Get all authors apart from presenters.
      *
      * @return array
      */
-    public function getNonPresenterAuthors()
+    public function getNonPresenterAuthors(): array
     {
         $xml = $this->getXmlRecord();
         $result = [];
@@ -207,7 +205,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Return educational levels
+     * Return educational levels.
      *
      * @return array
      */
@@ -220,7 +218,7 @@ class SolrLrmi extends SolrQdc
      * Return url to external LRMI record page based on the record ID
      * or false if an external link template is not provided.
      *
-     * @return string|boolean
+     * @return string|bool
      */
     public function getExternalLink()
     {
@@ -232,7 +230,7 @@ class SolrLrmi extends SolrQdc
             $recordId = substr($recordId, (strrpos($recordId, '.') + 1));
             return str_replace(
                 ['{materialId}', '{lang}'],
-                [$recordId, $this->getLocale()],
+                [$recordId, $this->preferredLanguage],
                 $link
             );
         }
@@ -244,7 +242,7 @@ class SolrLrmi extends SolrQdc
      * or false if an external link template is not provided or there is no
      * external rating page.
      *
-     * @return array|boolean
+     * @return array|bool
      */
     public function getExternalRatingLink()
     {
@@ -256,7 +254,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get educational subjects
+     * Get educational subjects.
      *
      * @return array
      */
@@ -266,7 +264,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get educational material type
+     * Get educational material type.
      *
      * @return array
      */
@@ -276,7 +274,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get topics
+     * Get topics.
      *
      * @param string $type defaults to /onto/yso/
      *
@@ -299,21 +297,11 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get an array of alternative titles for the record.
-     *
-     * @return array
-     */
-    public function getAlternativeTitles()
-    {
-        return $this->compareWithTitle($this->fields['title_alt'] ?? []);
-    }
-
-    /**
      * Is the provided filetype allowed for download?
      *
      * @param string $format file format
      *
-     * @return boolean
+     * @return bool
      */
     protected function isDownloadableFileFormat($format)
     {
@@ -321,7 +309,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get file format
+     * Get file format.
      *
      * @param string $filename file name
      *
@@ -341,13 +329,12 @@ class SolrLrmi extends SolrQdc
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return mixed
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
         $xml = $this->getXmlRecord();
         $uniqueId = $this->getUniqueID();
@@ -359,16 +346,19 @@ class SolrLrmi extends SolrQdc
             if ($format && in_array($format, $images)) {
                 $url = (string)$desc;
                 if ($this->isUrlLoadable($url, $uniqueId)) {
-                    $result[] = [
-                        'urls' => [
-                            'small' => $url,
-                            'medium' => $url,
-                            'large' => $url,
-                        ],
-                        'description' => '',
-                        'rights' => [],
-                        'downloadable' => false,
-                    ];
+                    if (!$this->maxAmountOfImages()) {
+                        $result[] = [
+                            'urls' => [
+                                'small' => $url,
+                                'medium' => $url,
+                                'large' => $url,
+                            ],
+                            'description' => '',
+                            'rights' => [],
+                            'downloadable' => false,
+                        ];
+                    }
+                    $this->imagesCount++;
                 }
             }
         }
@@ -425,7 +415,6 @@ class SolrLrmi extends SolrQdc
     {
         $xml = $this->getXmlRecord();
         $materials = [];
-        $locale = $this->getLocale();
         foreach ($xml->material as $material) {
             if (isset($material->format)) {
                 $mime = (string)$material->format;
@@ -446,8 +435,7 @@ class SolrLrmi extends SolrQdc
                     }
                 }
 
-                $titles = $this->getMaterialTitles($material->name);
-                $title = $titles[$locale] ?? $titles['default'];
+                $title = $this->getMaterialTitle($material->name);
                 $position = (int)$material->position ?? 0;
                 $filesize = (string)$material->filesize ?? null;
                 $materials[] = compact(
@@ -464,7 +452,7 @@ class SolrLrmi extends SolrQdc
         usort(
             $materials,
             function ($a, $b) {
-                return (int)$a['position'] <=> (int)$b['position'];
+                return $a['position'] <=> $b['position'];
             }
         );
 
@@ -472,25 +460,25 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get material titles in an assoc array
+     * Get material title.
      *
      * @param object $names to look for
      *
-     * @return array
+     * @return string
      */
-    public function getMaterialTitles($names)
+    public function getMaterialTitle($names)
     {
-        $titles = ['default' => (string)$names];
-
         foreach ($names as $name) {
-            $attr = $name->attributes();
-            $titles[(string)$attr->lang] = (string)$name;
+            $lang = trim((string)$name['lang']) ?? self::NO_LOCALE;
+            if ($lang === $this->preferredLanguage) {
+                return (string)$name;
+            }
         }
-        return $titles;
+        return (string)$names;
     }
 
     /**
-     * Get creation date
+     * Get creation date.
      *
      * @return string|false
      */
@@ -504,7 +492,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get last modified date
+     * Get last modified date.
      *
      * @return string|false
      */
@@ -518,7 +506,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get educational use
+     * Get educational use.
      *
      * @return array
      */
@@ -533,7 +521,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get educational aim
+     * Get educational aim.
      *
      * @return array
      */
@@ -547,7 +535,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get accessibility features
+     * Get accessibility features.
      *
      * @return array
      */
@@ -562,7 +550,7 @@ class SolrLrmi extends SolrQdc
     }
 
     /**
-     * Get accessibility hazards
+     * Get accessibility hazards.
      *
      * @return array
      */

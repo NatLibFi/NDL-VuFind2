@@ -17,19 +17,18 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Statistics
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 
 namespace FinnaConsole\Command\Util;
 
-use DateTime;
 use Finna\Db\Service\FinnaStatisticsServiceInterface;
 use Finna\Db\Type\FinnaStatisticsClientType;
 use Finna\Statistics\Driver\Redis as RedisDriver;
@@ -48,7 +47,7 @@ use function call_user_func;
  * @package  Statistics
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
- * @link     http://vufind.org/wiki/vufind2:developer_manual Wiki
+ * @link     https://vufind.org/wiki/development Wiki
  */
 #[AsCommand(
     name: 'util/process_stats_queue'
@@ -56,7 +55,7 @@ use function call_user_func;
 class ProcessStatsQueue extends AbstractUtilCommand
 {
     /**
-     * Constructor
+     * Constructor.
      *
      * @param FinnaStatisticsServiceInterface $statisticsService Statistics service
      * @param \Credis_Client                  $redisClient       Redis client
@@ -102,18 +101,18 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process sessions
+     * Process sessions.
      *
      * @return void
      */
     protected function processSessions(): void
     {
-        $callback = function (array $entry) {
+        $callback = function (array $entry): void {
             $logEntry = $this->statisticsService->createSessionEntity()
                 ->setInstitution($entry['institution'])
                 ->setView($entry['view'])
                 ->setType(FinnaStatisticsClientType::from($entry['crawler']))
-                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']));
+                ->setDate($entry['date']);
 
             $this->statisticsService->addSession($logEntry);
         };
@@ -122,18 +121,18 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process page views
+     * Process page views.
      *
      * @return void
      */
     protected function processPageViews(): void
     {
-        $callback = function (array $entry) {
+        $callback = function (array $entry): void {
             $logEntry = $this->statisticsService->createPageViewEntity()
                 ->setInstitution($entry['institution'])
                 ->setView($entry['view'])
                 ->setType(FinnaStatisticsClientType::from($entry['crawler']))
-                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']))
+                ->setDate($entry['date'])
                 ->setController($entry['controller'])
                 ->setAction($entry['action']);
 
@@ -144,7 +143,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process a queue
+     * Process a queue.
      *
      * @param string   $queueName Queue display name
      * @param string   $queueKey  Redis key
@@ -194,7 +193,7 @@ class ProcessStatsQueue extends AbstractUtilCommand
     }
 
     /**
-     * Process record views
+     * Process record views.
      *
      * Writes normal stats entries as well as extended log entries that spread
      * multiple tables.
@@ -203,12 +202,12 @@ class ProcessStatsQueue extends AbstractUtilCommand
      */
     protected function processRecordViews(): void
     {
-        $callback = function (array $entry) {
+        $callback = function (array $entry): void {
             $logEntry = $this->statisticsService->createRecordStatsLogEntity()
                 ->setInstitution($entry['institution'])
                 ->setView($entry['view'])
                 ->setType(FinnaStatisticsClientType::from($entry['crawler']))
-                ->setDate(DateTime::createFromFormat('Y-m-d', $entry['date']))
+                ->setDate($entry['date'])
                 ->setBackend($entry['backend'])
                 ->setSource($entry['source'])
                 ->setRecordId($entry['record_id'])

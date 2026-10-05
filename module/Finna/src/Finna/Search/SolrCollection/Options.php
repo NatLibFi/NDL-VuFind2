@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Solr Collection aspect of the Search Multi-class (Options)
+ * Solr Collection aspect of the Search Multi-class (Options).
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -30,8 +30,10 @@
 
 namespace Finna\Search\SolrCollection;
 
+use VuFind\Config\ConfigManagerInterface;
+
 /**
- * Solr Collection Search Options
+ * Solr Collection Search Options.
  *
  * @category VuFind
  * @package  Search_Solr
@@ -45,20 +47,20 @@ class Options extends \VuFind\Search\SolrCollection\Options
     use \Finna\Search\FinnaOptions;
 
     /**
-     * Date range visualization settings
+     * Date range visualization settings.
      *
      * @var string
      */
     protected $dateRangeVis;
 
     /**
-     * Constructor
+     * Constructor.
      *
-     * @param \VuFind\Config\PluginManager $configLoader Config loader
+     * @param ConfigManagerInterface $configManager Config manager
      */
-    public function __construct(\VuFind\Config\PluginManager $configLoader)
+    public function __construct(ConfigManagerInterface $configManager)
     {
-        parent::__construct($configLoader);
+        parent::__construct($configManager);
 
         $this->dateRangeVis = $this->facetSettings['SpecialFacets']['dateRangeVis'] ?? '';
 
@@ -82,7 +84,7 @@ class Options extends \VuFind\Search\SolrCollection\Options
     }
 
     /**
-     * Get the field used for date range search
+     * Get the field used for date range search.
      *
      * @return string
      */

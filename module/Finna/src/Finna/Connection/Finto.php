@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Connection
@@ -30,7 +30,7 @@
 namespace Finna\Connection;
 
 use Laminas\Http\Client;
-use Laminas\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareInterface;
 use VuFind\Config\Config;
 use VuFind\Log\LoggerAwareTrait;
 
@@ -196,7 +196,7 @@ class Finto implements LoggerAwareInterface
      * @param string      $vocid A Skosmos vocabulary identifier e.g. "stw" or "yso"
      * @param string      $uri   URI of the concept whose narrower concept to return
      * @param string|null $lang  Label language, e.g. "en" or "fi"
-     * @param boolean     $sort  Whether to sort results alphabetically or not
+     * @param bool        $sort  Whether to sort results alphabetically or not
      *
      * @return array Results
      * @throws \Exception

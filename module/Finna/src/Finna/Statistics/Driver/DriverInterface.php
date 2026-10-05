@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Statistics driver plugin interface
+ * Statistics driver plugin interface.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Statistics
@@ -30,7 +30,7 @@
 namespace Finna\Statistics\Driver;
 
 /**
- * Statistics driver plugin interface
+ * Statistics driver plugin interface.
  *
  * @category VuFind
  * @package  Statistics
@@ -41,7 +41,7 @@ namespace Finna\Statistics\Driver;
 interface DriverInterface
 {
     /**
-     * Add a new session to statistics
+     * Add a new session to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -58,7 +58,7 @@ interface DriverInterface
     ): void;
 
     /**
-     * Add a record view to statistics
+     * Add a record view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)
@@ -86,7 +86,7 @@ interface DriverInterface
     ): void;
 
     /**
-     * Add a page view to statistics
+     * Add a page view to statistics.
      *
      * @param string $institution Institution code
      * @param string $view        View subpath (empty string for default view)

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * RecordFieldMarkdown Test Class
+ * RecordFieldMarkdown Test Class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -32,7 +32,7 @@ namespace FinnaTest\View\Helper\Root;
 use Finna\View\Helper\Root\RecordFieldMarkdown;
 
 /**
- * RecordFieldMarkdown Test Class
+ * RecordFieldMarkdown Test Class.
  *
  * @category VuFind
  * @package  Tests
@@ -66,7 +66,7 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test basic markdown conversion with the default soft break
+     * Test basic markdown conversion with the default soft break.
      *
      * @return void
      */
@@ -78,11 +78,11 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
             <p>Another markdown paragraph<br>containing a line break</p>
 
             EOT;
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
-     * Test basic markdown conversion with a provided soft break
+     * Test basic markdown conversion with a provided soft break.
      *
      * @return void
      */
@@ -98,11 +98,11 @@ class RecordFieldMarkdownTest extends \PHPUnit\Framework\TestCase
             containing a line break</p>
 
             EOT;
-        $this->assertEquals($expected, $converted);
+        $this->assertSame($expected, $converted);
     }
 
     /**
-     * Return test Markdown input
+     * Return test Markdown input.
      *
      * @return string
      */

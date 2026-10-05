@@ -1,7 +1,7 @@
 <?php
 
 /**
- * CoverController test class
+ * CoverController test class.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Tests
@@ -37,6 +37,7 @@ use Generator;
 use Laminas\Http\Headers;
 use Laminas\Http\PhpEnvironment\Response;
 use Laminas\Stdlib\Parameters;
+use PHPUnit\Framework\MockObject\MockObject;
 use VuFind\Config\Config;
 use VuFind\Cover\CachingProxy;
 use VuFind\Http\PhpEnvironment\Request;
@@ -44,7 +45,7 @@ use VuFind\Session\Settings;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
- * CoverController test class
+ * CoverController test class.
  *
  * @category VuFind
  * @package  Tests
@@ -59,39 +60,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     use MockServicesTrait;
 
     /**
-     * Database containing access tokens
-     *
-     * @var array
-     */
-    protected array $accessTokenDb = [
-      [
-        'id' => 1,
-        'type' => 'access_token_other',
-        'user_id' => 1,
-        'created' => '2020-01-01 00:00:00',
-        'data' =>  'something:else',
-        'revoked' => 0,
-      ],
-      [
-        'id' => 2,
-        'type' => 'api_key',
-        'user_id' => 2,
-        'created' => '2020-01-01 00:00:00',
-        'data' => 'test_key_123',
-        'revoked' => 0,
-      ],
-      [
-        'id' => 3,
-        'type' => 'api_key',
-        'user_id' => 3,
-        'created' => '2020-01-01 00:00:00',
-        'data' => 'not_going_to_work_123',
-        'revoked' => 1,
-      ],
-    ];
-
-    /**
-     * Data provider for testing image piping
+     * Data provider for testing image piping.
      *
      * @return Generator
      */
@@ -238,16 +207,16 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Test pipe functionality
+     * Test pipe functionality.
      *
      * @param array    $config           Main config
      * @param array    $datasourceConfig Datasource config
      * @param array    $params           Parameters for the action
      * @param Response $expected         Expected result
      *
-     * @return       void
-     * @dataProvider getTestImagePipedData
+     * @return void
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('getTestImagePipedData')]
     public function testImagePiped(array $config, array $datasourceConfig, array $params, Response $expected): void
     {
         $coverController = $this->getCoverController($config, $datasourceConfig, $params);
@@ -256,19 +225,19 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * Get cover controller for testing
+     * Get cover controller for testing.
      *
      * @param array $config           Main config
      * @param array $datasourceConfig Datasource config
      * @param array $params           Test params for requesting image
      *
-     * @return CoverController
+     * @return MockObject&CoverController
      */
     protected function getCoverController(
         array $config = [],
         array $datasourceConfig = [],
         array $params = []
-    ): CoverController {
+    ): MockObject&CoverController {
         $records = [
           [
             'fixture' => 'lido/lido_test.xml',
@@ -286,13 +255,13 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
           'https://largekuvanlinkki.com',
         ]);
 
-        $accessTokenService = $this->getFinnaAccessTokenService($this->accessTokenDb);
+        $accessTokenService = $this->getFinnaAccessTokenService();
 
         $coverControllerMock = $this->getMockBuilder(CoverController::class)
           ->onlyMethods(['getRequest'])->setConstructorArgs([
-            $this->getMockBuilder(Loader::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(CachingProxy::class)->disableOriginalConstructor()->getMock(),
-            $this->getMockBuilder(Settings::class)->disableOriginalConstructor()->getMock(),
+            $this->createMock(Loader::class),
+            $this->createMock(CachingProxy::class),
+            $this->createMock(Settings::class),
             new Config($datasourceConfig),
             $recordLoader,
             $config['Content'] ?? [],
@@ -306,7 +275,7 @@ class CoverControllerTest extends \PHPUnit\Framework\TestCase
         $testRequest->setHeaders($headers);
         $query = new Parameters($params['query'] ?? []);
         $testRequest->setQuery($query);
-        $coverControllerMock->expects($this->any())->method('getRequest')->willReturn($testRequest);
+        $coverControllerMock->method('getRequest')->willReturn($testRequest);
         return $coverControllerMock;
     }
 }

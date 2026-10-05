@@ -1,7 +1,7 @@
 <?php
 
 /**
- * VuFind Bootstrapper
+ * VuFind Bootstrapper.
  *
  * PHP version 8
  *
@@ -17,8 +17,8 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * along with this program; if not, see
+ * <https://www.gnu.org/licenses/>.
  *
  * @category VuFind
  * @package  Bootstrap
@@ -35,7 +35,7 @@ use Laminas\Mvc\MvcEvent;
 use function in_array;
 
 /**
- * VuFind Bootstrapper
+ * VuFind Bootstrapper.
  *
  * @category VuFind
  * @package  Bootstrap
@@ -47,28 +47,28 @@ use function in_array;
 class Bootstrapper
 {
     /**
-     * Main VuFind configuration
+     * Main VuFind configuration.
      *
      * @var \VuFind\Config\Config
      */
     protected $config = null;
 
     /**
-     * Current MVC event
+     * Current MVC event.
      *
      * @var MvcEvent
      */
     protected $event;
 
     /**
-     * Event manager
+     * Event manager.
      *
      * @var \Laminas\EventManager\EventManagerInterface
      */
     protected $events;
 
     /**
-     * Constructor
+     * Constructor.
      *
      * @param MvcEvent $event Laminas MVC Event object
      */
@@ -77,7 +77,7 @@ class Bootstrapper
         $this->event = $event;
         $this->events = $event->getApplication()->getEventManager();
         $sm = $this->event->getApplication()->getServiceManager();
-        $this->config = $sm->get(\VuFind\Config\PluginManager::class)->get('config');
+        $this->config = $sm->get(\VuFind\Config\ConfigManagerInterface::class)->getConfigObject('config');
     }
 
     /**
@@ -97,7 +97,7 @@ class Bootstrapper
     }
 
     /**
-     * Set up bot check that disallows access to some functions from bots
+     * Set up bot check that disallows access to some functions from bots.
      *
      * @return void
      */
@@ -135,6 +135,7 @@ class Bootstrapper
                 || ($controller == 'l1record' && $action == 'ajaxtab')
                 || ($controller == 'myresearch')
                 || ($controller == 'record' && $action == 'ajaxtab')
+                || ($controller == 'record' && $action == 'collectionlist')
                 || ($controller == 'record' && $action == 'holdings')
                 || ($controller == 'record' && $action == 'details')
                 || ($controller == 'record' && $action == 'downloadfile')
@@ -168,7 +169,7 @@ class Bootstrapper
     }
 
     /**
-     * Set up statistics event handler
+     * Set up statistics event handler.
      *
      * N.B. The event handler may have already been created by the database row
      * session factory to ensure proper hookup before session events.
@@ -182,7 +183,7 @@ class Bootstrapper
         }
 
         $sm = $this->event->getApplication()->getServiceManager();
-        $callback = function ($event) use ($sm) {
+        $callback = function ($event) use ($sm): void {
             if (!($routeMatch = $event->getRouteMatch())) {
                 return;
             }
@@ -195,7 +196,7 @@ class Bootstrapper
                     }
                     $method = $request->getPost('method')
                         ?? $request->getQuery('method');
-                    if (!in_array($method, ['getImageInformation'])) {
+                    if ($method != 'getImageInformation') {
                         return;
                     }
                     $action .= "/$method";
