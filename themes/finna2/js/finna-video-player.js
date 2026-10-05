@@ -42,7 +42,7 @@ finna.videoPlayer = (() => {
   }
 
   /**
-   * Display warning icons when using inline video setting set to true.
+   * Display warning icons when inline video setting is enabled.
    * @param {HTMLElement} element Element clicked
    */
   function showWarningIcons(element)
