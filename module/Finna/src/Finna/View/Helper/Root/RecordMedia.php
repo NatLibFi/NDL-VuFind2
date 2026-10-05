@@ -121,7 +121,7 @@ class RecordMedia extends AbstractHelper
         return $this->renderClassTemplate(
             'RecordDriver/%s/media.phtml',
             get_class($this->driver),
-            $context ?? [
+            [
                 'driver' => $this->driver,
                 'videoURLs' => $this->cache['videoURLs'],
                 'audioURLs' => $this->cache['audioURLs'],
