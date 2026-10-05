@@ -3,13 +3,13 @@
    * Component for opening or displaying video content.
    * TODO: Create different component for embedded content.
    *
-   * @param string url         Url for the video
-   * @param int index          Video index, used to identify i.e video warnings
-   * @param array videoSources Sources for the video if applicable
-   * @param string ariaLabel   Translated aria label. Default is 'Link to video $description'
-   * @param string consent     Consent category to be accepted.
-   * @param bool embed         Is the video an iframe embed?
-   * @param string description Text description inside the button. Default is format_Video translated.
+   * @param string url          Url for the video
+   * @param int    index        Video index, used to identify i.e video warnings
+   * @param array  videoSources Sources for the video if applicable
+   * @param string ariaLabel    Translated aria label. Default is 'Link to video $description'
+   * @param string consent      Consent category to be accepted.
+   * @param bool   embed        Is the video an iframe embed?
+   * @param string description  Text description inside the button. Default is format_Video translated.
    */
   $index = $this->index ?? 0;
   $description = $this->description ?? $this->translate('format_Video');
@@ -27,12 +27,6 @@
     'data-consent-title' => $this->translate($this->cookieConsent()->getCategoryTitleForService($consent)),
     'aria-haspopup' => true,
   ];
-
-  // If inline video player is used and current video index is 0, this video button will be clicked to initialize the player.
-  // This will not cause the video to start playing.
-  if ($index === 0) {
-    $buttonAttributes['class'] .= ' active-video';
-  }
 
   // Generate unique selector for the button
   $jsSelector = '.' . str_replace(' ', '.', $buttonAttributes['class']);
