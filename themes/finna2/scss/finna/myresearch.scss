@@ -186,11 +186,9 @@
         background: darken($btn-primary-bg, 10%);
       }
     }
-    .dropdown-header {
-      padding: 0px;
-      font-size: $font-size-base;
-      white-space: initial;
-    }
+  }
+  > li .dropdown-header {
+    white-space: initial;
   }
 }
 
