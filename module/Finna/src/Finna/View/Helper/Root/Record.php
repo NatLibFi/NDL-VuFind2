@@ -1652,17 +1652,4 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         $url['desc'] = $desc;
     }
-
-    /**
-     * Process the given url and assign it to its correct cache.
-     *
-     * @param array|string $url      URL to process
-     * @param string       $cacheKey Cache key to store the URL if it is not an audio or a video URL.
-     * @param array        $storage  Final storage for the URL
-     *
-     * @return void
-     */
-    protected function processURL(array|string $url, string $cacheKey, array &$storage): void
-    {
-    }
 }
