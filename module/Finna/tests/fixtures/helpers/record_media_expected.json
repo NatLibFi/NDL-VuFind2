@@ -1,0 +1,279 @@
+{
+    "has all urls": {
+        "otherURLs": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "http://test_url_2.tt/narnia",
+                    "desc": "test_url_2.tt/narnia",
+                    "source": "test 513"
+                }
+            ]
+        },
+        "onlineURLs": {
+            "count": 2,
+            "urls": [
+                {
+                    "url": "https://test_url_231.tt/very_long_url_here_which_would_be_very_ridiculous_in_the_website_and_so",
+                    "text": "",
+                    "mediaType": "text/html",
+                    "source": "test",
+                    "desc": "https://test_url_231.tt/very_lon...bsite_and_so"
+                },
+                {
+                    "url": "https://test_url_1.tt/test.pdf",
+                    "text": "",
+                    "mediaType": "application/pdf",
+                    "source": "test",
+                    "desc": "https://test_url_1.tt/test.pdf"
+                }
+            ]
+        },
+        "mergedURLs": {
+            "count": 2,
+            "urls": [
+                {
+                    "url": "http://test_url_3.it/v/something",
+                    "desc": "URL to embedded video",
+                    "embed": "iframe"
+                },
+                {
+                    "url": "http://test_url_999.tt/narnia",
+                    "desc": "Merged test URL",
+                    "source": "test 123"
+                }
+            ]
+        },
+        "videoURLs": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "http://test_url_4/v/another_thing",
+                    "desc": "Video of manuls and minuls",
+                    "embed": "video",
+                    "format": "mp4",
+                    "videoSources": [
+                        {
+                            "src": "http://test_url_4/v/another_thing",
+                            "type": "video/mp4"
+                        }
+                    ]
+                }
+            ]
+        },
+        "audioURLs": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "https://test_url_6/a/audio_file",
+                    "desc": "",
+                    "embed": "audio",
+                    "type": "audio",
+                    "codec": "wav"
+                }
+            ]
+        },
+        "iiifManifests": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "https://someiiif.ti/filepath_here",
+                    "desc": "https://someiiif.ti/filepath_here"
+                }
+            ]
+        }
+    },
+    "has no urls": {
+        "otherURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "onlineURLs":{
+            "count": 0,
+            "urls": []
+        },
+        "mergedURLs":{
+            "count": 0,
+            "urls": []
+        },
+        "videoURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "audioURLs":{
+            "count": 0,
+            "urls": []
+        },
+        "iiifManifests":{
+            "count": 0,
+            "urls": []
+        }
+    },
+    "has no online urls": {
+        "otherURLs": {
+            "count": 2,
+            "urls": [
+                {
+                    "url": "https://test_url_1.tt/test.pdf",
+                    "desc": "URL for a imaginary PDF",
+                    "source": "test 2"
+                },
+                {
+                    "url": "http://test_url_2.tt/narnia",
+                    "desc": "test_url_2.tt/narnia",
+                    "source": "test 513"
+                }
+            ]
+        },
+        "onlineURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "mergedURLs": {
+            "count": 2,
+            "urls": [
+                {
+                    "url": "http://test_url_3.it/v/something",
+                    "desc": "URL to embedded video",
+                    "embed": "iframe"
+                },
+                {
+                    "url": "http://test_url_999.tt/narnia",
+                    "desc": "Merged test URL",
+                    "source": "test 123"
+                }
+            ]
+        },
+        "videoURLs": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "http://test_url_4/v/another_thing",
+                    "desc": "Video of manuls and minuls",
+                    "embed": "video",
+                    "format": "mp4",
+                    "videoSources": [
+                        {
+                            "src": "http://test_url_4/v/another_thing",
+                            "type": "video/mp4"
+                        }
+                    ]
+                }
+            ]
+        },
+        "audioURLs": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "https://test_url_6/a/audio_file",
+                    "desc": "",
+                    "embed": "audio",
+                    "type": "audio",
+                    "codec": "wav"
+                }
+            ]
+        },
+        "iiifManifests": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "https://someiiif.ti/filepath_here",
+                    "desc": "https://someiiif.ti/filepath_here"
+                }
+            ]
+        }
+    },
+    "has no other urls": {
+            "otherURLs": {
+                "count": 0,
+                "urls": []
+            },
+            "onlineURLs": {
+                "count": 2,
+                "urls": [
+                    {
+                        "url": "https://test_url_231.tt/very_long_url_here_which_would_be_very_ridiculous_in_the_website_and_so",
+                        "text": "",
+                        "mediaType": "text/html",
+                        "source": "test",
+                        "desc": "https://test_url_231.tt/very_lon...bsite_and_so"
+                    },
+                    {
+                        "url": "https://test_url_1.tt/test.pdf",
+                        "text": "",
+                        "mediaType": "application/pdf",
+                        "source": "test",
+                        "desc": "https://test_url_1.tt/test.pdf"
+                    }
+                ]
+            },
+            "mergedURLs": {
+                "count": 3,
+                "urls": [
+                    {
+                        "url": "http://test_url_2.tt/narnia",
+                        "desc": "URL to narnia",
+                        "source": "test"
+                    },
+                    {
+                        "url": "http://test_url_3.it/v/something",
+                        "desc": "URL to embedded video",
+                        "embed": "iframe"
+                    },
+                    {
+                        "url": "http://test_url_999.tt/narnia",
+                        "desc": "Merged test URL",
+                        "source": "test 123"
+                    }
+                ]
+        },
+        "videoURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "audioURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "iiifManifests": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "https://someiiif.ti/filepath_here",
+                    "desc": "https://someiiif.ti/filepath_here"
+                }
+            ]
+        }
+    },
+    "every url is the same url with different keys and values": {
+        "otherURLs": {
+            "count": 0,
+            "urls":[]
+        },
+        "onlineURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "mergedURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "videoURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "audioURLs": {
+            "count": 0,
+            "urls": []
+        },
+        "iiifManifests": {
+            "count": 1,
+            "urls": [
+                {
+                    "url": "http://same_url.it",
+                    "desc": "same_url.it"
+                }
+            ]
+        }
+    }
+}

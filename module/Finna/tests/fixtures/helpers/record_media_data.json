@@ -1,0 +1,271 @@
+{
+    "has all urls": 
+        {
+            "onlineURLs": [
+                {
+                    "url": "https://test_url_231.tt/very_long_url_here_which_would_be_very_ridiculous_in_the_website_and_so",
+                    "text": "",
+                    "mediaType": "text/html",
+                    "source": "test"
+                },
+                {
+                    "url": "https://test_url_1.tt/test.pdf",
+                    "text": "",
+                    "mediaType": "application/pdf",
+                    "source": "test"
+                }
+            ],
+            "urls": [
+                {
+                    "url": "https://test_url_1.tt/test.pdf",
+                    "desc": "URL for a imaginary PDF",
+                    "source": "test 2"
+                },
+                {
+                    "url": "http://test_url_2.tt/narnia",
+                    "desc": "http://test_url_2.tt/narnia",
+                    "source": "test 513"
+                },
+                {
+                    "url": "http://test_url_4/v/another_thing",
+                    "desc": "Video of manuls and minuls",
+                    "embed": "video",
+                    "format": "mp4",
+                    "videoSources": [
+                        {
+                            "src": "http://test_url_4/v/another_thing",
+                            "type": "video/mp4"
+                        }
+                    ]
+                },
+                {
+                    "url": "https://test_url_6/a/audio_file",
+                    "desc": "",
+                    "embed": "audio",
+                    "type": "audio",
+                    "codec": "wav"
+                }
+            ],
+            "mergedData": {
+                "urls": [
+                    {
+                        "url": "http://test_url_2.tt/narnia",
+                        "desc": "URL to narnia",
+                        "source": "test"
+                    },
+                    {
+                        "url": "http://test_url_3.it/v/something",
+                        "desc": "URL to embedded video",
+                        "embed": "iframe"
+                    },
+                    {
+                        "url": "http://test_url_999.tt/narnia",
+                        "desc": "Merged test URL",
+                        "source": "test 123"
+                    }
+
+                ]
+            },
+            "iiifManifests": [
+                {
+                    "url": "https://someiiif.ti/filepath_here"
+                },
+                {
+                    "url": "https://someiiif.ti/filepath_here"
+                }
+            ]
+        }
+    ,
+    "has no urls": 
+        {
+            "onlineURLs": [],
+            "urls": [],
+            "mergedData": {},
+            "iiifManifests": []
+        }
+    ,
+    "has no online urls": 
+        {
+            "onlineURLs": [],
+            "urls": [
+                {
+                    "url": "https://test_url_1.tt/test.pdf",
+                    "desc": "URL for a imaginary PDF",
+                    "source": "test 2"
+                },
+                {
+                    "url": "http://test_url_2.tt/narnia",
+                    "desc": "http://test_url_2.tt/narnia",
+                    "source": "test 513"
+                },
+                {
+                    "url": "http://test_url_4/v/another_thing",
+                    "desc": "Video of manuls and minuls",
+                    "embed": "video",
+                    "format": "mp4",
+                    "videoSources": [
+                        {
+                            "src": "http://test_url_4/v/another_thing",
+                            "type": "video/mp4"
+                        }
+                    ]
+                },
+                {
+                    "url": "https://test_url_6/a/audio_file",
+                    "desc": "",
+                    "embed": "audio",
+                    "type": "audio",
+                    "codec": "wav"
+                }
+            ],
+            "mergedData": {
+                "urls": [
+                    {
+                        "url": "http://test_url_2.tt/narnia",
+                        "desc": "URL to narnia",
+                        "source": "test"
+                    },
+                    {
+                        "url": "http://test_url_3.it/v/something",
+                        "desc": "URL to embedded video",
+                        "embed": "iframe"
+                    },
+                    {
+                        "url": "http://test_url_999.tt/narnia",
+                        "desc": "Merged test URL",
+                        "source": "test 123"
+                    }
+
+                ]
+            },
+            "iiifManifests": [
+                {
+                    "url": "https://someiiif.ti/filepath_here"
+                },
+                {
+                    "url": "https://someiiif.ti/filepath_here"
+                }
+            ]
+        },
+    "has no other urls": 
+        {
+            "onlineURLs": [
+                {
+                    "url": "https://test_url_231.tt/very_long_url_here_which_would_be_very_ridiculous_in_the_website_and_so",
+                    "text": "",
+                    "mediaType": "text/html",
+                    "source": "test"
+                },
+                {
+                    "url": "https://test_url_1.tt/test.pdf",
+                    "text": "",
+                    "mediaType": "application/pdf",
+                    "source": "test"
+                }
+            ],
+            "urls": [],
+            "mergedData": {
+                "urls": [
+                    {
+                        "url": "http://test_url_2.tt/narnia",
+                        "desc": "URL to narnia",
+                        "source": "test"
+                    },
+                    {
+                        "url": "http://test_url_3.it/v/something",
+                        "desc": "URL to embedded video",
+                        "embed": "iframe"
+                    },
+                    {
+                        "url": "http://test_url_999.tt/narnia",
+                        "desc": "Merged test URL",
+                        "source": "test 123"
+                    }
+
+                ]
+            },
+            "iiifManifests": [
+                {
+                    "url": "https://someiiif.ti/filepath_here"
+                },
+                {
+                    "url": "https://someiiif.ti/filepath_here"
+                }
+            ]
+        },
+    "every url is the same url with different keys and values": {
+            "onlineURLs": [
+                {
+                    "url": "http://same_url.it",
+                    "text": "",
+                    "mediaType": "text/html",
+                    "source": "test"
+                },
+                {
+                    "url": "http://same_url.it",
+                    "text": "",
+                    "mediaType": "application/pdf",
+                    "source": "test"
+                }
+            ],
+            "urls": [
+                {
+                    "url": "http://same_url.it",
+                    "desc": "URL for a imaginary PDF",
+                    "source": "test 2"
+                },
+                {
+                    "url": "http://same_url.it",
+                    "desc": "http://test_url_2.tt/narnia",
+                    "source": "test 513"
+                },
+                {
+                    "url": "http://same_url.it",
+                    "desc": "Video of manuls and minuls",
+                    "embed": "video",
+                    "format": "mp4",
+                    "videoSources": [
+                        {
+                            "src": "http://test_url_4/v/another_thing",
+                            "type": "video/mp4"
+                        }
+                    ]
+                },
+                {
+                    "url": "http://same_url.it",
+                    "desc": "",
+                    "embed": "audio",
+                    "type": "audio",
+                    "codec": "wav"
+                }
+            ],
+            "mergedData": {
+                "urls": [
+                    {
+                        "url": "http://same_url.it",
+                        "desc": "URL to narnia",
+                        "source": "test"
+                    },
+                    {
+                        "url": "http://same_url.it",
+                        "desc": "URL to embedded video",
+                        "embed": "iframe"
+                    },
+                    {
+                        "url": "http://same_url.it",
+                        "desc": "Merged test URL",
+                        "source": "test 123"
+                    }
+
+                ]
+            },
+            "iiifManifests": [
+                {
+                    "url": "http://same_url.it"
+                },
+                {
+                    "url": "http://same_url.it"
+                }
+            ]
+        }
+}

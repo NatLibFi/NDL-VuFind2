@@ -1,8 +1,9 @@
 <!-- START of: finna - RecordDriver/SolrQdc/core.phtml -->
 <?php
-  $recordMedia = $this->recordMedia($this->driver);
+  $recordHelper = $this->record($this->driver);
+  $linkDetails = $recordHelper->getLinkDetailsExtended();
+  $media = $recordHelper->renderTemplate('media.phtml', $linkDetails);
   $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
-  $media = $recordMedia->renderMedia();
 ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
@@ -22,7 +23,7 @@
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
       <?=$this->record($this->driver)->getLabelList() ?>
 
-      <?= $recordMedia->renderURLs(); ?>
+      <?= $media->renderTemplate('urls-container', $linkDetails); ?>
 
       <div class="record-core-metadata">
         <?php $formats = $this->driver->getFormats();
