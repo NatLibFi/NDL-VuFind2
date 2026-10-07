@@ -103,7 +103,7 @@ class RecordTest extends \PHPUnit\Framework\TestCase
             ['getIiifManifests', [], [], $iiifManifests],
         ];
         $driver = $this->createMock(DefaultRecord::class);
-        $driver->expects($this->any())->method('tryMethod')
+        $driver->method('tryMethod')
             ->willReturnMap($tryMethodMap);
         return $driver;
     }
@@ -121,7 +121,7 @@ class RecordTest extends \PHPUnit\Framework\TestCase
         array $getLinkDetails = [],
     ): MockObject {
         $openURLPlugin = $this->createPartialMock(OpenUrl::class, ['__invoke', 'isActive']);
-        $openURLPlugin->expects($this->any())->method('isActive')->willReturn(true);
+        $openURLPlugin->method('isActive')->willReturn(true);
         $openURLPlugin->expects($this->once())->method('__invoke')->willReturn($openURLPlugin);
 
         $contextHelper = $this->createPartialMock(Context::class, ['__invoke']);
@@ -136,14 +136,14 @@ class RecordTest extends \PHPUnit\Framework\TestCase
             ['context', $contextHelper],
         ];
         $viewMock = $this->createMock(PhpRenderer::class);
-        $viewMock->expects($this->any())->method('plugin')->willReturnMap($pluginMap);
+        $viewMock->method('plugin')->willReturnMap($pluginMap);
 
         $recordHelper = $this->getMockBuilder(Record::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['getLinkDetails', 'getView'])->getMock();
 
-        $recordHelper->expects($this->any())->method('getLinkDetails')->willReturn($getLinkDetails);
-        $recordHelper->expects($this->any())->method('getView')->willReturn($viewMock);
+        $recordHelper->method('getLinkDetails')->willReturn($getLinkDetails);
+        $recordHelper->method('getView')->willReturn($viewMock);
         return $recordHelper;
     }
 }
