@@ -1567,6 +1567,7 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     public function getLinkDetailsExtended(): array
     {
+        $renderedURLs = [];
         $result = [
             'videoURLs' => [
                 'count' => 0,
@@ -1607,7 +1608,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 if (is_string($url)) {
                     $url = json_decode($url, true);
                 }
-                if (in_array($url['url'], $this->renderedUrls)) {
+                if (in_array($url['url'], $renderedURLs)) {
                     continue;
                 }
                 $cacheKey = $key;
@@ -1622,7 +1623,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 }
                 $result[$cacheKey]['count']++;
                 $result[$cacheKey]['urls'][] = $url;
-                $this->renderedUrls[] = $url['url'];
+                $renderedURLs[] = $url['url'];
             }
         }
         return $result;
