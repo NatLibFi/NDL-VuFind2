@@ -151,14 +151,39 @@
 .list-public-indicator {
   padding-left: 0.3em;
 }
-
-.mylist-controls {
+.mylist-actions-container {
+  display: flex;
+  gap: 0.25rem;
+  .mylist-controls {
+    flex-basis: 20%;
   .control-container {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    &.sort-lists-control {
+      justify-content: right;
+    }
+    .dropdown.sort-button li {
+      a.dropdown-item {
+        border: none;
+      }
+      border: none;
+      .dropdown-item.selected {
+        background: $gray-lighter;
+      }
+    }
+  }
+  .mylists-sort {
+    color: $black;
+    border: none;
+    height: 3.3em;
+    width: 3em;
+    &:hover, &.show {
+      color: white;
+    }
+  }
   }
 }
+
 @include media-breakpoint-down(md) {
   .mylist-controls {
     .sort-option-container {

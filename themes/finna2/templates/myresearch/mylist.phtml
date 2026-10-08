@@ -24,14 +24,13 @@
   // Convenience variable:
   $account = $this->auth()->getManager();
   $user = $this->auth()->getUserObject();
-
-  $lists = $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null;
+  $lists = $user ? $this->userlist()->getUserListsAndCountsByUser($user, $this->allListsSortList['active'] ?? '') : null;
 
   $this->jsTranslations()->addStrings(['add_list_description' => 'Add list description', 'loading' => 'Loading']);
 ?>
 
 <!-- Leftside navigationbar -->
-<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => $list ? ('list' . $list->getId()) : 'favorites']); ?>
+<?= $this->context($this)->renderInContext('myresearch/menu.phtml', ['active' => $list ? ('list' . $list->getId()) : 'favorites', 'allListsSortList' => $this->allListsSortList]); ?>
 
 <?php foreach ($this->results->getRecommendations('side') as $current): ?>
   <?=$this->recommend($current)?>
