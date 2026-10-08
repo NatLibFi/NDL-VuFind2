@@ -11,7 +11,7 @@
   </div>
 <?php else: ?>
   <div class="delete-account-confirm">
-    <?=$this->partial('myresearch/account-login-info.phtml', ['user' => $this->auth()->getUserObject()]);?>
+    <?=$this->partial('myresearch/account-login-info.phtml');?>
     <form id="delete-account" method="post" action="<?=$this->url('myresearch-deleteaccount') ?>" name="deleteAccount">
       <h3><?=$this->transEsc('delete_account_confirm'); ?></h3>
       <p><?=$this->translate('delete_account_description_html'); ?></p>

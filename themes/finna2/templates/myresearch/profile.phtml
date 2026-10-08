@@ -68,7 +68,7 @@
         <?php endif; ?>
       <?php endif; ?>
       <?=$this->partial('myresearch/profile-messages.phtml', ['messages' => $this->profile['messages'] ?? []]); ?>
-      <?=$this->partial('myresearch/account-login-info.phtml', ['user' => $user]);?>
+      <?=$this->partial('myresearch/account-login-info.phtml');?>
       <?php if (is_array($this->profile)): ?>
         <?php if (count($cards) > 1): ?>
           <div class="myresearch-profile-list library-card-holder">
