@@ -153,12 +153,12 @@
 }
 .mylist-actions-container {
   display: flex;
+  gap: 0.25rem;
   .mylist-controls {
     flex-basis: 20%;
   .control-container {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
     &.sort-lists-control {
       justify-content: right;
     }
@@ -167,9 +167,6 @@
         border: none;
       }
       border: none;
-      &:last-child {
-        border-top: 1px solid $gray-lighter;
-      }
       .dropdown-item.selected {
         background: $gray-lighter;
       }
@@ -177,13 +174,11 @@
   }
   .mylists-sort {
     color: $black;
-    border-color: $black;
+    border: none;
     height: 3.3em;
     width: 3em;
-    margin-left: 1rem;
-    &:hover {
+    &:hover, &.show {
       color: white;
-      background-color: $black;
     }
   }
   }

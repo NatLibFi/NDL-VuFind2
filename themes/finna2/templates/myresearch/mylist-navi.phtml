@@ -76,11 +76,12 @@
                   <?php if ($sortOption === 'custom_order' && !$this->userlist()->customOrderAvailableForLists($this->user)):?>
                     <a class="dropdown-item" href="<?=$this->url('myresearch-sortalllists')?>" data-lightbox><?= $this->transEsc($options['desc']) ?></a>
                   <?php else: ?>
-                    <a class="dropdown-item <?=$options['selected'] ? 'selected' : ''?>" href="?allListsSort=<?=$sortOption?>"><?= $this->transEsc($options['desc']); ?></a>
+                    <a class="dropdown-item <?=$options['selected'] ? 'active' : ''?>" href="?allListsSort=<?=$sortOption?>"><?= $this->transEsc($options['desc']); ?></a>
                   <?php endif;?>
                 </li>
               <?php endforeach; ?>
               <li>
+                <hr class="dropdown-divider">
                 <a class="dropdown-item sort-all-lists" href="<?=$this->url('myresearch-sortalllists')?>" data-backdrop=”static” data-lightbox><span aria-hidden="true"></span> <span class="hidden-xs"><?=$this->transEsc('Sort manually')?></span></a>
               </li>
             </ul>

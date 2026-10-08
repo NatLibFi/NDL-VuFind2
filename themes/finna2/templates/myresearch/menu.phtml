@@ -8,13 +8,14 @@
     $ilsOffline = 'ils-none' === $this->ils()->getOfflineMode();
     $listOpen = $this->active == 'favorites' || substr($this->active, 0, 4) == 'list';
     $activeToLower = strtolower($this->active ?? '');
+    $activeAllListsSort = $this->allListsSortList['active'] ?? '';
 
     //Get the data for vertical menu to show lists on correct site
     if ($listOpen) {
       $list = $this->results?->getListObject();
       $listParams = [
         'activeId' => $list?->getId(),
-        'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user, $this->allListsSortList['active'] ?? '') : null,
+        'lists' => $user ? $this->userlist()->getUserListsAndCountsByUser($user, $activeAllListsSort) : null,
         'results' => $this->results,
         'user' => $user,
         'totalResourceCount' => $this->totalResourceCount,
@@ -132,6 +133,7 @@
       'open-list' => [
         'active' => $listOpen,
         'url' => 'myresearch-favorites',
+        'query' => $activeAllListsSort ? '?allListsSort=' . $activeAllListsSort : '',
         'translation' => 'saved_items',
         'show' => $this->userlist()->getMode() !== 'disabled',
         'partial' => [
