@@ -1,4 +1,4 @@
-<?php if ($user): ?>
+<?php if ($user = $this->auth()->getUserObject()): ?>
   <?php
     $authMethod = $user->getAuthMethod();
     $loginMethod = '';
@@ -7,7 +7,7 @@
     $loginMethod = $loginConfig['loginMethod'] ?? 'password';
     }
   ?>
-  <div class="logged-in-as">
+  <div class="account-login-info logged-in-as">
     <div>
       <div><span class="profile-title"><?=$this->transEsc('account_username')?>: </span><span><?=$this->escapeHtml($user->getDisplayableUsername($loginMethod))?></span></div>
       <div><span class="profile-title"><?=$this->transEsc('account_login_method')?>: </span><span><?=$this->transEscWithPrefix('login_method_', $authMethod)?></span></div>

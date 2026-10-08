@@ -1,5 +1,5 @@
-.my-research-content .logged-in-as,
-.delete-account-confirm .logged-in-as {
+.my-research-content .account-login-info,
+.delete-account-confirm .account-login-info {
   margin-bottom: 1.1em;
   > div {
     display: flex;
@@ -13,8 +13,8 @@
   }
 }
 @include media-breakpoint-down(md) {
-.my-research-content .logged-in-as,
-.delete-account-confirm .logged-in-as {
+.my-research-content .account-login-info,
+.delete-account-confirm .account-login-info {
   > div {
       // .display-name display deprecated
       &:not(.display-name) {
