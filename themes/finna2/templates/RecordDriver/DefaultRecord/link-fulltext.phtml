@@ -24,12 +24,12 @@
       $replace[] = is_array($source) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $source, null, $source);
   }
   if ($linkNote = $this->note ?? '') {
-      $link = ' <span class="url-public-note">%%note</span>';
+      $link .= ' <span class="url-public-note">%%note</span>';
       $search[] = '%%note';
       $replace[] = $this->escapeHtml($linkNote);
   }
   if ($linkPart = $this->part ?? '') {
-      $link = ' <span class="coverage">%%part</span>';
+      $link .= ' <span class="coverage">%%part</span>';
       $search[] = '%%part';
       $replace[] = $this->transEsc('default::link_' . $linkPart, null, $linkPart);
   }
