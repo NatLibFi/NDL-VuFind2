@@ -9,7 +9,6 @@
   $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 ?>
 <div class="media-<?=$mediaAlignment ?><?=$this->audioURLs['count'] ? ' audio' : ''?>">
-
   <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img]);?>
   <?php if ($this->videoURLs['count']): ?>
     <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $this->videoURLs['urls']]);?>
