@@ -1558,4 +1558,99 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return parent::getListNotes($list_id, $user_id);
     }
+
+    /**
+     * Get all the links associated with this record. Returns an array of
+     * associative arrays each containing 'count' and 'urls' keys.
+     *
+     * @return array
+     */
+    public function getLinkDetailsExtended(): array
+    {
+        $renderedURLs = [];
+        $result = [
+            'videoURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'audioURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'otherURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'onlineURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'mergedURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'iiifManifests' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+        ];
+
+        // Account for replace_other_urls setting
+        $otherURLs = $this->getLinkDetails(
+            ($this->getView()->plugin('openUrl'))($this->driver, 'record')->isActive()
+        );
+        $onlineURLs = $this->driver->tryMethod('getOnlineURLs', [], []);
+        $mergedURLs = $this->driver->tryMethod('getMergedRecordData', [], [])['urls'] ?? [];
+        $iiifManifests = $this->driver->tryMethod('getIiifManifests', [], []);
+
+        foreach (compact('iiifManifests', 'onlineURLs', 'otherURLs', 'mergedURLs') as $key => $value) {
+            foreach ($value as $url) {
+                if (is_string($url)) {
+                    $url = json_decode($url, true);
+                }
+                if (in_array($url['url'], $renderedURLs)) {
+                    continue;
+                }
+                $cacheKey = $key;
+                $this->supplementURL($url);
+                $isEmbeddedVideo
+                    = $this->getView()->plugin('recordLinker')->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
+
+                if (($url['embed'] ?? '') === 'video' || !empty($url['videoSources']) || $isEmbeddedVideo) {
+                    $cacheKey = 'videoURLs';
+                } elseif (($url['embed'] ?? '') === 'audio') {
+                    $cacheKey = 'audioURLs';
+                }
+                $result[$cacheKey]['count']++;
+                $result[$cacheKey]['urls'][] = $url;
+                $renderedURLs[] = $url['url'];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Support function to supplement external urls with proper icon and description.
+     *
+     * @param array $url URL to process
+     *
+     * @return void
+     */
+    protected function supplementURL(&$url): void
+    {
+        $desc = $url['desc'] ?? $url['url'];
+        if ($desc === $url['url']) {
+            $desc = ($this->getView()->plugin('truncateUrl'))($url['url']);
+        }
+
+        $externalIconMap = [
+            'Database Guide' => 'database-info',
+            'Database Interface' => 'database-browse',
+            'proxy-link' => 'download',
+        ];
+        if ($icon = ($externalIconMap[$desc] ?? '')) {
+            $url['icon'] = $icon;
+        }
+        $url['desc'] = $desc;
+    }
 }
