@@ -43,8 +43,9 @@
 ; When the item is clicked show content:encoded tag in a modal or on a content page.
 ; linkTo = "content-page|modal"
 
-; Select only specific elements from content:encoded tag contents using an XPath expression.
-; selectHtmlContent[html] = "."
+; Select specific elements from content:encoded using an XPath expression.
+; Selected elements will be available in the template as keyed values under 'element'.
+; selectHtmlContent[lead] = "//div[@class='lead']"
 
 ; Filters for searching item content:encoded tag contents using regular expressions
 ; (htmlContentSearch) and replacing matches with strings (htmlContentReplace).
