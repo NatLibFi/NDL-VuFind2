@@ -456,6 +456,23 @@
   }
 }
 
+.hold-single-actions {
+  display: flex;
+  align-items: center;
+  gap: (1.5 * $spacer);
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  .hold-cancel-one {
+    padding: 0rem;
+  }
+}
+@include media-breakpoint-up(sm) {
+  .hold-single-actions {
+    justify-content: end;
+    margin-bottom: 0rem;
+  }
+}
+
 .loan-history-buttons-bottom {
   display: flex;
 }

@@ -67,9 +67,9 @@
                         <input id="cancelSelected" name="cancelSelected" type="submit" value="<?=$this->transEscAttr('hold_cancel_selected') ?>" class="btn btn-primary btn-finna-toolbar dropdown-toggle" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
                         <ul class="dropdown-menu useraccount-confirm" role="presentation">
                           <li><span class="dropdown-header"><?=$this->transEsc('confirm_hold_cancel_selected_text') ?></span></li>
-                          <li useraccount-confirm-buttons>
+                          <li class="useraccount-confirm-buttons">
                             <a class="dropdown-item" href="#" id="confirm_cancel_selected_yes" role="button"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-                            <a class="dropdown-item" href="#" class="confirm_cancel_no" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
+                            <a class="dropdown-item confirm_cancel_no" href="#" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
                           </li>
                         </ul>
                       <?php endif; ?>
@@ -196,7 +196,9 @@
                   <?php elseif (isset($ilsDetails['in_transit']) && $ilsDetails['in_transit']): ?>
                     <div class="text-success"><?=$this->transEsc('request_in_transit') . (is_string($ilsDetails['in_transit']) ? ': ' . $this->transEsc('institution_' . $ilsDetails['in_transit'], [], $ilsDetails['in_transit']) : '') ?></div>
                   <?php elseif (isset($ilsDetails['position'])): ?>
-                    <p><strong><?=$this->transEsc('hold_queue_position') ?>:</strong> <?=$this->escapeHtml($ilsDetails['position']) ?></p>
+                    <div>
+                      <strong><?=$this->transEsc('hold_queue_position') ?>:</strong> <?=$this->escapeHtml($ilsDetails['position']) ?>
+                    </div>
                   <?php endif; ?>
 
                   <?php if (isset($this->cancelResults['items'])): ?>
@@ -223,21 +225,30 @@
                   <?php endif; ?>
 
                   <?php if (!empty($ilsDetails['frozen'])): ?>
-                    <strong>
+                    <div class="alert alert-info">
                       <?php if (empty($ilsDetails['frozenThrough'])): ?>
                         <?=$this->transEsc('hold_frozen') ?>
                       <?php else: ?>
                         <?=$this->transEsc('hold_frozen_through', ['%%date%%' => $ilsDetails['frozenThrough']]) ?>
                       <?php endif; ?>
-                    </strong>
+                    </div>
                   <?php endif; ?>
 
-                  <?php if (isset($ilsDetails['cancel_link'])): ?>
-                    <p><a href="<?=$this->escapeHtmlAttr($ilsDetails['cancel_link']) ?>"><?=$this->transEsc('hold_cancel') ?></a></p>
-                  <?php endif; ?>
-                  <?php if (!empty($ilsDetails['updateDetails'])): ?>
-                    <p><a class="hold-edit" href="<?=$this->escapeHtmlAttr($this->url('holds-edit', [], ['query' => ['selectedIDS[]' => $ilsDetails['updateDetails']]])) ?>" data-lightbox><?=$this->transEsc('Edit') ?></a></p>
-                  <?php endif; ?>
+                  <div class="hold-single-actions">
+                    <?php if (!empty($ilsDetails['updateDetails'])): ?>
+                      <a class="hold-edit" href="<?=$this->escapeHtmlAttr($this->url('holds-edit', [], ['query' => ['selectedIDS[]' => $ilsDetails['updateDetails']]])) ?>" data-lightbox><?=$this->transEsc('Edit') ?></a>
+                    <?php endif; ?>
+                    <?php if ($this->cancelForm && isset($ilsDetails['cancel_details'])): ?>
+                      <input type="submit" value="<?=$this->transEscAttr('Delete') ?>" class="btn btn-link dropdown-toggle hold-cancel-one" data-bs-toggle="dropdown" data-lightbox-ignore aria-expanded="false">
+                      <ul class="dropdown-menu useraccount-confirm" role="presentation">
+                        <li><span class="dropdown-header"><?=$this->transEsc('confirm_hold_cancel_one_text') ?></span></li>
+                        <li class="useraccount-confirm-buttons">
+                          <a class="dropdown-item js-confirm-cancel" href="#" role="button" data-cancel-details="<?=$this->escapeHtmlAttr($ilsDetails['cancel_details']) ?>"><?=$this->transEsc('confirm_dialog_yes') ?></a>
+                          <a class="dropdown-item confirm_cancel_no" href="#" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
+                        </li>
+                      </ul>
+                    <?php endif; ?>
+                  </div>
                 </div>
               </td>
             </tr>
@@ -251,10 +262,16 @@
                   <li><span class="dropdown-header"><?=$this->transEsc('confirm_hold_cancel_all_text') ?></span></li>
                   <li class="useraccount-confirm-buttons">
                     <a class="dropdown-item" href="#" id="confirm_cancel_all_yes" role="button"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-                    <a class="dropdown-item" href="#" class="confirm_cancel_no" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
+                    <a class="dropdown-item confirm_cancel_no" href="#" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
                   </li>
                 </ul>
               </div>
+              <?php
+                $script = <<<JS
+                    finna.holds.initCancelButtons();
+                    JS;
+                ?>
+                <?=$this->assetManager()->outputInlineScriptString($script); ?>
             </form>
           </div>
         <?php endif; ?>
