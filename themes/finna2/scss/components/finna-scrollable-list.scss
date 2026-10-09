@@ -123,6 +123,14 @@
   .list-scrollable__list-item {
     position: static;
     width: fit-content;
+    .iconlabel {
+      margin-right: 0px;
+      color: inherit;
+      &::before { 
+        padding-right: 0px;
+        font-size: 1em;
+      }
+    }
     .dropdown-toggle {
       .show--open,
       .show--closed {
@@ -147,6 +155,12 @@
       z-index: $zindex-dropdown;
     }
   }
+  .list-scrollable__scroll-next-btn {
+    right: 0rem;
+  }
+  .list-scrollable__scroll-prev-btn {
+    left: 0rem;
+  }
 }
 
 // Active filters on narrow search
@@ -162,6 +176,36 @@
     > div {
       display: flex;
       gap: 0.5em;
+    }
+  }
+}
+
+// ShortcutBar
+.shortcut-bar-scrollable-list.scrollable-list-container {
+  margin: 0em;
+  .link-list.list-scrollable {
+    padding: 0.4em;
+    margin-bottom: 0em;
+    background-color: $finna-shortcut-bar-background;
+    ul.list-scrollable__list {
+      gap: 1rem;
+      padding-right: 0.25rem;
+      padding-left: 0.25rem;
+      li.list-scrollable__list-item {
+        margin: 0em;
+        > a {
+          padding: $finna-shortcut-bar-link-padding;
+          color: $finna-shortcut-bar-link-color;
+          border-radius: $finna-shortcut-bar-link-border-radius;
+          background-color: $finna-shortcut-bar-link-background-color;
+          transition: background-color 0.3s ease;
+          &:hover {
+            color: $finna-shortcut-bar-link-hover-color;
+            text-decoration: $finna-shortcut-bar-link-text-decoration;
+            background-color: $finna-shortcut-bar-link-background-hover-color;
+          }
+        }
+      }
     }
   }
 }
