@@ -1,40 +1,26 @@
 <!-- START of: finna - content/about_finna_en-gb.phtml -->
-
-<?php $this->headTitle($this->translate('Finna - search services as a whole'));
-$this->content()->setHeading($this->translate('Finna - search services as a whole')); ?>
-<p>Finna is home to millions of items of cultural and scientific material in Finland.</p>
-<p>Hundreds of Finnish organisations such as archives, libraries and museums bring their unique content to Finna.</p>
-<p>The National Library of Finland maintains and develops the Finna service continuously in cooperation with archives, libraries, museums and other partners.</p>
-<p>Our objective is to make finding and using information and learning new lessons as easy and secure as possible.</p>
-<h2>What is the difference between Finna.fi and other Finna search services?</h2>
-<p>The Finna family of services comprises Finna.fi, which brings together the material, and hundreds of other Finna search services.</p>
-<div class="finna-aboutfinna-panel panel ">
-    <div class="panel-body">
-        <h3><a href="https://www.finna.fi">Finna.fi</a></h3>
-        <p>Finna.fi gives you access to material provided by all organisations participating in Finna in one location.</p>
-        <?php if ($template = $this->content()->findTemplateForLng('content/about_finnafi')): ?>
-            <p><a class="btn btn-primary" href="<?=$this->url('content-page', ['page' => 'about_finnafi'])?>">Read more</a></p>
-        <?php endif; ?>
-    </div>
-</div>
+<?php $this->headTitle($this->translate('Explore Finna views'));
+$this->content()->setHeading($this->translate('Explore Finna views')); ?>
+<p>Accompanying the Finna.fi search service, the interoperable and reliable Finna platform is available as a service for our organisational customers. More than 130 libraries, museums and archives have built their services on the platform.
+</p>
+<p>The Finna platform helps make materials easy to find, accessible and safe to use. Organisations can tailor their own services on the platform, such as online libraries and collection search services.</p>
 <div class="finna-aboutfinna-panel panel">
-    <div class="panel-body">
-        <h3>Other Finna search services</h3>
-        <p>Other Finna search services focus on material offered by other providers of certain material.</p>
-        <p>For example, in search services maintained by archives, libraries and museums, you can try different selections of collections offered by providers of certain material. The search services of higher education institutions provide their students and staff members with open material and licensed e-material.</p>
-        <p>The list below shows you which have their own Finna search services.</p>
-        <ul class="finna-aboutfinna-nav nav">
-            <li><a href="#archives"><?=$this->translate('Archives') ?></a></li>
-            <li><a href="#museums"><?=$this->translate('Museums') ?></a></li>
-            <li><a href="#thematic"><?=$this->translate('Thematic') ?></a></li>
-            <li><a href="#polylib"><?=$this->translate('Polytechnic Libraries') ?></a></li>
-            <li><a href="#speciallib"><?=$this->translate('Special libraries') ?></a></li>
-            <li><a href="#publiclib"><?=$this->translate('Public Libraries') ?></a></li>
-            <li><a href="#univlib"><?=$this->translate('University Libraries') ?></a></li>
-            <li><a href="#regionallib"><?=$this->translate('Regional views') ?></a></li>
-        </ul>
-        <?=$this->render('content/about_finna_sites.phtml') ?>
-    </div>
+  <div class="panel-body">
+    <p><a href="https://www.finna.fi">Finna.fi</a> brings together content from hundreds of libraries, museums, archives, repositories and research institutes. <a href="https://www.finna.fi/Content/about_finnafi"> Read more about Finna</a></p>
+  </div>
 </div>
-
+<div class="panel-body">
+  <ul class="finna-aboutfinna-nav nav">
+    <li><a href="#archives"><?=$this->translate('Archives') ?></a></li>
+    <li><a href="#museums"><?=$this->translate('Museums') ?></a></li>
+    <li><a href="#publiclib"><?=$this->translate('Public Libraries') ?></a></li>
+    <li><a href="#speciallib"><?=$this->translate('Special libraries') ?></a></li>
+    <li><a href="#univlib"><?=$this->translate('University Libraries') ?></a></li>
+    <li><a href="#polylib"><?=$this->translate('Polytechnic Libraries') ?></a></li>
+    <li><a href="#thematic"><?=$this->translate('Thematic views') ?></a></li>
+    <li><a href="#regionallib"><?=$this->translate('Regional views') ?></a></li>
+  </ul>
+</div>
+<hr>
+<?=$this->render('content/about_finna_sites.phtml') ?>
 <!-- END of: finna - content/about_finna_en-gb.phtml -->
