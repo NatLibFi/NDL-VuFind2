@@ -121,9 +121,23 @@
     <?=$this->component('finna-addition-template', ['template' => 'myresearch-favorites'])?>
     <div class="mylist-header">
       <?php if ($recordTotal > 0): ?>
-        <div class="mylist-controls search-controls">
+        <div class="mylist-controls search-controls myresearch-mylist">
           <div class="pagination-container">
             <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
+            <?php if ($list): ?>
+              <?=
+                $this->component(
+                    'confirm-button',
+                    [
+                      'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+                      'buttonLabel' => 'delete_list',
+                      'buttonClass' => 'btn btn-sm btn-danger btn-delete-list',
+                      'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+                      'header' => 'confirm_delete_list_text',
+                    ]
+                )
+              ?>
+            <?php endif; ?>
           </div>
           <div class="control-container hidden-print">
             <?php if ($list): ?>
@@ -151,6 +165,22 @@
         <div class="useraccount-header">
           <h3><?=$this->transEsc('You do not have any saved resources')?></h3>
         </div>
+          <?php if ($list): ?>
+            <div>
+              <?=
+                $this->component(
+                    'confirm-button',
+                    [
+                      'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+                      'buttonLabel' => 'delete_list',
+                      'buttonClass' => 'btn btn-danger',
+                      'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+                      'header' => 'confirm_delete_list_text',
+                    ]
+                )
+              ?>
+            </div>
+          <?php endif; ?>
       <?php endif; ?>
     </div>
     <?php if ($recordTotal > 0): ?>

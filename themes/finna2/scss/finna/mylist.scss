@@ -153,6 +153,15 @@
 }
 
 .mylist-controls {
+  &.myresearch-mylist {
+    display: flex;
+    gap: 0.5rem;
+    .pagination-container {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
   .control-container {
     display: flex;
     align-items: center;
@@ -169,6 +178,17 @@
     }
   }
 }
+@include media-breakpoint-down(xl) {
+  .mylist-controls{
+    &.myresearch-mylist {
+      .pagination-container {
+        width: 100%;
+        justify-content: space-between;
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
 @include media-breakpoint-down(md) {
   .mylist-bar.mobile-sidebar-container {
     .mobile-navigation-header-container {
@@ -181,7 +201,7 @@
   }
 }
 
-.btn-sort-order {
+.btn-sort-order, .btn-delete-list {
   padding: 0.4em;
 }
 
