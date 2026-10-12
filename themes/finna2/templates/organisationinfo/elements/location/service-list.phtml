@@ -40,6 +40,7 @@
 <span class="finna-toggletip">
   <button<?=$__attributes?>>
     <?php if (!empty($labelHtml)): ?><span class="finna-toggletip__label"><?=$labelHtml ?></span><?php endif; ?>
+      <?=$this->cleanHtml($service['name'])?>
   </button>
   <?php
     // Note: role="status" needs to be on the outer element that is never hidden for screen readers to note the change
