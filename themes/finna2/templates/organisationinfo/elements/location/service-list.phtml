@@ -11,10 +11,8 @@
       
       <div>
         <?php if ($desc = $service['description'] ?: $service['shortDescription']): ?>
-          <?php $tooltipEsc = $this->transEscAttr('<h6>' . $this->cleanHtml($service['name']) . '</h6>' . $this->cleanHtml($desc)); ?>
-          <button type="button" class="service-tooltip" data-bs-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="<?=$tooltipEsc?>">
-            <?=$this->cleanHtml($service['name'])?>
-          </button>
+          <?php 
+            $tooltipEsc = $this->cleanHtml('<h6>' . $this->cleanHtml($service['name']) . '</h6>' . $this->cleanHtml($desc)); ?>
           <?php
   $__attributes = $this->htmlAttributes($attributes ?? []);
   $__attributes->set([
@@ -40,7 +38,7 @@
 <span class="finna-toggletip">
   <button<?=$__attributes?>>
     <?php if (!empty($labelHtml)): ?><span class="finna-toggletip__label"><?=$labelHtml ?></span><?php endif; ?>
-      <?=$this->cleanHtml($service['name'])?>
+      <?=$this->transEsc($service['name'])?>
   </button>
   <?php
     // Note: role="status" needs to be on the outer element that is never hidden for screen readers to note the change
