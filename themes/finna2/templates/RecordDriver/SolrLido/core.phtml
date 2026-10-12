@@ -1,61 +1,9 @@
 <!-- START of: finna - RecordDriver/SolrLido/core.phtml -->
 <?php
-  $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  $img = $this->recordImage($this->record($this->driver));
-  $urls = $this->record($this->driver)->getLinkDetails();
-  if (!empty($urls)) {
-    $videoUrls = [];
-    $audioUrls = [];
-    $otherUrls = [];
-    foreach ($urls as $url) {
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
-        array_push($videoUrls, $url);
-      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
-        array_push($audioUrls, $url);
-      } else {
-        array_push($otherUrls, $url);
-      }
-    }
-  }
-
-  $thumbnail = false;
-  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
-  ob_start();
-?>
-  <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
-
-    <?php if (!empty($videoUrls) && $this->config()->inlineVideoEnabled()): ?>
-      <?php $i = 0; ?>
-        <?php foreach ($videoUrls as $url): ?>
-          <div class="resource-details">
-            <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a></div>
-            <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
-          </div>
-        <?php $i++; ?>
-      <?php endforeach; ?>
-    <?php endif; ?>
-
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
-
-    <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrLido']);?>
-    <?php endif; ?>
-
-    <?php if (!empty($audioUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
-    <?php endif; ?>
-
-    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-      <div class="organisation-menu">
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
-    <?php endif; ?>
-
-    <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
-  </div>
-<?php
-  $thumbnail = ob_get_contents();
-  ob_end_clean();
+  $recordHelper = $this->record($this->driver);
+  $linkDetails = $recordHelper->getLinkDetailsExtended();
+  $media = $recordHelper->renderTemplate('media.phtml', $linkDetails);
+  $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $summaries = $this->driver->getSummary();
   ob_start();
 ?>
@@ -73,8 +21,8 @@
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media">
   <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'left'): ?>
+    <?=$media ?>
   <?php endif; ?>
     <div class="media-body record-information">
       <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
@@ -106,15 +54,7 @@
           <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
         <?php endif; ?>
       </div>
-      <?php if ($documents = $this->driver->getDocuments()): ?>
-        <div class="record-links">
-          <div class="recordURLs local-available-online-record lido-links">
-            <ul class="truncate-field outer" data-rows="4">
-              <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $documents])?>
-            </ul>
-          </div>
-        </div>
-      <?php endif; ?>
+      <?= $recordHelper->renderTemplate('urls-container.phtml', $linkDetails); ?>
 
       <div class="summary-wrapper">
         <div class="description recordSummary">
@@ -154,8 +94,8 @@
       </div>
       <?php endif; ?>
     </div>
-  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'right'): ?>
+    <?=$media ?>
   <?php endif; ?>
 </div>
 <!-- END of: finna - RecordDriver/SolrLido/core.phtml -->

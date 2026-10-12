@@ -51,6 +51,7 @@ use VuFind\View\Helper\Root\Url;
 
 use function array_key_exists;
 use function count;
+use function get_class;
 use function in_array;
 use function intval;
 use function is_array;
