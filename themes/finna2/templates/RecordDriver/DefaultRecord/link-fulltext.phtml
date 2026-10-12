@@ -1,38 +1,40 @@
 <?php
-  // Build the link into a variable to avoid extra whitespaces
-  $search = [
-    '%%url',
-    '%%ariaLabel',
-    '%%desc',
+  $linkDescription = trim($this->desc);
+  $linkIcon = $this->icon ?? 'external-link';
+
+  $externalIconMap = [
+    'Database Guide' => 'database-info',
+    'Database Interface' => 'database-browse',
+    'proxy-link' => 'download',
   ];
-  $replace = [
-      $this->escapeHtmlAttr($this->proxyUrl($this->url)),
-      $this->transEscAttr('external_online_link'),
-      $this->transEsc('default::link_' . $this->text ?: $this->desc, null, $this->text ?: $this->desc),
+
+  // Build the link into a variable to avoid extra whitespaces
+  $aAttrs = [
+    'class' => 'fulltext',
+    'href' => $this->proxyUrl($this->url),
+    'target' => '_blank',
+    'aria-label' => $this->translate('external_online_link'),
   ];
 
   // Start the link with wrapping div
-  $link = '<div class="fulltextField">';
-  $link .= '<a class="fulltext" href="%%url" target="_blank" aria-label="%%ariaLabel">';
-  if ($linkIcon = $this->icon ?? 'external-link') {
-      $link .= $this->icon($linkIcon) . ' ';
+  $link = '<div class="fulltextField"><a ' . $this->htmlAttributes($aAttrs) . '>';
+  if ($linkIcon = $externalIconMap[$linkDescription] ?? $this->icon ?? 'external-link') {
+    $link .= $this->icon($linkIcon) . ' ';
   }
-  $link .= '%%desc</a>';
+
+  $link .= $this->transEsc('default::link_' . $linkDescription, null, $linkDescription) . '</a>';
   if ($source = $this->source ?? '') {
-      $link .= ' <span class="online-source">(%%source)</span>';
-      $search[] = '%%source';
-      $replace[] = is_array($source) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $source, null, $source);
+    $sourceDesc = is_array($source)
+      ? $this->transEsc('Multiple Organisations')
+      : $this->transEsc('default::source_' . $source, null, $source);
+    $link .= ' <span class="online-source">' . $sourceDesc . '</span>';
   }
   if ($linkNote = $this->note ?? '') {
-      $link .= ' <span class="url-public-note">%%note</span>';
-      $search[] = '%%note';
-      $replace[] = $this->escapeHtml($linkNote);
+    $link .= ' <span class="url-public-note">' . $this->escapeHtml($linkNote) . '</span>';
   }
   if ($linkPart = $this->part ?? '') {
-      $link .= ' <span class="coverage">%%part</span>';
-      $search[] = '%%part';
-      $replace[] = $this->transEsc('default::link_' . $linkPart, null, $linkPart);
+    $link .= ' <span class="coverage">' . $this->transEsc('default::link_' . $linkPart, null, $linkPart) . '</span>';
   }
   $link .= '</div>';
 ?>
-<?= str_replace($search, $replace, $link); ?>
+<?= $link ?>
