@@ -2,9 +2,10 @@
 <?php
   $binding = $this->driver->tryMethod('getBinding');
 
-  $recordMedia = $this->recordMedia($this->driver);
-  $media = $recordMedia->renderMedia();
-  $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+  $recordHelper = $this->record($this->driver);
+  $linkDetails = $recordHelper->getLinkDetailsExtended();
+  $media = $recordHelper->renderTemplate('media.phtml', $linkDetails);
+  $mediaAlignment = $recordHelper->getThumbnailAlignment('result');
 ?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
@@ -48,7 +49,7 @@
       $formats = $this->driver->getFormats();
     ?>
 
-    <?= $recordMedia->renderURLs(); ?>
+    <?= $recordHelper->renderTemplate('urls-container.phtml', $linkDetails); ?>
 
     <div class="record-core-metadata">
       <?php $formats = $this->driver->getFormats();

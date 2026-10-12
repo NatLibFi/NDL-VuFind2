@@ -1615,7 +1615,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                     continue;
                 }
                 $cacheKey = $key;
-                $this->supplementURL($url);
+                $url = $this->supplementURL($url);
                 $isEmbeddedVideo
                     = $this->getView()->plugin('recordLinker')->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
 
@@ -1633,28 +1633,19 @@ class Record extends \VuFind\View\Helper\Root\Record
     }
 
     /**
-     * Support function to supplement external urls with proper icon and description.
+     * Support function to supplement external urls with rights and description.
      *
      * @param array $url URL to process
      *
-     * @return void
+     * @return array
      */
-    protected function supplementURL(&$url): void
+    protected function supplementURL($url): array
     {
-        $desc = $url['desc'] ?? $url['url'];
+        $text = !empty($url['text']) ? $url['text'] : $url['url'];
+        $desc = !empty($url['desc']) ? $url['desc'] : $text;
         if ($desc === $url['url']) {
             $desc = ($this->getView()->plugin('truncateUrl'))($url['url']);
         }
-
-        $externalIconMap = [
-            'Database Guide' => 'database-info',
-            'Database Interface' => 'database-browse',
-            'proxy-link' => 'download',
-        ];
-        if ($icon = ($externalIconMap[$desc] ?? '')) {
-            $url['icon'] = $icon;
-        }
-
         if (
             in_array(get_class($this->driver), [SolrLido::class, SolrEad::class, SolrEad3::class])
             && !isset($url['rights'])
@@ -1662,7 +1653,7 @@ class Record extends \VuFind\View\Helper\Root\Record
             $url['rights'] = $this->driver->tryMethod('getAccessRestrictionsType', [], []);
             $url['rights']['description'] = $this->driver->tryMethod('getAccessRestrictions', [], []);
         }
-
         $url['desc'] = $desc;
+        return $url;
     }
 }

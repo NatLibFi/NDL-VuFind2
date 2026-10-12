@@ -369,11 +369,9 @@ $config = [
         'factories' => [
             'Finna\View\Helper\Root\BiblioworksChatbot' =>
                 'Finna\View\Helper\Root\BiblioworksChatbotFactory',
-            'Finna\View\Helper\Root\RecordMedia' => 'VuFind\ServiceManager\Factory\AutowiringFactory',
         ],
         'aliases' => [
             'biblioworksChatbot' => 'Finna\View\Helper\Root\BiblioworksChatbot',
-            'recordMedia' => 'Finna\View\Helper\Root\RecordMedia',
         ],
     ],
     'service_manager' => [
