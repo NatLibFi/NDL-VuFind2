@@ -16,17 +16,17 @@
             <option hidden value=""><?= $this->transEsc('organisation_info_autocomplete', ['%%count%%' => $locationCount]) ?></option>
             <?php foreach ($orgInfo['list'] as $item): ?>
               <?php
-              $name = $item['name'];
-              $area = $item['address']['area'];
-              $city = $item['address']['city'];
-              if ($area === $city) {
-                $area = '';
-              }
-              if ('' !== $area && '' !== $city) {
-                $name .= ", $area ($city)";
-              } elseif ('' !== $area || '' !== $city) {
-                $name .= ", $area$city";
-              }
+                $name = $item['name'];
+                $area = $item['address']['area'];
+                $city = $item['address']['city'];
+                if ($area === $city) {
+                  $area = '';
+                }
+                if ('' !== $area && '' !== $city) {
+                  $name .= ", $area ($city)";
+                } elseif ('' !== $area || '' !== $city) {
+                  $name .= ", $area$city";
+                }
               ?>
               <option value="<?= $this->escapeHtmlAttr($item['id']) ?>"><?= $this->escapeHtml($name) ?></option>
             <?php endforeach; ?>
@@ -40,7 +40,7 @@
           <button class="btn btn-default js-location-search-toggle" aria-expanded="false" data-toggle-aria-expanded>
             <?= $this->transEsc('Search for a Service') ?> <?= $this->icon('filter-expand', 'search-expand') ?><?= $this->icon('filter-collapse', 'search-collapse') ?>
           </button>
-          <a class="btn btn-link" href="#location-show-all-btn">
+          <a class="btn btn-link" href="#location_show_all_btn">
               <?= $this->transEsc('organisation_info_page_map_show_all') ?>
           </a>
           <div class="js-location-search">
@@ -88,7 +88,7 @@
         <div class="js-map-controls">
           <?php if ($locationCount > 1): ?>
             <button class="btn btn-link js-show-location" type="button" disabled><?= $this->transEsc('zoom_center') ?></button>
-            <button id="location-show-all-btn" class="btn btn-link js-show-all" type="button" hidden><?= $this->transEsc('organisation_info_page_map_show_all') ?></button>
+            <button id="location_show_all_btn" class="btn btn-link js-show-all" type="button" hidden><?= $this->transEsc('organisation_info_page_map_show_all') ?></button>
           <?php endif; ?>
         </div>
         <div class="map" role="presentation">
@@ -123,11 +123,11 @@
         }
 
         // Add to respective categories with IDs
-        if ($isOpen) {
+        if ($isOpen && $item['name'] != '') {
           $openList[] = ['name' => $name, 'id' => $item['id']];
-        } elseif ($isMobile) {
+        } elseif ($isMobile && $item['name'] != '') {
           $mobileList[] = ['name' => $name, 'id' => $item['id']];
-        } else {
+        } elseif ($item['name'] != '') {
           $closedList[] = ['name' => $name, 'id' => $item['id']];
         }
       }
@@ -137,25 +137,22 @@
         <h4><?=$this->transEsc('organisation_info_is_open_now') ?></h4>
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($openList as $item): ?>
-            <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a><br>
-            <?php endif; ?>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a>
+              <br>
           <?php endforeach; ?>
         </div>
         <h4><?=$this->transEsc('organisation_info_is_closed_now') ?></h4>
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($closedList as $item): ?>
-            <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a><br>
-            <?php endif; ?>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>"id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a>
+              <br>
           <?php endforeach; ?>
         </div>
         <h4><?=$this->transEsc('organisation_info_no_schedule') ?></h4>
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($mobileList as $item): ?>
-            <?php if ($item['name'] != ''): ?>
-              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a><br>
-            <?php endif; ?>
+              <a href="#<?= $this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?= $this->escapeHtml($item['name']) ?></a>
+              <br>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>
@@ -163,4 +160,3 @@
   <?php endif; ?>
 </div>
 <!-- END of: finna - organisationinfo/elements/location-selection.phtml -->
-   

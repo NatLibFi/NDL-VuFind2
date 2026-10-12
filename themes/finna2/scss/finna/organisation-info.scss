@@ -1,7 +1,6 @@
 // *** Common styles for organisation info page and widget ***
 $organisation-info-max-w: 400px !default;
 
-
 .panel-heading {
     background-color: $gray-ultralight;
     color: $gray-dark;
@@ -9,7 +8,7 @@ $organisation-info-max-w: 400px !default;
 .organisation-info {
     .organisation-status-columns {
         column-count: 4;
-        break-inside: avoid !important;
+        break-inside: avoid;
         overflow: hidden;
         text-overflow: ellipsis;
         hyphens: auto;
