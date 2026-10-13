@@ -290,12 +290,16 @@ h2.title,
   }
 }
 @include media-breakpoint-down(sm) {
+  .condensed-list-view .result-body {
+    padding-left: 0;
+  }
   .add-to-favorite-col {
     display: flex;
     gap: 0.75rem;
-    margin: $spacer 0rem;
+    padding: $padding-large-vertical 0;
     flex-direction: row;
     flex-wrap: wrap;
+    width: 100%;
     a {
       display: inline-flex;
       align-items: center;
