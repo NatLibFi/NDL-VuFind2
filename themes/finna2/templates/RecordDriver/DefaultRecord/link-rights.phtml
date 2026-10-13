@@ -1,7 +1,12 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/link-rights.phtml -->
 <?php
   $copyrightLink = $this->rights['link'] ?? '';
   $copyright = $this->rights['copyright'] ?? '';
   $copyrightDescription = $this->rights['description'] ?? '';
+
+  if (!$copyright && !$copyrightDescription) {
+    return;
+  }
 
   $rightsElement = '<div class="copyright-wrapper">(';
 
@@ -18,7 +23,7 @@
       if ($copyrightLink) {
         $rightsAttrs = [
             'class' => 'copyright-description',
-            'href' => $this->copyrightLink,
+            'href' => $copyrightLink,
             'target' => '_blank',
         ];
         $rightsElement .= ' <a' . $this->htmlAttributes($rightsAttrs) . '>'
@@ -42,3 +47,4 @@
     $rightsElement .= ')</div>';
 ?>
 <?= $rightsElement ?>
+<!-- END of: finna - RecordDriver/DefaultRecord/link-rights.phtml -->

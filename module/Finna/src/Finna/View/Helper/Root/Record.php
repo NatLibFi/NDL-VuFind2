@@ -1608,7 +1608,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $iiifManifests = $this->driver->tryMethod('getIiifManifests', [], []);
 
         foreach (compact('iiifManifests', 'onlineURLs', 'otherURLs', 'mergedURLs') as $key => $value) {
-            foreach ($value as $url) {
+            foreach ($value as $index => $url) {
                 if (is_string($url)) {
                     $url = json_decode($url, true);
                 }
@@ -1616,7 +1616,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                     continue;
                 }
                 $cacheKey = $key;
-                $url = $this->supplementURL($url);
+                $url = $this->supplementURL($url, $index);
                 $isEmbeddedVideo
                     = $this->getView()->plugin('recordLinker')->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
 
@@ -1636,14 +1636,17 @@ class Record extends \VuFind\View\Helper\Root\Record
     /**
      * Support function to supplement external urls with rights and description.
      *
-     * @param array $url URL to process
+     * @param array $url   URL to process.
+     * @param int   $index Index of the URL.
      *
      * @return array
      */
-    protected function supplementURL($url): array
+    protected function supplementURL(array $url, int $index): array
     {
         $text = !empty($url['text']) ? $url['text'] : $url['url'];
         $desc = !empty($url['desc']) ? $url['desc'] : $text;
+        $desc = !empty($url['description']) ? $url['description'] : $desc;
+        $linkType = $url['linkType'] ?? '';
         if ($desc === $url['url']) {
             $desc = ($this->getView()->plugin('truncateUrl'))($url['url']);
         }
@@ -1653,6 +1656,20 @@ class Record extends \VuFind\View\Helper\Root\Record
         ) {
             $url['rights'] = $this->driver->tryMethod('getAccessRestrictionsType', [], []);
             $url['rights']['description'] = $this->driver->tryMethod('getAccessRestrictions', [], []);
+        }
+        if ($linkType === 'proxy-link') {
+            $url['url'] = ($this->getView()->plugin('url'))(
+                'record-downloadfile',
+                [],
+                [
+                    'query' => [
+                        'id' => $this->driver->getUniqueID(),
+                        'index' => $index,
+                        'format' => $url['format'],
+                        'type' => 'document',
+                    ],
+                ]
+            );
         }
         $url['desc'] = $desc;
         return $url;

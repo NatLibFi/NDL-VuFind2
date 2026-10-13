@@ -1,6 +1,6 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/link-fulltext.phtml -->
 <?php
-  $linkId = uniqid('fulltext_link_', $this->id);
-  // Build the link into a variable to avoid extra whitespaces
+  $linkId = uniqid('fulltext_link_');
   $linkDescription = trim($this->desc);
 
   $externalIconMap = [
@@ -10,12 +10,22 @@
   ];
 
   // Build the link into a variable to avoid extra whitespaces
-  $aAttrs = [
-    'class' => 'fulltext',
-    'href' => $this->proxyUrl($this->url),
-    'target' => '_blank',
-    'aria-label' => $this->translate('external_online_link'),
-  ];
+  if ($this->linkType === 'proxy-link') {
+    $aAttrs = [
+      'rel' => 'nofollow',
+      'href' => $this->proxyUrl($this->url),
+    ];
+  } else {
+    $aAttrs = [
+      'class' => 'fulltext',
+      'href' => $this->proxyUrl($this->url),
+      'target' => '_blank',
+      'aria-label' => $this->translate('external_online_link'),
+    ];
+  }
+  if (in_array($this->linkType, ['download', 'proxy-link'])) {
+    $aAttrs['download'] = '';
+  }
 
   // Start the link with wrapping div
   $link = '<div class="fulltextField"><a ' . $this->htmlAttributes($aAttrs) . '>';
@@ -39,8 +49,8 @@
 
   $format = $this->format ?? '';
   $rights = $this->rights ?? [];
-  if ($format || $rights) {
-    $link .= $this->record($this->driver)->renderTemplate('link-rights.phtml', compact('format', 'rights', 'linkId'));
+  if (!$this->compact && ($format || $rights)) {
+    $link .= ' ' . $this->record($this->driver)->renderTemplate('link-rights.phtml', compact('format', 'rights', 'linkId'));
   }
   $link .= '</div>';
 ?>
@@ -55,3 +65,4 @@
         </button>
     </div>
 <?php endif; ?>
+<!-- END of: finna - RecordDriver/DefaultRecord/link-fulltext.phtml -->
