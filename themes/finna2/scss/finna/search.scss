@@ -296,10 +296,9 @@ h2.title,
   .add-to-favorite-col {
     display: flex;
     gap: 0.75rem;
-    padding: $padding-large-vertical 0;
+    margin: $spacer 0rem;
     flex-direction: row;
     flex-wrap: wrap;
-    width: 100%;
     a {
       display: inline-flex;
       align-items: center;
