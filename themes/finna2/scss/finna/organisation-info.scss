@@ -17,6 +17,9 @@ $organisation-info-max-w: 400px !default;
             display: inline-block; 
             padding-bottom: 0.5em;
         }
+        @media (max-width: 800px) {
+        column-count: 2;
+        }
     }
     .finna-panel {
         .panel-collapse,
