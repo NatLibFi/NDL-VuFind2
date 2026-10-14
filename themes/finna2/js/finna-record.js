@@ -701,6 +701,7 @@ finna.record = (function finnaRecord() {
   var my = {
     checkRequestsAreValid: checkRequestsAreValid,
     init: init,
+    initAudioAccordion: initAudioAccordion,
     setupHoldingsTab: setupHoldingsTab,
     setupLocationsEad3Tab: setupLocationsEad3Tab,
     setupHoldingsArchiveTab: setupHoldingsArchiveTab,
