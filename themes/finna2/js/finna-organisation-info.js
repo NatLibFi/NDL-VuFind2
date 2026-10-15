@@ -92,6 +92,36 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       searchToggle.focus();
     }
   }
+  // Show the service point listing:
+  function showListing() {
+    const elems = document.querySelectorAll('.location-listing');
+    if (!elems.length) return false;
+    elems.forEach(el => {
+      el.removeAttribute('hidden');
+      if (el.style && el.style.display === 'none') el.style.display = '';
+    });
+    return true;
+  }
+  // Show the service point listing:
+  function hideListing() {
+    const elems = document.querySelectorAll('.location-listing');
+    if (!elems.length) return false;
+    elems.forEach(el => el.setAttribute('hidden', ''));
+    return true;
+  }
+
+  // Add listener to call - Show all service points - inside the map widget and hide the list if service point is selected:
+  document.addEventListener('click', function (e) {
+    var link = e.target.closest && e.target.closest('a[href="#location_show_all_btn"]');
+    if (!link) {
+      if (typeof hideListing === 'function') hideListing();
+      return;
+    }
+    e.preventDefault();
+    var btn = document.getElementById('location_show_all_btn');
+    if (btn) btn.click();
+    if (typeof showListing === 'function') showListing();
+  });
 
   /**
    * Initialize location search
@@ -223,16 +253,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
       }
     );
-
-    // Add listener to call - Show all service points - inside the map widget:
-    document.addEventListener('click', function (e) {
-      var link = e.target.closest && e.target.closest('a[href="#location_show_all_btn"]');
-      if (!link) return;
-      e.preventDefault();
-      var btn = document.getElementById('location_show_all_btn');
-      if (btn) btn.click();
-    });
-
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
       const searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
