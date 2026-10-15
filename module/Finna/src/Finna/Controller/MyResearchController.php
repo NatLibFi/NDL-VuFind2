@@ -609,6 +609,9 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             return $view;
         }
 
+        $allListsSort = $this->params()->fromQuery('allListsSort', '');
+        $userListService = $this->getDbService(UserListServiceInterface::class);
+        $view->allListsSortList = $userListService->createSortListForAllLists($allListsSort);
         $view->sortList = $this->createSortList($results->getListObject());
 
         return $view;
@@ -688,6 +691,54 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
             throw $e;
         }
+    }
+
+    /**
+     * Sort users favorite lists.
+     *
+     * @return mixed
+     */
+    public function sortAllListsAction()
+    {
+        if (!$this->listsEnabled()) {
+            throw new ForbiddenException('Lists disabled');
+        }
+
+        $user = $this->getUser();
+        if (!$user) {
+            return $this->forceLogin();
+        }
+
+        if ($this->formWasSubmitted('cancelOrdering')) {
+            return $this->redirect()->toRoute('myresearch-favorites');
+        }
+
+        $userListService = $this->getDbService(UserListServiceInterface::class);
+        if ($this->formWasSubmitted('saveOrdering')) {
+            $orderedList = json_decode(
+                $this->params()->fromPost('orderedList'),
+                true
+            );
+            assert($userListService instanceof FinnaUserListService);
+            if (empty($orderedList)) {
+                $this->flashMessenger()->addErrorMessage('An error has occurred');
+            } else {
+                $userListService->saveCustomListOrder($user, $orderedList);
+                $this->flashMessenger()->addSuccessMessage('list_order_saved');
+            }
+            if ($this->inLightbox()) {
+                return $this->getRefreshResponse();
+            }
+            return $this->redirect()->toRoute('myresearch-favorites', ['allListsSort' => 'custom_order']);
+        }
+
+        $userLists = $userListService->getUserListsAndCountsByUser($user, '', 'custom_order');
+        return $this->createViewModel(
+            [
+                'sortAllLists' => true,
+                'results' => $userLists,
+            ]
+        )->setTemplate(('myresearch/sortlist.phtml'));
     }
 
     /**
@@ -1380,10 +1431,18 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         // Redirect to the first list, if available:
         if ($user = $this->getUser()) {
             $userListService = $this->getDbService(UserListServiceInterface::class);
-            $lists = $userListService->getUserListsAndCountsByUser($user);
+            $allListsSort = $this->params()->fromQuery('allListsSort', '');
+            $lists = $userListService->getUserListsAndCountsByUser($user, '', $allListsSort);
             if ($lists) {
                 $firstList = reset($lists);
-                return $this->forwardTo('MyResearch', 'MyList', ['id' => $firstList['list_entity']->getId()]);
+                return $this->forwardTo(
+                    'MyResearch',
+                    'MyList',
+                    [
+                        'id' => $firstList['list_entity']->getId(),
+                        'allListsSort' => $allListsSort,
+                    ]
+                );
             }
         }
         return parent::favoritesAction();

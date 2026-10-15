@@ -115,10 +115,13 @@
         border: none;
       }
       #add-new-list-item-btn {
-        padding: 0.3em 0.6em;
+        font-size: $font-size-large;
         border: none;
-        &:not(:hover) {
-          background: none;
+        background: none;
+        &:hover {
+          .icon {
+            color: darken($primary, 20%);
+          }
         }
         .list-add-icon {
           color: $action-link-color;
@@ -151,14 +154,37 @@
 .list-public-indicator {
   padding-left: 0.3em;
 }
-
-.mylist-controls {
-  .control-container {
+.mylist-actions-container {
+  display: flex;
+  gap: 0.25rem;
+  .mylist-controls {
     display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    .control-container {
+      display: flex;
+      align-items: center;
+      &.sort-lists-control {
+        justify-content: right;
+      }
+      .dropdown.sort-button li {
+        a.dropdown-item {
+          border: none;
+        }
+        border: none;
+        .dropdown-item.active {
+          font-weight: bold;
+        }
+      }
+    }
+    .mylists-sort {
+      color: $black;
+      border: none;
+      &:hover, &.show, &:focus {
+        color: white;
+      }
+    }
   }
 }
+
 @include media-breakpoint-down(md) {
   .mylist-controls {
     .sort-option-container {

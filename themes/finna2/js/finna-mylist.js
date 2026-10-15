@@ -15,6 +15,18 @@ finna.myList = (function finnaMyList() {
   }
 
   /**
+   * Get current all lists sort
+   * @returns {string} active sort
+   */
+  function getActiveAllListsSort()
+  {
+    if (document.querySelector('.sort-lists-control li a.active') !== null) {
+      return document.querySelector('.sort-lists-control li a.active').dataset.sort;
+    }
+    return '';
+  }
+
+  /**
    * Toggle an error message
    * @param {boolean} mode Should the message be shown
    */
@@ -402,7 +414,7 @@ finna.myList = (function finnaMyList() {
       type: 'POST',
       dataType: 'json',
       url: VuFind.path + '/AJAX/JSON?method=getMyLists',
-      data: {'active': getActiveListId()}
+      data: {'active': getActiveListId(), 'allListsSort': getActiveAllListsSort()}
     })
       .done(function onGetMyListsDone(data) {
         toggleSpinner(spinner, false);

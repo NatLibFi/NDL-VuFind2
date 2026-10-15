@@ -1,8 +1,10 @@
 <!-- START of: finna - myresearch/sortlist.phtml -->
 <?php
   $this->assetManager()->appendScriptLink('finna-mylist.js');
-  $list = $this->results->getListObject();
   $user = $this->auth()->getUserObject();
+  $results = empty($this->sortAllLists)
+    ? $this->results->getResults()
+    : $this->results;
 
   // Set up breadcrumbs:
   $this->breadcrumbs()->set($this->translate('Your Account'), $this->url('myresearch-home'))
@@ -14,7 +16,9 @@
 <?=$this->flashmessages()?>
 <form method="post" id="sort_form" name="sortForm">
   <input type="hidden" name="user_id" value="<?=$this->escapeHtmlAttr($user->getId()) ?>">
-  <input type="hidden" name="list_id" value="<?=$this->escapeHtmlAttr($list->getId()) ?>">
+  <?php if (empty($this->sortAllLists)): ?>
+    <input type="hidden" name="list_id" value="<?=$this->escapeHtmlAttr($this->results->getListObject()->getId()) ?>">
+  <?php endif; ?>
   <input type="hidden" id="orderedList" name="orderedList" value="">
 
   <div>
@@ -26,8 +30,12 @@
   </div>
 </form>
 <ol id="sortable" class="sortable-favorite-list">
-  <?php foreach ($this->results->getResults() as $i => $current): ?>
-    <li id="<?=$this->escapeHtmlAttr($current->getUniqueID()) ?>"><h4><?=$this->escapeHtml($current->getTitle()) ?><?=$this->icon('sort', 'sort-icon') ?></h4><p><?=$this->record($current)->getFormatList() ?></p></li>
+  <?php foreach ($results as $i => $current): ?>
+    <?php if (empty($this->sortAllLists)): ?>
+      <li id="<?=$this->escapeHtmlAttr($current->getUniqueId()) ?>"><h4><?= $this->escapeHtml($current->getTitle()) ?><?=$this->icon('sort', 'sort-icon') ?></h4><p><?=$this->record($current)->getFormatList() ?></p></li>
+    <?php else: ?>
+      <li id="<?=$this->escapeHtmlAttr($current['list_entity']->getId()) ?>"><h4><?=$this->escapeHtml($current['list_entity']->getTitle())?><?=$this->icon('sort', 'sort-icon')?></h4><p><?=$this->icon('user-list')?> <?=$this->transEsc('List')?></p></li>
+    <?php endif; ?>
   <?php endforeach; ?>
 </ol>
 

@@ -37,6 +37,7 @@ use VuFind\Db\Entity\EntityInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 
 use function assert;
+use function in_array;
 
 /**
  * Database service for UserList.
@@ -84,6 +85,23 @@ class UserListService extends \VuFind\Db\Service\UserListService implements User
     }
 
     /**
+     * Check if custom order is used in all lists.
+     *
+     * @param UserEntityInterface $user user entity.
+     *
+     * @return bool
+     */
+    public function isCustomOrderAvailableForLists(UserEntityInterface $user): bool
+    {
+        $dql = 'SELECT ul FROM ' . UserListEntityInterface::class . ' ul'
+            . ' WHERE ul.user = :user AND ul.finnaCustomOrderIndex IS NOT NULL';
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(compact('user'));
+        $query->setMaxResults(1);
+        return $query->getOneOrNullResult() !== null;
+    }
+
+    /**
      * Retrieve user's list object by title.
      *
      * @param UserEntityInterface|int $userOrId User entity or ID.
@@ -103,24 +121,35 @@ class UserListService extends \VuFind\Db\Service\UserListService implements User
      *
      * @param UserEntityInterface|int $userOrId User entity object or ID
      * @param string|string[]         $types    Types of user lists to get. Set to an empty array to get all.
+     * @param string                  $order    List order
      *
      * @return array
      * @throws Exception
      */
     public function getUserListsAndCountsByUser(
         UserEntityInterface|int $userOrId,
-        string|array $types = [UserListEntityInterface::TYPE_DEFAULT]
+        string|array $types = [UserListEntityInterface::TYPE_DEFAULT],
+        string $order = 'id'
     ): array {
-        $lists = parent::getUserListsAndCountsByUser($userOrId, $types);
+        $parameters = [
+            'user' => $this->getDoctrineReference(UserEntityInterface::class, $userOrId),
+        ];
+        $dql = 'SELECT ul AS list_entity, COUNT(DISTINCT(ur.resource)) AS count '
+            . 'FROM ' . UserListEntityInterface::class . ' ul '
+            . 'LEFT JOIN ' . UserResourceEntityInterface::class . ' ur WITH ur.list = ul.id '
+            . 'WHERE ul.user = :user ';
 
-        // Sort lists by id
-        $listsSorted = [];
-        foreach ($lists as $l) {
-            $listsSorted[$l['list_entity']->getId()] = $l;
+        $this->addTypesCheck($dql, $parameters, $types);
+
+        if (!in_array($order, array_keys($this->getAllListsSortList()))) {
+            $order = 'id';
         }
-        ksort($listsSorted);
+        $order = $order === 'custom_order' ? 'finnaCustomOrderIndex, ul.id asc' : $order;
+        $dql .= 'GROUP BY ul ORDER BY ul.' . $order;
 
-        return array_values($listsSorted);
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters($parameters);
+        return $query->getResult();
     }
 
     /**
@@ -152,6 +181,30 @@ class UserListService extends \VuFind\Db\Service\UserListService implements User
     }
 
     /**
+     * Update custom list order.
+     *
+     * @param UserEntityInterface $user        User id
+     * @param array               $orderedList Ordered List of Resources
+     *
+     * @return void
+     */
+    public function saveCustomListOrder(UserEntityInterface $user, array $orderedList): void
+    {
+        $listIndex = array_flip(array_values($orderedList));
+        $dql = 'SELECT ul FROM ' . UserListEntityInterface::class . ' ul'
+            . ' WHERE ul.user = :user';
+
+        $query = $this->entityManager->createQuery($dql);
+        $query->setParameters(compact('user'));
+        foreach ($query->getResult() as $userList) {
+            $listId = $userList->getId();
+            $userList->setFinnaCustomOrderIndex($listIndex[$listId] ?? null);
+            $this->entityManager->persist($userList);
+        }
+        $this->entityManager->flush();
+    }
+
+    /**
      * Retrieve protected lists.
      *
      * @return UserListEntityInterface[]
@@ -173,5 +226,44 @@ class UserListService extends \VuFind\Db\Service\UserListService implements User
         assert($entity instanceof UserListEntityInterface);
         $entity->setFinnaUpdated(new DateTime());
         parent::persistEntity($entity);
+    }
+
+    /**
+     * Create sort list for all favorite lists.
+     *
+     * @param string $sort Currently active sort
+     *
+     * @return array
+     */
+    public function createSortListForAllLists($sort = ''): array
+    {
+        $sortOptions = self::getAllListsSortList();
+        $sortList = [];
+
+        foreach ($sortOptions as $key => $value) {
+            $sortList['sortList'][$key] = [
+                'desc' => $value,
+                'selected' => $key === $sort,
+            ];
+            if ($key === $sort) {
+                $sortList['active'] = $sort;
+            }
+        }
+        return $sortList;
+    }
+
+    /**
+     * Return sort list for all favorite lists.
+     *
+     * @return array
+     */
+    public static function getAllListsSortList(): array
+    {
+        return [
+            'custom_order' => 'sort_custom_order',
+            'created asc' => 'sort_created_asc',
+            'created desc' => 'sort_created_desc',
+            'title' => 'sort_title',
+        ];
     }
 }
