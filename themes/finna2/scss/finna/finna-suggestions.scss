@@ -59,11 +59,6 @@
     }
   }
   .btn {
-    background-color: #723981;
-    &:hover {
-      background-color: #53295e;
-      border-color: #4c2657;
-    }
     @include media-breakpoint-down(xs) {
       margin-top: 5px;
     }
