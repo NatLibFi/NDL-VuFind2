@@ -28,6 +28,19 @@
   $lists = $user ? $this->userlist()->getUserListsAndCountsByUser($user) : null;
 
   $this->jsTranslations()->addStrings(['add_list_description' => 'Add list description', 'loading' => 'Loading']);
+
+  if ($list) {
+    $deleteButton = $this->component(
+        'confirm-button',
+        [
+          'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
+          'buttonLabel' => 'delete_list',
+          'buttonClass' => 'btn btn-sm btn-danger btn-delete-list',
+          'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
+          'header' => 'confirm_delete_list_text',
+        ]
+    );
+  }
 ?>
 
 <!-- Leftside navigationbar -->
@@ -121,9 +134,16 @@
     <?=$this->component('finna-addition-template', ['template' => 'myresearch-favorites'])?>
     <div class="mylist-header">
       <?php if ($recordTotal > 0): ?>
-        <div class="mylist-controls search-controls">
-          <div class="pagination-container">
-            <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
+        <div class="mylist-controls search-controls myresearch-mylist">
+          <div class="pagination-delete-wrapper">
+            <div class="pagination-container">
+              <?=$this->paginationControl($this->results->getPaginator(), 'Sliding', 'search/pagination_simple.phtml', ['results' => $this->results])?>
+            </div>
+            <div class="delete-list-wrapper">
+              <?php if ($list): ?>
+                <?=$deleteButton ?>
+              <?php endif; ?>
+            </div>
           </div>
           <div class="control-container hidden-print">
             <?php if ($list): ?>
@@ -151,6 +171,9 @@
         <div class="useraccount-header">
           <h3><?=$this->transEsc('You do not have any saved resources')?></h3>
         </div>
+        <?php if ($list): ?>
+          <?=$deleteButton ?>
+        <?php endif; ?>
       <?php endif; ?>
     </div>
     <?php if ($recordTotal > 0): ?>
@@ -163,17 +186,6 @@
       <?=$this->component('finna-addition-template', ['template' => 'myresearch-favorites-post-list'])?>
     <?php endif;?>
   </div>
-  <?php if ($user && $list): ?>
-    <form class="float-start delete-list" action="<?=$this->url('myresearch-deletelist') ?>?listID=<?=urlencode($list->getId())?>&confirm=1" method="post">
-      <ul class="dropdown-menu useraccount-confirm">
-        <li class="disabled"><?=$this->transEsc('confirm_delete_list_text')?></li>
-        <li class="useraccount-confirm-buttons">
-          <a class="dropdown-item confirm" href="#" role="button"><?=$this->transEsc('confirm_dialog_yes') ?></a>
-          <a class="dropdown-item cancel" href="#" role="button"><?=$this->transEsc('confirm_dialog_no')?></a>
-        </li>
-      </ul>
-    </form>
-  <?php endif; ?>
-  </div>
+</div>
 
 <!-- END of: finna - myresearch/mylist.phtml -->
