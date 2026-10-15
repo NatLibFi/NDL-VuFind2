@@ -73,18 +73,18 @@
                 <?php $filesize = $this->fileSize($material['filesize']); ?>
                 <li class="fulltextField">
                   <?php if (in_array($material['format'], $linkedFormats)): ?>
-                    <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
+                    <a class="icon-link" href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
                       aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>" target="_blank">
-                      <?=$this->icon($isHtml ? 'external-link' : 'download') ?>
-                      <?= $title ?>
+                      <?=$this->icon($isHtml ? 'external-link' : 'download', 'icon-link__icon') ?>
+                      <span class="icon-link__label"><?= $title ?></span>
                     </a>
                     (<?= $isHtml
                       ? $this->escapeHtml($externalLinkText)
                       : $this->escapeHtml($material['format'] . ($filesize ? (', ' . $filesize) : ''))
                     ?>)
                   <?php elseif ($externalLink): ?>
-                    <a href="<?= $externalLink ?>" aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>"
-                      target="_blank"><?=$this->icon('external-link') ?><?= $title ?></a>
+                    <a class="icon-link" href="<?= $externalLink ?>" aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>"
+                      target="_blank"><?=$this->icon('external-link', 'icon-link__icon') ?><span class="icon-link__label"><?= $title ?></span></a>
                     <?= $externalLinkAdditionalInfo ?>
                   <?php else: ?>
                     <?= $title ?>

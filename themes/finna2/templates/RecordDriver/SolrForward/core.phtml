@@ -114,10 +114,10 @@
                 }
               ?>
               <div class="fulltextField">
-                <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" aria-label="<?=$this->transEscAttr('external_online_link')?>"
+                <a class="fulltext icon-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" aria-label="<?=$this->transEscAttr('external_online_link')?>"
                   <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
                 >
-                  <?php if (!empty($icon)): ?><?=$this->icon($icon)?> <?php endif; ?><?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
+                  <?php if (!empty($icon)): ?><?=$this->icon($icon, 'icon-link__icon')?> <?php endif; ?><span class="icon-link__label"><?=$this->transEsc('default::link_' . $desc, null, $desc) ?></span>
                 </a>
               </div>
             <?php endforeach; ?>
@@ -126,7 +126,7 @@
                 <?php if (in_array($url['url'], $renderedURLs)) {
                   continue;
                 } ?>
-                <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+                <div class="fulltextField"><a class="fulltext icon-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link', 'icon-link__icon') ?> <span class="icon-link__label"><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></span></a>
                 <?php if ($url['source']): ?>
                   <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
                 <?php endif; ?>
