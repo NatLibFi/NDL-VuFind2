@@ -224,6 +224,15 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       }
     );
 
+    // Add listener to call - Show all service points - inside the map widget:
+    document.addEventListener('click', function (e) {
+      var link = e.target.closest && e.target.closest('a[href="#location_show_all_btn"]');
+      if (!link) return;
+      e.preventDefault();
+      var btn = document.getElementById('location_show_all_btn');
+      if (btn) btn.click();
+    });
+
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
       const searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
