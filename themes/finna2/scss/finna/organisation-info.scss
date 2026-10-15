@@ -17,9 +17,6 @@ $organisation-info-max-w: 400px !default;
             display: inline-block; 
             padding-bottom: 0.5em;
         }
-        @media (max-width: 800px) {
-        column-count: 2;
-        }
     }
     .finna-panel {
         .panel-collapse,
@@ -126,6 +123,9 @@ $organisation-info-max-w: 400px !default;
         .schedules-info {
             max-width: $organisation-info-max-w;
         }
+        .organisation-status-columns {
+        column-count: 3;
+        }   
     }
 }
 
@@ -410,7 +410,7 @@ $organisation-info-max-w: 400px !default;
             .js-map-controls {
                 text-align: right;
                 button[disabled] {
-                    color: $gray;
+                    visibility: hidden;
                 }
             }
         }
@@ -549,6 +549,11 @@ $organisation-info-max-w: 400px !default;
     }
 }
 @include media-breakpoint-down(sm) {
+    .organisation-info {
+    .organisation-status-columns {
+        column-count: 2;
+        }
+    }
     .organisation-info-page {
         .consortium-info {
             .consortium-info-row {
