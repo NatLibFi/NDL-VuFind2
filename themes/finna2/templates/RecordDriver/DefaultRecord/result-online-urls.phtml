@@ -15,7 +15,7 @@
     $this->partial('Helpers/videojs-translations.phtml');
 
     $urlBase = [
-      'class' => 'fulltext',
+      'class' => 'fulltext icon-link',
       'target' => '_blank',
     ];
     $this->htmlElement()->addAttributeTemplate('url-base', $urlBase);
@@ -116,8 +116,8 @@
             </finna-video>
           <?php else: ?>
             <?php $icon = isset($url['linkType']) && $url['linkType'] === 'proxy-link' ? 'download' : 'external-link'; ?>
-            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><?=$this->icon($icon) ?>
-              <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
+            <a <?= $this->htmlElement()->getAttributes($currentUrl, 'url-base') ?>><?=$this->icon($icon, 'icon-link__icon') ?>
+              <span class="icon-link__label"><?=$this->transEsc('default::link_' . $desc, null, $desc)?></span>
             </a>
             <?php if (!empty($url['note'])): ?> <span class="url-public-note"><?=$this->escapeHtml($url['note'])?></span><?php endif; ?>
           <?php endif; ?>

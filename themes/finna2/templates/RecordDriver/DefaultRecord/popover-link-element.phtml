@@ -9,12 +9,12 @@ $aAttrsBase = [
   'role' => 'button',
 ];
 $aAttributes = $this->htmlAttributes($aAttrsBase);
-$aAttributes->add('class', 'show-info');
+$aAttributes->add('class', 'show-info icon-link');
 $aAttributes->add('aria-label', $this->title ?: ($this->label . ' ' . $this->translate('field_info_link_title')));
 $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-additional-data\">{$this->additionalDataHtml}</span>" : '';
 ?>
 <div class="inline-linked-field" data-ids="<?=$this->escapeHtmlAttr(json_encode($this->ids))?>" data-auth-ids="<?=$this->escapeHtmlAttr(json_encode($this->authIds))?>" data-type="<?=$this->escapeHtmlAttr($this->type)?>" data-record-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId())?>" data-record-source="<?=$this->escapeHtmlAttr($this->driver->getSourceIdentifier())?>" role="group">
-  <a<?=$aAttributes?>><span class="field-label"><?=$this->escapeHtml($this->label)?></span><?php if ($this->date): ?><span class="author-date"> (<?=$this->escapeHtml($this->date)?>)</span><?php endif; ?> <?=$this->icon('popover-expand', 'expand') ?><?=$this->icon('popover-collapse', 'collapse') ?></a><?=$additionalDataElem?>
+  <a<?=$aAttributes?>><span class="icon-link__label"><span class="field-label"><?=$this->escapeHtml($this->label)?></span><?php if ($this->date): ?><span class="author-date"> (<?=$this->escapeHtml($this->date)?>)</span><?php endif; ?></span> <?=$this->icon('popover-expand', 'expand icon-link__icon') ?><?=$this->icon('popover-collapse', 'collapse icon-link__icon') ?></a><?=$additionalDataElem?>
   <?php if (!empty($this->description)): ?>
     <span class="authority-description"><?="({$this->escapeHtml($this->description)})"?></span>
   <?php endif; ?>

@@ -128,9 +128,9 @@
     <div class="recordURLs local-available-online-record">
       <?php // The following template is used in finna-record.js to pull links from real-time holdings ?>
       <div class="fulltextField url-template hidden">
-        <a class="fulltext" href="HREF" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
-          <?=$this->icon('external-link') ?> DESC
-          <span class="online-source">SOURCE</span>
+        <a class="fulltext icon-link" href="HREF" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
+          <?=$this->icon('external-link', 'icon-link__icon') ?> <span class="icon-link__label">DESC</span>
+          <span class="online-source icon-link__label">SOURCE</span>
         </a>
         <?php if (!empty($url['part'])): ?>
           <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?>
@@ -156,8 +156,8 @@
           }
         ?>
         <div class="fulltextField">
-          <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
-            <?=$this->icon($icon) ?> <?=$this->transEsc('default::link_' . $desc, null, $desc)?>
+          <a class="fulltext icon-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>" <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>>
+            <?=$this->icon($icon, 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('default::link_' . $desc, null, $desc)?></span>
           </a>
           <?php if (!empty($url['note'])): ?> <span class="url-public-note"><?=$this->escapeHtml($url['note'])?></span><?php endif; ?>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part']) ?><?php endif; ?>
@@ -168,7 +168,10 @@
         <?php if ($isRendered($url)) {
           continue;
         } ?>
-        <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+        <div class="fulltextField">
+          <a class="fulltext icon-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
+            <?=$this->icon('external-link', 'icon-link__icon') ?> <span class="icon-link__label"><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></span>
+          </a>
           <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
           <?php if ($url['source']): ?>
             <span class="online-source">(<?=$this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>
@@ -185,7 +188,10 @@
         ?>
         <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $count])?>">
           <?php foreach ($filteredMergedURLs as $url): ?>
-            <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
+            <div class="fulltextField">
+              <a class="fulltext icon-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
+                <?=$this->icon('external-link', 'icon-link__icon') ?> <span class="icon-link__label"><?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></span>
+              </a>
               <?php if (!empty($url['part'])): ?> <span class="coverage"><?=$this->transEsc('default::link_' . $url['part'], null, $url['part'])?><?php endif; ?>
               <?php if ($url['source']): ?>
                 <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source'])?>)</span>

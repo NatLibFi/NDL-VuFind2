@@ -566,13 +566,31 @@ table .iconlabel {
 .icon-link {
   display: inline-flex;
   gap: 0.25rem;
-  vertical-align: middle;
+  align-items: baseline;
 }
 .icon-link__icon {
   flex: none;
   padding: 0;
   line-height: inherit;
   color: inherit;
+}
+a.icon-link {
+    text-decoration: none;
+    .icon-link__icon {
+        text-decoration: none;
+    }
+    .icon-link__label {
+        text-decoration: $link-decoration;
+    }
+}
+a.icon-link:hover {
+    text-decoration: none;
+    .icon-link__icon {
+        text-decoration: none;
+    }
+    .icon-link__label {
+        text-decoration: $link-hover-decoration;
+    }
 }
 
 /* Unicode Icons */
