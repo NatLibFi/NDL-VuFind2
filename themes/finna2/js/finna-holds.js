@@ -10,9 +10,10 @@ finna.holds = (function finnaHolds() {
   }
 
   /**
-   * Initialize single cancel buttons for each hold.
+   * Initialize cancel buttons.
    */
   function initCancelButtons() {
+    // Initialize single cancel buttons for each hold
     document.querySelectorAll('.js-confirm-cancel').forEach(el => {
       el.addEventListener('click', (event) => {
         event.preventDefault();
@@ -20,6 +21,17 @@ finna.holds = (function finnaHolds() {
         confirmCancelRequest(el, 'cancelSelected');
       });
     });
+    // Initialize cancel selected button
+    const cancelSelectedButton = document.querySelector('.js-cancel-selected');
+    if (cancelSelectedButton) {
+      cancelSelectedButton.addEventListener('click', () => {
+        var count = document.querySelectorAll('form[name="updateForm"] .checkbox-select-item:checked').length;
+        const cancelText = document.querySelector('.js-cancel-selected-text');
+        if (cancelText && cancelText.dataset.translation) {
+          cancelText.textContent = cancelText.dataset.translation.replace("%%count%%", count);
+        }
+      });
+    }
   }
 
   return {
