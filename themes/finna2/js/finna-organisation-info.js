@@ -69,7 +69,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       resetSearch();
     }
   }
-
   /**
    * Get location from URL hash and display it
    */
@@ -79,7 +78,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       updateSelectedLocation(location, false);
     }
   }
-
   /**
    * Hide location search dropdown
    */
@@ -92,7 +90,46 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       searchToggle.focus();
     }
   }
-
+  /**
+   * Show the service point listing
+   * @returns {boolean} True if one or more elements were shown, false if none found.
+   */
+  function showListing() {
+    const elems = document.querySelectorAll('.location-listing');
+    if (!elems.length) return false;
+    elems.forEach(el => {
+      el.removeAttribute('hidden');
+      if (el.style && el.style.display === 'none') el.style.display = '';
+    });
+    return true;
+  }
+  /**
+   * Hide the service point listing
+   * @returns {boolean} True if one or more elements were hidden, false if none found.
+   */ 
+  function hideListing() {
+    const elems = document.querySelectorAll('.location-listing');
+    if (!elems.length) return false;
+    elems.forEach(el => el.setAttribute('hidden', ''));
+    return true;
+  }
+  /**
+   * Add listener to "Show all service points" link inside the map widget and
+   * hide the list when anything else is clicked.
+   * @param {MouseEvent} e - The click event.
+   * @returns {void}
+   */
+  document.addEventListener('click', function showAllServicePoints (e) {
+    var link = e.target.closest && e.target.closest('a[href="#location_show_all_btn"]');
+    if (!link) {
+      if (typeof hideListing === 'function') hideListing();
+      return;
+    }
+    e.preventDefault();
+    var btn = document.getElementById('location_show_all_btn');
+    if (btn) btn.click();
+    if (typeof showListing === 'function') showListing();
+  });
   /**
    * Initialize location search
    */
@@ -223,7 +260,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
       }
     );
-
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
       const searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
@@ -269,7 +305,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     map = finna.organisationMap;
     map.init(mapWidget, mapTileUrl, mapAttributionTemplate.innerHTML);
-
     /**
      * Hide map marker from mapTooltip
      */
