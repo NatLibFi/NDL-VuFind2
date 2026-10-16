@@ -2,11 +2,11 @@
 <?php
   $linkId = uniqid('fulltext_link_');
   $linkDescription = trim($this->desc);
+  $icon = $this->icon ?? 'external-icon';
 
   $externalIconMap = [
     'Database Guide' => 'database-info',
     'Database Interface' => 'database-browse',
-    'proxy-link' => 'download',
   ];
 
   // Build the link into a variable to avoid extra whitespaces
@@ -25,11 +25,12 @@
   }
   if (in_array($this->linkType, ['download', 'proxy-link'])) {
     $aAttrs['download'] = '';
+    $icon = 'download';
   }
 
   // Start the link with wrapping div
   $link = '<div class="fulltextField"><a ' . $this->htmlAttributes($aAttrs) . '>';
-  if ($linkIcon = $externalIconMap[$linkDescription] ?? $this->icon ?? 'external-link') {
+  if ($linkIcon = $externalIconMap[$linkDescription] ?? $icon) {
     $link .= $this->icon($linkIcon) . ' ';
   }
 

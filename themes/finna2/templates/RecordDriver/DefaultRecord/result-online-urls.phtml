@@ -8,17 +8,14 @@
 
   <?php // Always output the container div so that we can update its contents on dedup record selection: ?>
   <div class="available-online-links">
-      <?php if ('popup' !== $context): ?>
-        
-      <?php endif; ?>
-      <?= $this->record($this->driver)->renderTemplate(
-        'urls-container.phtml',
-        [
-          ...$linkDetails,
-          'compact' => true,
-          'header' => $this->translate('Available Online'),
-          'limit' => 4,
-        ]
-      ); ?>
+    <?= $this->record($this->driver)->renderTemplate(
+      'urls-container.phtml',
+      [
+        ...$linkDetails,
+        'compact' => true,
+        'header' => $this->translate('Available Online'),
+        'limit' => 4,
+      ]
+    ); ?>
   </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/result-online-urls.phtml -->

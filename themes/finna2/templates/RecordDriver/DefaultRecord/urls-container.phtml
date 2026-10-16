@@ -2,7 +2,8 @@
 <?php
   $identifierLinks = $this->identifierLinker($this->driver, 'record');
   $openUrl = $this->openUrl($this->driver, 'record');
-  $compact = $this->compact ?? false;
+  $context = $this->context ?? 'record';
+  $compact = in_array($context, ['popup', 'results']);
   $header = $this->header ?? '';
   $renderLimit = $this->limit ?? 0;
   $renderedAmount = 0;
@@ -44,7 +45,22 @@
         <?php endforeach; ?>
       </div>
     <?php endif; ?>
-
+    <?php if ($context !== 'record'): ?>
+      <?php foreach ($this->videoURLs['urls'] as $index => $url): ?>
+        <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
+          break;
+        } ?>
+        <?= $this->record($this->driver)->renderTemplate('link-video.phtml', [...$url, 'index' => $index]) ?>
+        <?php $renderedAmount++; ?>
+      <?php endforeach; ?>
+      <?php foreach ($this->audioURLs['urls'] as $index => $url): ?>
+        <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
+          break;
+        } ?>
+        <?= $this->record($this->driver)->renderTemplate('link-video.phtml', [...$url, 'index' => $index]) ?>
+        <?php $renderedAmount++; ?>
+      <?php endforeach; ?>
+    <?php endif; ?>
     <?=$identifierLinks?>
     <?php if ($openUrl->isActive()): ?>
       <?=$openUrl->renderTemplate()?><br>
@@ -52,7 +68,7 @@
   </div>
 </div>
 <?php $results = ob_get_clean(); ?>
-<?php if ($header && $renderedAmount): ?>
+<?php if ($context !== 'popup' && $header && $renderedAmount): ?>
   <strong class="available-online-header"><?=$this->escapeHtml($header)?>:</strong>
 <?php endif; ?>
 <?= $results ?>
