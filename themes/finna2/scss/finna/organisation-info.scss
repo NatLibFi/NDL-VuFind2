@@ -593,6 +593,18 @@ $organisation-info-max-w: 400px !default;
                 .service-list {
                     column-count: 3;
                 }
+                .finna-toggletip {
+                    padding: 0px;
+                    margin-left: -6px;
+                    color: $link-color;
+                    text-align: left;
+                    text-decoration: none;
+                    background-color: inherit;
+                    border: none;
+                    .finna-toggletip__button { 
+                        text-align: left;
+                    }
+                }
             }
         }
     }
