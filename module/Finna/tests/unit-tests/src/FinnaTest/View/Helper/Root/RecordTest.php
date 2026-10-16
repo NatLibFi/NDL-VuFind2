@@ -59,8 +59,8 @@ class RecordTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetLinkDetailsExtended(): void
     {
-        $testFixture = $this->getJsonFixture('helpers/record_media_data.json', 'Finna');
-        $expectedData = $this->getJsonFixture('helpers/record_media_expected.json', 'Finna');
+        $testFixture = $this->getJsonFixture('helpers/record/' . __FUNCTION__ . '_data.json', 'Finna');
+        $expectedData = $this->getJsonFixture('helpers/record/' . __FUNCTION__ . '_expected.json', 'Finna');
         foreach ($testFixture as $message => $testData) {
             $testData['onlineURLs'] = array_map(
                 fn ($url) => json_encode($url),

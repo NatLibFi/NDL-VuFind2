@@ -38,7 +38,7 @@
     $sourceDesc = is_array($source)
       ? $this->transEsc('Multiple Organisations')
       : $this->transEsc('default::source_' . $source, null, $source);
-    $link .= ' <span class="online-source">' . $sourceDesc . '</span>';
+    $link .= ' (<span class="online-source">' . $sourceDesc . '</span>)';
   }
   if ($linkNote = $this->note ?? '') {
     $link .= ' <span class="url-public-note">' . $this->escapeHtml($linkNote) . '</span>';

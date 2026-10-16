@@ -1646,6 +1646,7 @@ class Record extends \VuFind\View\Helper\Root\Record
         $text = !empty($url['text']) ? $url['text'] : $url['url'];
         $desc = !empty($url['desc']) ? $url['desc'] : $text;
         $desc = !empty($url['description']) ? $url['description'] : $desc;
+
         $linkType = $url['linkType'] ?? '';
         if ($desc === $url['url']) {
             $desc = ($this->getView()->plugin('truncateUrl'))($url['url']);

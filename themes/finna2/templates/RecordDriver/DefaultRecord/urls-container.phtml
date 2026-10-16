@@ -6,10 +6,8 @@
   $header = $this->header ?? '';
   $renderLimit = $this->limit ?? 0;
   $renderedAmount = 0;
+  ob_start();
 ?>
-<?php if ($header): ?>
-<strong class="available-online-header"><?=$header?>:</strong>
-<?php endif; ?>
 <div class="recordURLs local-available-online-record">
     <div class="fulltextField url-template hidden">
     <a class="fulltext" href="HREF" target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>">
@@ -22,19 +20,25 @@
   </div>
   <div class="truncate-field">
     <?php foreach ($this->onlineURLs['urls'] as $url): ?>
-      <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) break; ?>
+      <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
+        break;
+      } ?>
       <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact]) ?>
       <?php $renderedAmount++; ?>
     <?php endforeach; ?>
     <?php foreach ($this->otherURLs['urls'] as $url): ?>
-      <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) break; ?>
+      <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
+        break;
+      } ?>
       <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact]) ?>
       <?php $renderedAmount++; ?>
     <?php endforeach; ?>
     <?php if ($this->mergedURLs['count']): ?>
       <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $mergedURLs['count']])?>">
         <?php foreach ($this->mergedURLs['urls'] as $url): ?>
-          <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) break; ?>
+          <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
+            break;
+          } ?>
           <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact]) ?>
           <?php $renderedAmount++; ?>
         <?php endforeach; ?>
@@ -47,4 +51,10 @@
     <?php endif; ?>
   </div>
 </div>
+<?php $results = ob_get_clean(); ?>
+<?php if ($header && $renderedAmount): ?>
+  <strong class="available-online-header"><?=$this->escapeHtml($header)?>:</strong>
+<?php endif; ?>
+<?= $results ?>
+
 <!-- END of: finna - RecordDriver/DefaultRecord/urls-container.phtml -->
