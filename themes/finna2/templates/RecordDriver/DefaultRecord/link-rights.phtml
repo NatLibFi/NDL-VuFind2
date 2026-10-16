@@ -1,0 +1,50 @@
+<!-- START of: finna - RecordDriver/DefaultRecord/link-rights.phtml -->
+<?php
+  $copyrightLink = $this->rights['link'] ?? '';
+  $copyright = $this->rights['copyright'] ?? '';
+  $copyrightDescription = $this->rights['description'] ?? '';
+
+  if (!$copyright && !$copyrightDescription) {
+    return;
+  }
+
+  $rightsElement = '<div class="copyright-wrapper">(';
+
+  if ($format = $this->format ?? '') {
+      $rightsElement .= $this->escapeHtml($format);
+      if ($copyrightLink) {
+          $rightsElement .= ': ';
+      }
+  }
+  if ($copyright) {
+      $rightsElement .= '<span class="copyright-icons">'
+        . $this->partial('Helpers/copyright-icons.phtml', ['copyright' => $copyright])
+        . '</span>';
+      if ($copyrightLink) {
+        $rightsAttrs = [
+            'class' => 'copyright-description',
+            'href' => $copyrightLink,
+            'target' => '_blank',
+        ];
+        $rightsElement .= ' <a' . $this->htmlAttributes($rightsAttrs) . '>'
+            . $this->escapeHtml($copyright)
+            . '</a>';
+      } else {
+        $rightsElement .= $this->escapeHtml($copyright);
+      }
+  }
+    if ($copyrightDescription) {
+        $copyRightButtonAttrs = [
+            'class' => 'show-hide-button show-info more-link collapsed',
+            'data-bs-toggle' => 'collapse',
+            'data-bs-target' => "#cc_info_$this->linkId",
+            'aria-expanded' => false,
+        ];
+        $rightsElement .= '<button' . $this->htmlAttributes($copyRightButtonAttrs) . '>'
+            . $this->transEsc('copyright_info_show') . $this->icon('truncate-more')
+            . '</button>';
+    }
+    $rightsElement .= ')</div>';
+?>
+<?= $rightsElement ?>
+<!-- END of: finna - RecordDriver/DefaultRecord/link-rights.phtml -->
