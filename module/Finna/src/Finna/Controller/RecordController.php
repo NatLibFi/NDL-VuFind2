@@ -898,7 +898,8 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         foreach ($corsAllow as $allow) {
             $headers->addHeaderLine('Access-Control-Allow-Origin', $allow);
         }
-        if ($manifest = $generator->generate($driver)) {
+        $images = ($this->getViewRenderer()->plugin('record'))($driver)->getAllImages(true, true);
+        if ($manifest = $generator->generate($driver, $images)) {
             if ($manifestJson = json_encode($manifest)) {
                 $headers->addHeaderLine(
                     'Content-Type: application/json;' .

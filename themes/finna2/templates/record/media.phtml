@@ -10,7 +10,7 @@
   <?php endif; ?>
 </div>
 <div id="media-modal-content" class="d-flex flex-row gap-2" data-lightbox-ignore>
-  <?= $this->render('record/presentations.phtml', ['driver' => $this->driver, 'pages' => $this->pages]) ?>
+  <?= $this->render('record/mediatabs/presentations.phtml', ['driver' => $this->driver, 'pages' => $this->pages]) ?>
   <div class="flex-column record-information-simple">
     <?=$this->record($this->driver)->renderTemplate(
       'popup-information.phtml',

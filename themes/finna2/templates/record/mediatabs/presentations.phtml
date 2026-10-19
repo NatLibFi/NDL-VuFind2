@@ -1,33 +1,46 @@
 <?php
-  $tabs = $this->record($this->driver)->getMedias();
+  $linkDetails = $this->record($this->driver)->getLinkDetailsExtended();
   $navigation = [];
   $content = [];
   $active = true;
-  foreach ($tabs as $name => $tab) {
-    if (!$tab) {
+  foreach ($linkDetails as $name => $links) {
+    if (!$links['count'] || !$links['template']) {
       continue;
     }
+    $label = $links['template'];
     $navTab = [
       'active' => $active,
       'ariaCurrent' => $active,
-      'description' => 'Presentations of ' . $name,
+      'description' => 'Presentations of ' . $label,
       'label' => $name,
-      'link' => '#record-presentation-' . $name,
+      'link' => '#record-presentation-' . $label,
       '__linkAttributes' => [
-        'data-bs-target' => '#record-presentation-' . $name,
+        'data-bs-target' => '#record-presentation-' . $label,
         'data-bs-toggle' => 'tab',
       ],
     ];
-    $navContent = $this->render("record/$name.phtml", [...$this->vars()->getArrayCopy(), ...$tabs]);
+    $navContent = $this->render("record/mediatabs/$label.phtml", [...$links, ...compact('driver')]);
     $active = false;
     $navigation[] = [
       'tab' => $navTab,
       'content' => $navContent,
     ];
   }
+
+  $tabsAttrs = [];
+  if (count($navigation) < 2) {
+    $tabsAttrs['class'] = 'hidden';
+  }
 ?>
 <div class="record-media-container">
-  <?= $this->component('finna-tabs-nav', ['items' => array_column($navigation, 'tab')]) ?>
+  <?= $this->component(
+    'finna-tabs-nav',
+      [
+        'items' => array_column($navigation, 'tab'),
+        'attributes' => $tabsAttrs,
+      ]
+    ) 
+  ?>
   <div class="tab-content">
     <?php foreach ($navigation as $i => $values):?>
       <?php

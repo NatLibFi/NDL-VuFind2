@@ -86,10 +86,11 @@ class IIIFManifestGenerator implements HttpServiceAwareInterface, TranslatorAwar
      * Generate IIIF presentation manifest (version 3).
      *
      * @param RecordDriver $driver Record driver
+     * @param array        $images Images array
      *
      * @return ?object
      */
-    public function generate(RecordDriver $driver): ?object
+    public function generate(RecordDriver $driver, array $images): ?object
     {
         $images      = $driver->tryMethod('getAllImages');
         $recordId    = $driver->getUniqueID();

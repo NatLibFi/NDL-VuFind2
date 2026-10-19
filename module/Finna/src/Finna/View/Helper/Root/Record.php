@@ -1147,50 +1147,6 @@ class Record extends \VuFind\View\Helper\Root\Record
         return $this->renderTemplate('birth_death.phtml', compact('birth', 'death'));
     }
 
-    public function getMedias()
-    {
-        $images = ($this->getView()->plugin('recordImage'))($this)->getAllImagesAsCoverLinks();
-        $openUrl = $this->getView()->plugin('openUrl')($this->driver, 'record');
-        $openUrlActive = $openUrl->isActive();
-        // Account for replace_other_urls setting
-        $urls = $this->getLinkDetails($openUrlActive);
-        $onlineUrls = $this->driver->tryMethod('getOnlineURLs');
-
-        $renderedURLs = [];
-        $videos = [];
-        $audios = [];
-        $others = [];
-        $models = ($this->getView()->plugin('recordImage'))($this)->getAllModelsAsRepresentations();
-
-        $allUrls = [...$urls, ...$onlineUrls];
-        $recordLinker = $this->getView()->plugin('recordLinker');
-        foreach ($allUrls as $url) {
-            foreach ($renderedURLs as $renderedURL) {
-                $urlDescription = $url['desc'] ?? $url['text'] ?? '';
-                if ($url['url'] === $renderedURL['url'] && $urlDescription === $renderedURL['desc']) {
-                    continue 2;
-                }
-            }
-            switch ($url['embed'] ?? '') {
-                case 'audio':
-                    $audios[] = $url;
-                    break;
-                case 'video':
-                    $videos[] = $url;
-                    break;
-                default:
-                    $embeddedVideo = ($recordLinker)()->getEmbeddedVideo($url['url']);
-                    if (!empty($url['videoSources']) || $embeddedVideo === 'data-embed-iframe') {
-                        $videos[] = $url;
-                    } else {
-                        $others[] = $url;
-                    }
-                    break;
-            }
-        }
-        return compact('images', 'audios', 'videos', 'models', 'others');
-    }
-
     /**
      * Return number of linked biblio records for an authority record.
      * Returns an array with keys 'author' and 'topic'
@@ -1617,40 +1573,63 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $renderedURLs = [];
         $result = [
+            'imageURLs' => [
+                'count' => 0,
+                'urls' => [],
+                'template' => 'images',
+            ],
             'videoURLs' => [
                 'count' => 0,
                 'urls' => [],
+                'template' => 'videos',
             ],
             'audioURLs' => [
                 'count' => 0,
                 'urls' => [],
+                'template' => 'audios',
+            ],
+            'modelURLs' => [
+                'count' => 0,
+                'urls' => [],
+                'template' => 'models',
             ],
             'otherURLs' => [
                 'count' => 0,
                 'urls' => [],
+                'template' => false,
             ],
             'onlineURLs' => [
                 'count' => 0,
                 'urls' => [],
+                'template' => false,
             ],
             'mergedURLs' => [
                 'count' => 0,
                 'urls' => [],
+                'template' => false,
             ],
             'iiifManifests' => [
                 'count' => 0,
                 'urls' => [],
+                'template' => 'images',
             ],
         ];
-
+        
         // Account for replace_other_urls setting
         $otherURLs = $this->getLinkDetails(
             ($this->getView()->plugin('openUrl'))($this->driver, 'record')->isActive()
         );
         $onlineURLs = $this->driver->tryMethod('getOnlineURLs', [], []);
         $mergedURLs = $this->driver->tryMethod('getMergedRecordData', [], [])['urls'] ?? [];
-        $iiifManifests = $this->driver->tryMethod('getIiifManifests', [], []);
 
+        if ($this->getAllImages(true, true)) {
+            $result['iiifManifests']['count']++;
+            $result['iiifManifests']['urls'][] = [
+                'url' => $this->getView()->plugin('recordLinker')
+                ->getGeneratedIiifManifestUrl($this->driver),
+            ];
+        }
+        $iiifManifests = $this->driver->tryMethod('getIiifManifests', [], []);
         foreach (compact('iiifManifests', 'onlineURLs', 'otherURLs', 'mergedURLs') as $key => $value) {
             foreach ($value as $index => $url) {
                 if (is_string($url)) {

@@ -7,31 +7,39 @@
  */
 $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThemes: true);
 $pages = $this->pages ?? null;
+$simple = $this->simple ?? false;
+
+$tifyAttrs = [
+  'class' => trim('tify ' . ($simple ? 'simple' : '')),
+  'id' => $this->id ?? 'tify', 
+];
 ?>
 
 <div class="record-viewer-container container">
-  <div class="tify" id="tify"></div>
+  <div<?= $this->htmlAttributes($tifyAttrs); ?>></div>
 
-  <div class="record-iiif-toolbar container">
-    <span class="record-iiif-functions dropdown hstack gap-3">
-      <button type="button"
-        class="btn btn-outline-primary p-2 ms-auto icon-link"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
-             alt="IIIF"
-             class="bi icon-link__icon"
+  <?php if (!$simple): ?>
+    <div class="record-iiif-toolbar container">
+      <span class="record-iiif-functions dropdown hstack gap-3">
+        <button type="button"
+          class="btn btn-outline-primary p-2 ms-auto icon-link"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
         >
-        <span class="icon-link__label"><?=$this->transEsc('iiif_tools')?></span>
-        <?=$this->icon('dropdown-open')?>
-      </button>
-      <?=$this->component(
-        'finna-iiif-menu',
-        ['manifestUrls' => $this->manifestUrls, 'alignRight' => true]
-      );?>
-    </span>
-  </div>
+          <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
+              alt="IIIF"
+              class="bi icon-link__icon"
+          >
+          <span class="icon-link__label"><?=$this->transEsc('iiif_tools')?></span>
+          <?=$this->icon('dropdown-open')?>
+        </button>
+        <?=$this->component(
+          'finna-iiif-menu',
+          ['manifestUrls' => $this->manifestUrls, 'alignRight' => true]
+        );?>
+      </span>
+    </div>
+  <?php endif; ?>
 </div>
 
 <?php
@@ -46,8 +54,12 @@ $tifyConfig = [
   'colorMode' => 'light',
   'optionsResetOnPageChange' => ['pan', 'rotation', 'zoom'],
 ];
+if ($simple) {
+  $tifyConfig['view'] = null;
+  $tifyConfig['views'] = [];
+}
 
-if ($pages) {
+if ($pages || $simple) {
   $tifyConfig['pages'] = $pages;
 } else {
   $tifyConfig['urlQueryKey'] = 'view';
