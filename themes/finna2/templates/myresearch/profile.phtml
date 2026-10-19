@@ -321,6 +321,13 @@
         </div>
       <?php endif; ?>
     </div>
+
+    <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && $this->patronLoginView && !empty($this->patronLoginView->getTemplate())): ?>
+      <div class="myresearch-profile-loginview">
+        <?=$this->partial($this->patronLoginView);?>
+      </div>
+    <?php endif; ?>
+
     <div class="myresearch-profile-header">
       <h3 id="profile-settings"><?= $this->transEsc('finna_account_settings') ?></h3>
     </div>
@@ -407,10 +414,6 @@
           <?php endforeach; ?>
         </ul>
       <?php endforeach; ?>
-    <?php endif; ?>
-
-    <?php if (!is_array($this->profile) && 'ils-none' !== $this->ils()->getOfflineMode() && $this->patronLoginView && !empty($this->patronLoginView->getTemplate())): ?>
-      <?=$this->partial($this->patronLoginView);?>
     <?php endif; ?>
 
     <?php if ($this->developerSettings()->isEnabled()): ?>

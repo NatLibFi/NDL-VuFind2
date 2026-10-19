@@ -42,8 +42,8 @@ $box-shadow-sm: 0 .25rem 0.125rem rgba($gray, .15);
 $box-shadow-lg: 0 1rem 3rem rgba($gray, .2);
 
 //== Custom Finna divider (not in Bootstrap 5)
-$divider-color: $gray-mid-light;
-$divider-border: 1px solid $divider-color;
+$divider-color: $gray-mid-light !default;
+$divider-border: 1px solid $divider-color !default;
 
 //== Custom Finna styling
 $background-color:      $gray-light !default;
