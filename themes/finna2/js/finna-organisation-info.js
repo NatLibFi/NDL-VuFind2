@@ -110,7 +110,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   /**
    * Hide the service point listing
    * @returns {boolean} True if one or more elements were hidden, false if none found.
-   */ 
+   */
   function hideListing() {
     const elems = document.querySelectorAll('.location-listing');
     if (!elems.length) return false;
@@ -266,7 +266,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
       }
     );
-    
+
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
       const searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
