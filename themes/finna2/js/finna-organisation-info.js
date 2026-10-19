@@ -69,6 +69,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       resetSearch();
     }
   }
+
   /**
    * Get location from URL hash and display it
    */
@@ -78,6 +79,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       updateSelectedLocation(location, false);
     }
   }
+
   /**
    * Hide location search dropdown
    */
@@ -90,6 +92,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
       searchToggle.focus();
     }
   }
+
   /**
    * Show the service point listing
    * @returns {boolean} True if one or more elements were shown, false if none found.
@@ -103,6 +106,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     });
     return true;
   }
+
   /**
    * Hide the service point listing
    * @returns {boolean} True if one or more elements were hidden, false if none found.
@@ -113,6 +117,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     elems.forEach(el => el.setAttribute('hidden', ''));
     return true;
   }
+
   /**
    * Add listener to "Show all service points" link inside the map widget and
    * hide the list when anything else is clicked.
@@ -130,6 +135,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
     if (btn) btn.click();
     if (typeof showListing === 'function') showListing();
   });
+
   /**
    * Initialize location search
    */
@@ -260,6 +266,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
         }
       }
     );
+    
     // Add listeners that close the search dropdown as necessary:
     document.addEventListener('mousedown', (e) => {
       const searchLocationToggle = searchContainer.querySelector('.js-location-search-toggle');
