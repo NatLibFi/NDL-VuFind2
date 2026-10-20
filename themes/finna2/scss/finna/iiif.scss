@@ -66,6 +66,16 @@
         height: 28px;
     }
 
+    &.simple {
+        .openseadragon-canvas {
+            pointer-events: none !important;
+        }
+        pointer-events: none;
+        .tify-media-buttons.-controls,
+        .tify-header {
+            display: none;
+        }
+    }
 }
 
 

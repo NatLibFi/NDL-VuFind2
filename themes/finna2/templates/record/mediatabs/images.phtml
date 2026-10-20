@@ -1,0 +1,5 @@
+<?php 
+  $recordHelper = $this->record($this->driver);
+  $simpleView = !$recordHelper->getImagePopupZoom() || !$recordHelper->hasLargeImageLayout();
+?>
+<?=$this->component('finna-iiif-viewer', ['manifestUrls' => $this->urls, 'pages' => $this->pages ?? null, 'simple' => $simpleView]);?>

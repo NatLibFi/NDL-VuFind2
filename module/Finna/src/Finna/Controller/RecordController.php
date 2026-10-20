@@ -106,6 +106,9 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
      */
     public function homeAction()
     {
+        if ($this->inLightbox()) {
+            return $this->mediaAction();
+        }
         $result = parent::homeAction();
         $this->triggerStatsRecordView($result->driver ?? null);
         $this->addValidationResultMessage();
@@ -895,7 +898,8 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
         foreach ($corsAllow as $allow) {
             $headers->addHeaderLine('Access-Control-Allow-Origin', $allow);
         }
-        if ($manifest = $generator->generate($driver)) {
+        $images = ($this->getViewRenderer()->plugin('record'))($driver)->getAllImages(true, true);
+        if ($manifest = $generator->generate($driver, $images)) {
             if ($manifestJson = json_encode($manifest)) {
                 $headers->addHeaderLine(
                     'Content-Type: application/json;' .
@@ -916,5 +920,30 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
             $response->setStatusCode(404);
         }
         return $response;
+    }
+
+    /**
+     * Display record as modal content.
+     *
+     * @return \Laminas\View\Model\ViewModel
+     */
+    public function mediaAction(): \Laminas\View\Model\ViewModel
+    {
+        $index  = $this->params()->fromQuery('index', 0);
+        $format = $this->params()->fromQuery('format');
+        $type   = $this->params()->fromQuery('type');
+        // Set up next/previous record links (if appropriate)
+        if ($this->getSearchMemory()->getCurrentSearch()?->getOptions()?->resultScrollerActive()) {
+            $scrollData = $this->resultScroller()->getScrollData(
+                $this->loadRecord()
+            );
+        } else {
+            $scrollData = null;
+        }
+        // Modify current image index to a format for tify-viewer
+        $pages = [$index + 1];
+        return $this
+            ->createViewModel(compact('index', 'format', 'scrollData', 'pages'))
+            ->setTemplate('record/media');
     }
 }

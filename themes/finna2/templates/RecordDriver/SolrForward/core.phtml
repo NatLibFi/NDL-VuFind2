@@ -1,53 +1,10 @@
 <!-- START of: finna - RecordDriver/SolrForward/core.phtml -->
 <?php
   $primaryRoles = ['drt', 'aus'];
-
-  $openUrl = $this->openUrl($this->driver, 'record');
-  $openUrlActive = $openUrl->isActive();
-  // Account for replace_other_urls setting
-  $urls = $this->record($this->driver)->getLinkDetails($openUrlActive);
-  $onlineURLs = $this->driver->getOnlineURLs();
-  $mergedData = $this->driver->tryMethod('getMergedRecordData');
-  $renderedURLs = [];
-
-  if (!empty($urls)) {
-    $videoUrls = [];
-    $otherUrls = [];
-    foreach ($urls as $url) {
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
-        array_push($videoUrls, $url);
-        $renderedURLs[] = $url['url'];
-      } else {
-        array_push($otherUrls, $url);
-      }
-    }
-  }
-
-  $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  $img = $this->recordImage($this->record($this->driver));
-
-  $thumbnail = false;
-  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
-  ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?>">
-
-    <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrForward']);?>
-    <?php endif; ?>
-
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
-
-    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-      <div class="organisation-menu">
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
-    <?php endif; ?>
-
-    <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
-  </div>
-<?php
-  $thumbnail = ob_get_contents();
-  ob_end_clean();
+  $recordHelper = $this->record($this->driver);
+  $linkDetails = $recordHelper->getLinkDetailsExtended();
+  $media = $recordHelper->renderTemplate('media.phtml', $linkDetails);
+  $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $altTitles = $this->driver->getAlternativeTitles();
   ob_start();
 ?>
@@ -71,8 +28,8 @@
       <?=$altTitlesContent?>
     </div>
   <?php endif; ?>
-  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'left'): ?>
+    <?=$media ?>
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
@@ -99,50 +56,8 @@
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
       <?=$this->record($this->driver)->getLabelList() ?>
 
-      <div class="recordURLs local-available-online-record">
-        <div class="truncate-field">
-          <?php if (!empty($otherUrls)): ?>
-            <?php foreach ($otherUrls as $url): ?>
-              <?php
-                $renderedURLs[] = $url['url'];
-                $desc = $url['desc'] ?? $this->truncateUrl($url['url']);
-                if (!empty($url['desc'])) {
-                  $map = ['Database Guide' => 'info-database', 'Database Interface' => 'database-browse'];
-                  if (isset($map[$url['desc']])) {
-                    $icon = $map[$url['desc']];
-                  }
-                }
-              ?>
-              <div class="fulltextField">
-                <a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url']))?>" aria-label="<?=$this->transEscAttr('external_online_link')?>"
-                  <?php if (!empty($url['posterUrl'])): ?> data-poster-url="<?= $this->escapeHtmlAttr($url['posterUrl']) ?>"<?php endif; ?>
-                >
-                  <?php if (!empty($icon)): ?><?=$this->icon($icon)?> <?php endif; ?><?=$this->transEsc('default::link_' . $desc, null, $desc) ?>
-                </a>
-              </div>
-            <?php endforeach; ?>
-            <?php if (!empty($onlineURLs) || !empty($mergedData['urls'])): ?>
-              <?php foreach (!empty($mergedData['urls']) ? $mergedData['urls'] : $onlineURLs as $url): ?>
-                <?php if (in_array($url['url'], $renderedURLs)) {
-                  continue;
-                } ?>
-                <div class="fulltextField"><a class="fulltext" href="<?=$this->escapeHtmlAttr($this->proxyUrl($url['url'])) ?>"<?=!empty($url['embed']) && $url['embed'] == 'iframe' ? ' data-embed-iframe' : '' ?> target="_blank" aria-label="<?=$this->transEscAttr('external_online_link')?>"><?=$this->icon('external-link') ?> <?=!empty($url['text']) ? $this->transEsc('default::link_' . $url['text'], null, $url['text']) : $this->escapeHtml($this->truncateUrl($url['url'])) ?></a>
-                <?php if ($url['source']): ?>
-                  <span class="online-source">(<?=is_array($url['source']) ? $this->transEsc('Multiple Organisations') : $this->transEsc('default::source_' . $url['source'], null, $url['source']) ?>)</span>
-                <?php endif; ?>
-                </div>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          <?php endif; ?>
+      <?= $recordHelper->renderTemplate('urls-container.phtml', $linkDetails); ?>
 
-          <?=$this->identifierLinker($this->driver, 'record')?>
-
-          <?php if ($openUrlActive): ?>
-            <?=$openUrl->renderTemplate()?>
-          <?php endif; ?>
-        </div>
-      </div>
-      <?php $this->record($this->driver)->setRenderedUrls($renderedURLs); ?>
       <div class="record-core-metadata">
         <?php $formats = $this->driver->getFormats();
         if (!empty($formats)): ?>
@@ -252,8 +167,8 @@
       </div>
       <?php endif; ?>
     </div>
-  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'right'): ?>
+    <?=$media ?>
   <?php endif; ?>
 </div>
 <!-- END of: finna - RecordDriver/SolrForward/core.phtml -->

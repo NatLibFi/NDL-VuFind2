@@ -2,39 +2,49 @@
 /**
  * Viewer for IIIF manifests and collections.
  *
- * @param array    manifestUrls   URLs of IIIF manifests to load
+ * @param array       manifestUrls   URLs of IIIF manifests to load
+ * @param ?array<int> pages          Pages to display on the viewer on initial load.
  */
 $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThemes: true);
+$pages = $this->pages ?? null;
+$simple = $this->simple ?? false;
+
+$tifyAttrs = [
+  'class' => trim('tify ' . ($simple ? 'simple' : '')),
+  'id' => $this->id ?? 'tify', 
+];
 ?>
 
 <div class="record-viewer-container container">
-  <div class="tify" id="tify"></div>
+  <div<?= $this->htmlAttributes($tifyAttrs); ?>></div>
 
-  <div class="record-iiif-toolbar container">
-    <span class="record-iiif-functions dropdown hstack gap-3">
-      <button type="button"
-        class="btn btn-outline-primary p-2 ms-auto icon-link"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-      >
-        <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
-             alt="IIIF"
-             class="bi icon-link__icon"
+  <?php if (!$simple): ?>
+    <div class="record-iiif-toolbar container">
+      <span class="record-iiif-functions dropdown hstack gap-3">
+        <button type="button"
+          class="btn btn-outline-primary p-2 ms-auto icon-link"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
         >
-        <span class="icon-link__label"><?=$this->transEsc('iiif_tools')?></span>
-        <?=$this->icon('dropdown-open')?>
-      </button>
-      <?=$this->component(
-        'finna-iiif-menu',
-        ['manifestUrls' => $this->manifestUrls, 'alignRight' => true]
-      );?>
-    </span>
-  </div>
+          <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
+              alt="IIIF"
+              class="bi icon-link__icon"
+          >
+          <span class="icon-link__label"><?=$this->transEsc('iiif_tools')?></span>
+          <?=$this->icon('dropdown-open')?>
+        </button>
+        <?=$this->component(
+          'finna-iiif-menu',
+          ['manifestUrls' => $this->manifestUrls, 'alignRight' => true]
+        );?>
+      </span>
+    </div>
+  <?php endif; ?>
 </div>
 
 <?php
 $tifyJsPath = json_encode($this->scriptSrc('vendor/tify/tify.min.js'));
-$tifyConfig = json_encode([
+$tifyConfig = [
   'container' => '#tify',
   'manifestUrl' => $this->manifestUrls[0]['url'],
   'language' => substr($this->layout()->userLang, 0, 2) ?? 'fi',
@@ -43,8 +53,17 @@ $tifyConfig = json_encode([
   // prevent mismatching colors.
   'colorMode' => 'light',
   'optionsResetOnPageChange' => ['pan', 'rotation', 'zoom'],
-  'urlQueryKey' => 'view',
-  'urlQueryParams' => [
+];
+if ($simple) {
+  $tifyConfig['view'] = null;
+  $tifyConfig['views'] = [];
+}
+
+if ($pages || $simple) {
+  $tifyConfig['pages'] = $pages;
+} else {
+  $tifyConfig['urlQueryKey'] = 'view';
+  $tifyConfig['urlQueryParams'] = [
     'annotationId',
     'annotationsVisible',
     'layers',
@@ -53,8 +72,9 @@ $tifyConfig = json_encode([
     'pan',
     'rotation',
     'zoom',
-  ],
-]);
+  ];
+}
+$tifyConfig = json_encode($tifyConfig);
 
 $js = <<<JS
     import Tify from $tifyJsPath;
