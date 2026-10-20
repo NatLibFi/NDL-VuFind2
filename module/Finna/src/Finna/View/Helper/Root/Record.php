@@ -1643,9 +1643,10 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     protected function supplementURL(array $url, int $index): array
     {
-        $text = !empty($url['text']) ? $url['text'] : $url['url'];
-        $desc = !empty($url['desc']) ? $url['desc'] : $text;
-        $desc = !empty($url['description']) ? $url['description'] : $desc;
+        $desc = ($url['description'] ?? null)
+            ?: ($url['desc'] ?? null)
+            ?: ($url['text'] ?? null) 
+            ?: $url['url'];
 
         $linkType = $url['linkType'] ?? '';
         if ($desc === $url['url']) {
