@@ -567,30 +567,26 @@ table .iconlabel {
   display: inline-flex;
   gap: 0.25rem;
   align-items: baseline;
-}
-.icon-link__icon {
-  flex: none;
-  padding: 0;
-  line-height: inherit;
-  color: inherit;
-}
-a.icon-link {
+  text-decoration: none;
+  &__icon {
+    flex: none;
+    padding: 0;
+    line-height: inherit;
+    color: inherit;
+    text-decoration: none;
+  }
+  &__label {
+    text-decoration: $link-decoration;
+  }
+  &:hover {
     text-decoration: none;
     .icon-link__icon {
-        text-decoration: none;
+      text-decoration: none;
     }
     .icon-link__label {
-        text-decoration: $link-decoration;
+      text-decoration: $link-hover-decoration;
     }
-}
-a.icon-link:hover {
-    text-decoration: none;
-    .icon-link__icon {
-        text-decoration: none;
-    }
-    .icon-link__label {
-        text-decoration: $link-hover-decoration;
-    }
+  }
 }
 
 /* Unicode Icons */

@@ -33,8 +33,8 @@ $additionalDataElem = !empty($this->additionalDataHtml) ? "<span class=\"field-a
         <?php if ($this->externalLinks): ?>
           <div class="popover-external-links">
             <?php foreach ($this->externalLinks as $i => $link): ?>
-              <a href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank" aria-label="<?=$this->transEscAttr($link['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
-                <?=$this->icon('external-link') ?> <?=$this->transEsc($link['text'])?>
+              <a class="icon-link" href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank" aria-label="<?=$this->transEscAttr($link['title'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
+                <?=$this->icon('external-link', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc($link['text'])?></span>
               </a>
               <?php if ($link['displayId']): ?>
                 <span class="external-link-identifier">

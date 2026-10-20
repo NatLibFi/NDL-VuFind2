@@ -118,8 +118,8 @@ finna.layout = (function finnaLayout() {
         var moreLabel = self.data('label') || VuFind.translate('show_more');
         var lessLabel = self.data('label') || VuFind.translate('show_less');
 
-        var moreLink = $('<button type="button" class="more-link" aria-hidden="true">' + '<span>' + moreLabel + '</span>' + VuFind.icon('show-more') + '</button>');
-        var lessLink = $('<button type="button" class="less-link" aria-hidden="true">' + '<span>' + lessLabel + '</span>' + VuFind.icon('show-less') + '</button>');
+        var moreLink = $('<button type="button" class="more-link icon-link" aria-hidden="true">' + '<span class="icon-link__label">' + moreLabel + '</span>' + VuFind.icon('show-more', 'icon-link__icon') + '</button>');
+        var lessLink = $('<button type="button" class="less-link icon-link" aria-hidden="true">' + '<span class="icon-link__label">' + lessLabel + '</span>' + VuFind.icon('show-less', 'icon-link__icon') + '</button>');
 
         if (self.attr('tabindex') === '-1') {
           moreLink.attr('tabindex', '-1');

@@ -99,8 +99,8 @@
                           'confirm-button',
                           [
                             'buttonLink' => $this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record->getId()]]),
-                            'buttonLabelHtml' => $this->icon('library-card-disconnect') . ' ' . $this->translate('Disconnect Library Card'),
-                            'buttonClass' => 'btn-unstyled',
+                            'buttonLabelHtml' => $this->icon('library-card-disconnect', 'icon-link__icon') . ' ' . '<span class="icon-link__label">' . $this->translate('Disconnect Library Card') . '</span>',
+                            'buttonClass' => 'icon-link',
                             'confirmLink' => $this->url('librarycards-deletecard', [], ['query' => ['cardID' => $record->getId(), 'confirm' => 1]]),
                             'header' => 'confirm_delete_library_card_brief',
                             'clearAccountCache' => true,

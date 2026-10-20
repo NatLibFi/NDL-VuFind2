@@ -48,9 +48,9 @@
             if ($originalImage):
         ?>
             <div class="open-link">
-                <a target="_blank" href="<?=$this->escapeHtmlAttr($originalImage) ?>" rel="nofollow" download>
-                    <?=$this->icon('download') ?>
-                    <span><?=$this->transEsc('Download the image') ?></span>
+                <a class="icon-link" target="_blank" href="<?=$this->escapeHtmlAttr($originalImage) ?>" rel="nofollow" download>
+                    <?=$this->icon('download', 'icon-link__icon') ?>
+                    <span class="icon-link__label"><?=$this->transEsc('Download the image') ?></span>
                 </a>
                 <span class="image-dimensions"></span>
             </div>

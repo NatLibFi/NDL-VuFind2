@@ -31,7 +31,7 @@
         </audio>
       </div>
       <?php if (!$showDetails): ?>
-        <div class="open-link"><a target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?></a></div>
+        <div class="open-link"><a class="icon-link" target="_blank" href="<?=$url['url'] ?>"><?=$this->icon('download', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('Download recording') ?></span></a></div>
       </div>
       <?php else: ?>
         </div>

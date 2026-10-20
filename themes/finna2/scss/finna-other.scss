@@ -305,16 +305,7 @@ label.list-group-item {
     margin-bottom: 0;
   }
 }
-.more-link,
-.less-link {
-  .icon {
-    padding-left: 3px;
-  }
-}
 .more-link, .less-link, .less-link-top {
-  display: flex;
-  align-content: center;
-  align-items: center;
   cursor: pointer;
   font-weight: 600;
   text-transform: uppercase;
@@ -331,9 +322,6 @@ label.list-group-item {
   &.link-buttons {
     color: $link-color;
     font-weight: 400;
-    &:hover {
-      text-decoration: $link-hover-decoration;
-    }
   }
 }
 

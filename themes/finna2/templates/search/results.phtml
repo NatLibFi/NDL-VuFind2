@@ -315,13 +315,13 @@
     <div class="searchtools hidden-print">
       <?php if (is_numeric($this->results->getSearchId()) && (is_object($account) && $account->loginEnabled())): ?>
         <?php if ($this->results->isSavedSearch()): ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-delete') ?> <span><?=$this->transEsc('save_search_remove')?></span></a>
+          <a class="icon-link" href="<?=$this->url('myresearch-savesearch')?>?delete=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-delete', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('save_search_remove')?></span></a>
         <?php else: ?>
-          <a href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-save') ?> <span><?=$this->transEsc('save_search')?></span></a>
+          <a class="icon-link" href="<?=$this->url('myresearch-savesearch')?>?save=<?=urlencode($this->results->getSearchId())?>"><?=$this->icon('search-save', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('save_search')?></span></a>
         <?php endif; ?>
       <?php endif; ?>
-      <a href="<?=$this->url('search-email')?>" class="mailSearch" role="button" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('email') ?> <span><?=$this->transEsc('Email this Search')?></span></a>
-      <a href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><?=$this->icon('rss-feed') ?> <span><?=$this->transEsc('Get RSS Feed')?></span></a>
+      <a class="icon-link" href="<?=$this->url('search-email')?>" class="mailSearch" role="button" data-lightbox id="mailSearch<?=$this->escapeHtmlAttr($this->results->getSearchId())?>" title="<?=$this->transEsc('Email this Search')?>"><?=$this->icon('email', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('Email this Search')?></span></a>
+      <a class="icon-link" href="<?=$this->results->getUrlQuery()->setViewParam('rss')?>"><?=$this->icon('rss-feed', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('Get RSS Feed')?></span></a>
       <?php if ($template = $this->content()->findTemplateForLng('content/Additions/search-post-tools')): ?>
         <?=$this->render($template, ['results' => $this->results])?>
       <?php endif; ?>

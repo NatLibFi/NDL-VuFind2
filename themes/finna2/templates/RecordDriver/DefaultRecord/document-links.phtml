@@ -45,7 +45,7 @@
         ?>
         <a <?=$this->htmlAttributes($aAttrs)?>>
             <?=$this->icon($linkType, 'icon-link__icon')?>
-            <span class="icon-lin__label"><?=$this->transEscWithPrefix('link_', $description, [], $description)?></span>
+            <span class="icon-link__label"><?=$this->transEscWithPrefix('link_', $description, [], $description)?></span>
         </a>
     <?php endif; ?>
     <?php $linkToResource = trim(ob_get_clean()); ?>

@@ -479,7 +479,6 @@
     margin-top: 0.3rem;
     font-size: 1em;
     .icon {
-      margin-right: 0.3rem;
       color: $action-link-color;
       &:hover,
       &:focus {
@@ -488,6 +487,7 @@
     }
     .dropdown {
       position: initial;
+      margin-left: 0.25rem;
     }
     .image-dimensions,
     .dropdown-menu .file-size {
@@ -529,7 +529,6 @@
   a span {
     color: $action-link-color;
     &:hover {
-      text-decoration: $link-hover-decoration;
       color: $action-link-color;
     }
   }
