@@ -100,7 +100,7 @@ if ($otherTitles):?>
     <?=$this->record($this->driver)->getOnlineUrls('popup')?>
     <?php if ($this->userlist()->getMode() !== 'disabled'): ?>
       <div class="save-record-link">
-        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record icon-link" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><?=$this->icon('favorite', 'icon-link__label') ?> <span class="icon-link__label"><?=$this->transEsc('Add to favorites')?></span></a>
+        <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'Save'))?>" class="save-record icon-link" data-lightbox data-id="<?=$this->escapeHtmlAttr($this->driver->getUniqueId()) ?>" title="<?=$this->transEsc('Add to favorites')?>"><?=$this->icon('favorite', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('Add to favorites')?></span></a>
       </div>
     <?php endif; ?>
     <?= $this->context($this)->renderInContext('RecordDriver/DefaultRecord/image-download.phtml', ['index' => $this->index, 'rights' => $rights, 'image' => $image, 'hiRes' => $image['highResolution'] ?? false]) ?>
