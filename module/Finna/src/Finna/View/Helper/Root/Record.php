@@ -1594,7 +1594,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'urls' => [],
             ],
         ];
-
+        $recordLinker = $this->getView()->plugin('recordLinker');
         $allURLs['iiifManifests'] = $this->driver->tryMethod('getIiifManifests', [], []);
         $allURLs['onlineURLs'] = $this->driver->tryMethod('getOnlineURLs', [], []);
         // Account for replace_other_urls setting
@@ -1615,7 +1615,7 @@ class Record extends \VuFind\View\Helper\Root\Record
                 $renderedURLs[] = $url['url'];
                 $url = $this->supplementURL($url, $index);
                 $isEmbeddedVideo
-                    = $this->getView()->plugin('recordLinker')->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
+                    = $recordLinker->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
 
                 if (($url['embed'] ?? '') === 'video' || !empty($url['videoSources']) || $isEmbeddedVideo) {
                     $resultKey = 'videoURLs';
