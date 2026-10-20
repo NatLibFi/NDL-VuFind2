@@ -31,6 +31,9 @@
         left: 40px;
         right: auto;
         z-index: auto;
+        @include media-breakpoint-down(md) {
+            left: 0px;
+        }
     }
     .notes {
         display: inline-block;
