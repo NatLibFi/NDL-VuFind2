@@ -11,7 +11,7 @@
     <?= $this->record($this->driver)->renderTemplate(
       'urls-container.phtml',
       [
-        ...$linkDetails,
+        'linkDetails' => $linkDetails,
         'compact' => true,
         'header' => $this->translate('Available Online'),
         'limit' => 4,
