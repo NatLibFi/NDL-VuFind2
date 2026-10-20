@@ -176,10 +176,6 @@ $thumbnail-width-large:  200px !default;
 @include media-breakpoint-down(sm) {
   .result {
     border-bottom: 1px solid $border-color;
-    &#result0,
-    &:first-child {
-      border-top: 1px solid $border-color;
-    }
   }
 }
 
