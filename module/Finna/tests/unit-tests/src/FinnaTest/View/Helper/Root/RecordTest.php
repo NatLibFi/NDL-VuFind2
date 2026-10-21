@@ -37,6 +37,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use VuFind\RecordDriver\DefaultRecord;
 use VuFind\View\Helper\Root\Context;
 use VuFind\View\Helper\Root\OpenUrl;
+use VuFind\View\Helper\Root\Url;
 use VuFindTest\Feature\FixtureTrait;
 
 /**
@@ -69,7 +70,8 @@ class RecordTest extends \PHPUnit\Framework\TestCase
             $driver = $this->getDriver(
                 $testData['onlineURLs'],
                 $testData['mergedData'],
-                $testData['iiifManifests']
+                $testData['iiifManifests'],
+                $testData['accessRestrictions'] ?? [],
             );
             $recordHelper = $this->getRecordHelper(
                 true,
@@ -86,25 +88,28 @@ class RecordTest extends \PHPUnit\Framework\TestCase
     /**
      * Get mocked driver object.
      *
-     * @param array $onlineURLs    Response for function getOnlineURLs
-     * @param array $mergedData    Response for function getMergedRecordData
-     * @param array $iiifManifests Response for function getIiifManifests
+     * @param array $onlineURLs         Response for function getOnlineURLs
+     * @param array $mergedData         Response for function getMergedRecordData
+     * @param array $iiifManifests      Response for function getIiifManifests
+     * @param array $accessRestrictions Response for function getAccessRestrictionsForLinks
      *
      * @return MockObject
      */
     protected function getDriver(
         array $onlineURLs,
         array $mergedData,
-        array $iiifManifests
+        array $iiifManifests,
+        array $accessRestrictions
     ): MockObject {
         $tryMethodMap = [
             ['getOnlineURLs', [], [], $onlineURLs],
             ['getMergedRecordData', [], [], $mergedData],
             ['getIiifManifests', [], [], $iiifManifests],
+            ['getAccessRestrictionsForLinks', $accessRestrictions],
         ];
         $driver = $this->createMock(DefaultRecord::class);
-        $driver->method('tryMethod')
-            ->willReturnMap($tryMethodMap);
+        $driver->method('tryMethod')->willReturnMap($tryMethodMap);
+        $driver->method('getUniqueID')->willReturn('unique.123');
         return $driver;
     }
 
@@ -129,11 +134,19 @@ class RecordTest extends \PHPUnit\Framework\TestCase
         $truncateUrlPlugin = new TruncateUrl();
 
         $recordLinkerPlugin = $this->createPartialMock(RecordLinker::class, []);
+
+        $urlPlugin = $this->createPartialMock(Url::class, ['__invoke']);
+        $urlPlugin->method('__invoke')->willReturnCallback(
+            function ($name, $params, $options) {
+                return 'http://record-downloadfile?' . http_build_query($options['query']);
+            }
+        );
         $pluginMap = [
             ['openUrl', $openURLPlugin],
             ['truncateUrl', $truncateUrlPlugin],
             ['recordLinker', $recordLinkerPlugin],
             ['context', $contextHelper],
+            ['url', $urlPlugin],
         ];
         $viewMock = $this->createMock(PhpRenderer::class);
         $viewMock->method('plugin')->willReturnMap($pluginMap);

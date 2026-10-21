@@ -12,7 +12,9 @@
                     "url": "https://test_url_1.tt/test.pdf",
                     "text": "",
                     "mediaType": "application/pdf",
-                    "source": "test"
+                    "source": "test",
+                    "linkType": "proxy-link",
+                    "format": "PDF"
                 }
             ],
             "urls": [
@@ -267,5 +269,65 @@
                     "url": "http://same_url.it"
                 }
             ]
+        },
+    "urls have access restrictions": {
+        "onlineURLs": [
+            {
+                "url": "https://test_url_231.tt/very_long_url_here_which_would_be_very_ridiculous_in_the_website_and_so",
+                "text": "",
+                "mediaType": "text/html",
+                "source": "test"
+            },
+            {
+                "url": "https://test_url_1.tt/test.pdf",
+                "text": "",
+                "mediaType": "application/pdf",
+                "source": "test",
+                "rights": {
+                    "copyright": "PDF copyright",
+                    "link": "http://link.to.pdf.copyright",
+                    "description": "PDF is copyrighted"
+                }
+            }
+        ],
+        "urls": [],
+        "mergedData": {
+            "urls": [
+                {
+                    "url": "http://test_url_2.tt/narnia",
+                    "desc": "URL to narnia",
+                    "source": "test"
+                },
+                {
+                    "url": "http://test_url_3.it/v/something",
+                    "desc": "URL to embedded video",
+                    "embed": "iframe"
+                },
+                {
+                    "url": "http://test_url_999.tt/narnia",
+                    "desc": "Merged test URL",
+                    "source": "test 123",
+                    "rights": {
+                        "copyright": "Some other copyright",
+                        "link": "http://link.to.other.copyright",
+                        "description": "This is also copyrighted"
+                    }
+                }
+
+            ]
+        },
+        "iiifManifests": [
+            {
+                "url": "https://someiiif.ti/filepath_here"
+            },
+            {
+                "url": "https://someiiif.ti/filepath_here"
+            }
+        ],
+        "accessRestrictions": {
+            "copyright": "test copyright inc",
+            "link": "http://link.to.copyright",
+            "description": "Very stricted, much wow"
         }
+    }
 }

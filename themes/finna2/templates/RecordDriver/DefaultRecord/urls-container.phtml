@@ -7,6 +7,20 @@
   $header = $this->header ?? '';
   $renderLimit = $this->limit ?? 0;
   $renderedAmount = 0;
+  $linkDetails = $this->linkDetails;
+
+  $renderLinks = function (string $resultKey, string $type = 'link') use (&$renderedAmount, $renderLimit, $compact, $linkDetails) {
+    foreach ($linkDetails[$resultKey]['urls'] as $index => $url) {
+      if ($renderLimit > 0 && $renderedAmount >= $renderLimit) {
+        break;
+      }
+      echo $type === 'link'
+        ? $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact])
+        : $this->record($this->driver)->renderTemplate('link-video.phtml', [...$url, 'index' => $index]);
+      $renderedAmount++;
+    }
+  };
+
   ob_start();
 ?>
 <div class="recordURLs local-available-online-record">
@@ -20,46 +34,16 @@
     <?php endif; ?>
   </div>
   <div class="truncate-field">
-    <?php foreach ($this->onlineURLs['urls'] as $url): ?>
-      <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
-        break;
-      } ?>
-      <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact]) ?>
-      <?php $renderedAmount++; ?>
-    <?php endforeach; ?>
-    <?php foreach ($this->otherURLs['urls'] as $url): ?>
-      <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
-        break;
-      } ?>
-      <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact]) ?>
-      <?php $renderedAmount++; ?>
-    <?php endforeach; ?>
-    <?php if ($this->mergedURLs['count']): ?>
-      <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $mergedURLs['count']])?>">
-        <?php foreach ($this->mergedURLs['urls'] as $url): ?>
-          <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
-            break;
-          } ?>
-          <?= $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact]) ?>
-          <?php $renderedAmount++; ?>
-        <?php endforeach; ?>
+    <?php $renderLinks('onlineURLs') ?>
+    <?php $renderLinks('otherURLs') ?>
+    <?php if ($linkDetails['mergedURLs']): ?>
+      <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $linkDetails['mergedURLs']['count']])?>">
+        <?php $renderLinks('mergedURLs') ?>
       </div>
     <?php endif; ?>
     <?php if ($context !== 'record'): ?>
-      <?php foreach ($this->videoURLs['urls'] as $index => $url): ?>
-        <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
-          break;
-        } ?>
-        <?= $this->record($this->driver)->renderTemplate('link-video.phtml', [...$url, 'index' => $index]) ?>
-        <?php $renderedAmount++; ?>
-      <?php endforeach; ?>
-      <?php foreach ($this->audioURLs['urls'] as $index => $url): ?>
-        <?php if ($renderLimit > 0 && $renderedAmount > $renderLimit) {
-          break;
-        } ?>
-        <?= $this->record($this->driver)->renderTemplate('link-video.phtml', [...$url, 'index' => $index]) ?>
-        <?php $renderedAmount++; ?>
-      <?php endforeach; ?>
+      <?php $renderLinks('videoURLs', 'video') ?>
+      <?php $renderLinks('audioURLs', 'video'); ?>
     <?php endif; ?>
     <?=$identifierLinks?>
     <?php if ($openUrl->isActive()): ?>
@@ -72,5 +56,4 @@
   <strong class="available-online-header"><?=$this->escapeHtml($header)?>:</strong>
 <?php endif; ?>
 <?= $results ?>
-
 <!-- END of: finna - RecordDriver/DefaultRecord/urls-container.phtml -->

@@ -2,7 +2,7 @@
 <?php
   $recordHelper = $this->record($this->driver);
   $linkDetails = $recordHelper->getLinkDetailsExtended();
-  $media = $recordHelper->renderTemplate('media.phtml', $linkDetails);
+  $media = $recordHelper->renderTemplate('media.phtml', compact('linkDetails'));
   $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
   $summaries = $this->driver->getSummary();
   ob_start();
@@ -54,7 +54,7 @@
           <?=$this->record($this->driver)->renderTemplate('versions-link.phtml')?>
         <?php endif; ?>
       </div>
-      <?= $recordHelper->renderTemplate('urls-container.phtml', $linkDetails); ?>
+      <?= $recordHelper->renderTemplate('urls-container.phtml', compact('linkDetails')); ?>
 
       <div class="summary-wrapper">
         <div class="description recordSummary">

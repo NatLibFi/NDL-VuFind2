@@ -37,9 +37,6 @@ namespace Finna\View\Helper\Root;
 use Finna\Form\Form;
 use Finna\RecordDriver\Feature\ContainerFormatInterface;
 use Finna\RecordDriver\SolrAipa;
-use Finna\RecordDriver\SolrEad;
-use Finna\RecordDriver\SolrEad3;
-use Finna\RecordDriver\SolrLido;
 use Finna\RecordTab\TabManager;
 use Finna\Search\Solr\AuthorityHelper;
 use Finna\Service\UserPreferenceService;
@@ -51,7 +48,6 @@ use VuFind\View\Helper\Root\Url;
 
 use function array_key_exists;
 use function count;
-use function get_class;
 use function in_array;
 use function intval;
 use function is_array;
@@ -1614,13 +1610,13 @@ class Record extends \VuFind\View\Helper\Root\Record
                 'template' => 'images',
             ],
         ];
-        
+        $recordLinker = $this->getView()->plugin('recordLinker');
+        $allURLs['iiifManifests'] = $this->driver->tryMethod('getIiifManifests', [], []);
+        $allURLs['onlineURLs'] = $this->driver->tryMethod('getOnlineURLs', [], []);
         // Account for replace_other_urls setting
-        $otherURLs = $this->getLinkDetails(
+        $allURLs['otherURLs'] = $this->getLinkDetails(
             ($this->getView()->plugin('openUrl'))($this->driver, 'record')->isActive()
         );
-        $onlineURLs = $this->driver->tryMethod('getOnlineURLs', [], []);
-        $mergedURLs = $this->driver->tryMethod('getMergedRecordData', [], [])['urls'] ?? [];
 
         if ($this->getAllImages(true, true)) {
             $result['iiifManifests']['count']++;
@@ -1629,8 +1625,10 @@ class Record extends \VuFind\View\Helper\Root\Record
                 ->getGeneratedIiifManifestUrl($this->driver),
             ];
         }
-        $iiifManifests = $this->driver->tryMethod('getIiifManifests', [], []);
-        foreach (compact('iiifManifests', 'onlineURLs', 'otherURLs', 'mergedURLs') as $key => $value) {
+
+        $allURLs['mergedURLs'] = $this->driver->tryMethod('getMergedRecordData', [], [])['urls'] ?? [];
+
+        foreach ($allURLs as $resultKey => $value) {
             foreach ($value as $index => $url) {
                 if (is_string($url)) {
                     $url = json_decode($url, true);
@@ -1638,19 +1636,18 @@ class Record extends \VuFind\View\Helper\Root\Record
                 if (in_array($url['url'], $renderedURLs)) {
                     continue;
                 }
-                $cacheKey = $key;
+                $renderedURLs[] = $url['url'];
                 $url = $this->supplementURL($url, $index);
                 $isEmbeddedVideo
-                    = $this->getView()->plugin('recordLinker')->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
+                    = $recordLinker->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
 
                 if (($url['embed'] ?? '') === 'video' || !empty($url['videoSources']) || $isEmbeddedVideo) {
-                    $cacheKey = 'videoURLs';
+                    $resultKey = 'videoURLs';
                 } elseif (($url['embed'] ?? '') === 'audio') {
-                    $cacheKey = 'audioURLs';
+                    $resultKey = 'audioURLs';
                 }
-                $result[$cacheKey]['count']++;
-                $result[$cacheKey]['urls'][] = $url;
-                $renderedURLs[] = $url['url'];
+                $result[$resultKey]['count']++;
+                $result[$resultKey]['urls'][] = $url;
             }
         }
         return $result;
@@ -1666,22 +1663,19 @@ class Record extends \VuFind\View\Helper\Root\Record
      */
     protected function supplementURL(array $url, int $index): array
     {
-        $text = !empty($url['text']) ? $url['text'] : $url['url'];
-        $desc = !empty($url['desc']) ? $url['desc'] : $text;
-        $desc = !empty($url['description']) ? $url['description'] : $desc;
+        $desc = ($url['description'] ?? null)
+            ?: ($url['desc'] ?? null)
+            ?: ($url['text'] ?? null)
+            ?: $url['url'];
 
-        $linkType = $url['linkType'] ?? '';
         if ($desc === $url['url']) {
             $desc = ($this->getView()->plugin('truncateUrl'))($url['url']);
         }
-        if (
-            in_array(get_class($this->driver), [SolrLido::class, SolrEad::class, SolrEad3::class])
-            && !isset($url['rights'])
-        ) {
-            $url['rights'] = $this->driver->tryMethod('getAccessRestrictionsType', [], []);
-            $url['rights']['description'] = $this->driver->tryMethod('getAccessRestrictions', [], []);
+        $linkAccessRestrictions = $this->driver->tryMethod('getAccessRestrictionsForLinks');
+        if (!isset($url['rights']) && $linkAccessRestrictions) {
+            $url['rights'] = $linkAccessRestrictions;
         }
-        if ($linkType === 'proxy-link') {
+        if ('proxy-link' === ($url['linkType'] ?? '')) {
             $url['url'] = ($this->getView()->plugin('url'))(
                 'record-downloadfile',
                 [],

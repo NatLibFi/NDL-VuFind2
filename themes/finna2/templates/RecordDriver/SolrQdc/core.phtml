@@ -2,7 +2,7 @@
 <?php
   $recordHelper = $this->record($this->driver);
   $linkDetails = $recordHelper->getLinkDetailsExtended();
-  $media = $recordHelper->renderTemplate('media.phtml', $linkDetails);
+  $media = $recordHelper->renderTemplate('media.phtml', compact('linkDetails'));
   $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 ?>
 
@@ -23,7 +23,7 @@
       <?=$this->record($this->driver)->renderTemplate('cached-record-warning.phtml', ['driver' => $this->driver])?>
       <?=$this->record($this->driver)->getLabelList() ?>
 
-      <?= $recordHelper->renderTemplate('urls-container.phtml', $linkDetails); ?>
+      <?= $recordHelper->renderTemplate('urls-container.phtml', compact('linkDetails')); ?>
 
       <div class="record-core-metadata">
         <?php $formats = $this->driver->getFormats();

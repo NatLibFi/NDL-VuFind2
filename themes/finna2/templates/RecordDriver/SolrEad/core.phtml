@@ -2,7 +2,7 @@
 <?php
   $recordHelper = $this->record($this->driver);
   $linkDetails = $recordHelper->getLinkDetailsExtended();
-  $media = $recordHelper->renderTemplate('media.phtml', $linkDetails);
+  $media = $recordHelper->renderTemplate('media.phtml', compact('linkDetails'));
   $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 ?>
 
@@ -31,7 +31,7 @@
         </div>
       <?php endif; ?>
 
-      <?= $recordHelper->renderTemplate('urls-container.phtml', $linkDetails); ?>
+      <?= $recordHelper->renderTemplate('urls-container.phtml', compact('linkDetails')); ?>
 
       <?php
         $summExtended = $this->driver->tryMethod('getSummaryExtended');
