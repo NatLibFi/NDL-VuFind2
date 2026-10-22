@@ -36,7 +36,7 @@ finna.record = (function finnaRecord() {
         });
     }
     const more = $('.show-hide-button').html();
-    const less = $('.hide-info').html();
+    const less = $('.hide-info.less-link').html();
     $('.cc-info').on('show.bs.collapse', function changeText() {
       $(this).parents('.fulltextField').find('.show-hide-button').html(less);
       $(this).parents('ul').siblings('button.more-link').trigger("click");
