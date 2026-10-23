@@ -31,10 +31,10 @@
   // Start the link with wrapping div
   $link = '<div class="fulltextField"><a ' . $this->htmlAttributes($aAttrs) . '>';
   if ($linkIcon = $externalIconMap[$linkDescription] ?? $icon) {
-    $link .= $this->icon($linkIcon) . ' ';
+    $link .= $this->icon($linkIcon, 'icon-link__icon') . ' ';
   }
 
-  $link .= $this->transEsc('default::link_' . $linkDescription, null, $linkDescription) . '</a>';
+  $link .= '<span class="icon-link__label">' . $this->transEsc('default::link_' . $linkDescription, null, $linkDescription) . '</a></span>';
   if ($source = $this->source ?? '') {
     $sourceDesc = is_array($source)
       ? $this->transEsc('Multiple Organisations')
