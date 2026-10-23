@@ -5,10 +5,10 @@
   }
   $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 ?>
-<div class="media-<?=$mediaAlignment ?><?=$this->linkDetails['audioURLs'] ? ' audio' : ''?>">
-  <?php if ($this->linkDetails['videoURLs'] && $this->config()->inlineVideoEnabled()): ?>
+<div class="media-<?=$mediaAlignment ?><?=$this->linkDetails['audioURLs']['count'] ? ' audio' : ''?>">
+  <?php if ($this->linkDetails['videoURLs']['count'] && $this->config()->inlineVideoEnabled()): ?>
     <?php $i = 0; ?>
-      <?php foreach ($this->linkDetails['videoURLs'] as $url): ?>
+      <?php foreach ($this->linkDetails['videoURLs']['urls'] as $url): ?>
         <div class="resource-details">
           <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a></div>
           <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
