@@ -476,9 +476,13 @@ class Feed implements
             'contentDate' => 'getDateCreated',
         ];
 
+        // Values are XPath expressions for <content:encoded>.
         $xpathContent = [
-            'html' => '//item/content:encoded',
+            'html' => '.',
         ];
+
+        // Values are XPath expressions for <content:encoded>.
+        $selectHtmlContent = $config->toArray()['selectHtmlContent'] ?? [];
 
         $xcalContent = [
             'dtstart',
@@ -653,7 +657,7 @@ class Feed implements
         }
 
         if ($xpath) {
-            if ($xpathItem = $xpath->query('//item/content:encoded')->item(0)) {
+            if (($contentElements = $xpath->query('//item/content:encoded'))->count() > 0) {
                 $contentSearch = isset($config->htmlContentSearch)
                     ? $config->htmlContentSearch->toArray() : [];
 
@@ -662,20 +666,35 @@ class Feed implements
 
                 $searchReplace = array_combine($contentSearch, $contentReplace);
 
-                $cnt = 0;
-                foreach ($items as &$item) {
-                    foreach ($xpathContent as $setting => $xpathElement) {
-                        $content = $xpath->query($xpathElement, $xpathItem)->item($cnt++)?->nodeValue;
+                foreach ($items as $i => &$item) {
+                    // It is expected here that since feed items contain <content:encoded>
+                    // elements there will be one such element for each item.
+                    $content = $contentElements->item($i)?->nodeValue;
 
-                        $content = $this->processItemContent(
+                    foreach ($xpathContent as $setting => $xpathElement) {
+                        $processedContent = $this->processItemContent(
                             $content ?: '',
                             $searchReplace,
                             $cleanContent,
                             $id ?? '',
-                            $allowedImages
+                            $allowedImages,
+                            $xpathElement
                         );
 
-                        $item[$setting] = $content;
+                        $item[$setting] = $processedContent;
+                    }
+
+                    foreach ($selectHtmlContent as $setting => $xpathElement) {
+                        $processedContent = $this->processItemContent(
+                            $content ?: '',
+                            $searchReplace,
+                            $cleanContent,
+                            $id ?? '',
+                            $allowedImages,
+                            $xpathElement
+                        );
+
+                        $item['element'][$setting] = $processedContent;
                     }
                 }
             }
@@ -723,6 +742,7 @@ class Feed implements
      * @param bool   $cleanContent  Whether to run the content through cleanHtml
      * @param string $feedId        Feed ID
      * @param array  $allowedImages Allowed images
+     * @param string $xpathElement  XPath expression for selecting HTML content
      *
      * @return string
      */
@@ -731,7 +751,8 @@ class Feed implements
         array $searchReplace,
         bool $cleanContent,
         string $feedId,
-        array &$allowedImages
+        array &$allowedImages,
+        string $xpathElement
     ): string {
         if (!$content) {
             return $content;
@@ -776,6 +797,21 @@ class Feed implements
                     'src',
                     $this->proxifyImageUrl($srcAttr, $feedId)
                 );
+            }
+        }
+
+        // Select specific content if different from element root.
+        if ($xpathElement !== '.') {
+            $keep = [];
+            foreach ($domx->query($xpathElement) as $node) {
+                $keep[] = $node;
+            }
+            $root = $dom->documentElement;
+            while ($root->hasChildNodes()) {
+                $root->removeChild($root->firstChild);
+            }
+            foreach ($keep as $node) {
+                $root->appendChild($node);
             }
         }
 

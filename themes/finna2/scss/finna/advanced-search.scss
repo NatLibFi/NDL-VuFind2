@@ -473,8 +473,8 @@
         .value:before {
           @extend .fa, .fa-square-o;
             margin: 0px 4px;
-            width: 12px;
-            font-size: 16px;
+            width: 1rem;
+            font-size: 1rem;
         }
         &[aria-selected="true"] .value:before {
           content: '\f046';

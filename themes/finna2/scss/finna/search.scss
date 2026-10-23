@@ -176,10 +176,6 @@ $thumbnail-width-large:  200px !default;
 @include media-breakpoint-down(sm) {
   .result {
     border-bottom: 1px solid $border-color;
-    &#result0,
-    &:first-child {
-      border-top: 1px solid $border-color;
-    }
   }
 }
 
@@ -202,7 +198,7 @@ h2.title,
   margin: 0px;
   font-size: $font-size-h4;
   font-weight: 600;
-  line-height: 1.1em;
+  line-height: 1.25em;
 }
 .browse-title {
   margin: 0.8rem 0rem;
@@ -223,9 +219,7 @@ h2.title,
 .highlight {
   padding: 0px;
   font-size: 1em;
-  font-weight: bold;
   color: inherit;
-  background: none;
 }
 
 .savedLists {
@@ -292,6 +286,9 @@ h2.title,
   }
 }
 @include media-breakpoint-down(sm) {
+  .condensed-list-view .result-body {
+    padding-left: 0;
+  }
   .add-to-favorite-col {
     display: flex;
     gap: 0.75rem;

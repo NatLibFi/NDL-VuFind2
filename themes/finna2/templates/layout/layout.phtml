@@ -163,8 +163,6 @@
           $contentElementId = 'useraccount-content-heading';
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
-        } elseif (!empty($this->layout()->finnaMainTabs)) {
-          $contentElementId = 'content-main-tabs';
         }
       ?>
       <a class="skip-link" href="#<?=$contentElementId?>"><?=$this->transEsc('Skip to content') // skip to content ?></a>
@@ -251,6 +249,9 @@
             <?=$this->translate('search_bg_image_info_html')?>
           </div>
         </div>
+    <?php endif; ?>
+    <?php if ($isLandingPage && ($template = $this->content()->findTemplateForLng('content/Additions/frontpage-searchContent-post'))): ?>
+      <?= $this->render($template) ?>
     <?php endif; ?>
     <?php if ($isLandingPage && $template = $this->content()->findTemplateForLng('search/home/browsebar')): ?>
       <?=$this->render($template)?>

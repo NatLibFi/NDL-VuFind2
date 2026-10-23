@@ -13,8 +13,8 @@
     <div class="holdings-container-heading">
       <div class="location electronic">
         <?php if ($item['locationhref'] ?? false): ?>
-          <a href="<?=$this->escapeHtmlAttr($this->proxyUrl($item['locationhref']))?>" target="_blank">
-            <?=$this->icon('external-link') ?> <?=$locationText?>
+          <a class="icon-link" href="<?=$this->escapeHtmlAttr($this->proxyUrl($item['locationhref']))?>" target="_blank">
+            <?=$this->icon('external-link', 'icon-link__icon') ?> <span class="icon-link__label"><?=$locationText?></span>
           </a>
         <?php else: ?>
           <?=$locationText?>

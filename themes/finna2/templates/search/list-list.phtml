@@ -13,7 +13,7 @@
 ?>
 <?php $i = $this->indexStart; ?>
 <div class="<?=$this->escapeHtmlAttr(trim('record-list ' . ($this->resultsClass ?? '')))?>"<?=isset($this->resultsAttrs) ? ' ' . $this->resultsAttrs : ''?>>
-  <?php $list = $this->sortList ? $this->sortList : $this->params->getSortList(); ?>  
+  <?php $list = $this->sortList ? $this->sortList : $this->params->getSortList(); ?>
   <?php if ($list['title']['selected'] ?? false): ?>
     <?=$this->render('search/sort-title-message.phtml')?>
   <?php endif; ?>
@@ -25,7 +25,7 @@
       <?php $this->assetManager()->appendScriptLink('openurl.js'); ?>
       <?php $haveRecommendationHolder = true; ?>
     <?php endif; ?>
-    <div aria-label="<?=$this->transEsc('Search Result');?> <?=$recordNumber ?>" <?php if (empty($this->excludeResultIds)): ?> id="result<?=$i++ ?>"<?php endif; ?> class="result clearfix <?=$this->record($this->driver)->getContainerJsClasses()?>">
+    <div role="group" aria-label="<?=$this->transEsc('Search Result');?> <?=$recordNumber ?>" <?php if (empty($this->excludeResultIds)): ?> id="result<?=$i++ ?>"<?php endif; ?> class="result clearfix <?=$this->record($this->driver)->getContainerJsClasses()?>">
         <?php if ($showCheckboxes): ?>
           <div class="record-checkbox">
             <?=$this->record($current)->getCheckbox('', 'search-cart-form')?>

@@ -26,6 +26,15 @@
     .public-list-view {
         margin-top: 20px;
     }
+    /* Move paginator-info out of the way of the note button in the grid results. TODO: implement a better solution later. */
+    .grid-result .grid-image .paginator-info {
+        left: 40px;
+        right: auto;
+        z-index: auto;
+        @include media-breakpoint-down(md) {
+            left: 0px;
+        }
+    }
     .notes {
         display: inline-block;
         margin-top: 0.7em;
@@ -42,6 +51,7 @@
         }
     }
     .note-button {
+        position: absolute;
         z-index: 6;
         display: flex;
         align-items: center;

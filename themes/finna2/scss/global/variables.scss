@@ -111,6 +111,17 @@ $filterContent-text-color: $text-color !default;
 $finna-searchtools-background: $gray-light !default;
 $finna-searchtools-color: $body-bg !default;
 
+//== ShortcutBar
+$finna-shortcut-bar-link-padding: $btn-padding-y $btn-padding-x !default;
+$finna-shortcut-bar-link-text-decoration: none !default;
+$finna-shortcut-bar-link-text-decoration-hover: none !default;
+$finna-shortcut-bar-link-background: $action-link-color !default;
+$finna-shortcut-bar-link-background-hover: $dark !default;
+$finna-shortcut-bar-link-color: color.mix($finna-shortcut-bar-link-background, contrast($finna-shortcut-bar-link-background), 5%) !default;
+$finna-shortcut-bar-link-hover-color: color.mix($finna-shortcut-bar-link-background-hover, contrast($finna-shortcut-bar-link-background-hover), 5%) !default;
+$finna-shortcut-bar-link-border-radius: 1rem !default;
+$finna-shortcut-bar-background: $body-bg !default;
+
 //== Browsebar
 $finna-browsebar-background: $primary !default;
 $finna-browsebar-highlight-background: color.adjust($finna-browsebar-background, $lightness: -10% /*, $space: hsl*/) !default;

@@ -59,11 +59,13 @@
   <?php if ($orgInfo['address']['displayAddress']): ?>
     <div class="address info-element">
       <?php if ($orgInfo['mapUrl']): ?>
-        <a class="map-link" href="<?=$this->escapeHtmlAttr($orgInfo['mapUrl'])?>" target="_blank">
-          <?=$this->icon('map-marker') ?>
-          <?php $label = $this->translate('Location') . ': ' . $orgInfo['address']['displayAddress'] . ' (' . $this->translate('external_link') . ')'; ?>
-          <span class="map-address" aria-label="<?=$this->escapeHtmlAttr($label)?>">
-            <?=$this->escapeHtml($orgInfo['address']['displayAddress'])?>
+        <a class="map-link icon-link" href="<?=$this->escapeHtmlAttr($orgInfo['mapUrl'])?>" target="_blank">
+          <?=$this->icon('map-marker', 'icon-link__icon') ?>
+          <span class="icon-link__label">
+            <?php $label = $this->translate('Location') . ': ' . $orgInfo['address']['displayAddress'] . ' (' . $this->translate('external_link') . ')'; ?>
+            <span class="map-address" aria-label="<?=$this->escapeHtmlAttr($label)?>">
+              <?=$this->escapeHtml($orgInfo['address']['displayAddress'])?>
+            </span>
           </span>
         </a>
       <?php else: ?>
@@ -73,8 +75,8 @@
   <?php endif; ?>
 
   <div class="details-link info-element">
-    <a href="<?=$this->url('organisationinfo-home', [], ['fragment' => $orgInfo['id']])?>" class="details">
-      <?=$this->icon('homepage-link') ?> <?=$this->translate('organisation_info_more_info')?>
+    <a href="<?=$this->url('organisationinfo-home', [], ['fragment' => $orgInfo['id']])?>" class="details icon-link">
+      <?=$this->icon('homepage-link', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->translate('organisation_info_more_info')?></span>
     </a>
   </div>
   <div class="services">

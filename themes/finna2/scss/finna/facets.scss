@@ -103,7 +103,7 @@
     line-height: $line-height-base;
   }
   // Hide checkbox from facets
-  .icon-link .icon {
+  .icon-link:not(.more-narrow-toggle) .icon {
     display: none;
   }
   .collapse,
