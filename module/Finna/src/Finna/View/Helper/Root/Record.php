@@ -1558,4 +1558,114 @@ class Record extends \VuFind\View\Helper\Root\Record
         }
         return parent::getListNotes($list_id, $user_id);
     }
+
+    /**
+     * Get all the links associated with this record. Returns an array of
+     * associative arrays each containing 'count' and 'urls' keys.
+     *
+     * @return array
+     */
+    public function getLinkDetailsExtended(): array
+    {
+        $renderedURLs = [];
+        $result = [
+            'videoURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'audioURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'otherURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'onlineURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'mergedURLs' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+            'iiifManifests' => [
+                'count' => 0,
+                'urls' => [],
+            ],
+        ];
+        $recordLinker = $this->getView()->plugin('recordLinker');
+        $allURLs['iiifManifests'] = $this->driver->tryMethod('getIiifManifests', [], []);
+        $allURLs['onlineURLs'] = $this->driver->tryMethod('getOnlineURLs', [], []);
+        // Account for replace_other_urls setting
+        $allURLs['otherURLs'] = $this->getLinkDetails(
+            ($this->getView()->plugin('openUrl'))($this->driver, 'record')->isActive()
+        );
+
+        $allURLs['mergedURLs'] = $this->driver->tryMethod('getMergedRecordData', [], [])['urls'] ?? [];
+
+        foreach ($allURLs as $resultKey => $value) {
+            foreach ($value as $index => $url) {
+                if (is_string($url)) {
+                    $url = json_decode($url, true);
+                }
+                if (in_array($url['url'], $renderedURLs)) {
+                    continue;
+                }
+                $renderedURLs[] = $url['url'];
+                $url = $this->supplementURL($url, $index);
+                $isEmbeddedVideo
+                    = $recordLinker->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
+
+                if (($url['embed'] ?? '') === 'video' || !empty($url['videoSources']) || $isEmbeddedVideo) {
+                    $resultKey = 'videoURLs';
+                } elseif (($url['embed'] ?? '') === 'audio') {
+                    $resultKey = 'audioURLs';
+                }
+                $result[$resultKey]['count']++;
+                $result[$resultKey]['urls'][] = $url;
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * Support function to supplement external urls with rights and description.
+     *
+     * @param array $url   URL to process.
+     * @param int   $index Index of the URL.
+     *
+     * @return array
+     */
+    protected function supplementURL(array $url, int $index): array
+    {
+        $desc = ($url['description'] ?? null)
+            ?: ($url['desc'] ?? null)
+            ?: ($url['text'] ?? null)
+            ?: $url['url'];
+
+        if ($desc === $url['url']) {
+            $desc = ($this->getView()->plugin('truncateUrl'))($url['url']);
+        }
+        $linkAccessRestrictions = $this->driver->tryMethod('getAccessRestrictionsForLinks');
+        if (!isset($url['rights']) && $linkAccessRestrictions) {
+            $url['rights'] = $linkAccessRestrictions;
+        }
+        if ('proxy-link' === ($url['linkType'] ?? '')) {
+            $url['url'] = ($this->getView()->plugin('url'))(
+                'record-downloadfile',
+                [],
+                [
+                    'query' => [
+                        'id' => $this->driver->getUniqueID(),
+                        'index' => $index,
+                        'format' => $url['format'],
+                        'type' => 'document',
+                    ],
+                ]
+            );
+        }
+        $url['desc'] = $desc;
+        return $url;
+    }
 }
