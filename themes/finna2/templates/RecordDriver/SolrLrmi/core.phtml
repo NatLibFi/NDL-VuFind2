@@ -74,7 +74,7 @@
                 <li class="fulltextField">
                   <?php if (in_array($material['format'], $linkedFormats)): ?>
                     <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
-                      aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>" target="_blank">
+                      aria-label="<?= $title . ' ' . $this->escapeHtml($material['format'] . ($filesize ? (', ' . $filesize) : '')) . ' ' . $this->escapeHtml($externalLinkText)?>" target="_blank">
                       <?=$this->icon($isHtml ? 'external-link' : 'download') ?>
                       <?= $title ?>
                     </a>
@@ -83,7 +83,7 @@
                       : $this->escapeHtml($material['format'] . ($filesize ? (', ' . $filesize) : ''))
                     ?>)
                   <?php elseif ($externalLink): ?>
-                    <a href="<?= $externalLink ?>" aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>"
+                    <a href="<?= $externalLink ?>" aria-label="<?= $title . ' ' . $this->escapeHtmlAttr($externalLinkText) ?>"
                       target="_blank"><?=$this->icon('external-link') ?><?= $title ?></a>
                     <?= $externalLinkAdditionalInfo ?>
                   <?php else: ?>
