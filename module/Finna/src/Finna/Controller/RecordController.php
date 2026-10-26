@@ -931,17 +931,14 @@ class RecordController extends \VuFind\Controller\RecordController implements Lo
     {
         $index  = $this->params()->fromQuery('index', 0);
         $format = $this->params()->fromQuery('format');
-        $type   = $this->params()->fromQuery('type');
+
         // Set up next/previous record links (if appropriate)
-        if ($this->getSearchMemory()->getCurrentSearch()?->getOptions()?->resultScrollerActive()) {
-            $scrollData = $this->resultScroller()->getScrollData(
-                $this->loadRecord()
-            );
-        } else {
-            $scrollData = null;
-        }
+        $scrollData = $this->getSearchMemory()->getCurrentSearch()?->getOptions()?->resultScrollerActive()
+                    ? $scrollData = $this->resultScroller()->getScrollData($this->loadRecord())
+                    : null;
+
         // Modify current image index to a format for tify-viewer
-        $pages = [$index + 1];
+        $pages = [$index];
         return $this
             ->createViewModel(compact('index', 'format', 'scrollData', 'pages'))
             ->setTemplate('record/media');

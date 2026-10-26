@@ -67,6 +67,7 @@
     }
 
     &.simple {
+        max-height: 200px;
         .openseadragon-canvas {
             pointer-events: none !important;
         }

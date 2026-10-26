@@ -750,18 +750,20 @@ finna.layout = (function finnaLayout() {
   function initAudioButtons() {
     var scripts = {
       'videojs': 'vendor/video.min.js',
+      'finna-audio-player': 'finna-audio-player.js',
     };
     var subScripts = {
       'videojs-hotkeys': 'vendor/videojs.hotkeys.min.js',
       'videojs-quality': 'vendor/videojs-contrib-quality-levels.js',
       'videojs-airplay': 'vendor/silvermine-videojs-airplay.min.js',
     };
-    $('.audio-accordion .audio-item-wrapper:not(.done)').each(function initAudioPlayer() {
+    $('.audio-accordion .audio-item-wrapper').each(function initAudioPlayer() {
       var self = $(this);
       self.addClass('done');
       var play = self.find('.play');
       var source = self.find('source');
       play.one('click', function onPlay() {
+        console.log('test');
         finna.scriptLoader.load(
           scripts,
           () => {
@@ -772,11 +774,7 @@ finna.layout = (function finnaLayout() {
                 var audio = self.find('audio');
                 audio.removeClass('hide').addClass('video-js');
                 source.attr('src', source.data('src'));
-                videojs(
-                  audio.attr('id'),
-                  { controlBar: { volumePanel: false, muteToggle: false } },
-                  function onVideoJsInited() {}
-                );
+                finna.audioPlayer.initPlayer(audio);
                 play.remove();
                 self.find('.vjs-play-control').focus();
               }
@@ -800,12 +798,15 @@ finna.layout = (function finnaLayout() {
 
   }
 
+  /**
+   * Init model viewer buttons
+   */
   function initModelButtons() {
     const modelViewer = document.getElementById('model-viewer');
     let firstSrc = '';
     document.querySelectorAll('.model-button:not(.done)').forEach((button) => {
       let src = `${VuFind.path}/AJAX/JSON?${button.dataset.params}`;
-      button.addEventListener('click', (e) => {
+      button.addEventListener('click', (/*e*/) => {
         document.getElementById('model-viewer').setAttribute('src', src);
       });
       if (!firstSrc) {
@@ -1176,7 +1177,7 @@ finna.layout = (function finnaLayout() {
       initOffcanvas();
       initMobileNavBtnAnimation();
     },
-    initAudioButtons:initAudioButtons,
+    initAudioButtons: initAudioButtons,
     initModelButtons: initModelButtons,
     showPostLoginLightbox: showPostLoginLightbox
   };

@@ -1,0 +1,27 @@
+<?php
+  $divAttrs = [
+    'class' => trim(($this->class ?? '' ) . ' ' . $this->_componentClass),
+  ];
+  $images = $this->images ?? [];
+?>
+<div<?= $this->htmlAttributes($divAttrs); ?>>
+  <div class="images">
+    <?php foreach ($images as $index => $image): ?>
+      <div>
+        <?php
+          $imgAttrs = [
+            'class' => 'display-image',
+            'data-src' => $image['src'],
+            'data-id' => $index,
+          ];
+        ?>
+        <img<?= $this->htmlAttributes($imgAttrs); ?>>
+      </div>
+    <?php endforeach; ?>
+  </div>
+  <div class="paginator">
+      <?php foreach ($images as $index => $image): ?>
+        <div></div>
+      <?php endforeach; ?>
+  </div>
+</div>

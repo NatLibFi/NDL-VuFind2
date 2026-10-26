@@ -6,6 +6,7 @@
 <?php foreach ($audioUrls as $ind => $url):
     $format = $this->driver->tryMethod('getRecordFormat', [], '');
     $showDetails = $showFormat = false;
+    var_dump($url);
     if ($format === 'lido') {
       $showDetails = true;
       $showFormat = $url['desc'] === $url['url'];

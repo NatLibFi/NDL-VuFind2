@@ -12,14 +12,14 @@
       'active' => $active,
       'ariaCurrent' => $active,
       'description' => 'Presentations of ' . $label,
-      'label' => $name,
+      'label' => $label,
       'link' => '#record-presentation-' . $label,
       '__linkAttributes' => [
         'data-bs-target' => '#record-presentation-' . $label,
         'data-bs-toggle' => 'tab',
       ],
     ];
-    $navContent = $this->render("record/mediatabs/$label.phtml", [...$links, ...compact('driver')]);
+    $navContent = $this->render("record/mediatabs/$label.phtml", [...$links, 'driver' => $this->driver]);
     $active = false;
     $navigation[] = [
       'tab' => $navTab,
@@ -46,8 +46,7 @@
       <?php
         $tab = $values['tab'];
       ?>
-      <?php $active = $i == 0 ? ' active' : ''?>
-      <div class="tab-content tab-pane fade show<?=$active?>" id="record-presentation-<?= $tab['label'] ?>">
+      <div class="tab-content tab-pane fade show<?=$tab['active'] ? ' active' : ''?>" id="record-presentation-<?= $tab['label'] ?>">
         <?= $values['content'] ?>
       </div>
     <?php endforeach;?>

@@ -1,4 +1,4 @@
-/* global finna, VuFind, L, listId */
+/* global finna, VuFind, L */
 var imageElement = '<a draggable="false" href="" class="image-popup image-popup-navi hidden-print" data-lightbox-ignore></a>';
 
 var defaults = {
@@ -464,7 +464,6 @@ FinnaPaginator.prototype.onListButton = function onListButton(direction) {
 
 FinnaPaginator.prototype.setPopupImageState = function setPopupImageState(type) {
   var _ = this;
-  console.log(type);
   switch (type) {
   case 'noZoom':
     _.imagePopup.off('click').on('click', function onImageClick(e){
@@ -522,15 +521,7 @@ FinnaPaginator.prototype.setPagerInfo = function setPagerInfo() {
   if (_.images.length < _.settings.totalImagesCount) {
     imageOfImages += ` (${_.settings.totalImagesCount})`;
   }
-  var advanced = `${translations.image} ${imageOfImages}`;
   _.pagerInfo.find('.image-index').html(imageOfImages);
-};
-
-/**
- * Sets the current record index inside list view to the modal
- */
-FinnaPaginator.prototype.setRecordIndex = function setRecordIndex() {
-  var _ = this;
 };
 
 /**
@@ -769,7 +760,6 @@ FinnaPaginator.prototype.setMaxImages = function setMaxImages() {
  * Function to set image dimensions to download image link
  */
 FinnaPaginator.prototype.setDimensions = function setDimensions() {
-  var _ = this;
   var container = $('.image-details-container').not('.hidden');
   var openLink = container.find('.open-link a, .display-image a').attr('href');
   if (typeof openLink !== 'undefined') {

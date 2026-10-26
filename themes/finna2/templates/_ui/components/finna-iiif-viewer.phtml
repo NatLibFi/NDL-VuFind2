@@ -16,6 +16,7 @@ $tifyAttrs = [
 ?>
 
 <div class="record-viewer-container container">
+  <div class="no-image">No image to display</div>
   <div<?= $this->htmlAttributes($tifyAttrs); ?>></div>
 
   <?php if (!$simple): ?>
@@ -78,7 +79,15 @@ $tifyConfig = json_encode($tifyConfig);
 
 $js = <<<JS
     import Tify from $tifyJsPath;
-    new Tify($tifyConfig);
+    const tifyPlayer = new Tify($tifyConfig);
+    tifyPlayer.ready.then((e, t, u) => {
+      tifyPlayer.viewer.addHandler('tile-loaded', (i) => {
+        if (typeof i.tile.url === 'undefined') {
+          return;
+        }
+        console.log(i.tile);
+      });
+    });
     JS;
 
 echo $this->assetManager()->outputInlineScriptString($js, ['type' => 'module']);

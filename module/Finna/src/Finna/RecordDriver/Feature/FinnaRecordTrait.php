@@ -585,4 +585,14 @@ trait FinnaRecordTrait
         }
         return '';
     }
+
+    /**
+     * Get access restrictions for links
+     *
+     * @return array
+     */
+    protected function getAccessRestrictionsForLinks(): array
+    {
+        return [];
+    }
 }

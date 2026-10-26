@@ -1,9 +1,11 @@
-<?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $this->audios]);?>
+<?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $this->urls]);?>
 
 <?php
   $script = <<<JS
-      finna.layout.initAudioButtons();
       finna.record.initAudioAccordion();
+      finna.scriptLoader.load({'finna-audio-player': 'finna-audio-player.js'}, () => {
+        finna.audioPlayer.initPlayers();
+      });
       JS;
 ?>
 <?=$this->assetManager()->outputInlineScriptString($script) ?>

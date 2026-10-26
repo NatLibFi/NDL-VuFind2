@@ -1569,11 +1569,6 @@ class Record extends \VuFind\View\Helper\Root\Record
     {
         $renderedURLs = [];
         $result = [
-            'imageURLs' => [
-                'count' => 0,
-                'urls' => [],
-                'template' => 'images',
-            ],
             'videoURLs' => [
                 'count' => 0,
                 'urls' => [],
@@ -1641,7 +1636,9 @@ class Record extends \VuFind\View\Helper\Root\Record
                 $isEmbeddedVideo
                     = $recordLinker->getEmbeddedVideo($url['url']) === 'data-embed-iframe';
 
-                if (($url['embed'] ?? '') === 'video' || !empty($url['videoSources']) || $isEmbeddedVideo) {
+                if (($url['linkType'] ?? '') === 'download') {
+                    $resultKey = 'onlineURLs';
+                } else if (($url['embed'] ?? '') === 'video' || !empty($url['videoSources']) || $isEmbeddedVideo) {
                     $resultKey = 'videoURLs';
                 } elseif (($url['embed'] ?? '') === 'audio') {
                     $resultKey = 'audioURLs';
