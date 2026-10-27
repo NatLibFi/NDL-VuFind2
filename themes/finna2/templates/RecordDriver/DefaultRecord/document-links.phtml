@@ -23,6 +23,7 @@
         <?php $aAttrs = [
             'download' => '',
             'rel' => 'nofollow',
+            'aria-label' => $this->translate('Download the file') . (($desc = trim((string)$description)) !== '' && $desc !== 'Download the file' ? ' ' . $desc : ''),
             'class' => 'icon-link',
         ]; ?>
         <a href="<?=$this->url('record-downloadfile', [], ['query' => ['id' => $this->driver->getUniqueID(), 'index' => $i, 'format' => $document['format'], 'type' => 'document']])?>" <?=$this->htmlAttributes($aAttrs)?>>
