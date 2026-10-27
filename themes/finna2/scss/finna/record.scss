@@ -253,10 +253,14 @@
   }
   .cc-info {
     margin-left: 5px;
+    .less-link {
+      display: inline-block;
+    }
     .access-rights {
       padding: 0px;
       margin: 0px;
       font-size: $font-size-small;
+      word-break: normal;
     }
   }
   a.copyright-description,
