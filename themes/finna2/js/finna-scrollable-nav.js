@@ -8,6 +8,7 @@ finna.scrollableNav = (function finnaScrollableNav() {
       const list = scrollable.querySelector('.nav');
       const items = [...list.querySelectorAll('.nav-item')];
       const links = [...list.querySelectorAll('.nav-link')];
+      const redirectLink = scrollable.querySelector('.link-tabs');
 
       const prevBtn = scrollable.querySelector('.js-scroll-prev');
       const nextBtn = scrollable.querySelector('.js-scroll-next');
@@ -38,9 +39,11 @@ finna.scrollableNav = (function finnaScrollableNav() {
         el.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         el.focus({ preventScroll: true });
       }
-
-      // Add keyboard navigation
-      links.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigate(link); }));
+  
+      if (!redirectLink) {
+        // Add keyboard navigation
+        links.forEach(link => link.addEventListener('click', (e) => { e.preventDefault(); navigate(link); }));
+      }
 
       list.addEventListener('keydown', (e) => {
         const idx = Array.from(links).indexOf(document.activeElement);
@@ -70,9 +73,11 @@ finna.scrollableNav = (function finnaScrollableNav() {
 
       // Scroll to active item on load
       const activeOnLoad = list.querySelector('.nav-item .nav-link.active') || links[0];
-
       links.forEach(l => l.tabIndex = -1);
       activeOnLoad.tabIndex = 0;
+      if (redirectLink) {
+        activeOnLoad.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
     });
   }
 

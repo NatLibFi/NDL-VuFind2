@@ -1,0 +1,27 @@
+<?php
+  $this->buttonNumber ??= bin2hex(random_bytes(5));
+  $buttonAttributes = [
+    'class' => ['copy-to-clipboard-button', 'dropdown-item'],
+    'role' => 'button',
+    'tabindex' => '0',
+    'href' => '#',
+    'data-number' => $this->buttonNumber,
+    'data-target' => $this->selector,
+  ];
+  $buttonText = $this->icon('clone');
+  if ($this->hideButtonText) {
+    $buttonAttributes['title'] = $this->transEscAttr('copy_url_to_clipboard_button_label');
+  }
+?>
+<a<?=$this->htmlAttributes($buttonAttributes)?>>
+<?=$this->icon('clone')?>
+<span class="icon-link__label <?=$this->hideButtonText ? 'visually-hidden' : ''?>">
+    <?=$this->transEsc('copy_url_to_clipboard_button_label')?>
+</span>
+</a>
+<span id="copySuccessMessage<?=$this->buttonNumber?>" class="hidden">
+    <span class="copyMessage text-success"><small><?=$this->translate('copy_to_clipboard_success_message')?></small></span>
+</span>
+<span id="copyFailureMessage<?=$this->buttonNumber?>" class="hidden">
+    <span class="copyMessage text-danger"><small><?=$this->translate('copy_to_clipboard_failure_message')?></small></span>
+</span>

@@ -1,18 +1,17 @@
 .searchbox {
   @extend .clearfix;
-  margin: 12px 0px;
+  padding: 1rem 0px;
 
   .searchbox-flex {
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
     .search {
       flex: 1;
+      margin-right: 1rem;
     }
     .search-help-icon {
-      font-size: 1.9em;
-    }
-    .btn-advanced {
-      margin-left: 10px;
+      font-size: 1.5rem;
     }
     .btn-link {
       font-size: 1em;
@@ -20,9 +19,9 @@
       color: $finna-search-link-color;
     }
     .search-tooltip {
+      margin-right: 1rem;
       button {
-        margin-left: 30px;
-        color: $tooltip-button-color;
+        color: $finna-search-tooltip-color;
       }
     }
   }
@@ -75,6 +74,9 @@
       border-radius: none;
       .icon {
         font-size: 2em;
+        &:hover {
+          color: darken($action-link-color, 10%);
+        }
       }
     }
   }
@@ -150,6 +152,11 @@
 @include media-breakpoint-up(md) {
   .searchbox-flex .search {
     max-width: 70%;
+  }
+}
+@include media-breakpoint-up(md) {
+  .searchbox-flex .search-links {
+    width: 100%;
   }
 }
 @include media-breakpoint-down(lg) {

@@ -32,8 +32,9 @@
                 'params' => $this->params,
                 'current' => $this->current,
                 'page' => $this->next,
-                'liClasses' => ['visually-hidden'],
-                'contentHtml' => '<h2>' . $this->translate('page_next') . '</h2>',
+                'liClasses' => ['page-next-btn'],
+                'label' => $this->translate('page_next'),
+                'contentHtml' => $this->translate('Next'),
             ]
           )
         ?>

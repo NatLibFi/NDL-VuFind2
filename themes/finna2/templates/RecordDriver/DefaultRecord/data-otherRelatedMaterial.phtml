@@ -4,9 +4,9 @@
     <?php foreach ($data as $i => $item): ?>
       <?= $i > 0 ? '<br>' : '' ?>
       <?php if (!empty($item['url'])): ?>
-        <a href="<?=$this->escapeHtmlAttr($item['url'])?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($item['text'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
-          <?=$this->icon('external-link') ?>
-          <?=$this->escapeHtml($item['text'])?>
+        <a class="icon-link" href="<?=$this->escapeHtmlAttr($item['url'])?>" target="_blank" aria-label="<?=$this->escapeHtmlAttr($item['text'])?> (<?=$this->transEscAttr('external_link')?>; <?=$this->transEscAttr('Open in a new window')?>)">
+          <?=$this->icon('external-link', 'icon-link__icon') ?>
+          <span class="icon-link__label"><?=$this->escapeHtml($item['text'])?></span>
         </a>
       <?php else: ?>
         <?=$this->escapeHtml($item['text'])?>

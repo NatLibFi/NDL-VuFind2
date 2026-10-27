@@ -90,12 +90,6 @@
   padding-left: 0;
 }
 
-.add-to-favorite-col,
-.location-link-text {
-  .qrcodeLink {
-    background-color: $body-bg;
-  }
-}
 .location-link-text {
   .qrcode {
     width: 120px;
@@ -344,14 +338,6 @@ ol {
 
   > li {
     list-style-type: decimal;
-  }
-}
-
-.btn-unstyled {
-  border: none;
-  background-color: transparent;
-  &:hover, .btn-group.open & {
-    box-shadow: none;
   }
 }
 

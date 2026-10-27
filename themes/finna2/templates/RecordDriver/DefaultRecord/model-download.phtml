@@ -56,9 +56,9 @@
                         $fileSize = !empty($fileSize['value']) && $fileSize['unit'] === 'byte' ? '(' . $this->fileSize($fileSize['value']) . ')' : '';
                     }
             ?>
-            <a download href="<?=$url?>" rel="nofollow">
-                <?=$this->icon('download') ?>
-                <span><?=$this->transEsc('Download the file')?></span>
+            <a class="icon-link" download href="<?=$url?>" rel="nofollow">
+                <?=$this->icon('download', 'icon-link__icon') ?>
+                <span class="icon-link__label"><?=$this->transEsc('Download the file')?></span>
             </a> <span class="file-size"><?=$fileSize?></span>
         </div>
     <?php endif; ?>

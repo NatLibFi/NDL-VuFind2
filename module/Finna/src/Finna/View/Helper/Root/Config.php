@@ -111,4 +111,19 @@ class Config extends \VuFind\View\Helper\Root\Config
         $limits = $config['Social']['daily_record_comment_limit'] ?? [];
         return $limits[$user->getAuthMethod()] ?? $limits['*'] ?? null;
     }
+
+    /**
+     * Get offcanvas sidebar side.
+     *
+     * Finna: force off-canvas enabled.
+     *
+     * @return ?string 'left', 'right'
+     */
+    public function offcanvasSide(): ?string
+    {
+        $config = $this->get('config');
+        return ($config->Site->sidebarOnLeft ?? false)
+            ? 'left'
+            : 'right';
+    }
 }

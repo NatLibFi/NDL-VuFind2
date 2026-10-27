@@ -58,8 +58,9 @@
 }
 
 .useraccount-table {
-  .library-card-actions a {
-    display: block;
+  .library-card-actions a:not(.dropdown-item) {
+    display: inline-flex;
+    width: 100%;
     margin: 0.3em 0em;
   }
 }

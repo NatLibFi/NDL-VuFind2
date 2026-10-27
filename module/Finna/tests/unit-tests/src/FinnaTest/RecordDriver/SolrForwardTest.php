@@ -768,7 +768,6 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                     'copyright' => 'Luvanvarainen käyttö / ei tiedossa',
                     'link' => 'EI EI!',
                 ],
-                ['fi'],
             ],
             [
                 'getDescription',
@@ -1025,23 +1024,21 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
     /**
      * Test events with array values as return types.
      *
-     * @param string $function       Function of the driver to test.
-     * @param array  $expected       Result to be expected.
-     * @param array  $functionParams Parameters for the function to test.
+     * @param string $function Function of the driver to test.
+     * @param array  $expected Result to be expected.
      *
      * @return void
      */
     #[\PHPUnit\Framework\Attributes\DataProvider('getEventsArrayData')]
     public function testEventsWithArrayExpected(
         string $function,
-        array $expected,
-        array $functionParams = []
+        array $expected
     ): void {
-        $driver = $this->getDriver();
+        $driver = $this->getDriver(language: 'fi');
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertEquals(
             $expected,
-            $driver->$function(...$functionParams)
+            $driver->$function()
         );
     }
 
@@ -1055,7 +1052,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
         $driver = $this->getDriver();
         $this->assertSame(
             'Luvanvarainen käyttö / ei tiedossa',
-            $driver->getImageRights('fi', false)
+            $driver->getImageRights(false)
         );
     }
 
@@ -1106,13 +1103,17 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
      */
     public function testGetSummary()
     {
-        $driver = $this->getDriver();
-        $this->assertSame(
-            [
-                'Tämä on synopsis.',
-            ],
-            $driver->getSummary()
-        );
+        $expected =  [
+            'fi' => ['Tämä on synopsis.'],
+            'en' => ['This is synopsis.'],
+        ];
+        foreach ($expected as $key => $value) {
+            $driver = $this->getDriver(language: $key);
+            $this->assertSame(
+                $value,
+                $driver->getSummary()
+            );
+        }
     }
 
     /**
@@ -1164,13 +1165,17 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
     /**
      * Get a record driver with fake data.
      *
-     * @param array $overrides    Fixture fields to override.
-     * @param array $searchConfig Search configuration.
+     * @param array  $overrides    Fixture fields to override.
+     * @param array  $searchConfig Search configuration.
+     * @param string $language     Language
      *
      * @return SolrForward
      */
-    protected function getDriver($overrides = [], $searchConfig = []): SolrForward
-    {
+    protected function getDriver(
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+    ): SolrForward {
         $fixture = $this->getFixture('forward/forward_test.xml', 'Finna');
         $mainConfig = new \VuFind\Config\Config([
             'ImageRights' => [
@@ -1215,6 +1220,7 @@ class SolrForwardTest extends \PHPUnit\Framework\TestCase
                 ],
             ]
         );
+        $record->setPreferredLanguage($language);
         return $record;
     }
 }

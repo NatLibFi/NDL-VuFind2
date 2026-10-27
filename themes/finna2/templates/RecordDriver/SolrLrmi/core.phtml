@@ -1,9 +1,9 @@
 <!-- START of: finna - RecordDriver/SolrLrmi/core.phtml -->
 <?php
-  $rights = $this->driver->getAccessRestrictionsType($this->layout()->userLang);
+  $rights = $this->driver->getAccessRestrictionsType();
   $summary = $this->driver->getSummary();
   $externalLink = $this->driver->getExternalLink();
-  $materials = $this->driver->getMaterials($this->layout()->userLang);
+  $materials = $this->driver->getMaterials();
   $dateCreated = $this->driver->getDateCreated();
   $dateModified = $this->driver->getDateModified();
   $img = $this->recordImage($this->record($this->driver));
@@ -73,18 +73,18 @@
                 <?php $filesize = $this->fileSize($material['filesize']); ?>
                 <li class="fulltextField">
                   <?php if (in_array($material['format'], $linkedFormats)): ?>
-                    <a href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
-                      aria-label="<?= $title . ' ' . $this->escapeHtml($material['format'] . ($filesize ? (', ' . $filesize) : '')) . ' ' . $this->escapeHtml($externalLinkText)?>" target="_blank">
-                      <?=$this->icon($isHtml ? 'external-link' : 'download') ?>
-                      <?= $title ?>
+                    <a class="icon-link" href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
+                      aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>" target="_blank">
+                      <?=$this->icon($isHtml ? 'external-link' : 'download', 'icon-link__icon') ?>
+                      <span class="icon-link__label"><?= $title ?></span>
                     </a>
                     (<?= $isHtml
                       ? $this->escapeHtml($externalLinkText)
                       : $this->escapeHtml($material['format'] . ($filesize ? (', ' . $filesize) : ''))
                     ?>)
                   <?php elseif ($externalLink): ?>
-                    <a href="<?= $externalLink ?>" aria-label="<?= $title . ' ' . $this->escapeHtmlAttr($externalLinkText) ?>"
-                      target="_blank"><?=$this->icon('external-link') ?><?= $title ?></a>
+                    <a class="icon-link" href="<?= $externalLink ?>" aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>"
+                      target="_blank"><?=$this->icon('external-link', 'icon-link__icon') ?><span class="icon-link__label"><?= $title ?></span></a>
                     <?= $externalLinkAdditionalInfo ?>
                   <?php else: ?>
                     <?= $title ?>

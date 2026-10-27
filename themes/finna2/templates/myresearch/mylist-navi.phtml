@@ -10,11 +10,19 @@
         }
      }
   }
+
+  $side = $this->config()->offcanvasSide();
 ?>
 <ul class="dropdown-menu subtabs collapse show" role="presentation">
   <li class="mobile-navigation-header-container visible-xs visible-sm">
     <h1 class="mobile-navigation-header"><?=$this->transEsc('Favourite lists')?></h1>
-    <button class="sidebar-close-btn" aria-label="<?=$this->transEsc('close')?>"><?=$this->icon('sidefacets-close', 'sidefacets-close-icon') ?></button>
+    <span class="visible-xs visible-sm close-offcanvas">
+      <a class="close-offcanvas-btn" href="#" data-toggle="vufind-offcanvas" role="button">
+        <?='left' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-left' : 'offcanvas-hide-right') : ''?>
+        <span class="btn-link__label"><?=$this->transEsc('navigate_back') ?></span>
+        <?='right' === $side ? $this->icon($this->layout()->rtl ? 'offcanvas-hide-right' : 'offcanvas-hide-left') : ''?>
+      </a>
+    </span>
   </li>
   <?php foreach ($lists as $current): ?>
     <?php
@@ -35,18 +43,6 @@
       <?php if ($active): ?>
         <?php $url = $this->url('list-page', ['lid' => $list->getId()], ['force_canonical' => true]) ?>
         <?= $this->partial('myresearch/list-visibility.phtml', ['listUrl' => $url, 'public' => $list->isPublic()]); ?>
-        <?=
-          $this->component(
-              'confirm-button',
-              [
-                'buttonLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId()]]),
-                'buttonLabel' => 'delete_list',
-                'buttonClass' => 'btn btn-link',
-                'confirmLink' => $this->url('myresearch-deletelist', [], ['query' => ['listID' => $list->getId(), 'confirm' => 1]]),
-                'header' => 'confirm_delete_list_text',
-              ]
-          )
-        ?>
       <?php endif; ?>
     </li>
   <?php endforeach; ?>

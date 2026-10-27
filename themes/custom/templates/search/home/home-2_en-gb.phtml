@@ -5,35 +5,32 @@
 <div>
   <div class="info-col">
     <div class="infobox">
-    <h2>TODO Kokeile ulkomaisten tieteellisten aineistojen hakua</h2>
-    <p>TODO Tee sinua kiinnostava haku, ja valitse haun jälkeen ulkomaisten aineistojen välilehti.<p>
-    <p>TODO<small>Ulkomaiset aineistot sisältävät mm. vertaisarvioituja kokotekstejä sekä verkossa saatavilla olevia aineistoja.</small></p>
-    <p><a class="btn btn-primary" role="button" href="<?=$this->url('primo-search');?>?lookfor=Work%20intensification&amp;type=AllFields&amp;filter%5B%5D=tlevel%3A%22online_resources%22"><?=$this->icon('search') ?> Esimerkkihaku</a>
+    <h2>Try the search for international scholarly material</h2>
+    <p>Do a search that interests you and then select the tab for international material.<p>
+    <p><small>The international material contains peer-reviewed full texts as well as material available online.</small></p>
+    <p><a class="btn btn-primary" role="button" href="<?=$this->url('primo-search');?>?lookfor=Work%20intensification&amp;type=AllFields&amp;filter%5B%5D=tlevel%3A%22online_resources%22"><?=$this->icon('search') ?> Example Search</a>
     </div>
   </div>
   <div class="info-col">
     <div class="infobox">
-      <h2>TODO Uusi lainat </h2>
-      <p><a class="btn btn-primary" role="button" href="<?=$this->url('myresearch-checkedout')?>" title="Kirjaudu sisään"><?=$this->icon('sign-in') ?> Kirjaudu sisään </a> kirjastokortilla tai Haka-tunnuksillasi.</p>
-      <p>Klikkaa uusi kaikki lainat -painiketta.</p>
-      <p>Kaikki uusittavissa olevat lainasi uusitaan.</p>
+      <h2>New loans</h2>
+      <p><a class="btn btn-primary" role="button" href="<?=$this->url('myresearch-checkedout')?>" title="Login"><?=$this->icon('sign-in') ?> Login </a> using your library card or Haka-login.</p>
+      <p>Select the button Renew all loans.</p>
+      <p>All renewable loans will be renewed.</p>
     </div>
   </div>
 
   <div class="info-col">
     <div class="infobox">
-      <h2>Class infobox styles can be edited in variables.scss file</h2>
+      <h2>Class infobox styles can be edited in variables.less file</h2>
       <ul>
-        <li>$home-middle-background = background of full container</li>
-        <li>$infobox-background = infobox background</li>
-        <li>$infobox-border = infobox border</li>
-        <li>$infobox-text-color = text default color</li>
-        <li>$infobox-box-shadow = shadow of infoboxes</li>
+        <li>@home-middle-background = background of full container</li>
+        <li>@infobox-background = infobox background</li>
+        <li>@infobox-border = infobox border</li>
+        <li>@infobox-text-color = text default color</li>
+        <li>@infobox-box-shadow = shadow of infoboxes</li>
       </ul>
     </div>
   </div>
 </div>
-<div class="clearfix"></div>
-<div><?= $this->feed('carousel-1'); ?></div>
-<div><?= $this->feed('carousel-small'); ?></div>
 <!-- END of: finna - search/home/home-2_en-gb.phtml -->

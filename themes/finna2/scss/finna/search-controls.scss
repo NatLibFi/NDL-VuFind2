@@ -1,17 +1,8 @@
-.search-tab-tip {
-  position: relative;
-  padding: 0.4em;
-  background-color: $search-tab-tip-bg;
-  p {
-    margin: 0.2em;
-  }
-}
-
 // All search control buttons
 .search-controls {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: baseline;
   justify-content: space-between;
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
@@ -24,19 +15,22 @@
     color: $body-bg;
   }
   .button-label {
-    padding: 0.2em;
+    padding: 0.25em;
   }
   .control-container {
     display: flex;
-    margin-top: 0.4em;
-    margin-bottom: 0.4em;
-    gap: 0.3rem;
-    font-size: 0.9em;
+    margin-top: (0.5 * $spacer);
+    margin-bottom: (0.5 * $spacer);
+    gap: 0.5rem;
+    font-size: $font-size-small;
   }
   .sort-option-container,
   .limit-option-container,
   .view-option-container {
     display: inline-block;
+  }
+  .view-option-container {
+    flex-grow: 1;
   }
 }
 @include media-breakpoint-down(xs) {
@@ -45,7 +39,7 @@
     .view-dropdown {
       .dropdown-toggle {
         display: inline-block;
-        max-width: 150px;
+        max-width: 200px;
         text-overflow: ellipsis;
         white-space: nowrap;
         overflow: hidden;
@@ -72,6 +66,11 @@
   .view-dropdown {
     display: inline-block;
   }
+  .search-controls {
+    .control-container {
+      width: auto;
+    }
+  }
 }
 
 .sort-button,
@@ -81,19 +80,8 @@
   .dropdown-toggle {
     display: inline-block;
     padding: 0.4em;
-    font-size: 1em;
-    color: $action-link-color;
-    white-space: nowrap;
-    background: transparent;
-    border: 2px solid $action-link-color;
-    border-radius: $border-radius-base;
-    &:hover,
-    &:focus {
-      color: $body-bg;
-      text-decoration: none;
-      background: $action-link-color;
-      transition: background 0.2s linear;
-    }
+    @extend .btn, .btn-outline-dark;
+    font-size: $font-size-small;
   }
   .dropdown-menu {
     padding: 0px;
@@ -101,7 +89,6 @@
     > li > a {
       padding-top: 0.7em;
       padding-bottom: 0.7em;
-      color: $gray;
       text-align: left;
     }
   }
@@ -110,20 +97,29 @@
 .view-option-container .view-button {
   display: inline-block;
   padding: 0.4em;
+  color: $dark;
+  border-radius: $finna-button-radius;
+  a {
+    color: inherit;
+  }
+  &:hover, &:focus-within {
+    background: $dark;
+    color: $light;
+  }
   &.selected {
-    border: 2px solid $action-link-color;
-    border-radius: $border-radius-base;
+    border: $btn-border-width solid $dark;
   }
 }
 
 .search-tab-tip, .search-sort-title {
   background-color: $search-tab-tip-bg;
-  box-shadow: 2px 2px 4px #888888;
-  margin-bottom: 12px;
-  padding: 5px;
+  margin-top: $spacer;
+  margin-bottom: $spacer;
+  border-radius: $alert-border-radius;
+  padding: $alert-padding-y $alert-padding-x;
   position: relative;
   p {
-    margin: 2px;
+    margin: 0.2em;
   }
 }
 

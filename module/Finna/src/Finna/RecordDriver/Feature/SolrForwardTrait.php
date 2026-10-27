@@ -86,18 +86,16 @@ trait SolrForwardTrait
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     *                           links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $includePdf = false)
+    public function getAllImages($includePdf = false)
     {
         $images = [];
-        $cacheKey = __FUNCTION__ . '|' . $language;
-        if (isset($this->cache[$cacheKey])) {
-            return $this->cache[$cacheKey];
+        if (isset($this->cache[__FUNCTION__])) {
+            return $this->cache[__FUNCTION__];
         }
         $xmlDoc = $this->getAllRecordsXmlDoc();
         foreach ($xmlDoc->all() as $xml) {
@@ -118,7 +116,7 @@ trait SolrForwardTrait
                 $rights = [];
                 if ($copyright = $xmlDoc->attr($eventType, 'finna-kayttooikeus')) {
                     $rights['copyright'] = $copyright;
-                    $link = $this->getRightsLink($rights['copyright'], $language);
+                    $link = $this->getRightsLink($rights['copyright']);
                     if ($link) {
                         $rights['link'] = $link;
                     }
@@ -139,7 +137,7 @@ trait SolrForwardTrait
                 $this->imagesCount++;
             }
         }
-        $this->cache[$cacheKey] = $images;
+        $this->cache[__FUNCTION__] = $images;
         return $images;
     }
 

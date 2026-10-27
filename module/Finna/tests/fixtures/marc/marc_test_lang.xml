@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<collection xmlns='http://www.loc.gov/MARC21/slim'>
+
+    <record
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.loc.gov/MARC21/slim http://www.loc.gov/standards/marcxml/schema/MARC21slim.xsd"
+        xmlns="http://www.loc.gov/MARC21/slim"
+        type="Bibliographic">
+        <leader>00000cam a22000004i 4500</leader>
+        <controlfield tag="001">123</controlfield>
+        <controlfield tag="003">   FI-MELINDA    </controlfield>
+        <controlfield tag="008">021122s2020    en            000 0 eng d</controlfield>
+        <datafield tag="245" ind1="0" ind2="0">
+            <subfield code="a">Proboscidea</subfield>
+        </datafield>
+        <datafield tag="520" ind1="3">
+            <subfield code="8">1/p</subfield>
+            <subfield code="a">Asiaa norsueläimistä.</subfield>
+        </datafield>
+        <datafield tag="520" ind1="3">
+            <subfield code="8">2/p</subfield>
+            <subfield code="a">Om elefantdjur.</subfield>
+        </datafield>
+        <datafield tag="520" ind1="3">
+            <subfield code="6">880-01</subfield>
+            <subfield code="a">Hobotnye.</subfield>
+        </datafield>
+        <datafield tag="520" ind1="3">
+            <subfield code="8">1/p</subfield>
+            <subfield code="a">Lisää asiaa norsueläimistä.</subfield>
+        </datafield>
+        <datafield tag="880" ind1="3">
+            <subfield code="6">520-01</subfield>
+            <subfield code="a">Хоботные.</subfield>
+        </datafield>
+        <datafield tag="886" ind1="2">
+            <subfield code="2">local</subfield>
+            <subfield code="a">kieli</subfield>
+            <subfield code="b">00</subfield>
+            <subfield code="8">1/p</subfield>
+            <subfield code="l">fin</subfield>
+        </datafield>
+        <datafield tag="886" ind1="2">
+            <subfield code="2">local</subfield>
+            <subfield code="a">kieli</subfield>
+            <subfield code="b">00</subfield>
+            <subfield code="8">2/p</subfield>
+            <subfield code="l">swe</subfield>
+        </datafield>
+    </record>
+</collection>

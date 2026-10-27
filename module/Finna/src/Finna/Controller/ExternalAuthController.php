@@ -66,6 +66,8 @@ class ExternalAuthController extends \VuFind\Controller\ExternalAuthController
     {
         $user = parent::getUser();
         if ($user) {
+            // Clone the user to avoid modifying the shared object:
+            $user = clone $user;
             $parts = explode(':', $user->getUsername(), 2);
             if (isset($parts[1])) {
                 $user->setUsername($parts[1]);

@@ -58,19 +58,28 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         $allTests = [
             [
                 'getAbstracts',
+                'fi',
                 [
-                    'fi' => 'Tosi abstraktia',
-                    'en-gb' => 'So abstract',
+                    'Tosi abstraktia',
+                ],
+            ],
+            [
+                'getAbstracts',
+                'en',
+                [
+                    'So abstract',
                 ],
             ],
             [
                 'getAccessRestrictions',
+                'en',
                 [
                     'Restricted Access',
                 ],
             ],
             [
                 'getAllImages',
+                'fi',
                 [
                     [
                         'urls' => [
@@ -97,6 +106,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getAllRecordLinks',
+                'en',
                 [
                     [
                         'value' => 'Animals of Earth',
@@ -109,16 +119,19 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getAlternativeTitles',
+                'en',
                 [
                     'Alt Title',
                 ],
             ],
             [
                 'getDescriptionURL',
+                'en',
                 false,
             ],
             [
                 'getSeries',
+                'en',
                 [
                     [
                         'name' => 'Animals of Earth - The Series',
@@ -128,10 +141,12 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getIdentifier',
+                'en',
                 [],
             ],
             [
                 'getKeywords',
+                'en',
                 [
                     'keyword1',
                     'keyword2',
@@ -139,6 +154,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getISBNs',
+                'en',
                 [
                     '978-3-16-148410-0',
                     '978-3-16-148410-1',
@@ -146,6 +162,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getOtherIdentifiers',
+                'en',
                 [
                     [
                         'data' => '123-4-245-6',
@@ -155,6 +172,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getURLs',
+                'en',
                 [
                     [
                         'url' => 'http://localhost/url1',
@@ -166,12 +184,14 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getEducationPrograms',
+                'en',
                 [
                     'Duck Education',
                 ],
             ],
             [
                 'getPhysicalDescriptions',
+                'en',
                 [
                     'Format',
                     'Another Format',
@@ -180,12 +200,14 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getPhysicalMediums',
+                'en',
                 [
                     'No physical carrier',
                 ],
             ],
             [
                 'getDescriptions',
+                'en',
                 [
                     'Description text',
                     'Additional description',
@@ -193,6 +215,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getGeneralNotes',
+                'en',
                 [
                     'Notification text',
                 ],
@@ -212,6 +235,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
      * Test functions.
      *
      * @param string $function Function of the driver to test
+     * @param string $language Language to test
      * @param mixed  $expected Result to be expected
      * @param string $fixture  Fixture file
      *
@@ -220,10 +244,11 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('getTestInstitutionalRepositoryRecordData')]
     public function testInstitutionalRepositoryRecordFunctions(
         string $function,
+        string $language,
         $expected,
         string $fixture,
     ): void {
-        $driver = $this->getInstitutionalRepositoryDriver(fixture: $fixture);
+        $driver = $this->getInstitutionalRepositoryDriver(fixture: $fixture, language: $language);
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertSame(
             $expected,
@@ -302,14 +327,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         string $language,
         array $expected
     ): void {
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $driver = $this->getInstitutionalRepositoryDriver();
-        $driver->setTranslator($translator);
+        $driver = $this->getInstitutionalRepositoryDriver(language: $language);
         $this->assertSame(
             $expected,
             $driver->getNonPresenterAuthors()
@@ -414,6 +432,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         return [
             [
                 'getAllImages',
+                'en',
                 [
                     0 => [
                         'urls' => [
@@ -446,6 +465,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getAllRecordLinks',
+                'en',
                 [
                     0 => [
                         'value' => 'Ducks in the universe',
@@ -458,24 +478,29 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getSeries',
+                'en',
                 [],
             ],
             [
                 'getIdentifier',
+                'en',
                 [
                     0 => 'TM 1234',
                 ],
             ],
             [
                 'getKeywords',
+                'en',
                 [],
             ],
             [
                 'getISBNs',
+                'en',
                 [],
             ],
             [
                 'getOtherIdentifiers',
+                'en',
                 [
                     0 => [
                         'data' => 'Q123456789',
@@ -489,20 +514,24 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getURLs',
+                'en',
                 [],
             ],
             [
                 'getEducationPrograms',
+                'en',
                 [],
             ],
             [
                 'getPhysicalDescriptions',
+                'en',
                 [
                     0 => '2.1 cm x 2.3 cm',
                 ],
             ],
             [
                 'getPhysicalMediums',
+                'en',
                 [
                     0 => 'Akryyli',
                     1 => 'Kangas',
@@ -510,6 +539,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getDescriptions',
+                'en',
                 [
                     0 => 'painting by Juha Kuoma',
                     1 => 'abstract should be removed',
@@ -517,12 +547,21 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
             ],
             [
                 'getAbstracts',
+                'fi',
                 [
-                    '' => 'Ei suodatetussa',
+                    'Ei suodatetussa',
+                ],
+            ],
+            [
+                'getAbstracts',
+                'en',
+                [
+                    'Not in filtered',
                 ],
             ],
             [
                 'getDescriptionURL',
+                'en',
                 false,
             ],
         ];
@@ -532,6 +571,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
      * Test functions with return value array.
      *
      * @param string $function Function of the driver to test
+     * @param string $language Language to test
      * @param mixed  $expected Result to be expected
      *
      * @return void
@@ -539,9 +579,10 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     #[\PHPUnit\Framework\Attributes\DataProvider('getTestMuseumRecordFunctionsData')]
     public function testMuseumRecordFunctions(
         string $function,
+        string $language,
         $expected
     ): void {
-        $driver = $this->getMuseumDriver();
+        $driver = $this->getMuseumDriver(language: $language);
         $this->assertTrue(is_callable([$driver, $function], true));
         $this->assertSame(
             $expected,
@@ -943,6 +984,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
      *
      * @param array  $overrides    Fixture fields to override
      * @param array  $searchConfig Search configuration
+     * @param string $language     Language
      * @param string $fixture      Fixture file name
      *
      * @return SolrQdc
@@ -950,6 +992,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
     protected function getInstitutionalRepositoryDriver(
         $overrides = [],
         $searchConfig = [],
+        $language = 'en',
         string $fixture = 'qdc/qdc_ir_test.xml'
     ): SolrQdc {
         $fullRecord = $this->getFixture($fixture, 'Finna');
@@ -1002,6 +1045,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
+        $record->setPreferredLanguage($language);
         $record->setRawData(
             [
                 'id' => 'knp-247394',
@@ -1076,13 +1120,7 @@ class SolrQdcTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $record->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
-        $translator = $this
-            ->getMockBuilder(\Laminas\I18n\Translator\Translator::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods([])
-            ->getMock();
-        $translator->setLocale($language);
-        $record->setTranslator($translator);
+        $record->setPreferredLanguage($language);
         $defaultData = ['id' => 'knp-247394', 'fullrecord' => $fixture];
         $record->setRawData(array_merge($defaultData, $overrides));
         return $record;

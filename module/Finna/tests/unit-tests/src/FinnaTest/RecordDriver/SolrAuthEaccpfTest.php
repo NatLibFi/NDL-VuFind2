@@ -105,15 +105,44 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
+     * Test getGetOccupations.
+     *
+     * @return void
+     */
+    public function testGetOccupations(): void
+    {
+        $expected =  [
+            'fi' => [
+              'historiantutkija',
+              'filosofian tohtori',
+            ],
+            'en' => [
+              'history scholar',
+            ],
+        ];
+        foreach ($expected as $key => $value) {
+            $driver = $this->getDriver(language: $key);
+            $this->assertSame(
+                $value,
+                $driver->getOccupations()
+            );
+        }
+    }
+
+    /**
      * Get a record driver with fake data.
      *
-     * @param array $overrides    Fixture fields to override.
-     * @param array $searchConfig Search configuration.
+     * @param array  $overrides    Fixture fields to override.
+     * @param array  $searchConfig Search configuration.
+     * @param string $language     Language
      *
      * @return SolrAuthEaccpf
      */
-    protected function getDriver($overrides = [], $searchConfig = []): SolrAuthEaccpf
-    {
+    protected function getDriver(
+        $overrides = [],
+        $searchConfig = [],
+        $language = 'en',
+    ): SolrAuthEaccpf {
         $fixture = $this->getFixture('eaccpf/eaccpf_test.xml', 'Finna');
         $dateConverter = new \VuFind\Date\Converter(['displayDateFormat' => 'j.n.Y']);
         $record = new SolrAuthEaccpf(
@@ -123,6 +152,7 @@ class SolrAuthEaccpfTest extends \PHPUnit\Framework\TestCase
         );
         $record->attachDateConverter($dateConverter);
         $record->setRawData(['fullrecord' => $fixture]);
+        $record->setPreferredLanguage($language);
         return $record;
     }
 }

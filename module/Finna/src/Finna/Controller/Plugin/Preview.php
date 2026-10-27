@@ -218,7 +218,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
      * @param string $format   Metadata format
      * @param string $source   Record source
      *
-     * @return array Validation report with keys result, errors, warnings and recommendations
+     * @return array Validation report with keys metadata, result, errors, warnings and recommendations
      */
     protected function validateRecord(string $metadata, string $format, string $source): array
     {
@@ -280,7 +280,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
         } else {
             $result = self::VALIDATION_NO_ISSUES;
         }
-        return compact('result', 'errors', 'warnings', 'recommendations');
+        return compact('metadata', 'result', 'errors', 'warnings', 'recommendations');
     }
 
     /**
@@ -330,6 +330,7 @@ class Preview extends AbstractPlugin implements LoggerAwareInterface
                 if ($formatNsUri === $namespace->nodeValue) {
                     // Found the default, no need to add namespaces!
                     $addNamespaces = false;
+                    break;
                 }
             }
             if ($addNamespaces) {

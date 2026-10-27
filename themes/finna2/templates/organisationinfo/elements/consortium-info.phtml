@@ -39,7 +39,7 @@
           <span class="consortium-search">
             <?php $building = "0/{$this->id}/"; ?>
             <?php $consortiumSearchLink = $this->url('search-results', [], ['query' => ['filter' => $this->buildingFacetOperator . 'building:"' . $building . '"']])?>
-            <a href="<?= $this->escapeHtmlAttr($consortiumSearchLink) ?>"><?=$this->icon('search') ?></i> <?= $this->transEsc('organisation_info_search'); ?></a>
+            <a class="icon-link" href="<?= $this->escapeHtmlAttr($consortiumSearchLink) ?>"><?=$this->icon('search', 'icon-link__icon') ?> <span class="icon-link__label"><?= $this->transEsc('organisation_info_search'); ?></span></a>
           </span>
           <?php if ($coverage = $consortium['finna']['finnaCoverage']): ?>
             <span class="gauge-meter">

@@ -117,12 +117,14 @@ if ($img):
 
         <?php if (!$this->driver->isCollection()): ?>
           <?php if ($snippet = $this->driver->getHighlightedSnippet()): ?>
-            <?php if (!empty($snippet['caption'])): ?>
-              <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
-            <?php endif; ?>
-            <?php if (!empty($snippet['snippet'])): ?>
-              <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
-            <?php endif; ?>
+            <div class="truncate-field" data-rows="5">
+              <?php if (!empty($snippet['caption'])): ?>
+                <strong><?=$this->transEsc($snippet['caption']) ?>:</strong>
+              <?php endif; ?>
+              <?php if (!empty($snippet['snippet'])): ?>
+                  <?=$this->translate('highlight_snippet_html', ['%%snippet%%' => $this->highlight($snippet['snippet'])]) ?><br>
+              <?php endif; ?>
+            </div>
           <?php endif; ?>
         <?php endif; ?>
 
@@ -139,9 +141,9 @@ if ($img):
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchyID)?>" class="hiddenHierarchyId">
               <input type="hidden" value="<?=$this->escapeHtmlAttr($hierarchySource)?>" class="hiddenHierarchySource">
               <?php $treeLinkText = $typeIsArchive ? 'hierarchy_view_context' : 'hierarchy_view_collection_structure'; ?>
-              <a class="hierarchyTreeLinkText" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID, 'source' => $hierarchySource]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
-                <?=$this->icon('hierarchy-tree') ?>
-                <?=$this->transEsc($treeLinkText)?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?>
+              <a class="hierarchyTreeLinkText icon-link" role="button" data-lightbox href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'HierarchyTree', ['hierarchy' => $hierarchyID, 'source' => $hierarchySource]))?>#tabnav" title="<?=$this->transEsc('hierarchy_tree')?>" data-lightbox-href="<?=$this->escapeHtmlAttr($recordLinker->getTabUrl($this->driver, 'AjaxTab', ['hierarchy' => $hierarchyID]))?>" data-lightbox-post="tab=hierarchytree">
+                <?=$this->icon('hierarchy-tree', 'icon-link__icon') ?>
+                <span class="icon-link__label"><?=$this->transEsc($treeLinkText)?><?php if (count($trees) > 1): ?>: <?=$this->escapeHtml($hierarchyTitle)?><?php endif; ?></span>
               </a>
             </div>
           <?php endforeach; ?>

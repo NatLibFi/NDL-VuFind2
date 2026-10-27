@@ -115,13 +115,12 @@ trait SolrFinnaTrait
      *   - description Human readable description (array)
      *   - link        Link to copyright info
      *
-     * @param string $language   Language for copyright information
-     * @param bool   $includePdf Whether to include first PDF file when no image
-     * links are found
+     * @param bool $includePdf Whether to include first PDF file when no image
+     *                         links are found
      *
      * @return array
      */
-    public function getAllImages($language = 'fi', $includePdf = true)
+    public function getAllImages($includePdf = true)
     {
         return [];
     }
@@ -140,14 +139,12 @@ trait SolrFinnaTrait
     /**
      * Return type of access restriction for the record.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'   Copyright (e.g. 'CC BY 4.0')
      *   'link'        Link to copyright info, see IndexRecord::getRightsLink
      *   or false if no access restriction type is defined.
      */
-    public function getAccessRestrictionsType($language)
+    public function getAccessRestrictionsType()
     {
         return false;
     }
@@ -440,15 +437,13 @@ trait SolrFinnaTrait
     /**
      * Return image rights.
      *
-     * @param string $language Language
-     *
      * @return mixed array with keys:
      *   'copyright'  Copyright (e.g. 'CC BY 4.0') (optional)
      *   'description Human readable description (array)
      *   'link'       Link to copyright info
      *   or false if the record contains no images
      */
-    public function getImageRights($language)
+    public function getImageRights()
     {
         return false;
     }

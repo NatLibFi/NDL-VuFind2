@@ -5,16 +5,16 @@
     }
 ?>
 <div class="open-link download-audio">
-    <a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download>
-        <?=$this->icon('download') ?> <?=$this->transEsc('Download recording') ?>
+    <a class="icon-link" href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download>
+        <?=$this->icon('download', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('Download recording') ?></span>
     </a> <span class="file-size"><?=$fileSize?></span>
 </div>
 <?php if (!empty($url['identifier'])): ?>
     <div class="audio-details-container text-left" data-img-index="<?=$ind?>">
         <div class="audio-details">
             <button class="toggle-audio-information collapsed" data-bs-toggle="collapse" data-bs-target="#audio_details_<?=$ind?>" aria-expanded="false" aria-controls="audio_details_<?=$ind?>">
-                <span class="show-audio-information"><?=$this->icon('image-information-show') ?> <?=$this->transEsc($this->showButtonText ?? 'Show Audio Information')?></span>
-                <span class="hide-audio-information"><?=$this->icon('image-information-hide') ?> <?=$this->transEsc($this->hideButtonText ?? 'Hide Audio Information')?></span>
+                <span class="show-audio-information icon-link"><?=$this->icon('image-information-show', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc($this->showButtonText ?? 'Show Audio Information')?></span></span>
+                <span class="hide-audio-information icon-link"><?=$this->icon('image-information-hide', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc($this->hideButtonText ?? 'Hide Audio Information')?></span></span>
             </button>
             <div id="audio_details_<?=$ind?>" class="collapse">
                 <table class="table-condensed" role="presentation">

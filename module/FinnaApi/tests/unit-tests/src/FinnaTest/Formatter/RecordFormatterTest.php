@@ -215,6 +215,7 @@ class RecordFormatterTest extends \PHPUnit\Framework\TestCase
         ];
         $localeConfig = new \VuFind\Config\Config($localeConfig);
         $driver->attachLocaleSettings(new \VuFind\I18n\Locale\LocaleSettings($localeConfig));
+        $driver->setPreferredLanguage('fi');
 
         $ratingsService = $this->getMockBuilder(\VuFind\Db\Service\RatingsService::class)
             ->disableOriginalConstructor()

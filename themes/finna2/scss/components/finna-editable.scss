@@ -24,10 +24,10 @@
     &:hover,
     &:active,
     &:focus {
-      border: 1px solid $gray-lighter;
+      border: 1px solid $border-color;
       .finna-editable-btn {
         transition: all 0.2s linear;
-        color: $gray;
+        color: $dark;
       }
     }
   }

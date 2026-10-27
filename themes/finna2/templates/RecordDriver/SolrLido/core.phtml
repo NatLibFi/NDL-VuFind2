@@ -28,7 +28,7 @@
       <?php $i = 0; ?>
         <?php foreach ($videoUrls as $url): ?>
           <div class="resource-details">
-            <div class="open-link"><a href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download')?> <?=$this->transEsc('Download video') ?></a></div>
+            <div class="open-link"><a class="icon-link" href="<?=$url['url'] ?>" target="_blank" rel="nofollow" download><?=$this->icon('download', 'icon-link__icon')?> <span class="icon-link__label"><?=$this->transEsc('Download video') ?></span></a></div>
             <?=$this->record($this->driver)->renderTemplate('video-information.phtml', ['i' => $i, 'url' => $url]);?>
           </div>
         <?php $i++; ?>

@@ -87,6 +87,10 @@
       flex-basis: 100%;
       margin-top: 40px;
     }
+    .barcode-number {
+      text-align: center;
+      flex-basis: 100%;
+    }
   </style>
   <?php
     $script = <<<JS
@@ -114,6 +118,9 @@
         <?=$this->transEsc('An error has occurred')?>
       <?php else: ?>
         <?=$barcodeSvg?>
+        <div class="barcode-number">
+          <?=$this->escapeHtml($this->code)?>
+        </div>
         <div class="barcode-instructions">
           <?=$this->translate('show_barcode_instructions_html', null, '')?>
         </div>

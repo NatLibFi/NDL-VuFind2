@@ -62,7 +62,7 @@
   .dropdown .dropdown-menu > li > a > .description {
     display: block;
     width: 100%;
-    font-size: 0.9em; 
+    font-size: 0.9em;
     white-space: normal;
   }
 }
@@ -73,7 +73,7 @@
 }
 
 .navbar-collapse {
-  border-top: 3px solid $primary;
+  border-top: 1px solid $border-color;
 }
 @include media-breakpoint-down(sm) {
   #header-collapse {
@@ -96,29 +96,24 @@
   height: $navbar-height;
   padding: 0px;
   margin: 0px;
+  border-radius: 0;
+  border: none;
   color: $btn-primary-color;
   background-color: $primary;
-  border-radius: 0;
-  &:focus {
+  &:focus-visible {
+    outline: 0;
+    box-shadow: $nav-link-focus-box-shadow;
     background: darken($primary, 10%);
   }
   .mobilemenu-bars,
   .mobilemenu-close {
-    font-size: 24px;
+    font-size: 1.75rem;
   }
   &.collapsed .mobilemenu-close {
     display: none;
   }
   &:not(.collapsed) .mobilemenu-bars {
     display: none;
-  }
-  &.activated {
-    animation: bg-blinker .4s ease-in-out .2s 1;
-  }
-  @keyframes bg-blinker {
-    50%  {
-      background-color: screen($primary, rgba(255, 255, 255, 0.4));
-    }
   }
 }
 

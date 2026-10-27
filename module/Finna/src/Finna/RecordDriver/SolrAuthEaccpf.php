@@ -60,7 +60,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $firstTitle = '';
         $record = $this->getXmlRecord();
         if (isset($record->cpfDescription->identity->nameEntry)) {
-            $languages = $this->mapLanguageCode($this->getLocale());
+            $languages = $this->mapLanguageCode($this->preferredLanguage);
             $name = $record->cpfDescription->identity->nameEntry;
             if (!isset($name->part)) {
                 return '';
@@ -225,7 +225,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
             return '';
         }
         $result = [];
-        $languages = $this->mapLanguageCode($this->getLocale());
+        $languages = $this->mapLanguageCode($this->preferredLanguage);
         foreach ($record->cpfDescription->description->places->place as $place) {
             $attr = $place->attributes();
             if ($attr->placeEntry && !$attr->lang || in_array((string)$attr->lang, $languages)) {
@@ -275,7 +275,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $result = [];
         $record = $this->getXmlRecord();
         if (isset($record->cpfDescription->description->occupations)) {
-            $languages = $this->mapLanguageCode($this->getLocale());
+            $languages = $this->mapLanguageCode($this->preferredLanguage);
             foreach ($record->cpfDescription->description->occupations as $occupations) {
                 if (!isset($occupations->occupation)) {
                     continue;
@@ -305,7 +305,7 @@ class SolrAuthEaccpf extends SolrAuthDefault
         $result = [];
         $record = $this->getXmlRecord();
         if (isset($record->control->sources)) {
-            $languages = $this->mapLanguageCode($this->getLocale());
+            $languages = $this->mapLanguageCode($this->preferredLanguage);
             foreach ($record->control->sources->source as $source) {
                 if (isset($source->sourceEntry)) {
                     $title = '';
@@ -352,17 +352,6 @@ class SolrAuthEaccpf extends SolrAuthDefault
             }
         }
         return $result;
-    }
-
-    /**
-     * Set preferred language for display strings.
-     *
-     * @param string $language Language
-     *
-     * @return void
-     */
-    public function setPreferredLanguage($language)
-    {
     }
 
     /**

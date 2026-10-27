@@ -4,7 +4,7 @@
   display: flex;
   flex-flow: row wrap;
   align-items: center;
-  margin: 0.5em 0em;
+  margin: (0.5 * $spacer) 0px;
   font-size: 0.9em;
   > * {
     margin-right: 0.3em;
@@ -27,12 +27,22 @@
     }
   }
   .btn-group {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
     .btn {
-      border: 1px solid $gray-lighter;
-      background: $gray-ultralight;
+      border: 1px solid $border-color;
+      background: $light;
       color: $text-color;
-      padding: 0.4em 0.9em;
+      padding: $padding-small-vertical $padding-base-horizontal;
       font-size: 0.9em;
+      &:hover, &:focus {
+        color: $light;
+        background: $dark;
+        text-decoration: none;
+        transition: background 0.2s linear;
+      }
     }
   }
 }

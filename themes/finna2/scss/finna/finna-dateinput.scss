@@ -2,13 +2,7 @@
     .input-group {
         .input-field {
             width: auto;
-        }
-        .datepicker-toggle {
-            padding: $padding-base-vertical 6px;
-            margin-top: 0px;
-            margin-bottom: 0px;
-            border-color: $input-border-color;
-            border-width: 1px;
+            height: $input-height;
         }
     }
     .dateformat-hint {

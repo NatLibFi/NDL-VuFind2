@@ -70,8 +70,8 @@
   <?php if (isset($i) && $i >= $this->facets_before_more): ?>
     <?php if ($this->showMoreInLightbox === 'more' && $facetLightbox = $options->getFacetListAction()): ?>
       <li class="facet__list__item">
-        <a class="facet narrow-toggle more-narrow-toggle" data-lightbox href="<?=$moreUrl ?>" rel="nofollow">
-          <span class="text"><?=$this->icon('list') ?> <?=$this->transEsc('see all')?></span>
+        <a class="facet narrow-toggle icon-link more-narrow-toggle" data-lightbox href="<?=$moreUrl ?>" rel="nofollow">
+          <?=$this->icon('list', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('see all')?></span>
         </a>
       </li>
     <?php endif; ?>

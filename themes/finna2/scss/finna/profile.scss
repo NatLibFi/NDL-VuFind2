@@ -1,4 +1,5 @@
-.my-research-content .logged-in-as {
+.my-research-content .account-login-info,
+.delete-account-confirm .account-login-info {
   margin-bottom: 1.1em;
   > div {
     display: flex;
@@ -12,7 +13,8 @@
   }
 }
 @include media-breakpoint-down(md) {
-.my-research-content .logged-in-as {
+.my-research-content .account-login-info,
+.delete-account-confirm .account-login-info {
   > div {
       // .display-name display deprecated
       &:not(.display-name) {
@@ -64,23 +66,32 @@
 }
 
 .myresearch-profile-header {
-  background: $gray;
-  background: $action-link-color;
+  background: $light;
   h3 {
-    padding: 0.3em 0.5em;
+    padding: $padding-large-vertical $padding-large-horizontal;
     margin: 0px;
-    font-size: $font-size-h3;
-    font-weight: 400;
-    color: $body-bg;
+    font-size: $font-size-h4;
+    font-weight: 600;
+    color: $text-color;
+    border-left: 1px solid $border-color;
+    border-right: 1px solid $border-color;
+    border-top: 1px solid $border-color;
+    border-top-left-radius: $border-radius-base;
+    border-top-right-radius: $border-radius-base;
   }
+}
+
+.myresearch-profile-loginview {
+  margin-bottom: (2 * $spacer);
 }
 
 .library-profile {
   display: inline-block;
   width: 100%;
-  margin-bottom: 3em;
-  border: 1px solid $gray-lighter;
-  box-shadow: 10px 15px 30px -25px $gray;
+  margin-bottom: (2 * $spacer);
+  border: 1px solid $border-color;
+  border-bottom-left-radius: $border-radius-base;
+  border-bottom-right-radius: $border-radius-base;
   #profile_library_form input {
     min-width: 210px;
   }
@@ -236,4 +247,8 @@ fieldset.profile-group {
     padding: 0px;
     margin: 0em 0.5em 0em 0em;
   }
+}
+
+#delete-account {
+  margin-bottom: 1.1em;
 }

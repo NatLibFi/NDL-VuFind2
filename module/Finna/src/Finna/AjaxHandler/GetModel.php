@@ -141,7 +141,6 @@ class GetModel extends \VuFind\AjaxHandler\AbstractBase implements \VuFindHttp\H
         // Use fileloader for proxies
         $file = $this->fileLoader->getFile($url, $fileName, 'Models', 'public');
         if (!empty($file['result'])) {
-            $route = stripslashes($this->router->getBaseUrl());
             // Point url to public cache so viewer has access to it
             $url = ($this->urlHelper)('home') . 'cache/' . $fileName;
             return $this->formatResponse(compact('url'));

@@ -31,6 +31,8 @@
 namespace Finna\Form;
 
 use Exception;
+use Finna\RecordDriver\SolrAipa;
+use NatLibFi\FinnaCodeSets\Model\DataObjectInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\RecordDriver\DefaultRecord;
 
@@ -382,13 +384,21 @@ class Form extends \VuFind\Form\Form
             if (!$this->record) {
                 throw new \Exception('Record not set for FeedbackRecord form');
             }
-            $dataSource = $this->record->tryMethod('getDataSource');
-            $inst = $this->dataSourceConfig[$dataSource] ?? null;
-            if (!($recipientEmail = $inst['feedbackEmail'] ?? null)) {
-                throw new \Exception(
-                    'Error sending record feedback: Recipient email for'
-                    . " $dataSource not set in datasources.ini"
-                );
+            if ($this->record instanceof SolrAipa) {
+                if (!$recipientEmail = $this->record->getFeedbackEmail()) {
+                    throw new \Exception(
+                        'Error sending record feedback: Unable to determine recipient email'
+                    );
+                }
+            } else {
+                $dataSource = $this->record->tryMethod('getDataSource');
+                $inst = $this->dataSourceConfig[$dataSource] ?? null;
+                if (!($recipientEmail = $inst['feedbackEmail'] ?? null)) {
+                    throw new \Exception(
+                        'Error sending record feedback: Recipient email for'
+                        . " $dataSource not set in datasources.ini"
+                    );
+                }
             }
             return [
                 [
@@ -497,19 +507,26 @@ class Form extends \VuFind\Form\Form
             // Append receiver info after general record feedback instructions
             // (translation key for this is defined in FeedbackForms.yaml)
             if (!$translationEmpty('feedback_recipient_info_record')) {
+                if ($this->record instanceof SolrAipa) {
+                    // Institution names in FinnaAdmin are currently in Finnish only.
+                    $institutionName = $this->record->getFeedbackOrganization()
+                        ->getPrefLabel(DataObjectInterface::LANGUAGE_FINNISH);
+                } else {
+                    $institutionName = $organisationDisplayName($this->record, true);
+                }
                 $preParagraphs[] = $transEsc(
                     'feedback_recipient_info_record',
-                    [
-                        '%%institution%%'
-                            => $organisationDisplayName($this->record, true),
-                    ]
+                    ['%%institution%%' => $institutionName]
                 );
             }
-            $datasourceKey = 'feedback_recipient_info_record_'
-                . $this->record->tryMethod('getDataSource', [], '') . '_html';
-            if (!$translationEmpty($datasourceKey)) {
-                $preParagraphs[] = '<span class="datasource-info">'
-                    . $this->translate($datasourceKey) . '</span>';
+            if (!$this->record instanceof SolrAipa) {
+                $datasourceKey = 'feedback_recipient_info_record_'
+                    . $this->record->tryMethod('getDataSource', [], '')
+                    . '_html';
+                if (!$translationEmpty($datasourceKey)) {
+                    $preParagraphs[] = '<span class="datasource-info">'
+                        . $this->translate($datasourceKey) . '</span>';
+                }
             }
         }
         if (

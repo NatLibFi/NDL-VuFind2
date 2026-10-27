@@ -5,7 +5,12 @@
      * @param string class Class for the container. Default is "vc-invocation-{n} vc-finna-js-record-container".
      * @param string recordId Record id.
      * @param string source Record backend source identifier.
+     * @param bool   shared If true, dynamically loaded data is loaded just once and shared between all components of
+     * the same class.
      */
+    if ($this->shared && !$this->class) {
+        throw new \Exception("Parameter 'class' is required with 'shared'");
+    }
     $containerAttributes = [
         'class' => trim(($this->class ?? '') . " vc-invocation-$this->_invocation $this->_componentClass"),
         'data-method' => $this->method ?? '',
@@ -16,7 +21,12 @@
     if ($dataSource = $this->source ?? null) {
         $containerAttributes['data-source'] = $dataSource;
     }
-    $jsSelector = '.' . str_replace(' ', '.', $containerAttributes['class']);
+    if ($instanceId = $this->instanceId ?? null) {
+        $containerAttributes['data-instance-id'] = $instanceId;
+    }
+    $jsSelector = $this->shared
+        ? '.' . $this->class . '.' . $this->_componentClass
+        : '.' . str_replace(' ', '.', $containerAttributes['class']);
 ?>
 <div<?=$this->htmlAttributes($containerAttributes);?>>
 </div>

@@ -14,18 +14,18 @@
     <p>
       <span class="location-links address info-element"><?=$this->escapeHtml($orgInfo['address']['displayAddress'] ?? '')?></span>
       <?php if ($orgInfo['routeUrl']): ?>
-        <a href="<?=$this->escapeHtmlAttr($orgInfo['routeUrl'])?>" target="_blank" class="location-links route info-element"><?=$this->icon('route') ?> <?=$this->transEsc('organisation_info_route')?></a>
+        <a href="<?=$this->escapeHtmlAttr($orgInfo['routeUrl'])?>" target="_blank" class="location-links route info-element icon-link"><?=$this->icon('route', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('organisation_info_route')?></span></a>
       <?php endif; ?>
     </p>
     <?php if ($orgInfo['homepage']): ?>
       <p class="location-links website info-element">
-        <a href="<?=$this->escapeHtmlAttr($orgInfo['homepage'])?>" target="_blank"><?=$this->icon('homepage-link') ?> <?=$this->transEsc('organisation_info_homepage')?></a></span>
+        <a href="<?=$this->escapeHtmlAttr($orgInfo['homepage'])?>" target="_blank" class="icon-link"><?=$this->icon('homepage-link', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->transEsc('organisation_info_homepage')?></span></a>
       </p>
     <?php endif; ?>
     <?php if ($orgInfo['email']): ?>
       <p class="location-links email info-element">
-        <a href="mailto:<?=$this->escapeHtmlAttr($orgInfo['email'])?>">
-          <?=$this->icon('email') ?> <?=$this->escapeHtml($orgInfo['email'])?>
+        <a class="icon-link" href="mailto:<?=$this->escapeHtmlAttr($orgInfo['email'])?>">
+          <?=$this->icon('email', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->escapeHtml($orgInfo['email'])?></span>
         </a>
         <?php if ($name = $orgInfo['emailName'] ?? null): ?>
           / <?=$this->escapeHtml($name)?>
@@ -35,8 +35,8 @@
     <?php foreach ($orgInfo['links'] as $link): ?>
       <?php if (str_contains($link['name'], 'Facebook')): ?>
         <p class="location-links facebook info-element">
-          <a class="facebook" href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank">
-            <?=$this->icon('facebook') ?> <?=$this->escapeHtml($link['name'])?>
+          <a class="facebook icon-link" href="<?=$this->escapeHtmlAttr($link['url'])?>" target="_blank">
+            <?=$this->icon('facebook', 'icon-link__icon') ?> <span class="icon-link__label"><?=$this->escapeHtml($link['name'])?></span>
           </a>
         </p>
       <?php endif; ?>

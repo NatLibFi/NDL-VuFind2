@@ -8,7 +8,7 @@
   $dateinputValue = $this->dateinputValue ?? '';
   $dateinputPicker = $this->dateinputPicker ?? '';
   $dateinputRequired = $this->dateinputRequired ?? false;
-  $dateinputSize = $this->dateinputSize ?? '10';
+  $dateinputSize = $this->dateinputSize ?? '8';
   $dateinputMaxlength = $this->dateinputMaxlength ?? '10';
   $dateinputAutocomplete = $this->dateinputAutocomplete ?? 'off';
 ?>
@@ -17,7 +17,7 @@
   <?php if ($dateinputPicker === 'single'): ?>
     <span class="input-group">
       <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" <?php if (isset($dateinputName)): ?>name="<?=$dateinputName ?>"<?php endif; ?> value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
-      <button type="button" class="btn btn-default datepicker-toggle">
+      <button type="button" class="btn btn-sm btn-default datepicker-toggle">
         <?=$this->icon('calendar') ?>
         <span class="visually-hidden"><?=$this->transEsc('datepicker_select_date')?> <span class="datepicker-date-selected"></span></span>
       </button>
@@ -27,7 +27,7 @@
         <span class="btn-datepicker-prev" role="button" slot="previous"><?=$this->icon('datepicker-prev') ?><span class="visually-hidden"><?=$this->transEsc('Prev')?></span></span><span class="btn-datepicker-next" role="button" slot="next"><?=$this->icon('datepicker-next') ?><span class="visually-hidden"><?=$this->transEsc('Next')?></span></span>
         <calendar-month></calendar-month>
       </calendar-date>
-      <button type="button" class="btn btn-primary btn-xs btn-datepicker-close"><?=$this->transEsc('close')?></button>
+      <button type="button" class="btn btn-primary btn-datepicker-close"><?=$this->transEsc('close')?></button>
     </span>
   <?php else: ?>
     <input type="text" class="input-field form-control <?=$dateinputClass ?>" id="<?=$dateinputId ?>" name="<?=$dateinputName ?>" value="<?=$dateinputValue ?>" placeholder="<?=$dateinputPlaceholder ?>" size="<?=$dateinputSize ?>" maxlength="<?=$dateinputMaxlength ?>" <?php if ($dateinputRequired): ?>required<?php endif; ?> autocomplete="<?=$dateinputAutocomplete ?>">
