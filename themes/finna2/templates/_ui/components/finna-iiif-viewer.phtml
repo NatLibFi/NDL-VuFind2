@@ -13,15 +13,15 @@ $iiifLogo = $this->imageSrc()->getSourceAddress('iiif_logo.min', allowParentThem
   <div class="record-iiif-toolbar container">
     <span class="record-iiif-functions dropdown hstack gap-3">
       <button type="button"
-        class="btn btn-outline-primary p-2 ms-auto icon-link"
+        class="btn btn-outline-primary p-2 ms-auto"
         data-bs-toggle="dropdown"
         aria-expanded="false"
       >
         <img src="<?=$this->escapeHtmlAttr($iiifLogo)?>"
              alt="IIIF"
-             class="bi icon-link__icon"
+             class="bi"
         >
-        <span class="icon-link__label"><?=$this->transEsc('iiif_tools')?></span>
+        <span><?=$this->transEsc('iiif_tools')?></span>
         <?=$this->icon('dropdown-open')?>
       </button>
       <?=$this->component(
