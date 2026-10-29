@@ -10,10 +10,14 @@
     <?php foreach ($services as $service): ?>
       <div>
         <?php if ($desc = $service['description'] ?: $service['shortDescription']): ?>
-          <?php $tooltipEsc = $this->transEscAttr('<h6>' . $this->cleanHtml($service['name']) . '</h6>' . $this->cleanHtml($desc)); ?>
-          <button type="button" class="service-tooltip" data-bs-toggle="tooltip" data-placement="bottom" data-html="true" data-original-title="<?=$tooltipEsc?>">
-            <?=$this->cleanHtml($service['name'])?>
-          </button>
+          <?php
+            $contentHtml = '<h6>' . $this->cleanHtml($service['name']) . '</h6>' . $this->cleanHtml($desc);
+            echo $this->component('finna-toggletip', [
+              'placement' => 'bottom',
+              'contentHtml' => $contentHtml,
+              'labelHtml' => $this->cleanHtml($service['name']),
+            ]);
+          ?>
         <?php else: ?>
           <?=$this->cleanHtml($service['name'])?>
         <?php endif; ?>
