@@ -229,6 +229,11 @@
       margin: 0;
     }
   }
+  button {
+    text-transform: none;
+    font-weight: 400;
+    font-size: $font-size-small;
+  }
 }
 
 .record-core-metadata {
