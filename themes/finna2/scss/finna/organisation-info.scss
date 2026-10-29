@@ -124,7 +124,7 @@ $organisation-info-max-w: 400px !default;
             max-width: $organisation-info-max-w;
         }
         .organisation-status-columns {
-        column-count: 3;
+            column-count: 3;
         }   
     }
 }
@@ -550,9 +550,9 @@ $organisation-info-max-w: 400px !default;
 }
 @include media-breakpoint-down(sm) {
     .organisation-info {
-    .organisation-status-columns {
-        column-count: 2;
-        }
+        .organisation-status-columns {
+            column-count: 2;
+            }
     }
     .organisation-info-page {
         .consortium-info {
