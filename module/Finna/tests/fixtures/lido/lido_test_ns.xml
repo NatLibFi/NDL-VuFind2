@@ -434,8 +434,12 @@
                 </lido:materialsTech>
             </lido:eventMaterialsTech>
             <lido:eventDescriptionSet>
-              <lido:descriptiveNoteValue xml:lang="fi">valmistusprosessin kuvaus</lido:descriptiveNoteValue>
-              <lido:descriptiveNoteValue xml:lang="en">description of the production process</lido:descriptiveNoteValue>
+              <lido:descriptiveNoteValue xml:lang="fi">valmistusprosessin ensimmäinen kuvaus</lido:descriptiveNoteValue>
+              <lido:descriptiveNoteValue xml:lang="en">first description of the production process</lido:descriptiveNoteValue>
+            </lido:eventDescriptionSet>
+            <lido:eventDescriptionSet>
+              <lido:descriptiveNoteValue xml:lang="fi">valmistusprosessin toinen kuvaus</lido:descriptiveNoteValue>
+              <lido:descriptiveNoteValue xml:lang="en">another description of the production process</lido:descriptiveNoteValue>
             </lido:eventDescriptionSet>
           </lido:event>
         </lido:eventSet>

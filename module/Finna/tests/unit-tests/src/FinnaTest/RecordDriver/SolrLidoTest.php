@@ -1237,8 +1237,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                             'culture' => 'kulttuuri',
-                            'descriptions' => ['valmistusprosessin kuvaus'],
-                            'description' => 'valmistusprosessin kuvaus',
+                            'descriptions' => [
+                                'valmistusprosessin ensimmäinen kuvaus',
+                                'valmistusprosessin toinen kuvaus',
+                            ],
+                            'description' => 'valmistusprosessin ensimmäinen kuvaus',
                         ],
                     ],
                     'suunnittelu' => [
@@ -1327,8 +1330,11 @@ class SolrLidoTest extends \PHPUnit\Framework\TestCase
                                 ],
                             ],
                             'culture' => 'kulttuuri',
-                            'descriptions' => ['description of the production process'],
-                            'description' => 'description of the production process',
+                            'descriptions' => [
+                                'first description of the production process',
+                                'another description of the production process',
+                            ],
+                            'description' => 'first description of the production process',
                         ],
                     ],
                     'suunnittelu' => [
