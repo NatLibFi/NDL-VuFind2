@@ -3,6 +3,7 @@
   $linkId = uniqid('fulltext_link_');
   $linkDescription = trim($this->desc);
   $icon = $this->icon ?? 'external-link';
+  $isDownloadLink = in_array($this->linkType, ['download', 'proxy-link']);
 
   $externalIconMap = [
     'Database Guide' => 'database-info',
@@ -20,12 +21,17 @@
       'class' => 'fulltext',
       'href' => $this->proxyUrl($this->url),
       'target' => '_blank',
-      'aria-label' => $this->translate('external_online_link'),
     ];
   }
-  if (in_array($this->linkType, ['download', 'proxy-link'])) {
+
+  // Handle
+  if ($isDownloadLink) {
     $aAttrs['download'] = '';
-    $icon = 'download';
+    if (!$linkDescription || $linkDescription === $this->url) {
+      $linkDescription = $this->translate('Download the file');
+    } else {
+      $aAttrs['aria-label'] = $this->translate('Download the file') . ' ' . $linkDescription;
+    }
   }
 
   // Start the link with wrapping div
@@ -41,6 +47,11 @@
 
   // Create a label for the link
   $link .= '<span class="icon-link__label">' . $this->transEscWithPrefix('default::link_', $linkDescription) . '</span>';
+
+  // Add visually hidden label for screen readers
+  if (!$isDownloadLink) {
+    $link .= '<span class="visually-hidden"> ' . $this->transEsc('external_online_link') . '</span>';
+  }
 
   // Close the link element
   $link .= '</a>';
