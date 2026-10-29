@@ -2,6 +2,7 @@
   //Don't add start and end tags
   $localSizes = $sizes ?? ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]];
   $rating = $this->driver->isRatingAllowed();
+  $img = $this->recordImage($this->record($this->driver));
 ?>
 <div class="image-information">
   <div class="cover-wrapper">
