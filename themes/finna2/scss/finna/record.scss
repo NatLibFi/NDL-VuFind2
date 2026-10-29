@@ -218,8 +218,8 @@
   color: $gray-slightly-lighter;
 }
 .fulltextField {
-  a {
-    
+  > a {
+    font-size: $font-size-small;
   }
   .copyright-wrapper {
     display: inline-flex;
