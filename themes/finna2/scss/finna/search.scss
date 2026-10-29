@@ -22,7 +22,6 @@ $thumbnail-width-large:  200px !default;
     @include gradient-vertical($background-start-color, $background-end-color, $background-start-percent, $background-end-percent);
   }
   .searchContent {
-    -webkit-overflow-scrolling: touch;
     background-color: $background-color;
     background-image: $background-image-url;
     background-repeat: no-repeat;
