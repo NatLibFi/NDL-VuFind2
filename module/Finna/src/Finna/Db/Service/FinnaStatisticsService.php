@@ -309,6 +309,9 @@ class FinnaStatisticsService extends AbstractDbService implements
             ->setOnline($logEntry->getOnline())
             ->setExtraMetadata($logEntry->getExtraMetadata());
         $this->persistEntity($entity);
+        if ($this->cachedViewRecord && $this->cachedViewRecord !== $entity) {
+            $this->entityManager->detach($this->cachedViewRecord);
+        }
         $this->cachedViewRecord = $entity;
         return $entity;
     }
@@ -392,6 +395,9 @@ class FinnaStatisticsService extends AbstractDbService implements
             $entity->setInstitution($logEntry->getInstitution());
             $entity->setView($logEntry->getView());
             $this->persistEntity($entity);
+        }
+        if ($this->cachedViewInstView && $this->cachedViewInstView !== $entity) {
+            $this->entityManager->detach($this->cachedViewInstView);
         }
         $this->cachedViewInstView = $entity;
         return $entity;

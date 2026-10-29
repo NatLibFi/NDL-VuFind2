@@ -34,6 +34,7 @@ use Finna\Db\Type\FinnaStatisticsClientType;
 use Finna\Statistics\Driver\Redis as RedisDriver;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 use function call_user_func;
@@ -76,9 +77,28 @@ class ProcessStatsQueue extends AbstractUtilCommand
      */
     protected function configure()
     {
-        $this->setDescription(
-            'Process statistics queues from Redis into statistics tables'
-        );
+        $this->setDescription('Process statistics queues from Redis into statistics tables')
+            ->addOption(
+                'sessions',
+                null,
+                InputOption::VALUE_NEGATABLE,
+                'Whether to process session queue -- default is true',
+                true
+            )
+            ->addOption(
+                'page-views',
+                null,
+                InputOption::VALUE_NEGATABLE,
+                'Whether to process page view queue -- default is true',
+                true
+            )
+            ->addOption(
+                'record-views',
+                null,
+                InputOption::VALUE_NEGATABLE,
+                'Whether to process record view queue -- default is true',
+                true
+            );
     }
 
     /**
@@ -93,9 +113,15 @@ class ProcessStatsQueue extends AbstractUtilCommand
     {
         $this->output = $output;
 
-        $this->processSessions();
-        $this->processPageViews();
-        $this->processRecordViews();
+        if ($input->getOption('sessions')) {
+            $this->processSessions();
+        }
+        if ($input->getOption('page-views')) {
+            $this->processPageViews();
+        }
+        if ($input->getOption('record-views')) {
+            $this->processRecordViews();
+        }
 
         return 0;
     }

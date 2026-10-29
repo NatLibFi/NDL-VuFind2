@@ -1710,11 +1710,8 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
                 }
             }
             $culture = $reader->firstValue($node, 'culture/term') ?? '';
-            $descriptions = [];
-            $desc = $this->getLanguageSpecificValueByPath($node, 'eventDescriptionSet/descriptiveNoteValue', $language);
-            if ($desc) {
-                $descriptions[] = $desc;
-            }
+            $descNodes = $reader->all($node, 'eventDescriptionSet/descriptiveNoteValue');
+            $descriptions = $this->getAllLanguageSpecificValues($descNodes, $language);
             $event = [
                 'type' => $type,
                 'name' => $name,

@@ -62,15 +62,18 @@ a.authority-link {
 }
 
 .authority-recommend {
+  margin-bottom: 1rem;
   .authoritybox {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
     padding: 10px;
-    margin-bottom: 20px;
     overflow: hidden;
     border: 1px solid $border-color;
-    border-radius: $border-radius-small;
+    border-radius: $border-radius-large;
+    &.filtered {
+      border-top-left-radius: 0;
+    }
     div:first-child {
       padding-right: 0.3em;
     }
@@ -89,9 +92,6 @@ a.authority-link {
         margin: 0px;
       }
     }
-    &.filtered {
-      border-top: none;
-    }
     h3 {
       margin-top: 0.3em;
       margin-bottom: 0.3em;
@@ -109,9 +109,13 @@ a.authority-link {
   .tabs-table .nav-tabs {
     position: relative;
     display: flex;
+    justify-content: space-between;
     margin-top: 0px;
     margin-bottom: 0px;
-    border-bottom: 1px solid $gray-lighter;
+    border-bottom: none;
+    &.collapsed {
+      border-bottom: 1px solid $border-color;
+    }
     > li {
       display: flex;
       align-items: center;
@@ -127,16 +131,13 @@ a.authority-link {
       &.spinner {
         position: absolute;
         right: 40px;
-        bottom: 12px;
+        bottom: 50%;
         margin-left: 0px;
       }
       &.toggle {
-        position: absolute;
-        right: 8px;
-        bottom: 5px;
-        float: right;
+        padding: 0rem 0.75rem;
         font-family: finnaicons;
-        font-size: 24px;
+        font-size: $font-size-icon-large;
         color: $action-link-color;
         background-color: transparent;
         &:before {
@@ -199,13 +200,6 @@ a.authority-link {
     }
     .media-right {
       flex-basis: 40%;
-    }
-  }
-}
-@include media-breakpoint-down(md) {
-  .authority-recommend .tabs-table {
-    ul.nav-tabs > li:not(.many-tabs) {
-      flex-basis: 50%;
     }
   }
 }

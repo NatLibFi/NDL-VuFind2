@@ -219,6 +219,7 @@
 }
 .fulltextField .copyright-wrapper {
   display: inline-flex;
+  flex-flow: row wrap;
   align-items: center;
   justify-content: start;
   font-size: $font-size-small;

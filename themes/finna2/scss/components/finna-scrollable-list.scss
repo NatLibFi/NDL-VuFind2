@@ -196,14 +196,20 @@
         > a {
           padding: $finna-shortcut-bar-link-padding;
           color: $finna-shortcut-bar-link-color;
-          text-decoration: $finna-shortcut-bar-link-text-decoration;
           border-radius: $finna-shortcut-bar-link-border-radius;
           background-color: $finna-shortcut-bar-link-background;
           transition: background-color 0.3s ease;
           &:hover {
             color: $finna-shortcut-bar-link-hover-color;
-            text-decoration: $finna-shortcut-bar-link-text-decoration-hover;
             background-color: $finna-shortcut-bar-link-background-hover;
+          }
+          &.icon-link {
+            .icon-link__label {
+              text-decoration: $finna-shortcut-bar-link-text-decoration;
+            }
+            &:hover .icon-link__label {
+              text-decoration: $finna-shortcut-bar-link-text-decoration-hover;
+            }
           }
         }
       }

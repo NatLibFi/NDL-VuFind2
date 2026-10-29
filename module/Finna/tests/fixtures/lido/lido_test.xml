@@ -434,8 +434,12 @@
                 </materialsTech>
             </eventMaterialsTech>
             <eventDescriptionSet>
-              <descriptiveNoteValue lang="fi">valmistusprosessin kuvaus</descriptiveNoteValue>
-              <descriptiveNoteValue lang="en">description of the production process</descriptiveNoteValue>
+              <descriptiveNoteValue lang="fi">valmistusprosessin ensimmäinen kuvaus</descriptiveNoteValue>
+              <descriptiveNoteValue lang="en">first description of the production process</descriptiveNoteValue>
+            </eventDescriptionSet>
+            <eventDescriptionSet>
+              <descriptiveNoteValue lang="fi">valmistusprosessin toinen kuvaus</descriptiveNoteValue>
+              <descriptiveNoteValue lang="en">another description of the production process</descriptiveNoteValue>
             </eventDescriptionSet>
           </event>
         </eventSet>
