@@ -120,7 +120,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @returns {void}
    */
   document.addEventListener('click', function showAllServicePoints (e) {
-    var link = e.target.closest && e.target.closest('a[href="#location_show_all_btn"]');
+    var link = e.target.closest('a[href="#location_show_all_btn"]');
     if (!link) {
       if (typeof hideListing === 'function') hideListing();
       return;
