@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  AJAX
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -41,6 +42,7 @@ use VuFind\Db\Service\UserResourceServiceInterface;
  * @category VuFind
  * @package  AJAX
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -74,6 +76,7 @@ class EditListResourceFactory implements \Laminas\ServiceManager\Factory\Factory
         return new $requestedName(
             $container->get(\VuFind\Auth\Manager::class)->getUserObject(),
             $container->get(\VuFind\Db\Service\PluginManager::class)->get(UserResourceServiceInterface::class),
+            $container->get(\VuFind\Favorites\FavoritesService::class),
             $container->get('ViewRenderer')->plugin('markdown'),
             $capabilities->getListSetting() !== 'disabled',
         );

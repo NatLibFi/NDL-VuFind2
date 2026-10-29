@@ -23,19 +23,17 @@
  * @category VuFind
  * @package  Database
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
 
 namespace Finna\Db\Service;
 
-use DateTime;
 use Finna\Db\Entity\UserEntityInterface;
 use Finna\Db\Entity\UserListEntityInterface;
 use Finna\Db\Entity\UserResourceEntityInterface;
 use VuFind\Db\Entity\ResourceEntityInterface;
-use VuFind\Db\Entity\UserEntityInterface as VuFindUserEntityInterface;
-use VuFind\Db\Entity\UserListEntityInterface as VuFindUserListEntityInterface;
 
 use function assert;
 
@@ -45,6 +43,7 @@ use function assert;
  * @category VuFind
  * @package  Database
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development:plugins:database_gateways Wiki
  */
@@ -68,24 +67,25 @@ class UserResourceService extends \VuFind\Db\Service\UserResourceService impleme
     }
 
     /**
-     * Create user/resource/list link if one does not exist; update notes if one does.
+     * Create user/resource/list link if one does not exist.
      *
-     * Finna: updates custom order as well.
+     * Finna: Optionally, also update notes and/or custom order.
      *
      * @param ResourceEntityInterface|int $resourceOrId Entity or ID of resource to link up
      * @param UserEntityInterface|int     $userOrId     Entity or ID of user creating link
      * @param UserListEntityInterface|int $listOrId     Entity or ID of list to link up
-     * @param string                      $notes        Notes to associate with link
-     * @param ?int                        $order        Custom order
+     * @param ?string                     $notes        Notes to associate with link
+     *                                                  (null if existing notes should not be overwritten)
+     * @param ?int                        $order        Custom order (null if order should not be changed)
      *
-     * @return UserResource|false
+     * @return UserResourceEntityInterface|false
      */
     public function createOrUpdateLinkWithOrder(
         ResourceEntityInterface|int $resourceOrId,
         UserEntityInterface|int $userOrId,
         UserListEntityInterface|int $listOrId,
-        string $notes = '',
-        ?int $order = null
+        ?string $notes,
+        ?int $order
     ): UserResourceEntityInterface {
         $resource = $this->getDoctrineReference(ResourceEntityInterface::class, $resourceOrId);
         $user = $this->getDoctrineReference(UserEntityInterface::class, $userOrId);
@@ -101,41 +101,16 @@ class UserResourceService extends \VuFind\Db\Service\UserResourceService impleme
                 ->setUserList($list);
         }
         // Update the notes:
-        $result->setNotes($notes);
+        if (null !== $notes) {
+            $result->setNotes($notes);
+        }
         // Update Finna custom order:
-        assert($result instanceof UserResourceEntityInterface);
-        $result->setFinnaCustomOrderIndex($order);
+        if (null !== $order) {
+            assert($result instanceof UserResourceEntityInterface);
+            $result->setFinnaCustomOrderIndex($order);
+        }
         $this->persistEntity($result);
 
-        // Update list date:
-        $list->setFinnaUpdated(new DateTime());
-        $this->persistEntity($list);
-
         return $result;
-    }
-
-    /**
-     * Unlink rows for the specified resource.
-     *
-     * @param int|int[]|null              $resourceId ID (or array of IDs) of resource(s) to unlink (null for ALL
-     * matching resources)
-     * @param UserEntityInterface|int     $userOrId   ID or entity representing user removing links
-     * @param UserListEntityInterface|int $listOrId   ID or entity representing list to unlink (null for ALL
-     * matching lists)
-     *
-     * @return void
-     */
-    public function unlinkFavorites(
-        int|array|null $resourceId,
-        VuFindUserEntityInterface|int $userOrId,
-        VuFindUserListEntityInterface|int|null $listOrId = null
-    ): void {
-        parent::unlinkFavorites($resourceId, $userOrId, $listOrId);
-        if (null !== $listOrId) {
-            $list = $this->getDoctrineReference(UserListEntityInterface::class, $listOrId);
-            // Update list date:
-            $list->setFinnaUpdated(new DateTime());
-            $this->persistEntity($list);
-        }
     }
 }

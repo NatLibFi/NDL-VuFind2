@@ -24,6 +24,7 @@
  * @package  AJAX
  * @author   Joni Nevalainen <joni.nevalainen@gofore.com>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -31,13 +32,12 @@
 namespace Finna\AjaxHandler;
 
 use Finna\Db\Service\UserListServiceInterface;
-use Finna\Db\Service\UserResourceServiceInterface;
+use Finna\Favorites\FavoritesService;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Session\SessionManager;
 use Laminas\View\Renderer\RendererInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\SearchServiceInterface;
-use VuFind\Favorites\FavoritesService;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Record\Loader as RecordLoader;
 use VuFind\Record\ResourcePopulator;
@@ -54,6 +54,7 @@ use function count;
  * @package  AJAX
  * @author   Joni Nevalainen <joni.nevalainen@gofore.com>
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -64,23 +65,21 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
     /**
      * Constructor.
      *
-     * @param ?UserEntityInterface         $user                Logged in user (or null)
-     * @param SearchNormalizer             $searchNormalizer    Search normalize
-     * @param SearchServiceInterface       $searchService       Search database service
-     * @param UserListServiceInterface     $userListService     User list database service
-     * @param UserResourceServiceInterface $userResourceService User resource database service
-     * @param FavoritesService             $favoritesService    Favorites service
-     * @param SessionManager               $sessionManager      Session manager
-     * @param RecordLoader                 $recordLoader        Record loader
-     * @param ResourcePopulator            $resourcePopulator   Resource populator
-     * @param RendererInterface            $renderer            View renderer
+     * @param ?UserEntityInterface     $user              Logged in user (or null)
+     * @param SearchNormalizer         $searchNormalizer  Search normalize
+     * @param SearchServiceInterface   $searchService     Search database service
+     * @param UserListServiceInterface $userListService   User list database service
+     * @param FavoritesService         $favoritesService  Favorites service
+     * @param SessionManager           $sessionManager    Session manager
+     * @param RecordLoader             $recordLoader      Record loader
+     * @param ResourcePopulator        $resourcePopulator Resource populator
+     * @param RendererInterface        $renderer          View renderer
      */
     public function __construct(
         protected ?UserEntityInterface $user,
         protected SearchNormalizer $searchNormalizer,
         protected SearchServiceInterface $searchService,
         protected UserListServiceInterface $userListService,
-        protected UserResourceServiceInterface $userResourceService,
         protected FavoritesService $favoritesService,
         protected SessionManager $sessionManager,
         protected RecordLoader $recordLoader,
@@ -217,11 +216,12 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
                 continue;
             }
             if (!($targetList = $this->userListService->getListByTitle($this->user, $title))) {
-                $targetList = $this->favoritesService->createListForUser($this->user);
-                $targetList->setTitle($title);
-                $targetList->setDescription($list['description'] ?? '');
-                $targetList->setPublic($list['public'] ?? false);
-                $this->userListService->persistEntity($targetList);
+                $targetList = $this->favoritesService->createAndPersistListForUserWithDetails(
+                    $this->user,
+                    $title,
+                    $list['description'] ?? '',
+                    $list['public'] ?? false
+                );
                 $listCount++;
             }
 
@@ -246,13 +246,7 @@ class ImportFavorites extends \VuFind\AjaxHandler\AbstractBase implements Transl
 
                 if (null !== ($order = $record['order'] ?? null)) {
                     if ($resource = $this->resourcePopulator->getOrCreateResourceForDriver($driver)) {
-                        $this->userResourceService->createOrUpdateLinkWithOrder(
-                            $resource,
-                            $this->user,
-                            $targetList,
-                            $record['notes'] ?? '',
-                            $order
-                        );
+                        $this->favoritesService->updateResourceCustomOrder($this->user, $resource, $targetList, $order);
                     }
                 }
 

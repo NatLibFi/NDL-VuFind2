@@ -28,6 +28,7 @@
  * @author   Kalle Pyykkönen <kalle.pyykkonen@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
  * @author   Tuure Ilmarinen <tuure.ilmarinen@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -37,7 +38,6 @@ namespace Finna\Controller;
 use Finna\Db\Entity\UserEntityInterface;
 use Finna\Db\Entity\UserResourceEntityInterface;
 use Finna\Db\Service\FinnaFeedbackServiceInterface;
-use Finna\Db\Service\UserListService as FinnaUserListService;
 use Finna\Db\Service\UserListServiceInterface;
 use Finna\Db\Service\UserResourceService;
 use Finna\Db\Service\UserServiceInterface;
@@ -68,6 +68,7 @@ use function strlen;
  * @author   Konsta Raunio <konsta.raunio@helsinki.fi>
  * @author   Kalle Pyykkönen <kalle.pyykkonen@helsinki.fi>
  * @author   Juha Luoma <juha.luoma@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     http://vufind.org   Main Site
  */
@@ -392,8 +393,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             }
 
             $listId = (int)$this->params()->fromPost('list');
-            $favorites = $this->serviceLocator
-                ->get(\VuFind\Favorites\FavoritesService::class);
+            $favoritesService = $this->serviceLocator->get(\Finna\Favorites\FavoritesService::class);
 
             $recordLoader = $this->serviceLocator->get(\VuFind\Record\Loader::class);
             $userResourceService = $this->getDbService(UserResourceService::class);
@@ -498,7 +498,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                             . implode("\n$notesSeparator", $notesBlocks);
                     }
 
-                    $saveResult = $favorites->save(
+                    $saveResult = $favoritesService->saveRecordToFavorites(
                         [
                             'list' => $listId,
                             'notes' => $allNotes,
@@ -545,25 +545,25 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $view = parent::editlistAction();
         // If the user is in the process of saving a public list, send them back
         // to the save screen
+        $saveListId = $this->params()->fromQuery('saveListId');
         if ($view instanceof \Laminas\Http\PhpEnvironment\Response) {
-            if (
-                $this->formWasSubmitted()
-                && ($listId = $this->params()->fromQuery('saveListId'))
-            ) {
-                $saveUrl = $this->url()->fromRoute('list-save', ['id' => $listId]);
+            if ($this->formWasSubmitted() && $saveListId) {
+                $saveUrl = $this->url()->fromRoute('list-save', ['id' => $saveListId]);
                 return $this->redirect()->toUrl($saveUrl);
             }
+        } elseif ($saveListId) {
+            $view->action = $this->url()->fromRoute('editList', options: ['query' => ['saveListId' => $saveListId]]);
         }
         // If the user is in the process of saving historic loans, send them back
         // to the save screen
+        $saveHistoricLoans = $this->params()->fromQuery('saveHistoricLoans');
         if ($view instanceof \Laminas\Http\PhpEnvironment\Response) {
-            if (
-                $this->formWasSubmitted()
-                && ($this->params()->fromQuery('saveHistoricLoans'))
-            ) {
+            if ($this->formWasSubmitted() && $saveHistoricLoans) {
                 $saveUrl = $this->url()->fromRoute('myresearch-savehistoricloans');
                 return $this->redirect()->toUrl($saveUrl);
             }
+        } elseif ($saveHistoricLoans) {
+            $view->action = $this->url()->fromRoute('editList', options: ['query' => ['saveHistoricLoans' => 1]]);
         }
         return $view;
     }
@@ -644,13 +644,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $this->params()->fromPost('orderedList'),
                 true
             );
-            $userListService = $this->getDbService(UserListServiceInterface::class);
-            assert($userListService instanceof FinnaUserListService);
+            $favoritesService = $this->serviceLocator->get(\Finna\Favorites\FavoritesService::class);
             $listID = $this->params()->fromPost('list_id');
             if (empty($listID) || empty($orderedList)) {
                 $this->flashMessenger()->addErrorMessage('An error has occurred');
             } else {
-                $userListService->saveCustomFavoriteOrder($user, $listID, $orderedList);
+                $favoritesService->saveCustomFavoriteOrder($user, $listID, $orderedList);
                 $this->flashMessenger()->addSuccessMessage('list_order_saved');
             }
             if ($this->inLightbox()) {
@@ -1136,12 +1135,11 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             && $this->params()->fromPost('opcode') == 'save_order'
         ) {
             $orderedList = $this->params()->fromPost('orderedList');
-            $userListService = $this->getDbService(\VuFind\Db\Service\UserListServiceInterface::class);
-            assert($userListService instanceof UserListServiceInterface);
+            $favoritesService = $this->serviceLocator->get(\Finna\Favorites\FavoritesService::class);
             if (
                 empty($listID)
                 || empty($orderedList)
-                || !$userListService->saveCustomFavoriteOrder($user, $listID, $orderedList)
+                || !$favoritesService->saveCustomFavoriteOrder($user, $listID, $orderedList)
             ) {
                 $this->flashMessenger()->addErrorMessage('An error has occurred');
             }

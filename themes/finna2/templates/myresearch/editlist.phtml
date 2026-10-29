@@ -11,7 +11,7 @@
 
 <?=$this->component('page-title', ['title' => $pageTitle, 'tabindex' => '0']);?>
 
-<form class="form-edit-list" method="post" name="<?=empty($this->list->getId()) ? 'newList' : 'editListForm'?>" action="<?=$this->url('editList'); ?>">
+<form class="form-edit-list" method="post" name="<?=empty($this->list->getId()) ? 'newList' : 'editListForm'?>" action="<?=$this->action ?? $this->url('editList'); ?>">
   <input type="hidden" name="id" value="<?=empty($this->list->getId()) ? 'NEW' : $this->escapeHtmlAttr($this->list->getId()) ?>">
   <?=$this->context($this)->renderInContext('cart/form-record-hidden-inputs.phtml', []); ?>
   <input type="hidden" name="followup" value="<?=$this->escapeHtmlAttr($this->followup) ?>">
