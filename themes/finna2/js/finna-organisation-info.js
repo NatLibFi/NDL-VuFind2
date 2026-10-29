@@ -99,11 +99,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    */
   function showListing() {
     const elems = document.querySelectorAll('.location-listing');
-    if (!elems.length) return false;
-    elems.forEach(el => {
-      el.removeAttribute('hidden');
-      if (el.style && el.style.display === 'none') el.style.display = '';
-    });
+    elems.forEach(el => el.removeAttribute('hidden'));
     return true;
   }
 
@@ -113,7 +109,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    */
   function hideListing() {
     const elems = document.querySelectorAll('.location-listing');
-    if (!elems.length) return false;
     elems.forEach(el => el.setAttribute('hidden', ''));
     return true;
   }
