@@ -13,6 +13,9 @@
     $this->headLink()->appendAlternate($this->recordLinker()->getActionUrl($this->driver, 'RDF'), 'application/rdf+xml', 'RDF Representation');
   }
 
+  // Add Finna skip link target
+  $this->layout()->finnaSkipLinkTarget = 'record-skip-link-target';
+
   // Set flag for special cases relating to full-width hierarchy tree tab:
   $tree = (strtolower($this->activeTab) == 'hierarchytree');
 
@@ -66,7 +69,7 @@
       <?=$this->record($this->driver)->getMetaTags();?>
       <?=$this->record($this->driver)->getCoreMetadata()?>
     <?php else: ?>
-      <h2 class="collection-title"><?=$this->driver->getTitle();?></h2>
+      <?=$this->partial('RecordDriver/DefaultRecord/record-title-skiplink.phtml') ?>
       <?php $formats = $this->driver->getFormats();
       if (!empty($formats)): ?>
         <div class="recordFormat collection-format">
