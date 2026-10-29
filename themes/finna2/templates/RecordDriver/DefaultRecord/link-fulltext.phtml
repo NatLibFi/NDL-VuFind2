@@ -2,7 +2,7 @@
 <?php
   $linkId = uniqid('fulltext_link_');
   $linkDescription = trim($this->desc);
-  $icon = $this->icon ?? 'external-icon';
+  $icon = $this->icon ?? 'external-link';
 
   $externalIconMap = [
     'Database Guide' => 'database-info',
@@ -29,23 +29,36 @@
   }
 
   // Start the link with wrapping div
-  $link = '<div class="fulltextField"><a ' . $this->htmlAttributes($aAttrs) . '>';
+  $link = '<div class="fulltextField">';
+
+  // Create the actual link element
+  $link .= '<a' . $this->htmlAttributes($aAttrs) . '>';
+
+  // Add an icon to the link
   if ($linkIcon = $externalIconMap[$linkDescription] ?? $icon) {
     $link .= $this->icon($linkIcon, 'icon-link__icon') . ' ';
   }
 
-  $link .= '<span class="icon-link__label">' . $this->transEsc('default::link_' . $linkDescription, null, $linkDescription) . '</a></span>';
+  // Create a label for the link
+  $link .= '<span class="icon-link__label">' . $this->transEscWithPrefix('default::link_', $linkDescription) . '</span>';
+
+  // Close the link element
+  $link .= '</a>';
+
+  // Add the additional information after the link:
   if ($source = $this->source ?? '') {
     $sourceDesc = is_array($source)
       ? $this->transEsc('Multiple Organisations')
-      : $this->transEsc('default::source_' . $source, null, $source);
+      : $this->transEscWithPrefix('default::source_', $source);
     $link .= ' (<span class="online-source">' . $sourceDesc . '</span>)';
   }
+
   if ($linkNote = $this->note ?? '') {
     $link .= ' <span class="url-public-note">' . $this->escapeHtml($linkNote) . '</span>';
   }
+
   if ($linkPart = $this->part ?? '') {
-    $link .= ' <span class="coverage">' . $this->transEsc('default::link_' . $linkPart, null, $linkPart) . '</span>';
+    $link .= ' <span class="coverage">' . $this->transEscWithPrefix('default::link_', $linkPart) . '</span>';
   }
 
   $format = $this->format ?? '';
