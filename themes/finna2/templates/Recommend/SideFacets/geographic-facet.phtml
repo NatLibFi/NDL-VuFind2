@@ -10,14 +10,14 @@
   <?php endif;?>
   <div class="clearfix"></div>
 </div>
-<div aria-hidden="true" class="geographic-facet">
+<div class="geographic-facet">
   <?php if (empty($geoFilters)):?>
-    <div class="location-search-info alert alert-info hidden">
+    <div aria-hidden="true" class="location-search-info alert alert-info hidden">
       <?=$this->icon('spinner', 'hidden') ?>
       <div class="info"></div>
     </div>
   <?php else: ?>
-    <div class="map-container">
+    <div aria-hidden="true" class="map-container">
       <div class="map" style="height: 200px"></div>
       <div class="location-search-info info-map hidden">
         <?=$this->icon('ui-close', 'close-info') ?>
@@ -28,7 +28,7 @@
   <?php endif; ?>
   <div class="map-controls text-center">
     <a class="btn user-location-filter" href="<?=$removeFacetUrl?>"><?=$this->translate('use_my_location');?></a>
-    <a tabindex="-1" class="btn map-control" href="<?=$this->escapeHtmlAttr($mapPopupUrl) ?>" data-lightbox><?=$this->translate('select_from_map');?></a>
+    <a aria-hidden="true" class="btn map-control" href="<?=$this->escapeHtmlAttr($mapPopupUrl) ?>" data-lightbox><?=$this->translate('select_from_map');?></a>
   </div>
   <div class="clearfix"></div>
 </div>
