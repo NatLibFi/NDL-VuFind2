@@ -1,0 +1,87 @@
+<!-- START of: finna - ajax/feed-list.phtml -->
+<?php
+  $display = $this->display;
+  $feedId = $this->feedId;
+  $linkText = $this->linkText ?? '';
+  $moreLinkIcon = $this->moreLinkIcon ?? '';
+  $dateText = $this->dateText ?? '';
+  $onlyFirstImage = $this->onlyFirstImage;
+?>
+<div class="list-featured-feed<?= $this->images ? ' with-image' : ''; ?> <?= $display; ?>">
+<?php if (!$this->translateTitle): // Translated title is displayed in the container, so ignore it here ?>
+  <h2 class="feed-header"><?= $this->escapeHtml($this->title) ?></h2>
+<?php endif; ?>
+<?php if (isset($this->description)): ?><p class="additional-description"><?= $this->translate($this->description) // HTML, intentionally left unescaped ?></p><?php endif; ?>
+    <?php
+      $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items;
+      $firstItem = '';
+      $linkBox = $display === 'linkbox';
+    ?>
+    <?php ob_start(); ?>
+    <?php foreach ($items as $key => $item): ?>
+      <?php
+        $first = $key === 0 && $display !== 'articles';
+      ?>
+      <?php
+        $linkElement = [
+          'href' => $item['link'],
+        ];
+        if ($this->linkTarget) {
+          $linkElement['target'] = $this->linkTarget;
+        }
+        if ($item['modal']) {
+          $linkElement['data-lightbox'] = '';
+          $linkElement['data-lightbox-title'] = $item['title'];
+        }
+      ?>
+      <li>
+        <?php if ($linkBox): ?>
+          <a class="link-box" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>">
+        <?php endif; ?>
+        <?=$this->partial('ajax/feed-list-featured-item.phtml', compact('item', 'first', 'linkElement', 'feedId', 'linkText', 'moreLinkIcon', 'dateText', 'display', 'onlyFirstImage'))?>
+        <?php if ($linkBox): ?>
+          </a>
+        <?php endif; ?>
+      </li>
+      <?php if ($first) : ?>
+        <?php
+          $firstItem = ob_get_clean();
+          ob_start();
+          if ($display === 'featured') {
+            continue;
+          }
+        ?>
+      <?php endif; ?>
+      <?php if ($linkBox && $key == 2): ?>
+        <?php
+          $featuredArticles = ob_get_clean();
+          ob_start();
+        ?>
+      <?php endif; ?>
+    <?php endforeach; ?>
+    <?php $rightSide = ob_get_clean(); ?>
+    <div class="list-featured-container">
+      <?php if ($this->display !== 'articles'): ?>
+        <?php if ($linkBox): ?>
+            <div class="list-featured-container-lifts">
+        <?php endif; ?>
+        <ul class="container-featured">
+          <?= $firstItem ?>
+        </ul>
+        <?php if ($featuredArticles ?? false): ?>
+          <ul class="container-articles-featured">
+            <?= $featuredArticles ?>
+          </ul>
+        <?php endif; ?>
+        <?php if ($linkBox): ?>
+            </div>
+        <?php endif; ?>
+      <?php endif; ?>
+      <?php if ($this->display !== 'featured'): ?>
+        <ul class="container-articles">
+          <?= $rightSide?>
+        </ul>
+      <?php endif; ?>
+    </div>
+</div>
+<!-- END of: finna - ajax/feed-list.phtml -->

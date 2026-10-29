@@ -1,0 +1,39 @@
+<!-- START of: finna - ajax/feed-list-item.phtml -->
+<?php
+  $hasIcon = !empty($item['icon']['name']);
+  $hasImg = !empty($item['image']['url']);
+?>
+  <?php
+    $feedId ??= '';
+    $linkText ??= '';
+    $linkElement ??= '';
+    $first ??= false;
+    $linkBox = $display === 'linkbox';
+    $moreLinkIcon ??= '';
+    $dateText ??= '';
+    $onlyFirstImage = $this->onlyFirstImage ?? false;
+  ?>
+  <?php if (($first || !$onlyFirstImage) && $hasImg): ?>
+    <div class="image-container <?php if ($linkBox && isset($item['image']['orientation'])): ?><?= $item['image']['orientation'] ?><?php endif; ?>">
+      <img src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="" aria-hidden="true">
+    </div>
+  <?php endif; ?>    
+  <div class="feed-item-container">
+    <div class="content-elements">
+        <?php if (!$linkBox): ?><a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><?php endif; ?>
+        <h3 class="title"><?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title'] ?? '') ?></h3>
+        <?php if (!$linkBox): ?></a><?php endif; ?>
+        <?php if (isset($item['dateFull']) || isset($item['date'])): ?>
+          <p class="date"><?php if (!empty($dateText)):?><?= $this->transEsc($dateText) ?>:<?php endif; ?> <?= $item['dateFull'] ?? $item['date'] ?></p>
+        <?php endif; ?>
+        <?php if ((isset($item['description']) || isset($item['text'])) && ($linkBox || $first)): ?>
+          <p class="text"><?=$this->escapeHtml($item['description'] ?? $item['text']) ?></p>
+        <?php endif; ?>
+    </div>
+    <?php if (!$linkBox): ?>
+      <span><a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><?= $this->transEsc($linkText) ?></a> <?=$this->icon($moreLinkIcon)?></span>
+    <?php else: ?>
+      <p class="link-text"><?= $this->transEsc($linkText) ?> <?=$this->icon($moreLinkIcon)?></p>
+    <?php endif; ?>
+  </div>
+<!-- END of: finna - ajax/feed-list-item.phtml -->
