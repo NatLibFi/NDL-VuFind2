@@ -8,6 +8,7 @@
  *  @param string    type            'link' or 'dropdown' for dropdown menu button, 'link' as default.
  *  @param string    href            'href' attribute.
  *  @param string    label           Link text.
+ *  @param string    target          Target attribute for link.
  *  @param string    icon            Icon on the left side of link text, using iconHelper (optional).
  *  @param string    iconElement     Icon on the left side of link text, using i-element (optional).
  *  @param array     dropdownItems   Items (links) in a dropdown menu, only applicable for type 'dropdown'.
@@ -15,6 +16,7 @@
  * Params available for dropdownItems:
  * - href
  * - label
+ * - target
  * - icon
  * - iconElement
  */
@@ -47,7 +49,7 @@
             <ul class="dropdown-menu">
               <?php foreach ($__item['dropdownItems'] ?? [] as $__dropdownItem): ?>
                 <li>
-                  <a class="dropdown-item" href="<?=$__dropdownItem['href'] ?? ''?>" >
+                  <a class="dropdown-item" href="<?=$__dropdownItem['href'] ?? ''?>" target="<?= $__item['target'] ?? '' ?>" >
                     <?php if (isset($__dropdownItem['icon'])): ?>
                       <?= $this->icon($__dropdownItem['icon']) ?>
                     <?php elseif (isset($__dropdownItem['iconElement'])): ?>
@@ -59,7 +61,7 @@
               <?php endforeach; ?>
             </ul>
           <?php else: ?>
-            <a class="icon-link" href="<?=$__item['href'] ?? ''?>">
+            <a class="icon-link" href="<?=$__item['href'] ?? ''?>" target="<?= $__item['target'] ?? '' ?>" >
               <?php if (isset($__item['icon'])): ?>
                 <?= $this->icon($__item['icon'], 'icon-link__icon') ?>
               <?php elseif (isset($__item['iconElement'])): ?>
