@@ -9,13 +9,14 @@ if (is_object($marc)) {
 }
 $journalTitle = $this->driver->tryMethod('getContainerTitle');
 $formats = $this->driver->tryMethod('getFormats');
+$formatParts = explode('/', $formats[1] ?? $formats[0] ?? []);
 if ($marcProceedingsField) {
     $format = 'CONF';
-} elseif ($marcPhdField) {
+} elseif ($marcPhdField || in_array('Thesis', $formatParts)) {
     $format = 'THES';
-} elseif (!empty($journalTitle) || (is_array($formats) && in_array('Article', $formats))) {
+} elseif (!empty($journalTitle) || in_array('Article', $formatParts)) {
     $format = 'JOUR';
-} elseif (is_array($formats) && in_array('Journal', $formats)) {
+} elseif (in_array('Journal', $formatParts)) {
     $format = 'JFULL';
 } else {
     $format = 'BOOK';
