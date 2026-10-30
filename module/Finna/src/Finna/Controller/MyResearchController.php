@@ -299,32 +299,6 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $displayItemBarcode
             = !empty($config->Catalog->display_checked_out_item_barcode);
 
-        // Display renewal information
-        $renewedCount = 0;
-        $renewErrorCount = 0;
-        foreach ($renewResult as $renew) {
-            if ($renew['success']) {
-                $renewedCount++;
-            } else {
-                $renewErrorCount++;
-            }
-        }
-        if ($renewedCount > 0) {
-            $msg = $this->translate(
-                'renew_ok',
-                ['%%count%%' => $renewedCount,
-                '%%transactionscount%%' => $result['count']]
-            );
-            $this->flashMessenger()->addInfoMessage($msg);
-        }
-        if ($renewErrorCount > 0) {
-            $msg = $this->translate(
-                'renew_failed',
-                ['%%count%%' => $renewErrorCount]
-            );
-            $this->flashMessenger()->addErrorMessage($msg);
-        }
-
         $params = $pageOptions['ilsParams'];
         $ilsPaging = $pageOptions['ilsPaging'];
         $view = $this->createViewModel(
