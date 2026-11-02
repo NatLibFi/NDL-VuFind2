@@ -21,7 +21,7 @@
     <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $this->linkDetails['videoURLs']['urls']]);?>
   <?php endif; ?>
 
-  <?php if ($this->linkDetails['audioURLs']): ?>
+  <?php if ($this->linkDetails['audioURLs']['count']): ?>
     <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $this->linkDetails['audioURLs']['urls']]);?>
   <?php endif; ?>
 
