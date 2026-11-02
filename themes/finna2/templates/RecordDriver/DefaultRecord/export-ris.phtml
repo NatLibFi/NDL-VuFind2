@@ -9,7 +9,7 @@ if (is_object($marc)) {
 }
 $journalTitle = $this->driver->tryMethod('getContainerTitle');
 $formats = $this->driver->tryMethod('getFormats');
-$formatParts = explode('/', $formats[1] ?? $formats[0] ?? []);
+$formatParts = explode('/', $formats[1] ?? $formats[0] ?? '');
 if ($marcProceedingsField) {
     $format = 'CONF';
 } elseif ($marcPhdField || in_array('Thesis', $formatParts)) {
