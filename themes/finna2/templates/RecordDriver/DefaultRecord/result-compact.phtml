@@ -129,9 +129,7 @@
     <?=$this->driver->supportsCoinsOpenUrl() ? '<span class="Z3988" aria-hidden="true" title="' . $this->escapeHtmlAttr($this->driver->getCoinsOpenUrl()) . '"></span>' : ''?>
   </div>
   <div class="clearfix"></div>
-  <div class="savedLists">
-    <strong><?=$this->transEsc('Saved in')?>:</strong>
-  </div>
+  <?=$this->component('finna-list/saved-in')?>
   <?=$this->render('list/list-notes.phtml')?>
 </div>
 <!-- END of: finna - RecordDriver/DefaultRecord/result-compact.phtml -->
