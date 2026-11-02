@@ -110,6 +110,9 @@ table .iconlabel {
 .iconlabel[class*="format-feed-journalenewspaper"]:before {
     content: "\e60d";
 }
+.iconlabel[class*="format-0place"]:before {
+	@extend .fa, .fa-location-dot;
+}
 .iconlabel[class*="format-1place"]:before,
 .iconlabel[class*="format-feed-place"]:before {
     content: "\e901";
@@ -227,6 +230,10 @@ table .iconlabel {
 .iconlabel[class*="format-2gamevideogame"]:before,
 .iconlabel[class*="format-feed-gamevideogame"]:before {
 	@extend .fa, .fa-gamepad;
+}
+.iconlabel[class*="format-1gamejigsawpuzzle"]:before,
+.iconlabel[class*="format-feed-gamejigsawpuzzle"]:before {
+	@extend .fa, .fa-puzzle-piece;
 }
 .iconlabel.full-text-available:before {
     content: "\e96e";
