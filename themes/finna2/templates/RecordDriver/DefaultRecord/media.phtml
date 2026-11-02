@@ -17,7 +17,7 @@
     <?php endforeach; ?>
   <?php endif; ?>
   <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml');?>
-  <?php if ($this->linkDetails['videoURLs']): ?>
+  <?php if ($this->linkDetails['videoURLs']['count']): ?>
     <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $this->linkDetails['videoURLs']['urls']]);?>
   <?php endif; ?>
 
