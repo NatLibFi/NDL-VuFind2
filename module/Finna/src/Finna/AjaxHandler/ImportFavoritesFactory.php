@@ -23,6 +23,7 @@
  * @category VuFind
  * @package  AJAX
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -36,7 +37,6 @@ use Psr\Container\ContainerExceptionInterface as ContainerException;
 use Psr\Container\ContainerInterface;
 use VuFind\Db\Service\SearchServiceInterface;
 use VuFind\Db\Service\UserListServiceInterface;
-use VuFind\Db\Service\UserResourceServiceInterface;
 
 /**
  * Factory for ImportFavorites AJAX handler.
@@ -44,6 +44,7 @@ use VuFind\Db\Service\UserResourceServiceInterface;
  * @category VuFind
  * @package  AJAX
  * @author   Ere Maijala <ere.maijala@helsinki.fi>
+ * @author   Minna Rönkä <minna.ronka@helsinki.fi>
  * @license  http://opensource.org/licenses/gpl-2.0.php GNU General Public License
  * @link     https://vufind.org/wiki/development Wiki
  */
@@ -79,7 +80,6 @@ class ImportFavoritesFactory implements FactoryInterface
             $container->get(\VuFind\Search\SearchNormalizer::class),
             $dbServiceManager->get(SearchServiceInterface::class),
             $dbServiceManager->get(UserListServiceInterface::class),
-            $dbServiceManager->get(UserResourceServiceInterface::class),
             $container->get(\VuFind\Favorites\FavoritesService::class),
             $container->get(\Laminas\Session\SessionManager::class),
             $container->get(\VuFind\Record\Loader::class),

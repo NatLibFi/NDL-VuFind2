@@ -29,10 +29,10 @@
 
 namespace Finna\AjaxHandler;
 
+use Finna\Favorites\FavoritesService;
 use Laminas\Mvc\Controller\Plugin\Params;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserListServiceInterface;
-use VuFind\Favorites\FavoritesService;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Record\Loader;
 use VuFind\View\Helper\Root\Record as RecordHelper;

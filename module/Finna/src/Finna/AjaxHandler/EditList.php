@@ -29,6 +29,7 @@
 
 namespace Finna\AjaxHandler;
 
+use Finna\Favorites\FavoritesService;
 use Finna\View\Helper\Root\Markdown;
 use Laminas\Mvc\Controller\Plugin\Params;
 use Laminas\Stdlib\Parameters;
@@ -36,7 +37,6 @@ use Laminas\View\Renderer\RendererInterface;
 use VuFind\Db\Entity\UserEntityInterface;
 use VuFind\Db\Service\UserListServiceInterface;
 use VuFind\Exception\ListPermission as ListPermissionException;
-use VuFind\Favorites\FavoritesService;
 use VuFind\I18n\Translator\TranslatorAwareInterface;
 use VuFind\Tags\TagsService;
 
