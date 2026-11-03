@@ -139,22 +139,19 @@
         <h4><?=$this->transEsc('organisation_info_is_open_now') ?></h4>
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($openList as $item): ?>
-              <a href="#<?=$this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a>
-              <br>
+            <p><a href="#<?=$this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a></p>
           <?php endforeach; ?>
         </div>
         <h4><?=$this->transEsc('organisation_info_is_closed_now') ?></h4>
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($closedList as $item): ?>
-              <a href="#<?=$this->escapeHtmlAttr($item['id']) ?>"id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a>
-              <br>
+            <p><a href="#<?=$this->escapeHtmlAttr($item['id']) ?>"id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a></p>
           <?php endforeach; ?>
         </div>
         <h4><?=$this->transEsc('organisation_info_no_schedule') ?></h4>
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($mobileList as $item): ?>
-              <a href="#<?=$this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a>
-              <br>
+            <p><a href="#<?=$this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a></p>
           <?php endforeach; ?>
         </div>
       <?php endif; ?>

@@ -15,7 +15,11 @@ $organisation-info-max-w: 400px !default;
         white-space: normal;
         #jump-to-top {
             display: inline-block; 
-            padding-bottom: 0.5em;
+
+        }
+        p { 
+            margin: 0 0 0.9em 0; 
+            line-height: 1.4; 
         }
     }
     .finna-panel {
