@@ -6,7 +6,7 @@
   </span>
   <?php if (isset($data['link'])): ?>
     <span class="rights-link">
-      <a href="<?= $this->escapeHtmlAttr($data['link']); ?>" target="_blank"><?= $this->transEsc('usage_meaning')?></a>
+      <a href="<?= $this->escapeHtmlAttr($data['link']); ?>" target="_blank"><?= $this->transEsc('usage_meaning')?><span class="visually-hidden"><?=' ' . $this->transEscAttr('external_online_link')?></span></a>
     </span>
   <?php endif; ?>
 <?php endif; ?>
