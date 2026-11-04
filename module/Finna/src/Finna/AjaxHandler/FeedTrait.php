@@ -123,11 +123,11 @@ trait FeedTrait
             $feed['visualItems'] = $config->visualItems;
         }
 
-        if ($type === 'list-featured') {
-            $feed['moreLinkIcon'] = $config->moreLinkIcon;
-            $feed['dateText'] = $config->dateText ?? '';
-            $feed['display'] = $config->display ?? 'all';
-            $feed['onlyFirstImage'] = $config->onlyFirstImage ?? false;
+        if ($type === 'linkbox' || 'list') {
+            $feed['linkText'] = $config->linkText ?? '';
+        }
+        if ($type === 'list') {
+            $feed['display'] = $config->display ?? '';
         }
 
         $isCarouselStyle = str_contains($type, 'carousel') || $type === 'slider';

@@ -1,0 +1,35 @@
+<!-- START of: finna - ajax/feed-list.phtml -->
+<?php
+  $feedId = $this->feedId;
+  $linkText = $this->linkText;
+?>
+<div class="list-linkbox-feed<?= $this->images ? ' with-image' : ''; ?>">
+  <?php if (!$this->translateTitle): // Translated title is displayed in the container, so ignore it here ?>
+    <h2 class="feed-header"><?= $this->escapeHtml($this->title) ?></h2>
+  <?php endif; ?>
+  <ul>
+    <?php
+      $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items;
+    ?>
+    <?php foreach ($items as $item): ?>
+      <?php
+        $linkElement = [
+          'href' => $item['link'],
+        ];
+        if ($this->linkTarget) {
+          $linkElement['target'] = $this->linkTarget;
+        }
+        if ($item['modal']) {
+          $linkElement['data-lightbox'] = '';
+          $linkElement['data-lightbox-title'] = $item['title'];
+        }
+      ?>
+      <li>
+        <a class="linkbox" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>">
+          <?=$this->partial('ajax/feed-linkbox-item.phtml', compact('item', 'linkElement', 'feedId', 'linkText'))?>
+        </a>
+      </li>
+    <?php endforeach; ?>
+  </ul>
+</div>
+<!-- END of: finna - ajax/feed-list.phtml -->
