@@ -144,13 +144,11 @@
                   <?php /* Depending on the ILS driver, the "location" value may be a string or an ID; figure out the best
                     value to display... */ ?>
                   <?php $pickupDisplay = ''; ?>
-                  <?php $pickupTranslate = false; ?>
                   <?php if (isset($ilsDetails['location'])): ?>
                     <?php if ($this->pickup): ?>
                       <?php foreach ($this->pickup as $library): ?>
                         <?php if ($library['locationID'] == $ilsDetails['location']): ?>
                           <?php $pickupDisplay = $library['locationDisplay']; ?>
-                          <?php $pickupTranslate = true; ?>
                         <?php endif; ?>
                       <?php endforeach; ?>
                     <?php endif; ?>
@@ -164,7 +162,7 @@
                   <?php if (!empty($pickupDisplay)): ?>
                     <div class="pickup-location-container">
                       <strong><?=$this->transEsc('pick_up_location') ?>:</strong>
-                      <?=$pickupTranslate ? $this->transEscWithPrefix('location_', $pickupDisplay) : $this->escapeHtml($pickupDisplay)?>
+                      <?=$this->transEscWithPrefix('location_', $pickupDisplay)?>
                     </div>
                   <?php endif; ?>
 
