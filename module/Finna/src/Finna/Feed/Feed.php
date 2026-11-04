@@ -528,12 +528,6 @@ class Feed implements
                             // Attempt to parse image URL from content
                             if ($value = $this->extractImage($item->getContent())) {
                                 $value = ['url' => $value];
-                                list($width, $height) = getimagesize($value['url']);
-                                if ($width > $height) {
-                                    $value['orientation'] = 'landscape';
-                                } else {
-                                    $value['orientation'] = 'portrait';
-                                }
                             }
                         }
                         if (!empty($value['url'])) {
