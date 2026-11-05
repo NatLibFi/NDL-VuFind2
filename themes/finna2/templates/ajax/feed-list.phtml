@@ -6,6 +6,8 @@
 <?php if (isset($this->description)): ?><p class="additional-description"><?= $this->translate($this->description) // HTML, intentionally left unescaped ?></p><?php endif; ?>
   <?php
     $featured = $this->display === 'featured';
+    $linkIcon = $this->linkIcon ?? '';
+    $moreLinkText = $this->moreLinkText ?? $this->transEsc('more_ellipsis');
   ?>
   <ul class="feed-list-container <?php if ($featured): ?>feed-featured<?php endif; ?>">
     <?php
@@ -30,15 +32,17 @@
               $linkElement['data-lightbox-title'] = $item['title'];
             }
           ?>
-          <?=$this->partial('ajax/feed-list-item.phtml', compact('item', 'linkElement', 'linkText', 'featured', 'first'))?>
+          <?=$this->partial('ajax/feed-list-item.phtml', compact('item', 'linkElement', 'linkText', 'linkIcon', 'featured', 'first'))?>
         <?php else: ?>
           <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
         <?php endif; ?>
       </li>
     <?php endforeach; ?>
-    <li class="more-link feed-list-item">
-      <a<?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><?= $this->transEsc('More'); ?>&hellip;</a>
-    </li>
+    <?php if ($this->moreLink): ?>
+      <li class="more-link feed-list-item">
+        <a class="icon-link" <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><span class="icon-link__label"><?= $this->transEsc($moreLinkText)?></span> <?= $this->icon($linkIcon, 'icon-link__icon'); ?></a>
+      </li>
+    <?php endif; ?>
   </ul>
 </div>
 <!-- END of: finna - ajax/feed-list.phtml -->

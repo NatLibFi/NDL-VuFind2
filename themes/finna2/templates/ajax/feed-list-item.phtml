@@ -39,7 +39,7 @@
     <?php if (isset($item['description']) || isset($item['text'])): ?><p class="text"><?=$this->escapeHtml($item['description'] ?? $item['text']) ?></p><?php endif; ?>
   <?php endif; ?>
   <?php if (isset($linkText)): ?>
-    <a class="link-text" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><?= $this->transEsc($this->linkText) ?> <?=$this->icon('carousel-follow-link')?></a>
+    <a class="link-text icon-link" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><span class="icon-link__label"><?= $this->transEsc($this->linkText) ?></span> <?=$this->icon($linkIcon, 'icon-link__icon')?></a>
   <?php endif; ?>
 </div>
 <!-- END of: finna - ajax/feed-list-item.phtml -->

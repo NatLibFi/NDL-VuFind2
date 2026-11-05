@@ -40,6 +40,9 @@ finna-feed.feed-container {
         margin-top: 0px;
         margin-bottom: 0px;
     }
+    a .title:hover {
+        text-decoration: $link-hover-decoration;
+    }
     .date {
         font-size: $font-size-small;
         color: $gray-light;
@@ -1177,6 +1180,10 @@ finna-feed.splide--ttb {
         object-fit: cover;
         border-top-left-radius: $linkbox-feed-border-radius;
         border-bottom-left-radius: $linkbox-feed-border-radius;
+    }
+    .more-link {
+        display: flex;
+        align-self: center;
     }
 }
 @container feed (max-width: #{$screen-xs-max}) {
