@@ -123,9 +123,6 @@ trait FeedTrait
             $feed['visualItems'] = $config->visualItems;
         }
 
-        if ($type === 'linkbox' || 'list') {
-            $feed['linkText'] = $config->linkText ?? '';
-        }
         if ($type === 'list') {
             $feed['display'] = $config->display ?? '';
         }

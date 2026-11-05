@@ -1,7 +1,7 @@
 ;; Mandatory settings:
 
 ; active = [0|1]
-; type = "[list|carousel|carousel-vertical|grid|slider]"
+; type = "[list|carousel|carousel-vertical|grid|slider|linkbox]"
 
 ; url[language code|*] = "<url>" Feed URL, for example:
 ;    Absolute URL: http://blogs.helsinki.fi/scriptaselecta/feed/
@@ -90,6 +90,7 @@
 
 ; moreLink = [0|1] Display a "more" link.
 ; dateFormat = "<format>" Item date format ("j.n." by default, see: http://php.net/manual/en/function.date.php).
+; display = "featured" First feed item is shown next to the rest of feed items as a featured item. Not applied by default.
 
 ;; Optional carousel settings:
 
