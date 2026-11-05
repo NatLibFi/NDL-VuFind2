@@ -1161,8 +1161,10 @@ finna-feed.splide--ttb {
     }
     .linkbox {
         display: flex;
-        color: contrast($primary);
-        background-color: $primary;
+        color: $linkbox-feed-color;
+        background-color: $linkbox-feed-background;
+        border: $linkbox-feed-border;
+        border-radius: $linkbox-feed-border-radius;
         &:hover {
             text-decoration: none;
         }
@@ -1179,16 +1181,15 @@ finna-feed.splide--ttb {
     }
     .date {
         padding: 0px;
-        color: contrast($primary);
+        color: $linkbox-feed-color
     }
     .text {
-        color: contrast($primary);
+        color: $linkbox-feed-color;
     }
     a,
     .text {
         font-size: 1rem;
     }
-  
     .title {
         margin-top: 0rem;
     }
@@ -1196,6 +1197,8 @@ finna-feed.splide--ttb {
         width: 100%;
         height: 100%;
         object-fit: cover;
+        border-top-left-radius: $linkbox-feed-border-radius;
+        border-bottom-left-radius: $linkbox-feed-border-radius;
     }
 }
 @container feed (max-width: #{$screen-xs-max}) {
