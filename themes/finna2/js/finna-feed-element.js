@@ -130,7 +130,7 @@ class FinnaFeedElement extends HTMLElement {
       const type = settings.type;
       const titleElement = this.parentElement.querySelector('.carousel-header');
       const carousel = ['carousel', 'carousel-vertical', 'slider'].includes(type);
-      const hasContent = this.querySelector('.list-feed > ul > .list-container > li, .list-feed > ul .feed-featured .list-container > li, .carousel-feed > li, .feed-grid > div, .list-linkbox-feed > ul > li');
+      const hasContent = this.querySelector('.list-feed > .feed-list-container > .list-container > .feed-list-item, .list-feed.featured > .feed-featured .featured-item, .carousel-feed > li, .feed-grid > div, .list-linkbox-feed > ul > li');
       if (!hasContent) {
         this.classList.add('hidden');
         if (titleElement) {

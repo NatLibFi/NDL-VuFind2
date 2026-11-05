@@ -7,10 +7,7 @@
   <?php
     $featured = $this->display === 'featured';
   ?>
-  <ul>
-    <?php if ($featured) : ?>
-      <div class="feed-featured">
-    <?php endif; ?>
+  <div class="feed-list-container <?php if ($featured): ?>feed-featured<?php endif; ?>" role="list">
     <?php
       $featuredItem = '';
       ob_start();
@@ -20,7 +17,7 @@
       <?php
         $first = $key === 0;
       ?>
-      <li>
+      <div class="feed-list-item" role="listitem">
         <?php if (isset($item['link'])):?>
           <?php
             $linkElement = [
@@ -38,7 +35,7 @@
         <?php else: ?>
           <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
         <?php endif; ?>
-      </li>
+      </div>
       <?php if ($featured && $first) : ?>
         <?php
           $featuredItem = ob_get_clean();
@@ -47,22 +44,19 @@
       <?php endif; ?>
     <?php endforeach; ?>
     <?php $rightSide = ob_get_clean(); ?>
-    <?php if ($featured) : ?>
+    <?php if ($featured): ?>
       <div class="featured-item">
         <?= $featuredItem ?>
       </div>
     <?php endif; ?>
     <div class="list-container">
       <?= $rightSide ?>
-    </div>
-    <?php if ($featured) : ?>
+      <?php if ($this->moreLink): ?>
+      <div class="more-link" role="listitem">
+        <a<?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><?= $this->transEsc('More'); ?>&hellip;</a>
       </div>
     <?php endif; ?>
-    <?php if ($this->moreLink): ?>
-      <li class="more-link">
-        <a<?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><?= $this->transEsc('More'); ?>&hellip;</a>
-      </li>
-    <?php endif; ?>
-  </ul>
+    </div>
+  </div>
 </div>
 <!-- END of: finna - ajax/feed-list.phtml -->

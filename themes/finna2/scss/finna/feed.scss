@@ -25,15 +25,18 @@ finna-feed.feed-container {
         width: 40%;
     }
     .list-content-container {
+        display: flex;
+        flex-direction: column;
         width: 100%;
     }
-    li {
+    .feed-list-item {
         display: flex;
         flex-direction: row;
         gap: 0.5em;
         line-height: 2em;
     }
     .title {
+        display: inline-block;
         margin-top: 0px;
         margin-bottom: 0px;
     }
@@ -67,9 +70,6 @@ finna-feed.feed-container {
         margin-top: $padding-large-vertical;
     }
     &.with-image {
-        li {
-          clear: both;
-        }
         .list-content-container {
             width: 60%;
             padding: 0rem $padding-large-horizontal;
@@ -108,7 +108,7 @@ finna-feed.feed-container {
             }
         }
         &.with-image {
-            .featured-item li {
+            .featured-item .feed-list-item {
                 display: flex;
                 flex-direction: row;
                 .list-img-container {
@@ -127,7 +127,7 @@ finna-feed.feed-container {
 }
 @container feed (max-width: #{$screen-xs-max}) {
     .feed-container .list-feed {
-        li {
+        .feed-list-item {
             flex-direction: column;
             gap: 0px;
         }
@@ -151,7 +151,7 @@ finna-feed.feed-container {
             }
         }
         &.with-image {
-            .featured-item li {
+            .featured-item .feed-list-item {
                 flex-direction: column;
                 .list-img-container,
                 .list-content-container {
@@ -159,8 +159,12 @@ finna-feed.feed-container {
                 }
                 .list-content-container {
                     padding: $padding-large-vertical 0rem;
+                    padding-bottom: 0rem;
                 }
             }
+        }
+        .more-link {
+            align-self: flex-start;
         }
     }
 }
