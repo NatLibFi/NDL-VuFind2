@@ -16,7 +16,7 @@ finna-feed.feed-container {
     background: $list-feed-background;
     padding: $list-feed-padding;
     margin-bottom: $spacer;
-    .list-container {
+    &:not(.featured) .feed-list-container {
         display: flex;
         flex-direction: column;
         gap: $spacer;
@@ -47,9 +47,6 @@ finna-feed.feed-container {
     .text {
         margin-bottom: 0.3em;
         color: $gray;
-        &:hover {
-            text-decoration: none;
-        }
     }
     .xcal-fields {
         margin-bottom: 0px;
@@ -82,29 +79,25 @@ finna-feed.feed-container {
     // display - featured
     &.featured {
         .feed-featured {
-            display: flex;
-            flex-direction: row;
-            gap: $spacer;
-            .featured-item {
-                width: 70%;
-            }
-            .list-container {
+            .feed-list-item {
+                float: right;
                 width: 30%;
-                display: flex;
-                flex-direction: column;
-                gap: 0.5em;
+                padding-bottom: $padding-base-vertical;
+                clear: right;
+            }
+            .featured-item {
+                float: left;
+                width: 70%;
+                clear: both;
             }
             .list-content-container {
                 width: 100%;
                 padding-top: 0px;
                 padding-bottom: 0px;
             }
-        }
-        .more-link {
-            display: flex;
-            align-self: end;
-            a {
+            .more-link {
                 width: fit-content;
+                align-items: flex-end;
             }
         }
         &.with-image {
@@ -116,7 +109,7 @@ finna-feed.feed-container {
                 }
                 .list-content-container {
                     width: 60%;
-                    padding-right: 0.5rem;
+                    padding-right: 0.5em;
                 }
             }
             .list-container .list-content-container {
@@ -128,43 +121,28 @@ finna-feed.feed-container {
 @container feed (max-width: #{$screen-xs-max}) {
     .feed-container .list-feed {
         .feed-list-item {
+            display: flex;
             flex-direction: column;
-            gap: 0px;
+            .list-content-container {
+                width: 100%;
+                padding: 0px;
+            }
         }
-        .list-img-container,
-        &.with-image .list-content-container {
+        .list-img-container {
             width: 100%;
         }
-        &.with-image .list-content-container {
-            padding: $padding-large-vertical 0rem;
-        }
-        .more-link {
-            align-self: flex-start;
-        }
-    }
-    .feed-container .list-feed.featured {
-        .feed-featured {
-            flex-direction: column;
-            .featured-item,
-            .list-container {
+        &.featured .feed-featured {
+            .feed-list-item {
+                display: block;
+                float: none;
                 width: 100%;
             }
-        }
-        &.with-image {
-            .featured-item .feed-list-item {
+            .featured-item {
+                display: flex;
                 flex-direction: column;
-                .list-img-container,
-                .list-content-container {
-                    width: 100%;
-                }
-                .list-content-container {
-                    padding: $padding-large-vertical 0rem;
-                    padding-bottom: 0rem;
-                }
+                float: none;
+                width: 100%;
             }
-        }
-        .more-link {
-            align-self: flex-start;
         }
     }
 }
