@@ -49,7 +49,7 @@
             <ul class="dropdown-menu">
               <?php foreach ($__item['dropdownItems'] ?? [] as $__dropdownItem): ?>
                 <li>
-                  <a class="dropdown-item" href="<?=$__dropdownItem['href'] ?? ''?>" target="<?= $__item['target'] ?? '' ?>" >
+                  <a class="dropdown-item" href="<?=$__dropdownItem['href'] ?? ''?>" <?php if (isset($__dropdownItem['target'])): ?>target="<?= $__dropdownItem['target']?>"<?php endif;?>>
                     <?php if (isset($__dropdownItem['icon'])): ?>
                       <?= $this->icon($__dropdownItem['icon']) ?>
                     <?php elseif (isset($__dropdownItem['iconElement'])): ?>
@@ -61,7 +61,7 @@
               <?php endforeach; ?>
             </ul>
           <?php else: ?>
-            <a class="icon-link" href="<?=$__item['href'] ?? ''?>" target="<?= $__item['target'] ?? '' ?>" >
+            <a class="icon-link" href="<?=$__item['href'] ?? ''?>" <?php if (isset($__item['target'])): ?>target="<?= $__item['target']?>"<?php endif;?>>
               <?php if (isset($__item['icon'])): ?>
                 <?= $this->icon($__item['icon'], 'icon-link__icon') ?>
               <?php elseif (isset($__item['iconElement'])): ?>
