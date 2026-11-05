@@ -3144,4 +3144,16 @@ class SolrLido extends SolrDefault implements \Psr\Log\LoggerAwareInterface
         }
         return '';
     }
+
+    /**
+     * Get access restrictions for links.
+     *
+     * @return array
+     */
+    public function getAccessRestrictionsForLinks(): array
+    {
+        $rights = $this->tryMethod('getAccessRestrictionsType', [], []);
+        $rights['description'] = $this->tryMethod('getAccessRestrictions', [], []);
+        return $rights;
+    }
 }

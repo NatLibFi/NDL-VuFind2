@@ -1,55 +1,16 @@
 <!-- START of: finna - RecordDriver/SolrEad/core.phtml -->
 <?php
-  $urls = $this->record($this->driver)->getLinkDetails();
-  if (!empty($urls)) {
-    $videoUrls = [];
-    $audioUrls = [];
-    $otherUrls = [];
-    foreach ($urls as $url) {
-      $type = $url['type'] ?? null;
-      if (!empty($url['videoSources']) || !empty($url['embed']) && $url['embed'] == 'video' || $this->recordLinker()->getEmbeddedVideo($url['url']) == 'data-embed-iframe') {
-        array_push($videoUrls, $url);
-      } elseif (!empty($url['embed']) && $url['embed'] == 'audio') {
-        array_push($audioUrls, $url);
-      } elseif ($type !== 'image') {
-        // Filter away image-urls since they are displayed via image-paginator
-        array_push($otherUrls, $url);
-      }
-    }
-  }
-  $params = $this->searchMemory()->getLastSearchParams($this->searchClassId);
-  $img = $this->recordImage($this->record($this->driver));
-  $thumbnail = false;
-  $thumbnailAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
-  ob_start(); ?>
-  <div class="media-<?=$thumbnailAlignment ?><?=!empty($audioUrls) ? ' audio' : ''?>">
-    <?=$this->record($this->driver)->renderTemplate('record-image-information.phtml', ['img' => $img, 'sizes' => ['small' => ['w' => 100, 'h' => 100], 'medium' => ['w' => 1200, 'h' => 1200]]]);?>
-
-    <?php $urls = $this->record($this->driver)->getLinkDetails(); ?>
-    <?php if (!empty($videoUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-video-player.phtml', ['videoUrls' => $videoUrls, 'type' => 'SolrEad']);?>
-    <?php endif; ?>
-
-    <?php if (!empty($audioUrls)): ?>
-      <?=$this->record($this->driver)->renderTemplate('record-audio-player.phtml', ['audioUrls' => $audioUrls]);?>
-    <?php endif; ?>
-
-    <?php if ($this->record($this->driver)->getOrganisationMenuPosition() === 'inline'): ?>
-      <div class="organisation-menu">
-        <?=$this->render('record/record-organisation-menu.phtml') ?>
-      </div>
-    <?php endif; ?>
-
-    <?=$this->record($this->driver)->renderTemplate('record-post-thumbnail.phtml');?>
-  </div>
-  <?php $thumbnail = ob_get_contents(); ?>
-<?php ob_end_clean(); ?>
+  $recordHelper = $this->record($this->driver);
+  $linkDetails = $recordHelper->getLinkDetailsExtended();
+  $media = $recordHelper->renderTemplate('media.phtml', compact('linkDetails'));
+  $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
+?>
 
 <?php $this->metadata()->generateMetatags($this->driver);?>
 <div class="media">
   <h1 class="record-title visible-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
-  <?php if ($thumbnail && $thumbnailAlignment == 'left'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'left'): ?>
+    <?=$media ?>
   <?php endif; ?>
   <div class="media-body record-information">
       <h1 class="record-title hidden-xs"><?=$this->escapeHtml($this->driver->getTitle())?></h1>
@@ -70,15 +31,7 @@
         </div>
       <?php endif; ?>
 
-      <?php if (!empty($otherUrls)): ?>
-        <div class="record-links">
-          <div class="recordURLs local-available-online-record">
-            <ul class="truncate-field outer" data-rows="4">
-              <?=$this->record($this->driver)->renderTemplate('document-links.phtml', ['documents' => $otherUrls])?>
-            </ul>
-          </div>
-        </div>
-      <?php endif; ?>
+      <?= $recordHelper->renderTemplate('urls-container.phtml', compact('linkDetails')); ?>
 
       <?php
         $summExtended = $this->driver->tryMethod('getSummaryExtended');
@@ -138,8 +91,8 @@
       </div>
       <?php endif; ?>
     </div>
-  <?php if ($thumbnail && $thumbnailAlignment == 'right'): ?>
-    <?=$thumbnail ?>
+  <?php if ($media && $mediaAlignment == 'right'): ?>
+    <?=$media ?>
   <?php endif; ?>
 </div>
 <!-- END of: finna - RecordDriver/SolrEad/core.phtml -->
