@@ -12,9 +12,9 @@
   <?php endif; ?>
 <?php endif; ?>
 <div class="list-content-container">
-  <a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>">
+  <?php if (isset($linkElement)): ?><a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><?php endif; ?>
     <h3 class="title"><?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title'] ?? '') ?></h3>
-  </a>
+  <?php if (isset($linkElement)):?></a><?php endif; ?>
   <?php if (isset($item['dateFull']) || isset($item['date'])): ?>
     <span class="date"><span class="date-text"><?=$this->transEsc('Published')?>: </span><?=$this->escapeHtml($item['dateFull'] ?? $item['date'])?></span>
   <?php endif; ?>
@@ -38,7 +38,7 @@
   <?php if (!$featured || $featured && $first): ?>
     <?php if (isset($item['description']) || isset($item['text'])): ?><p class="text"><?=$this->escapeHtml($item['description'] ?? $item['text']) ?></p><?php endif; ?>
   <?php endif; ?>
-  <?php if (isset($linkText)): ?>
+  <?php if (isset($linkElement) && isset($linkText)): ?>
     <a class="link-text icon-link" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><span class="icon-link__label"><?= $this->transEsc($this->linkText) ?></span> <?=$this->icon($linkIcon, 'icon-link__icon')?></a>
   <?php endif; ?>
 </div>

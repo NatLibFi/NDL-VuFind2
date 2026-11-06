@@ -19,6 +19,7 @@
         $first = $key === 0;
       ?>
       <li class="feed-list-item <?php if ($featured && $first): ?>featured-item<?php endif; ?>">
+        <?php $feedParams = ['item', 'linkText', 'linkIcon', 'featured', 'first'];?>
         <?php if (isset($item['link'])):?>
           <?php
             $linkElement = [
@@ -31,11 +32,10 @@
               $linkElement['data-lightbox'] = '';
               $linkElement['data-lightbox-title'] = $item['title'];
             }
+            $feedParams[] = 'linkElement';
           ?>
-          <?=$this->partial('ajax/feed-list-item.phtml', compact('item', 'linkElement', 'linkText', 'linkIcon', 'featured', 'first'))?>
-        <?php else: ?>
-          <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
         <?php endif; ?>
+        <?=$this->partial('ajax/feed-list-item.phtml', compact($feedParams))?>        
       </li>
     <?php endforeach; ?>
     <?php if ($this->moreLink): ?>
