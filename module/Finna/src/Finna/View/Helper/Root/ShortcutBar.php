@@ -126,6 +126,9 @@ class ShortcutBar extends \Laminas\View\Helper\AbstractHelper
         foreach ($items as $item) {
             $itemSettings = [];
             if ($url = $item['url'] ?? '') {
+                if (isset($url[$lng]) && !$url[$lng]) {
+                    continue;
+                }
                 $itemSettings['href'] = $url[$lng] ?? $url['fi'] ?? $url;
             }
             if ($route = $item['route'] ?? '') {
@@ -134,6 +137,9 @@ class ShortcutBar extends \Laminas\View\Helper\AbstractHelper
                     $item['routeParams'] ?? [],
                     $item['queryParams'] ?? []
                 );
+            }
+            if (isset($item['target'])) {
+                $itemSettings['target'] = $item['target'];
             }
             $itemSettings['label'] = $item['label'] ?? 'link';
             if (isset($item['icon'])) {
