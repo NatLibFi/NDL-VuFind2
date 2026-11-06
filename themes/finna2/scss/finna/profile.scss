@@ -120,6 +120,7 @@
     }
     &.profile-long {
       padding-bottom: 0px;
+      padding-left: 0px;
     }
     &.messaging-last {
       margin-bottom: 20px;
@@ -138,6 +139,9 @@
       }
       &.profile-title {
         padding-bottom: 0px;
+      }
+      &.profile-long {
+        padding-left: 0.6em;
       }
     }
   }
