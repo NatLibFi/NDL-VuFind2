@@ -1375,18 +1375,21 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $catalog = $this->getILS();
 
         $success = true;
-        if (isset($values->profile_email)) {
+        // Update email
+        if (
+            isset($values->profile_email)
+            && $catalog->checkFunction('updateEmail', compact('patron'))
+        ) {
             $validator = new \Laminas\Validator\EmailAddress();
-            if (
-                $validator->isValid($values->profile_email)
-                && $catalog->checkFunction('updateEmail', compact('patron'))
-            ) {
-                // Update email
+            if ($validator->isValid($values->profile_email)) {
                 $result = $catalog->updateEmail($patron, $values->profile_email);
                 if (!$result['success']) {
                     $this->flashMessenger()->addErrorMessage($result['status']);
                     $success = false;
                 }
+            } else {
+                $this->flashMessenger()->addErrorMessage('profile_update_failed');
+                $success = false;
             }
         }
         // Update phone
