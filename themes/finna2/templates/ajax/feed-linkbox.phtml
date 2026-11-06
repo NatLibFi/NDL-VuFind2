@@ -1,0 +1,42 @@
+<!-- START of: finna - ajax/feed-linkbox.phtml -->
+<?php
+  $feedId = $this->feedId;
+  $linkText = $this->linkText;
+?>
+<div class="list-linkbox-feed<?= $this->images ? ' with-image' : ''; ?>">
+  <?php if (!$this->translateTitle): // Translated title is displayed in the container, so ignore it here ?>
+    <h2 class="feed-header"><?= $this->escapeHtml($this->title) ?></h2>
+  <?php endif; ?>
+  <ul>
+    <?php
+      $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items;
+      $linkIcon = $this->linkIcon ?? '';
+      $moreLinkText = $this->moreLinkText ?? $this->transEsc('more_ellipsis');
+    ?>
+    <?php foreach ($items as $item): ?>
+      <?php
+        $linkElement = [
+          'href' => $item['link'],
+        ];
+        if ($this->linkTarget) {
+          $linkElement['target'] = $this->linkTarget;
+        }
+        if ($item['modal']) {
+          $linkElement['data-lightbox'] = '';
+          $linkElement['data-lightbox-title'] = $item['title'];
+        }
+      ?>
+      <li>
+        <a class="linkbox" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>">
+          <?=$this->partial('ajax/feed-linkbox-item.phtml', compact('item', 'linkElement', 'feedId', 'linkText', 'linkIcon'))?>
+        </a>
+      </li>
+    <?php endforeach; ?>
+    <?php if ($this->moreLink): ?>
+      <li class="more-link">
+        <a class="icon-link" <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><span class="icon-link__label"><?= $this->transEsc($moreLinkText)?></span> <?= $this->icon($linkIcon, 'icon-link__icon'); ?></a>
+      </li>
+    <?php endif; ?>
+  </ul>
+</div>
+<!-- END of: finna - ajax/feed-linkbox.phtml -->

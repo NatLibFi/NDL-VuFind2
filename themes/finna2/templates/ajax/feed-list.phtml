@@ -1,16 +1,25 @@
 <!-- START of: finna - ajax/feed-list.phtml -->
-<div class="list-feed<?= $this->images ? ' with-image' : ''; ?>">
+<div class="list-feed<?= $this->images ? ' with-image' : ''; ?> <?= $this->display ?>">
 <?php if (!$this->translateTitle): // Translated title is displayed in the container, so ignore it here ?>
   <h2 class="feed-header"><?= $this->escapeHtml($this->title) ?></h2>
 <?php endif; ?>
 <?php if (isset($this->description)): ?><p class="additional-description"><?= $this->translate($this->description) // HTML, intentionally left unescaped ?></p><?php endif; ?>
-  <ul>
+  <?php
+    $featured = $this->display === 'featured';
+    $linkIcon = $this->linkIcon ?? '';
+    $moreLinkText = $this->moreLinkText ?? $this->transEsc('more_ellipsis');
+  ?>
+  <ul class="feed-list-container <?php if ($featured): ?>feed-featured<?php endif; ?>">
+    <?php
+      $featuredItem = '';
+    ?>
     <?php $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items; ?>
-    <?php foreach ($items as $item): ?>
-      <li>
-        <?php if (isset($item['date'])): ?>
-          <span class="date"<?php if (isset($item['dateFull'])):?> title="<?=$this->escapeHtmlAttr($item['dateFull'])?>"<?php endif; ?>><?=$this->escapeHtml($item['date'])?></span>
-        <?php endif; ?>
+    <?php foreach ($items as $key => $item): ?>
+      <?php
+        $first = $key === 0;
+      ?>
+      <li class="feed-list-item <?php if ($featured && $first): ?>featured-item<?php endif; ?>">
+        <?php $feedParams = ['item', 'linkText', 'linkIcon', 'featured', 'first'];?>
         <?php if (isset($item['link'])):?>
           <?php
             $linkElement = [
@@ -23,19 +32,15 @@
               $linkElement['data-lightbox'] = '';
               $linkElement['data-lightbox-title'] = $item['title'];
             }
+            $feedParams[] = 'linkElement';
           ?>
-          <a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>">
-            <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
-          </a>
-        <?php else: ?>
-          <?=$this->partial('ajax/feed-list-item.phtml', compact('item'))?>
         <?php endif; ?>
+        <?=$this->partial('ajax/feed-list-item.phtml', compact($feedParams))?>        
       </li>
     <?php endforeach; ?>
-
     <?php if ($this->moreLink): ?>
-      <li class="more-link">
-        <a<?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><?= $this->transEsc('More'); ?>&hellip;</a>
+      <li class="more-link feed-list-item">
+        <a class="icon-link" <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><span class="icon-link__label"><?= $this->transEsc($moreLinkText)?></span> <?= $this->icon($linkIcon, 'icon-link__icon'); ?></a>
       </li>
     <?php endif; ?>
   </ul>

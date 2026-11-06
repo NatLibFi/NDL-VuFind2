@@ -1,7 +1,7 @@
 ;; Mandatory settings:
 
 ; active = [0|1]
-; type = "[list|carousel|carousel-vertical|grid|slider]"
+; type = "[list|carousel|carousel-vertical|grid|slider|linkbox]"
 
 ; url[language code|*] = "<url>" Feed URL, for example:
 ;    Absolute URL: http://blogs.helsinki.fi/scriptaselecta/feed/
@@ -89,7 +89,10 @@
 ;; Optional list settings:
 
 ; moreLink = [0|1] Display a "more" link.
+; moreLinkText = "<translation-key>" The text shown on the displayed "more" link. Defaults to "more_ellipsis".
 ; dateFormat = "<format>" Item date format ("j.n." by default, see: http://php.net/manual/en/function.date.php).
+; display = "featured" First feed item is shown next to the rest of feed items as a featured item. Not applied by default.
+; linkIcon = "<icon-alias>" The icon shown after linkText and moreLink. Not displayed by default.
 
 ;; Optional carousel settings:
 
@@ -106,6 +109,12 @@
 ; backgroundColor = "#f7f7f7" Background colour of the slider (default none).
 ; stackedHeight = [pixels] The height of the slider when it uses the stacked (vertical) layout, e.g. on mobile device (sets regular height value by default).
 ; imagePlacement = [left|right] The side of which the image is on the slider when it uses the horizontal layout (default left).
+
+;; Optional linkbox settings:
+
+; moreLink = [0|1] Display a "more" link.
+; moreLinkText = "<translation-key>" The text shown on the displayed "more" link. Defaults to "more_ellipsis".
+; linkIcon = "<icon-alias>" The icon shown after linkText and moreLink. Not displayed by default.
 
 ; Number of visible items in the carousel
 

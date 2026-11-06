@@ -172,6 +172,12 @@ $list-feed-header-background: none !default;
 $list-feed-header-padding: none !default;
 $list-feed-header-color: $gray !default;
 
+//== Linkbox feed style
+$linkbox-feed-background: $gray-ultralight !default;
+$linkbox-feed-border: none !default;
+$linkbox-feed-border-radius: 0px !default;
+$linkbox-feed-color: $text-color !default;
+
 //== Myresearch custom styles
 $myresearch-header-background:  $body-bg !default;
 $myresearch-tabs-color: $gray !default;
