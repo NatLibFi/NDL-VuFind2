@@ -11,7 +11,7 @@
     <?php
       $items = isset($this->visualItems) ? array_slice($this->items, 0, $this->visualItems) : $this->items;
       $linkIcon = $this->linkIcon ?? '';
-      $moreLinkText = $this->moreLinkText ?? $this->transEsc('more_ellipsis');
+      $moreLinkText = $this->moreLinkText ?? 'more_ellipsis';
     ?>
     <?php foreach ($items as $item): ?>
       <?php
@@ -34,7 +34,7 @@
     <?php endforeach; ?>
     <?php if ($this->moreLink): ?>
       <li class="more-link">
-        <a class="icon-link" <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><span class="icon-link__label"><?= $this->transEsc($moreLinkText)?></span> <?= $this->icon($linkIcon, 'icon-link__icon'); ?></a>
+        <a class="icon-link" aria-label="<?= $this->transEsc('More') ?>: <?= $this->transEsc($this->title) ?>" <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><span class="icon-link__label"><?= $this->transEsc($moreLinkText)?></span> <?= $this->icon($linkIcon, 'icon-link__icon'); ?></a>
       </li>
     <?php endif; ?>
   </ul>

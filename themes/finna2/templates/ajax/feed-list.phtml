@@ -7,7 +7,7 @@
   <?php
     $featured = $this->display === 'featured';
     $linkIcon = $this->linkIcon ?? '';
-    $moreLinkText = $this->moreLinkText ?? $this->transEsc('more_ellipsis');
+    $moreLinkText = $this->moreLinkText ?? 'more_ellipsis';
   ?>
   <ul class="feed-list-container <?php if ($featured): ?>feed-featured<?php endif; ?>">
     <?php
@@ -40,7 +40,7 @@
     <?php endforeach; ?>
     <?php if ($this->moreLink): ?>
       <li class="more-link feed-list-item">
-        <a class="icon-link" <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><span class="icon-link__label"><?= $this->transEsc($moreLinkText)?></span> <?= $this->icon($linkIcon, 'icon-link__icon'); ?></a>
+        <a class="icon-link" aria-label="<?= $this->transEsc('More') ?>: <?= $this->transEsc($this->title) ?>" <?= $this->linkTarget ? ' target="' . $this->escapeHtmlAttr($this->linkTarget) . '"' : '' ?> href="<?= $this->escapeHtmlAttr($this->moreLink); ?>"><span class="icon-link__label"><?= $this->transEsc($moreLinkText)?></span> <?= $this->icon($linkIcon, 'icon-link__icon'); ?></a>
       </li>
     <?php endif; ?>
   </ul>

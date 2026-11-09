@@ -12,7 +12,7 @@
   <div class="content-elements">
     <h3 class="title"><?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title'] ?? '') ?></h3>
     <?php if (isset($item['dateFull']) || isset($item['date'])): ?>
-      <p class="date"><?= $this->transEsc('Published') ?>: <?= $item['dateFull'] ?? $item['date'] ?></p>
+      <p class="date"><?= $this->transEsc('Published') ?>: <?= $this->escapeHtml($item['dateFull'] ?? $item['date']) ?></p>
     <?php endif; ?>
     <?php if ((isset($item['description']) || isset($item['text']))): ?>
       <p class="text"><?=$this->escapeHtml($item['description'] ?? $item['text']) ?></p>
