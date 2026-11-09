@@ -13,8 +13,8 @@
 #   - type: 'link' or 'dropdown' for dropdown menu button, 'link' by default
 #   - label: translation key or item label
 #   - url: href of the link <a> element, the special characters in the url must be encoded in an href applicable form
-#       <lng-code>: to specify, if a specific language uses a specific url.
-#         Note that if language codes for urls are applied, the item won't show in the bar on language versions which aren't specified.
+#       <lng-code>: if a specific language uses a specific url.
+#         Note that if language codes for urls are applied, the item won't be displayed in the bar on language versions which aren't specified.
 #   - route: href of the link <a> element, internal route
 #   - icon: icon used for the item, using the icon helper
 #   - iconElement: icon used for the item, using the <i> element
