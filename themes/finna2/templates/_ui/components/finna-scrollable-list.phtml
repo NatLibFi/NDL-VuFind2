@@ -26,7 +26,7 @@
 <?php $__attributes = $this->htmlAttributes($attributes ?? []); ?>
 <div<?= $__attributes->add('class', ['scrollable-list-container']) ?>>
   <?php if ($__title): ?>
-    <h<?=$__headingLevel?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$__headingLevel?>>
+    <h<?=$this->escapeHtml($__headingLevel) ?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$this->escapeHtml($__headingLevel) ?>>
   <?php endif; ?>
   <div class="link-list list-scrollable">
     <button class="list-scrollable__scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
@@ -41,7 +41,7 @@
               <?php if (isset($__item['icon'])): ?>
                 <?= $this->icon($__item['icon'], 'icon-link__icon') ?>
               <?php elseif (isset($__item['iconElement'])): ?>
-                <span class="icon-link__icon"><i class="icon icon--font <?= $__item['iconElement'] ?>" aria-hidden="true"></i></span>
+                <span class="icon-link__icon"><i class="icon icon--font <?= $this->escapeHtmlAttr($__item['iconElement']) ?>" aria-hidden="true"></i></span>
               <?php endif; ?>
               <span class="icon-link__label"><?= $this->transEsc($__item['label'] ?? ''); ?></span>
               <?= $this->icon('collapse'); ?>
@@ -49,11 +49,11 @@
             <ul class="dropdown-menu">
               <?php foreach ($__item['dropdownItems'] ?? [] as $__dropdownItem): ?>
                 <li>
-                  <a class="dropdown-item" href="<?=$__dropdownItem['href'] ?? ''?>" <?php if (isset($__dropdownItem['target'])): ?>target="<?= $__dropdownItem['target']?>"<?php endif;?>>
+                  <a class="dropdown-item" href="<?=$this->escapeHtmlAttr($__dropdownItem['href'] ?? '') ?>" <?php if (isset($__dropdownItem['target'])): ?>target="<?=$this->escapeHtmlAttr($__dropdownItem['target']) ?>"<?php endif;?>>
                     <?php if (isset($__dropdownItem['icon'])): ?>
                       <?= $this->icon($__dropdownItem['icon']) ?>
                     <?php elseif (isset($__dropdownItem['iconElement'])): ?>
-                      <span><i class="icon icon--font <?= $__dropdownItem['iconElement'] ?>" aria-hidden="true"></i></span>
+                      <span><i class="icon icon--font <?= $this->escapeHtmlAttr($__dropdownItem['iconElement']) ?>" aria-hidden="true"></i></span>
                     <?php endif; ?>
                     <span><?= $this->transEsc($__dropdownItem['label'] ?? ''); ?></span>
                   </a>
@@ -61,11 +61,11 @@
               <?php endforeach; ?>
             </ul>
           <?php else: ?>
-            <a class="icon-link" href="<?=$__item['href'] ?? ''?>" <?php if (isset($__item['target'])): ?>target="<?= $__item['target']?>"<?php endif;?>>
+            <a class="icon-link" href="<?=$this->escapeHtmlAttr($__item['href'] ?? '')?>" <?php if (isset($__item['target'])): ?>target="<?=$this->escapeHtmlAttr($__item['target']) ?>"<?php endif;?>>
               <?php if (isset($__item['icon'])): ?>
                 <?= $this->icon($__item['icon'], 'icon-link__icon') ?>
               <?php elseif (isset($__item['iconElement'])): ?>
-                <span class="icon-link__icon"><i class="icon icon--font <?= $__item['iconElement'] ?>" aria-hidden="true"></i></span>
+                <span class="icon-link__icon"><i class="icon icon--font <?=$this->escapeHtmlAttr($__item['iconElement']) ?>" aria-hidden="true"></i></span>
               <?php endif; ?>
               <span class="icon-link__label"><?= $this->transEsc($__item['label'] ?? ''); ?></span>
             </a>

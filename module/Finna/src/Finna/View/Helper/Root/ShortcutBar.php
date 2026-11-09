@@ -32,6 +32,8 @@ namespace Finna\View\Helper\Root;
 use VuFind\Config\YamlReader;
 use VuFind\Http\RouteHelper;
 
+use function is_array;
+
 /**
  * ShortcutBar plugin.
  *
@@ -126,10 +128,13 @@ class ShortcutBar extends \Laminas\View\Helper\AbstractHelper
         foreach ($items as $item) {
             $itemSettings = [];
             if ($url = $item['url'] ?? '') {
-                if (isset($url[$lng]) && !$url[$lng]) {
+                if (isset($url[$lng])) {
+                    $itemSettings['href'] = $url[$lng];
+                } elseif (!is_array($url)) {
+                    $itemSettings['href'] = $url;
+                } else {
                     continue;
                 }
-                $itemSettings['href'] = $url[$lng] ?? $url['fi'] ?? $url;
             }
             if ($route = $item['route'] ?? '') {
                 $itemSettings['href'] = $this->routeHelper->getUrlFromRoute(
