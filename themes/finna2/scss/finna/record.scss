@@ -1107,12 +1107,12 @@ finna-model-viewer .object-editor {
       display: flex;
       gap: 0.75rem;
       align-items: center;
-    }
-    .comment-info {
-      display: flex;
-      flex: 1;
-      justify-content: space-between;
-      gap: 0.75rem;      
+      .comment-info {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+        gap: 0.75rem;      
+      }
     }
   }
 }
