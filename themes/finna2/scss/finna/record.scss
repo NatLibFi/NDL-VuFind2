@@ -1070,15 +1070,14 @@ finna-model-viewer .object-editor {
   margin-bottom: 0.7em;
   background-color: lighten($gray, 78%);
   border-radius: $border-radius-base;
-  .name {
+  .comment-info-wrapper {
     padding-bottom: 0.3em;
     border-bottom: 2px solid $gray-lighter;
-    .comment-rating {
-      display: inline-block;
-    }
-    .comment-info {
-      display: inline;
-      margin-left: 0.7em;
+    font-size: $font-size-small;
+    .comment-edit {
+      > a {
+        margin-left: 0.75rem;
+      }
     }
   }
   .comment-text {
@@ -1087,8 +1086,29 @@ finna-model-viewer .object-editor {
     white-space: pre-line;
   }
 }
+@include media-breakpoint-up(sm) {
+  .comment-info-wrapper {
+    .name {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      .comment-created {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+      }
+      .comment-info {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+        gap: 0.75rem;
+      }
+    }
+  }
+}
 // Comment form
 .comment-form-wrapper {
+  margin-bottom: 0.7rem;
   padding: 10px;
   background-color: $light;
   border-radius: $border-radius-base;
@@ -1098,12 +1118,17 @@ finna-model-viewer .object-editor {
       font-size: 1.5em;
       color: $primary;
     }
+    .comment-rating {
+      margin-bottom: 0.2rem;
+    }
     .nickname-holder {
-      margin-bottom: 5px;
+      margin-bottom: 0.7rem;
+      font-size: $font-size-small;
     }
     .comment-description {
       margin-top: 1em;
       margin-left: 2em;
+      font-size: $font-size-small;
     }
   }
 }
@@ -1121,6 +1146,7 @@ finna-model-viewer .object-editor {
       .comment-description {
         margin-top: 4em;
         margin-left: 4em;
+        font-size: $font-size-base;
       }
     }
   }

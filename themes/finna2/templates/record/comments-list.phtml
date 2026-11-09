@@ -17,31 +17,39 @@
       $own = $user && $comment->getUser()?->getId() === $user->getId();
   ?>
   <div class="comment-wrapper comment" data-id="<?=$comment->getId()?>">
-    <div class="name text-right">
-      <?php if ($ratingAllowed): ?>
-        <div class="comment-rating">
-          <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()?->getId()); ?>
-          <?php if ($ratingData['count']): ?>
-            <?=$this->component('star-rating', ['readonly' => true, 'ratingData' => $ratingData]);?>
-          <?php endif; ?>
+    <div class="comment-info-wrapper">
+      <div class="name">
+        <?php if ($ratingAllowed): ?>
+          <div class="comment-rating">
+            <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()?->getId()); ?>
+            <?php if ($ratingData['count']): ?>
+              <?=$this->component('star-rating', ['readonly' => true, 'ratingData' => $ratingData]);?>
+            <?php endif; ?>
+          </div>
+        <?php endif; ?>
+        <div class="comment-info">
+            <div class="comment-created">
+              <div class="comment-user">
+                <strong><?=null === $comment->getUser() ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($comment->getUser())))?></strong>
+              </div>
+              <div class="comment-date">
+                <?=$this->escapeHtml($comment->getCreated()->format($this->config()->dateTimeFormat()))?>
+              </div>
+            </div>
+            <?php if ($comment->getFinnaUpdated()): ?>
+              <div class="comment-updated">
+                <?=$this->transEsc('modified')?>
+                <?=$this->escapeHtml($comment->getFinnaUpdated()->format($this->config()->dateTimeFormat()))?>
+              </div>
+            <?php endif; ?>
         </div>
-      <?php endif; ?>
-      <div class="comment-info">
-        <small>
-          <strong><?=null === $comment->getUser() ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($comment->getUser())))?></strong>
-          <?=$this->escapeHtml($comment->getCreated()->format($this->config()->dateTimeFormat()))?>
-          <?php if ($comment->getFinnaUpdated()): ?>
-            <br>
-            <?=$this->transEsc('modified')?>
-            <?=$this->escapeHtml($comment->getFinnaUpdated()->format($this->config()->dateTimeFormat()))?>
-          <?php endif; ?>
-          <?php if ($own): ?>
-            <br>
+      </div>
+      <?php if ($own): ?>
+          <div class="comment-edit text-right">
             <a href="#" class="edit"><?=$this->transEsc('Edit')?></a>
             <a href="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'DeleteComment', ['delete' => $comment->getId()]))?>" id="recordComment<?=$this->escapeHtml($comment->getId())?>" class="delete text-danger"><?=$this->transEsc('Delete')?></a>
-          <?php endif; ?>
-        </small>
-      </div>
+          </div>
+      <?php endif; ?>
     </div>
     <div class="comment-text"><?=$this->escapeHtml($comment->getComment())?></div>
     <?php if (!$own): ?>
