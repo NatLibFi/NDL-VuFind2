@@ -19,29 +19,29 @@
   <div class="comment-wrapper comment" data-id="<?=$comment->getId()?>">
     <div class="comment-info-wrapper">
       <div class="name">
-        <?php if ($ratingAllowed): ?>
-          <div class="comment-rating">
-            <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()?->getId()); ?>
-            <?php if ($ratingData['count']): ?>
-              <?=$this->component('star-rating', ['readonly' => true, 'ratingData' => $ratingData]);?>
-            <?php endif; ?>
-          </div>
-        <?php endif; ?>
-        <div class="comment-info">
-            <div class="comment-created">
-              <div class="comment-user">
-                <strong><?=null === $comment->getUser() ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($comment->getUser())))?></strong>
-              </div>
-              <div class="comment-date">
-                <?=$this->escapeHtml($comment->getCreated()->format($this->config()->dateTimeFormat()))?>
-              </div>
+        <div class="comment-rating-user-wrapper">
+          <?php if ($ratingAllowed): ?>
+            <div class="comment-rating">
+              <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()?->getId()); ?>
+              <?php if ($ratingData['count']): ?>
+                <?=$this->component('star-rating', ['readonly' => true, 'ratingData' => $ratingData]);?>
+              <?php endif; ?>
             </div>
-            <?php if ($comment->getFinnaUpdated()): ?>
-              <div class="comment-updated">
-                <?=$this->transEsc('modified')?>
-                <?=$this->escapeHtml($comment->getFinnaUpdated()->format($this->config()->dateTimeFormat()))?>
-              </div>
-            <?php endif; ?>
+          <?php endif; ?>
+          <div class="comment-user">
+            <strong><?=null === $comment->getUser() ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($comment->getUser())))?></strong>
+          </div>
+        </div>
+        <div class="comment-info">
+          <div class="comment-created">
+            <?=$this->escapeHtml($comment->getCreated()->format($this->config()->dateTimeFormat()))?>
+          </div>
+          <?php if ($comment->getFinnaUpdated()): ?>
+            <div class="comment-updated">
+              <?=$this->transEsc('modified')?>
+              <?=$this->escapeHtml($comment->getFinnaUpdated()->format($this->config()->dateTimeFormat()))?>
+            </div>
+          <?php endif; ?>
         </div>
       </div>
       <?php if ($own): ?>
