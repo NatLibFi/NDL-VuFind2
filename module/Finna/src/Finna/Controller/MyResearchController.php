@@ -689,7 +689,8 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             if (!$csrf->isValid($this->getRequest()->getPost()->get('csrf'))) {
                 throw new \VuFind\Exception\BadRequest('error_inconsistent_parameters');
             }
-            $showSuccess = $showError = false;
+            $showSuccess = false;
+            $showError = [];
 
             // Update email
             $validator = new \Laminas\Validator\EmailAddress();
@@ -709,7 +710,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 }
                 $showSuccess = true;
             } else {
-                $showError = true;
+                $showError[] = 'Email address is invalid';
             }
 
             assert($user instanceof UserEntityInterface);
@@ -720,7 +721,7 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
                 $userService->persistEntity($user);
                 $showSuccess = true;
             } elseif (!$nicknameValid) {
-                $showError = true;
+                $showError[] = 'profile_update_failed';
             } elseif ($nicknameAvailable) {
                 $user->setFinnaNickname($values->finna_nickname);
                 $userService->persistEntity($user);
@@ -728,12 +729,12 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
             } elseif ($user->getFinnaNickname() === $values->finna_nickname) {
                 $showSuccess = true;
             } else {
-                $showSuccess = $showError = false;
-                $this->flashMessenger()->addErrorMessage('profile_update_nickname_taken');
+                $showError[] = 'profile_update_nickname_taken';
             }
-            if ($showError) {
-                $this->flashMessenger()->addErrorMessage('profile_update_failed');
-            } elseif ($showSuccess) {
+            foreach ($showError as $errorMessage) {
+                $this->flashMessenger()->addErrorMessage($errorMessage);
+            }
+            if (!$showError && $showSuccess) {
                 $this->flashMessenger()->addSuccessMessage('profile_update');
             }
 
@@ -1375,18 +1376,21 @@ class MyResearchController extends \VuFind\Controller\MyResearchController
         $catalog = $this->getILS();
 
         $success = true;
-        if (isset($values->profile_email)) {
+        // Update email
+        if (
+            isset($values->profile_email)
+            && $catalog->checkFunction('updateEmail', compact('patron'))
+        ) {
             $validator = new \Laminas\Validator\EmailAddress();
-            if (
-                $validator->isValid($values->profile_email)
-                && $catalog->checkFunction('updateEmail', compact('patron'))
-            ) {
-                // Update email
+            if ($validator->isValid($values->profile_email)) {
                 $result = $catalog->updateEmail($patron, $values->profile_email);
                 if (!$result['success']) {
                     $this->flashMessenger()->addErrorMessage($result['status']);
                     $success = false;
                 }
+            } else {
+                $this->flashMessenger()->addErrorMessage('Email address is invalid');
+                $success = false;
             }
         }
         // Update phone
