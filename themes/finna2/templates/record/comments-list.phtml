@@ -21,12 +21,12 @@
       <div class="name">
         <div class="comment-rating-user-wrapper">
           <?php if ($ratingAllowed): ?>
-            <div class="comment-rating">
-              <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()?->getId()); ?>
-              <?php if ($ratingData['count']): ?>
+            <?php $ratingData = $this->ratings()->getRatingData($this->driver, $comment->getUser()?->getId()); ?>
+            <?php if ($ratingData['count']): ?>
+              <div class="comment-rating">
                 <?=$this->component('star-rating', ['readonly' => true, 'ratingData' => $ratingData]);?>
-              <?php endif; ?>
-            </div>
+              </div>
+            <?php endif; ?>
           <?php endif; ?>
           <div class="comment-user">
             <strong><?=null === $comment->getUser() ? $this->transEsc('comment_anonymous_user') : $this->escapeHtml(trim($this->userPublicName($comment->getUser())))?></strong>
