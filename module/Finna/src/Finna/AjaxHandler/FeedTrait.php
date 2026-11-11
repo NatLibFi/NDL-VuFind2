@@ -123,6 +123,15 @@ trait FeedTrait
             $feed['visualItems'] = $config->visualItems;
         }
 
+        if ($type === 'list' || 'linkbox') {
+            $feed['moreLinkText'] = $config->moreLinkText;
+            $feed['linkIcon'] = $config->linkIcon;
+        }
+
+        if ($type === 'list') {
+            $feed['display'] = $config->display ?? '';
+        }
+
         $isCarouselStyle = str_contains($type, 'carousel') || $type === 'slider';
         $template = $isCarouselStyle ? 'carousel' : $type;
         $html = $viewRenderer->partial("ajax/feed-$template.phtml", $feed);

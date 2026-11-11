@@ -1,15 +1,8 @@
-/** List feed **/
-.feed-container .list-feed:not(.with-image) {
-    li {
-        span.date {
-            float: left;
-            + a {
-                display: block;
-                margin-left: 3.5em;
-            }
-        }
-    }
+finna-feed.feed-container {
+    container: feed / inline-size;
 }
+
+/** List feed **/
 .feed-container .list-feed .feed-header {
     color: $list-feed-header-color;
 }
@@ -22,80 +15,139 @@
 .feed-container .list-feed {
     background: $list-feed-background;
     padding: $list-feed-padding;
-    margin-bottom: 20px;
-    li {
+    margin-bottom: $spacer;
+    &:not(.featured) .feed-list-container {
+        display: flex;
+        flex-direction: column;
+        gap: $spacer;
+    }
+    .list-img-container {
+        width: 40%;
+    }
+    .list-content-container {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .feed-list-item {
+        display: flex;
+        flex-direction: row;
+        gap: 0.5em;
         line-height: 2em;
-        a {
-            text-decoration: none;
-        }
     }
     .title {
-        font-weight: normal;
+        display: inline-block;
+        margin-top: 0px;
+        margin-bottom: 0px;
     }
-    .more-link {
-        margin-top: 15px;
+    a .title:hover {
+        text-decoration: $link-hover-decoration;
     }
     .date {
+        font-size: $font-size-small;
         color: $gray-light;
     }
-
     .text {
+        margin-bottom: 0.3em;
         color: $gray;
-        &:hover {
-            text-decoration: none;
-        }
     }
-
+    .xcal-fields {
+        margin-bottom: 0px;
+    }
     .xcal {
-        padding-bottom: 0px;
         display: block;
+        padding-bottom: 0px;
         margin-bottom: 0px;
         color: $gray;
+        :last-child {
+            margin-bottom: 1rem;
+        }
         .icon {
             padding-right: 5px;
         }
     }
-
+    .more-link {
+        margin-top: $padding-large-vertical;
+    }
     &.with-image {
-        li {
-          clear: both;
-          position: relative;
-        }
-        img {
-            max-width: 40%;
-            margin-bottom: 15px;
-            margin-right: 10px;
-            float: left;
-        }
-        .date {
-            position: absolute;
-            padding: 5px;
-            color: $body-bg;
-            background: rgba(20,20,20,.6);
-            left: 15px;
-        }
-        .title, .text {
-            vertical-align: top;
-            float: right;
-            width: 55%;
-        }
-        .text {
-            padding-bottom: 15px;
-        }
-        p {
-            &.xcal {
-                float: right;
-                width: 55%
-            }
+        .list-content-container {
+            width: 60%;
+            padding: 0rem $padding-large-horizontal;
         }
         .more-link {
             display: block;
             text-align: center;
-            padding-top: 15px;
         }
-
     }
-
+    // display - featured
+    &.featured {
+        .feed-featured {
+            .feed-list-item {
+                float: right;
+                width: 30%;
+                padding-bottom: $padding-base-vertical;
+                clear: right;
+            }
+            .featured-item {
+                float: left;
+                width: 70%;
+                clear: both;
+            }
+            .list-content-container {
+                width: 100%;
+                padding-top: 0px;
+                padding-bottom: 0px;
+            }
+            .more-link {
+                width: fit-content;
+                align-items: flex-end;
+            }
+        }
+        &.with-image {
+            .featured-item .feed-list-item {
+                display: flex;
+                flex-direction: row;
+                .list-img-container {
+                    width: 40%;
+                }
+                .list-content-container {
+                    width: 60%;
+                    padding-right: 0.5em;
+                }
+            }
+            .list-container .list-content-container {
+                padding: 0px;
+            }
+        }
+    }
+}
+@container feed (max-width: #{$screen-xs-max}) {
+    .feed-container .list-feed {
+        .feed-list-item {
+            display: flex;
+            flex-direction: column;
+            .list-content-container {
+                width: 100%;
+                padding: 0px;
+            }
+        }
+        .list-img-container {
+            width: 100%;
+        }
+        &.featured .feed-featured {
+            .feed-list-item {
+                display: block;
+                float: none;
+                width: 100%;
+            }
+            .featured-item {
+                display: flex;
+                flex-direction: column;
+                float: none;
+                width: 100%;
+            }
+        }
+    }
 }
 
 // mixin for image prosessing on fulltext rss feeds
@@ -359,15 +411,15 @@
 
 // xCal fields
 .xcal-fields {
-    margin-bottom: 20px;
-   .xcal-value {
+    margin-bottom: $spacer;
+    .xcal-value {
        float: right;
        width: 70%;
-   }
-   div {
+    }
+    div {
        display: inline-block;
        width: 100%;
-   }
+    }
 }
 
 // LinkedEvents
@@ -1071,6 +1123,74 @@ finna-feed.splide--ttb {
             .carousel-text {
                 position: initial;
             }
+        }
+    }
+}
+
+/* type - linkbox */
+.list-linkbox-feed {
+    flex-direction: column;
+    gap: 0.5em;
+    ul {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+        margin: 0px;
+    }
+    .linkbox {
+        display: flex;
+        color: $linkbox-feed-color;
+        background-color: $linkbox-feed-background;
+        border: $linkbox-feed-border;
+        border-radius: $linkbox-feed-border-radius;
+        &:hover {
+            text-decoration: none;
+        }
+    }
+    .feed-img-container {
+        width: 40%;
+    }
+    .feed-item-container {
+        width: 100%;
+        padding: $spacer;
+    }
+    &.with-image .feed-item-container {
+        width: 60%;
+    }
+    .date {
+        padding: 0px;
+        color: $linkbox-feed-color
+    }
+    .text {
+        color: $linkbox-feed-color;
+    }
+    a,
+    .text {
+        font-size: 1rem;
+    }
+    .title {
+        margin-top: 0rem;
+    }
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-top-left-radius: $linkbox-feed-border-radius;
+        border-bottom-left-radius: $linkbox-feed-border-radius;
+    }
+    .more-link {
+        display: flex;
+        align-self: center;
+    }
+}
+@container feed (max-width: #{$screen-xs-max}) {
+    .list-linkbox-feed {
+        .linkbox {
+            flex-direction: column;
+        }
+        .feed-img-container,
+        &.with-image .feed-item-container {
+            width: 100%;
         }
     }
 }
