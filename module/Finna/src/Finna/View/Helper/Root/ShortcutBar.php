@@ -128,10 +128,10 @@ class ShortcutBar extends \Laminas\View\Helper\AbstractHelper
         foreach ($items as $item) {
             $itemSettings = [];
             if ($url = $item['url'] ?? '') {
-                if (isset($url[$lng])) {
-                    $itemSettings['href'] = $url[$lng];
-                } elseif (!is_array($url)) {
+                if (!is_array($url)) {
                     $itemSettings['href'] = $url;
+                } elseif (isset($url[$lng])) {
+                    $itemSettings['href'] = $url[$lng];
                 } else {
                     continue;
                 }

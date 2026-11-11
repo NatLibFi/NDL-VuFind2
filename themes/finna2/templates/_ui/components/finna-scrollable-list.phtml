@@ -26,7 +26,7 @@
 <?php $__attributes = $this->htmlAttributes($attributes ?? []); ?>
 <div<?= $__attributes->add('class', ['scrollable-list-container']) ?>>
   <?php if ($__title): ?>
-    <h<?=$this->escapeHtml($__headingLevel) ?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$this->escapeHtml($__headingLevel) ?>>
+    <h<?=$__headingLevel ?> class="scrollable-list-title"><?=$this->transEsc($__title)?></h<?=$__headingLevel ?>>
   <?php endif; ?>
   <div class="link-list list-scrollable">
     <button class="list-scrollable__scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
