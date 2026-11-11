@@ -7,10 +7,6 @@
   $ratings = $this->driver->isRatingAllowed();
 ?>
 <!-- START of: finna - RecordTab/usercomments.phtml -->
-<div class="comment-list">
-  <?=$this->render('record/comments-list.phtml', ['driver' => $this->driver])?>
-</div>
-
 <?php if ($user): ?>
   <div class="comment-form-wrapper <?=count($this->record($this->driver)->getComments()) % 2 ? 'even' : 'odd'?>">
     <form class="comment-form" action="<?=$this->escapeHtmlAttr($this->recordLinker()->getActionUrl($this->driver, 'AddComment'))?>" method="post">
@@ -59,9 +55,13 @@
     </form>
   </div>
 <?php else: ?>
-  <div>
+  <div class="comment-form-login">
     <?php $singleSignOn = $this->auth()->hasSessionInitiator(); ?>
     <a href="?login=true&amp;catalogLogin=true" class="btn btn-primary login-link"<?php if (!$singleSignOn): ?> data-lightbox<?php endif; ?> title="<?=$this->transEscAttr('Login')?>"><?= $this->transEsc('Login'); ?></a> <?= $this->transEsc('comment_login') ?>
   </div>
 <?php endif; ?>
+
+<div class="comment-list">
+  <?=$this->render('record/comments-list.phtml', ['driver' => $this->driver])?>
+</div>
 <!-- END of: finna - RecordTab/usercomments.phtml -->

@@ -1068,17 +1068,31 @@ finna-model-viewer .object-editor {
   padding: 0.7em;
   padding-top: 0.4em;
   margin-bottom: 0.7em;
-  background-color: lighten($gray, 78%);
+  background-color: $light;
   border-radius: $border-radius-base;
-  .name {
+  .comment-info-wrapper {
     padding-bottom: 0.3em;
     border-bottom: 2px solid $gray-lighter;
-    .comment-rating {
-      display: inline-block;
+    font-size: $font-size-small;
+    .name {
+      .comment-rating-user-wrapper {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+        .comment-user {
+          word-break: break-all;
+        }
+      }
+      .comment-info {
+        .comment-created, .comment-updated {
+          white-space: nowrap;
+        }
+      }
     }
-    .comment-info {
-      display: inline;
-      margin-left: 0.7em;
+    .comment-edit {
+      > a {
+        margin-left: 0.75rem;
+      }
     }
   }
   .comment-text {
@@ -1087,8 +1101,25 @@ finna-model-viewer .object-editor {
     white-space: pre-line;
   }
 }
+@include media-breakpoint-up(sm) {
+  .comment-info-wrapper {
+    .name {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      .comment-info {
+        display: flex;
+        flex: 1;
+        justify-content: space-between;
+        gap: 0.75rem;      
+      }
+    }
+  }
+}
+
 // Comment form
 .comment-form-wrapper {
+  margin-bottom: 0.7rem;
   padding: 10px;
   background-color: $light;
   border-radius: $border-radius-base;
@@ -1098,12 +1129,18 @@ finna-model-viewer .object-editor {
       font-size: 1.5em;
       color: $primary;
     }
+    .comment-rating {
+      margin-bottom: 0.2rem;
+    }
     .nickname-holder {
-      margin-bottom: 5px;
+      margin-bottom: 0.7rem;
+      font-size: $font-size-small;
     }
     .comment-description {
       margin-top: 1em;
       margin-left: 2em;
+      font-size: $font-size-small;
+      padding: 0.5em;
     }
   }
 }
@@ -1111,7 +1148,7 @@ finna-model-viewer .object-editor {
   .comment-form-wrapper {
     .comment-form {
       .comment-info-icon {
-        margin-top: 2.7em;
+        margin-top: 2em;
         margin-left: 1em;
       }
       .comment-col {
@@ -1119,11 +1156,16 @@ finna-model-viewer .object-editor {
         width: 50%;
       }
       .comment-description {
-        margin-top: 4em;
-        margin-left: 4em;
+        margin-top: 3.4em;
+        margin-left: 3.4em;
+        font-size: $font-size-base;
+        padding: 0px;
       }
     }
   }
+}
+.comment-form-login {
+  margin-bottom: 0.7em;
 }
 
 // Series tab
