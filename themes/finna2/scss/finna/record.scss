@@ -1068,7 +1068,7 @@ finna-model-viewer .object-editor {
   padding: 0.7em;
   padding-top: 0.4em;
   margin-bottom: 0.7em;
-  background-color: lighten($gray, 78%);
+  background-color: $light;
   border-radius: $border-radius-base;
   .comment-info-wrapper {
     padding-bottom: 0.3em;
@@ -1147,7 +1147,7 @@ finna-model-viewer .object-editor {
   .comment-form-wrapper {
     .comment-form {
       .comment-info-icon {
-        margin-top: 2.7em;
+        margin-top: 2em;
         margin-left: 1em;
       }
       .comment-col {
@@ -1155,12 +1155,15 @@ finna-model-viewer .object-editor {
         width: 50%;
       }
       .comment-description {
-        margin-top: 4em;
-        margin-left: 4em;
+        margin-top: 3.4em;
+        margin-left: 3.4em;
         font-size: $font-size-base;
       }
     }
   }
+}
+.comment-form-login {
+  margin-bottom: 0.7em;
 }
 
 // Series tab
