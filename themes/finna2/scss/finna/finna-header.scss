@@ -127,7 +127,7 @@ section.main.template-dir-feedcontent.template-name-content .container-fluid.fin
     }
     .adv-search-menu {
       position: absolute;
-      z-index: 1;
+      z-index: $zindex-dropdown;
       padding: 10px;
       background-color: #fff;
       border: 1px solid $gray-lighter;

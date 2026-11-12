@@ -257,7 +257,7 @@
       <?=$this->render($template)?>
     <?php endif; ?>
     </section>
-    <?php if (in_array($this->templateName, ['results', 'search', 'home']) && ($template = $this->content()->findTemplateForLng('content/Additions/results-pre'))): ?>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/main-pre')): ?>
       <div class="container results-pre">
         <?=$this->render($template)?>
       </div>
