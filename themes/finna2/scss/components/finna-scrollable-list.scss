@@ -204,6 +204,7 @@
             background-color: $finna-shortcut-bar-link-background-hover;
           }
           &.icon-link {
+            backface-visibility: visible;
             .icon-link__label {
               text-decoration: $finna-shortcut-bar-link-text-decoration;
             }
