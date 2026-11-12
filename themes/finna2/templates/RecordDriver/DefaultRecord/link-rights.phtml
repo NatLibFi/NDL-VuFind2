@@ -8,7 +8,7 @@
     return;
   }
 
-  $rightsElement = '<div class="copyright-wrapper">(';
+  $rightsElement = '<div class="copyright-wrapper">&nbsp;';
 
   if ($format = $this->format ?? '') {
       $rightsElement .= $this->escapeHtml($format);
@@ -26,9 +26,15 @@
             'href' => $copyrightLink,
             'target' => '_blank',
         ];
-        $rightsElement .= ' <a' . $this->htmlAttributes($rightsAttrs) . '>'
-            . $this->escapeHtml($copyright)
-            . '</a>';
+        $rightsElement .= ' 
+            <span class="visually-hidden">' 
+            . $this->transEsc('usage_rights_ext') 
+            . '</span><a' . ' ' 
+            . $this->htmlAttributes($rightsAttrs) . '>'
+            . $this->escapeHtml($copyright) . ' ' 
+            . '<span class="visually-hidden">' 
+            . $this->transEscAttr('external_online_link') 
+            . '</span></a>';
       } else {
         $rightsElement .= $this->escapeHtml($copyright);
       }
@@ -44,7 +50,7 @@
             . $this->transEsc('copyright_info_show') . $this->icon('truncate-more')
             . '</button>';
     }
-    $rightsElement .= ')</div>';
+    $rightsElement .= '</div>';
 ?>
 <?= $rightsElement ?>
 <!-- END of: finna - RecordDriver/DefaultRecord/link-rights.phtml -->
