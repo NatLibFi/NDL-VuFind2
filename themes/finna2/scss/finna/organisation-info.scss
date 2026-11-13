@@ -511,13 +511,10 @@ $organisation-info-max-w: 400px !default;
                     break-inside: avoid-column;
                     page-break-inside: avoid;
                 }
-                .service-tooltip {
+                .finna-toggletip__button {
                     padding: 0px;
                     color: $link-color;
                     text-align: left;
-                    text-decoration: none;
-                    background-color: inherit;
-                    border: none;
                 }
             }
         }
@@ -591,6 +588,11 @@ $organisation-info-max-w: 400px !default;
                 width: 100%;
                 .service-list {
                     column-count: 3;
+                }
+                .finna-toggletip__button {
+                    padding: 0px;
+                    color: $link-color;
+                    text-align: left;
                 }
             }
         }
