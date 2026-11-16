@@ -379,7 +379,9 @@ class GetFieldInfo extends \VuFind\AjaxHandler\AbstractBase implements LoggerAwa
         }
         if ($this->dynamicContent['other_language_enrichment']) {
             $result['otherLanguageLabels'] = $pref;
-            $result['otherLanguageAltLabels'] = $alt;
+            if ($this->dynamicContent['alt_label_enrichment']) {
+                $result['otherLanguageAltLabels'] = $alt;
+            }
         }
 
         return $result;
