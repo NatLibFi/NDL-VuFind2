@@ -186,7 +186,7 @@ class CommentsService extends \VuFind\Db\Service\CommentsService implements Comm
             . 'FROM ' . CommentsEntityInterface::class . ' c '
             . 'LEFT JOIN c.user u '
             . 'WHERE c.finnaVisible = 1 AND (' . implode(' OR ', $terms) . ') '
-            . 'ORDER BY c.created ASC';
+            . 'ORDER BY c.created DESC';
 
         $query = $this->entityManager->createQuery($dql);
         $query->setParameters($parameters);
