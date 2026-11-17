@@ -27,13 +27,13 @@
             'target' => '_blank',
         ];
         $rightsElement .= ' 
-            <a '. $this->htmlAttributes($rightsAttrs) . '> 
-              <span class="visually-hidden">' 
-            . $this->transEsc('usage_rights_ext') 
-            . '</span>' 
-            . $this->escapeHtml($copyright) . ' ' 
-            . '<span class="visually-hidden">' 
-            . $this->transEscAttr('external_online_link') 
+            <a ' . $this->htmlAttributes($rightsAttrs) . '>
+              <span class="visually-hidden">'
+            . $this->transEsc('usage_rights_ext')
+            . '</span>'
+            . $this->escapeHtml($copyright) . ' '
+            . '<span class="visually-hidden">'
+            . $this->transEscAttr('external_online_link')
             . '</span></a>';
       } else {
         $rightsElement .= $this->escapeHtml($copyright);
