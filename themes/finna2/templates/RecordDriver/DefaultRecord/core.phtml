@@ -64,7 +64,7 @@
         <div class="recordAuthors">
           <div class="truncate-field">
             <?php foreach ($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+              <?=($index > 0 ? '<span aria-hidden="true">; </span>' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
             <?php endforeach; ?>
             <?php $altScriptFound = false; ?>
             <?php foreach ($results as $index => $author): ?>

@@ -48,7 +48,7 @@
         <div class="truncate-field recordAuthors">
           <span>
             <?php foreach ($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
+              <?=($index > 0 ? '<span aria-hidden="true">; </span>' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
             <?php endforeach; ?>
           </span>
         </div>
