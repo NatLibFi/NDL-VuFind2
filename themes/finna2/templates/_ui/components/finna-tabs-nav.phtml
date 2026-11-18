@@ -27,7 +27,7 @@
   <ul class="finna-nav-tabs finna-nav nav nav-tabs link-tabs active-multi-level">
   <?php foreach ($items ?? [] as $i => $item): ?>
     <?php
-      $tabId = $item['label'] ?? $i; 
+      $tabId = $item['label'] ?? $i;
       $listAttributes = $this->htmlAttributes();
       $listAttributes->add('class', 'nav-item');
       $listAttributes->add('id', 'tab-' . $item['label'] ?? $i);
