@@ -22,7 +22,7 @@
     .navbar-nav {
       margin: 0px;
       > li > a {
-        padding: 16px;
+        padding: $spacer;
         margin-top: 0px;
         margin-bottom: 0px;
       }
@@ -32,7 +32,11 @@
         width: 100%;
       }
       > ul > li {
+        width: 100%;
         border-bottom: 1px solid $gray-lighter;
+        a {
+          width: 100%;
+        }
       }
       .dropdown-menu {
         margin-top: 0px;

@@ -1,35 +1,84 @@
 <?php
   /**
-   * Tabbed navigation bar that will also show the active tab's children.
-   *
-   * Uses the following components:
-   * - finna-nav
+   * Scrollable tabbed navigation bar that will also show the active tab's children.
    *
    * @param ?string   ariaCurrent  See finna-nav
    * @param ?string   ariaLabel    Value for aria-label attribute
    * @param ?iterable attributes   Additional attributes
    * @param ?array    items        See finna-nav
    *
-   * Supported variations using CSS classes:
-   * - finna-tabs-nav-lg
-   *     Larger variation
    */
-  $__attributes = $this->htmlAttributes($attributes ?? []);
+  $__navAttributes = $this->htmlAttributes($attributes ?? []);
   if (isset($ariaLabel)) {
-    $__attributes['aria-label'] = $ariaLabel;
+    $__navAttributes['aria-label'] = $ariaLabel;
   }
 ?>
-<nav<?= $__attributes->add('class', ['finna-tabs-nav', 'clearfix']) ?>>
+<nav<?= $__navAttributes->add('class', ['finna-tabs-nav nav-scrollable', 'clearfix']) ?>>
   <?php
-    $__navAttributes = $this->htmlAttributes(['class' => 'finna-nav-tabs']);
-    if ($__attributes->hasValue('class', 'finna-tabs-nav-lg')) {
-      $__navAttributes->add('class', 'finna-nav-lg');
-    }
+    $activeMultiLevel = false;
+    $subTabs = [];
   ?>
-  <?= $this->component('finna-nav', [
-      'ariaCurrent' => $ariaCurrent ?? null,
-      'attributes' => $__navAttributes,
-      'items' => $items ?? [],
-      'renderChildren' => 'simple',
-    ]); ?>
+  <button class="arrow-btn scroll-prev-btn js-scroll-prev hidden" aria-label="<?=$this->transEscAttr('Scroll backward') ?>">
+    <?=$this->icon('tabs-prev')?>
+  </button>
+  <button class="arrow-btn scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
+    <?=$this->icon('tabs-next')?>
+  </button>
+  <ul class="finna-nav-tabs finna-nav nav nav-tabs link-tabs active-multi-level">
+  <?php foreach ($items ?? [] as $i => $item): ?>
+    <?php
+      $tabId = $item['label'] ?? $i; 
+      $listAttributes = $this->htmlAttributes();
+      $listAttributes->add('class', 'nav-item');
+      $listAttributes->add('id', 'tab-' . $item['label'] ?? $i);
+      $linkAttributes = $this->htmlAttributes();
+      $linkAttributes['href'] = $item['link'] ?? '#';
+      $linkAttributes->add('class', 'nav-link');
+      if (isset($item['active']) && $item['active']) {
+        $linkAttributes['aria-current'] = 'page';
+        $listAttributes->add('class', 'active-trail');
+        $linkAttributes->add('class', 'active');
+      }
+    ?>
+    <?php if (isset(($item['children']))): ?>
+      <?php foreach ($item['children'] as $child): ?>
+        <?php
+        $childAttributes = $this->htmlAttributes();
+        $childLinkAttributes = $this->htmlAttributes();
+        if ($child['active']) {
+            $listAttributes->add('class', 'active-trail');
+            $linkAttributes->add('class', 'active');
+            $childAttributes['aria-current'] = 'page';
+            $childLinkAttributes->add('class', 'active');
+          }
+        ?>
+      <?php
+      $childLinkAttributes['href'] = $child['link'] ?? '';
+      if (isset($child['description'])) {
+        $childAttributes->add('class', 'nav-item-has-description');
+      }
+      ?>
+      <?php ob_start(); ?>
+      <li<?= $childAttributes ?>>
+        <a<?= $childLinkAttributes ?>><span><?= $child['label'] ?? '' ?></span>
+        <?php if (isset($child['description'])): ?><span role="note"><?= $child['description'] ?></span><?php endif; ?></a>
+      </li>
+    <?php $subTabs[$item['label']][] = ob_get_clean();?>
+    <?php endforeach; ?>
+    <?php endif; ?>
+    <li<?= $listAttributes ?>>
+      <a<?= $linkAttributes ?>><?= $item['label'] ?? '' ?></a>
+      <?php if (isset($tooltipBtn)): ?>
+        <?= $this->component('finna-tooltip-btn', $tooltipBtn) ?>
+      <?php endif; ?>
+    </li>
+  <?php endforeach; ?>
+  </ul>
+<?php foreach ($items ?? [] as $i => $item): ?>
+  <ul id="sub-tab-<?= $item['label'] ?? $i ?>">
+    <?php foreach ($subTabs[$item['label']] ?? [] as $tab): ?>
+      <?= $tab; ?>
+  <?php endforeach; ?>
+  </ul>
+<?php endforeach; ?>
 </nav>

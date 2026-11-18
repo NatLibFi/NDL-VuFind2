@@ -8,6 +8,7 @@
  * - finna-navbar
  * - finna-tabs-nav
  *
+ * @param bool      isTab             Whether the nav is displayed as tabs, default is true           
  * @param string    ariaLabel         See finna-navbar and finna-tabs-nav
  * @param ?iterable attributes        Additional attributes
  * @param array     items             See finna-nav and finna-tabs-nav
@@ -22,22 +23,18 @@
  * respective component.
  *
  * Supported variations using CSS classes:
- * - finna-multi-level-nav-lg
- *     Larger variation
  * - finna-multi-level-nav-content
  *     Content navigation variation
  */
 ?>
-<?php $__attributes = $this->htmlAttributes($attributes ?? []); ?>
+<?php
+  $isTab = $isTab ?? true;
+  $__attributes = $this->htmlAttributes($attributes ?? []);
+?>
 <div<?= $__attributes->add('class', 'finna-multi-level-nav') ?>>
+  <?php if ($isTab): ?>
   <?php
     $__tabsNavAttributes = $this->htmlAttributes($tabsNavAttributes ?? []);
-    if (!isset($__tabsNavAttributes['class'])) {
-      $__tabsNavAttributes['class'] = 'hidden-xs';
-    }
-    if ($__attributes->hasValue('class', 'finna-multi-level-nav-lg')) {
-      $__tabsNavAttributes->add('class', 'finna-tabs-nav-lg');
-    }
   ?>
   <?= $this->component('finna-tabs-nav', [
       'ariaCurrent' => 'page',
@@ -45,11 +42,9 @@
       'attributes' => $__tabsNavAttributes,
       'items' => $items ?? [],
     ]); ?>
+  <?php else: ?>
   <?php
     $__navbarAttributes = $this->htmlAttributes($navbarAttributes ?? []);
-    if (!isset($__navbarAttributes['class'])) {
-      $__navbarAttributes['class'] = 'visible-xs';
-    }
     if ($__attributes->hasValue('class', 'finna-multi-level-nav-content')) {
       $__navbarAttributes->add('class', 'finna-navbar-content');
     }
@@ -69,4 +64,5 @@
       'toggleBtnLabel' => $toggleBtnLabel ?? null,
       'toggleBtnSrOnly' => $toggleBtnSrOnly ?? null,
     ]); ?>
+  <?php endif; ?>
 </div>

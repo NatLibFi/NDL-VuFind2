@@ -1,8 +1,22 @@
 .finna-multi-level-nav {
-  margin-top: 12px;
-  margin-bottom: 12px;
-  .finna-nav-tabs {
-    margin-top: 0;
-    margin-bottom: 0;
+  margin-top: $spacer 0px;
+
+  // Displayed as tabs
+  .finna-tabs-nav {
+    ul[id*='sub-tab-'] {
+      display: none; // only active displayed
+      flex-direction: row;
+      flex-wrap: wrap;
+       margin: 0px;
+      > li {
+        padding: 0.8em 0.6em;
+        > a {
+          color: $text-color;
+          &.active {
+            font-weight: 700;
+          }
+        }
+      }
+    }
   }
 }

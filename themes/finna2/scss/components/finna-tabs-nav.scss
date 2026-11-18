@@ -1,0 +1,14 @@
+.finna-tabs-nav {
+  font-size: 1em;
+  .nav-tabs {
+    > li {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      > button {
+        padding-left: 0;
+        color: $nav-tabs-active-color;
+      }
+    }
+  }
+}

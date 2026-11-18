@@ -104,9 +104,6 @@ h1.content-header {
         color: $link-color;
         margin-bottom: 25px;
     }
-    ul:not(.nav-tabs.help-tabs):not(.finna-nav) li:not(.feed-tab) {
-        margin-bottom: 3px;
-    }
     .organisation-list-item {
         width: 25%;
         float: left;
@@ -144,9 +141,6 @@ ul.nav-tabs.help-tabs {
             font-size: 20px;
         }
     }
-}
-.template-name-content .finna-multi-level-nav-content {
-    margin-top: $spacer;
 }
 
 .example-image-area {

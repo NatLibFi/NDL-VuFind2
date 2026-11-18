@@ -26,7 +26,7 @@
   $__attributes = $this->htmlAttributes($attributes ?? []);
   $__attributes->add('class', 'nav-item');
   $__linkAttributes = $this->htmlAttributes($__linkAttributes ?? []);
-  $__linkAttributes->add('class', 'nav-link');
+  $__linkAttributes->add('class', ['nav-link', 'icon-link']);
   $__renderChildren = $renderChildren ?? 'dropdown';
   if (!empty($children) && 'dropdown' === $__renderChildren) {
     $__attributes->add('class', 'dropdown');
@@ -54,6 +54,7 @@
         $__childAttributes->add('class', 'nav-item-has-description');
       }
       $__childLinkAttributes = $this->htmlAttributes($__child['linkAttributes'] ?? []);
+      $__childLinkAttributes->add('class', 'icon-link');
       $__childLinkAttributes['href'] = $__child['link'] ?? '';
       if (!empty($__child['active'])) {
         $__childLinkAttributes->add('class', 'active');
@@ -73,7 +74,10 @@
     if ($__hasDropdown = (!empty($__children) && 'dropdown' === $__renderChildren)) {
       $__linkAttributes->set([
         'href' => '#',
-        'class' => 'dropdown-toggle',
+        'class' => [
+          'dropdown-toggle',
+          'icon-link'
+        ],
         'data-bs-toggle' => 'dropdown',
         'role' => 'button',
         'aria-expanded' => 'false',
@@ -82,7 +86,7 @@
       $__linkAttributes['href'] = $link ?? '';
     }
   ?>
-  <a<?= $__linkAttributes ?>><?= $label ?? '' ?><?php if ($__hasDropdown): ?> <b class="caret"></b><?php endif; ?></a>
+  <a<?= $__linkAttributes ?>><span class="icon-link__label"><?= $label ?? '' ?></span><?php if ($__hasDropdown): ?> <b class="icon-link__icon caret"></b><?php endif; ?></a>
   <?php if (!$__hasDropdown && isset($tooltipBtn)): ?>
     <?= $this->component('finna-tooltip-btn', $tooltipBtn) ?>
   <?php endif; ?>

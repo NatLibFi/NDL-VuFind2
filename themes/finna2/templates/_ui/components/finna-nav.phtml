@@ -18,17 +18,12 @@
    *     Larger variation
    * - finna-nav-navbar
    *     Variation for finna-navbar
-   * - finna-nav-tabs
-   *     Variation for finna-tabs-nav
    */
   $__attributes = $this->htmlAttributes($attributes ?? []);
 
   // Internally use Bootstrap styles as a base.
   if ($__attributes->hasValue('class', 'finna-nav-navbar')) {
     $__attributes->add('class', 'navbar-nav');
-  }
-  if ($__attributes->hasValue('class', 'finna-nav-tabs')) {
-    $__attributes->add('class', 'nav-tabs');
   }
 
   // Items are processed at this point so that the active-multi-level class
