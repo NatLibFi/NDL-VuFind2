@@ -2,10 +2,21 @@
   /**
    * Scrollable tabbed navigation bar that will also show the active tab's children.
    *
-   * @param ?string   ariaCurrent  See finna-nav
-   * @param ?string   ariaLabel    Value for aria-label attribute
-   * @param ?iterable attributes   Additional attributes
-   * @param ?array    items        See finna-nav
+   * @param ?string   ariaCurrent     aria-current value for possible active items
+   * @param ?string   ariaLabel       Value for aria-label attribute
+   * @param ?iterable attributes      Additional attributes for nav element
+   * @param ?array    items           An array of tab nav items
+   *   @param ?bool     active          Is the item active? Defaults to false.
+   *   @param ?string   ariaCurrent     aria-current value for possible active items
+   *   @param ?iterable listAttributes  Additional attributes
+   *   @param ?array    children        Array of sub tab parameter arrays for tab items
+   *   @param ?string   description     Item description. Only rendered for child items.
+   *   @param ?string   label           Item label
+   *   @param ?string   link            Item link (href value). Not used if the item has
+   *                                    children.
+   *   @param ?iterable linkAttributes  Additional item link attributes.
+   *   @param ?array    toggletip       Parameter array for finna-toggletip. Tooltip
+   *                                    buttons are only rendered for first level items.
    *
    */
   $__navAttributes = $this->htmlAttributes($attributes ?? []);
@@ -24,61 +35,69 @@
   <button class="arrow-btn scroll-next-btn js-scroll-next hidden" aria-label="<?=$this->transEscAttr('Scroll forward') ?>">
     <?=$this->icon('tabs-next')?>
   </button>
-  <ul class="finna-nav-tabs finna-nav nav nav-tabs link-tabs active-multi-level">
+  <ul class="finna-nav-tabs finna-nav nav nav-tabs link-tabs">
   <?php foreach ($items ?? [] as $i => $item): ?>
     <?php
       $tabId = $item['label'] ?? $i;
-      $listAttributes = $this->htmlAttributes();
-      $listAttributes->add('class', 'nav-item');
-      $listAttributes->add('id', 'tab-' . $item['label'] ?? $i);
-      $linkAttributes = $this->htmlAttributes();
-      $linkAttributes['href'] = $item['link'] ?? '#';
-      $linkAttributes->add('class', 'nav-link');
+      $__listAttributes = $this->htmlAttributes($item['listAttributes'] ?? []);
+      $__listAttributes->add('class', 'nav-item');
+      $__listAttributes->add('id', 'tab-' . $item['label'] ?? $i);
+      $__linkAttributes = $this->htmlAttributes($item['linkAttributes'] ?? []);
+      $__linkAttributes['href'] = $item['link'] ?? '#';
+      $__linkAttributes->add('class', 'nav-link');
       if (isset($item['active']) && $item['active']) {
-        $linkAttributes['aria-current'] = 'page';
-        $listAttributes->add('class', 'active-trail');
-        $linkAttributes->add('class', 'active');
+        if (isset($ariaCurrent)) {
+          $__linkAttributes['aria-current'] = $ariaCurrent;
+        }
+        $__listAttributes->add('class', 'active-trail');
+        $__linkAttributes->add('class', 'active');
+      }
+      if (isset($item['toggletip'])) {
+        $__listAttributes->add('class', 'with-tooltip');
       }
     ?>
     <?php if (isset(($item['children']))): ?>
       <?php foreach ($item['children'] as $child): ?>
         <?php
-        $childAttributes = $this->htmlAttributes();
-        $childLinkAttributes = $this->htmlAttributes();
-        if ($child['active']) {
-            $listAttributes->add('class', 'active-trail');
-            $linkAttributes->add('class', 'active');
-            $childAttributes['aria-current'] = 'page';
+          $childAttributes = $this->htmlAttributes();
+          $childLinkAttributes = $this->htmlAttributes();
+          if ($child['active']) {
+            // Add parent tab also as active
+            $__listAttributes->add('class', 'active-trail');
+            $__linkAttributes->add('class', 'active');
+            if (isset($ariaCurrent)) {
+              $childLinkAttributes['aria-current'] = $ariaCurrent;
+            }
             $childLinkAttributes->add('class', 'active');
           }
+          $childLinkAttributes['href'] = $child['link'] ?? '';
+          if (isset($child['description'])) {
+            $childAttributes->add('class', 'nav-item-has-description');
+          }
         ?>
-      <?php
-      $childLinkAttributes['href'] = $child['link'] ?? '';
-      if (isset($child['description'])) {
-        $childAttributes->add('class', 'nav-item-has-description');
-      }
-      ?>
-      <?php ob_start(); ?>
-      <li<?= $childAttributes ?>>
-        <a<?= $childLinkAttributes ?>><span><?= $child['label'] ?? '' ?></span>
-        <?php if (isset($child['description'])): ?><span role="note"><?= $child['description'] ?></span><?php endif; ?></a>
-      </li>
-    <?php $subTabs[$item['label']][] = ob_get_clean();?>
-    <?php endforeach; ?>
+        <?php ob_start(); ?>
+        <li<?= $childAttributes ?>>
+          <a<?= $childLinkAttributes ?>><span><?= $child['label'] ?? '' ?></span>
+          <?php if (isset($child['description'])): ?><span role="note"><?= $child['description'] ?></span><?php endif; ?></a>
+        </li>
+        <?php $subTabs[$item['label']][] = ob_get_clean();?>
+      <?php endforeach; ?>
     <?php endif; ?>
-    <li<?= $listAttributes ?>>
-      <a<?= $linkAttributes ?>><?= $item['label'] ?? '' ?></a>
-      <?php if (isset($tooltipBtn)): ?>
-        <?= $this->component('finna-tooltip-btn', $tooltipBtn) ?>
+    <li<?= $__listAttributes ?>>
+      <a<?= $__linkAttributes ?>><?= $item['label'] ?? '' ?></a>
+      <?php if (isset($item['toggletip'])): ?>
+        <?= $this->component('finna-toggletip', $item['toggletip']) ?>
       <?php endif; ?>
     </li>
   <?php endforeach; ?>
   </ul>
 <?php foreach ($items ?? [] as $i => $item): ?>
-  <ul id="sub-tab-<?= $item['label'] ?? $i ?>">
-    <?php foreach ($subTabs[$item['label']] ?? [] as $tab): ?>
-      <?= $tab; ?>
-  <?php endforeach; ?>
-  </ul>
+  <?php if (isset($subTabs[$item['label']])): ?> 
+    <ul id="sub-tab-<?= $item['label'] ?? $i ?>">
+      <?php foreach ($subTabs[$item['label']] ?? [] as $tab): ?>
+        <?= $tab; ?>
+      <?php endforeach; ?>
+    </ul>
+  <?php endif; ?>
 <?php endforeach; ?>
 </nav>
