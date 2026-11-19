@@ -15,7 +15,6 @@ $organisation-info-max-w: 400px !default;
         white-space: normal;
         #jump-to-top {
             display: inline-block; 
-
         }
         p { 
             margin: 0 0 0.9em 0; 
@@ -556,7 +555,7 @@ $organisation-info-max-w: 400px !default;
     .organisation-info {
         .organisation-status-columns {
             column-count: 2;
-            }
+        }
     }
     .organisation-info-page {
         .consortium-info {

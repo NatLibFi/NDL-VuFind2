@@ -125,7 +125,8 @@
         }
 
         // Add to respective categories with IDs
-        if ($isOpen && $item['name'] != '') {
+        if ($item['name'] === '') {
+        } elseif ($isOpen && $item['name'] != '') {
           $openList[] = ['name' => $name, 'id' => $item['id']];
         } elseif ($isMobile && $item['name'] != '') {
           $mobileList[] = ['name' => $name, 'id' => $item['id']];
@@ -145,7 +146,7 @@
         <h4><?=$this->transEsc('organisation_info_is_closed_now') ?></h4>
         <div class="organisation-info organisation-status-columns">
           <?php foreach ($closedList as $item): ?>
-            <p><a href="#<?=$this->escapeHtmlAttr($item['id']) ?>"id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a></p>
+            <p><a href="#<?=$this->escapeHtmlAttr($item['id']) ?>" id="jump-to-top"><?=$this->escapeHtml($item['name']) ?></a></p>
           <?php endforeach; ?>
         </div>
         <h4><?=$this->transEsc('organisation_info_no_schedule') ?></h4>

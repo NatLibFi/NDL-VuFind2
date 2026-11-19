@@ -216,12 +216,11 @@ finna.layout = (function finnaLayout() {
   function moveFocusToTopOnMapPage() {
     document.addEventListener('click', (e) => {
       if (!e.target.closest('#jump-to-top')) return;
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: 'auto' });
       setTimeout(() => {
         const t = document.getElementById('map-info');
         if (!t) return;
         t.setAttribute('tabindex', '-1');
-        t.scrollIntoView({ behavior: 'smooth', block: 'start' });
         try { t.focus({ preventScroll: true }); } catch (err) { void err; t.focus(); }
         setTimeout(() => { if (t.getAttribute('tabindex') === '-1') t.removeAttribute('tabindex'); }, 700);
       }, 500);
