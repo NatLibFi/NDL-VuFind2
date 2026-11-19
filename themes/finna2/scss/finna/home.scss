@@ -42,6 +42,8 @@
   position: relative;
 }
 h1.introductionText, h2.introductionText, h3.introductionText {
+  white-space: normal;
+  overflow-wrap: break-word;
   margin: 0px 50px 5px 0px;
   em {
       font-style: normal;
