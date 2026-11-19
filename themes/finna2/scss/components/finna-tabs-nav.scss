@@ -1,0 +1,28 @@
+.finna-tabs-nav {
+  font-size: 1em;
+  .nav-tabs {
+    > li {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      > button {
+        padding-left: 0;
+        color: $nav-tabs-active-color;
+      }
+      &.with-tooltip {
+        a {
+          padding-right: 2.5rem;
+        }
+        .finna-toggletip {
+          display: inline;
+          > button {
+            position: relative;
+            display: inline-block;
+            margin-left: -2.25rem;
+            font-size: $font-size-large;
+          }
+        }
+      }
+    }
+  }
+}
