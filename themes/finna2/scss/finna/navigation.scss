@@ -8,6 +8,9 @@ header {
 }
 
 .finna-navbar {
+  .navbar-header {
+    max-width: 150px;
+  }
   .nav-item > .nav-link {
     display: flex;
     align-items: center;

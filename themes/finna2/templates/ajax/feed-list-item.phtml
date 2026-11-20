@@ -3,7 +3,7 @@
   $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);
 ?>
-<?php if ($hasImg): ?>
+<?php if ($hasImg && (!$featured || $featured && $first)): ?>
   <div class="list-img-container">
     <img src="<?=$this->escapeHtmlAttr($item['image']['url']) ?>" alt="">
   </div>
@@ -11,23 +11,35 @@
     <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
   <?php endif; ?>
 <?php endif; ?>
-<span class="title"><?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title'] ?? '') ?></span>
-<?php if ($item['xcal'] ?? []): ?>
-  <div class="xcal-fields">
-    <?php if (!empty($xcal['startDate'])): ?>
-      <?php if ($xcal['singleDay']): ?>
-        <p class="xcal"><div class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="visually-hidden"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?></p>
-        <?php if (!empty($xcal['startTime'])): ?>
-          <p class="xcal"><?=$this->icon('feed-xcal-time') ?><span class="visually-hidden"><?=$this->transEscAttr('xcal_time') ?></span> <?=$this->escapeHtml($xcal['startTime']) ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime'] ?? '') ?></p>
+<div class="list-content-container">
+  <?php if (isset($linkElement)): ?><a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><?php endif; ?>
+    <h3 class="title"><?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title'] ?? '') ?></h3>
+  <?php if (isset($linkElement)):?></a><?php endif; ?>
+  <?php if (isset($item['dateFull']) || isset($item['date'])): ?>
+    <span class="date"><span class="date-text"><?=$this->transEsc('Published')?>: </span><?=$this->escapeHtml($item['dateFull'] ?? $item['date'])?></span>
+  <?php endif; ?>
+  <?php if ($xcal = $item['xcal'] ?? []): ?>
+    <div class="xcal-fields">
+      <?php if (!empty($xcal['startDate'])): ?>
+        <?php if ($xcal['singleDay']): ?>
+          <p class="xcal"><div class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="visually-hidden"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?></p>
+          <?php if (!empty($xcal['startTime'])): ?>
+            <p class="xcal"><?=$this->icon('feed-xcal-time') ?><span class="visually-hidden"><?=$this->transEscAttr('xcal_time') ?></span> <?=$this->escapeHtml($xcal['startTime']) ?>&nbsp;&ndash;&nbsp;<?=$this->escapeHtml($xcal['endTime'] ?? '') ?></p>
+          <?php endif; ?>
+        <?php else: ?>
+          <p class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="visually-hidden"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?> &ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate'])?></p>
         <?php endif; ?>
-      <?php else: ?>
-        <p class="xcal"><?=$this->icon('feed-xcal-date') ?><span class="visually-hidden"><?=$this->transEscAttr('xcal_date') ?></span> <?=$this->escapeHtml($xcal['startDate']) ?> &ndash;&nbsp;<?=$this->escapeHtml($xcal['endDate'])?></p>
       <?php endif; ?>
-    <?php endif; ?>
-    <?php if (!empty($xcal['location'])): ?>
-      <p class="xcal"><?=$this->icon('feed-xcal-location') ?><span class="visually-hidden"><?=$this->transEscAttr('Location') ?></span> <?=$this->escapeHtml($xcal['location']) ?></p>
-    <?php endif; ?>
-  </div>
-<?php endif; ?>
-<?php if (isset($item['text'])): ?><span class="text"><?=$this->escapeHtml($item['text']) ?></span><?php endif; ?>
+      <?php if (!empty($xcal['location'])): ?>
+        <p class="xcal"><?=$this->icon('feed-xcal-location') ?><span class="visually-hidden"><?=$this->transEscAttr('Location') ?></span> <?=$this->escapeHtml($xcal['location']) ?></p>
+      <?php endif; ?>
+    </div>
+  <?php endif; ?>
+  <?php if (!$featured || $featured && $first): ?>
+    <?php if (isset($item['description']) || isset($item['text'])): ?><p class="text"><?=$this->escapeHtml($item['description'] ?? $item['text']) ?></p><?php endif; ?>
+  <?php endif; ?>
+  <?php if (isset($linkElement) && isset($linkText)): ?>
+    <a class="link-text icon-link" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><span class="icon-link__label"><?= $this->transEsc($this->linkText) ?></span> <?=$this->icon($linkIcon, 'icon-link__icon')?></a>
+  <?php endif; ?>
+</div>
 <!-- END of: finna - ajax/feed-list-item.phtml -->
