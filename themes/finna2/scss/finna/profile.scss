@@ -92,9 +92,6 @@
   border: 1px solid $border-color;
   border-bottom-left-radius: $border-radius-base;
   border-bottom-right-radius: $border-radius-base;
-  #profile_library_form input {
-    min-width: 210px;
-  }
   div {
     padding: 0.6em;
     &.separator {
@@ -119,7 +116,7 @@
       line-height: 1.5;
     }
     &.profile-long {
-      padding-bottom: 0px;
+      padding-left: 0px;
     }
     &.messaging-last {
       margin-bottom: 20px;
@@ -127,6 +124,31 @@
     &.profile-group {
       padding-top: 0px;
       padding-left: 16px;
+    }
+    &.my-profile-loan-history {
+      display: flex;
+      align-items: center;
+      gap: 0.7em;
+      padding-left: 0px;
+        .loan-history-help-icon {
+          font-size: 1.2rem;
+        }
+    }
+    &.profile-update-address {
+      margin-top: 1.5rem;
+      margin-bottom: 1.5rem;
+      padding-left: 0.6em;
+      font-weight: 700;
+    }
+    &.my-profile-info {
+      display: flex;
+      .my-profile-info-icon {
+        padding-top: 0px;
+        padding-right: 0px;
+      }
+      .my-profile-info-text {
+        padding-top: 0px;
+      }
     }
   }
 }
@@ -138,6 +160,12 @@
       }
       &.profile-title {
         padding-bottom: 0px;
+      }
+      &.profile-long {
+        padding-left: 0.6em;
+      }
+      &.my-profile-loan-history {
+        padding-left: 0.6em;
       }
     }
   }

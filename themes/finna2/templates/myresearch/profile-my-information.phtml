@@ -11,8 +11,13 @@
           <input id="email" type="email" class="form-control" name="email" value="<?=$this->escapeHtmlAttr($user->getEmail())?>">
         </div>
         <div class="clearfix visible-xs"></div>
-        <div class="my-profile-col">
-          <?=$this->icon('info') ?> <?=$this->transEsc($this->hideDueDateReminder ? 'email_info_without_ddr' : 'email_info') ?>
+        <div class="my-profile-col my-profile-info">
+          <div class="my-profile-info-icon">
+            <?=$this->icon('info') ?>
+          </div>
+          <div class="my-profile-info-text">
+            <?=$this->transEsc($this->hideDueDateReminder ? 'email_info_without_ddr' : 'email_info') ?>
+          </div>
         </div>
       </div>
       <div class="my-profile-row">
@@ -23,8 +28,13 @@
           <input id="finna_nickname" type="text" class="form-control profileinfo-fields" name="finna_nickname" value="<?=$this->escapeHtmlAttr(trim($user->getFinnaNickname() ?? ''))?>" pattern="^(?!.*[._\-\s]{2})[A-ZÅÄÖa-zåäö0-9._\-\s]{3,50}$" title="<?=$this->transEsc('finna_nickname_restrictions')?>">
         </div>
         <div class="clearfix visible-xs"></div>
-        <div class="my-profile-col">
-          <?=$this->icon('info') ?> <?=$this->transEsc('finna_nickname_info')?>
+        <div class="my-profile-col my-profile-info">
+          <div class="my-profile-info-icon">
+            <?=$this->icon('info') ?>
+          </div>
+          <div class="my-profile-info-text">
+            <?=$this->transEsc('finna_nickname_info')?>
+          </div>
         </div>
       </div>
       <div class="my-profile-row">
