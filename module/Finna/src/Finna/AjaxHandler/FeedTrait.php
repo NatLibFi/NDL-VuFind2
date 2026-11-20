@@ -129,6 +129,7 @@ trait FeedTrait
         }
 
         if ($type === 'list') {
+            $feed['useDescription'] = $config->useDescription ?? false;
             $feed['display'] = $config->display ?? '';
         }
 

@@ -93,6 +93,7 @@
 ; dateFormat = "<format>" Item date format ("j.n." by default, see: http://php.net/manual/en/function.date.php).
 ; display = "featured" First feed item is shown next to the rest of feed items as a featured item. Not applied by default.
 ; linkIcon = "<icon-alias>" The icon shown after linkText and moreLink. Not displayed by default.
+; useDescription = [0|1] Whether to display the feed's 'description' field, if available, instead of 'text'. Default is 0 (false).
 
 ;; Optional carousel settings:
 

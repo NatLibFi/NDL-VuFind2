@@ -39,6 +39,8 @@ finna-feed.feed-container {
         display: inline-block;
         margin-top: 0px;
         margin-bottom: 0px;
+        font-size: 1rem;
+        font-weight: 400;
     }
     a .title:hover {
         text-decoration: $link-hover-decoration;
@@ -122,7 +124,7 @@ finna-feed.feed-container {
     }
 }
 @container feed (max-width: #{$screen-xs-max}) {
-    .feed-container .list-feed {
+    .feed-container .list-feed.featured {
         .feed-list-item {
             display: flex;
             flex-direction: column;
