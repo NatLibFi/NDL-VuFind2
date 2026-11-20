@@ -36,7 +36,11 @@
     </div>
   <?php endif; ?>
   <?php if (!$featured || $featured && $first): ?>
-    <?php if (isset($item['description']) || isset($item['text'])): ?><p class="text"><?=$this->escapeHtml($item['description'] ?? $item['text']) ?></p><?php endif; ?>
+    <?php if ($useDescription && isset($item['description'])): ?>
+      <p class="text"><?=$this->escapeHtml($item['description'])?></p>
+    <?php elseif (isset($item['text'])): ?>  
+      <p class="text"><?=$this->escapeHtml($item['text']) ?></p>
+    <?php endif; ?>
   <?php endif; ?>
   <?php if (isset($linkElement) && isset($linkText)): ?>
     <a class="link-text icon-link" <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><span class="icon-link__label"><?= $this->transEsc($this->linkText) ?></span> <?=$this->icon($linkIcon, 'icon-link__icon')?></a>
