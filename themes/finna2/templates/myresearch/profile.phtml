@@ -100,6 +100,7 @@
             <div class="my-profile-col profile-title"><?=$this->transEsc('preferred_pickup_location')?>:</div>
             <div><?=$this->escapeHtml($this->pickup[0]['locationDisplay']); ?></div>
           <?php endif; ?>
+          <div class="clearfix"></div>
 
           <?php if (isset($profile['messagingServices']) && !empty($profile['messagingServices'])): ?>
             <?= $this->partial('myresearch/profile-messaging.phtml', ['profile' => $profile, 'user' => $user, 'capabilityParams' => $capabilityParams]); ?>
