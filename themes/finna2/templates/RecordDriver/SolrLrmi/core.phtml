@@ -48,7 +48,7 @@
         <div class="truncate-field recordAuthors">
           <span>
             <?php foreach ($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
+              <?=($index > 0 ? '<span aria-hidden="true">; </span>' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?><?php if (!empty($author['affiliation'])): ?>, <?= $this->escapeHtml($author['affiliation']) ?><?php endif;?></a>
             <?php endforeach; ?>
           </span>
         </div>
@@ -74,14 +74,14 @@
                 <li class="fulltextField">
                   <?php if (in_array($material['format'], $linkedFormats)): ?>
                     <a class="icon-link" href="<?= $this->escapeHtmlAttr($this->proxyUrl($material['url'])) ?>"
-                      aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>" target="_blank">
+                      aria-label="<?=$this->escapeHtmlAttr($title . ' ' . $material['format'] . ' ' . $filesize . ' ' . $externalLinkText) ?>" target="_blank">
                       <?=$this->icon($isHtml ? 'external-link' : 'download', 'icon-link__icon') ?>
                       <span class="icon-link__label"><?= $title ?></span>
-                    </a>
+                    </a><span aria-hidden="true">
                     (<?= $isHtml
                       ? $this->escapeHtml($externalLinkText)
                       : $this->escapeHtml($material['format'] . ($filesize ? (', ' . $filesize) : ''))
-                    ?>)
+                    ?>)</span>
                   <?php elseif ($externalLink): ?>
                     <a class="icon-link" href="<?= $externalLink ?>" aria-label="<?= $this->escapeHtmlAttr($externalLinkText) ?>"
                       target="_blank"><?=$this->icon('external-link', 'icon-link__icon') ?><span class="icon-link__label"><?= $title ?></span></a>

@@ -55,7 +55,7 @@ if ($img):
           <?php if ($results = $this->driver->getNonPresenterAuthors()): ?>
           <div class="truncate-field" data-rows="1">
             <?php foreach ($results as $index => $author): ?>
-              <?=($index > 0 ? '; ' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
+              <?=($index > 0 ? '<span aria-hidden="true">; </span>' : '')?><?=$this->record($this->driver)->getLinkedFieldElement('author', $author['name'], $author, ['date' => true, 'role' => true, 'authorityType' => $author['type'] ?? null])?>
             <?php endforeach; ?>
           </div>
         <?php endif; ?>
