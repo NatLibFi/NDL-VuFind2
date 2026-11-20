@@ -40,6 +40,7 @@ finna-feed.feed-container {
         margin-top: 0px;
         margin-bottom: 0px;
         font-size: 1rem;
+        font-weight: 400;
     }
     a .title:hover {
         text-decoration: $link-hover-decoration;
@@ -100,6 +101,7 @@ finna-feed.feed-container {
                 padding-bottom: 0px;
                 .title {
                     font-size: $font-size-h3;
+                    font-weight: $headings-font-weight;
                 }
             }
             .more-link {
