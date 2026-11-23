@@ -2,6 +2,7 @@
 <?php
   $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);
+  $hasPositionedDate =  !$featured && !$displayFullDate && isset($item['date']);
 ?>
 <?php if ($hasImg && (!$featured || $featured && $first)): ?>
   <div class="list-img-container">
@@ -11,12 +12,17 @@
     <?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon'], 'wrapper' => true]);?>
   <?php endif; ?>
 <?php endif; ?>
-<div class="list-content-container">
+<div class="list-content-container<?php if (!$hasImg && $hasPositionedDate): ?> positioned-content<?php endif; ?>">
+  <?php if ($hasPositionedDate): ?>
+    <span class="date" <?php if (isset($item['dateFull'])): ?>aria-label="<?= $item['dateFull'] ?>"<?php endif; ?>><?=$this->escapeHtml($item['date'])?></span>
+  <?php endif; ?>
   <?php if (isset($linkElement)): ?><a <?=$this->htmlElement()->getAttributes($linkElement)?> data-feed="<?=$this->escapeHtmlAttr($this->feedId)?>"><?php endif; ?>
     <h3 class="title"><?php if ($hasIcon && !$hasImg): ?><?=$this->partial('Helpers/feed-icon.phtml', ['icon' => $item['icon']]);?><?php endif; ?> <?=$this->escapeHtml($item['title'] ?? '') ?></h3>
   <?php if (isset($linkElement)):?></a><?php endif; ?>
-  <?php if (isset($item['dateFull']) || isset($item['date'])): ?>
-    <span class="date"><span class="date-text"><?=$this->transEsc('Published')?>: </span><?=$this->escapeHtml($item['dateFull'] ?? $item['date'])?></span>
+  <?php if ($featured || $displayFullDate): ?>
+    <?php if (isset($item['dateFull']) || isset($item['date'])): ?>
+      <span class="date-with-text"><span class="date-text"><?=$this->transEsc('Published')?>: </span><?=$this->escapeHtml($item['dateFull'] ?? $item['date'])?></span>
+    <?php endif; ?>    
   <?php endif; ?>
   <?php if ($xcal = $item['xcal'] ?? []): ?>
     <div class="xcal-fields">
