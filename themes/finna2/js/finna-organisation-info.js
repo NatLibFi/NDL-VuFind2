@@ -121,12 +121,13 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   const showAllServicePoints = (e) => {
     const link = e.target.closest('.show-all-button');
     if (!link) {
-      hideListing?.();
+      if (hideListing) { hideListing(); }
       return;
     }
     e.preventDefault();
-    document.getElementById('location_show_all_btn')?.click();
-    showListing?.();
+    const btn = document.getElementById('location_show_all_btn');
+    if (btn) { btn.click(); }
+    if (showListing) { showListing(); }
   };
   document.addEventListener('click', showAllServicePoints);
 
