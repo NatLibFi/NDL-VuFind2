@@ -2,7 +2,7 @@
 <?php
   $hasIcon = !empty($item['icon']['name']);
   $hasImg = !empty($item['image']['url']);
-  $hasPositionedDate =  !$featured && !$displayFullDate && isset($item['date']);
+  $hasPositionedDate = !$featured && !$displayFullDate && isset($item['date']);
 ?>
 <?php if ($hasImg && (!$featured || $featured && $first)): ?>
   <div class="list-img-container">
