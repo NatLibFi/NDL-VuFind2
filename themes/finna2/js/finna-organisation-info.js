@@ -117,19 +117,18 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * Add listener to "Show all service points" link inside the map widget and
    * hide the list when anything else is clicked.
    * @param {MouseEvent} e - The click event.
-   * @returns {void}
    */
-  document.addEventListener('click', function showAllServicePoints (e) {
-    var link = e.target.closest('a[href="#location_show_all_btn"]');
+  const showAllServicePoints = (e) => {
+    const link = e.target.closest('a[href="#location_show_all_btn"]');
     if (!link) {
-      if (typeof hideListing === 'function') hideListing();
+      hideListing?.();
       return;
     }
     e.preventDefault();
-    var btn = document.getElementById('location_show_all_btn');
-    if (btn) btn.click();
-    if (typeof showListing === 'function') showListing();
-  });
+    document.getElementById('location_show_all_btn')?.click();
+    showListing?.();
+  };
+  document.addEventListener('click', showAllServicePoints);
 
   /**
    * Initialize location search
