@@ -131,6 +131,7 @@ trait FeedTrait
         if ($type === 'list') {
             $feed['useDescription'] = $config->useDescription ?? false;
             $feed['display'] = $config->display ?? '';
+            $feed['displayFullDate'] = $config->displayFullDate ?? false;
         }
 
         $isCarouselStyle = str_contains($type, 'carousel') || $type === 'slider';

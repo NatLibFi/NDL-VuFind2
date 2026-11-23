@@ -9,6 +9,7 @@
     $linkIcon = $this->linkIcon ?? '';
     $moreLinkText = $this->moreLinkText ?? 'more_ellipsis';
     $useDescription = $this->useDescription;
+    $displayFullDate = $this->displayFullDate;
   ?>
   <ul class="feed-list-container <?php if ($featured): ?>feed-featured<?php endif; ?>">
     <?php
@@ -20,7 +21,7 @@
         $first = $key === 0;
       ?>
       <li class="feed-list-item <?php if ($featured && $first): ?>featured-item<?php endif; ?>">
-        <?php $feedParams = ['item', 'linkText', 'linkIcon', 'featured', 'first', 'useDescription'];?>
+        <?php $feedParams = ['item', 'linkText', 'linkIcon', 'featured', 'first', 'useDescription', 'displayFullDate'];?>
         <?php if (isset($item['link'])):?>
           <?php
             $linkElement = [

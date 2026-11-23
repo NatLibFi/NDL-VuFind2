@@ -19,7 +19,7 @@ finna-feed.feed-container {
     &:not(.featured) .feed-list-container {
         display: flex;
         flex-direction: column;
-        gap: $spacer;
+        gap: 0.3em;
     }
     .list-img-container {
         width: 40%;
@@ -30,6 +30,7 @@ finna-feed.feed-container {
         width: 100%;
     }
     .feed-list-item {
+        position: relative;
         display: flex;
         flex-direction: row;
         gap: 0.5em;
@@ -42,12 +43,27 @@ finna-feed.feed-container {
         font-size: 1rem;
         font-weight: 400;
     }
-    a .title:hover {
-        text-decoration: $link-hover-decoration;
+    a .title {
+        line-height: 2em;
+        &:hover {
+            text-decoration: $link-hover-decoration;
+        }
     }
-    .date {
+    .date-with-text {
         font-size: $font-size-small;
         color: $gray-light;
+    }
+    .positioned-content {
+        .date {
+            position: absolute;
+            top: 0px;
+        }
+        .title,
+        .text,
+        .xcal-fields,
+        .link-text {
+            margin-left: 3.5rem;
+        }
     }
     .text {
         margin-bottom: 0.3em;
@@ -79,6 +95,14 @@ finna-feed.feed-container {
         .more-link {
             display: block;
             text-align: center;
+        }
+        .date {
+            position: absolute;
+            left: 0.7em;
+            padding: 0.3em;
+            font-size: $font-size-large;
+            color: $body-bg;
+            background: rgba(20,20,20,.6);
         }
     }
     // display - featured
