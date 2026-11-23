@@ -234,38 +234,36 @@
               <?=$this->render('search/logosection.phtml') ?>
             </div>
           <?php endif; ?>
-        <?php if (isset($this->layout()->introduction) && $this->resolver('search/introductiontext.phtml')): ?>
-        <div class="introduction">
-          <div class="introduction clearfix">
-            <?=$this->render('search/introductiontext.phtml') ?>
-          </div>
-        </div>
-        <?php endif; ?>
+          <?php if (isset($this->layout()->introduction) && $this->resolver('search/introductiontext.phtml')): ?>
+            <div class="introduction">
+              <div class="introduction clearfix">
+                <?=$this->render('search/introductiontext.phtml') ?>
+              </div>
+            </div>
+          <?php endif; ?>
 
-        <?php if (!empty($this->layout()->searchbox)): ?>
+          <?php if (!empty($this->layout()->searchbox)): ?>
             <?=$this->layout()->searchbox ?>
-        <?php endif; ?>
+          <?php endif; ?>
+        </div>
       </div>
-    </div>
-    <?php if ($isLandingPage && !$this->translationEmpty('search_bg_image_info_html')): ?>
+      <?php if ($isLandingPage && !$this->translationEmpty('search_bg_image_info_html')): ?>
         <div aria-hidden="true" class="search-bg-image-info">
           <div class="search-bg-image-info-content">
             <?=$this->translate('search_bg_image_info_html')?>
           </div>
         </div>
-    <?php endif; ?>
-    <?php if ($isLandingPage && ($template = $this->content()->findTemplateForLng('content/Additions/frontpage-searchContent-post'))): ?>
-      <?= $this->render($template) ?>
-    <?php endif; ?>
-    <?php if ($isLandingPage && $template = $this->content()->findTemplateForLng('search/home/browsebar')): ?>
-      <?=$this->render($template)?>
-    <?php endif; ?>
-    </section>
-    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/searchContent-post')): ?>
-      <div class="container searchContent-post">
+      <?php endif; ?>
+      <?php if ($isLandingPage && ($template = $this->content()->findTemplateForLng('content/Additions/frontpage-searchContent-post'))): ?>
+        <?= $this->render($template) ?>
+      <?php endif; ?>
+      <?php if ($isLandingPage && $template = $this->content()->findTemplateForLng('search/home/browsebar')): ?>
         <?=$this->render($template)?>
-      </div>
-    <?php endif; ?>
+      <?php endif; ?>
+      <?php if ($template = $this->content()->findTemplateForLng('content/Additions/searchContent-post')): ?>
+        <?=$this->render($template)?>
+      <?php endif; ?>
+    </section>
     <?=$this->breadcrumbs()->render(); ?>
     <?php $finnaFilters = ''; ?>
     <?php if (!empty($this->layout()->finnaFilters)): ?>
