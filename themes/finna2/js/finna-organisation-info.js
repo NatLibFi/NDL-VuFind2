@@ -119,7 +119,7 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
    * @param {MouseEvent} e - The click event.
    */
   const showAllServicePoints = (e) => {
-    const link = e.target.closest('a[href="#location_show_all_btn"]');
+    const link = e.target.closest('.show-all-button');
     if (!link) {
       hideListing?.();
       return;
