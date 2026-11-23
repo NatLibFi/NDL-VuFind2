@@ -19,7 +19,7 @@ finna-feed.feed-container {
     &:not(.featured) .feed-list-container {
         display: flex;
         flex-direction: column;
-        gap: $spacer;
+        gap: 0.3em;
     }
     .list-img-container {
         width: 40%;
