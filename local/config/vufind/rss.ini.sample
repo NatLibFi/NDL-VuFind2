@@ -94,6 +94,7 @@
 ; display = "featured" First feed item is shown next to the rest of feed items as a featured item. Not applied by default.
 ; linkIcon = "<icon-alias>" The icon shown after linkText and moreLink. Not displayed by default.
 ; useDescription = [0|1] Whether to display the feed's 'description' field, if available, instead of 'text'. Default is 0 (false).
+; displayFullDate = [0|1] When display is not 'featured', whether to display the feed's date field with text 'Published' under the title. Default is 0 (false).
 
 ;; Optional carousel settings:
 
