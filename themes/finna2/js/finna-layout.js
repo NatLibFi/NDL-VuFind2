@@ -215,7 +215,7 @@ finna.layout = (function finnaLayout() {
    */
   function moveFocusToTopOnMapPage() {
     document.addEventListener('click', (e) => {
-      if (!e.target.closest('#jump-to-top')) return;
+      if (!e.target.closest('.jump')) return;
       window.scrollTo({ top: 0, behavior: 'auto' });
       setTimeout(() => {
         const t = document.getElementById('map-info');
