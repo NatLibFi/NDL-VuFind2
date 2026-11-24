@@ -161,6 +161,10 @@
         $contentElementId = 'main';
         if (!empty($this->layout()->finnaUserAccountHeading)) {
           $contentElementId = 'useraccount-content-heading';
+        } elseif ($isLandingPage) {
+          $contentElementId = 'content';
+        } elseif ((!empty($this->layout()->finnaSkipLinkTarget))) {
+          $contentElementId = $this->layout()->finnaSkipLinkTarget;
         } elseif (!empty($this->layout()->finnaMainHeader)) {
           $contentElementId = 'content-heading';
         }
@@ -198,7 +202,7 @@
       </nav>
     </header>
     <?php if ($isLandingPage && $template = $this->content()->findTemplateForLng('content/Additions/frontpage-header-post')): ?>
-      <section class="container">
+      <section class="container header-post">
         <?=$this->render($template)?>
       </section>
     <?php endif; ?>
@@ -257,6 +261,11 @@
       <?=$this->render($template)?>
     <?php endif; ?>
     </section>
+    <?php if ($template = $this->content()->findTemplateForLng('content/Additions/searchContent-post')): ?>
+      <div class="container searchContent-post">
+        <?=$this->render($template)?>
+      </div>
+    <?php endif; ?>
     <?=$this->breadcrumbs()->render(); ?>
     <?php $finnaFilters = ''; ?>
     <?php if (!empty($this->layout()->finnaFilters)): ?>

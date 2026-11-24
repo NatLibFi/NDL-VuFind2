@@ -35,7 +35,7 @@
   <div class="truncate-field">
     <?php $renderLinks('onlineURLs') ?>
     <?php $renderLinks('otherURLs') ?>
-    <?php if ($linkDetails['mergedURLs']): ?>
+    <?php if ($linkDetails['mergedURLs']['count']): ?>
       <div class="merged-urls-wrapper truncate-field" data-button-class="link-buttons" data-row-height="1" data-button-placement="top" data-label="<?=$this->transEscAttr('links_from_other_organisations', ['%%count%%' => $linkDetails['mergedURLs']['count']])?>">
         <?php $renderLinks('mergedURLs') ?>
       </div>

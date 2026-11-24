@@ -80,11 +80,15 @@ class Citation extends \VuFind\View\Helper\Root\Citation
         $result = parent::__invoke($driver);
 
         // Use Finna's methods for retrieving the authors to display:
-        $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended')
-            ?? $this->driver->tryMethod('getNonPresenterAuthors');
-        if (null !== $authors) {
-            $this->details['authors'] = $this->prepareAuthors(array_unique(array_column($authors, 'name')));
+        if ($this->driver instanceof \Finna\RecordDriver\SolrQdc) {
+            $authors = $this->driver->tryMethod('getPrimaryAuthors') ?? [];
+        } else {
+            $authors = $this->driver->tryMethod('getPrimaryAuthorsExtended')
+                ?? $this->driver->tryMethod('getNonPresenterAuthors')
+                ?? [];
+            $authors = array_column($authors, 'name');
         }
+        $this->details['authors'] = $this->prepareAuthors(array_unique($authors));
 
         return $result;
     }

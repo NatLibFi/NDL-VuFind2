@@ -61,7 +61,7 @@ if (is_array($series)) {
     }
 }
 
-if ($marc) {
+if ($marc || $this->driver instanceof \Finna\RecordDriver\SolrQdc) {
     $authors = $this->driver->tryMethod('getPrimaryAuthors', [], []);
 } else {
     $authors = $this->driver->tryMethod('getNonPresenterAuthors')
@@ -75,8 +75,10 @@ foreach ($authors as $author) {
 }
 
 $presenters = $this->driver->tryMethod('getPresenters', [], []);
-foreach ($presenters['presenters'] ?? [] as $author) {
-    echo "A2  - {$author['name']}\r\n";
+$secondaryAuthors = $presenters['presenters'] ?? $this->driver->tryMethod('getSecondaryAuthors') ?? [];
+foreach ($secondaryAuthors as $author) {
+    $name = $author['name'] ?? $author;
+    echo "A2  - {$name}\r\n";
 }
 
 $pubPlaces = $this->driver->tryMethod('getPlacesOfPublication');
