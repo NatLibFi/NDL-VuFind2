@@ -23,7 +23,7 @@
   if (isset($ariaLabel)) {
     $__navAttributes['aria-label'] = $ariaLabel;
   }
-  $__renderChildren = isset($renderChildren) ? $renderChildren : false;
+  $__renderChildren = $renderChildren ?? false;
 ?>
 <nav<?= $__navAttributes->add('class', ['finna-tabs-nav nav-scrollable', 'clearfix']) ?>>
   <?php
