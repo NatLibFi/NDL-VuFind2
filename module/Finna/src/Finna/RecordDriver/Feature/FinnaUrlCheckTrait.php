@@ -273,13 +273,16 @@ trait FinnaUrlCheckTrait
      */
     protected function getIPv6Address(string $host): string
     {
-        foreach (dns_get_record($host, DNS_AAAA) ?: [] as $dnsRec) {
-            $ipv6 = $dnsRec['ipv6'] ?? '';
-            if ($ipv6) {
+        $records = dns_get_record($host, DNS_AAAA);
+        if (false === $records) {
+            $this->logWarning("URL check: AAAA record lookup failed for '$host'");
+            return '';
+        }
+        foreach ($records as $dnsRec) {
+            if ($ipv6 = $dnsRec['ipv6'] ?? null) {
                 return $ipv6;
             }
         }
-
         return '';
     }
 }
