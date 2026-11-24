@@ -2,7 +2,7 @@
 <?php
   $recordHelper = $this->record($this->driver);
   $linkDetails = $recordHelper->getLinkDetailsExtended();
-  $media = null; // AIPA records have no media of their own to display
+  $media = ''; // AIPA records have no media of their own to display
   $mediaAlignment = $this->record($this->driver)->getThumbnailAlignment('result');
 ?>
 
