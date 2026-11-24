@@ -23,6 +23,7 @@
   if (isset($ariaLabel)) {
     $__navAttributes['aria-label'] = $ariaLabel;
   }
+  $__renderChildren = isset($renderChildren) ? $renderChildren : false;
 ?>
 <nav<?= $__navAttributes->add('class', ['finna-tabs-nav nav-scrollable', 'clearfix']) ?>>
   <?php
@@ -56,7 +57,7 @@
         $__listAttributes->add('class', 'with-tooltip');
       }
     ?>
-    <?php if (isset(($item['children']))): ?>
+    <?php if ($__renderChildren && isset(($item['children']))): ?>
       <?php foreach ($item['children'] as $child): ?>
         <?php
           $childAttributes = $this->htmlAttributes();
