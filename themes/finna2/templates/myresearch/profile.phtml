@@ -24,8 +24,10 @@
       ob_start();
 ?>
         <?php if (in_array($updateAddress['method'], ['database', 'driver'])): ?>
+          <?=$this->icon('ui-edit') ?>
           <a class="profile-library-info-address-update" href="<?=$this->escapeHtmlAttr($this->url('myresearch-changeprofileaddress')) ?>" data-lightbox title="<?=$this->escapeHtmlAttr($linkText) ?>"><?=$this->escapeHtml($linkText) ?></a>
         <?php elseif ($updateAddress['method'] == 'url'): ?>
+          <?=$this->icon('external-link') ?>
           <a class="profile-library-info-address-update" href="<?=$this->escapeHtmlAttr($this->translation()->getStringFromMixed($updateAddress['url'])) ?>" target="_blank" title="<?=$this->escapeHtmlAttr($linkText) ?>"><?=$this->escapeHtml($linkText) ?></a>
         <?php endif; ?>
 <?php
