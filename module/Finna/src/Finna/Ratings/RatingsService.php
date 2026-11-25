@@ -29,6 +29,7 @@
 
 namespace Finna\Ratings;
 
+use VuFind\Db\Entity\RatingsEntityInterface;
 use VuFind\RecordDriver\AbstractBase as RecordDriver;
 
 /**
@@ -50,11 +51,11 @@ class RatingsService extends \VuFind\Ratings\RatingsService
      * @param ?int         $rating The user-provided rating, or null to clear any existing
      * rating
      *
-     * @return void
+     * @return RatingsEntityInterface
      */
-    public function saveRating(RecordDriver $driver, int $userId, ?int $rating): void
+    public function saveRating(RecordDriver $driver, int $userId, ?int $rating): RatingsEntityInterface
     {
-        parent::saveRating($driver, $userId, $rating);
+        $result = parent::saveRating($driver, $userId, $rating);
 
         // Also update ratings of any duplicates:
         $mergedData = $driver->trymethod('getMergedRecordData', default: []);
@@ -63,5 +64,7 @@ class RatingsService extends \VuFind\Ratings\RatingsService
             $resource = $this->resourcePopulator->getOrCreateResourceForRecordId($record['id'], $source);
             $this->dbService->addOrUpdateRating($resource, $userId, $rating);
         }
+
+        return $result;
     }
 }
