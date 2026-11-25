@@ -60,8 +60,8 @@
     <?php if ($__renderChildren && isset(($item['children']))): ?>
       <?php foreach ($item['children'] as $child): ?>
         <?php
-          $childAttributes = $this->htmlAttributes();
-          $childLinkAttributes = $this->htmlAttributes();
+          $childAttributes = $this->htmlAttributes([]);
+          $childLinkAttributes = $this->htmlAttributes([]);
           if ($child['active']) {
             // Add parent tab also as active
             $__listAttributes->add('class', 'active-trail');
@@ -78,14 +78,14 @@
         ?>
         <?php ob_start(); ?>
         <li<?= $childAttributes ?>>
-          <a<?= $childLinkAttributes ?>><span><?= $child['label'] ?? '' ?></span>
-          <?php if (isset($child['description'])): ?><span role="note"><?= $child['description'] ?></span><?php endif; ?></a>
+          <a<?= $childLinkAttributes ?>><span><?= $this->transEsc($child['label'] ?? '') ?></span>
+          <?php if (isset($child['description'])): ?><span role="note"><?= $this->escapeHtml($child['description']) ?></span><?php endif; ?></a>
         </li>
         <?php $subTabs[$item['label']][] = ob_get_clean();?>
       <?php endforeach; ?>
     <?php endif; ?>
     <li<?= $__listAttributes ?>>
-      <a<?= $__linkAttributes ?>><?= $item['label'] ?? '' ?></a>
+      <a<?= $__linkAttributes ?>><?= $this->transEsc($item['label'] ?? '') ?></a>
       <?php if (isset($item['toggletip'])): ?>
         <?= $this->component('finna-toggletip', $item['toggletip']) ?>
       <?php endif; ?>
@@ -94,7 +94,7 @@
   </ul>
 <?php foreach ($items ?? [] as $i => $item): ?>
   <?php if (isset($subTabs[$item['label']])): ?> 
-    <ul id="sub-tab-<?= $item['label'] ?? $i ?>">
+    <ul id="sub-tab-<?= $this->escapeHtmlAttr($item['label'] ?? $i) ?>">
       <?php foreach ($subTabs[$item['label']] ?? [] as $tab): ?>
         <?= $tab; ?>
       <?php endforeach; ?>

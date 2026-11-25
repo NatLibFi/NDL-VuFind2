@@ -4,7 +4,7 @@
   // Displayed as tabs
   .finna-tabs-nav {
     ul[id*='sub-tab-'] {
-      display: none; // only active displayed
+      display: none;
       flex-direction: row;
       flex-wrap: wrap;
        margin: 0px;
