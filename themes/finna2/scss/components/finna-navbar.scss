@@ -19,6 +19,12 @@
       align-items: center;
       justify-content: center;
     }
+    &:not(.finna-navbar-content) {
+      .navbar-toggler {
+        color: $dark;
+        background-color: transparent;
+      }
+    }
     .navbar-nav {
       margin: 0px;
       > li > a {
