@@ -88,7 +88,9 @@ class Citation extends \VuFind\View\Helper\Root\Citation
                 ?? [];
             $authors = array_column($authors, 'name');
         }
-        $this->details['authors'] = $this->prepareAuthors(array_unique($authors));
+        if ($authors) {
+            $this->details['authors'] = $this->prepareAuthors(array_unique($authors));
+        }
 
         return $result;
     }
