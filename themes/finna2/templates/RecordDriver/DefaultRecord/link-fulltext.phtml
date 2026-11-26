@@ -4,6 +4,8 @@
   $linkDescription = trim($this->desc);
   $icon = $this->icon ?? 'external-link';
   $isDownloadLink = in_array($this->linkType, ['download', 'proxy-link']);
+  $displaySource = $this->displaySource ?? false;
+  $source = $this->source ?? '';
 
   $externalIconMap = [
     'Database Guide' => 'database-info',
@@ -57,7 +59,7 @@
   $link .= '</a>';
 
   // Add the additional information after the link:
-  if ($source = $this->source ?? '') {
+  if ($displaySource && $source) {
     $sourceDesc = is_array($source)
       ? $this->transEsc('Multiple Organisations')
       : $this->transEscWithPrefix('default::source_', $source);

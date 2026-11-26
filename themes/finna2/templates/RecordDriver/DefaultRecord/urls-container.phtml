@@ -13,8 +13,10 @@
       if ($renderLimit > 0 && $renderedAmount >= $renderLimit) {
         break;
       }
+      // Display sources only for merged URLs
+      $displaySource = $resultKey === 'mergedURLs';
       echo $type === 'link'
-        ? $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'compact' => $compact])
+        ? $this->record($this->driver)->renderTemplate('link-fulltext.phtml', [...$url, 'displaySource' => $displaySource, 'compact' => $compact])
         : $this->record($this->driver)->renderTemplate('link-video.phtml', [...$url, 'index' => $index]);
       $renderedAmount++;
     }
