@@ -10,8 +10,8 @@
   $truncateSettings = $alwaysUseLightbox ? false : [
     'rows' => $this->facets_before_more,
     'btn-class' => 'facet',
-    'more-label' => $this->transEsc('more'),
-    'less-label' => $this->transEsc('less'),
+    'more-label' => $this->transEsc('show_more_options'),
+    'less-label' => $this->transEsc('show_less_options'),
     'wrapper-class' => false,
     'wrapper-tagname' => 'div',
   ];
@@ -42,7 +42,7 @@
   $ulAttrs = $this->htmlAttributes(['class' => 'facet__list']);
   if ($truncateSettings) {
     $ulAttrs->add('class', 'truncate-facets');
-    $ulAttrs->add('data-truncate', $this->htmlSafeJsonEncode($truncateSettings), null);
+    $ulAttrs->add('data-truncate', $this->htmlSafeJsonEncode($truncateSettings, null));
   }
 ?>
 <ul<?=$ulAttrs?>>
