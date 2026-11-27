@@ -43,7 +43,7 @@
           <strong><?= $this->transEsc('Aipa::Curated By') ?>:</strong>
           <span>
           <?php foreach ($results as $index => $author): ?>
-            <?=($index > 0 ? '; ' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?>
+            <?=($index > 0 ? '<span aria-hidden="true">; </span>' : '')?><a href="<?=$this->record($this->driver)->getLink('author', $author['name'])?>"><?=$this->escapeHtml($author['name'])?></a><?php if (!empty($author['date'])): ?><span class="author-date">, <?=$this->escapeHtml($author['date']) ?></span><?php endif; ?>
           <?php endforeach; ?>
           </span>
         </div>
