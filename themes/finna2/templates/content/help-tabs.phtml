@@ -34,14 +34,9 @@
 <?= $this->component(
     'finna-multi-level-nav',
     [
+      'isTab' => true,
       'ariaLabel' => $this->translate('Help'),
-      'attributes' => [
-        'class' => ['finna-multi-level-nav-content', 'finna-multi-level-nav-lg'],
-      ],
-      'brandContent' => $this->transEsc('tabs_' . $this->activeTab),
-      'collapseId' => 'nav-help-collapse',
       'items' => $items,
-      'toggleBtnLabel' => $this->transEsc('More'),
     ]
 );
 ?>
