@@ -2,23 +2,23 @@
 <div class="sort-option-container">
   <span class="button-label"><?=$this->transEsc('Sort')?></span>
   <div class="sort-button">
-  <div class="dropdown">
-    <?php foreach ($this->sortList as $sortType => $sortData): ?>
-      <?php if ($sortData['selected']): ?>
-      <a href="#" class="dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false" aria-label="<?=$this->transEscAttr('Sort')?> <?=$this->transEsc($sortData['desc'])?>">
-        <span><?=$this->transEsc($sortData['desc'])?></span> <?=$this->icon('dropdown-open') ?>
-      </a>
-      <?php endif; ?>
-    <?php endforeach; ?>
-    <ul class="dropdown-menu" role="menu">
+    <div class="dropdown">
       <?php foreach ($this->sortList as $sortType => $sortData): ?>
-      <li class="sort-<?=$this->escapeHtmlAttr(str_replace([' ', '_'], '-', $sortType))?>">
-        <a class="dropdown-item" role="menuitem" href="<?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>"><?=$this->transEsc($sortData['desc'])?></a>
+        <?php if ($sortData['selected']): ?>
+          <a href="#" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="<?=$this->transEscAttr('Sort')?> <?=$this->transEsc($sortData['desc'])?>">
+            <span><?=$this->transEsc($sortData['desc'])?></span> <?=$this->icon('dropdown-open') ?>
+          </a>
+        <?php endif; ?>
       <?php endforeach; ?>
-      </li>
-    </ul>
-    <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEscAttr('Set')?>"></noscript>
-  </div>
+      <ul class="dropdown-menu" role="menu">
+        <?php foreach ($this->sortList as $sortType => $sortData): ?>
+          <li class="sort-<?=$this->escapeHtmlAttr(str_replace([' ', '_'], '-', $sortType))?>">
+            <a class="dropdown-item" role="menuitem" href="<?=isset($sortData['url']) ? $this->escapeHtmlAttr($sortData['url']) : $this->results->getUrlQuery()->setSort($sortType)?>"><?=$this->transEsc($sortData['desc'])?></a>
+          </li>
+        <?php endforeach; ?>
+      </ul>
+      <noscript><input type="submit" class="btn btn-default" value="<?=$this->transEscAttr('Set')?>"></noscript>
+    </div>
   </div>
 </div>
 <!-- END of: finna - myresearch/controls/sort.phtml -->
