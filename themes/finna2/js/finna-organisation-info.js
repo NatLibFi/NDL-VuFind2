@@ -94,6 +94,44 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
   }
 
   /**
+   * Show the service point listing
+   * @returns {boolean} True if one or more elements were shown, false if none found.
+   */
+  function showListing() {
+    const elems = document.querySelectorAll('.location-listing');
+    elems.forEach(el => el.removeAttribute('hidden'));
+    return true;
+  }
+
+  /**
+   * Hide the service point listing
+   * @returns {boolean} True if one or more elements were hidden, false if none found.
+   */
+  function hideListing() {
+    const elems = document.querySelectorAll('.location-listing');
+    elems.forEach(el => el.setAttribute('hidden', ''));
+    return true;
+  }
+
+  /**
+   * Add listener to "Show all service points" link inside the map widget and
+   * hide the list when anything else is clicked.
+   * @param {MouseEvent} e - The click event.
+   */
+  const showAllServicePoints = (e) => {
+    const link = e.target.closest('.show-all-button');
+    if (!link) {
+      if (hideListing) { hideListing(); }
+      return;
+    }
+    e.preventDefault();
+    const btn = document.getElementById('location_show_all_btn');
+    if (btn) { btn.click(); }
+    if (showListing) { showListing(); }
+  };
+  document.addEventListener('click', showAllServicePoints);
+
+  /**
    * Initialize location search
    */
   function initLocationSearch() {
@@ -269,7 +307,6 @@ finna.organisationInfo = (function finnaOrganisationInfo() {
 
     map = finna.organisationMap;
     map.init(mapWidget, mapTileUrl, mapAttributionTemplate.innerHTML);
-
     /**
      * Hide map marker from mapTooltip
      */
